@@ -1,7 +1,7 @@
 {
   "name": "agenticjs",
   "version": "0.0.6",
-  "description": "AI Agents library for Javascript Developers.",
+  "description": "AI Multi-Agent library for Javascript Developers.",
   "main": "dist/bundle.cjs.js",
   "module": "dist/bundle.esm.js",
   "unpkg": "dist/bundle.umd.js",
@@ -16,13 +16,13 @@
   "packageManager": "npm@9.8.1",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AIChampions/agenticjs.git"
+    "url": "git+https://github.com/AI-Champions/AgenticJS"
   },
   "author": "AI Champions",
   "license": "MIT",
-  "homepage": "https://aichampions.co/agenticjs",
+  "homepage": "https://agenticjs.com",
   "bugs": {
-    "url": "https://github.com/AIChampions/agenticjs/issues"
+    "url": "https://github.com/AI-Champions/AgenticJS/issues"
   },
   "keywords": [
     "ai agents",
