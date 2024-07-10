@@ -1,0 +1,63 @@
+{
+  "name": "agenticjs",
+  "version": "0.0.6",
+  "description": "AI Agents library for Javascript Developers.",
+  "main": "dist/bundle.cjs.js",
+  "module": "dist/bundle.esm.js",
+  "unpkg": "dist/bundle.umd.js",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "node test/test.js",
+    "pretest": "npm run build",
+    "play-react": "cd playground/react && npm run dev",
+    "play-node": "cd playground/nodejs && node index.js"
+  },
+  "packageManager": "npm@9.8.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AIChampions/agenticjs.git"
+  },
+  "author": "AI Champions",
+  "license": "MIT",
+  "homepage": "https://aichampions.co/agenticjs",
+  "bugs": {
+    "url": "https://github.com/AIChampions/agenticjs/issues"
+  },
+  "keywords": [
+    "ai agents",
+    "multi-agent systems",
+    "javascript",
+    "framework",
+    "node.js",
+    "react",
+    "vue",
+    "angular",
+    "nextjs",
+    "real-time",
+    "visualization"
+  ],
+  "dependencies": {
+    "@langchain/anthropic": "^0.2.3",
+    "langchain": "^0.2.5",
+    "uuid": "^10.0.0",
+    "zustand": "^4.5.2"
+  },
+  "peerDependencies": {
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "eslint": "^7.32.0",
+    "prettier": "^2.3.2",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-sourcemaps": "^0.6.3",
+    "rollup-plugin-terser": "^7.0.2"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}
