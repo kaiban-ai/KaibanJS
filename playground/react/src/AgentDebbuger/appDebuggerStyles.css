@@ -1,0 +1,51 @@
+.actionWrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.title {
+    color: #d8d5d5;
+    border-bottom: 1px solid #333;
+}
+
+.section {
+    margin: 20px 0 20px;
+}
+
+.sectionTitle {
+    color: #d8d5d5;
+    font-size: 30px;
+}
+
+.listItem {
+    color: #999;
+    margin-bottom: 10px;
+}
+
+.inputTextarea {
+    width: 100%;
+    box-sizing: border-box;
+    height: 200px;
+    border: 1px solid #333;
+    padding: 10px;
+    font-size: 16px;
+}
+
+@media (prefers-color-scheme: light) {
+    .title {
+        color: #9b9999;
+    }
+    .sectionTitle {
+        color: rgb(80, 77, 77);
+    }
+
+    .listItem {
+        color: #818181;
+    }
+
+    .inputTextarea {
+        color: #474646;
+        background-color: #ebeaea;
+    }
+}
