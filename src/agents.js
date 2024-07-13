@@ -36,34 +36,24 @@ function interpolateDescription(description, inputs) {
 }
 
 function getApiKey(llmConfig, provider) {
-    if (llmConfig && llmConfig.apiKey) return llmConfig.apiKey;
+    if (llmConfig?.apiKey) return llmConfig.apiKey;
+
+    let env = {};
 
     if (typeof process !== 'undefined' && process.env) {
-        // Check if process.env is available (Node.js or Next.js environment)
-        if (provider === 'anthropic') {
-            return process.env.ANTHROPIC_API_KEY || process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY;
-        } else if (provider === 'google') {
-            return process.env.GOOGLE_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
-        } else if (provider === 'mistral') {
-            return process.env.MISTRAL_API_KEY || process.env.NEXT_PUBLIC_MISTRAL_API_KEY;
-        }
-        else {
-            return process.env.OPENAI_API_KEY || process.env.NEXT_PUBLIC_OPENAI_API_KEY;
-        }
+        env = process.env;
     } else if (typeof window !== 'undefined') {
-        // Check for browser environment with environment variables in import.meta.env
-        if (provider === 'anthropic') {
-            return import.meta.env.VITE_ANTHROPIC_API_KEY || window?.process?.env?.ANTHROPIC_API_KEY;
-        } else if (provider === 'google') {
-            return import.meta.env.VITE_GOOGLE_API_KEY || window?.process?.env?.GOOGLE_API_KEY;
-        } else if (provider === 'mistral') {
-            return import.meta.env.VITE_MISTRAL_API_KEY || window?.process?.env?.MISTRAL_API_KEY;
-        } else {
-            return import.meta.env.VITE_OPENAI_API_KEY || window?.process?.env?.OPENAI_API_KEY;
-        }
+        env = window?.process?.env || import.meta.env || {};
     }
 
-    throw new Error('API key is missing. Please provide it through llmConfig or set the appropriate environment variables.');
+    const apiKeys = {
+        anthropic: env.ANTHROPIC_API_KEY || env.NEXT_PUBLIC_ANTHROPIC_API_KEY || env.VITE_ANTHROPIC_API_KEY,
+        google: env.GOOGLE_API_KEY || env.NEXT_PUBLIC_GOOGLE_API_KEY || env.VITE_GOOGLE_API_KEY,
+        mistral: env.MISTRAL_API_KEY || env.NEXT_PUBLIC_MISTRAL_API_KEY || env.VITE_MISTRAL_API_KEY,
+        openai: env.OPENAI_API_KEY || env.NEXT_PUBLIC_OPENAI_API_KEY || env.VITE_OPENAI_API_KEY,
+    };
+
+    return apiKeys[provider] || apiKeys.openai || (() => { throw new Error('API key is missing. Please provide it through llmConfig or set the appropriate environment variables.'); })();
 }
 
 
@@ -106,27 +96,20 @@ class BasicChatAgent extends BaseAgent {
     }
 
     async initAgent() {
-        if (this.llmConfig.provider === 'anthropic') {
-            this.llmInstance = new ChatAnthropic({
-                ...this.llmConfig,
-                apiKey: getApiKey(this.llmConfig, 'anthropic'),
-            });
-        } else if (this.llmConfig.provider === 'google') {
-            this.llmInstance = new ChatGoogleGenerativeAI({
-                ...this.llmConfig,
-                apiKey: getApiKey(this.llmConfig, 'google'),
-            });
-        } else if (this.llmConfig.provider === 'mistral') {
-            this.llmInstance = new ChatMistralAI({
-                ...this.llmConfig,
-                apiKey: getApiKey(this.llmConfig, 'mistral'),
-            });
-        } else {
-            this.llmInstance = new ChatOpenAI({
-                ...this.llmConfig,
-                apiKey: getApiKey(this.llmConfig, 'openai'),
-            });
-        }
+        const providers = {
+            anthropic: ChatAnthropic,
+            google: ChatGoogleGenerativeAI,
+            mistral: ChatMistralAI,
+            openai: ChatOpenAI,
+        };
+
+        const provider = this.llmConfig.provider;
+        const ChatClass = providers[provider] || providers.openai;
+
+        this.llmInstance = new ChatClass({
+            ...this.llmConfig,
+            apiKey: getApiKey(this.llmConfig, provider),
+        });
     }
 
     async executeTask(task, inputs, context) {
