@@ -5,6 +5,9 @@ import { terser } from 'rollup-plugin-terser';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 
+// Determine if we are in development mode based on the NODE_ENV environment variable
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 export default {
   input: 'src/index.js',
   output: [
@@ -43,7 +46,8 @@ export default {
       babelHelpers: 'bundled',
       exclude: 'node_modules/**'
     }),
-    terser(),
+    // Only include terser (minification) if not in development mode
+    ...(!isDevelopment ? [terser()] : []),
     sourcemaps()  // Ensure sourcemaps from dependencies are handled
     ],
     external: ['react', 'react-dom', 'uuid'],
