@@ -36,9 +36,14 @@ Install AgenticJS via npm:
 npm install agenticjs --save
 ```
 
-Set your LLM API key as an environment variable:
+Set your LLM API keys as environment variables:
 ```bash
+
+# For Anthropic
 export ANTHROPIC_API_KEY='your-api-key'
+
+# For OpenAI
+export OPENAI_API_KEY='your-openai-api-key'
 ```
 
 Import AgenticJS in your JavaScript file:
@@ -152,10 +157,24 @@ const team = new Team({
     inputs: { aboutMe: 'My name is Will, I have been a Javascript Developer for 3 years. I know React, NextJS, and REDUX. My latest job was as a Junior Developer at Disney creating UIs for the main landing page.' },  // Initial input for the first task
 });
 
-// Start the team: This initiates the sequence of tasks as defined, leading to the generation of the final deliverable.
-team.start();
+// ──── Listening to Changes────────────────────────────────────────────
+// 
+// Listening to changes in the team's state is crucial for dynamic updates.
+// Yup...AgenticJS utilizes a store similar to Redux for state management.
+// 
+// You can subscribe to specific fields or any field on the store.
+//──────────────────────────────────────────────────────────────────────
 
+const unsubscribe = team.subscribeToChanges((updatedFields) => {
+    console.log("Workflow Status Updated:", updatedFields);
+}, ['teamWorkflowStatus']);
 
+// ──── Start Team Workflow ───────────────────────────────────────
+// 
+// Begins the predefined team process, producing the final result.
+//─────────────────────────────────────────────────────────────────
+const result = await team.start();
+console.log("Final Output:", result);
 ```
 
 ## Documentation
