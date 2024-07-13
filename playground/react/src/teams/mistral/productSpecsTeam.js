@@ -8,8 +8,8 @@ const requirementsAnalyst = new Agent({
     background: 'Business Analysis',
     tools: [],
     llmConfig: {
-        provider: "google",
-        model: "gemini-1.5-flash",
+        provider: "mistral",
+        model: "mistral-small",
     }
 
 });
@@ -21,8 +21,8 @@ const technicalWriter = new Agent({
     background: 'Technical Writing',
     tools: [],
     llmConfig: {
-        provider: "google",
-        model: "gemini-1.5-flash",
+        provider: "mistral",
+        model: "mistral-small",
     }
 });
 
@@ -33,8 +33,8 @@ const validator = new Agent({
     background: 'Quality Assurance',
     tools: [],
     llmConfig: {
-        provider: "google",
-        model: "gemini-1.5-flash",
+        provider: "mistral",
+        model: "mistral-small",
     }
 });
 

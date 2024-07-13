@@ -19,6 +19,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ChatOpenAI, OpenAI } from "@langchain/openai";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { ChatMistralAI } from "@langchain/mistralai";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { createReactAgent, AgentExecutor } from "langchain/agents";
 import { StringOutputParser } from "@langchain/core/output_parsers";
@@ -43,6 +44,8 @@ function getApiKey(llmConfig, provider) {
             return process.env.ANTHROPIC_API_KEY || process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY;
         } else if (provider === 'google') {
             return process.env.GOOGLE_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+        } else if (provider === 'mistral') {
+            return process.env.MISTRAL_API_KEY || process.env.NEXT_PUBLIC_MISTRAL_API_KEY;
         }
         else {
             return process.env.OPENAI_API_KEY || process.env.NEXT_PUBLIC_OPENAI_API_KEY;
@@ -53,6 +56,8 @@ function getApiKey(llmConfig, provider) {
             return import.meta.env.VITE_ANTHROPIC_API_KEY || window?.process?.env?.ANTHROPIC_API_KEY;
         } else if (provider === 'google') {
             return import.meta.env.VITE_GOOGLE_API_KEY || window?.process?.env?.GOOGLE_API_KEY;
+        } else if (provider === 'mistral') {
+            return import.meta.env.VITE_MISTRAL_API_KEY || window?.process?.env?.MISTRAL_API_KEY;
         } else {
             return import.meta.env.VITE_OPENAI_API_KEY || window?.process?.env?.OPENAI_API_KEY;
         }
@@ -110,6 +115,11 @@ class BasicChatAgent extends BaseAgent {
             this.llmInstance = new ChatGoogleGenerativeAI({
                 ...this.llmConfig,
                 apiKey: getApiKey(this.llmConfig, 'google'),
+            });
+        } else if (this.llmConfig.provider === 'mistral') {
+            this.llmInstance = new ChatMistralAI({
+                ...this.llmConfig,
+                apiKey: getApiKey(this.llmConfig, 'mistral'),
             });
         } else {
             this.llmInstance = new ChatOpenAI({
