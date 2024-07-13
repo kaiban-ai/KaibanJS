@@ -123,7 +123,6 @@ const createTeamStore = (initialState = {}) => {
 
             // Update the task with the result and duration
             set(state => {
-                console.log('asdasdss');
                 const taskIndex = state.tasks.findIndex(t => t.id === taskId);
                 if (taskIndex !== -1) {
                     const updatedTasks = [...state.tasks];
