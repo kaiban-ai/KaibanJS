@@ -18,6 +18,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ChatOpenAI, OpenAI } from "@langchain/openai";
 import { ChatAnthropic } from "@langchain/anthropic";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { createReactAgent, AgentExecutor } from "langchain/agents";
 import { StringOutputParser } from "@langchain/core/output_parsers";
@@ -40,13 +41,18 @@ function getApiKey(llmConfig, provider) {
         // Check if process.env is available (Node.js or Next.js environment)
         if (provider === 'anthropic') {
             return process.env.ANTHROPIC_API_KEY || process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY;
-        } else {
+        } else if (provider === 'google') {
+            return process.env.GOOGLE_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+        }
+        else {
             return process.env.OPENAI_API_KEY || process.env.NEXT_PUBLIC_OPENAI_API_KEY;
         }
     } else if (typeof window !== 'undefined') {
         // Check for browser environment with environment variables in import.meta.env
         if (provider === 'anthropic') {
             return import.meta.env.VITE_ANTHROPIC_API_KEY || window?.process?.env?.ANTHROPIC_API_KEY;
+        } else if (provider === 'google') {
+            return import.meta.env.VITE_GOOGLE_API_KEY || window?.process?.env?.GOOGLE_API_KEY;
         } else {
             return import.meta.env.VITE_OPENAI_API_KEY || window?.process?.env?.OPENAI_API_KEY;
         }
@@ -99,6 +105,11 @@ class BasicChatAgent extends BaseAgent {
             this.llmInstance = new ChatAnthropic({
                 ...this.llmConfig,
                 apiKey: getApiKey(this.llmConfig, 'anthropic'),
+            });
+        } else if (this.llmConfig.provider === 'google') {
+            this.llmInstance = new ChatGoogleGenerativeAI({
+                ...this.llmConfig,
+                apiKey: getApiKey(this.llmConfig, 'google'),
             });
         } else {
             this.llmInstance = new ChatOpenAI({

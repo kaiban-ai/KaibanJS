@@ -1,5 +1,5 @@
 import AgentsBoardDebugger from './AgentsBoardDebugger';
-import team from './teams/productSpecsTeam';
+import team from './teams/google/productSpecsTeam';
 
 function App() {
   return (
