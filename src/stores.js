@@ -114,20 +114,20 @@ const createTeamStore = (initialState = {}) => {
             // const result = await new Promise(resolve => setTimeout(resolve, 5000));
             const endTime = Date.now();
             const taskDuration = (endTime - startTime) / 1000;  // Convert to seconds
-            console.log(`Task completed in ${taskDuration} seconds`);
-        
-
-            // const result = await new Promise(resolve => setTimeout(resolve, 5000));
-            // const result = await get().executeAgentTask(agent, task);
-            // console.log(result);         
-
+            
+            const taskIndex = get().tasks.findIndex(t => t.id === taskId);
+            const totalTasks = get().tasks.length;
+            const currentTaskNumber = taskIndex + 1; // Adding 1 because index is 0-based
+            const titleOrDescription = task.title || (task.description ? task.description.split(" ").slice(0, 3).join(" ") + '...' : 'Untitled');
+            console.log(`Task (${currentTaskNumber}/${totalTasks}): *${titleOrDescription}* completed in ${taskDuration} seconds.`);
+            
             // Update the task with the result and duration
             set(state => {
                 const taskIndex = state.tasks.findIndex(t => t.id === taskId);
                 if (taskIndex !== -1) {
                     const updatedTasks = [...state.tasks];
                     updatedTasks[taskIndex] = { ...updatedTasks[taskIndex], status: 'done', result: result, duration: taskDuration };
-                    const newLog = { timestamp: startTime/1000, agent: agent, task: task, logDescription: `Task ${updatedTasks[taskIndex].description} completed in ${taskDuration} seconds`};
+                    const newLog = { timestamp: startTime/1000, agent: agent, task: task, logDescription: `Task: ${task.title || 'Untitled'} completed in ${taskDuration} seconds`};
                     return { ...state, tasks: updatedTasks, workflowLogs: [...state.workflowLogs, newLog], workflowContext: result };
                 }
                 return state;

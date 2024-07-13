@@ -4,70 +4,126 @@ const { Agent, Task, Team } = require('../../dist/bundle.cjs.js');
 require('dotenv').config({ path: './.env.local' });
 
 async function main() {
-  // Define agents
-  const researcher = new Agent({
-    name: 'Alice',
-    role: 'Researcher',
-    goal: 'Analyze AI advancements about {topic}',
-    background: 'AI researcher',
-    tools: []
-  });
+// ╔══════════════════════════════════════════════════════╗
+// ║ How to Use AgenticJS:                                ║
+// ║ 1. Define your Agents with specific roles and goals  ║
+// ║ 2. Define the Tasks each Agent will perform          ║ 
+// ║ 3. Create the Team and assign Agents and their Tasks ║
+// ║ 4. Start the Team to execute the defined tasks       ║
+// ╚══════════════════════════════════════════════════════╝
 
-  const writer = new Agent({
-    name: 'Bob',
-    role: 'Writer',
-    goal: 'Write an article about {topic}',
-    background: 'Tech writer',
-    tools: []
-  });
+// ──── Agents ────────────────────────────────────────────
+// ─ Agents are autonomous entities designed to perform
+// ─ specific roles and achieve goals based on the
+// ─ tasks assigned to them.
+// ────────────────────────────────────────────────────────
 
-  // Define tasks
-  const researchTask = new Task({
-    description: ` Identify the next big trend in {topic}.
-    Focus on identifying pros and cons and the overall narrative.
-    Your final report should clearly articulate the key points,
-    its market opportunities, and potential risks.
-    `,
-    expectedOutput: 'A comprehensive 3 paragraphs long report on the latest AI trends.',
-    agent: researcher
-  });
+const profileAnalyst = new Agent({
+    name: 'Ivy', 
+    role: 'Profile Analyst', 
+    goal: 'Extract structured information from conversational user input.', 
+    background: 'Data Processor',
+    tools: [],  // Tools are omitted for now
+    llmConfig: {
+        provider: "anthropic",  // or "openai"
+        model: "claude-3-5-sonnet-20240620",
+        temperature: 0.9,
+        maxTokens: 1024,
+        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
+    }    
+});
 
-  const writingTask = new Task({
-    description: `Compose an insightful article on {topic}.
-    Focus on the latest trends and how it's impacting the industry.
-    This article should be easy to understand, engaging, and positive.`,
-    expectedOutput: 'A 4 paragraph article on {topic} advancements formatted as markdown.',
-    agent: writer
-  });
+const formatter = new Agent({
+    name: 'Formy', 
+    role: 'Formatter', 
+    goal: 'Format structured information into a professional resume.', 
+    background: 'Document Formatter',
+    tools: [],
+    llmConfig: {
+        provider: "anthropic",  // or "openai"
+        model: "claude-3-5-sonnet-20240620",
+        temperature: 0.9,
+        maxTokens: 1024,
+        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
+    }    
+});
 
-  // Create a team
-  const team = new Team({
-    name: 'Productivity Team',
-    agents: [researcher, writer],
-    tasks: [researchTask, writingTask],
-    inputs: { topic: "AI Agents" },
-    verbose: 2
-  });
+const reviewer = new Agent({
+    name: 'Revy', 
+    role: 'Reviewer', 
+    goal: 'Review and polish the final resume.', 
+    background: 'Quality Assurance Specialist',
+    tools: [],
+    llmConfig: {
+        provider: "anthropic",  // or "openai"
+        model: "claude-3-5-sonnet-20240620",
+        temperature: 0.9,
+        maxTokens: 1024,
+        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
+    }    
+});
 
-  // Subscribe to any change
-  // team.subscribeToChanges(state => {
-  //   console.log("Something in the state changed", state);
-  // });
+// ──── Tasks ─────────────────────────────────────────────
+// ─ Tasks define the specific actions each agent must
+// ─ take, their expected outputs, and mark critical
+// ─ outputs as deliverables if they are the final
+// ─ products.
+// ────────────────────────────────────────────────────────
 
-  // Subscribe only to changes in 'agents' and 'name'
-  const unsubscribe = team.subscribeToChanges((newValues) => {
-    console.log("Workflow Updated:", newValues);
-  }, ['teamWorkflowStatus']);
+const processingTask = new Task({ 
+    title: 'Process User Input',
+    description: `Extract relevant details such as name, experience, skills, and job history from the user's 'aboutMe' input. 
+    aboutMe: {aboutMe}`,
+    expectedOutput: 'Structured data ready for formatting.', 
+    agent: profileAnalyst
+});
 
-  try {
-    const result = await team.start();
-    console.log(result);
-    // After some operations or when no longer needed, you can unsubscribe
-    // unsubscribe(); // Call this function to stop listening to state changes when appropriate
+const formattingTask = new Task({
+    title: 'Format Resume',
+    description: `Use the extracted information to create a clean, professional resume layout tailored for a JavaScript Developer.`,
+    expectedOutput: 'A well-formatted resume in PDF format.', 
+    agent: formatter 
+});
 
-  } catch (error) {
-    console.error('Failed to start the team:', error);
-  }
+const reviewTask = new Task({ 
+    title: 'Review Resume',
+    description: `Ensure the resume is error-free, engaging, and meets professional standards.`,
+    expectedOutput: 'A polished, final resume ready for job applications. Please do not give any feedback on the resume. Just the final resume.', 
+    agent: reviewer 
+});
+
+// ──── Team ────────────────────────────────────────────
+// ─ The Team coordinates the agents and their tasks.
+// ─ It starts with an initial input and manages the
+// ─ flow of information between tasks.
+// ──────────────────────────────────────────────────────
+
+const team = new Team({
+    name: 'Resume Creation Team',
+    agents: [profileAnalyst, formatter, reviewer],
+    tasks: [processingTask, formattingTask, reviewTask],
+    inputs: { aboutMe: 'My name is Will, I have been a Javascript Developer for 3 years. I know React, NextJS, and REDUX. My latest job was as a Junior Developer at Disney creating UIs for the main landing page.' },  // Initial input for the first task
+});
+
+// ──── Listening to Changes────────────────────────────────────────────
+// 
+// Listening to changes in the team's state is crucial for dynamic updates.
+// Yup...AgenticJS utilizes a store similar to Redux for state management.
+// 
+// You can subscribe to specific fields or any field on the store.
+//──────────────────────────────────────────────────────────────────────
+
+const unsubscribe = team.subscribeToChanges((updatedFields) => {
+    console.log("Workflow Status Updated:", updatedFields);
+}, ['teamWorkflowStatus']);
+
+// ──── Start Team Workflow ───────────────────────────────────────
+// 
+// Begins the predefined team process, producing the final result.
+//─────────────────────────────────────────────────────────────────
+const result = await team.start();
+console.log("Final Output:", result);
+
 }
 
 main();

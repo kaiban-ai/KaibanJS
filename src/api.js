@@ -66,8 +66,9 @@ class Agent {
 }
 
 class Task {
-    constructor({ description, expectedOutput, agent, isDeliverable = false }) {
+    constructor({ title = '', description, expectedOutput, agent, isDeliverable = false }) {
         this.id = uuidv4();
+        this.title = title; // Title is now optional with a default empty string
         this.description = description;
         this.expectedOutput = expectedOutput;
         this.isDeliverable = isDeliverable;
