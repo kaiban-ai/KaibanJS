@@ -1,6 +1,6 @@
 {
   "name": "agenticjs",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "AI Multi-Agent library for Javascript Developers.",
   "main": "dist/bundle.cjs.js",
   "module": "dist/bundle.esm.js",
