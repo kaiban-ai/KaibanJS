@@ -34,8 +34,9 @@ export default {
   plugins: [
     peerDepsExternal(),
     resolve({
-      browser: false,  // Set to false to prioritize Node.js modules
-      preferBuiltins: true  // Ensure Node.js built-ins are used
+      browser: true,  // Set to false to prioritize Node.js modules
+      preferBuiltins: false,  // Ensure Node.js built-ins are used
+      mainFields: ['browser', 'module', 'main']
     }),
     // resolve({
     //   browser: true,
@@ -48,7 +49,7 @@ export default {
     }),
     // Only include terser (minification) if not in development mode
     ...(!isDevelopment ? [terser()] : []),
-    sourcemaps()  // Ensure sourcemaps from dependencies are handled
-    ],
-    external: ['react', 'react-dom', 'uuid'],
+    sourcemaps(),  // Ensure sourcemaps from dependencies are handled
+  ],
+  external: ['react', 'react-dom', 'uuid'],
 };
