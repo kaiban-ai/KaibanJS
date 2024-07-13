@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useTeamStore } from 'agenticjs'; // Ensure correct path
 
 const AgentsBoardDebugger = ({team}) => {
+
+    const useTeamStore = team.useStore(); 
     const { agents, tasks, workflowLogs, teamWorkflowStatus, workflowResult, inputs, setInputs } = useTeamStore(state => ({
         agents: state.agents,
         tasks: state.tasks,

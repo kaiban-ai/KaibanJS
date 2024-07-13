@@ -1,6 +1,6 @@
 /**
  * API module for the Library.
- * 
+ *    
  * This module defines the primary classes used throughout the library, encapsulating
  * the core functionalities of agents, tasks, and team coordination. It serves as the
  * public interface for the library, allowing external applications to interact with
@@ -17,7 +17,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { useTeamStore } from './stores';
+import { createTeamStore } from './stores';
 import { ReActAgent, BasicChatAgent } from './agents';
 
 
@@ -80,17 +80,54 @@ class Task {
 
 class Team {
     constructor({ name, agents, tasks, verbose = 1, inputs = {}, env = null }) {
-        this.name = name;
-        this.verbose = verbose;
-        useTeamStore.getState().clearAll();
-        useTeamStore.getState().addAgents(agents);
-        useTeamStore.getState().addTasks(tasks);
-        useTeamStore.getState().setInputs(inputs);
-        useTeamStore.getState().setName(name);
+        this.store = createTeamStore({ name, agents, tasks, inputs, env, verbose});
     }
 
     async start(inputs = {}) {
-        await useTeamStore.getState().start(inputs);
+        await this.store.getState().start(inputs);
+        return this.store.getState().workflowResult;
+    }
+
+    // More DX friendly for NodeJS Developers
+    getStore() {
+        return this.store;
+    }
+
+    // More DX friendly for React Developers
+    useStore() {
+        return this.store;
+    }
+
+    // Enhanced subscribeToChanges to listen for specific properties
+    subscribeToChanges(listener, properties = []) {
+        if (properties.length === 0) {
+            // No specific properties, return global subscription
+            return this.store.subscribe(listener);
+        }
+
+        let currentValues = properties.reduce((acc, prop) => ({
+            ...acc,
+            [prop]: this.store.getState()[prop]
+        }), {});
+
+        return this.store.subscribe(() => {
+            const state = this.store.getState();
+            let hasChanged = false;
+            const newValues = {};
+
+            properties.forEach(prop => {
+                const newValue = state[prop];
+                if (newValue !== currentValues[prop]) {
+                    hasChanged = true;
+                    newValues[prop] = newValue;
+                }
+            });
+
+            if (hasChanged) {
+                currentValues = { ...currentValues, ...newValues };
+                listener(newValues);
+            }
+        });
     }
 }
 

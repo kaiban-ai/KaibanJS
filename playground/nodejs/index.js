@@ -49,8 +49,22 @@ async function main() {
     verbose: 2
   });
 
+  // Subscribe to any change
+  // team.subscribeToChanges(state => {
+  //   console.log("Something in the state changed", state);
+  // });
+
+  // Subscribe only to changes in 'agents' and 'name'
+  const unsubscribe = team.subscribeToChanges((newValues) => {
+    console.log("Workflow Updated:", newValues);
+  }, ['teamWorkflowStatus']);
+
   try {
-    await team.start();
+    const result = await team.start();
+    console.log(result);
+    // After some operations or when no longer needed, you can unsubscribe
+    // unsubscribe(); // Call this function to stop listening to state changes when appropriate
+
   } catch (error) {
     console.error('Failed to start the team:', error);
   }

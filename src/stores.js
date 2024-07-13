@@ -11,13 +11,23 @@
  */
 
 import {create} from 'zustand';
+import { devtools, subscribeWithSelector } from 'zustand/middleware';
 
+// ──── Store Factory for Multiple Teams ───────────────────────────────
+// 
+// Implements a store factory instead of a standard Zustand store to manage state for multiple teams.
+// This design supports isolated state management for each team's agents and workflows, 
+// allowing multiple teams to operate concurrently with their own tasks and statuses.
+// ─────────────────────────────────────────────────────────────────────
 
+const createTeamStore = (initialState = {}) => {   
+    // console.log("Initial state:", initialState); // Log the initial state
 
-
-// Define the store with centralized state management and actions
-const useTeamStore = create((set, get) => ({
-    
+    // Define the store with centralized state management and actions
+    const useTeamStore =  create(
+        devtools(
+            subscribeWithSelector((set, get) => ({ 
+            
     /**
      * State definitions for teamWorkflow management
      * 
@@ -31,16 +41,16 @@ const useTeamStore = create((set, get) => ({
      * 'finished_workflow': The workflow has successfully completed all its tasks and no further operational actions are required.
      */
 
-    teamWorkflowStatus: 'first_workflow',
-    workflowResult: null,
-    name: '',
-    agents: [],
-    tasks: [],
-    workflowLogs: [], // New state for task logs
-    inputs: {},  // Add a new state property for inputs
-    workflowContext: '',  // Add a new state property for workflow context
+    teamWorkflowStatus: initialState.teamWorkflowStatus || 'first_workflow',
+    workflowResult: initialState.workflowResult || null,
+    name: initialState.name || '',
+    agents: initialState.agents || [],
+    tasks: initialState.tasks || [],
+    workflowLogs: initialState.workflowLogs || [],
+    inputs: initialState.inputs || {},
+    workflowContext: initialState.workflowContext || '',
+    env: initialState.env || {},
     setInputs: (inputs) => set({ inputs }),  // Add a new action to update inputs
-    env: {},
     setName: (name) => set({ name }),  // Add a new action to update inputs
     setEnv: (env) => set({ env }),  // Add a new action to update inputs
     addAgents: agents => {
@@ -126,15 +136,17 @@ const useTeamStore = create((set, get) => ({
         }
     },
     clearAll: () => set({ agents: [], tasks: [], inputs: {}, workflowLogs: [], workflowContext: '', workflowResult: null, teamWorkflowStatus: 'first_workflow'}),
-    
-
     // TODO: Let's move this code to the main function... it is so simple now thatit does not make sense 
     // to have it here.
     executeAgentTask: async (agent, task, inputs, context='') => {
         // Assuming all agent classes extend BaseAgent and implement their own executeTask method
             // TODO: Why inputs here?
             return agent.executeTask(task, inputs, context);
-    }
-}));
+    }    
 
-export { useTeamStore };
+}), "teamStore"))
+    );
+    return useTeamStore;
+};
+
+export { createTeamStore };
