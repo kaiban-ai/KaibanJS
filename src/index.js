@@ -9,7 +9,6 @@
  * - Agent: A class that manages individual agents with specific roles and capabilities.
  * - Task: A class for defining tasks that agents can perform.
  * - Team: A class for managing groups of agents and their tasks.
- * - useTeamStore: A Zustand store hook for state management across the library.
  *
  * Usage:
  * Import these components directly from the library's entry point to utilize the functionality
@@ -17,11 +16,9 @@
  */
 
 import { Agent, Task, Team } from './api';
-import { useTeamStore } from './stores';
 
 export {
     Agent,
     Task,
-    Team,
-    useTeamStore  // Exporting the store for external use
+    Team
 };

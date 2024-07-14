@@ -1,13 +1,13 @@
 {
   "name": "agenticjs",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "AI Multi-Agent library for Javascript Developers.",
   "main": "dist/bundle.cjs.js",
   "module": "dist/bundle.esm.js",
   "unpkg": "dist/bundle.umd.js",
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -c -w",
+    "dev": "NODE_ENV=development rollup -c -w",
     "test": "node test/test.js",
     "pretest": "npm run build",
     "play-react": "cd playground/react && npm run dev",
@@ -39,6 +39,8 @@
   ],
   "dependencies": {
     "@langchain/anthropic": "^0.2.3",
+    "@langchain/google-genai": "^0.0.21",
+    "@langchain/mistralai": "^0.0.25",
     "langchain": "^0.2.5",
     "uuid": "^10.0.0",
     "zustand": "^4.5.2"

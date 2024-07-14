@@ -1,5 +1,5 @@
-import AgentsBoardDebugger from "./AgentDebbuger/AgentsBoardDebugger";
-import team from "./teams/productSpecsTeamClaude";
+import team from "./teams/anthropic/productSpecsTeam";
+import AgentsBoardDebugger from "./components/AgentDebbuger/AgentsBoardDebugger";
 import "./index.css";
 
 function App() {

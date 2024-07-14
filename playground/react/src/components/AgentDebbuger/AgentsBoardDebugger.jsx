@@ -1,9 +1,9 @@
-import { useTeamStore } from "agenticjs"; // Ensure correct path
 import { useEffect, useState } from "react";
-import Spinner from "../components/Spinner/Spinner";
+import Spinner from "../Spinner/Spinner";
 import "./appDebuggerStyles.css";
 
 const AgentsBoardDebugger = ({ team }) => {
+    const useTeamStore = team.useStore();
     const {
         agents,
         tasks,
@@ -47,7 +47,7 @@ const AgentsBoardDebugger = ({ team }) => {
     return (
         <div>
             <h1 className="title">Agents Team Debugger</h1>
-            <div className="section">
+            <div className="inputSection">
                 <h2 className="sectionTitle">Team Inputs</h2>
                 <div>
                     <textarea
@@ -71,8 +71,10 @@ const AgentsBoardDebugger = ({ team }) => {
                 <h2 className="sectionTitle">🕵️‍♂️ Agents</h2>
                 <ul>
                     {agents.map((agent) => (
-                        <li key={agent.id} className="listItem">
-                            {agent.name} - {agent.role}
+                        <li key={agent.id} className="listItem agentName">
+                            <span>
+                                {agent.name} - {agent.role}
+                            </span>
                         </li>
                     ))}
                 </ul>
@@ -82,7 +84,17 @@ const AgentsBoardDebugger = ({ team }) => {
                 <ul>
                     {tasks.map((task) => (
                         <li key={task.id} className="listItem">
-                            {task.description} - {task.status}
+                            <div className="taskContainer">
+                                <span className="taskDescription">
+                                    {task.description}
+                                </span>
+                                <span className="taskStatus">
+                                    {task.status}{" "}
+                                    {task.status === "doing" && (
+                                        <Spinner color="white" />
+                                    )}
+                                </span>
+                            </div>
                         </li>
                     ))}
                 </ul>
@@ -103,22 +115,38 @@ const AgentsBoardDebugger = ({ team }) => {
             <div className="section">
                 <h2 className="sectionTitle">📋 Task Logs</h2>
 
-                <ul>
-                    {workflowLogs.map((log) => (
-                        <li
-                            key={log.task.id + log.task.status + log.agent.name}
-                            className="listItem"
-                        >
-                            ({log.task.status}) - timestamp: {log.timestamp} -{" "}
-                            {log.agent.name} - {log.task.description}
-                        </li>
-                    ))}
-                </ul>
+                {workflowLogs.length > 0 ? (
+                    <ul>
+                        {workflowLogs.map((log) => (
+                            <li
+                                key={
+                                    log.task.id +
+                                    log.task.status +
+                                    log.agent.name
+                                }
+                                className="listItem"
+                            >
+                                ({log.task.status}) - timestamp: {log.timestamp}{" "}
+                                - {log.agent.name} - {log.task.description}
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <div className="noAvailableData">
+                        <span>Not yet available</span>
+                    </div>
+                )}
             </div>
             <div className="section">
                 <h2 className="sectionTitle">Workflow Result</h2>
                 <div>
-                    {workflowResult ? workflowResult : "Not yet available"}
+                    {workflowResult ? (
+                        workflowResult
+                    ) : (
+                        <div className="noAvailableData">
+                            <span>Not yet available</span>
+                        </div>
+                    )}
                 </div>
             </div>
             <div className="section">
@@ -126,24 +154,37 @@ const AgentsBoardDebugger = ({ team }) => {
 
                 <ul>
                     {tasks.map((task) => (
-                        <li key={task.id} className="listItem">
-                            <div> Task: {task.description}</div>
-
+                        <li
+                            key={task.id}
+                            className="listItem taskResult_Container last_child"
+                        >
                             <div>
-                                Time:{" "}
-                                {task.duration
-                                    ? `${task.duration} seconds`
-                                    : "Not yet available"}
+                                <strong className="subtitle">Task:</strong>
+                                <span> {task.description} </span>
                             </div>
 
                             <div>
-                                <strong>Result</strong>
+                                <strong className="subtitle">Time:</strong>
+                                <span>
+                                    {" "}
+                                    {task.duration
+                                        ? `${task.duration} seconds`
+                                        : "Not yet available"}
+                                </span>
                             </div>
 
-                            <div>
-                                {task.result
-                                    ? task.result
-                                    : "Not yet available"}
+                            <div className="taskResult_response">
+                                <p>
+                                    <strong className="subtitle">
+                                        Result:
+                                    </strong>
+                                </p>
+
+                                <p>
+                                    {task.result
+                                        ? task.result
+                                        : "Not yet available"}
+                                </p>
                             </div>
                         </li>
                     ))}

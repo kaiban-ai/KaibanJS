@@ -32,6 +32,12 @@ h1 {
     line-height: 1.1;
 }
 
+@media only screen and (max-width: 768px) {
+    ul {
+        padding: 0;
+    }
+}
+
 button {
     border-radius: 8px;
     border: 1px solid transparent;
@@ -44,7 +50,7 @@ button {
     transition: border-color 0.25s;
 }
 button:hover {
-    border-color: #646cff;
+    border-color: #6366f1;
 }
 button:focus,
 button:focus-visible {
@@ -64,14 +70,13 @@ button:focus-visible {
         color: #1a1a1a;
     }
     button:hover {
-        border-color: #959af7;
+        border-color: #6366f1;
     }
 }
 
 .mainContent {
     width: 100%;
     box-sizing: border-box;
-
     padding: 20px;
     max-width: 2048px;
     margin: 0 auto 0;

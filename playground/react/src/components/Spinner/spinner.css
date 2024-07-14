@@ -3,9 +3,20 @@
     height: 1.8rem;
     border-radius: 50%;
     box-sizing: border-box;
-    border-top: 4px solid #fff;
-    border-left: 4px solid #fff;
-    border-right: 4px solid #ff00;
+    border-top: 4px solid #6366f1;
+    border-left: 4px solid #6366f1;
+    border-right: 4px solid transparent;
+    animation: spinner 0.7s infinite linear;
+}
+
+.spinnerWhite {
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border-top: 4px solid white;
+    border-left: 4px solid white;
+    border-right: 4px solid transparent;
     animation: spinner 0.7s infinite linear;
 }
 
