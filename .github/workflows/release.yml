@@ -59,11 +59,17 @@ jobs:
         node-version: '18'
         registry-url: 'https://registry.npmjs.org/'
 
+    - name: Reset local changes
+      run: |
+        git fetch origin main
+        git reset --hard origin/main
+        git clean -fdx        
+
     - name: Configure git user
       run: |
         git config user.name "Dariel Noel"
         git config user.email "darielnoel@gmail.com"
-        
+
     - name: Install dependencies
       run: npm install --also=dev
 
