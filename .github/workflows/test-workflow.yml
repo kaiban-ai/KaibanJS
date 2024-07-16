@@ -22,7 +22,7 @@ jobs:
         node-version: '14'
 
     - name: Install dependencies
-      run: npm install
+      run: npm install --also=dev
 
     - name: Build for integration tests
       run: npm run build:test
