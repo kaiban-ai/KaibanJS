@@ -1,8 +1,69 @@
 function moscaFetch() {
     let originalFetch = globalThis.fetch; // Save the original fetch function
+    // Step 1: Define your custom fetch function
+    // Define your custom fetch function
+    let myCustomFetch = async (input, options) => {
+        console.log('MoscaFetch -> Using custom fetch for:', input);
+
+        for (const mock of mocks) {
+            let { body: requestBody, method: requestMethod = 'GET' } = options || {};
+            requestMethod = requestMethod.toUpperCase();
+            try {
+                requestBody = requestBody ? JSON.parse(requestBody) : undefined;
+            } catch (error) {
+                // requestBody remains unchanged if it's not JSON
+            }
+
+            const urlMatches = mock.url === '*' || input === mock.url;
+            const methodMatches = mock.method === '*' || mock.method.toUpperCase() === requestMethod;
+            const bodyMatches = mock.body === '*' || JSON.stringify(requestBody) === JSON.stringify(mock.body);
+
+            if (urlMatches && methodMatches && bodyMatches) {
+                if (mock.isRecorder) {
+                    const response = await originalFetch(input, options);
+                    const clonedResponse = response.clone();
+                    records.push({
+                        url: input,
+                        method: requestMethod,
+                        body: requestBody,
+                        response: await clonedResponse.json() // Assuming JSON response
+                    });
+                    if (mock.callback) {
+                        mock.callback({
+                            request: { url: input, method: requestMethod, body: requestBody },
+                            response: response,
+                            status: response.status
+                        });
+                    }
+                    return response; // Ensure recorders do not block the response
+                } else {
+                    const mockResponse = new Response(JSON.stringify(mock.response), {
+                        status: 200,
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (mock.callback) {
+                        mock.callback({
+                            request: { url: input, method: requestMethod, body: requestBody },
+                            response: mockResponse,
+                            status: mockResponse.status
+                        });
+                    }
+                    return Promise.resolve(mockResponse);
+                }
+            }
+        }
+        return originalFetch(input, options); // Call the original fetch if no mocks or recorders match
+    };
+
+    // Immediately enforce custom fetch
+    const withMockedApis = process.env.TEST_ENV === 'mocked-llm-apis' ? true : false;
+    if(withMockedApis){
+        // Override globalThis.fetch with your custom fetch
+        globalThis.fetch = myCustomFetch;
+    }    
+    
     let mocks = [];
     let records = [];
-    
 
     function mock(mockConfigs) {                
         // Ensure the input is always treated as an array, even if it's a single object
@@ -45,58 +106,16 @@ function moscaFetch() {
     }
 
     function ensureFetchIsMocked() {
-        if (globalThis.fetch === originalFetch) {
-            globalThis.fetch = async (input, options) => {
-                for (const mock of mocks) {
-                    let { body: requestBody, method: requestMethod = 'GET' } = options || {};
-                    requestMethod = requestMethod.toUpperCase();
-                    try {
-                        requestBody = requestBody ? JSON.parse(requestBody) : undefined;
-                    } catch (error) {
-                        // requestBody remains unchanged if it's not JSON
-                    }
-
-                    const urlMatches = mock.url === '*' || input === mock.url;
-                    const methodMatches = mock.method === '*' || mock.method.toUpperCase() === requestMethod;
-                    const bodyMatches = mock.body === '*' || JSON.stringify(requestBody) === JSON.stringify(mock.body);
-
-                    if (urlMatches && methodMatches && bodyMatches) {
-                        if (mock.isRecorder) {
-                            const response = await originalFetch(input, options);
-                            const clonedResponse = response.clone();
-                            records.push({
-                                url: input,
-                                method: requestMethod,
-                                body: requestBody,
-                                response: await clonedResponse.json() // Assuming JSON response
-                            });
-                            mock.callback({
-                                request: { url: input, method: requestMethod, body: requestBody },
-                                response: mockResponse,
-                                status: mockResponse.status
-                            });                            
-                            return response; // Ensure recorders do not block the response
-                        } else {
-                            const mockResponse = new Response(JSON.stringify(mock.response), {
-                                status: 200,
-                                headers: { 'Content-Type': 'application/json' }
-                            });
-                            if (mock.callback) {
-                                mock.callback({
-                                    request: { url: input, method: requestMethod, body: requestBody },
-                                    response: mockResponse,
-                                    status: mockResponse.status
-                                });
-                            }                            
-                            return Promise.resolve(mockResponse);
-                        }
-                    }
-                }
-                return originalFetch(input, options); // Call the original fetch if no mocks or recorders match
-            };
+        // Always ensure myCustomFetch is the global fetch
+        if (globalThis.fetch !== myCustomFetch) {
+            globalThis.fetch = myCustomFetch;
         }
     }
 
+    // Immediately enforce custom fetch
+    if(withMockedApis){
+        ensureFetchIsMocked();
+    }
     return { mock, record, getRecords, clearRecords, restoreAll, restoreOne };
 }
 

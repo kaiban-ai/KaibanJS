@@ -28,7 +28,7 @@ To mock HTTP requests:
 mock({
     url: 'https://api.example.com/data',
     method: 'POST',
-    expectedBody: '*',
+    body: '*',
     response: { key: 'value' },
     callback: info => console.log('Request completed', info)
 });
@@ -58,11 +58,18 @@ Configuration Options
 
 To record requests for later analysis or setup:
 ```js
+// Setting up recording
 record({
     url: '*',
     method: '*',
-    expectedBody: '*'
+    body: '*'  // Record any POST request to this URL
 });
+
+// After your requests
+const recordedData = getRecords();
+debugger;
+console.log(recordedData); 
+// Then Copy/Paste the object from the console
 ```
 
 #### Retrieving Records
