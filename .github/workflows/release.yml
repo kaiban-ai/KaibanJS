@@ -1,0 +1,80 @@
+name: Release Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Enter the version for this release'
+        required: true
+
+jobs:
+  pre-release-checks:
+    runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+    
+    - name: Install dependencies
+      run: npm install --also=dev
+
+    - name: Build for integration tests
+      run: npm run build:test
+
+    - name: Run integration tests
+      run: npm run test:integration
+
+    - name: Build production version
+      run: npm run build
+
+    - name: Run e2e tests
+      run: npm run test:e2e
+
+  release:
+    needs: pre-release-checks
+    runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: 'main'  # Ensures the main branch is checked out      
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+        registry-url: 'https://registry.npmjs.org/'
+
+    - name: Configure git user
+      run: |
+        git config user.name "Dariel Noel"
+        git config user.email "darielnoel@gmail.com"
+
+    - name: Build production version
+      run: npm run build        
+
+    - name: Update package.json version and create Git tag
+      run: npm version ${{ github.event.inputs.version }}
+
+    - name: Push changes and tags
+      run: |
+        git push origin main --follow-tags
+
+    - name: Publish to npm
+      run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
