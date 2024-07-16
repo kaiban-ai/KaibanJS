@@ -84,7 +84,7 @@ class Team {
         this.store = createTeamStore({ name, agents, tasks, inputs, env, verbose});
     }
 
-    async start(inputs = {}) {
+    async start(inputs = null) {
         await this.store.getState().start(inputs);
         return this.store.getState().workflowResult;
     }
