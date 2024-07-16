@@ -1,24 +1,23 @@
 {
   "name": "agenticjs",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "AI Multi-Agent library for Javascript Developers.",
   "main": "dist/bundle.cjs.js",
   "module": "dist/bundle.esm.js",
   "unpkg": "dist/bundle.umd.js",
   "scripts": {
-      "build": "npx rollup -c",
-      "build:test": "TEST_ENV=mocked-llm-apis npx rollup -c",
-      "dev": "NODE_ENV=development npx rollup -c -w",
-      "test": "npm run build:test && test:integration",
-      "test:watch": "TEST_ENV=mocked-llm-apis jest --testPathPattern='tests/e2e' --watch",
-      "test:debug": "TEST_ENV=mocked-llm-apis node --inspect-brk node_modules/.bin/jest --runInBand --verbose",
-      "test:prod": "npm run build && jest",
-      "test:integration": "TEST_ENV=mocked-llm-apis jest --testPathPattern='tests/e2e'",
-      "test:e2e": "TEST_ENV=real-llm-apis jest --testPathPattern='tests/e2e'",
-      "play-react": "cd playground/react && npm run dev",
-      "play-node": "cd playground/nodejs && node index.js"
+    "build": "npx rollup -c",
+    "build:test": "TEST_ENV=mocked-llm-apis npx rollup -c",
+    "dev": "NODE_ENV=development npx rollup -c -w",
+    "test": "npm run build:test && test:integration",
+    "test:watch": "TEST_ENV=mocked-llm-apis jest --testPathPattern='tests/e2e' --watch",
+    "test:debug": "TEST_ENV=mocked-llm-apis node --inspect-brk node_modules/.bin/jest --runInBand --verbose",
+    "test:prod": "npm run build && jest",
+    "test:integration": "TEST_ENV=mocked-llm-apis jest --testPathPattern='tests/e2e'",
+    "test:e2e": "TEST_ENV=real-llm-apis jest --testPathPattern='tests/e2e'",
+    "play-react": "cd playground/react && npm run dev",
+    "play-node": "cd playground/nodejs && node index.js"
   },
-
   "packageManager": "npm@9.8.1",
   "repository": {
     "type": "git",
