@@ -63,6 +63,9 @@ jobs:
       run: |
         git config user.name "Dariel Noel"
         git config user.email "darielnoel@gmail.com"
+        
+    - name: Install dependencies
+      run: npm install --also=dev
 
     - name: Build production version
       run: npm run build        
