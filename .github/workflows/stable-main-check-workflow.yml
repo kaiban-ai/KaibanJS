@@ -1,11 +1,11 @@
-name: Run Tests on PR
+name: Stable Main CI
 
 on:
-  pull_request:
-    branches: [ main ]  # Adjust based on your target branch
+  push:
+    branches: [main]  # Triggered on commits pushed to these branches
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
