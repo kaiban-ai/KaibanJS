@@ -57,6 +57,8 @@ jobs:
     - name: Push changes and tags
       run: |
         git push origin main --follow-tags
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}        
 
     - name: Publish to npm
       run: npm publish
