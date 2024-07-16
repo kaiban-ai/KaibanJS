@@ -1,5 +1,5 @@
 import AgentsBoardDebugger from './AgentsBoardDebugger';
-import team from './teams/mistral/productSpecsTeam';
+import team from './teams/openai/productSpecsTeam';
 
 function App() {
   return (

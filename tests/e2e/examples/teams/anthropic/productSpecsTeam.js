@@ -1,4 +1,4 @@
-import { Agent, Task, Team } from 'agenticjs';
+const { Agent, Task, Team } = require('agenticjs');
 
 // Define agents
 const requirementsAnalyst = new Agent({
@@ -75,4 +75,4 @@ const team = new Team({
   inputs: { founderIdea: 'I want to add a Referral program to our SAAS platform.' },  // Initial input for the first task
 });
 
-export default team;
+module.exports = team;

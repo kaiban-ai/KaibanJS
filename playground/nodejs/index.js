@@ -25,12 +25,9 @@ const profileAnalyst = new Agent({
     background: 'Data Processor',
     tools: [],  // Tools are omitted for now
     llmConfig: {
-        provider: "anthropic",  // or "openai"
-        model: "claude-3-5-sonnet-20240620",
-        temperature: 0.9,
-        maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
-    }    
+      provider: "google",
+      model: "gemini-1.5-flash",
+    }  
 });
 
 const formatter = new Agent({
@@ -40,12 +37,9 @@ const formatter = new Agent({
     background: 'Document Formatter',
     tools: [],
     llmConfig: {
-        provider: "anthropic",  // or "openai"
-        model: "claude-3-5-sonnet-20240620",
-        temperature: 0.9,
-        maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
-    }    
+      provider: "google",
+      model: "gemini-1.5-flash",
+    }   
 });
 
 const reviewer = new Agent({
@@ -55,12 +49,9 @@ const reviewer = new Agent({
     background: 'Quality Assurance Specialist',
     tools: [],
     llmConfig: {
-        provider: "anthropic",  // or "openai"
-        model: "claude-3-5-sonnet-20240620",
-        temperature: 0.9,
-        maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
-    }    
+      provider: "google",
+      model: "gemini-1.5-flash",
+    }     
 });
 
 // ──── Tasks ─────────────────────────────────────────────
