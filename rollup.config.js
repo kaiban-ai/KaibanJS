@@ -1,4 +1,5 @@
 import resolve from '@rollup/plugin-node-resolve';
+import replace from '@rollup/plugin-replace';
 import commonjs from '@rollup/plugin-commonjs';
 import babel from '@rollup/plugin-babel';
 import { terser } from 'rollup-plugin-terser';
@@ -7,6 +8,7 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 
 // Determine if we are in development mode based on the NODE_ENV environment variable
 const isDevelopment = process.env.NODE_ENV === 'development';
+const isTest = process.env.TEST_ENV === 'mocked-llm-apis';
 
 export default {
   input: 'src/index.js',
@@ -38,11 +40,12 @@ export default {
       preferBuiltins: false,  // Ensure Node.js built-ins are used
       mainFields: ['browser', 'module', 'main']
     }),
-    // resolve({
-    //   browser: true,
-    //   preferBuiltins: false
-    // }),
     commonjs(),
+    // Include the replace plugin only if isTest is true
+    ...(isTest ? [replace({
+      'shims.fetch': `(...args) => { return global.fetch(...args); };\n`, // Include newline
+      preventAssignment: true
+    })] : []),
     babel({
       babelHelpers: 'bundled',
       exclude: 'node_modules/**'
