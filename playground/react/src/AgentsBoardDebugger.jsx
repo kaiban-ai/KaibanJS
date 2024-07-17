@@ -18,6 +18,10 @@ const AgentsBoardDebugger = ({team}) => {
     useEffect(() => {
         setStatusLog(prevLog => [...prevLog, teamWorkflowStatus]);
     }, [teamWorkflowStatus]);
+
+    // useEffect(() => {
+    //     console.log('Tasks:', tasks);
+    // }, [tasks]);
         
     const startTeam = () => {
         try {

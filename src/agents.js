@@ -16,13 +16,15 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { ChatOpenAI, OpenAI } from "@langchain/openai";
+import { ChatOpenAI } from "@langchain/openai";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatMistralAI } from "@langchain/mistralai";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { createReactAgent, AgentExecutor } from "langchain/agents";
+import { createReactAgent, AgentExecutor, createToolCallingAgent } from "langchain/agents";
 import { StringOutputParser } from "@langchain/core/output_parsers";
+import { PromptTemplate, ChatPromptTemplate } from '@langchain/core/prompts';
+
 
 function interpolateDescription(description, inputs) {
     let result = description;
@@ -58,13 +60,14 @@ function getApiKey(llmConfig, provider) {
 
 
 class BaseAgent {
-    constructor({ name, role, goal, background, tools, llmConfig = {} }) {
+    constructor({ name, role, goal, background, tools, llmConfig = {}, maxIterations = 5 }) {
         this.id = uuidv4();
         this.name = name;
         this.role = role;
         this.goal = goal;
         this.background = background;
         this.tools = tools;
+        this.maxIterations = maxIterations;
 
         const defaultConfig = {
             model: "gpt-3.5-turbo-0125",
@@ -90,7 +93,7 @@ class BasicChatAgent extends BaseAgent {
     constructor(config) {
         super(config);
         const defaultConfig = {
-            model: "gpt-3.5-turbo-0125",
+            model: "gpt-3.5-turbo-1106",
         };
         this.llmConfig = { ...defaultConfig, ...config.llmConfig };
     }
@@ -137,7 +140,29 @@ class BasicChatAgent extends BaseAgent {
         ];
         const parser = new StringOutputParser();
         const response = await this.llmInstance.invoke(messages);
+
         return parser.invoke(response);
+
+        // const prompt = ChatPromptTemplate.fromMessages([
+        //     ['system', 'You are a helpful assistant'],
+        //     ['placeholder', '{chat_history}'],
+        //     ['human', '{input}'],
+        //     ['placeholder', '{agent_scratchpad}'],
+        // ]);
+
+        // this.agent = await createToolCallingAgent({
+        //     llm: this.llmInstance,
+        //     tools: this.tools,
+        //     prompt
+        // });
+
+        // const agentExecutor = new AgentExecutor({
+        //     agent: this.agent,
+        //     tools: this.tools,
+        // });
+
+        // const result = await agentExecutor.invoke({ input: interpolatedDescription });
+        // return result.output;
     }
 }
 
@@ -145,36 +170,97 @@ class ReActAgent extends BaseAgent {
     constructor(config) {
         super(config);
         const defaultConfig = {
-            model: "gpt-3.5-turbo-instruct",
+            model: "gpt-3.5-turbo-1106",
             temperature: 0,
         };
         this.llmConfig = { ...defaultConfig, ...config.llmConfig };
     }
 
     async initAgent() {
-        this.llmInstance = new OpenAI({
-            ...this.llmConfig,
-            apiKey: getApiKey(this.llmConfig, 'openai'),
-        });
+        const providers = {
+            anthropic: ChatAnthropic,
+            google: ChatGoogleGenerativeAI,
+            mistral: ChatMistralAI,
+            openai: ChatOpenAI,
+        };
 
-        const prompt = "Your custom ReAct prompt";  // Example, specify your actual prompt
-        this.agent = await createReactAgent({
-            llm: this.llmInstance,
-            tools: this.tools,
-            prompt,
+        const provider = this.llmConfig.provider;
+        const ChatClass = providers[provider] || providers.openai;
+
+        this.llmInstance = new ChatClass({
+            ...this.llmConfig,
+            apiKey: getApiKey(this.llmConfig, provider),
+            // callbacks: [
+            //     {
+            //         handleLLMStart: async () => {
+            //             onUpdate("start");
+            //             console.log('----handleLLMStart!');
+            //         },
+            //         handleLLMEnd: async (output) => {
+            //             onUpdate("end");
+            //             console.log('----handleLLMEnd!', output);
+            //             console.log(output?.llmOutput?.tokenUsage);
+            //         }
+            //     },
+            // ],
         });
     }
 
     async executeTask(task, inputs, context) {
         await this.initAgent();
+
+        const interpolatedDescription = interpolateDescription(task.description, inputs);
+
+        const prompt = PromptTemplate.fromTemplate(`
+            Answer the following questions as best you can. You have access to the following tools:
+
+            {tools}
+
+            Use the following format:
+
+            Question: the input question you must answer
+            Thought: you should always think about what to do
+            Action: the action to take, should be one of [{tool_names}]
+            Action Input: the input to the action
+            Observation: the result of the action
+            ... (this Thought/Action/Action Input/Observation can repeat N times)
+            Thought: I now know the final answer
+            Final Answer: the final answer to the original input question
+
+            Begin!
+
+            Question: {input}
+            Thought:{agent_scratchpad}
+            `);
+
+        this.agent = await createReactAgent({
+            llm: this.llmInstance,
+            tools: this.tools,
+            prompt,
+            streamRunnable: false,
+        });
+
         const executor = new AgentExecutor({
             agent: this.agent,
             tools: this.tools,
+            maxIterations: this.maxIterations,
+            // callbacks: [
+            //     {
+            //         handleAgentAction(action) {
+            //             console.log('handleAgentAction!', action);
+            //         },
+            //         handleAgentEnd(action) {
+            //             console.log('handleAgentEnd!', action);
+            //         },
+            //     },
+            // ]
         });
         const result = await executor.invoke({
-            input: task.description,
-            chat_history: context,
+            input: interpolatedDescription,
+            // chat_history: context,
         });
+
+        console.log("Result:", result);
         return result.output;
     }
 }

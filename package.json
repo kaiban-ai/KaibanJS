@@ -39,9 +39,12 @@
   ],
   "dependencies": {
     "@langchain/anthropic": "^0.2.3",
+    "@langchain/community": "^0.2.19",
+    "@langchain/core": "^0.2.16",
     "@langchain/google-genai": "^0.0.21",
     "@langchain/mistralai": "^0.0.25",
-    "langchain": "^0.2.5",
+    "@langchain/openai": "^0.2.2",
+    "langchain": "^0.2.10",
     "uuid": "^10.0.0",
     "zustand": "^4.5.2"
   },
