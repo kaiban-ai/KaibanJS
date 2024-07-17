@@ -1,4 +1,4 @@
-import { Agent, Task, Team } from 'agenticjs';
+const { Agent, Task, Team } = require('agenticjs');
 
 // Define agents
 const requirementsAnalyst = new Agent({
@@ -6,15 +6,7 @@ const requirementsAnalyst = new Agent({
     role: 'Requirements Analyst', 
     goal: 'Outline core functionalities and objectives for new features based on the founder’s input.', 
     background: 'Business Analysis',
-    tools: [],
-    llmConfig: {
-        provider: "anthropic",  // or "openai"
-        model: "claude-3-5-sonnet-20240620",
-        temperature: 0.9,
-        maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
-    }
-
+    tools: []
 });
 
 const technicalWriter = new Agent({
@@ -22,14 +14,7 @@ const technicalWriter = new Agent({
     role: 'Technical Writer', 
     goal: 'Convert functional outlines into detailed technical specifications.', 
     background: 'Technical Writing',
-    tools: [],
-    llmConfig: {
-        provider: "anthropic",  // or "openai"
-        model: "claude-3-5-sonnet-20240620",
-        temperature: 0.9,
-        maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
-    }    
+    tools: []
 });
 
 const validator = new Agent({
@@ -37,14 +22,7 @@ const validator = new Agent({
     role: 'Validator', 
     goal: 'Ensure the specifications are accurate and complete.', 
     background: 'Quality Assurance',
-    tools: [],
-    llmConfig: {
-        provider: "anthropic",  // or "openai"
-        model: "claude-3-5-sonnet-20240620",
-        temperature: 0.9,
-        maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
-    }    
+    tools: []
 });
 
 // Define tasks
@@ -75,4 +53,4 @@ const team = new Team({
   inputs: { founderIdea: 'I want to add a Referral program to our SAAS platform.' },  // Initial input for the first task
 });
 
-export default team;
+module.exports = team;

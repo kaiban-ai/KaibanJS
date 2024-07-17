@@ -93,7 +93,7 @@ class BasicChatAgent extends BaseAgent {
     constructor(config) {
         super(config);
         const defaultConfig = {
-            model: "gpt-3.5-turbo-1106",
+            model: "gpt-3.5-turbo-0125",
         };
         this.llmConfig = { ...defaultConfig, ...config.llmConfig };
     }
@@ -139,8 +139,13 @@ class BasicChatAgent extends BaseAgent {
             new HumanMessage(humanMessage),
         ];
         const parser = new StringOutputParser();
-        const response = await this.llmInstance.invoke(messages);
-
+        try {
+            const response = await this.llmInstance.invoke(messages);
+            return parser.invoke(response);
+        } catch (error) {
+            console.error("Error invoking LLM instance:", error);
+            // Handle the error appropriately
+        }
         return parser.invoke(response);
 
         // const prompt = ChatPromptTemplate.fromMessages([
@@ -170,7 +175,7 @@ class ReActAgent extends BaseAgent {
     constructor(config) {
         super(config);
         const defaultConfig = {
-            model: "gpt-3.5-turbo-1106",
+            model: "gpt-3.5-turbo-0125",
             temperature: 0,
         };
         this.llmConfig = { ...defaultConfig, ...config.llmConfig };
