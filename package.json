@@ -1,15 +1,20 @@
 {
   "name": "agenticjs",
-  "version": "0.0.8",
+  "version": "0.0.11",
   "description": "AI Multi-Agent library for Javascript Developers.",
   "main": "dist/bundle.cjs.js",
   "module": "dist/bundle.esm.js",
   "unpkg": "dist/bundle.umd.js",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "NODE_ENV=development rollup -c -w",
-    "test": "node test/test.js",
-    "pretest": "npm run build",
+    "build": "npx rollup -c",
+    "build:test": "TEST_ENV=mocked-llm-apis npx rollup -c",
+    "dev": "NODE_ENV=development npx rollup -c -w",
+    "test": "npm run build:test && test:integration",
+    "test:watch": "TEST_ENV=mocked-llm-apis jest --testPathPattern='tests/e2e' --watch",
+    "test:debug": "TEST_ENV=mocked-llm-apis node --inspect-brk node_modules/.bin/jest --runInBand --verbose",
+    "test:prod": "npm run build && jest",
+    "test:integration": "TEST_ENV=mocked-llm-apis jest --testPathPattern='tests/e2e'",
+    "test:e2e": "TEST_ENV=real-llm-apis jest --testPathPattern='tests/e2e'",
     "play-react": "cd playground/react && npm run dev",
     "play-node": "cd playground/nodejs && node index.js"
   },
@@ -38,26 +43,29 @@
     "visualization"
   ],
   "dependencies": {
-    "@langchain/anthropic": "^0.2.3",
-    "@langchain/google-genai": "^0.0.21",
-    "@langchain/mistralai": "^0.0.25",
-    "langchain": "^0.2.5",
-    "uuid": "^10.0.0",
-    "zustand": "^4.5.2"
+    "@langchain/anthropic": "0.2.3",
+    "@langchain/google-genai": "0.0.21",
+    "@langchain/mistralai": "0.0.25",
+    "langchain": "0.2.5",
+    "uuid": "10.0.0",
+    "zustand": "4.5.2"
   },
   "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0"
+    "react": "17.0.0 || 18.0.0",
+    "react-dom": "17.0.0 || 18.0.0"
   },
   "devDependencies": {
-    "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-commonjs": "^26.0.1",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "eslint": "^7.32.0",
-    "prettier": "^2.3.2",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-sourcemaps": "^0.6.3",
-    "rollup-plugin-terser": "^7.0.2"
+    "@rollup/plugin-babel": "6.0.4",
+    "@rollup/plugin-commonjs": "26.0.1",
+    "@rollup/plugin-node-resolve": "15.2.3",
+    "@rollup/plugin-replace": "5.0.7",
+    "dotenv": "16.4.5",
+    "eslint": "7.32.0",
+    "jest": "29.7.0",
+    "prettier": "2.3.2",
+    "rollup-plugin-peer-deps-external": "2.2.4",
+    "rollup-plugin-sourcemaps": "0.6.3",
+    "rollup-plugin-terser": "7.0.2"
   },
   "engines": {
     "node": ">=12.0.0"

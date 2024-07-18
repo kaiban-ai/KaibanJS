@@ -1,5 +1,5 @@
-import team from "./teams/anthropic/productSpecsTeam";
 import AgentsBoardDebugger from "./components/AgentDebbuger/AgentsBoardDebugger";
+import team from './teams/openai/productSpecsTeam';
 import "./index.css";
 
 function App() {

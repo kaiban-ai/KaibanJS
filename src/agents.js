@@ -132,7 +132,13 @@ class BasicChatAgent extends BaseAgent {
             new HumanMessage(humanMessage),
         ];
         const parser = new StringOutputParser();
-        const response = await this.llmInstance.invoke(messages);
+        try {
+            const response = await this.llmInstance.invoke(messages);
+            return parser.invoke(response);
+        } catch (error) {
+            console.error("Error invoking LLM instance:", error);
+            // Handle the error appropriately
+        }
         return parser.invoke(response);
     }
 }
