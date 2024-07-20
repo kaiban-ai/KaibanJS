@@ -50,10 +50,6 @@
     "uuid": "10.0.0",
     "zustand": "4.5.2"
   },
-  "peerDependencies": {
-    "react": "17.0.0 || 18.0.0",
-    "react-dom": "17.0.0 || 18.0.0"
-  },
   "devDependencies": {
     "@rollup/plugin-babel": "6.0.4",
     "@rollup/plugin-commonjs": "26.0.1",
