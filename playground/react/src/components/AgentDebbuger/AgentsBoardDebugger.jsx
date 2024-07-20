@@ -21,6 +21,7 @@ const AgentsBoardDebugger = ({ team }) => {
         inputs: state.inputs,
         setInputs: state.setInputs,
     }));
+    console.log("🚀 ~ AgentsBoardDebugger ~ workflowLogs:", workflowLogs);
 
     const [statusLog, setStatusLog] = useState([teamWorkflowStatus]);
 
@@ -117,19 +118,34 @@ const AgentsBoardDebugger = ({ team }) => {
 
                 {workflowLogs.length > 0 ? (
                     <ul>
-                        {workflowLogs.map((log) => (
-                            <li
-                                key={
-                                    log.task.id +
-                                    log.task.status +
-                                    log.agent.name
-                                }
-                                className="listItem"
-                            >
-                                ({log.task.status}) - timestamp: {log.timestamp}{" "}
-                                - {log.agent.name} - {log.task.description}
-                            </li>
-                        ))}
+                        {workflowLogs
+                            .filter(
+                                (log, index, self) =>
+                                    index ===
+                                    self.findIndex(
+                                        (t) =>
+                                            t.task.description ===
+                                                log.task.description &&
+                                            t.timestamp === log.timestamp &&
+                                            t.agent.name === log.agent.name &&
+                                            t.task.status === log.task.status
+                                    )
+                            )
+                            .map((log) => (
+                                <li
+                                    key={
+                                        log.task.id +
+                                        log.task.status +
+                                        log.agent.name +
+                                        log.logDescription
+                                    }
+                                    className="listItem"
+                                >
+                                    ({log.task.status}) - timestamp:{" "}
+                                    {log.timestamp} - {log.agent.name} -{" "}
+                                    {log.task.description}
+                                </li>
+                            ))}
                     </ul>
                 ) : (
                     <div className="noAvailableData">
