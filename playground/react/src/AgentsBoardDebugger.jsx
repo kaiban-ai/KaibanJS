@@ -46,7 +46,7 @@ return (
         <div style={{ margin: '20px  0' }}>
             <h2 style={{ color: '#666', fontSize: '30px' }}>🕵️‍♂️ Agents</h2>
             {agents.map(agent => (
-                <p key={agent.id} style={{ color: '#999' }}>{agent.name} - {agent.role}</p>
+                <p key={agent.id} style={{ color: '#999' }}>{agent.name} - {agent.role} - status: ({agent.status})</p>
             ))}
         </div>
         <div style={{ margin: '20px 0' }}>
@@ -64,9 +64,9 @@ return (
             ))}
         </div>        
         <div style={{ margin: '20px 0' }}>
-            <h2 style={{ color: '#666', fontSize: '30px' }}>📋 Task Logs</h2>
+            <h2 style={{ color: '#666', fontSize: '30px' }}>📋 Workflow Logs</h2>
             {workflowLogs.map((log, index) => (
-                <p key={index} style={{ color: '#999' }}>🔘 ({log.task.status}) - timestamp: {log.timestamp} - {log.agent.name} - {log.task.description}</p>
+                <p key={index} style={{ color: '#999' }}>🔘 ({log.taskStatus}) - ({log.taskTitle}) - ({log.agentName}) - ({log.agentStatus}) - timestamp: {log.timestamp} - {log.agent.name} - {log.task.description}</p>
             ))}
         </div>        
         <div style={{ margin: '20px 0' }}>

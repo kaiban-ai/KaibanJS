@@ -9,14 +9,14 @@
     "build": "npx rollup -c",
     "build:test": "NODE_ENV=development TEST_ENV=mocked-llm-apis npx rollup -c",
     "dev": "NODE_ENV=development npx rollup -c -w",
-    "test": "npm run build:test && test:integration",
+    "test": "npm run build:test && npm run test:integration",
     "test:watch": "TEST_ENV=mocked-llm-apis jest --testPathPattern='tests/e2e' --watch",
-    "test:debug": "TEST_ENV=mocked-llm-apis node --inspect-brk node_modules/.bin/jest --runInBand --verbose",
+    "test:debug": "TEST_ENV=real-llm-apis node --inspect-brk node_modules/.bin/jest --runInBand --verbose",
     "test:prod": "npm run build && jest",
     "test:integration": "TEST_ENV=mocked-llm-apis jest --testPathPattern='tests/e2e'",
     "test:e2e": "TEST_ENV=real-llm-apis jest --testPathPattern='tests/e2e'",
-    "play-react": "cd playground/react && npm run dev",
-    "play-node": "cd playground/nodejs && node index.js"
+    "play:react": "cd playground/react && npm run dev",
+    "play:node": "cd playground/nodejs && node index.js"
   },
   "packageManager": "npm@9.8.1",
   "repository": {
@@ -50,12 +50,11 @@
     "@langchain/mistralai": "0.0.25",
     "@langchain/openai": "0.2.2",
     "langchain": "0.2.10",
+    "p-queue": "^8.0.1",
+    "pino": "^9.3.1",
+    "pino-pretty": "^11.2.1",
     "uuid": "10.0.0",
     "zustand": "4.5.2"
-  },
-  "peerDependencies": {
-    "react": "17.0.0 || 18.0.0",
-    "react-dom": "17.0.0 || 18.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-babel": "6.0.4",

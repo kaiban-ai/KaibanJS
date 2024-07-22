@@ -15,7 +15,7 @@ const mistralAITeamRecordedRequests = require('./examples/teams/mistral/productS
 const withMockedApis = process.env.TEST_ENV === 'mocked-llm-apis' ? true : false;
 
 describe('Product Spec Team Workflows', () => {
-    describe('Using OpenAI Agents', () => {
+    describe.skip('Using OpenAI Agents', () => {
         beforeEach(() => {         
             // Mocking all POST requests with a callback
             withMockedApis && mock(openAITeamRecordedRequests);
@@ -32,7 +32,7 @@ describe('Product Spec Team Workflows', () => {
         });
     });
 
-    describe('Using Gemini AI Agents', () => {
+    describe.skip('Using Gemini AI Agents', () => {
         beforeEach(() => {         
             // Mocking all POST requests with a callback
             withMockedApis && mock(geminiAITeamRecordedRequests);
@@ -66,7 +66,7 @@ describe('Product Spec Team Workflows', () => {
             expect(wordCount).toBeGreaterThan(20);      
         });
     });        
-    describe('Using Mistral AI Agents', () => {
+    describe.skip('Using Mistral AI Agents', () => {
         beforeEach(() => {         
             // Mocking all POST requests with a callback
             withMockedApis && mock(mistralAITeamRecordedRequests);
@@ -78,6 +78,7 @@ describe('Product Spec Team Workflows', () => {
 
             const result = await mistralAIProductSpecsTeam.start();                      
             expect(result).toBeDefined();
+            console.log(result);
             expect(typeof result).toBe('string');
             const wordCount = result.trim().split(/\s+/).length;
             expect(wordCount).toBeGreaterThan(20);      

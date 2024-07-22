@@ -1,14 +1,3 @@
-function interpolateDescription(description, inputs) {
-    let result = description;
-
-    for (const key in inputs) {
-        const placeholder = `{${key}}`;
-        result = result.replace(placeholder, inputs[key]);
-    }
-
-    return result;
-}
-
 function getApiKey(llmConfig, provider) {
     if (llmConfig?.apiKey) return llmConfig.apiKey;
 
@@ -30,4 +19,15 @@ function getApiKey(llmConfig, provider) {
     return apiKeys[provider] || apiKeys.openai || (() => { throw new Error('API key is missing. Please provide it through llmConfig or set the appropriate environment variables.'); })();
 }
 
-export { interpolateDescription, getApiKey };
+// Utility function to replace placeholders in the agent prompt.
+function replaceAgentAttributes(template, attributes) {
+    return template
+        .replace('{name}', attributes.name)
+        .replace('{role}', attributes.role)
+        .replace('{background}', attributes.background)
+        .replace('{goal}', attributes.goal)
+        .replace('{context}', attributes.context)
+        .replace('{expectedOutput}', attributes.expectedOutput);
+}
+
+export { getApiKey, replaceAgentAttributes };

@@ -19,48 +19,51 @@ const searchAgent = new Agent({
     role: 'Information Gatherer',
     goal: 'Find up-to-date information about the given sports query.',
     background: 'Research',
-    type: 'ReAct',
     tools: [searchTool],
 });
 
-// const contentCreator = new Agent({
-//     name: 'Writer',
-//     role: 'Content Creator',
-//     goal: 'Generate a comprehensive article about the sports event.',
-//     background: 'Journalism',
-//     tools: [wikiTool],
-// });
+const contentCreator = new Agent({
+    name: 'Writer',
+    role: 'Content Creator',
+    goal: 'Generate a comprehensive articles about any sports event.',
+    background: 'Journalism',
+    tools: []    
+});
 
 // Define tasks
 const searchTask = new Task({
     description: `Search for detailed information about the sports query: {sportsQuery}.`,
-    expectedOutput: 'Detailed information about the sports event.',
+    expectedOutput: 'Detailed information about the sports event. Key players, key moments, final score and other usefull information.',
     agent: searchAgent
 });
 
-// const writeTask = new Task({
-//     description: `Using the gathered information, write a detailed article about the sports event.`,
-//     expectedOutput: 'A well-structured and engaging sports article.',
-//     agent: contentCreator
-// });
+const writeTask = new Task({
+    description: `Using the gathered information, write a detailed article about the sport event.`,
+    expectedOutput: 'A well-structured and engaging sports article. With a title, introduction, body, and conclusion.',
+    agent: contentCreator
+});
 
 // Team to coordinate the agents
 const team = new Team({
     name: 'Sports Content Creation Team',
-    agents: [searchAgent ],
-    tasks: [searchTask],
-    inputs: { sportsQuery: 'Who won the last Copa America?' },  // Placeholder for dynamic input
+    agents: [searchAgent,contentCreator ],
+    tasks: [searchTask, writeTask],
+    inputs: { sportsQuery: 'Who won the Copa America in 2024?' },  // Placeholder for dynamic input
     // Results of the latest UEFA Champions League match.
 });
 
 // Listening to changes in the team's state and starting the workflow
-team.subscribeToChanges((updatedFields) => {
-    console.log("Workflow Status Updated:", updatedFields);
-});
+// team.subscribeToChanges((updatedFields) => {
+//     console.log("Workflow Status Updated:", updatedFields);
 
-// (async () => {
-//     const result = await team.start();
-//     console.log("Final Output:", result);
-// })();
 
 export default team;
+
+
+
+
+// - tavily_search_results_json: A search engine optimized for comprehensive, accurate, and trusted results. Useful for when you need to answer questions about current events. Input should be a search query.
+
+// - clock: A tool that provides the current date and time.
+
+// - team_knowledge_base: This tool will give you access to useful knowledge gathered by your team that could be helpful for successfully achieving your task. But please remember that this tool may not be accurate or up-to-date.

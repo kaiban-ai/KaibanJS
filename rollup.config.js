@@ -54,5 +54,5 @@ export default {
     ...(!isDevelopment ? [terser()] : []),
     sourcemaps(),  // Ensure sourcemaps from dependencies are handled
   ],
-  external: ['react', 'react-dom', 'uuid'],
+  external: ['react', 'react-dom', 'uuid', 'pino', 'pino-pretty'],
 };
