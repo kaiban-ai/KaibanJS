@@ -38,7 +38,6 @@ export const useTaskStore = (set, get) => ({
 
     // Centralized error handling method for tasks
     handleTaskError: ({task, error}) => {
-        debugger;
         // Log the error with detailed context
         console.error(`[${new Date().toISOString()}] ERROR: Task Execution Failure - Task Title: ${getTaskTitleForLogs(task)} Task ID: ${task.id}, Error: ${error.message}`);
 

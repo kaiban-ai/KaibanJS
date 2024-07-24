@@ -15,7 +15,7 @@ const mistralAITeamRecordedRequests = require('./examples/teams/mistral/productS
 const withMockedApis = process.env.TEST_ENV === 'mocked-llm-apis' ? true : false;
 
 describe('Product Spec Team Workflows', () => {
-    describe.skip('Using OpenAI Agents', () => {
+    describe('Using OpenAI Agents', () => {
         beforeEach(() => {         
             // Mocking all POST requests with a callback
             withMockedApis && mock(openAITeamRecordedRequests);

@@ -257,7 +257,6 @@ const createTeamStore = (initialState = {}) => {
                             useTeamStore.getState().updateTaskStatus(task.id, TASK_STATUS_enum.DONE);
                         })
                         .catch(error => {
-                            debugger;
                             // Call the centralized task error handler from the store
                             useTeamStore.getState().handleTaskError({task, error});
 

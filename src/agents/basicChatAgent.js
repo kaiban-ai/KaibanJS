@@ -1,5 +1,6 @@
 import { BaseAgent } from './baseAgent';
-import { interpolateDescription, getApiKey } from './utils';
+import { getApiKey } from '../utils/agents';
+import { interpolateTaskDescription, } from '../utils/tasks';
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
@@ -36,7 +37,7 @@ class BasicChatAgent extends BaseAgent {
 
     async executeTask(task, inputs, context) {
         await this.initAgent();
-        const interpolatedDescription = interpolateDescription(task.description, inputs);
+        const interpolatedDescription = interpolateTaskDescription(task.description, inputs);
 
         const systemMessage = `
             Hello, You are ${this.name}.

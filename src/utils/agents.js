@@ -30,4 +30,51 @@ function replaceAgentAttributes(template, attributes) {
         .replace('{expectedOutput}', attributes.expectedOutput);
 }
 
-export { getApiKey, replaceAgentAttributes };
+// Utility function to clean up JSON string. to be able to parse it. later
+
+//Examples Input
+
+// Example 1
+// "{
+//    "thought": "To find detailed information about the Copa America 2024 winner, I need to search for the most recent and relevant information. Since this is a future event (as of my last update), I should verify if it has already taken place or if there are any changes to the schedule."
+//    "action": "tavily_search_results_json",
+//    "actionInput": {"query":"Copa America 2024 winner results details"}
+// }"
+
+// Example 2
+// {\n   "thought": "To find detailed information about the Copa America 2024 winner, I need to search for the most recent and relevant information. Since this is a future event, I should be cautious about the results and verify if the tournament has actually taken place."\n   "action": "tavily_search_results_json",\n   "actionInput": {"query":"Copa America 2024 winner results details"}\n}
+
+const getParsedJSON = (str) => {
+    try {
+        // Directly attempt to parse the JSON first
+        return JSON.parse(str);
+    } catch (error) {
+        // Attempt to fix common JSON issues
+        let sanitizedStr = str
+            .trim()
+            // Normalize line breaks and spaces
+            .replace(/\s*\n\s*/g, "")
+            // Replace single quotes with double quotes
+            .replace(/'/g, '"')
+            // Ensure proper quoting around keys
+            .replace(/([{,]\s*)([^"\s][a-zA-Z0-9_]+\s*):/g, '$1"$2":')
+            // Ensure proper quoting around string values that are unquoted
+            .replace(/:\s*([^"\s][^,}\s]*)(\s*[},])/g, ': "$1"$2')
+            // Add missing commas between key-value pairs, accommodating various edge cases
+            .replace(/(?<=}|\])(\s*{)/g, ',$1')
+            .replace(/(["}\]])(\s*["{])/g, '$1,$2')
+            // Remove trailing commas within objects or arrays
+            .replace(/,\s*([}\]])/g, '$1');
+
+        try {
+            // Attempt to parse the sanitized string
+            return JSON.parse(sanitizedStr);
+        } catch (error) {
+            console.error("Error parsing sanitized JSON:", error);
+            return null;
+        }
+    }
+};
+
+
+export { getApiKey, replaceAgentAttributes, getParsedJSON };

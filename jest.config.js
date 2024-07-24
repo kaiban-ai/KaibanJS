@@ -1,6 +1,6 @@
 module.exports = {
     transform: {
-      '^.+\\.js$': 'babel-jest',
+      "^.+\\.[t|j]sx?$": "babel-jest"
     },
     moduleNameMapper: {
         '^agenticjs$': '<rootDir>/dist/bundle.cjs.js'
