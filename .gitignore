@@ -38,3 +38,4 @@ yarn-error.log*
 *.pem
 
 *storybook.log
+_todo.md
