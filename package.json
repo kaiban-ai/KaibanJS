@@ -9,7 +9,7 @@
     "build": "npx rollup -c",
     "build:test": "TEST_ENV=mocked-llm-apis npx rollup -c",
     "dev": "NODE_ENV=development npx rollup -c -w",
-    "test": "npm run build:test && test:integration",
+    "test": "npm run build:test && npm run test:integration",
     "test:watch": "TEST_ENV=mocked-llm-apis jest --testPathPattern='tests/e2e' --watch",
     "test:debug": "TEST_ENV=mocked-llm-apis node --inspect-brk node_modules/.bin/jest --runInBand --verbose",
     "test:prod": "npm run build && jest",
