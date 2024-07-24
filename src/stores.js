@@ -54,6 +54,10 @@ const createTeamStore = (initialState = {}) => {
     setName: (name) => set({ name }),  // Add a new action to update inputs
     setEnv: (env) => set({ env }),  // Add a new action to update inputs
     addAgents: agents => {
+        const envVariables = get().env; // Accessing the env property using get().env
+        agents.forEach(agent => {
+            agent.setEnv(envVariables); // Setting the environment variables for each agent
+        });
         set(state => ({ agents: [...state.agents, ...agents] }));
     },
     addTasks: (tasks) => {
@@ -140,7 +144,7 @@ const createTeamStore = (initialState = {}) => {
     executeAgentTask: async (agent, task, inputs, context='') => {
         // Assuming all agent classes extend BaseAgent and implement their own executeTask method
             // TODO: Why inputs here?
-            return agent.executeTask(task, inputs, context);
+            return agent.executeTask(task, inputs, context, get().env);
     }    
 
 }), "teamStore"))
