@@ -39,6 +39,10 @@ class Agent {
         return this.agentInstance.executeTask(task, inputs, context);
     }
 
+    setEnv(env){
+        this.agentInstance.setEnv(env);
+    }
+
     // Proxy property access to the underlying agent instance
     get id() {
         return this.agentInstance.id;
@@ -81,7 +85,8 @@ class Task {
 
 class Team {
     constructor({ name, agents, tasks, verbose = 1, inputs = {}, env = null }) {
-        this.store = createTeamStore({ name, agents, tasks, inputs, env, verbose});
+        this.store = createTeamStore({ name, tasks, inputs, env, verbose});
+        this.store.getState().addAgents(agents);
     }
 
     async start(inputs = null) {
