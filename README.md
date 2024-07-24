@@ -1,56 +1,59 @@
 ![AgenticJS Logo](https://www.agenticjs.com/logo.svg)
 
-AgenticJS is a JavaScript-native framework for building multi-agent AI systems.
-
 [![Star on GitHub](https://img.shields.io/github/stars/AI-Champions/agenticjs.svg?style=social)](https://github.com/AI-Champions/AgenticJS)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/AI-Champions/agenticjs/blob/main/LICENSE) [![npm version](https://img.shields.io/npm/v/agenticjs.svg?style=flat)](https://www.npmjs.com/package/agenticjs)
 [![stability-alpha](https://img.shields.io/badge/stability-alpha-f4d03f.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#alpha)
 [![Tests](https://github.com/AI-Champions/AgenticJS/actions/workflows/stable-main-check-workflow.yml/badge.svg)](https://github.com/AI-Champions/AgenticJS/actions/workflows/stable-main-check-workflow.yml)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/AI-Champions/AgenticJS/pulls)
 
-
-**Powered by Claude**
-
-AgenticJS utilizes [Claude](https://www.anthropic.com/api), the cutting-edge LLM from [Anthropic](https://www.anthropic.com/), across all examples. This integration allows AgenticJS to offer advanced AI agent functionalities and decision-making capabilities, making every interaction smarter. Discover how we use Claude to bring innovative AI solutions to life in our [interactive playground](https://agenticjs.com).
+# AgenticJS
+AgenticJS is a JavaScript-native framework for building multi-agent AI systems.
 
 ## Try It Out
 
-[Explore the Playground](https://agenticjs.com)
+[Explore the Playground](https://agenticjs.com) — *it's like Trello or Asana, but for AI Agents and humans.*
 
 ## Why AgenticJS?
 
-In a landscape dominated by Python frameworks, JavaScript developers have often found themselves at a disadvantage. AgenticJS is here to change that by providing a robust, easy-to-use AI multi-agent framework tailored for the JavaScript ecosystem.
+There are about 20 million JavaScript developers worldwide, yet most AI frameworks are originally written in Python. Others are mere adaptations for JavaScript. 
+
+This puts all of us **JavaScript developers at a disadvantage in the AI race**. But not anymore...
+
+AgenticJS changes the game by aiming to offer a robust, easy-to-use AI multi-agent framework designed specifically for the JavaScript ecosystem.
+
+```js
+const writtenBy = `Another JS Dev Who Doesn't Want to Learn Python to do meaningful AI Stuff.`;
+console.log(writtenBy);
+```
+
 
 ### Key Features
 
 - **Role-Based Agent Design:** Design agents with specific roles and goals.
-- **Autonomous Inter-Agent Delegation:** Enable agents to delegate tasks autonomously.
 - **Flexible Task Management:** Define and assign tasks dynamically to agents.
+- **Redux-Inspired Architecture:** This architecture offers a unified approach to managing the states of all AI agents. As a big plus, it integrates effortlessly into your React applications.
 - **Real-Time Visualizer:** Built-in UI visualizer for development and debugging.
 - **Browser and Server Compatibility:** Works seamlessly across client and server environments.
+- **Multi-Model Support:** Integrates with various AI models including OpenAI, Gemini, Claude, and Mistral, enhancing versatility and adaptability.
 
 ## Getting Started
 
-Install AgenticJS via npm:
+### Install AgenticJS via npm:
 
 ```bash
 npm install agenticjs --save
 ```
 
-Set your LLM API keys as environment variables:
-```bash
-
-# For Anthropic
-export ANTHROPIC_API_KEY='your-api-key'
-
-# For OpenAI
-export OPENAI_API_KEY='your-openai-api-key'
-```
-
-Import AgenticJS in your JavaScript file:
+### Import AgenticJS in your JavaScript file:
 
 ```js
+// Using ES6 import syntax for NextJS, React, etc.
 import { Agent, Task, Team } from 'agenticjs';
+```
+
+```js
+// Using CommonJS syntax for NodeJS
+const { Agent, Task, Team } = require("agenticjs");
 ```
 
 ## Example Usage
@@ -59,6 +62,9 @@ Define agents, tasks, and a team to manage them:
 
 ```js
 import { Agent, Task, Team } from 'agenticjs';
+
+// NodeJS
+// const { Agent, Task, Team } = require('agenticjs');
 
 // ╔══════════════════════════════════════════════════════╗
 // ║ How to Use AgenticJS:                                ║
@@ -79,14 +85,7 @@ const profileAnalyst = new Agent({
     role: 'Profile Analyst', 
     goal: 'Extract structured information from conversational user input.', 
     background: 'Data Processor',
-    tools: [],  // Tools are omitted for now
-    llmConfig: {
-        provider: "anthropic",  // or "openai"
-        model: "claude-3-5-sonnet-20240620",
-        temperature: 0.9,
-        maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
-    }    
+    tools: [],  // Tools are omitted for now  
 });
 
 const formatter = new Agent({
@@ -94,14 +93,7 @@ const formatter = new Agent({
     role: 'Formatter', 
     goal: 'Format structured information into a professional resume.', 
     background: 'Document Formatter',
-    tools: [],
-    llmConfig: {
-        provider: "anthropic",  // or "openai"
-        model: "claude-3-5-sonnet-20240620",
-        temperature: 0.9,
-        maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
-    }    
+    tools: [],  
 });
 
 const reviewer = new Agent({
@@ -109,14 +101,7 @@ const reviewer = new Agent({
     role: 'Reviewer', 
     goal: 'Review and polish the final resume.', 
     background: 'Quality Assurance Specialist',
-    tools: [],
-    llmConfig: {
-        provider: "anthropic",  // or "openai"
-        model: "claude-3-5-sonnet-20240620",
-        temperature: 0.9,
-        maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
-    }    
+    tools: [],  
 });
 
 // ──── Tasks ─────────────────────────────────────────────
@@ -156,14 +141,15 @@ const team = new Team({
     agents: [profileAnalyst, formatter, reviewer],
     tasks: [processingTask, formattingTask, reviewTask],
     inputs: { aboutMe: 'My name is Will, I have been a Javascript Developer for 3 years. I know React, NextJS, and REDUX. My latest job was as a Junior Developer at Disney creating UIs for the main landing page.' },  // Initial input for the first task
+    env: {OPENAI_API_KEY: 'your-open-ai-api-key'}  // Environment variables for the team
 });
+
+// Note: Avoid hardcoding API keys; retrieve them from environment variables instead.
 
 // ──── Listening to Changes────────────────────────────────────────────
 // 
 // Listening to changes in the team's state is crucial for dynamic updates.
 // Yup...AgenticJS utilizes a store similar to Redux for state management.
-// 
-// You can subscribe to specific fields or any field on the store.
 //──────────────────────────────────────────────────────────────────────
 
 const unsubscribe = team.subscribeToChanges((updatedFields) => {
@@ -185,7 +171,7 @@ console.log("Final Output:", result);
 
 ### Compatibility
 
-AgenticJS is compatible with major front-end frameworks like React, Vue, Angular, and NextJS, making it a versatile choice for developers.
+AgenticJS aims to be compatible with major front-end frameworks like React, Vue, Angular, and NextJS, making it a versatile choice for developers. The JavaScript ecosystem is a "bit complex...". If you have any problems, please tell us and we'll help you fix them.
 
 ### Community and Support
 
