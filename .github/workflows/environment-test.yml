@@ -1,0 +1,77 @@
+name: CI with npm pack
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout AgenticJS Library
+      uses: actions/checkout@v2
+      with:
+        repository: AI-Champions/AgenticJS
+        path: agenticjs
+
+    - name: Checkout AgenticJS-React-Vite Repository
+      uses: actions/checkout@v2
+      with:
+        repository: darielnoel/AgenticJS-React-Vite
+        token: ${{ secrets.GITHUB_TOKEN }} # This is needed to access the repository
+        path: react-vite-app
+
+    - name: Checkout AgenticJS-NodeJS Repository
+      uses: actions/checkout@v2
+      with:
+        repository: darielnoel/AgenticJS-NodeJS
+        token: ${{ secrets.GITHUB_TOKEN }} # This is needed to access the repository        
+        path: agenticjs-nodejs        
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 18.x
+
+    - name: Build and Pack AgenticJS Library
+      run: |
+        cd agenticjs
+        npm install
+        npm run build
+        npm pack
+      id: agenticjs-build
+    
+    - name: Install other dependencies for React + Vite App
+      run: |
+        cd react-vite-app
+        npm install
+
+    - name: Install AgenticJS in React + Vite App using Pack
+      run: |
+        cd react-vite-app
+        npm install ../agenticjs/*.tgz
+
+    - name: Build React + Vite App
+      run: |
+        cd react-vite-app
+        npm run build
+
+    # - name: Run tests for React + Vite App
+    #   run: |
+    #     cd react-vite-app
+    #     npm test
+
+    # Handle NodeJS App after React + Vite App
+    - name: Install other dependencies for NodeJS App
+      run: |
+        cd agenticjs-nodejs
+        npm install
+
+    - name: Install AgenticJS in NodeJS App using Pack
+      run: |
+        cd agenticjs-nodejs
+        npm install ../agenticjs/*.tgz
+
+    - name: Test NodeJS App
+      run: |
+        cd agenticjs-nodejs
+        npm test
