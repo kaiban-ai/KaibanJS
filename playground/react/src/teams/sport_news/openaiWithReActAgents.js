@@ -19,7 +19,6 @@ const searchAgent = new Agent({
     role: 'Information Gatherer',
     goal: 'Find up-to-date information about the given sports query.',
     background: 'Research',
-    type: 'ReactChampionAgent',
     type: 'ReAct',
     tools: [searchTool]  
 });
@@ -30,7 +29,6 @@ const contentCreator = new Agent({
     goal: 'Generate a comprehensive articles about any sports event.',
     background: 'Journalism',
     type: 'ReAct',
-    type: 'ReactChampionAgent',
     tools: []  
 });
 
