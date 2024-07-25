@@ -11,7 +11,6 @@ const requirementsAnalyst = new Agent({
         provider: "anthropic",  // or "openai"
         model: "claude-3-5-sonnet-20240620",
         temperature: 0.9,
-        maxTokens: 1024,
         anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
     }
 
@@ -27,7 +26,6 @@ const technicalWriter = new Agent({
         provider: "anthropic",  // or "openai"
         model: "claude-3-5-sonnet-20240620",
         temperature: 0.9,
-        maxTokens: 1024,
         anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
     }    
 });
@@ -42,7 +40,6 @@ const validator = new Agent({
         provider: "anthropic",  // or "openai"
         model: "claude-3-5-sonnet-20240620",
         temperature: 0.9,
-        maxTokens: 1024,
         anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
     }    
 });
@@ -73,6 +70,7 @@ const team = new Team({
   agents: [requirementsAnalyst, technicalWriter, validator],
   tasks: [analysisTask, writingTask, validationTask],
   inputs: { founderIdea: 'I want to add a Referral program to our SAAS platform.' },  // Initial input for the first task
+  env: {OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY, ANTHROPIC_API_KEY: import.meta.env.VITE_ANTHROPIC_API_KEY}
 });
 
 export default team;

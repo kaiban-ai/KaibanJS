@@ -21,13 +21,10 @@ const searchAgent = new Agent({
     background: 'Research',
     type: 'ReactChampionAgent',
     tools: [searchTool],
-    // llmConfig: {
-    //     provider: "anthropic",  // or "openai"
-    //     model: "claude-3-5-sonnet-20240620",
-    //     temperature: 0.9,
-    //     maxTokens: 1024,
-    //     anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
-    // }    
+    llmConfig: {
+        provider: "mistral",
+        model: "mistral-small",
+    }  
 });
 
 const contentCreator = new Agent({
@@ -38,12 +35,9 @@ const contentCreator = new Agent({
     type: 'ReactChampionAgent',
     tools: [],
     llmConfig: {
-        provider: "anthropic",  // or "openai"
-        model: "claude-3-5-sonnet-20240620",
-        temperature: 0.9,
-        maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
-    }     
+        provider: "mistral",
+        model: "mistral-small",
+    }    
 });
 
 // Define tasks
@@ -65,22 +59,13 @@ const team = new Team({
     agents: [searchAgent,contentCreator ],
     tasks: [searchTask, writeTask],
     inputs: { sportsQuery: 'Who won the Copa America in 2024?' },  // Placeholder for dynamic input
-    env: {OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY, ANTHROPIC_API_KEY: import.meta.env.VITE_ANTHROPIC_API_KEY}
+    env: {
+        OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY, 
+        ANTHROPIC_API_KEY: import.meta.env.VITE_ANTHROPIC_API_KEY, 
+        MISTRAL_API_KEY: import.meta.env.VITE_MISTRAL_API_KEY,
+        GOOGLE_API_KEY: import.meta.env.VITE_GOOGLE_API_KEY
+    }    
     // Results of the latest UEFA Champions League match.
 });
 
-// Listening to changes in the team's state and starting the workflow
-// team.subscribeToChanges((updatedFields) => {
-//     console.log("Workflow Status Updated:", updatedFields);
-
-
 export default team;
-
-
-
-
-// - tavily_search_results_json: A search engine optimized for comprehensive, accurate, and trusted results. Useful for when you need to answer questions about current events. Input should be a search query.
-
-// - clock: A tool that provides the current date and time.
-
-// - team_knowledge_base: This tool will give you access to useful knowledge gathered by your team that could be helpful for successfully achieving your task. But please remember that this tool may not be accurate or up-to-date.
