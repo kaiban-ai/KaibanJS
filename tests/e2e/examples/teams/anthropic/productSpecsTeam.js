@@ -14,7 +14,6 @@ const requirementsAnalyst = new Agent({
         maxTokens: 1024,
         anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
     }
-
 });
 
 const technicalWriter = new Agent({
@@ -73,6 +72,7 @@ const team = new Team({
   agents: [requirementsAnalyst, technicalWriter, validator],
   tasks: [analysisTask, writingTask, validationTask],
   inputs: { founderIdea: 'I want to add a Referral program to our SAAS platform.' },  // Initial input for the first task
+  env: {ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY}  // Environment variables for the team
 });
 
 module.exports = team;

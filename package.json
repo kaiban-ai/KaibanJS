@@ -1,10 +1,11 @@
 {
   "name": "agenticjs",
-  "version": "0.0.11",
+  "version": "0.0.15",
   "description": "AI Multi-Agent library for Javascript Developers.",
   "main": "dist/bundle.cjs.js",
   "module": "dist/bundle.esm.js",
   "unpkg": "dist/bundle.umd.js",
+  "types": "types/index.d.ts",
   "scripts": {
     "build": "npx rollup -c",
     "build:test": "NODE_ENV=development TEST_ENV=mocked-llm-apis npx rollup -c",
