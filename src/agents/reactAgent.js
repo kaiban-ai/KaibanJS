@@ -25,6 +25,7 @@ class ReActAgent extends BaseAgent {
             // model: "gpt-4o-mini",
             model: "gpt-3.5-turbo-0125",
             // model: "gpt-4-turbo",
+            provider: 'openai',
             temperature: 0,
         };
         this.llmConfig = { ...defaultConfig, ...config.llmConfig };

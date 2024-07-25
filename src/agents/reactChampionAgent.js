@@ -25,6 +25,7 @@ class ReactChampionAgent extends BaseAgent {
         super(config);
         const defaultConfig = {
             model: "gpt-3.5-turbo-0125",
+            provider: 'openai'
         };
         this.llmConfig = { ...defaultConfig, ...config.llmConfig };
     }

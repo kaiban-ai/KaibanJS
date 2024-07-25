@@ -15,7 +15,11 @@ class BaseAgent {
         this.store = null;
         this.status = AGENT_STATUS_enum.INITIAL;
         this.env = null;
-        this.llmConfig = llmConfig;
+        this.llmConfig = { 
+            provider: "openai", 
+            model: "gpt-3.5-turbo-0125",
+             ...llmConfig 
+        };
     }
 
     async initAgent() {

@@ -25,6 +25,7 @@ import { TASK_STATUS_enum } from './utils/enums';
 class Agent {
     constructor({ type, ...config }) {
         this.agentInstance = this.createAgent(type, config);
+        this.type = type || 'ReactChampionAgent';
     }
  
     createAgent(type, config) {
