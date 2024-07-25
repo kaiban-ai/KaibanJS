@@ -36,7 +36,7 @@ class Agent {
             case 'ReactChampionAgent':
                 return new ReactChampionAgent(config);
             default:
-                return new ReActAgent(config);
+                return new ReactChampionAgent(config);
         }
     }
 
