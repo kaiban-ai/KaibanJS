@@ -22,8 +22,8 @@ const searchAgent = new Agent({
     type: 'ReactChampionAgent',
     tools: [searchTool],
     llmConfig: {
-        provider: "mistral",
-        model: "mistral-small",
+        provider: "google",
+        model: "gemini-1.5-flash",
     }  
 });
 
@@ -35,9 +35,9 @@ const contentCreator = new Agent({
     type: 'ReactChampionAgent',
     tools: [],
     llmConfig: {
-        provider: "mistral",
-        model: "mistral-small",
-    }    
+        provider: "google",
+        model: "gemini-1.5-flash",
+    } 
 });
 
 // Define tasks
