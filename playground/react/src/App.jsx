@@ -1,6 +1,5 @@
 import AgentsBoardDebugger from './AgentsBoardDebugger';
-// import team from './teams/openai/sportsNewsTeam';
-import team from './teams/openai/sportsNewsTeamWithChampionAgent';
+import team from './teams/product_specs/anthropic';
 
 function App() {
   return (
