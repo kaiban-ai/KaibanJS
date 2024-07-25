@@ -1,4 +1,4 @@
-name: CI with npm pack
+name: CI Environment Tests
 
 on: 
   workflow_dispatch:
@@ -6,6 +6,9 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:  # Set the environment variable for all steps in this job
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      VITE_OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}    
     steps:
     - name: Checkout AgenticJS Library
       uses: actions/checkout@v2
