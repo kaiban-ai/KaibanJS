@@ -12,12 +12,14 @@ export default {
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const reactAgent = {
   args: {
-    team: teamWithReactAgents
+    team: teamWithReactAgents,
+    title: 'With LangChain ReAct Agents'
   },
 };
 
 export const reactChampionAgent = {
   args: {
-    team: teamWithChampionAgents
+    team: teamWithChampionAgents,
+    title: 'With AgenticJS ReAct Agents'
   },
 };

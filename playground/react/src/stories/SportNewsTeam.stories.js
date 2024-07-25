@@ -13,24 +13,28 @@ export default {
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const withOpenAI = {
   args: {
-    team: teamOpenAI
+    team: teamOpenAI,
+    title: 'With OpenAI Model'
   },
 };
 
 export const withAnthropic = {
   args: {
-    team: teamAnthropic
+    team: teamAnthropic,
+     title: 'With Anthropic Model'
   },
 };
 
 export const withGeminiAI = {
   args: {
-    team: teamGemini
+    team: teamGemini,
+    title: 'With Gemini Model'    
   },
 };
 
 export const withMistral = {
   args: {
-    team: teamMistral
+    team: teamMistral,
+    title: 'With Mistral Model' 
   },
 };

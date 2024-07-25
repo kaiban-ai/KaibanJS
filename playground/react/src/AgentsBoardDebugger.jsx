@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const AgentsBoardDebugger = ({team}) => {
+const AgentsBoardDebugger = ({team, title=null}) => {
 
     const useTeamStore = team.useStore(); 
     const { agents, tasks, workflowLogs, teamWorkflowStatus, workflowResult, inputs, setInputs } = useTeamStore(state => ({
@@ -34,10 +34,10 @@ const AgentsBoardDebugger = ({team}) => {
 
 return (
     <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-        <h1 style={{ color: '#333', borderBottom: '1px solid #333' }}>Agents Team Debugger</h1>
-
+        <h1 style={{ color: '#333' }}>Agents Team Debugger</h1>
+        {title ? <h2 style={{ color: '#666', fontSize: '30px', borderBottom: '1px solid #333' }}>{title}</h2> : null}
         <div style={{ margin: '20px 0' }}>
-            <h2 style={{ color: '#666', fontSize: '30px' }}>Team Inputs</h2>
+            <h2 style={{ color: '#666', fontSize: '24px' }}>Team Inputs</h2>
             <textarea value={JSON.stringify(inputs, null, 2)} onChange={(e) => setInputs(JSON.parse(e.target.value))} placeholder="Enter JSON input" style={{ width: '500px' }}/>
             <p>
                 <button onClick={startTeam} style={{ padding: '10px', backgroundColor: '#0000FF', color: 'white', border: 'none', cursor: 'pointer' }}>Start Workflow</button>
@@ -46,7 +46,7 @@ return (
         <div style={{ margin: '20px  0' }}>
             <h2 style={{ color: '#666', fontSize: '30px' }}>🕵️‍♂️ Agents</h2>
             {agents.map(agent => (
-                <p key={agent.id} style={{ color: '#999' }}>{agent.name} - {agent.role} - status: ({agent.status})</p>
+                <p key={agent.id} style={{ color: '#999' }}>{agent.name} - {agent.role} - [{agent.type}] - [{agent.llmConfig.provider}- {agent.llmConfig.model}] - status: ({agent.status})</p>
             ))}
         </div>
         <div style={{ margin: '20px 0' }}>
