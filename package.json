@@ -5,6 +5,7 @@
   "main": "dist/bundle.cjs.js",
   "module": "dist/bundle.esm.js",
   "unpkg": "dist/bundle.umd.js",
+  "types": "types/index.d.ts",
   "scripts": {
     "build": "npx rollup -c",
     "build:test": "TEST_ENV=mocked-llm-apis npx rollup -c",
