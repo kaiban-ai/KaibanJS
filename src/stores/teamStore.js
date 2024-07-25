@@ -61,7 +61,11 @@ const createTeamStore = (initialState = {}) => {
     setEnv: (env) => set({ env }),  // Add a new action to update inputs
 
     addAgents: (agents) => {
-        agents.forEach(agent => agent.setStore(useTeamStore));
+        const { env } = get();
+        agents.forEach(agent => {
+            agent.setStore(useTeamStore);
+            agent.setEnv(env);
+        });
         set(state => ({ agents: [...state.agents, ...agents] }));
     },
 

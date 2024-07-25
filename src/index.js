@@ -48,8 +48,12 @@ class Agent {
         this.agentInstance.setStore(store);
     }
 
+    setEnv(env) {
+        this.agentInstance.setEnv(env);
+    }
+
     setStatus(status) {
-        this.agentInstance.status = status;
+        this.agentInstance.setStatus(status);
     }    
 
     // Proxy property access to the underlying agent instance

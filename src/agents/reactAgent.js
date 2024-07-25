@@ -31,20 +31,39 @@ class ReActAgent extends BaseAgent {
     }
 
     async initAgent() {
+        // Define the default settings
+        const defaultConfig = {
+            model: "gpt-3.5-turbo-0125",
+            provider: 'openai'
+        };
+    
+        // Merge the defaults with any custom settings provided
+        this.llmConfig = { ...defaultConfig, ...this.llmConfig };
+        
+        // Ensure the API key is retrieved and set correctly
+        const apiKey = getApiKey(this.llmConfig, this.env);
+        this.llmConfig.apiKey = apiKey;
+        
+        if (!this.llmConfig.apiKey) {
+            throw new Error('API key is missing. Please provide it through the Agent llmConfig or throught the team env variable. E.g: new Team ({name: "My Team", env: {OPENAI_API_KEY: "your-api-key"}})');
+        }
+    
+        // Define a mapping of providers to their corresponding chat classes
         const providers = {
             anthropic: ChatAnthropic,
             google: ChatGoogleGenerativeAI,
             mistral: ChatMistralAI,
             openai: ChatOpenAI,
         };
-
-        const provider = this.llmConfig.provider;
-        const LLMProviderClass = providers[provider] || providers.openai;
-
-        this.llmInstance = new LLMProviderClass({
-            ...this.llmConfig,
-            apiKey: getApiKey(this.llmConfig, provider)
-        });
+    
+        // Choose the chat class based on the provider, with a fallback to OpenAI if not found
+        const ChatClass = providers[this.llmConfig.provider];
+    
+        // Initialize the language model instance with the complete configuration
+        this.llmInstance = new ChatClass(this.llmConfig);
+    
+        // Initialize the chat message history
+        this.memory = new ChatMessageHistory();
     
     }
 

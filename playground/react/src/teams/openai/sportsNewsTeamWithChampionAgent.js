@@ -65,6 +65,7 @@ const team = new Team({
     agents: [searchAgent,contentCreator ],
     tasks: [searchTask, writeTask],
     inputs: { sportsQuery: 'Who won the Copa America in 2024?' },  // Placeholder for dynamic input
+    env: {OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY, ANTHROPIC_API_KEY: import.meta.env.VITE_ANTHROPIC_API_KEY}
     // Results of the latest UEFA Champions League match.
 });
 
