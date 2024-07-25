@@ -61,10 +61,6 @@ class ReActAgent extends BaseAgent {
     
         // Initialize the language model instance with the complete configuration
         this.llmInstance = new ChatClass(this.llmConfig);
-    
-        // Initialize the chat message history
-        this.memory = new ChatMessageHistory();
-    
     }
 
     async executeTask(task, inputs, context) {
