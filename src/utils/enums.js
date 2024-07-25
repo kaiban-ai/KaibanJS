@@ -19,11 +19,18 @@ const AGENT_STATUS_enum = {
     EXECUTING_ACTION: "EXECUTING_ACTION", // LangChain Callback: handleAgentAction()
     USING_TOOL: "USING_TOOL",   // LangChain Callback: handleToolStart()
     USING_TOOL_ERROR: "USING_TOOL_ERROR",   // LangChain Callback: handleToolError()
+    TOOL_RESULTS: "TOOL_RESULTS",   
+    TOOL_DOES_NOT_EXIST: "TOOL_DOES_NOT_EXIST",   
     OBSERVATION: "OBSERVATION", // LangChain Callback: handleToolEnd()
     FINAL_ANSWER: "FINAL_ANSWER", // LangChain Callback: handleAgentEnd(),
     TASK_COMPLETED: "TASK_COMPLETED", // Indicates all task operations, including final outputs, are completed
     MAX_ITERATIONS_ERROR: "MAX_ITERATIONS_ERROR", 
-    IDLE: "IDLE",
+    ISSUES_PARSING_LLM_OUTPUT: "ISSUES_PARSING_LLM_OUTPUT",
+    SELF_QUESTION: "SELF_QUESTION",
+    ITERATION_START: "ITERATION_START",
+    ITERATION_END: "ITERATION_END",
+    AGENTIC_LOOP_CRITICAL_ERROR: "AGENTIC_LOOP_CRITICAL_ERROR",
+    WEIRD_LLM_OUTPUT: "WEIRD_LLM_OUTPUT",
 }
 
 // ──── Task Status Definitions ───────────────────────────────────────
