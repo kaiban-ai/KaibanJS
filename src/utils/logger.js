@@ -7,7 +7,7 @@ const logger = pino({
     options: {
       colorize: true,
       levelFirst: true,
-      translateTime: 'SYS:standard',
+      translateTime: 'HH:MM:ss',  // Custom time format
       ignore: 'pid,hostname',  // Customize what to ignore in logs
       singleLine: true  // Optional: Puts each log message on a single line
     }
