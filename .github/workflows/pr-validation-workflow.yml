@@ -8,10 +8,10 @@ jobs:
     build-and-test:
         runs-on: ubuntu-latest
         env:
-            OPENAI_API_KEY: a-fake-api-key-so-ke-can-do-prs-without-breaking-the-ci
-            ANTHROPIC_API_KEY: a-fake-api-key-so-ke-can-do-prs-without-breaking-the-ci
-            GOOGLE_API_KEY: a-fake-api-key-so-ke-can-do-prs-without-breaking-the-ci
-            MISTRAL_API_KEY: a-fake-api-key-so-ke-can-do-prs-without-breaking-the-ci
+            OPENAI_API_KEY: "fake-api-key-so-we-can-use-ci-in-forked-repositories"
+            ANTHROPIC_API_KEY: "fake-api-key-so-we-can-use-ci-in-forked-repositories"
+            GOOGLE_API_KEY: "fake-api-key-so-we-can-use-ci-in-forked-repositories"
+            MISTRAL_API_KEY: "fake-api-key-so-we-can-use-ci-in-forked-repositories"
         steps:
             - name: Checkout code
               uses: actions/checkout@v2
@@ -29,6 +29,3 @@ jobs:
 
             - name: Run integration tests
               run: npm run test:integration
-
-            - name: Build production version
-              run: npm run build

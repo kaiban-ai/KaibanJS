@@ -35,42 +35,20 @@ function interpolateDescription(description, inputs) {
     return result;
 }
 
-function getApiKey(llmConfig, provider) {
+function getApiKey(llmConfig, provider, env) {
     if (llmConfig?.apiKey) return llmConfig.apiKey;
 
-    let env = {};
-
-    if (typeof process !== "undefined" && process.env) {
-        env = process.env;
-    } else if (typeof window !== "undefined") {
-        env = window?.process?.env || import.meta.env || {};
-    }
-
     const apiKeys = {
-        anthropic:
-            env.ANTHROPIC_API_KEY ||
-            env.NEXT_PUBLIC_ANTHROPIC_API_KEY ||
-            env.VITE_ANTHROPIC_API_KEY,
-        google:
-            env.GOOGLE_API_KEY ||
-            env.NEXT_PUBLIC_GOOGLE_API_KEY ||
-            env.VITE_GOOGLE_API_KEY,
-        mistral:
-            env.MISTRAL_API_KEY ||
-            env.NEXT_PUBLIC_MISTRAL_API_KEY ||
-            env.VITE_MISTRAL_API_KEY,
-        openai:
-            env.OPENAI_API_KEY ||
-            env.NEXT_PUBLIC_OPENAI_API_KEY ||
-            env.VITE_OPENAI_API_KEY,
+        anthropic: env.ANTHROPIC_API_KEY,
+        google: env.GOOGLE_API_KEY,
+        mistral: env.MISTRAL_API_KEY,
+        openai: env.OPENAI_API_KEY,
     };
-
     return (
         apiKeys[provider] ||
-        apiKeys.openai ||
         (() => {
             throw new Error(
-                "API key is missing. Please provide it through llmConfig or set the appropriate environment variables."
+                'API key is missing. Please provide it through the Agent llmConfig or throught the team env variable. E.g: new Team ({name: "My Team", env: {OPENAI_API_KEY: "your-api-key"}})'
             );
         })()
     );
@@ -84,22 +62,19 @@ class BaseAgent {
         this.goal = goal;
         this.background = background;
         this.tools = tools;
-
         const defaultConfig = {
             model: "gpt-3.5-turbo-0125",
-            apiKey: getApiKey(llmConfig, llmConfig.provider || "openai"),
+            apiKey: null,
         };
         this.llmConfig = { ...defaultConfig, ...llmConfig };
-
-        if (!this.llmConfig.apiKey) {
-            throw new Error(
-                "API key is missing. Please provide it through llmConfig or set the appropriate environment variables."
-            );
-        }
     }
 
     async initAgent() {
         throw new Error("initAgent must be implemented by subclasses.");
+    }
+
+    setEnv(env) {
+        this.env = env;
     }
 
     executeTask(task) {
@@ -124,12 +99,12 @@ class BasicChatAgent extends BaseAgent {
             openai: ChatOpenAI,
         };
 
-        const provider = this.llmConfig.provider;
+        const provider = this.llmConfig.provider || "openai";
         const ChatClass = providers[provider] || providers.openai;
 
         this.llmInstance = new ChatClass({
             ...this.llmConfig,
-            apiKey: getApiKey(this.llmConfig, provider),
+            apiKey: getApiKey(this.llmConfig, provider, this.env),
         });
     }
 
@@ -192,6 +167,11 @@ class ReActAgent extends BaseAgent {
     }
 
     async initAgent() {
+        if (!this.llmConfig.apiKey) {
+            throw new Error(
+                'API key is missing. Please provide it through the Agent llmConfig or throught the team env variable. E.g: new Team ({name: "My Team", env: {OPENAI_API_KEY: "your-api-key"}})'
+            );
+        }
         this.llmInstance = new OpenAI({
             ...this.llmConfig,
             apiKey: getApiKey(this.llmConfig, "openai"),

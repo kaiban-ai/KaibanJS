@@ -11,7 +11,6 @@ const requirementsAnalyst = new Agent({
         provider: "google",
         model: "gemini-1.5-flash",
     }
-
 });
 
 const technicalWriter = new Agent({
@@ -64,6 +63,7 @@ const team = new Team({
     agents: [requirementsAnalyst, technicalWriter, validator],
     tasks: [analysisTask, writingTask, validationTask],
     inputs: { founderIdea: 'I want to add a Referral program to our SAAS platform.' },  // Initial input for the first task
+    env: {GOOGLE_API_KEY: process.env.GOOGLE_API_KEY}  // Environment variables for the team
 });
 
 module.exports = team;
