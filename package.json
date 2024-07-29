@@ -19,6 +19,7 @@
     "test:unit": "jest --testPathPattern='tests/unit' --watch",
     "test:unit:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --verbose --testPathPattern='tests/unit'",
     "play:react": "cd playground/react && npm run dev",
+    "play:sb": "cd playground/react && npm run storybook",
     "play:node": "cd playground/nodejs && node index.js"
   },
   "packageManager": "npm@9.8.1",
