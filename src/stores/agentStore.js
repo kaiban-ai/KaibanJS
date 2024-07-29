@@ -14,8 +14,6 @@ const useAgentStore = (set, get) => ({
             agentStatus: agent.status,
         });
         logger.info(`🤔 Agent ${agent.name} is ${agent.status}:`, task.interpolatedTaskDescription);
-        // logger.info(messages[0]);
-        // logger.info(messages[0]);
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
 

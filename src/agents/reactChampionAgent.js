@@ -40,16 +40,15 @@ class ReactChampionAgent extends BaseAgent {
         let finalAnswer = null;
         let iterations = 0;
         const maxAgentIterations = 5;  // Define maximum iterations here
-    
-        try {
-            while (!finalAnswer && iterations < maxAgentIterations) {
 
+        while (!finalAnswer && iterations < maxAgentIterations) {
+            try {
                 logger.info(`🏁 Agent ${_self.name} - ${AGENT_STATUS_enum.ITERATION_START} (${iterations+1}/${maxAgentIterations})`);
                 
                 // pure function that returns the result of the agent thinking
                 const thinkingResult = await this.executeThinking(_self, task, ExecutableAgent, feedbackMessage);
                 // sometimes the LLM does not returns a valid JSON object so we try to sanitize the output here
-                const parsedThinkingResult = getParsedJSON(thinkingResult);
+                const parsedThinkingResult = getParsedJSON(thinkingResult.llmOutput);
 
                 const actionType = this.determineActionType(parsedThinkingResult);
 
@@ -89,14 +88,15 @@ class ReactChampionAgent extends BaseAgent {
                         logger.warn(`Unhandled agent status: ${actionType}`);
                         break;
                 }
-
-                logger.info(`🔄 Agent ${_self.name} - ${AGENT_STATUS_enum.ITERATION_END}`);
-                iterations++;
+            } catch (error) {
+                // DETERMINE The severity of the error
+                // TODO: See what to do with this kind of errors
+                this.handleAgenticLoopError(_self, error, iterations, maxAgentIterations);
             }
-        } catch (error) {
-            // TODO: See what to do with this kind of errors
-            this.handleAgenticLoopCriticalError(_self, error, iterations, maxAgentIterations);
+            logger.info(`🔄 Agent ${_self.name} - ${AGENT_STATUS_enum.ITERATION_END}`);
+            iterations++;            
         }
+
     
         if (iterations >= maxAgentIterations) {
             this.handleMaxIterationsError(_self, iterations);
@@ -209,52 +209,88 @@ class ReactChampionAgent extends BaseAgent {
         }
     }
 
-    handleThinkingStart(agent, task, feedbackMessage) {
-
+    async handleThinkingStart({ agent, task, messages }) {
+        try {
+            logger.info(`🤔 Agent ${agent.name} starts thinking...`);
+            const transformedMessages = messages.flatMap(subArray =>
+                subArray.map(message => ({
+                    type: message.constructor.name,
+                    content: message.content
+                }))
+            );
+            return transformedMessages;
+        } catch (error) {
+            logger.error(`Error in handleThinkingStart: ${error}`);
+            throw new Error(`Failed to start thinking: ${error.message}`);
+        }
     }
-    async executeThinking(agent, task, ExecutableAgent, feedbackMessage) {
-        
-        logger.info(`🤔 Agent ${agent.name} is ${AGENT_STATUS_enum.THINKING}...`);
-
-        // console.log(AGENT_STATUS_enum.THINKING, iterations);
-        const agentResult = await ExecutableAgent.invoke(
-            {feedbackMessage},
-            {
-                "configurable":{"sessionId":"foo-bar-baz"},
-                callbacks: [{
-                    handleChatModelStart: async (llm, messages) => {
-                    // Transform and flatten the messages array
-                    const transformedMessages = messages.map(subArray => 
-                        subArray.map(message => {
-                            const type = message.constructor.name;  // Assuming each message object has a 'type' property
-                            let content = message.content;
-                            return { type, content };
-                        })
-                    ).flat();  // Flatten the array of arrays into a single array
-
-                    console.log(transformedMessages);     
-                        agent.handleThinkingStart(agent, task, transformedMessages);
-                    },
-
-                    handleLLMEnd: async (output) => {
-                        console.log('----handleLLMEnd!', output);
-                        //_self.store.getState().handleAgentThinkingEnd({agent: _self, task, output});
-                        
-                        // Getting the output from the LLM
-                        // console.log(output?.generations[0][0].text);
-
-                        // Getting the token usage from the LLM
-                        // console.log(output?.llmOutput?.tokenUsage);
-                    },                    
-                }]
-            }
-        );
-        const agentResultParser = new StringOutputParser();
-        const parsedResponse = await agentResultParser.invoke(agentResult);
-        return parsedResponse;
-    }    
     
+    async handleThinkingEnd({ agent, task, output }) {
+        try {
+            logger.info(`🤔 Agent ${agent.name} finished thinking...`);
+            const agentResultParser = new StringOutputParser();
+            if (!output.generations || !output.generations[0] || !output.generations[0][0].message) {
+                throw new Error('Invalid output structure');
+            }
 
+            const { message } = output.generations[0][0];
+            const parsedResult = await agentResultParser.invoke(message);
+            return {
+                llmOutput: parsedResult,
+                llmUsageStats: {
+                    inputTokens: message.usage_metadata?.input_tokens ?? -1,
+                    outputTokens: message.usage_metadata?.output_tokens ?? -1
+                }
+            };
+        } catch (error) {
+            logger.error(`Error in handleThinkingEnd: ${error}`);
+            throw new Error(`Failed to process thinking result: ${error.message}`);
+        }
+    }
+
+    handleThinkingError({ agent, task, error }) {  
+        logger.error(`🤔 Agent ${agent.name} encountered an error during ${AGENT_STATUS_enum.THINKING_ERROR}:`, error);
+        throw new Error(`Agent ${agent.name} encountered an error during thinking   ${error}`);
+    }
+
+    async executeThinking(agent, task, ExecutableAgent, feedbackMessage) {
+        return new Promise((resolve, reject) => {
+            ExecutableAgent.invoke(
+                { feedbackMessage },
+                {
+                    "configurable": { "sessionId": "foo-bar-baz" },
+                    callbacks: [{
+                        handleChatModelStart: (llm, messages) => {
+                            try {
+                                agent.handleThinkingStart({ agent, task, messages });
+                            } catch (error) {
+                                logger.error('Error in handleThinkingStart handler:', error);
+                                agent.handleThinkingError({ agent, task, error });
+                                reject(new Error(`Error initializing thinking process: ${error.message}`));
+                            }
+                        },
+    
+                        handleLLMEnd: async (output) => {
+                            console.log('----handleLLMEnd!', output);
+                            try {
+                                const thinkingOutput = await agent.handleThinkingEnd({ agent, task, output });
+                                resolve(thinkingOutput);
+                            } catch (parseError) {
+                                logger.error('Error during handleThinkingEnd:', parseError);
+                                agent.handleThinkingError({ agent, task, error: parseError });
+                                reject(new Error(`Error processing thinking output: ${parseError.message}`));
+                            }
+                        },
+                    }]
+                }
+            ).catch(error => {
+                logger.error('Error during Agent.executeThinking  handler invocation:', error);
+                agent.handleThinkingError({ agent, task, error });
+                reject(new Error(`Error during Agent.executeThinking handler invocation: ${error.message}`));
+            });
+        });
+    }
+    
     handleIssuesParsingLLMOutput(agent) { 
         // console.log("ISSUES_PARSING_JSON", parsedJSON);
         logger.info(`😡 Agent ${agent.name} found some ${AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT}.`);
@@ -317,13 +353,13 @@ class ReactChampionAgent extends BaseAgent {
         return feedbackMessage;
     }
 
-    handleAgenticLoopCriticalError(agent, error, iterations, maxAgentIterations) {
-        logger.error(`🚨 Agent ${agent.name} - ${AGENT_STATUS_enum.AGENTIC_LOOP_CRITICAL_ERROR} | Iterations: ${iterations}/${maxAgentIterations}`);
-        throw new Error(`Agent ${agent.name} encountered a critical error. Iterations: ${iterations}/${maxAgentIterations}.`, error);
+    handleAgenticLoopError(agent, error, iterations, maxAgentIterations) {
+        logger.error(`🚨 Agent ${agent.name} - ${AGENT_STATUS_enum.AGENTIC_LOOP_ERROR} | Iterations: ${iterations}/${maxAgentIterations}`, error.message);
+        throw new Error(`Agent ${agent.name} encountered a critical error. Iterations: ${iterations}/${maxAgentIterations}.`, error.message);
     }
 
     handleMaxIterationsError(agent, iterations) {
-        logger.warn(`🛑 Agent ${agent.name} - ${AGENT_STATUS_enum.MAX_ITERATIONS_ERROR} | Iterations: ${iterations}`);
+        logger.error(`🛑 Agent ${agent.name} - ${AGENT_STATUS_enum.MAX_ITERATIONS_ERROR} | Iterations: ${iterations}`);
         throw new Error(`Agent ${agent.name} reached the maximum number of iterations without finding a final answer.`);
     }
 

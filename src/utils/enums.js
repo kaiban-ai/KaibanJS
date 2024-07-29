@@ -14,8 +14,9 @@
 const AGENT_STATUS_enum = {
     INITIAL: "INITIAL",
     THINKING: "THINKING", // LangChain Callback: llmStart()
+    THINKING_END: "THINKING_END", // LangChain Callback: llmEnd()
     THINKING_ERROR: "THINKING_ERROR", // LangChain Callback: handleLLMError()
-    THOUGHT: "THOUGHT",   // LangChain Callback: llmEnd()
+    THOUGHT: "THOUGHT",   // LangChain Callback: llmEnd() and THOUGH Present in the output
     EXECUTING_ACTION: "EXECUTING_ACTION", // LangChain Callback: handleAgentAction()
     USING_TOOL: "USING_TOOL",   // LangChain Callback: handleToolStart()
     USING_TOOL_ERROR: "USING_TOOL_ERROR",   // LangChain Callback: handleToolError()
@@ -29,7 +30,7 @@ const AGENT_STATUS_enum = {
     SELF_QUESTION: "SELF_QUESTION",
     ITERATION_START: "ITERATION_START",
     ITERATION_END: "ITERATION_END",
-    AGENTIC_LOOP_CRITICAL_ERROR: "AGENTIC_LOOP_CRITICAL_ERROR",
+    AGENTIC_LOOP_ERROR: "AGENTIC_LOOP_ERROR",
     WEIRD_LLM_OUTPUT: "WEIRD_LLM_OUTPUT",
 }
 
