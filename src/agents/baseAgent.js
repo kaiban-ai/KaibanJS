@@ -1,4 +1,3 @@
-import { getApiKey } from '../utils/agents';
 import { v4 as uuidv4 } from 'uuid';
 import { AGENT_STATUS_enum } from '../utils/enums';
 
