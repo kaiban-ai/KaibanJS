@@ -14,4 +14,8 @@ const logger = pino({
   }
 });
 
-export { logger };
+const setLogLevel = (level) => {
+  logger.level = level;
+};
+
+export { logger, setLogLevel };
