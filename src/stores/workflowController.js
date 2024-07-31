@@ -28,11 +28,8 @@ export const setupWorkflowController = (useTeamStore) => {
             if (doneTasks.length > previousDoneTasks.length) {
                 const tasks = useTeamStore.getState().tasks;
                 const nextTask = tasks.find(t => t.status === TASK_STATUS_enum.TODO);
-
                 if (nextTask) {
                     useTeamStore.getState().updateTaskStatus(nextTask.id, TASK_STATUS_enum.DOING);
-                } else {
-                    useTeamStore.getState().finishWorkflowAction();
                 }
             }
         }

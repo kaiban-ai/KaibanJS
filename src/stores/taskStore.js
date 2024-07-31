@@ -56,7 +56,7 @@ export const useTaskStore = (set, get) => ({
         const stats = get().getTaskStats(task, get);
         task.status = TASK_STATUS_enum.DONE;
         task.result = result;
-
+        
         const taskLog = get().prepareNewLog({
             agent,
             task,
@@ -67,14 +67,21 @@ export const useTaskStore = (set, get) => ({
             },
             logType: 'TaskStatusUpdate'
         });
-
+        logger.debug(`Task completed with ID ${task.id}, Duration: ${stats.duration} seconds`);
         set(state => ({
-            tasks: state.tasks.map(t => t.id === task.id ? {...t, ...stats, status: TASK_STATUS_enum.DONE, result: result} : t),
+            ...state,
             workflowLogs: [...state.workflowLogs, taskLog],
+            tasks: state.tasks.map(t => t.id === task.id ? {...t, ...stats, status: TASK_STATUS_enum.DONE, result: result} : t),
             workflowContext: `${state.workflowContext} ${result}`
         }));
-
-        logger.debug(`Task completed with ID ${task.id}, Duration: ${stats.duration} seconds`);
+    
+        // This logic is here cause if put it in a subscriber, it will create race conditions
+        // that will create a a non deterministic behavior for the Application State
+        const tasks = get().tasks;
+        const allTasksDone = tasks.every(t => t.status === TASK_STATUS_enum.DONE);
+        if(allTasksDone){
+            get().finishWorkflowAction();
+        }
     },
 
     handleTaskError: ({ task, error }) => {

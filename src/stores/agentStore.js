@@ -288,13 +288,13 @@ const useAgentStore = (set, get) => ({
             agentStatus: agent.status,
         });
         logger.info(`🏁 ${AGENT_STATUS_enum.TASK_COMPLETED}: Agent ${agent.name} finished the given task.`);
+        // Call handleTaskCompleted or trigger a listener for the log entry
         set(state => ({
             workflowLogs: [...state.workflowLogs, agentLog],
             // Additional state updates if necessary
         }));
-    
-        // Call handleTaskCompleted or trigger a listener for the log entry
         get().handleTaskCompleted({ agent, task, result });
+    
     }
 });
 
