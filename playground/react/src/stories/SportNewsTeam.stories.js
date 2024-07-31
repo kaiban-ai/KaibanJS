@@ -3,6 +3,7 @@ import teamOpenAI from '../teams/sport_news/openai';
 import teamAnthropic from '../teams/sport_news/anthropic';
 import teamGemini from '../teams/sport_news/gemini';
 import teamMistral from '../teams/sport_news/mistral';
+import teamResearchTeamOpenAI from '../teams/research_team_trueai/openai';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 export default {
@@ -36,5 +37,11 @@ export const withMistral = {
   args: {
     team: teamMistral,
     title: 'With Mistral Model' 
+  },
+};
+export const withResearchTeamOpenAI = {
+  args: {
+    team: teamResearchTeamOpenAI,
+    title: 'With Research Team OpenAI' 
   },
 };
