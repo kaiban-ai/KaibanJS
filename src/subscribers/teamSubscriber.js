@@ -1,4 +1,4 @@
-import { logPrettyWorkflowStatus } from "../utils/prettyLogs";
+import { logPrettyWorkflowStatus, logPrettyWorkflowResult } from "../utils/prettyLogs";
 import { WORKFLOW_STATUS_enum } from '../utils/enums';
 
 const subscribeWorkflowStatusUpdates = (useStore) => {
@@ -42,6 +42,7 @@ const subscribeWorkflowStatusUpdates = (useStore) => {
                             status: 'Finished',
                             message: 'Workflow has successfully completed all tasks.'
                         });
+                        logPrettyWorkflowResult({...newLog.metadata});
                         break;
                     case WORKFLOW_STATUS_enum.BLOCKED:
                         logPrettyWorkflowStatus({
