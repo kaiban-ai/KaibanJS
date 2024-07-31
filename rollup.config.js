@@ -11,6 +11,7 @@ const isTest = process.env.TEST_ENV === 'mocked-llm-apis';
 function generateConfig(format) {
   
   const isESM = format === 'es';
+  const isCJS = format === 'cjs';
   const external = isESM ? ['react', 'react-dom', 'uuid', 'pino', 'pino-pretty'] : ['uuid', 'pino', 'pino-pretty'];
   return {
     input: 'src/index.js',
@@ -29,6 +30,13 @@ function generateConfig(format) {
         mainFields: ['browser', 'module', 'main']
       }),
       commonjs(),
+      ...(isCJS ? [replace({
+        preventAssignment: true,
+        values: {
+          'navigator.userAgentData': 'undefined',
+          'navigator.userAgent': '""'
+        }
+      })] : []),      
       ...(isTest ? [replace({
         'shims.fetch': `(...args) => { return global.fetch(...args); };\n`,
         preventAssignment: true
