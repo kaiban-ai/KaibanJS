@@ -19,8 +19,8 @@ const AGENT_STATUS_enum = {
     THOUGHT: "THOUGHT",   // LangChain Callback: llmEnd() and THOUGH Present in the output
     EXECUTING_ACTION: "EXECUTING_ACTION", // LangChain Callback: handleAgentAction()
     USING_TOOL: "USING_TOOL",   // LangChain Callback: handleToolStart()
+    USING_TOOL_END: "USING_TOOL_END",   
     USING_TOOL_ERROR: "USING_TOOL_ERROR",   // LangChain Callback: handleToolError()
-    TOOL_RESULTS: "TOOL_RESULTS",   
     TOOL_DOES_NOT_EXIST: "TOOL_DOES_NOT_EXIST",   
     OBSERVATION: "OBSERVATION", // LangChain Callback: handleToolEnd()
     FINAL_ANSWER: "FINAL_ANSWER", // LangChain Callback: handleAgentEnd(),
@@ -52,4 +52,26 @@ const TASK_STATUS_enum = {
     DONE: 'DONE'
 };
 
-export { AGENT_STATUS_enum, TASK_STATUS_enum };
+// ──── Workflow Status Definitions ───────────────────────────────────────
+// 
+// INITIAL: The very beginning of the workflow process, before any action has been initiated.
+// RUNNING: The workflow is actively processing tasks, indicating that the workflow is in full operation.
+// STOPPING: The workflow is in the process of being stopped, which could be due to task completion, a manual stop command, or other reasons.
+// STOPPED: The workflow has been completely stopped and is in a stable state, ready for review or restart.
+// ERRORED: The workflow has encountered a critical issue and has halted unexpectedly, requiring error handling or intervention.
+// FINISHED: The workflow has successfully completed all its tasks and no further operational actions are required.
+// BLOCKED: The workflow is unable to proceed due to one or more tasks being blocked, requiring administrative review or automated recovery actions to resume or terminate the blocked tasks.
+// 
+// ─────────────────────────────────────────────────────────────────────────
+
+const WORKFLOW_STATUS_enum = {
+    INITIAL: 'INITIAL',
+    RUNNING: 'RUNNING',
+    STOPPING: 'STOPPING',
+    STOPPED: 'STOPPED',
+    ERRORED: 'ERRORED',
+    FINISHED: 'FINISHED',
+    BLOCKED: 'BLOCKED'
+};
+
+export { AGENT_STATUS_enum, TASK_STATUS_enum, WORKFLOW_STATUS_enum };

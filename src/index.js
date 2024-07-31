@@ -19,8 +19,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { createTeamStore } from './stores';
 import { ReActAgent, BasicChatAgent, ReactChampionAgent } from './agents';
-import { TASK_STATUS_enum } from './utils/enums';
-
+import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from './utils/enums';
 
 class Agent {
     constructor({ type, ...config }) {
@@ -111,8 +110,8 @@ class Task {
 }
 
 class Team {
-    constructor({ name, agents, tasks, verbose = 1, inputs = {}, env = null }) {
-        this.store = createTeamStore({ name, agents:[], tasks:[], inputs, env, verbose});
+    constructor({ name, agents, tasks, logLevel, inputs = {}, env = null }) {
+        this.store = createTeamStore({ name, agents:[], tasks:[], inputs, env, logLevel});
              
         // Add agents and tasks to the store, they will be set with the store automatically
         this.store.getState().addAgents(agents);
@@ -123,19 +122,24 @@ class Team {
         return new Promise((resolve, reject) => {
             // Subscribe to the store and save the unsubscribe function for cleanup
             const unsubscribe = this.store.subscribe(state => state.teamWorkflowStatus, (status) => {
-                if (status === 'finished_workflow') {
-                    // When the condition is met, resolve the promise with the workflowResult
-                    resolve(this.store.getState().workflowResult);
-                    // Unsubscribe to prevent memory leaks
-                    unsubscribe();
-                } else if (status === 'errored_workflow') {
-                    // When the errored_workflow condition is met, reject the promise
-                    reject(new Error('Workflow encountered an error'));
-                    // Unsubscribe to prevent memory leaks
-                    unsubscribe();
+                switch (status) {
+                    case WORKFLOW_STATUS_enum.FINISHED:
+                        resolve(this.store.getState().workflowResult);
+                        // Unsubscribe to prevent memory leaks
+                        unsubscribe();
+                        break;
+                    case WORKFLOW_STATUS_enum.ERRORED:
+                        reject(new Error('Workflow encountered an error'));
+                        unsubscribe();
+                        break;
+                    case WORKFLOW_STATUS_enum.BLOCKED:
+                        reject(new Error('Workflow blocked'));
+                        unsubscribe();
+                        break;
+                    default:
+                        break;
                 }
             });
-    
             try {
                 // Trigger the workflow
                 this.store.getState().startWorkflow(inputs);
