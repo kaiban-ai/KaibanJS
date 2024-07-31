@@ -3,7 +3,7 @@ import { AGENT_STATUS_enum } from '../utils/enums';
 
 
 class BaseAgent {
-    constructor({ name, role, goal, background, tools, llmConfig = {}, maxIterations = 10 }) {
+    constructor({ name, role, goal, background, tools, llmConfig = {}, maxIterations = 5 }) {
         this.id = uuidv4();
         this.name = name;
         this.role = role;
@@ -17,6 +17,7 @@ class BaseAgent {
         this.llmConfig = { 
             provider: "openai", 
             model: "gpt-3.5-turbo-0125",
+            maxRetries: 3,
              ...llmConfig 
         };
     }
