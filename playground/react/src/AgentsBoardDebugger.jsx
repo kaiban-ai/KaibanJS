@@ -24,11 +24,8 @@ const AgentsBoardDebugger = ({team, title=null}) => {
     // }, [tasks]);
         
     const startTeam = () => {
-        try {
-            team.start(inputs);
-        } catch (error) {
-            console.error('Invalid JSON input:', error);
-        }      
+        team.start(inputs)
+            .catch(error => console.log('Error during team workflow execution'));
     };
 
 
@@ -66,7 +63,15 @@ return (
         <div style={{ margin: '20px 0' }}>
             <h2 style={{ color: '#666', fontSize: '30px' }}>📋 Workflow Logs</h2>
             {workflowLogs.map((log, index) => (
-                <p key={index} style={{ color: '#999' }}>🔘 ({log.taskStatus}) - ({log.taskTitle}) - ({log.agentName}) - ({log.agentStatus}) - timestamp: {log.timestamp} - {log.agent.name} - {log.task.description}</p>
+                log.logType !== 'WorkflowStatusUpdate' ? (
+                    <p key={index} style={{ color: '#999' }}>
+                        🔘 ({log.taskStatus}) - ({log.taskTitle}) - ({log.agentName}) - ({log.agentStatus}) - timestamp: {log.timestamp} - {log.agent?.name} - {log.task?.description}
+                    </p>
+                ) : (
+                    <p key={index} style={{ color: '#999' }}>
+                        🔘 Workflow Status Update - ({log.workflowStatus}) timestamp: {log.timestamp}
+                    </p>
+                )
             ))}
         </div>        
         <div style={{ margin: '20px 0' }}>

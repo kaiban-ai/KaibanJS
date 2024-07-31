@@ -9,14 +9,16 @@
  * The store is designed to be imported and used directly in components or services where state management
  * is required, offering straightforward access to state properties and actions to modify them.
  */
-import PQueue from 'p-queue';
 import {create} from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { useAgentStore } from './agentStore';
 import { useTaskStore } from './taskStore';
-import { TASK_STATUS_enum} from '../utils/enums';
+import { TASK_STATUS_enum, WORKFLOW_STATUS_enum} from '../utils/enums';
 import { getTaskTitleForLogs, interpolateTaskDescription} from '../utils/tasks';
-import {logger} from '../utils/logger';
+import {logger, setLogLevel} from '../utils/logger';
+import { subscribeWorkflowStatusUpdates } from '../subscribers/teamSubscriber';
+import { subscribeTaskStatusUpdates } from '../subscribers/taskSubscriber';
+import { setupWorkflowController } from './workflowController';
 
 // ──── Store Factory for Multiple Teams ───────────────────────────────
 // 
@@ -28,26 +30,16 @@ import {logger} from '../utils/logger';
 const createTeamStore = (initialState = {}) => {   
     // console.log("Initial state:", initialState); // Log the initial state
     // Define the store with centralized state management and actions
+    if(initialState.logLevel){
+        setLogLevel(initialState.logLevel); // Update logger level if provided
+    }
     const useTeamStore =  create(
         devtools(
             subscribeWithSelector((set, get) => ({ 
                 ...useAgentStore(set, get),
                 ...useTaskStore(set, get),
-            
-    /**
-     * State definitions for teamWorkflow management
-     * 
-     * 'first_workflow': Indicates the very beginning of the workflow process, before any action has been initiated.
-     * 'creating_workflow': Refers to the phase where the system is actively setting up the team, configuring parameters and initializing required resources.
-     * 'starting_workflow': Marks the transition from the initial setup to the actual beginning of task processing.
-     * 'running_workflow': The workflow is actively processing tasks, indicating that the workflow is in full operation.
-     * 'stopping_workflow': The workflow is in the process of being stopped, which could be due to task completion, a manual stop command, or other reasons.
-     * 'stopped_workflow': The workflow has been completely stopped and is in a stable state, ready for review or restart.
-     * 'errored_workflow': Indicates that the workflow has encountered a critical issue and has halted unexpectedly, requiring error handling or intervention.
-     * 'finished_workflow': The workflow has successfully completed all its tasks and no further operational actions are required.
-     */
 
-    teamWorkflowStatus: initialState.teamWorkflowStatus || 'first_workflow',
+    teamWorkflowStatus: initialState.teamWorkflowStatus || WORKFLOW_STATUS_enum.INITIAL,
     workflowResult: initialState.workflowResult || null,
     name: initialState.name || '',
     agents: initialState.agents || [],
@@ -59,6 +51,7 @@ const createTeamStore = (initialState = {}) => {
     setInputs: (inputs) => set({ inputs }),  // Add a new action to update inputs
     setName: (name) => set({ name }),  // Add a new action to update inputs
     setEnv: (env) => set({ env }),  // Add a new action to update inputs
+    logLevel: initialState.logLevel,
 
     addAgents: (agents) => {
         const { env } = get();
@@ -80,12 +73,12 @@ const createTeamStore = (initialState = {}) => {
 
     startWorkflow: async (inputs) => {
         // Start the first task or set all to 'TODO' initially
-        logger.info(`Team ${get().name} is starting the task sequence...`);
+        logger.info(`🚀 Team *${get().name}* is starting to work.`);
         if(inputs){
             get().setInputs(inputs);
         }
         get().resetWorkflowStateAction();
-        get().setTeamWorkflowStatus('running_workflow');      
+        get().setTeamWorkflowStatus(WORKFLOW_STATUS_enum.RUNNING);      
         const tasks = get().tasks;
         if (tasks.length > 0 && tasks[0].status === TASK_STATUS_enum.TODO) {
             get().updateTaskStatus(tasks[0].id, TASK_STATUS_enum.DOING);
@@ -114,10 +107,10 @@ const createTeamStore = (initialState = {}) => {
                 workflowLogs: [],
                 workflowContext: '',
                 workflowResult: null,
-                teamWorkflowStatus: 'first_workflow'
+                teamWorkflowStatus: WORKFLOW_STATUS_enum.INITIAL
             };
         });
-        logger.info("Workflow state has been reset.");
+        logger.debug("Workflow state has been reset.");
     },    
 
     // New function to handle finishing workflow
@@ -126,30 +119,47 @@ const createTeamStore = (initialState = {}) => {
         const deliverableTask = tasks.slice().reverse().find(task => task.isDeliverable);
         const lastTaskResult = tasks[tasks.length - 1].result;
 
+        // Detailed console logging
+        logger.info(`Finishing Workflow:`, deliverableTask ? deliverableTask.result : lastTaskResult);
+
+        // Prepare the log entry for finishing the workflow
+        const newLog = {
+            task: null,
+            agent: null,
+            timestamp: Date.now(),
+            logDescription: `Workflow finished with result: ${deliverableTask ? deliverableTask.result : lastTaskResult}`,
+            workflowStatus: WORKFLOW_STATUS_enum.FINISHED,
+            metadata: {
+                result: deliverableTask ? deliverableTask.result : lastTaskResult
+            },
+            logType: 'WorkflowStatusUpdate'
+        };
+
         // Update state with the final results and set workflow status
-        set({
-            workflowContext: '',
-            workflowResult: deliverableTask ? deliverableTask.result : lastTaskResult,
-            teamWorkflowStatus: 'finished_workflow',
-        });
-    }, 
+        set(state => ({
+            ...state,
+            workflowContext: '',  // Reset the workflow context
+            workflowResult: deliverableTask ? deliverableTask.result : lastTaskResult,  // Set the final result
+            teamWorkflowStatus: WORKFLOW_STATUS_enum.FINISHED,  // Set status to indicate a finished workflow
+            workflowLogs: [...state.workflowLogs, newLog]  // Append new log to the logs array
+        }));
+    },
     // Add a new action to update teamWorkflowStatus
     setTeamWorkflowStatus: (status) => set({ teamWorkflowStatus: status }),   
     // Function to handle errors during workflow execution
     // Adjusted method to handle workflow errors
     handleWorkflowError: (task, error) => {
         // Detailed console error logging
-        logger.error(`[${new Date().toISOString()}] Workflow Error:`, error.message);
-
+        logger.error(`Workflow Error:`, error.message);
         // Prepare the error log with specific workflow context
         const newLog = {
             task,
             agent: task.agent,
             timestamp: Date.now(),
             logDescription: `Workflow error encountered: ${error.message}`,
-            workflowStatus: 'errored_workflow',
+            workflowStatus: WORKFLOW_STATUS_enum.ERRORED,
             metadata: {
-                errorMessage: error.message
+                error
             },
             logType: 'WorkflowStatusUpdate'
         };
@@ -158,22 +168,46 @@ const createTeamStore = (initialState = {}) => {
         set(state => ({
             ...state,
             workflowContext: '',  // Reset the workflow context
-            teamWorkflowStatus: 'errored_workflow',  // Set status to indicate an error
+            teamWorkflowStatus: WORKFLOW_STATUS_enum.ERRORED,  // Set status to indicate an error
             workflowLogs: [...state.workflowLogs, newLog]  // Append new log to the logs array
         }));
     },
+
+    handleWorkflowBlocked: ({ task, error }) => {
+        // Detailed console error logging
+        logger.warn(`WORKFLOW BLOCKED:`, error.message);
+        // Prepare the error log with specific workflow context
+        const newLog = {
+            task,
+            agent: task.agent,
+            timestamp: Date.now(),
+            logDescription: `Workflow blocked encountered: ${error.message}`,
+            workflowStatus: WORKFLOW_STATUS_enum.BLOCKED,
+            metadata: {
+                error
+            },
+            logType: 'WorkflowStatusUpdate'
+        };
+
+        // Update state with error details and add new log entry
+        set(state => ({
+            ...state,
+            teamWorkflowStatus: WORKFLOW_STATUS_enum.BLOCKED,  // Set status to indicate a blocked workflow
+            workflowLogs: [...state.workflowLogs, newLog]  // Append new log to the logs array
+        }));
+    },
+
     performTask: async (agent, task) => {
         if (task && agent) {
             // Log the start of the task
-            logger.info(`Task: ${getTaskTitleForLogs(task)} starting...`);
-    
+            logger.debug(`Task: ${getTaskTitleForLogs(task)} starting...`);
+            task.status = TASK_STATUS_enum.DOING;
             // Add a log entry for the task starting
             set(state => {
                 const newLog = get().prepareNewLog({
                     agent,
                     task,
                     logDescription: `Task: ${getTaskTitleForLogs(task)} started.`,
-                    taskStatus: TASK_STATUS_enum.DOING,
                     metadata: {}, // Initial metadata can be empty or include the start time
                     logType: 'TaskStatusUpdate'
                 });
@@ -201,7 +235,6 @@ const createTeamStore = (initialState = {}) => {
      * @param {string} params.agentId - Identifier for the agent performing the action.
      * @param {string} params.taskId - Identifier of the task associated with this log entry.
      * @param {string} params.logDescription - Descriptive text detailing what the log entry is about.
-     * @param {string} params.taskStatus - Current status of the task or action at the time of logging.
      * @param {Object} params.metadata - Additional structured data providing more context about the action.
      * @param {string} params.logType - Categorization of the log entry to facilitate filtering and analysis.
      * 
@@ -231,97 +264,24 @@ const createTeamStore = (initialState = {}) => {
 
         return newLog;
     },    
-    clearAll: () => set({ agents: [], tasks: [], inputs: {}, workflowLogs: [], workflowContext: '', workflowResult: null, teamWorkflowStatus: 'first_workflow'})   
+    clearAll: () => set({ agents: [], tasks: [], inputs: {}, workflowLogs: [], workflowContext: '', workflowResult: null, teamWorkflowStatus: WORKFLOW_STATUS_enum.INITIAL})   
 
 }), "teamStore"))
     );
 
-    // After defining the store, set up the subscription inside the store definition
-    // useTeamStore.subscribe(state => state.workflowLogs, (newLogs, previousLogs) => {
-    //     if (newLogs.length > previousLogs.length) { // Check if a new log has been added
-    //         const newLog = newLogs[newLogs.length - 1]; // Get the latest log
-    //         if (newLog.logType === 'AgentStatusUpdate') {
-    //             console.log(`Agent ${newLog.agent.name} status changed to ${newLog.agentStatus}: ${newLog.logDescription}`);
-    //             console.log(newLog.metadata);
-    //         }
-    //     }
-    // });
+    // ──── Workflow Controller Initialization ────────────────────────────
+    // 
+    // Activates the workflow controller to monitor and manage task transitions and overall workflow states:
+    // - Monitors changes in task statuses, handling transitions from TODO to DONE.
+    // - Ensures tasks proceed seamlessly through their lifecycle stages within the application.
+    // ─────────────────────────────────────────────────────────────────────
+    setupWorkflowController(useTeamStore);
 
-    const taskQueue = new PQueue({ concurrency: 1 });
+    // Subscribe to task updates: Used mainly for logging purposes
+    subscribeTaskStatusUpdates(useTeamStore);
 
-    // Subscribe to changes in the tasks array where the status is TASK_STATUS_enum.DOING
-    useTeamStore.subscribe(
-        state => state.tasks.filter(t => t.status === TASK_STATUS_enum.DOING),
-        (doingTasks, previousDoingTasks) => {
-            // Ensure we only act on new TASK_STATUS_enum.DOING tasks, not previously doing tasks
-            doingTasks.forEach(task => {
-                if (!previousDoingTasks.find(t => t.id === task.id)) {
-                    taskQueue.add(() => useTeamStore.getState().performTask(task.agent, task))
-                        .then(() => {
-                            useTeamStore.getState().updateTaskStatus(task.id, TASK_STATUS_enum.DONE);
-                        })
-                        .catch(error => {
-                            // Call the centralized task error handler from the store
-                            useTeamStore.getState().handleTaskError({task, error});
-
-                            // // Call the centralized error handler from the store
-                            useTeamStore.getState().handleWorkflowError(task, error);
-                        });
-                }
-            });
-        }
-    );
-
-    // Subscribe to changes in the tasks array where the status is 'DONE'
-    useTeamStore.subscribe(
-        state => state.tasks.filter(t => t.status === 'DONE'),
-        (doneTasks, previousDoneTasks) => {
-            // Check if new tasks have been completed
-            if (doneTasks.length > previousDoneTasks.length) {
-                const tasks = useTeamStore.getState().tasks;
-                const nextTask = tasks.find(t => t.status === TASK_STATUS_enum.TODO);
-
-                // Check for the next 'TODO' task and set it to TASK_STATUS_enum.DOING
-                if (nextTask) {
-                    useTeamStore.getState().updateTaskStatus(nextTask.id, TASK_STATUS_enum.DOING);
-                } else {
-                    // Call the function to finish the workflow
-                    useTeamStore.getState().finishWorkflowAction();
-                }
-            }
-        }
-    );
-
-
-// Subscribe to changes in task status, focusing on task status updates
-useTeamStore.subscribe(state => state.workflowLogs, (newLogs, previousLogs) => {
-    if (newLogs.length > previousLogs.length) { // Check if a new log has been added
-        const newLog = newLogs[newLogs.length - 1]; // Get the latest log
-
-        if (newLog.logType === 'TaskStatusUpdate') {
-            // Calculate task position and total number of tasks for contextual logging
-            const totalTasks = useTeamStore.getState().tasks.length;
-            const taskIndex = useTeamStore.getState().tasks.findIndex(t => t.id === newLog.task.id);
-            const currentTaskNumber = taskIndex + 1; // Adding 1 because index is 0-based
-
-            // Attempt to find the previous log for this task to calculate the duration of the previous status
-            const previousLog = previousLogs.slice().reverse().find(log =>
-                log.task.id === newLog.task.id && log.taskStatus !== newLog.taskStatus
-            );
-
-            let durationMessage = "";
-            if (previousLog) {
-                const duration = ((newLog.timestamp - previousLog.timestamp) / 1000); // Duration in seconds
-                durationMessage = ` Duration from ${previousLog.taskStatus} to ${newLog.taskStatus}: ${duration} seconds.`;
-            }
-
-            // Consolidated log of task status change with the duration of the previous status
-            logger.info(`//---------------------------------------------------------------
-// Task (${currentTaskNumber}/${totalTasks}): *${getTaskTitleForLogs(newLog.task)}* status changed to ${newLog.taskStatus}.${durationMessage}
-//---------------------------------------------------------------`);
-        }
-    }
-});
+    // Subscribe to WorkflowStatus updates: Used mainly for loggin purposes
+    subscribeWorkflowStatusUpdates(useTeamStore);
 
 
     return useTeamStore;
