@@ -37,5 +37,10 @@ function logPrettyWorkflowStatus({ status, message }) {
     logger.info(`[Workflow Status: ${status}] ${message}`);
 }
 
+// Function to log workflow status updates in a formatted manner
+function logPrettyWorkflowResult({ result }) {
+    logger.info(`Workflow Result: \n\n${result}`);
+}
 
-export { logPrettyTaskCompletion, logPrettyTaskStatus, logPrettyWorkflowStatus };
+
+export { logPrettyTaskCompletion, logPrettyTaskStatus, logPrettyWorkflowStatus, logPrettyWorkflowResult };

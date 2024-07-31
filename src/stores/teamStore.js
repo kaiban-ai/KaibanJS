@@ -120,7 +120,7 @@ const createTeamStore = (initialState = {}) => {
         const lastTaskResult = tasks[tasks.length - 1].result;
 
         // Detailed console logging
-        logger.info(`Finishing Workflow:`, deliverableTask ? deliverableTask.result : lastTaskResult);
+        logger.debug(`Workflow Result:`, deliverableTask ? deliverableTask.result : lastTaskResult);
 
         // Prepare the log entry for finishing the workflow
         const newLog = {
