@@ -87,6 +87,9 @@ class Agent {
     get llmConfig() {
         return this.agentInstance.llmConfig;
     }    
+    get llmSystemMessage() {
+        return this.agentInstance.llmSystemMessage;
+    }    
 }
 class Task {
     constructor({ title = '', description, expectedOutput, agent, isDeliverable = false }) {

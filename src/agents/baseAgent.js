@@ -20,6 +20,7 @@ class BaseAgent {
             maxRetries: 3,
              ...llmConfig 
         };
+        this.llmSystemMessage = null;
     }
 
     async initAgent() {

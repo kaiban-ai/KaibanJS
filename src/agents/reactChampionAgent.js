@@ -76,7 +76,7 @@ class ReactChampionAgent extends BaseAgent {
                                 feedbackMessage = this.handleUsingToolError({agent: _self, task, parsedLLMOutput, tool, error});
                             }
                         } else {
-                            feedbackMessage = this.handleToolDoesNotExist({agent: _self, task, parsedLLMOutput, toolName, error });
+                            feedbackMessage = this.handleToolDoesNotExist({agent: _self, task, parsedLLMOutput, toolName });
                         }
                         break;
                     case AGENT_STATUS_enum.OBSERVATION:
@@ -185,6 +185,7 @@ class ReactChampionAgent extends BaseAgent {
         const systemMessage = this.buildSystemMessage(agent, task, interpolatedDescription);
         const feedbackMessage = this.buildInitialMessage(agent, task, interpolatedDescription, context);
 
+        this.llmSystemMessage = systemMessage;
 
         const promptAgent = ChatPromptTemplate.fromMessages([
             new SystemMessage(systemMessage),
@@ -293,7 +294,6 @@ class ReactChampionAgent extends BaseAgent {
                         },
     
                         handleLLMEnd: async (output) => {
-                            logger.debug('----handleLLMEnd!', output);
                             agent.handleThinkingEnd({ agent, task, output })
                                 .then(thinkingResult => resolve(thinkingResult))
                                 .catch(error => {
@@ -312,7 +312,7 @@ class ReactChampionAgent extends BaseAgent {
     handleIssuesParsingLLMOutput({agent, task, output}) { 
         const jSONPArsingError = new Error('Received an invalid JSON object from the LLM. Requesting a correctly formatted JSON response.', output.llmOutput);
         agent.store.getState().handleAgentIssuesParsingLLMOutput({agent, task, output, error: jSONPArsingError});
-        const feedbackMessage = "You returned an invalid JSON object. Please format your answer as a valid JSON object. Just the JSON object not comments or anything else.";
+        const feedbackMessage = `You returned an invalid JSON object. Please format your answer as a valid JSON object. Just the JSON object not comments or anything else. E.g: {\"finalAnswer\": \"The final answer\"}`;
         return feedbackMessage;
     }
 
@@ -324,7 +324,7 @@ class ReactChampionAgent extends BaseAgent {
 
     handleThought({agent, task, parsedLLMOutput}) {
         agent.store.getState().handleAgentThought({agent, task, output: parsedLLMOutput});
-        const feedbackMessage = "Your toughts are great, please use it to get to the final answer now.";
+        const feedbackMessage = "Your toughts are great, let's keep going.";
         return feedbackMessage;
     }
 
@@ -336,7 +336,7 @@ class ReactChampionAgent extends BaseAgent {
 
     async executeUsingTool({agent, task, parsedLLMOutput, tool}) {
         // If the tool exists, use it
-        const toolInput = parsedLLMOutput.actionInput.query;
+        const toolInput = parsedLLMOutput.actionInput;
         agent.handleUsingToolStart({agent, task, tool, input: toolInput});
         const toolResult = await tool.call(toolInput);
         agent.handleUsingToolEnd({agent, task, tool, output: toolResult});
