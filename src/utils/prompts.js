@@ -1,3 +1,5 @@
+import { zodToJsonSchema } from "zod-to-json-schema";
+
 const ReActAgentEnhancedPrompt = `
     You are {name}.
     Your role is: {role}.
@@ -77,21 +79,29 @@ const getChampionReActAgentSystemPrompt = (inputs) => {
         ## Tools available for your use: 
 
         ${inputs.tools.length > 0 ? 
-            inputs.tools.map(tool => `${tool.name}: ${tool.description}`).join(', ') : 
+            inputs.tools.map(tool => `${tool.name}: ${tool.description} Tool Input Schema: ${JSON.stringify(zodToJsonSchema(tool.schema))}`).join(', ') : 
             "No tools available. You must reply in your internal knowledge."}
 
         **Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.
 
         ## Format of your output
 
-        You will return one of the following: 
+        You will return just one of the following:
+        
+        - Thought + (Action or Self Question)
+        OR
+        - Observation
+        OR
+        - Final Answer
+
+        Below the explanation of each one:
 
         ### Thought + (Action or Self Question)
 
         {
-           thought: "your thoughts about what to next" // it could be an action or ask yourself a follow up question
-           action:  "you decide what action to take based on your previous thought",// the action could be a self follow up question or decide to use a tool from the available tools to use,
-           actionInput: the input to the action, just a simple JSON object, enclosed in curly braces, using \" to wrap keys and values.
+           "thought": "your thoughts about what to next" // it could be an action or ask yourself a follow up question
+           "action":  "you decide what action to take based on your previous thought",// the action could be a self follow up question or decide to use a tool from the available tools to use,
+           "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \" to wrap keys and values. Remember to use the Tool Schema.
         }
 
         Examples: 
@@ -124,6 +134,8 @@ const getChampionReActAgentSystemPrompt = (inputs) => {
         {
             "finalAnswer": "The final answer to the Task."
         }
+
+        **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         `
         ; 
 };
