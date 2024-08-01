@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 const AgentsBoardDebugger = ({team, title=null}) => {
 
     const useTeamStore = team.useStore(); 
-    const { agents, tasks, workflowLogs, teamWorkflowStatus, workflowResult, inputs, setInputs } = useTeamStore(state => ({
+    const { agents, tasks, workflowLogs, teamWorkflowStatus, workflowResult, inputs, setInputs, workflowContext } = useTeamStore(state => ({
         agents: state.agents,
         tasks: state.tasks,
         workflowLogs: state.workflowLogs,
@@ -11,7 +11,22 @@ const AgentsBoardDebugger = ({team, title=null}) => {
         workflowResult: state.workflowResult,
         inputs: state.inputs,
         setInputs: state.setInputs,
+        workflowContext: state.workflowContext
     }));
+
+    const [openSystemMessage, setOpenSystemMessage] = useState({});
+    const [openWorkflowContext, setOpenWorkflowContext] = useState(false);
+
+    const toggleSystemMessage = (id) => {
+        setOpenSystemMessage(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
+    };    
+
+    const toggleWorkflowContext = () => {
+        setOpenWorkflowContext(prev => !prev);
+    };
 
     const [statusLog, setStatusLog] = useState([]);
 
@@ -40,10 +55,22 @@ return (
                 <button onClick={startTeam} style={{ padding: '10px', backgroundColor: '#0000FF', color: 'white', border: 'none', cursor: 'pointer' }}>Start Workflow</button>
             </p>
         </div>        
-        <div style={{ margin: '20px  0' }}>
+        <div style={{ margin: '20px 0' }}>
             <h2 style={{ color: '#666', fontSize: '30px' }}>🕵️‍♂️ Agents</h2>
             {agents.map(agent => (
-                <p key={agent.id} style={{ color: '#999' }}>{agent.name} - {agent.role} - [{agent.type}] - [{agent.llmConfig.provider}- {agent.llmConfig.model}] - status: ({agent.status})</p>
+                <div key={agent.id} style={{ color: '#999', marginBottom: '10px' }}>
+                    {agent.name} - {agent.role} - [{agent.type}] - [{agent.llmConfig.provider}- {agent.llmConfig.model}] - status: ({agent.status})
+                    {agent.llmSystemMessage && (
+                        <div onClick={() => toggleSystemMessage(agent.id)} style={{ cursor: 'pointer', textDecoration: 'underline' }}>
+                            {openSystemMessage[agent.id] ? 'Hide System Message' : 'Show System Message'}
+                        </div>
+                    )}
+                    {openSystemMessage[agent.id] && (
+                        <div style={{ color: '#999' }}>
+                            System Message: {agent.llmSystemMessage}
+                        </div>
+                    )}
+                </div>
             ))}
         </div>
         <div style={{ margin: '20px 0' }}>
@@ -59,7 +86,18 @@ return (
                     <div>🔘 Status: {status}</div>
                 </div>
             ))}
-        </div>        
+        </div>
+        <div style={{ marginTop: '20px' }}>
+            <h2 style={{ color: '#666', fontSize: '30px', cursor: 'pointer' }} onClick={toggleWorkflowContext}>
+            {openWorkflowContext ? '▼' : '▶'} 🧠 Workflow Context
+            </h2>
+            {openWorkflowContext && (
+                <div style={{ color: '#999' }}>
+                    {workflowContext ? workflowContext : 'No context available'}
+                </div>
+            )}
+        </div>
+                
         <div style={{ margin: '20px 0' }}>
             <h2 style={{ color: '#666', fontSize: '30px' }}>📊 Task Results</h2>
             {tasks.map(task => (
