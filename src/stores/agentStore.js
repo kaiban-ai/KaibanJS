@@ -13,7 +13,7 @@ const useAgentStore = (set, get) => ({
             logType: 'AgentStatusUpdate',
             agentStatus: agent.status
         });
-        logger.debug(`🏁 ${AGENT_STATUS_enum.ITERATION_START}: Agent ${agent.name} -  (${iterations+1}/${maxAgentIterations})`);
+        logger.trace(`🏁 ${AGENT_STATUS_enum.ITERATION_START}: Agent ${agent.name} -  (${iterations+1}/${maxAgentIterations})`);
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));        
     },
     
@@ -27,7 +27,7 @@ const useAgentStore = (set, get) => ({
             logType: 'AgentStatusUpdate',
             agentStatus: agent.status,
         }); 
-        logger.debug(`🔄 ${AGENT_STATUS_enum.ITERATION_END}: Agent ${agent.name} ended another iteration.`);
+        logger.trace(`🔄 ${AGENT_STATUS_enum.ITERATION_END}: Agent ${agent.name} ended another iteration.`);
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));     
     },   
 
@@ -42,6 +42,9 @@ const useAgentStore = (set, get) => ({
             agentStatus: agent.status,
         });
         logger.info(`🤔 ${AGENT_STATUS_enum.THINKING}: Agent ${agent.name} starts thinking...`);
+        logger.debug('System Message:', messages[0]);
+        logger.debug('Feedback Message:', messages[messages.length - 1].content);
+        logger.debug('All Messages', messages);
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
 
@@ -56,7 +59,8 @@ const useAgentStore = (set, get) => ({
             agentStatus: agent.status,
         });
         logger.info(`💡 ${AGENT_STATUS_enum.THINKING_END}: Agent ${agent.name} finished thinking.`);
-        logger.debug(output.llmUsageStats);
+        logger.trace(`Output:`, output.parsedLLMOutput);
+        logger.trace(`Usage:`, output.llmUsageStats);
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
 
@@ -118,6 +122,7 @@ const useAgentStore = (set, get) => ({
             agentStatus: agent.status,
         });
         logger.info(`🛠️⏳ ${AGENT_STATUS_enum.USING_TOOL}: Agent ${agent.name} is  using ${tool.name}...`);
+        logger.debug(`Tool Input:`, input);
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
 
@@ -132,7 +137,7 @@ const useAgentStore = (set, get) => ({
             agentStatus: agent.status,
         });
         logger.info(`🛠️✅ ${AGENT_STATUS_enum.USING_TOOL_END}: Agent ${agent.name} - got  results from tool:${tool.name}`);
-        logger.debug(output);
+        logger.debug(`Tool Output:`, output);
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
 
@@ -191,7 +196,7 @@ const useAgentStore = (set, get) => ({
             agentStatus: agent.status,
         });
         logger.info(`💭 ${AGENT_STATUS_enum.THOUGHT}: Agent ${agent.name} has a cool though.`);
-        logger.debug(`${output.thought}`);
+        logger.info(`${output.thought}`);
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
     
