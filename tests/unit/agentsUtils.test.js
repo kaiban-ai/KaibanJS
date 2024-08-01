@@ -66,7 +66,20 @@ describe('Agents Utility Functions', () => {
             const result = getParsedJSON(input);
             expect(result).toEqual(expectedOutput);
         });        
+
+        test('should handle JSON strings with markdown', () => {
+            const input = "/```json\n{\n \"thought\": \"To get the answer, I need to look for the latest Copa America tournament and its winner.\",\n \"action\": \"tavily_search_results_json\",\n \"actionInput\": {\"query\": \"Copa America 2024 winner\"}\n}\n```";
+            const expectedOutput = {
+                thought: "To get the answer, I need to look for the latest Copa America tournament and its winner.",
+                action: "tavily_search_results_json",
+                actionInput: { query: "Copa America 2024 winner" }
+            };
+            const result = getParsedJSON(input);
+            expect(result).toEqual(expectedOutput);
+        });        
         
+
+
 
         // More tests can be added here for different scenarios
     });
