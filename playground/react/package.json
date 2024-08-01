@@ -14,6 +14,7 @@
   "dependencies": {
     "@agentic/stdlib": "^6.4.0",
     "@langchain/community": "^0.2.19",
+    "mathjs": "^13.0.3",
     "octokit": "^4.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
