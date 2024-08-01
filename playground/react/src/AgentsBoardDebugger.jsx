@@ -61,6 +61,21 @@ return (
             ))}
         </div>        
         <div style={{ margin: '20px 0' }}>
+            <h2 style={{ color: '#666', fontSize: '30px' }}>📊 Task Results</h2>
+            {tasks.map(task => (
+                <div key={task.id} style={{ color: '#999', marginBottom: '10px' }}>
+                    <div>🔘 Task: {task.description}</div>
+                    <div>Time: {task.duration ? `${task.duration} seconds` : 'Not yet available'}</div>
+                    <div><strong>Result</strong></div>
+                    <div>{task.result ? task.result : 'Not yet available'}</div>
+                </div>
+            ))}
+        </div>      
+        <div style={{ margin: '20px 0' }}>
+            <h2 style={{ color: '#666', fontSize: '30px' }}>Workflow Result</h2>
+            <div>{workflowResult ? workflowResult : 'Not yet available'}</div>
+        </div>       
+        <div style={{ margin: '20px 0' }}>
             <h2 style={{ color: '#666', fontSize: '30px' }}>📋 Workflow Logs</h2>
             {workflowLogs.map((log, index) => (
                 log.logType !== 'WorkflowStatusUpdate' ? (
@@ -73,22 +88,7 @@ return (
                     </p>
                 )
             ))}
-        </div>        
-        <div style={{ margin: '20px 0' }}>
-            <h2 style={{ color: '#666', fontSize: '30px' }}>Workflow Result</h2>
-            <div>{workflowResult ? workflowResult : 'Not yet available'}</div>
-        </div>       
-        <div style={{ margin: '20px 0' }}>
-            <h2 style={{ color: '#666', fontSize: '30px' }}>📊 Task Results</h2>
-            {tasks.map(task => (
-                <div key={task.id} style={{ color: '#999', marginBottom: '10px' }}>
-                    <div>🔘 Task: {task.description}</div>
-                    <div>Time: {task.duration ? `${task.duration} seconds` : 'Not yet available'}</div>
-                    <div><strong>Result</strong></div>
-                    <div>{task.result ? task.result : 'Not yet available'}</div>
-                </div>
-            ))}
-        </div>       
+        </div>           
 
     </div>
 );
