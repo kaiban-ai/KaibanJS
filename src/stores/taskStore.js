@@ -72,7 +72,9 @@ export const useTaskStore = (set, get) => ({
             ...state,
             workflowLogs: [...state.workflowLogs, taskLog],
             tasks: state.tasks.map(t => t.id === task.id ? {...t, ...stats, status: TASK_STATUS_enum.DONE, result: result} : t),
-            workflowContext: `${state.workflowContext} ${result}`
+            workflowContext: `${state.workflowContext} 
+            Results from task ${task.description}: \n ${result}
+             \n\n`
         }));
     
         // This logic is here cause if put it in a subscriber, it will create race conditions

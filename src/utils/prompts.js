@@ -129,7 +129,7 @@ const getChampionReActAgentSystemPrompt = (inputs) => {
 
         ### Final Answer
 
-        IMPORTANT: (Please respect the expected output from the user): ${inputs.expectedOutput}
+        IMPORTANT: (Please respect the expected output requirements from the user): ${inputs.expectedOutput}
 
         {
             "finalAnswer": "The final answer to the Task."
