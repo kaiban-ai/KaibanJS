@@ -138,7 +138,6 @@ const createTeamStore = (initialState = {}) => {
         // Update state with the final results and set workflow status
         set(state => ({
             ...state,
-            workflowContext: '',  // Reset the workflow context
             workflowResult: deliverableTask ? deliverableTask.result : lastTaskResult,  // Set the final result
             teamWorkflowStatus: WORKFLOW_STATUS_enum.FINISHED,  // Set status to indicate a finished workflow
             workflowLogs: [...state.workflowLogs, newLog]  // Append new log to the logs array
@@ -167,7 +166,6 @@ const createTeamStore = (initialState = {}) => {
         // Update state with error details and add new log entry
         set(state => ({
             ...state,
-            workflowContext: '',  // Reset the workflow context
             teamWorkflowStatus: WORKFLOW_STATUS_enum.ERRORED,  // Set status to indicate an error
             workflowLogs: [...state.workflowLogs, newLog]  // Append new log to the logs array
         }));
