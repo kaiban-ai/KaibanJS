@@ -53,7 +53,7 @@ const getParsedJSON_4_tests_passing = (str) => {
     }
 };
 
-function getParsedJSON(str) {
+function getParsedJSONV6(str) {
     // Define a schema based on expected keys and their patterns
     const schema = {
         "thought": /"thought"\s*:\s*"([^"]*)"/,
@@ -89,5 +89,48 @@ function getParsedJSON(str) {
 
     return result;
 }
+
+function getParsedJSON(str) {
+    try {
+        // First attempt to parse the JSON string directly
+        return JSON.parse(str);
+    } catch (e) {
+        // If JSON parsing fails, fall back to regex extraction
+        const schema = {
+            "thought": /"thought"\s*:\s*"([^"]*)"/,
+            "action": /"action"\s*:\s*"([^"]*)"/,
+            "actionInput": /"actionInput"\s*:\s*({[^}]*})/,
+            "observation": /"observation"\s*:\s*"([^"]*)"/,
+            "isFinalAnswerReady": /"isFinalAnswerReady"\s*:\s*(true|false)/,
+            "finalAnswer": /"finalAnswer"\s*:\s*"([^"]*)"/
+        };
+
+        let result = {};
+
+        // Iterate over each key in the schema to find matches in the input string
+        for (let key in schema) {
+            const regex = schema[key];
+            const match = str.match(regex);
+            if (match) {
+                // If the key is found, parse the value appropriately
+                if (key === "actionInput") {
+                    // Assuming actionInput always contains a JSON-like object
+                    try {
+                        result[key] = JSON.parse(match[1].replace(/'/g, '"'));
+                    } catch (e) {
+                        result[key] = null; // Default to null if parsing fails
+                    }
+                } else if (key === "isFinalAnswerReady") {
+                    result[key] = match[1] === 'true'; // Convert string to boolean
+                } else {
+                    result[key] = match[1];
+                }
+            }
+        }
+
+        return result;
+    }
+}
+
 
 export { getParsedJSON };
