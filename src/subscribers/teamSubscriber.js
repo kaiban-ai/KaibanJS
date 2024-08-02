@@ -42,7 +42,7 @@ const subscribeWorkflowStatusUpdates = (useStore) => {
                             status: 'Finished',
                             message: 'Workflow has successfully completed all tasks.'
                         });
-                        logPrettyWorkflowResult({...newLog.metadata});
+                        logPrettyWorkflowResult({...newLog});
                         break;
                     case WORKFLOW_STATUS_enum.BLOCKED:
                         logPrettyWorkflowStatus({

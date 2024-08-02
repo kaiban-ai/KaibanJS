@@ -20,8 +20,10 @@ const subscribeTaskStatusUpdates = (useStore) => {
                             iterationCount: newLog.metadata.iterationCount,
                             duration: newLog.metadata.duration,
                             agentName: newLog.agent.name,
+                            agentModel: newLog.agent.llmConfig.model,
                             taskTitle: getTaskTitleForLogs(newLog.task),
                             currentTaskNumber,
+                            costDetails: newLog.metadata.costDetails,
                             totalTasks
                         });
                         break;

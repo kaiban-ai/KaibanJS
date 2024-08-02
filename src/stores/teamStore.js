@@ -13,9 +13,10 @@ import {create} from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { useAgentStore } from './agentStore';
 import { useTaskStore } from './taskStore';
-import { TASK_STATUS_enum, WORKFLOW_STATUS_enum} from '../utils/enums';
+import { TASK_STATUS_enum, AGENT_STATUS_enum, WORKFLOW_STATUS_enum} from '../utils/enums';
 import { getTaskTitleForLogs, interpolateTaskDescription} from '../utils/tasks';
 import {logger, setLogLevel} from '../utils/logger';
+import {calculateTotalWorkflowCost} from '../utils/llmCostCalculator';
 import { subscribeWorkflowStatusUpdates } from '../subscribers/teamSubscriber';
 import { subscribeTaskStatusUpdates } from '../subscribers/taskSubscriber';
 import { setupWorkflowController } from './workflowController';
@@ -74,11 +75,33 @@ const createTeamStore = (initialState = {}) => {
     startWorkflow: async (inputs) => {
         // Start the first task or set all to 'TODO' initially
         logger.info(`🚀 Team *${get().name}* is starting to work.`);
+        get().resetWorkflowStateAction();
+
         if(inputs){
             get().setInputs(inputs);
         }
-        get().resetWorkflowStateAction();
-        get().setTeamWorkflowStatus(WORKFLOW_STATUS_enum.RUNNING);      
+
+        // Create a log entry to mark the initiation of the workflow
+        const initialLog = {
+            task: null,
+            agent: null,
+            timestamp: Date.now(),
+            logDescription: `Workflow initiated for team *${get().name}*.`,
+            workflowStatus: WORKFLOW_STATUS_enum.RUNNING,  // Using RUNNING as the initial status
+            metadata: {
+                message: "Workflow has been initialized with input settings.",
+                inputs: inputs // Assuming you want to log the inputs used to start the workflow
+            },
+            logType: 'WorkflowStatusUpdate'
+        };
+
+        // Update state with the new log
+        set(state => ({
+            ...state,
+            workflowLogs: [...state.workflowLogs, initialLog],
+            teamWorkflowStatus: WORKFLOW_STATUS_enum.RUNNING
+        }));        
+  
         const tasks = get().tasks;
         if (tasks.length > 0 && tasks[0].status === TASK_STATUS_enum.TODO) {
             get().updateTaskStatus(tasks[0].id, TASK_STATUS_enum.DOING);
@@ -115,6 +138,7 @@ const createTeamStore = (initialState = {}) => {
 
     // New function to handle finishing workflow
     finishWorkflowAction: () => {
+        const stats = get().getWorkflowStats();
         const tasks = get().tasks;
         const deliverableTask = tasks.slice().reverse().find(task => task.isDeliverable);
         const lastTaskResult = tasks[tasks.length - 1].result;
@@ -130,7 +154,11 @@ const createTeamStore = (initialState = {}) => {
             logDescription: `Workflow finished with result: ${deliverableTask ? deliverableTask.result : lastTaskResult}`,
             workflowStatus: WORKFLOW_STATUS_enum.FINISHED,
             metadata: {
-                result: deliverableTask ? deliverableTask.result : lastTaskResult
+                result: deliverableTask ? deliverableTask.result : lastTaskResult,
+                ...stats,
+                teamName: get().name,
+                taskCount: tasks.length,
+                agentCount: get().agents.length
             },
             logType: 'WorkflowStatusUpdate'
         };
@@ -262,8 +290,61 @@ const createTeamStore = (initialState = {}) => {
 
         return newLog;
     },    
-    clearAll: () => set({ agents: [], tasks: [], inputs: {}, workflowLogs: [], workflowContext: '', workflowResult: null, teamWorkflowStatus: WORKFLOW_STATUS_enum.INITIAL})   
+    clearAll: () => set({ agents: [], tasks: [], inputs: {}, workflowLogs: [], workflowContext: '', workflowResult: null, teamWorkflowStatus: WORKFLOW_STATUS_enum.INITIAL}),
+    getWorkflowStats() {
+        const endTime = Date.now(); // Consider the current time as the end time
+        const workflowLogs = get().workflowLogs;
+        const lastWorkflowRunningLog = workflowLogs.slice().reverse().find(log => log.logType === "WorkflowStatusUpdate" && log.workflowStatus === "RUNNING");
 
+        const startTime = lastWorkflowRunningLog ? lastWorkflowRunningLog.timestamp : Date.now();
+        const duration = (endTime - startTime) / 1000; // Calculate duration in seconds
+        let modelUsageStats = {};
+    
+        let llmUsageStats = {
+            inputTokens: 0,
+            outputTokens: 0,
+            callsCount: 0,
+            callsErrorCount: 0,
+            parsingErrors: 0
+        };
+        let iterationCount = 0;
+    
+        // Iterate over logs for usage stats, starting from the found 'INITIAL' timestamp
+        workflowLogs.forEach(log => {
+            if (log.logType === 'AgentStatusUpdate' && log.timestamp >= startTime) {
+                if (log.agentStatus === AGENT_STATUS_enum.THINKING_END) {
+                    const modelCode = log.agent.llmConfig.model;
+                    if (!modelUsageStats[modelCode]) {
+                        modelUsageStats[modelCode] = {inputTokens: 0, outputTokens: 0, callsCount: 0};
+                    }
+                    modelUsageStats[modelCode].inputTokens += log.metadata.output.llmUsageStats.inputTokens;
+                    modelUsageStats[modelCode].outputTokens += log.metadata.output.llmUsageStats.outputTokens;
+                    modelUsageStats[modelCode].callsCount += 1; // Each log entry counts as a call
+                    llmUsageStats.inputTokens += log.metadata.output.llmUsageStats.inputTokens;
+                    llmUsageStats.outputTokens += log.metadata.output.llmUsageStats.outputTokens;
+                    llmUsageStats.callsCount += 1;                    
+                } else if (log.agentStatus === AGENT_STATUS_enum.THINKING_ERROR) {
+                    llmUsageStats.callsErrorCount += 1;
+                } else if (log.agentStatus === AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT) {
+                    llmUsageStats.parsingErrors += 1;
+                } else if (log.agentStatus === AGENT_STATUS_enum.ITERATION_END) {
+                    iterationCount += 1;
+                }
+            }
+        });
+
+        // Calculate total costs based on the model usage stats
+        const costDetails = calculateTotalWorkflowCost(modelUsageStats);
+
+        return {
+            startTime,
+            endTime,
+            duration,
+            llmUsageStats,
+            iterationCount,
+            costDetails
+        };
+    }
 }), "teamStore"))
     );
 

@@ -2,6 +2,7 @@ import { TASK_STATUS_enum, AGENT_STATUS_enum} from "../utils/enums";
 import { getTaskTitleForLogs} from '../utils/tasks';
 import { logger } from "../utils/logger";
 import { PrettyError } from "../utils/errors";
+import { calculateTaskCost } from "../utils/llmCostCalculator";
 
 export const useTaskStore = (set, get) => ({
     // state
@@ -10,7 +11,7 @@ export const useTaskStore = (set, get) => ({
     getTaskStats(task) {
         const endTime = Date.now();
         const lastDoingLog = get().workflowLogs.slice().reverse().find(log =>
-            log.task.id === task.id && log.logType === "TaskStatusUpdate" && log.task.status === TASK_STATUS_enum.DOING
+            log.task && log.task.id === task.id && log.logType === "TaskStatusUpdate" && log.task.status === TASK_STATUS_enum.DOING
         );
         const startTime = lastDoingLog ? lastDoingLog.timestamp : endTime; // Use endTime if no DOING log is found
         const duration = (endTime - startTime) / 1000; // Calculate duration in seconds
@@ -25,7 +26,7 @@ export const useTaskStore = (set, get) => ({
         let iterationCount = 0;
     
         get().workflowLogs.forEach(log => {
-            if (log.task.id === task.id && log.timestamp >= startTime && log.logType === 'AgentStatusUpdate') {
+            if (log.task && log.task.id === task.id && log.timestamp >= startTime && log.logType === 'AgentStatusUpdate') {
                 if (log.agentStatus === AGENT_STATUS_enum.THINKING_END) {
                     llmUsageStats.inputTokens += log.metadata.output.llmUsageStats.inputTokens;
                     llmUsageStats.outputTokens += log.metadata.output.llmUsageStats.outputTokens;
@@ -56,6 +57,10 @@ export const useTaskStore = (set, get) => ({
         const stats = get().getTaskStats(task, get);
         task.status = TASK_STATUS_enum.DONE;
         task.result = result;
+
+        const modelCode = agent.llmConfig.model; // Assuming this is where the model code is stored
+        // Calculate costs directly using stats
+        const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
         
         const taskLog = get().prepareNewLog({
             agent,
@@ -63,6 +68,7 @@ export const useTaskStore = (set, get) => ({
             logDescription: `Task completed: ${getTaskTitleForLogs(task)}, Duration: ${stats.duration} seconds`,
             metadata: {
                 ...stats,
+                costDetails,
                 result
             },
             logType: 'TaskStatusUpdate'
