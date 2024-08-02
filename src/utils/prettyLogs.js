@@ -3,7 +3,7 @@ import { logger } from "./logger";
 
 function logPrettyTaskCompletion({ iterationCount, duration, llmUsageStats, agentName, agentModel, taskTitle, currentTaskNumber,totalTasks, costDetails }) {
     const message = [
-        chalk.black('+-----------------------------------------+'),
+        chalk.black('\n+-----------------------------------------+'),
         chalk.bold(`| Task (${currentTaskNumber}/${totalTasks}) - status changed to ${chalk.green('DONE')}     |`),        
         '|-----------------------------------------|',
         chalk.bold('| Summary:'),
@@ -24,7 +24,7 @@ function logPrettyTaskCompletion({ iterationCount, duration, llmUsageStats, agen
         chalk.black('| Calls Count: ') + chalk.green(llmUsageStats.callsCount),
         chalk.black('| Calls Error Count: ') + chalk.red(llmUsageStats.callsErrorCount),
         chalk.black('| Parsing Errors: ') + chalk.red(llmUsageStats.parsingErrors),
-        chalk.black('+-----------------------------------------+'),
+        chalk.black('+-----------------------------------------+\n\n'),
     ].join('\n');
     logger.info(message);
 }
@@ -35,7 +35,7 @@ function logPrettyTaskStatus({currentTaskNumber, totalTasks, taskTitle, taskStat
     logger.info(chalk.bold.black(`|| Task (${currentTaskNumber}/${totalTasks}) - status changed to ${taskStatus === 'DONE' ? chalk.green(taskStatus) : chalk.yellow(taskStatus) }`));
     logger.info(chalk.bold.black(`|| Title: ${taskTitle}`));
     logger.info(chalk.bold.black(`|| Agent: ${agentName}`));
-    logger.info(chalk.bold.black('||===========================================||'));
+    logger.info(chalk.bold.black('||===========================================||\n\n'));
 }
 
 // Function to log workflow status updates in a formatted manner
@@ -48,8 +48,8 @@ function logPrettyWorkflowResult({metadata}) {
     const {result, duration, llmUsageStats, iterationCount, costDetails, teamName, taskCount, agentCount} = metadata;
     logger.info(`Workflow Result: ${result}`);
     const message = [
-        chalk.black('+-----------------------------------------+'),
-        chalk.bold(`| WORKFLOW - ${chalk.green('FINISH')}                        |`),        
+        chalk.black('\n+-----------------------------------------+'),
+        chalk.bold(`| WORKFLOW - ${chalk.green('FINISH')}                       |`),        
         '|-----------------------------------------|',
         chalk.bold('| Summary:'),
         '|',
@@ -69,9 +69,9 @@ function logPrettyWorkflowResult({metadata}) {
         chalk.black('| Calls Count: ') + chalk.red(llmUsageStats.callsCount),
         chalk.black('| Calls Error Count: ') + chalk.red(llmUsageStats.callsErrorCount),
         chalk.black('| Parsing Errors: ') + chalk.red(llmUsageStats.parsingErrors),
-        chalk.black('+-----------------------------------------+'),
+        chalk.black('+-----------------------------------------+\n'),
     ].join('\n');
-    logger.info(message);    
+    logger.info(message);        
 }
 
 
