@@ -16,15 +16,11 @@ class BaseAgent {
         this.env = null;
         this.llmConfig = { 
             provider: "openai", 
-            model: "gpt-3.5-turbo-0125",
-            maxRetries: 3,
-             ...llmConfig 
+            model: "gpt-4o-mini",
+            maxRetries: 1,
+            ...llmConfig 
         };
         this.llmSystemMessage = null;
-    }
-
-    async initAgent() {
-        throw new Error("initAgent must be implemented by subclasses.");
     }
 
     setStore(store) {

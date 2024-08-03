@@ -21,12 +21,6 @@ import { LLMInvocationError } from '../utils/errors';
 class ReactChampionAgent extends BaseAgent {
     constructor(config) {
         super(config);
-        const defaultConfig = {
-            model: "gpt-3.5-turbo-0125",
-            provider: 'openai',
-            maxRetries: 1,
-        };
-        this.llmConfig = { ...defaultConfig, ...config.llmConfig };
     }
 
     async executeTask(task, inputs, context) {

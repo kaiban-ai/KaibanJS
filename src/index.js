@@ -18,7 +18,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { createTeamStore } from './stores';
-import { ReActAgent, BasicChatAgent, ReactChampionAgent } from './agents';
+import { ReactChampionAgent } from './agents';
 import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from './utils/enums';
 
 class Agent {
@@ -29,10 +29,6 @@ class Agent {
  
     createAgent(type, config) {
         switch (type) {
-            case 'ReAct':
-                return new ReActAgent(config);
-            case 'BasicChatAgent':
-                return new BasicChatAgent(config);
             case 'ReactChampionAgent':
                 return new ReactChampionAgent(config);
             default:

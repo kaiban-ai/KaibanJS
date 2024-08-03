@@ -22,26 +22,10 @@ const clockTool = new DynamicTool({
 class ReActAgent extends BaseAgent {
     constructor(config) {
         super(config);
-        const defaultConfig = {
-            // model: "gpt-4o-mini",
-            model: "gpt-3.5-turbo-0125",
-            // model: "gpt-4-turbo",
-            provider: 'openai',
-            temperature: 0,
-        };
-        this.llmConfig = { ...defaultConfig, ...config.llmConfig };
+        this.llmConfig = config.llmConfig;
     }
 
     async initAgent() {
-        // Define the default settings
-        const defaultConfig = {
-            model: "gpt-3.5-turbo-0125",
-            provider: 'openai'
-        };
-    
-        // Merge the defaults with any custom settings provided
-        this.llmConfig = { ...defaultConfig, ...this.llmConfig };
-        
         // Ensure the API key is retrieved and set correctly
         const apiKey = getApiKey(this.llmConfig, this.env);
         this.llmConfig.apiKey = apiKey;

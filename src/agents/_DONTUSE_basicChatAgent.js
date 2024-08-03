@@ -12,10 +12,7 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 class BasicChatAgent extends BaseAgent {
     constructor(config) {
         super(config);
-        const defaultConfig = {
-            model: "gpt-3.5-turbo-0125",
-        };
-        this.llmConfig = { ...defaultConfig, ...config.llmConfig };
+        this.llmConfig = config.llmConfig;
     }
 
     async initAgent() {
