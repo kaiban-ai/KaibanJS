@@ -1,21 +1,11 @@
-import pino from 'pino';
+import log from 'loglevel';
 
-// Setting up Pino with pino-pretty as a transport
-const logger = pino({
-  transport: {
-    target: 'pino-pretty',
-    options: {
-      colorize: true,
-      levelFirst: true,
-      translateTime: 'HH:MM:ss',  // Custom time format
-      ignore: 'pid,hostname',  // Customize what to ignore in logs
-      singleLine: true  // Optional: Puts each log message on a single line
-    }
-  }
-});
+// Set initial log level
+log.setLevel(log.levels.INFO);  // Default to 'info' level
 
+// To set log level dynamically
 const setLogLevel = (level) => {
-  logger.level = level;
+  log.setLevel(log.levels[level.toUpperCase()]);
 };
 
-export { logger, setLogLevel };
+export { log as logger, setLogLevel };

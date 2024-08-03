@@ -1,41 +1,41 @@
-import chalk from "chalk";
+import ansis from "ansis";
 import { logger } from "./logger";
 
 function logPrettyTaskCompletion({ iterationCount, duration, llmUsageStats, agentName, agentModel, taskTitle, currentTaskNumber,totalTasks, costDetails }) {
     const message = [
-        chalk.black('\n+-----------------------------------------+'),
-        chalk.bold(`| Task (${currentTaskNumber}/${totalTasks}) - status changed to ${chalk.green('DONE')}     |`),        
+        ansis.black('\n+-----------------------------------------+'),
+        ansis.bold(`| Task (${currentTaskNumber}/${totalTasks}) - status changed to ${ansis.green('DONE')}     |`),        
         '|-----------------------------------------|',
-        chalk.bold('| Summary:'),
+        ansis.bold('| Summary:'),
         '|',
-        chalk.black('| Task: ') + chalk.cyan(taskTitle),
-        chalk.black('| Agent: ') + chalk.cyan(agentName),
-        chalk.black('| Model: ') + chalk.cyan(agentModel),
+        ansis.black('| Task: ') + ansis.cyan(taskTitle),
+        ansis.black('| Agent: ') + ansis.cyan(agentName),
+        ansis.black('| Model: ') + ansis.cyan(agentModel),
         '|',        
-        chalk.black('| Iterations: ') + chalk.cyan(iterationCount),
-        chalk.black('| Duration: ') + chalk.cyan(duration) + chalk.cyan(' seconds'),
-        chalk.black('| Input Tokens: ') + chalk.yellow(llmUsageStats.inputTokens),
-        chalk.black('| Output Tokens: ') + chalk.yellow(llmUsageStats.outputTokens),
+        ansis.black('| Iterations: ') + ansis.cyan(iterationCount),
+        ansis.black('| Duration: ') + ansis.cyan(duration) + ansis.cyan(' seconds'),
+        ansis.black('| Input Tokens: ') + ansis.yellow(llmUsageStats.inputTokens),
+        ansis.black('| Output Tokens: ') + ansis.yellow(llmUsageStats.outputTokens),
         '|',           
-        chalk.black('| Cost Input Tokens: ') + chalk.cyan(`$${costDetails.costInputTokens}`),
-        chalk.black('| Cost Output Tokens: ') + chalk.cyan(`$${costDetails.costOutputTokens}`),
-        chalk.black('| Total Cost: ') + chalk.cyan(`$${costDetails.totalCost}`),        
+        ansis.black('| Cost Input Tokens: ') + ansis.cyan(`$${costDetails.costInputTokens}`),
+        ansis.black('| Cost Output Tokens: ') + ansis.cyan(`$${costDetails.costOutputTokens}`),
+        ansis.black('| Total Cost: ') + ansis.cyan(`$${costDetails.totalCost}`),        
         '|',                   
-        chalk.black('| Calls Count: ') + chalk.green(llmUsageStats.callsCount),
-        chalk.black('| Calls Error Count: ') + chalk.red(llmUsageStats.callsErrorCount),
-        chalk.black('| Parsing Errors: ') + chalk.red(llmUsageStats.parsingErrors),
-        chalk.black('+-----------------------------------------+\n\n'),
+        ansis.black('| Calls Count: ') + ansis.green(llmUsageStats.callsCount),
+        ansis.black('| Calls Error Count: ') + ansis.green(llmUsageStats.callsErrorCount),
+        ansis.black('| Parsing Errors: ') + ansis.green(llmUsageStats.parsingErrors),
+        ansis.black('+-----------------------------------------+\n\n'),
     ].join('\n');
     logger.info(message);
 }
 
 function logPrettyTaskStatus({currentTaskNumber, totalTasks, taskTitle, taskStatus, agentName}) {
     // Bold border and task status line
-    logger.info(chalk.bold.black('||===========================================||'));
-    logger.info(chalk.bold.black(`|| Task (${currentTaskNumber}/${totalTasks}) - status changed to ${taskStatus === 'DONE' ? chalk.green(taskStatus) : chalk.yellow(taskStatus) }`));
-    logger.info(chalk.bold.black(`|| Title: ${taskTitle}`));
-    logger.info(chalk.bold.black(`|| Agent: ${agentName}`));
-    logger.info(chalk.bold.black('||===========================================||\n\n'));
+    logger.info(ansis.bold.black('||===========================================||'));
+    logger.info(ansis.bold.black(`|| Task (${currentTaskNumber}/${totalTasks}) - status changed to ${taskStatus === 'DONE' ? ansis.green(taskStatus) : ansis.yellow(taskStatus) }`));
+    logger.info(ansis.bold.black(`|| Title: ${taskTitle}`));
+    logger.info(ansis.bold.black(`|| Agent: ${agentName}`));
+    logger.info(ansis.bold.black('||===========================================||\n\n'));
 }
 
 // Function to log workflow status updates in a formatted manner
@@ -48,28 +48,28 @@ function logPrettyWorkflowResult({metadata}) {
     const {result, duration, llmUsageStats, iterationCount, costDetails, teamName, taskCount, agentCount} = metadata;
     logger.info(`Workflow Result: ${result}`);
     const message = [
-        chalk.black('\n+-----------------------------------------+'),
-        chalk.bold(`| WORKFLOW - ${chalk.green('FINISH')}                       |`),        
+        ansis.black('\n+-----------------------------------------+'),
+        ansis.bold(`| WORKFLOW - ${ansis.green('FINISH')}                       |`),        
         '|-----------------------------------------|',
-        chalk.bold('| Summary:'),
+        ansis.bold('| Summary:'),
         '|',
-        chalk.black('| Team: ') + chalk.cyan(teamName),
-        chalk.black('| Tasks: ') + chalk.cyan(taskCount),
-        chalk.black('| Agents: ') + chalk.cyan(agentCount),
+        ansis.black('| Team: ') + ansis.cyan(teamName),
+        ansis.black('| Tasks: ') + ansis.cyan(taskCount),
+        ansis.black('| Agents: ') + ansis.cyan(agentCount),
         '|',        
-        chalk.black('| Iterations: ') + chalk.yellow(iterationCount),
-        chalk.black('| Duration: ') + chalk.yellow(duration) + chalk.yellow(' seconds'),
-        chalk.black('| Input Tokens: ') + chalk.yellow(llmUsageStats.inputTokens),
-        chalk.black('| Output Tokens: ') + chalk.yellow(llmUsageStats.outputTokens),
+        ansis.black('| Iterations: ') + ansis.yellow(iterationCount),
+        ansis.black('| Duration: ') + ansis.yellow(duration) + ansis.yellow(' seconds'),
+        ansis.black('| Input Tokens: ') + ansis.yellow(llmUsageStats.inputTokens),
+        ansis.black('| Output Tokens: ') + ansis.yellow(llmUsageStats.outputTokens),
         '|',           
-        chalk.black('| Cost Input Tokens: ') + chalk.cyan(`$${costDetails.costInputTokens}`),
-        chalk.black('| Cost Output Tokens: ') + chalk.cyan(`$${costDetails.costOutputTokens}`),
-        chalk.black('| Total Cost: ') + chalk.cyan(`$${costDetails.totalCost}`),        
+        ansis.black('| Cost Input Tokens: ') + ansis.cyan(`$${costDetails.costInputTokens}`),
+        ansis.black('| Cost Output Tokens: ') + ansis.cyan(`$${costDetails.costOutputTokens}`),
+        ansis.black('| Total Cost: ') + ansis.cyan(`$${costDetails.totalCost}`),        
         '|',                   
-        chalk.black('| Calls Count: ') + chalk.red(llmUsageStats.callsCount),
-        chalk.black('| Calls Error Count: ') + chalk.red(llmUsageStats.callsErrorCount),
-        chalk.black('| Parsing Errors: ') + chalk.red(llmUsageStats.parsingErrors),
-        chalk.black('+-----------------------------------------+\n'),
+        ansis.black('| Calls Count: ') + ansis.red(llmUsageStats.callsCount),
+        ansis.black('| Calls Error Count: ') + ansis.red(llmUsageStats.callsErrorCount),
+        ansis.black('| Parsing Errors: ') + ansis.red(llmUsageStats.parsingErrors),
+        ansis.black('+-----------------------------------------+\n'),
     ].join('\n');
     logger.info(message);        
 }
