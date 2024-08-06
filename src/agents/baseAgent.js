@@ -3,7 +3,7 @@ import { AGENT_STATUS_enum } from '../utils/enums';
 
 
 class BaseAgent {
-    constructor({ name, role, goal, background, tools, llmConfig = {}, maxIterations = 5 }) {
+    constructor({ name, role, goal, background, tools, llmConfig = {}, maxIterations = 10 }) {
         this.id = uuidv4();
         this.name = name;
         this.role = role;
