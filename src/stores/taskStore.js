@@ -65,7 +65,7 @@ export const useTaskStore = (set, get) => ({
         const taskLog = get().prepareNewLog({
             agent,
             task,
-            logDescription: `Task completed: ${getTaskTitleForLogs(task)}, Duration: ${stats.duration} seconds`,
+            logDescription: `Task completed: ${getTaskTitleForLogs(task)}.`,
             metadata: {
                 ...stats,
                 costDetails,
