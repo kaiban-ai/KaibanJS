@@ -6,7 +6,14 @@ const requirementsAnalyst = new Agent({
     role: 'Requirements Analyst', 
     goal: 'Outline core functionalities and objectives for new features based on the founder’s input.', 
     background: 'Business Analysis',
-    tools: []
+    tools: [],
+    llmConfig: {
+        provider: "anthropic",  // or "openai"
+        model: "claude-3-5-sonnet-20240620",
+        temperature: 0.9,
+        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
+    }
+
 });
 
 const technicalWriter = new Agent({
@@ -14,7 +21,13 @@ const technicalWriter = new Agent({
     role: 'Technical Writer', 
     goal: 'Convert functional outlines into detailed technical specifications.', 
     background: 'Technical Writing',
-    tools: []
+    tools: [],
+    llmConfig: {
+        provider: "anthropic",  // or "openai"
+        model: "claude-3-5-sonnet-20240620",
+        temperature: 0.9,
+        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
+    }    
 });
 
 const validator = new Agent({
@@ -22,7 +35,13 @@ const validator = new Agent({
     role: 'Validator', 
     goal: 'Ensure the specifications are accurate and complete.', 
     background: 'Quality Assurance',
-    tools: []
+    tools: [],
+    llmConfig: {
+        provider: "anthropic",  // or "openai"
+        model: "claude-3-5-sonnet-20240620",
+        temperature: 0.9,
+        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
+    }    
 });
 
 // Define tasks
@@ -51,7 +70,7 @@ const team = new Team({
   agents: [requirementsAnalyst, technicalWriter, validator],
   tasks: [analysisTask, writingTask, validationTask],
   inputs: { founderIdea: 'I want to add a Referral program to our SAAS platform.' },  // Initial input for the first task
-  env: { OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY}
+  env: {OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY, ANTHROPIC_API_KEY: import.meta.env.VITE_ANTHROPIC_API_KEY}
 });
 
 export default team;

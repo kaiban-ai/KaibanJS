@@ -1,4 +1,4 @@
-const { Agent, Task, Team } = require('agenticjs');
+import { Agent, Task, Team } from 'agenticjs';
 
 // Define agents
 const requirementsAnalyst = new Agent({
@@ -7,6 +7,7 @@ const requirementsAnalyst = new Agent({
     goal: 'Outline core functionalities and objectives for new features based on the founder’s input.', 
     background: 'Business Analysis',
     tools: []
+
 });
 
 const technicalWriter = new Agent({
@@ -14,7 +15,7 @@ const technicalWriter = new Agent({
     role: 'Technical Writer', 
     goal: 'Convert functional outlines into detailed technical specifications.', 
     background: 'Technical Writing',
-    tools: []
+    tools: []  
 });
 
 const validator = new Agent({
@@ -22,7 +23,7 @@ const validator = new Agent({
     role: 'Validator', 
     goal: 'Ensure the specifications are accurate and complete.', 
     background: 'Quality Assurance',
-    tools: []
+    tools: []  
 });
 
 // Define tasks
@@ -50,8 +51,8 @@ const team = new Team({
   name: 'Product Specs Team',
   agents: [requirementsAnalyst, technicalWriter, validator],
   tasks: [analysisTask, writingTask, validationTask],
-  inputs: { founderIdea: 'I want to add a Referral program to our SAAS platform.' },  // Initial input for the first task,
-  env: {OPENAI_API_KEY: process.env.OPENAI_API_KEY}  // Environment variables for the team
+  inputs: { founderIdea: 'I want to add a Referral program to our SAAS platform.' },  // Initial input for the first task
+  env: {OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY, ANTHROPIC_API_KEY: import.meta.env.VITE_ANTHROPIC_API_KEY}
 });
 
-module.exports = team;
+export default team;

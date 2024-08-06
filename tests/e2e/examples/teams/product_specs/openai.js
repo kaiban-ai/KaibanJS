@@ -1,4 +1,11 @@
-import { Agent, Task, Team } from 'agenticjs';
+const { Agent, Task, Team } = require('agenticjs');
+const { TavilySearchResults } = require('@langchain/community/tools/tavily_search');
+
+// Define tools
+const searchTool = new TavilySearchResults({
+    maxResults: 1,
+    apiKey: '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',
+});
 
 // Define agents
 const requirementsAnalyst = new Agent({
@@ -6,15 +13,7 @@ const requirementsAnalyst = new Agent({
     role: 'Requirements Analyst', 
     goal: 'Outline core functionalities and objectives for new features based on the founder’s input.', 
     background: 'Business Analysis',
-    tools: [],
-    llmConfig: {
-        provider: "anthropic",  // or "openai"
-        model: "claude-3-5-sonnet-20240620",
-        temperature: 0.9,
-        maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
-    }
-
+    tools: []
 });
 
 const technicalWriter = new Agent({
@@ -22,14 +21,7 @@ const technicalWriter = new Agent({
     role: 'Technical Writer', 
     goal: 'Convert functional outlines into detailed technical specifications.', 
     background: 'Technical Writing',
-    tools: [],
-    llmConfig: {
-        provider: "anthropic",  // or "openai"
-        model: "claude-3-5-sonnet-20240620",
-        temperature: 0.9,
-        maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
-    }    
+    tools: []
 });
 
 const validator = new Agent({
@@ -37,14 +29,7 @@ const validator = new Agent({
     role: 'Validator', 
     goal: 'Ensure the specifications are accurate and complete.', 
     background: 'Quality Assurance',
-    tools: [],
-    llmConfig: {
-        provider: "anthropic",  // or "openai"
-        model: "claude-3-5-sonnet-20240620",
-        temperature: 0.9,
-        maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
-    }    
+    tools: []
 });
 
 // Define tasks
@@ -56,7 +41,7 @@ const analysisTask = new Task({
 
 const writingTask = new Task({ 
     description: `Create detailed technical specifications based on the functional outline provided. Include user stories, system requirements, and acceptance criteria.`,
-    expectedOutput: 'A detailed technical specifications document.', 
+    expectedOutput: 'A detailed technical specifications document. Must be in Markdown format.', 
     isDeliverable: true,
     agent: technicalWriter 
 });
@@ -72,7 +57,8 @@ const team = new Team({
   name: 'Product Specs Team',
   agents: [requirementsAnalyst, technicalWriter, validator],
   tasks: [analysisTask, writingTask, validationTask],
-  inputs: { founderIdea: 'I want to add a Referral program to our SAAS platform.' },  // Initial input for the first task
+  inputs: { founderIdea: 'I want to add a Referral program to our SAAS platform.' },  // Initial input for the first task,
+  env: {OPENAI_API_KEY: process.env.OPENAI_API_KEY}  // Environment variables for the team
 });
 
-export default team;
+module.exports = team;

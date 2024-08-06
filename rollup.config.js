@@ -11,7 +11,7 @@ const isTest = process.env.TEST_ENV === 'mocked-llm-apis';
 function generateConfig(format) {
   
   const isESM = format === 'es';
-  const external = isESM ? ['react', 'react-dom', 'uuid'] : ['uuid'];
+  const external = isESM ? ['react', 'react-dom', 'uuid', 'pino', 'pino-pretty'] : ['uuid', 'pino', 'pino-pretty'];
   return {
     input: 'src/index.js',
     output: {

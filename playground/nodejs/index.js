@@ -24,10 +24,6 @@ const profileAnalyst = new Agent({
     goal: 'Extract structured information from conversational user input.', 
     background: 'Data Processor',
     tools: [],  // Tools are omitted for now
-    llmConfig: {
-      provider: "google",
-      model: "gemini-1.5-flash",
-    }  
 });
 
 const formatter = new Agent({
@@ -35,11 +31,7 @@ const formatter = new Agent({
     role: 'Formatter', 
     goal: 'Format structured information into a professional resume.', 
     background: 'Document Formatter',
-    tools: [],
-    llmConfig: {
-      provider: "google",
-      model: "gemini-1.5-flash",
-    }   
+    tools: []
 });
 
 const reviewer = new Agent({
@@ -47,11 +39,7 @@ const reviewer = new Agent({
     role: 'Reviewer', 
     goal: 'Review and polish the final resume.', 
     background: 'Quality Assurance Specialist',
-    tools: [],
-    llmConfig: {
-      provider: "google",
-      model: "gemini-1.5-flash",
-    }     
+    tools: []  
 });
 
 // ──── Tasks ─────────────────────────────────────────────
@@ -94,6 +82,7 @@ const team = new Team({
     agents: [profileAnalyst, formatter, reviewer],
     tasks: [processingTask, formattingTask, reviewTask],
     inputs: { aboutMe: 'My name is Will, I have been a Javascript Developer for 3 years. I know React, NextJS, and REDUX. My latest job was as a Junior Developer at Disney creating UIs for the main landing page.' },  // Initial input for the first task
+    env: {OPENAI_API_KEY: process.env.OPENAI_API_KEY}
 });
 
 // ──── Listening to Changes────────────────────────────────────────────

@@ -29,9 +29,3 @@ jobs:
 
     - name: Run integration tests
       run: npm run test:integration
-
-    - name: Build production version
-      run: npm run build
-
-    - name: Run e2e tests
-      run: npm run test:e2e

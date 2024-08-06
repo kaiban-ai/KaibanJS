@@ -1,6 +1,6 @@
 module.exports = {
     transform: {
-      '^.+\\.js$': 'babel-jest',
+      "^.+\\.[t|j]sx?$": "babel-jest"
     },
     moduleNameMapper: {
         '^agenticjs$': '<rootDir>/dist/bundle.cjs.js'
@@ -9,5 +9,7 @@ module.exports = {
     testEnvironment: 'node', // Use Node.js environment for executing tests,
     verbose: true, // Make Jest more verbose
     silent: false, // Ensure Jest is not silent (though this is not directly related to console.log output)
-
+    // testMatch: [
+    //   "**/tests/e2e/exampl/**/*.js"
+    // ], // Run tests only in the specific directory
   };
