@@ -49,10 +49,11 @@ const createTeamStore = (initialState = {}) => {
     inputs: initialState.inputs || {},
     workflowContext: initialState.workflowContext || '',
     env: initialState.env || {},
+    logLevel: initialState.logLevel,
+
     setInputs: (inputs) => set({ inputs }),  // Add a new action to update inputs
     setName: (name) => set({ name }),  // Add a new action to update inputs
     setEnv: (env) => set({ env }),  // Add a new action to update inputs
-    logLevel: initialState.logLevel,
 
     addAgents: (agents) => {
         const { env } = get();
@@ -344,7 +345,75 @@ const createTeamStore = (initialState = {}) => {
             iterationCount,
             costDetails
         };
-    }
+    },
+    getCleanedState() {
+
+        // Function to clean individual agent data
+        const cleanAgent = (agent) => ({
+            ...agent,
+            id: '[REDACTED]', // Clean sensitive ID at the root level
+            llmConfig: agent.llmConfig ? {
+                ...agent.llmConfig, 
+                apiKey: '[REDACTED]' // Clean API key at the root level
+            } : {}, // Provide an empty object if llmConfig is undefined at the root level
+            agentInstance: agent.agentInstance ? {
+                ...agent.agentInstance,
+                id: '[REDACTED]', // Clean sensitive ID in agentInstance
+                llmConfig: agent.agentInstance.llmConfig ? {
+                    ...agent.agentInstance.llmConfig, 
+                    apiKey: '[REDACTED]' // Clean API key in agentInstance llmConfig
+                } : {} // Provide an empty object if llmConfig is undefined in agentInstance
+            } : {} // Provide an empty object if agentInstance is undefined
+        });
+
+        // Function to clean individual task data
+        const cleanTask = (task) => ({
+            ...task,
+            id: '[REDACTED]', // Clean sensitive ID
+            agent: task.agent ? cleanAgent(task.agent) : null, // Clean the nested agent if exists
+            duration: '[REDACTED]',
+            endTime: '[REDACTED]',
+            startTime: '[REDACTED]',
+        });
+
+        // Function to clean log metadata
+        const cleanMetadata = (metadata) => ({
+            ...metadata,
+            duration: metadata.duration ? '[REDACTED]' : metadata.duration,
+            endTime: metadata.endTime ? '[REDACTED]' : metadata.endTime,
+            startTime: metadata.startTime ? '[REDACTED]' : metadata.startTime,
+        });        
+
+        // Clone and clean agents
+        const cleanedAgents = get().agents.map(agent => cleanAgent(agent));
+
+        // Clone and clean tasks, including the nested agents
+        const cleanedTasks = get().tasks.map(task => cleanTask(task));
+
+        // Clone and clean workflowLogs, including the potential agents and tasks
+        const cleanedWorkflowLogs = get().workflowLogs.map(log => ({
+            ...log,
+            agent: log.agent ? cleanAgent(log.agent) : null, // Clean the agent if exists
+            task: log.task ? cleanTask(log.task) : null, // Clean the task if exists
+            timestamp: '[REDACTED]',
+            metadata: log.metadata ? cleanMetadata(log.metadata) : {} // Clean metadata if exists
+        }));
+
+        // Return only the parts of the state necessary for the snapshot or further processing
+        return {
+            teamWorkflowStatus: get().teamWorkflowStatus,
+            workflowResult: get().workflowResult,
+            name: get().name,
+            agents: cleanedAgents,
+            tasks: cleanedTasks,
+            workflowLogs: cleanedWorkflowLogs,
+            inputs: get().inputs,
+            workflowContext: get().workflowContext,
+            logLevel: get().logLevel,
+            // Include other state parts as necessary, cleaned as needed
+        };
+    },    
+
 }), "teamStore"))
     );
 
