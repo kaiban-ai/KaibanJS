@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 function moscaFetch() {
     let originalFetch = globalThis.fetch; // Save the original fetch function
     // Step 1: Define your custom fetch function
@@ -112,11 +114,22 @@ function moscaFetch() {
         }
     }
 
+    function saveRecords(filename = 'recordedData.json') {
+        const filePath = `${process.cwd()}/${filename}`;
+        fs.writeFile(filePath, JSON.stringify(records, null, 2), (err) => {
+            if (err) {
+                console.error('Error saving records:', err);
+            } else {
+                console.log(`Records saved successfully to ${filePath}`);
+            }
+        });
+    }    
+
     // Immediately enforce custom fetch
     if(withMockedApis){
         ensureFetchIsMocked();
     }
-    return { mock, record, getRecords, clearRecords, restoreAll, restoreOne };
+    return { mock, record, getRecords, clearRecords, restoreAll, restoreOne, saveRecords };
 }
 
 module.exports = moscaFetch;
