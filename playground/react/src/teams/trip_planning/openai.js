@@ -1,23 +1,13 @@
 import { Agent, Task, Team } from 'agenticjs';
 
-import { TavilyClient } from '@agentic/stdlib';
-import {calculator} from '@agentic/stdlib/calculator';
-import { createLangChainTools } from '@agentic/stdlib/langchain'
+import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
 
 // Define tools
-const rawSearchInternetTool = new TavilyClient({
+const searchInternet = new TavilySearchResults({
     maxResults: 3,
     // apiKey: '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',
     apiKey: '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',
 });
-
-const searchInternet = createLangChainTools(rawSearchInternetTool)[0];
-
-// const rawCalculator = new calculator();
-const calculatorTool = createLangChainTools(calculator)[0];
-const scrapeAndSummarize = searchInternet;
-
-
 
 // Define agents with exact roles, goals, and backgrounds from Python example
 const citySelectorAgent = new Agent({
@@ -57,7 +47,7 @@ const travelConciergeAgent = new Agent({
     goal: `Create the most amazing travel itineraries with budget and packing suggestions for the city`,
     background: `Specialist in travel planning and logistics with decades of experience`,
     type: 'ReactChampionAgent',
-    tools: [searchInternet, calculatorTool],
+    tools: [searchInternet],
     maxIterations: 5,
     llmConfig: { 
         provider: "openai", 
