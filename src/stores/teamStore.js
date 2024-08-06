@@ -352,6 +352,7 @@ const createTeamStore = (initialState = {}) => {
         const cleanAgent = (agent) => ({
             ...agent,
             id: '[REDACTED]', // Clean sensitive ID at the root level
+            env: '[REDACTED]', // Clean sensitive Env in agent
             llmConfig: agent.llmConfig ? {
                 ...agent.llmConfig, 
                 apiKey: '[REDACTED]' // Clean API key at the root level
@@ -359,6 +360,7 @@ const createTeamStore = (initialState = {}) => {
             agentInstance: agent.agentInstance ? {
                 ...agent.agentInstance,
                 id: '[REDACTED]', // Clean sensitive ID in agentInstance
+                env: '[REDACTED]', // Clean sensitive Env in agentInstance
                 llmConfig: agent.agentInstance.llmConfig ? {
                     ...agent.agentInstance.llmConfig, 
                     apiKey: '[REDACTED]' // Clean API key in agentInstance llmConfig
