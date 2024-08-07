@@ -1,4 +1,4 @@
-import { Agent, Task, Team } from 'agenticjs';
+const { Agent, Task, Team } = require('agenticjs');
 
 // Define agents
 const profileAnalyst = new Agent({
@@ -53,7 +53,7 @@ const team = new Team({
      where I worked with Vue and Tailwind. 
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.` },  // Initial input for the first task
-  env: {OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY, ANTHROPIC_API_KEY: import.meta.env.VITE_ANTHROPIC_API_KEY}
+     env: {OPENAI_API_KEY: process.env.OPENAI_API_KEY}  // Environment variables for the team
 });
 
-export default team;
+module.exports = team;
