@@ -312,6 +312,11 @@ class ReactChampionAgent extends BaseAgent {
 
     handleFinalAnswer({agent, task, parsedLLMOutput}) {
         // console.log(parsedJSON.finalAnswer);
+        if (parsedLLMOutput.finalAnswer) {
+            if (typeof parsedLLMOutput.finalAnswer === 'object' && parsedLLMOutput.finalAnswer !== null) {
+                parsedLLMOutput.finalAnswer = JSON.stringify(parsedLLMOutput.finalAnswer);
+            }
+        }
         agent.store.getState().handleAgentFinalAnswer({agent, task, output: parsedLLMOutput});
         return parsedLLMOutput;
     }
