@@ -95,8 +95,9 @@ const team = new Team({
     env: {OPENAI_API_KEY: 'your-open-ai-api-key'}  // Environment variables for the team
 });
 
-const result = await team.start();
-console.log("Final Output:", result);
+team.start().then((result) => {
+  console.log("Final Output:", result);
+});
 ```
 
 ## Basic Concepts
