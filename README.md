@@ -95,8 +95,9 @@ const team = new Team({
     env: {OPENAI_API_KEY: 'your-open-ai-api-key'}  // Environment variables for the team
 });
 
-const result = await team.start();
-console.log("Final Output:", result);
+team.start().then((result) => {
+  console.log("Final Output:", result);
+});
 ```
 
 ## Basic Concepts
@@ -112,12 +113,271 @@ The Team coordinates the agents and their tasks. It starts with an initial input
 
 ## Key Features
 
-- **Role-Based Agent Design:** Design agents with specific roles and goals.
-- **Flexible Task Management:** Define and assign tasks dynamically to agents.
+<!-- - **Role-Based Agent Design:** Design agents with specific roles and goals.
 - **Redux-Inspired Architecture:** This architecture offers a unified approach to managing the states of all AI agents. As a big plus, it integrates effortlessly into your React applications.
 - **Real-Time Visualizer:** Built-in UI visualizer for development and debugging.
 - **Browser and Server Compatibility:** Works seamlessly across client and server environments.
-- **Multi-Model Support:** Integrates with various AI models including OpenAI, Gemini, Claude, and Mistral, enhancing versatility and adaptability.
+- **Multi-Model Support:** Integrates with various AI models including OpenAI, Gemini, Claude, and Mistral, enhancing versatility and adaptability. -->
+
+<details style="margin-bottom:10px;">
+  <summary><b style="color:black;">Role-Based Agent Design</b></summary>
+
+<p style="margin-top:10px;">
+Harness the power of specialization by configuring AI agents to excel in distinct, critical functions within your projects. This approach enhances the effectiveness and efficiency of each task, moving beyond the limitations of generic AI.
+
+In this example, our software development team is powered by three specialized AI agents: Dave, Ella, and Quinn. Each agent is expertly tailored to its specific role, ensuring efficient task handling and synergy that accelerates the development cycle.
+</p>
+
+```js
+import { Agent } from 'agenticjs';
+
+const daveLoper = new Agent({
+  name: 'Dave Loper',
+  role: 'Developer',
+  goal: 'Write and review code',
+  background: 'Experienced in JavaScript, React, and Node.js'
+});
+
+const ella = new Agent({
+  name: 'Ella',
+  role: 'Product Manager',
+  goal: 'Define product vision and manage roadmap',
+  background: 'Skilled in market analysis and product strategy'
+});
+
+const quinn = new Agent({
+  name: 'Quinn',
+  role: 'QA Specialist',
+  goal: 'Ensure quality and consistency',
+  background: 'Expert in testing, automation, and bug tracking'
+});
+
+```
+</details>
+
+
+<details style="margin-bottom:10px;">
+  <summary><b style="color:black;">Tool Integration</b></summary>
+
+<p style="margin-top:10px;">
+Just as professionals use specific tools to excel in their tasks, enable your AI agents to utilize tools like search engines, calculators, and more to perform specialized tasks with greater precision and efficiency.
+
+In this example, one of the AI agents, Peter Atlas, leverages the Tavily Search Results tool to enhance his ability to select the best cities for travel. This tool allows Peter to analyze travel data considering weather, prices, and seasonality, ensuring the most suitable recommendations.
+</p>
+
+```js
+import { Agent, Tool } from 'agenticjs';
+
+const tavilySearchResults = new Tool({
+  name: 'Tavily Search Results',
+  maxResults: 1,
+  apiKey: 'ENV_TRAVILY_API_KEY',
+});
+
+const peterAtlas = new Agent({
+  name: 'Peter Atlas',
+  role: 'City Selector',
+  goal: 'Choose the best city based on comprehensive travel data',
+  background: 'Experienced in geographical data analysis and travel trends',
+  tools: [tavilySearchResults]
+});
+```
+
+*AgenticJS supports all LangchainJS-compatible tools, offering a versatile approach to tool integration. For further details, visit the [documentation](https://github.com/AI-Champions/AgenticJS).*
+</details>  
+
+
+<details style="margin-bottom:10px;">
+  <summary><b style="color:black;">Multiple LLMs Support</b></summary>
+
+<p style="margin-top:10px;">
+Optimize your AI solutions by integrating a range of specialized AI models, each tailored to excel in distinct aspects of your projects.
+
+In this example, the agents—Emma, Lucas, and Mia—use diverse AI models to handle specific stages of feature specification development. This targeted use of AI models not only maximizes efficiency but also ensures that each task is aligned with the most cost-effective and appropriate AI resources.
+</p>
+
+```js
+import { Agent } from 'agenticjs';
+
+const emma = new Agent({
+  name: 'Emma',
+  role: 'Initial Drafting',
+  goal: 'Outline core functionalities',
+  llmConfig: {
+    provider: "google",
+    model: "gemini-1.5-pro",
+  }
+});
+
+const lucas = new Agent({
+  name: 'Lucas',
+  role: 'Technical Specification',
+  goal: 'Draft detailed technical specifications',
+  llmConfig: {
+    provider: "anthropic",
+    model: "claude-3-5-sonnet-20240620",
+  }
+});
+
+const mia = new Agent({
+  name: 'Mia',
+  role: 'Final Review',
+  goal: 'Ensure accuracy and completeness of the final document',
+  llmConfig: {
+    provider: "openai",
+    model: "gpt-4o",
+  }
+});
+```
+
+*For further details on integrating diverse AI models with AgenticJS, please visit the [documentation](https://github.com/AI-Champions/AgenticJS).*
+  </details>
+
+  <details style="margin-bottom:10px;">
+  <summary><b style="color:black;">Robust State Management</b></summary>
+
+<p style="margin-top:10px;">
+AgenticJS employs a Redux-inspired architecture, enabling a unified approach to manage the states of AI agents, tasks, and overall flow within your applications. This method ensures consistent state management across complex agent interactions, providing enhanced clarity and control.
+
+Here's a simplified example demonstrating how to integrate AgenticJS with state management in a React application:
+</p>
+
+```js
+import myAgentsTeam from "./agenticTeam";
+
+const AgenticJSComponent = () => {
+  const useTeamStore = myAgentsTeam.useStore();
+
+  const { agents, workflowResult } = useTeamStore(state => ({
+    agents: state.agents,
+    workflowResult: state.workflowResult,
+  }));
+
+  return (
+    <div>
+      <button onClick={myAgentsTeam.start}>Start Team Workflow</button>
+      <p>Workflow Result: {workflowResult}</p>
+      <div>
+        <h2>🕵️‍♂️ Agents</h2>
+        {agents.map(agent => (
+          <p key={agent.id}>{agent.name} - {agent.role} - Status: ({agent.status})</p>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default AgenticJSComponent;
+```
+
+*For a deeper dive into state management with AgenticJS, visit the [documentation](https://github.com/AI-Champions/AgenticJS).*  
+  </details>
+
+  <details style="margin-bottom:10px;">
+  <summary><b style="color:black;">Integrate with Your Preferred JavaScript Frameworks</b></summary>
+
+<p style="margin-top:10px;">
+Easily add AI capabilities to your NextJS, React, Vue, Angular, and Node.js projects.
+
+AgenticJS is designed for seamless integration across a diverse range of JavaScript environments. Whether you’re enhancing user interfaces in React, Vue, or Angular, building scalable applications with NextJS, or implementing server-side solutions in Node.js, the framework integrates smoothly into your existing workflow. 
+</p>
+
+```js
+import React from 'react';
+import myAgentsTeam from "./agenticTeam";
+
+const TaskStatusComponent = () => {
+  const useTeamStore = myAgentsTeam.useStore();
+  
+  const { tasks } = useTeamStore(state => ({
+    tasks: state.tasks.map(task => ({
+      id: task.id,
+      description: task.description,
+      status: task.status
+    }))
+  }));
+
+  return (
+    <div>
+      <h1>Task Statuses</h1>
+      <ul>
+        {tasks.map(task => (
+          <li key={task.id}>{task.description}: Status - {task.status}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default TaskStatusComponent;
+```
+
+*For a deeper dive visit the [documentation](https://github.com/AI-Champions/AgenticJS).*  
+  </details>
+
+  </details>
+  <details style="margin-bottom:10px;">
+  <summary><b style="color:black;">Observability and Monitoring</b></summary>
+
+<p style="margin-top:10px;">
+Built into AgenticJS, the observability features enable you to track every state change with detailed stats and logs, ensuring full transparency and control. This functionality provides real-time insights into token usage, operational costs, and state changes, enhancing system reliability and enabling informed decision-making through comprehensive data visibility.
+
+The following code snippet demonstrates how the state management approach is utilized to monitor and react to changes in workflow logs, providing granular control and deep insights into the operational dynamics of your AI agents:
+</p>
+
+```js
+
+const useStore = myAgentsTeam.useStore();
+
+useStore.subscribe(state => state.workflowLogs, (newLogs, previousLogs) => {
+    if (newLogs.length > previousLogs.length) {
+        const { task, agent, metadata } = newLogs[newLogs.length - 1];
+        if (newLogs[newLogs.length - 1].logType === 'TaskStatusUpdate') {
+            switch (task.status) {
+                case TASK_STATUS_enum.DONE:
+                    console.log('Task Completed', {
+                        taskDescription: task.description,
+                        agentName: agent.name,
+                        agentModel: agent.llmConfig.model,
+                        duration: metadata.duration,
+                        llmUsageStats: metadata.llmUsageStats,
+                        costDetails: metadata.costDetails,
+                    });
+                    break;
+                case TASK_STATUS_enum.DOING:
+                case TASK_STATUS_enum.BLOCKED:
+                case TASK_STATUS_enum.REVISE:
+                case TASK_STATUS_enum.TODO:
+                    console.log('Task Status Update', {
+                        taskDescription: task.description,
+                        taskStatus: task.status,
+                        agentName: agent.name
+                    });
+                    break;
+                default:
+                    console.warn('Encountered an unexpected task status:', task.status);
+                    break;
+            }
+        }
+    }
+});
+```
+
+For more details on how to utilize observability features in AgenticJS, please visit the [documentation](https://github.com/AI-Champions/AgenticJS).  
+  </details>     
+
+  </details>
+  <details style="margin-bottom:10px;">
+  <summary><b style="color:black;">Real-Time Agentic Kanban Board</b></summary>
+
+<p style="margin-top:10px;">
+Work, prototype, run, and share your AI agents effortlessly with your teams and clients—no installations, complex commands, or servers required. Who said that AI is hard anymore?
+</p>
+
+**Why a Kanban Board?**
+
+Kanban boards are excellent tools for showcasing team workflows in real time, providing a clear and interactive snapshot of each member's progress. We’ve adapted this concept for AI agents. Now, you can visualize the workflow of your AI agents as team members, with tasks moving from "To Do" to "Done" right before your eyes. This visual representation simplifies understanding and managing complex AI operations, making it accessible to anyone, anywhere.
+</details> 
 
 ## Documentation
 
@@ -141,14 +401,14 @@ const writtenBy = `Another JS Dev Who Doesn't Want to Learn Python to do meaning
 console.log(writtenBy);
 ```
 
-### Community and Support
+## Community and Support
 
-Join our [Discord community](https://bit.ly/JoinAIChamps) to connect with other developers and get support. [Follow us](https://x.com/dariel_noel) on Twitter for the latest updates.
+Join the [Discord community](https://bit.ly/JoinAIChamps) to connect with other developers and get support. [Follow us](https://x.com/dariel_noel) on Twitter for the latest updates.
 
-### Contributing
+## Contributing
 
-We welcome contributions from the community. Please read our contributing guidelines before submitting pull requests.
+We welcome contributions from the community. Please read the contributing guidelines before submitting pull requests.
 
-### License
+## License
 
 AgenticJS is MIT licensed.
