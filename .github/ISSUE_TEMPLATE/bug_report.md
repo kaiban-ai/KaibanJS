@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Create a bug report for AgenticJS
 title: "[BUG] - Bug title here"
 labels: bug
 assignees: ''
