@@ -3,7 +3,7 @@ import { AGENT_STATUS_enum } from '../utils/enums';
 
 
 class BaseAgent {
-    constructor({ name, role, goal, background, tools, llmConfig = {}, maxIterations = 10 }) {
+    constructor({ name, role, goal, background, tools, llmConfig = {}, maxIterations = 10, forceFinalAnswer = true }) {
         this.id = uuidv4();
         this.name = name;
         this.role = role;
@@ -21,6 +21,7 @@ class BaseAgent {
             ...llmConfig 
         };
         this.llmSystemMessage = null;
+        this.forceFinalAnswer = forceFinalAnswer;
     }
 
     setStore(store) {

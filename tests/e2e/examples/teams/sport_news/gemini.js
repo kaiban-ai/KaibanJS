@@ -1,11 +1,12 @@
-import { Agent, Task, Team } from 'agenticjs';
-import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
-import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
+const { Agent, Task, Team } = require('agenticjs');
+const { TavilySearchResults } = require('@langchain/community/tools/tavily_search');
+const { WikipediaQueryRun } = require("@langchain/community/tools/wikipedia_query_run");
 
 // Define tools
 const searchTool = new TavilySearchResults({
     maxResults: 3,
-    apiKey: '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',
+    // apiKey: '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',
+    apiKey: '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',
 });
 
 const wikiTool = new WikipediaQueryRun({
@@ -24,7 +25,7 @@ const searchAgent = new Agent({
     llmConfig: {
         provider: "google",
         model: "gemini-1.5-pro",
-    }  
+    }    
 });
 
 const contentCreator = new Agent({
@@ -37,7 +38,7 @@ const contentCreator = new Agent({
     llmConfig: {
         provider: "google",
         model: "gemini-1.5-pro",
-    } 
+    }     
 });
 
 // Define tasks
@@ -59,14 +60,8 @@ const team = new Team({
     agents: [searchAgent,contentCreator ],
     tasks: [searchTask, writeTask],
     inputs: { sportsQuery: 'Who won the Copa America in 2024?' },  // Placeholder for dynamic input
-    env: {
-        OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY, 
-        ANTHROPIC_API_KEY: import.meta.env.VITE_ANTHROPIC_API_KEY, 
-        MISTRAL_API_KEY: import.meta.env.VITE_MISTRAL_API_KEY,
-        GOOGLE_API_KEY: import.meta.env.VITE_GOOGLE_API_KEY
-    },
-    logLevel: 'debug'    
-    // Results of the latest UEFA Champions League match.
+    env: {GOOGLE_API_KEY: process.env.GOOGLE_API_KEY},  // Environment variables for the team,
+    logLevel: 'error'
 });
 
-export default team;
+module.exports = team;

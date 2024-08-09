@@ -39,6 +39,11 @@ class ReactChampionAgent extends BaseAgent {
             try {
                 _self.handleIterationStart({agent: _self, task, iterations, maxAgentIterations});
 
+                // Check if we need to force the final answer
+                if (_self.forceFinalAnswer && iterations === maxAgentIterations - 2) {
+                    feedbackMessage = "We don't have more time to keep looking for the answer. Please use all the information you have gathered until now and give the finalAnswer right away.";
+                }                
+
                 // pure function that returns the result of the agent thinking
                 const thinkingResult = await this.executeThinking(_self, task, ExecutableAgent, feedbackMessage);
                 // sometimes the LLM does not returns a valid JSON object so we try to sanitize the output here
@@ -323,13 +328,17 @@ class ReactChampionAgent extends BaseAgent {
 
     handleThought({agent, task, parsedLLMOutput}) {
         agent.store.getState().handleAgentThought({agent, task, output: parsedLLMOutput});
-        const feedbackMessage = "Your toughts are great, let's keep going.";
+        let feedbackMessage = "Your toughts are great, let's keep going.";
+        if(parsedLLMOutput.action === 'self_question' && parsedLLMOutput.actionInput) {
+            const actionAsString = typeof parsedLLMOutput.actionInput == 'object' ? JSON.stringify(parsedLLMOutput.actionInput) : parsedLLMOutput.actionInput;
+            feedbackMessage = "Awesome, please answer yourself the question: " + actionAsString;
+        }
         return feedbackMessage;
     }
 
     handleSelfQuestion({agent, task, parsedLLMOutput}) {
         agent.store.getState().handleAgentSelfQuestion({agent, task, output: parsedLLMOutput});
-        const feedbackMessage = "Awesome please answer yourself the question";
+        const feedbackMessage = "Awesome, please answer yourself the question";
         return feedbackMessage;
     }
 
