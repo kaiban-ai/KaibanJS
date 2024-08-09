@@ -64,7 +64,8 @@ const team = new Team({
         ANTHROPIC_API_KEY: import.meta.env.VITE_ANTHROPIC_API_KEY, 
         MISTRAL_API_KEY: import.meta.env.VITE_MISTRAL_API_KEY,
         GOOGLE_API_KEY: import.meta.env.VITE_GOOGLE_API_KEY
-    }    
+    },
+    logLevel: 'debug'    
     // Results of the latest UEFA Champions League match.
 });
 
