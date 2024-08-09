@@ -4,6 +4,8 @@ const { mock, record, restoreAll, getRecords, saveRecords } = require('../utils/
 
 const openAITeam = require('./examples/teams/sport_news/openai');
 const openAITeamRecordedRequests = require('./examples/teams/sport_news/openai.requests.json');
+const geminiTeam = require('./examples/teams/sport_news/gemini');
+const geminiTeamRecordedRequests = require('./examples/teams/sport_news/gemini.requests.json');
 
 
 // Determine if mocks should be applied based on the environment
@@ -27,6 +29,25 @@ describe('Sport News Team Workflows', () => {
         it('completes the entire workflow successfully', async () => {
             const result = await openAITeam.start();
             const storeFinalState = openAITeam.useStore().getState().getCleanedState();
+            expect(storeFinalState).toMatchSnapshot();
+
+            // const recordedData = getRecords();
+            // console.log(recordedData); 
+            // saveRecords();
+
+        });
+    });
+    describe('Using Gemini Agents', () => {
+        beforeEach(() => {         
+            // Mocking all POST requests with a callback
+            withMockedApis && mock(geminiTeamRecordedRequests);
+        });
+        afterEach(() => {
+            withMockedApis && restoreAll();
+        });      
+        it('completes the entire workflow successfully', async () => {
+            const result = await geminiTeam.start();
+            const storeFinalState = geminiTeam.useStore().getState().getCleanedState();
             expect(storeFinalState).toMatchSnapshot();
 
             // const recordedData = getRecords();
