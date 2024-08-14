@@ -381,7 +381,7 @@ Kanban boards are excellent tools for showcasing team workflows in real time, pr
 
 ## Documentation
 
-- [Official Documentation](https://agenticjs.com)
+- [Official Documentation](https://docs.agenticjs.com/category/core-concepts)
 - [Join Our Discord](https://bit.ly/JoinAIChamps)
 
 ### Compatibility
