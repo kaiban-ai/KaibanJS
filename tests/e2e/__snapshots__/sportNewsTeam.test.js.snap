@@ -6922,9 +6922,9 @@ This victory was a testament to the team's unwavering spirit, their ability to o
       "logType": "TaskStatusUpdate",
       "metadata": {
         "costDetails": {
-          "costInputTokens": -1,
-          "costOutputTokens": -1,
-          "totalCost": -1,
+          "costInputTokens": 0.0121,
+          "costOutputTokens": 0.0031,
+          "totalCost": 0.0152,
         },
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
@@ -25140,9 +25140,9 @@ This victory was a testament to the team's unwavering spirit, their ability to o
       "logType": "TaskStatusUpdate",
       "metadata": {
         "costDetails": {
-          "costInputTokens": -1,
-          "costOutputTokens": -1,
-          "totalCost": -1,
+          "costInputTokens": 0.0488,
+          "costOutputTokens": 0.0164,
+          "totalCost": 0.0652,
         },
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
@@ -25354,9 +25354,9 @@ This victory was a testament to the team's unwavering spirit, their ability to o
       "metadata": {
         "agentCount": 2,
         "costDetails": {
-          "costInputTokens": -1,
-          "costOutputTokens": -1,
-          "totalCost": -1,
+          "costInputTokens": 0.061,
+          "costOutputTokens": 0.0195,
+          "totalCost": 0.0805,
         },
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
