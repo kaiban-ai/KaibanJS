@@ -1,6 +1,7 @@
 import {logger} from "./logger";
 
 const modelsPricing = [
+    // GPT Models from OpenAI
     {
       "modelCode": "gpt-4o-mini",
       "provider": "openai",
@@ -42,6 +43,79 @@ const modelsPricing = [
       "inputPricePerMillionTokens": 30.00,
       "outputPricePerMillionTokens": 60.00,
       "features": "Latest generation AI"
+    },
+    // Claude Models from Anthropic
+    {
+      "modelCode": "claude-3-5-sonnet-20240620",
+      "provider": "anthropic",
+      "inputPricePerMillionTokens": 3,
+      "outputPricePerMillionTokens": 15,
+      "features": "Highest level of intelligence and capability"
+    },
+    {
+      "modelCode": "claude-3-opus-20240229",
+      "provider": "anthropic",
+      "inputPricePerMillionTokens": 15,
+      "outputPricePerMillionTokens": 75,
+      "features": "Top-level performance, intelligence, fluency, and understanding"
+    },
+    {
+      "modelCode": "claude-3-sonnet-20240229",
+      "provider": "anthropic",
+      "inputPricePerMillionTokens": 3,
+      "outputPricePerMillionTokens": 15,
+      "features": "Strong utility, balanced for scaled deployments"
+    },
+    {
+      "modelCode": "claude-3-haiku-20240307",
+      "provider": "anthropic",
+      "inputPricePerMillionTokens": 0.25,
+      "outputPricePerMillionTokens": 1.25,
+      "features": "Quick and accurate targeted performance"
+    },
+    // Gemini Models from Google
+    {
+      "modelCode": "gemini-1.5-flash",
+      "provider": "google",
+      "inputPricePerMillionTokens": 0.35,
+      "outputPricePerMillionTokens": 1.05,
+      "features": "Fast multimodal model with 1 million token context window"
+    },
+    {
+      "modelCode": "gemini-1.5-pro",
+      "provider": "google",
+      "inputPricePerMillionTokens": 3.50,
+      "outputPricePerMillionTokens": 10.50,
+      "features": "Next-generation model with 2 million token context window"
+    },
+    {
+      "modelCode": "gemini-1.0-pro",
+      "provider": "google",
+      "inputPricePerMillionTokens": 0.50,
+      "outputPricePerMillionTokens": 1.50,
+      "features": "First-generation model, only text and image reasoning"
+    },
+    // Mistral Models
+    {
+      "modelCode": "open-mistral-nemo-2407",
+      "provider": "mistral",
+      "inputPricePerMillionTokens": 0.3,
+      "outputPricePerMillionTokens": 0.3,
+      "features": "Mistral Nemo is a state-of-the-art 12B model developed with NVIDIA"
+    },
+    {
+      "modelCode": "mistral-large-2407",
+      "provider": "mistral",
+      "inputPricePerMillionTokens": 3,
+      "outputPricePerMillionTokens": 9,
+      "features": "Top-tier reasoning for high-complexity tasks, for your most sophisticated needs"
+    },
+    {
+      "modelCode": "codestral-2405",
+      "provider": "mistral",
+      "inputPricePerMillionTokens": 1,
+      "outputPricePerMillionTokens": 3,
+      "features": "State-of-the-art Mistral model trained specifically for code tasks"
     }
 ];
   
