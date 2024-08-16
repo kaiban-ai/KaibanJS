@@ -11,7 +11,7 @@ AgenticJS is a JavaScript-native framework for building multi-agent AI systems.
 
 ## Try It Out
 
-[Explore the Playground](https://agenticjs.com) — *it's like Trello or Asana, but for AI Agents and humans.*
+[Explore the Playground](https://www.agenticjs.com/playground) — *it's like Trello or Asana, but for AI Agents and humans.*
 
 ## Getting Started
 
