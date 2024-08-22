@@ -1,3 +1,14 @@
+/**
+ * Enumeration Definitions.
+ *
+ * This file defines various enumerations used throughout the AgenticJS library, such as agent statuses, task statuses, 
+ * and workflow states. These enums provide a standardized set of constants that facilitate clear and consistent state management 
+ * and behavior handling across different components of the library.
+ *
+ * Usage:
+ * Reference these enums to ensure consistent state management and behavior checks across the library's various functional areas.
+ */
+
 //──── Agent Status Definitions ───────────────────────────────────────
 // 
 // INITIAL: The agent is set up and waiting to start the task.

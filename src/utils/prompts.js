@@ -1,3 +1,13 @@
+/**
+ * Prompt Templates for Agents.
+ *
+ * This file provides templates for constructing prompts that are used to interact with language models within the AgenticJS library. 
+ * These templates ensure that interactions are consistent and properly formatted, facilitating effective communication with LLMs.
+ *
+ * Usage:
+ * Utilize these templates when setting up dialogues or commands for agents to ensure they are correctly interpreted by the underlying LLMs.
+ */
+
 import { zodToJsonSchema } from "zod-to-json-schema";
 
 const ReActAgentEnhancedPrompt = `

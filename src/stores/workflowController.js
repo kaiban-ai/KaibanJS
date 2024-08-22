@@ -1,3 +1,13 @@
+/**
+ * Workflow Controller Setup.
+ *
+ * Configures and controls the task execution workflow within a team context, using a queue system to manage the sequential
+ * execution of tasks based on their statuses. It ensures tasks are processed in the correct order and handles status updates.
+ *
+ * Usage:
+ * Integrate this controller to manage the flow of tasks within your application, ensuring tasks are executed in an orderly and efficient manner.
+ */
+
 import PQueue from 'p-queue';
 import { TASK_STATUS_enum } from '../utils/enums';
 

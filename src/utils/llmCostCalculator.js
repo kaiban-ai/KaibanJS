@@ -1,3 +1,14 @@
+/**
+ * LLM Cost Calculation Utilities.
+ *
+ * This file contains functions for calculating the costs associated with using large language models (LLMs) based on 
+ * token usage and model-specific pricing. It helps in budgeting and monitoring the financial aspects of using LLMs within 
+ * the AgenticJS library.
+ *
+ * Usage:
+ * Apply these functions to compute and track costs as part of operational management and optimization of LLM usage in projects.
+ */
+
 import {logger} from "./logger";
 
 const modelsPricing = [

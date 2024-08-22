@@ -1,4 +1,14 @@
-import { AGENT_STATUS_enum, TASK_STATUS_enum } from "../utils/enums";
+/**
+ * Agent Store Configuration.
+ *
+ * This file configures a Zustand store specifically for managing the state of agents within the AgenticJS library. 
+ * It outlines actions and state changes related to the lifecycle of agents, including task execution, status updates, and error handling.
+ *
+ * Usage:
+ * Employ this store to handle state updates for agents dynamically throughout the lifecycle of their tasks and interactions.
+ */
+
+import { AGENT_STATUS_enum } from "../utils/enums";
 import { logger } from "../utils/logger";
 
 const useAgentStore = (set, get) => ({
