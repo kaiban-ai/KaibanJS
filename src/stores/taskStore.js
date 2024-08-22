@@ -1,3 +1,13 @@
+/**
+ * Task Store Management.
+ *
+ * Defines the Zustand store slice for task management, handling task lifecycle events such as completion, updates, and errors.
+ * It ensures tasks are managed consistently with the ability to react to changes in task status and handle errors effectively.
+ *
+ * Usage:
+ * Use this store to manage tasks within your application, providing a robust system for updating and tracking task progress and state.
+ */
+
 import { TASK_STATUS_enum, AGENT_STATUS_enum} from "../utils/enums";
 import { getTaskTitleForLogs} from '../utils/tasks';
 import { logger } from "../utils/logger";

@@ -1,3 +1,15 @@
+/**
+ * Custom Error Definitions.
+ *
+ * This file defines custom error classes for handling specific error scenarios within the AgenticJS library. It includes 
+ * errors for API invocation failures and more nuanced errors that provide detailed diagnostic information. Custom errors 
+ * enhance error handling by making it more informative and actionable.
+ *
+ * Usage:
+ * Utilize these custom errors to throw and catch exceptions that require specific handling strategies, thereby improving 
+ * the robustness and reliability of error management in the application.
+ */
+
 class LLMInvocationError extends Error {
     constructor(message, originalError = null, recommendedAction = null, context = {}) {
         super(message);

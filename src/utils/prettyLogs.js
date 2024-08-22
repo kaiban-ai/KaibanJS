@@ -1,3 +1,14 @@
+/**
+ * Pretty Logging Utilities.
+ *
+ * Enhances log outputs by formatting them into more readable and visually appealing structures. This file contains functions 
+ * that generate styled log entries for various operational states and outcomes within the AgenticJS library, making it easier 
+ * to interpret and review logs.
+ *
+ * Usage:
+ * Use these functions to output enhanced visual logs for better clarity and easier debugging during development and monitoring.
+ */
+
 import ansis from "ansis";
 import { logger } from "./logger";
 

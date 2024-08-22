@@ -1,3 +1,14 @@
+/**
+ * Agent Utility Functions.
+ *
+ * This file provides utility functions specifically designed to support agent operations within the AgenticJS library. 
+ * Functions include retrieving API keys based on agent configurations and cleaning JSON strings for parsing. These utilities 
+ * aid in configuring agents accurately and handling their data interactions.
+ *
+ * Usage:
+ * Use these utilities to manage agent configurations and preprocess data formats essential for the smooth operation of agents.
+ */
+
 function getApiKey(llmConfig, env) {
     if (llmConfig?.apiKey) return llmConfig.apiKey;
 

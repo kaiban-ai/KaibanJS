@@ -1,3 +1,14 @@
+/**
+ * Base Agent Definition.
+ *
+ * This file defines the BaseAgent class, which serves as the foundational component for all agents within the library. 
+ * It includes fundamental methods for setting environment variables, managing agent status, and abstract methods 
+ * for task execution which must be implemented by subclasses to handle specific tasks.
+ *
+ * Usage:
+ * Extend this class to create specialized agents with specific behaviors suited to different types of tasks and workflows.
+ */
+
 import { v4 as uuidv4 } from 'uuid';
 import { AGENT_STATUS_enum } from '../utils/enums';
 

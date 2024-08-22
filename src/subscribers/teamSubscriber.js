@@ -1,3 +1,13 @@
+/**
+ * Workflow Status Subscriber.
+ *
+ * Monitors changes in the workflow status, logging significant events and updating the system state accordingly. 
+ * This is crucial for maintaining a clear overview of workflow progress and handling potential issues promptly.
+ *
+ * Usage:
+ * Use this subscriber to keep track of workflow statuses, enabling proactive management of workflows and their states.
+ */
+
 import { logPrettyWorkflowStatus, logPrettyWorkflowResult } from "../utils/prettyLogs";
 import { WORKFLOW_STATUS_enum } from '../utils/enums';
 

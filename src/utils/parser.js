@@ -1,3 +1,14 @@
+/**
+ * Data Parsing Utilities.
+ *
+ * This file offers functions for parsing and sanitizing data formats, particularly focusing on JSON structures that agents 
+ * might receive or need to process. These utilities ensure that data handled by agents is in the correct format and free of 
+ * errors that could disrupt processing.
+ *
+ * Usage:
+ * Leverage these parsing utilities to preprocess or clean data before it is fed into agents or other processing functions within the library.
+ */
+
 // Utility function to clean up JSON string. to be able to parse it. later
 
 //Examples Input
