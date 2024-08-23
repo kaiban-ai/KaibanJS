@@ -11,6 +11,7 @@
 
 import { v4 as uuidv4 } from "uuid";
 import { ENUM_AGENT_STATUS } from "../utils/enums";
+import { ILLMConfig, TEnv } from "../utils/types";
 
 /**
  * --- Base Agent Parameters ---
@@ -39,16 +40,26 @@ export interface IBaseAgentParams {
   goal: string;
   background: string;
   tools?: any[];
-  llmConfig?: any;
+  llmConfig?: ILLMConfig;
   maxIterations?: number;
   forceFinalAnswer: boolean;
 }
 
+/**
+ * --- Base Agent ---
+ *
+ * The BaseAgent class serves as the foundational component for all agents within the library.
+ * It includes fundamental methods for setting environment variables, managing agent status, and abstract methods
+ * for task execution which must be implemented by subclasses to handle specific tasks.
+ *
+ * Usage:
+ * Extend this class to create specialized agents with specific behaviors suited to different types of tasks and workflows.
+ */
 class BaseAgent {
   id: string;
   store: any = null;
   status: ENUM_AGENT_STATUS;
-  env: any = null;
+  env: TEnv = null;
   llmSystemMessage: any = null;
 
   name: string;
@@ -56,7 +67,7 @@ class BaseAgent {
   goal: string;
   background: string;
   tools: any[];
-  llmConfig: any;
+  llmConfig: ILLMConfig;
   maxIterations: number;
   forceFinalAnswer: boolean;
 
@@ -82,23 +93,17 @@ class BaseAgent {
   }
 
   // TODO: Missing context for store type
-  setStore(store) {
+  setStore = (store) => {
     this.store = store;
-  }
+  };
 
-  setStatus(status: ENUM_AGENT_STATUS) {
+  setStatus = (status: ENUM_AGENT_STATUS) => {
     this.status = status;
-  }
+  };
 
-  // TODO: Missing context for env type
-  setEnv(env) {
+  setEnv = (env: TEnv) => {
     this.env = env;
-  }
-
-  // TODO: Missing context for task type
-  executeTask(task) {
-    throw new Error("executeTask must be implemented by subclasses.");
-  }
+  };
 }
 
 export { BaseAgent };
