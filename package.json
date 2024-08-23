@@ -21,7 +21,8 @@
     "play:react": "cd playground/react && npm run dev",
     "play:sb": "cd playground/react && npm run storybook",
     "play:node": "cd playground/nodejs && node index.js",
-    "code-snapshot": "node xscripts/codeSnapshot.js"
+    "code-snapshot": "node xscripts/codeSnapshot.js",
+    "test:types": "npx tsc --noEmit"
   },
   "packageManager": "npm@9.8.1",
   "repository": {
@@ -77,9 +78,11 @@
     "prettier": "2.3.2",
     "rollup-plugin-peer-deps-external": "2.2.4",
     "rollup-plugin-sourcemaps": "0.6.3",
-    "rollup-plugin-terser": "7.0.2"
+    "rollup-plugin-terser": "7.0.2",
+    "typescript": "^5.5.4"
   },
   "engines": {
     "node": ">=12.0.0"
-  }
+  },
+  "type": "module"
 }

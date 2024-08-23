@@ -1,45 +1,98 @@
 // -------------------------------------------------------------------------
-// Welcome to the sketchbook of our library's type definitions. 
+// Welcome to the sketchbook of our library's type definitions.
 //--------------------------------------------------------------------------
 //
-// Like a promise of "we'll do it tomorrow," we've sketched out the outlines but the details? 
+// Like a promise of "we'll do it tomorrow," we've sketched out the outlines but the details?
 // Well, they will be defined later... This finger never eats but always says 'I'll pick the tab next time!'
 //
 // Feel adventurous? Help us fill in the gaps – don't wait for tomorrow!
 // -------------------------------------------------------------------------
 
-export class Agent {
+import { Tool } from "langchain/tools";
+import type { AGENT_STATUS_enum, TASK_STATUS_enum } from "./enums.d.ts";
+import type {
+  BaseAgent,
+  IBaseAgentParams,
+  ILLMConfig,
+  ITaskStats,
+  TAgentTypes,
+  TStore,
+} from "./types.d.ts";
 
-    [key: string]: any;
+declare module "agenticjs" {
+  export class Agent {
+    agentInstance: BaseAgent;
+    type: string;
 
-    constructor(props?: Record<string, any>) {
-        Object.assign(this, props);
-    }    
+    constructor(type: TAgentTypes, config: IBaseAgentParams);
 
-    // Implementation details will be defined later... 
-    // Yes, this is the 'I’ll clean my desk next week' kind of later.
-}
+    createAgent(type: TAgentTypes, config: IBaseAgentParams): BaseAgent;
+    executeTask(task: Task): Promise<any>;
 
-export class Task {
+    setStore(store: TStore): void;
+    setEnv(env: Record<string, any>): void;
+    setStatus(status: AGENT_STATUS_enum): void;
 
-    [key: string]: any;
+    id(): string;
+    name(): string;
+    role(): string;
+    goal(): string;
+    background(): string;
+    tools(): Tool[];
+    status(): AGENT_STATUS_enum;
+    llmConfig(): ILLMConfig;
+    llmSystemMessage(): string;
+    forceFinalAnswer(): boolean;
+  }
 
-    constructor(props?: Record<string, any>) {
-        Object.assign(this, props);
-    }    
+  export interface ITaskParams {
+    title?: string;
+    description: string;
+    expectedOutput: any;
+    agent: BaseAgent;
+    isDeliverable?: boolean;
+  }
 
-    // Implementation details will be defined later... 
-    // Like that gym membership we all get in January.
-}
+  export class Task {
+    id: string;
+    title: string;
+    description: string;
+    expectedOutput: string;
+    isDeliverable: boolean;
+    agent: BaseAgent;
+    status: TASK_STATUS_enum;
+    result: any; // ? Need more context
+    stats: ITaskStats | null;
+    duration: number | null;
+    dependencies: Task[];
+    interpolatedTaskDescription: string | null;
+    store: TStore;
 
-export class Team {
+    constructor(params: ITaskParams);
 
-    [key: string]: any;
+    setStore(store: TStore): void;
+  }
 
-    constructor(props?: Record<string, any>) {
-        Object.assign(this, props);
-    }    
+  export interface ITeamParams {
+    name: string;
+    agents?: BaseAgent[];
+    tasks?: Task[];
+    logLevel?: string;
+    inputs?: Record<string, string>;
+    env?: Record<string, any> | null;
+  }
 
-    // Implementation details will be defined later... 
-    // We're scheduling a meeting to plan the meeting about this.
+  export class Team {
+    store: TStore;
+
+    constructor(params: ITeamParams);
+
+    start(): Promise<void>;
+    getStore(): TStore;
+    useStore(): TStore;
+    subscribeToChanges(
+      listener: (store: TStore) => void, // ? Need more context
+      properties?: string[]
+    ): () => void;
+  }
 }
