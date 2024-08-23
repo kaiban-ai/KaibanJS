@@ -1,7 +1,7 @@
 /**
  * Prompt Templates for Agents.
  *
- * This file provides templates for constructing prompts that are used to interact with language models within the AgenticJS library.
+ * This file provides templates for constructing prompts that are used to interact with language models within the AgenticJS library. 
  * These templates ensure that interactions are consistent and properly formatted, facilitating effective communication with LLMs.
  *
  * Usage:
@@ -9,7 +9,6 @@
  */
 
 import { zodToJsonSchema } from "zod-to-json-schema";
-import { ILLMTool } from "./types";
 
 const ReActAgentEnhancedPrompt = `
     You are {name}.
@@ -73,15 +72,8 @@ const ReActAgentPromptLangchainOriginal = `
     Thought:{agent_scratchpad}
 `;
 
-const getChampionReActAgentSystemPrompt = (inputs: {
-  name: string;
-  role: string;
-  background: string;
-  goal: string;
-  tools: ILLMTool[];
-  expectedOutput: string;
-}) => {
-  return `You are ${inputs.name}.
+const getChampionReActAgentSystemPrompt = (inputs) => {
+    return `You are ${inputs.name}.
 
         Your role is: ${inputs.role}.
         Your background is: ${inputs.background}.
@@ -96,20 +88,9 @@ const getChampionReActAgentSystemPrompt = (inputs: {
 
         ## Tools available for your use: 
 
-        ${
-          inputs.tools.length > 0
-            ? inputs.tools
-                .map(
-                  (tool) =>
-                    `${tool.name}: ${
-                      tool.description
-                    } Tool Input Schema: ${JSON.stringify(
-                      zodToJsonSchema(tool.schema)
-                    )}`
-                )
-                .join(", ")
-            : "No tools available. You must reply in your internal knowledge."
-        }
+        ${inputs.tools.length > 0 ? 
+            inputs.tools.map(tool => `${tool.name}: ${tool.description} Tool Input Schema: ${JSON.stringify(zodToJsonSchema(tool.schema))}`).join(', ') : 
+            "No tools available. You must reply in your internal knowledge."}
 
         **Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.
 
@@ -158,20 +139,16 @@ const getChampionReActAgentSystemPrompt = (inputs: {
 
         ### Final Answer
 
-        IMPORTANT: (Please respect the expected output requirements from the user): ${
-          inputs.expectedOutput
-        }
+        IMPORTANT: (Please respect the expected output requirements from the user): ${inputs.expectedOutput}
 
         {
             "finalAnswer": "The final answer to the Task."
         }
 
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
-        `;
+        `
+        ; 
 };
 
-export {
-  ReActAgentPromptLangchainOriginal,
-  ReActAgentEnhancedPrompt,
-  getChampionReActAgentSystemPrompt,
-};
+
+export { ReActAgentPromptLangchainOriginal, ReActAgentEnhancedPrompt, getChampionReActAgentSystemPrompt };

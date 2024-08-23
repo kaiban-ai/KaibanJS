@@ -32,24 +32,13 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { logger } from "../utils/logger";
 import { getChampionReActAgentSystemPrompt } from "../utils/prompts";
 import { LLMInvocationError } from "../utils/errors";
-import { IThinkingResult } from "../utils/types";
-
-export type TLLMInstance =
-  | ChatOpenAI
-  | ChatAnthropic
-  | ChatGoogleGenerativeAI
-  | ChatMistralAI;
 
 class ReactChampionAgent extends BaseAgent {
-  llmInstance: TLLMInstance;
-  llmSystemMessage: string;
-  memory: ChatMessageHistory;
-
   constructor(config: IBaseAgentParams) {
     super(config);
   }
 
-  executeTask = async (task, inputs: string[], context: string[]) => {
+  async executeTask(task, inputs, context) {
     const _self = this;
 
     const agentConfigForExecution = this.buildAgent(
@@ -244,7 +233,7 @@ class ReactChampionAgent extends BaseAgent {
         metadata: { iterations, maxAgentIterations },
       };
     }
-  };
+  }
 
   buildSystemMessage(agent, task, interpolatedTaskDescription) {
     const systemMessage = getChampionReActAgentSystemPrompt({
@@ -274,12 +263,7 @@ class ReactChampionAgent extends BaseAgent {
     return feedbackMessage;
   }
 
-  buildAgent(
-    agent: ReactChampionAgent,
-    task,
-    inputs: string[],
-    context: string[]
-  ) {
+  buildAgent(agent, task, inputs, context) {
     // Ensure the API key is retrieved and set correctly
     const apiKey = getApiKey(agent.llmConfig, agent.env);
     agent.llmConfig.apiKey = apiKey;
@@ -302,9 +286,7 @@ class ReactChampionAgent extends BaseAgent {
     const ChatClass = providers[this.llmConfig.provider];
 
     // Initialize the language model instance with the complete configuration
-    // ! No sufficient overlap between the different classes to give a suitable type
-    // @ts-ignore
-    this.llmInstance = new ChatClass({ ...this.llmConfig });
+    this.llmInstance = new ChatClass(this.llmConfig);
 
     // Initialize the chat message history
     this.memory = new ChatMessageHistory();
@@ -349,7 +331,7 @@ class ReactChampionAgent extends BaseAgent {
     };
   }
 
-  determineActionType = (parsedResult) => {
+  determineActionType(parsedResult) {
     if (parsedResult === null) {
       return ENUM_AGENT_STATUS.ISSUES_PARSING_LLM_OUTPUT;
     } else if (parsedResult.finalAnswer) {
@@ -365,24 +347,23 @@ class ReactChampionAgent extends BaseAgent {
     } else {
       return ENUM_AGENT_STATUS.WEIRD_LLM_OUTPUT; // Fallback for unhandled or unexpected output
     }
-  };
+  }
 
-  handleIterationStart = ({ agent, task, iterations, maxAgentIterations }) => {
+  handleIterationStart({ agent, task, iterations, maxAgentIterations }) {
     agent.store.getState().handleAgentIterationStart({
       agent,
       task,
       iterations,
       maxAgentIterations,
     });
-  };
+  }
 
-  handleIterationEnd = ({ agent, task, iterations, maxAgentIterations }) => {
+  handleIterationEnd({ agent, task, iterations, maxAgentIterations }) {
     agent.store
       .getState()
       .handleAgentIterationEnd({ agent, task, iterations, maxAgentIterations });
-  };
-
-  handleThinkingStart = ({ agent, task, messages }) => {
+  }
+  async handleThinkingStart({ agent, task, messages }) {
     try {
       const transformedMessages = messages.flatMap((subArray) =>
         subArray.map((message) => ({
@@ -403,13 +384,9 @@ class ReactChampionAgent extends BaseAgent {
       );
       throw error; // Rethrow to ensure it can still be handled upstream if necessary
     }
-  };
+  }
 
-  handleThinkingEnd = async ({
-    agent,
-    task,
-    output,
-  }): Promise<IThinkingResult> => {
+  async handleThinkingEnd({ agent, task, output }) {
     try {
       const agentResultParser = new StringOutputParser();
       if (
@@ -423,7 +400,7 @@ class ReactChampionAgent extends BaseAgent {
       const { message } = output.generations[0][0];
       const parsedResult = await agentResultParser.invoke(message);
       const parsedLLMOutput = getParsedJSON(parsedResult);
-      const thinkingResult: IThinkingResult = {
+      const thinkingResult = {
         parsedLLMOutput: parsedLLMOutput,
         llmOutput: parsedResult,
         llmUsageStats: {
@@ -441,69 +418,58 @@ class ReactChampionAgent extends BaseAgent {
       );
       throw error; // Rethrow to ensure it can still be handled upstream if necessary
     }
-  };
+  }
 
-  handleThinkingError = ({ agent, task, error }) => {
+  handleThinkingError({ agent, task, error }) {
     agent.store.getState().handleAgentThinkingError({ agent, task, error });
-  };
+  }
 
-  executeThinking = async (
-    agent: ReactChampionAgent,
-    task,
-    ExecutableAgent,
-    feedbackMessage
-  ): Promise<IThinkingResult> => {
-    return new Promise(
-      (
-        resolve: (
-          value: IThinkingResult | PromiseLike<IThinkingResult>
-        ) => void,
-        reject: (reason?: any) => void
-      ) => {
-        ExecutableAgent.invoke(
-          { feedbackMessage },
-          {
-            configurable: { sessionId: "foo-bar-baz" },
-            callbacks: [
-              {
-                handleChatModelStart: (llm, messages) => {
-                  agent
-                    .handleThinkingStart({ agent, task, messages })
-                    .catch((error) => {
-                      reject(error);
-                    });
-                },
-
-                handleLLMEnd: async (output) => {
-                  agent
-                    .handleThinkingEnd({ agent, task, output })
-                    .then((thinkingResult) => resolve(thinkingResult))
-                    .catch((error) => {
-                      reject(error);
-                    });
-                },
+  async executeThinking(agent, task, ExecutableAgent, feedbackMessage) {
+    return new Promise((resolve, reject) => {
+      ExecutableAgent.invoke(
+        { feedbackMessage },
+        {
+          configurable: { sessionId: "foo-bar-baz" },
+          callbacks: [
+            {
+              handleChatModelStart: (llm, messages) => {
+                agent
+                  .handleThinkingStart({ agent, task, messages })
+                  .catch((error) => {
+                    reject(error);
+                  });
               },
-            ],
-          }
-        ).catch((error) => {
-          logger.error(
-            `LLM_INVOCATION_ERROR: Error during LLM API call for Agent: ${agent.name}, Task: ${task.id}. Details:`,
-            error
-          );
-          reject(
-            new LLMInvocationError({
-              message: `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
-              originalError: error,
-            })
-          );
-        });
-      }
-    );
-  };
 
-  handleIssuesParsingLLMOutput = ({ agent, task, output }) => {
+              handleLLMEnd: async (output) => {
+                agent
+                  .handleThinkingEnd({ agent, task, output })
+                  .then((thinkingResult) => resolve(thinkingResult))
+                  .catch((error) => {
+                    reject(error);
+                  });
+              },
+            },
+          ],
+        }
+      ).catch((error) => {
+        logger.error(
+          `LLM_INVOCATION_ERROR: Error during LLM API call for Agent: ${agent.name}, Task: ${task.id}. Details:`,
+          error
+        );
+        reject(
+          new LLMInvocationError(
+            `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
+            error
+          )
+        );
+      });
+    });
+  }
+
+  handleIssuesParsingLLMOutput({ agent, task, output }) {
     const jSONPArsingError = new Error(
-      `Received an invalid JSON object from the LLM. Requesting a correctly formatted JSON response. ${output.llmOutput}`
+      "Received an invalid JSON object from the LLM. Requesting a correctly formatted JSON response.",
+      output.llmOutput
     );
     agent.store.getState().handleAgentIssuesParsingLLMOutput({
       agent,
@@ -513,9 +479,9 @@ class ReactChampionAgent extends BaseAgent {
     });
     const feedbackMessage = `You returned an invalid JSON object. Please format your answer as a valid JSON object. Just the JSON object not comments or anything else. E.g: {\"finalAnswer\": \"The final answer\"}`;
     return feedbackMessage;
-  };
+  }
 
-  handleFinalAnswer = ({ agent, task, parsedLLMOutput }) => {
+  handleFinalAnswer({ agent, task, parsedLLMOutput }) {
     // console.log(parsedJSON.finalAnswer);
     if (parsedLLMOutput.finalAnswer) {
       if (
@@ -531,9 +497,9 @@ class ReactChampionAgent extends BaseAgent {
       .getState()
       .handleAgentFinalAnswer({ agent, task, output: parsedLLMOutput });
     return parsedLLMOutput;
-  };
+  }
 
-  handleThought = ({ agent, task, parsedLLMOutput }) => {
+  handleThought({ agent, task, parsedLLMOutput }) {
     agent.store
       .getState()
       .handleAgentThought({ agent, task, output: parsedLLMOutput });
@@ -550,17 +516,17 @@ class ReactChampionAgent extends BaseAgent {
         "Awesome, please answer yourself the question: " + actionAsString;
     }
     return feedbackMessage;
-  };
+  }
 
-  handleSelfQuestion = ({ agent, task, parsedLLMOutput }) => {
+  handleSelfQuestion({ agent, task, parsedLLMOutput }) {
     agent.store
       .getState()
       .handleAgentSelfQuestion({ agent, task, output: parsedLLMOutput });
     const feedbackMessage = "Awesome, please answer yourself the question";
     return feedbackMessage;
-  };
+  }
 
-  executeUsingTool = async ({ agent, task, parsedLLMOutput, tool }) => {
+  async executeUsingTool({ agent, task, parsedLLMOutput, tool }) {
     // If the tool exists, use it
     const toolInput = parsedLLMOutput.actionInput;
     agent.handleUsingToolStart({ agent, task, tool, input: toolInput });
@@ -570,56 +536,55 @@ class ReactChampionAgent extends BaseAgent {
     const feedbackMessage =
       "You got this result from the tool: " + JSON.stringify(toolResult);
     return feedbackMessage;
-  };
+  }
 
-  handleUsingToolStart = ({ agent, task, tool, input }) => {
+  handleUsingToolStart({ agent, task, tool, input }) {
     agent.store.getState().handleAgentToolStart({ agent, task, tool, input });
-  };
-
-  handleUsingToolEnd = ({ agent, task, tool, output }) => {
+  }
+  handleUsingToolEnd({ agent, task, tool, output }) {
     agent.store.getState().handleAgentToolEnd({ agent, task, tool, output });
-  };
+  }
 
-  handleUsingToolError = ({ agent, task, parsedLLMOutput, tool, error }) => {
+  handleUsingToolError({ agent, task, parsedLLMOutput, tool, error }) {
     agent.store.getState().handleAgentToolError({ agent, task, tool, error });
     // console.error(`Error occurred while using the tool ${parsedLLMOutput.action}:`, error);
     const feedbackMessage = `An error occurred while using the tool ${parsedLLMOutput.action}. Please try again or use a different method.`;
     return feedbackMessage;
-  };
+  }
 
-  handleToolDoesNotExist = ({ agent, task, parsedLLMOutput, toolName }) => {
+  handleToolDoesNotExist({ agent, task, parsedLLMOutput, toolName }) {
     agent.store
       .getState()
       .handleAgentToolDoesNotExist({ agent, task, toolName });
     const feedbackMessage = `Hey, the tool ${parsedLLMOutput.action} does not exist. Please find another way.`;
     return feedbackMessage;
-  };
+  }
 
-  handleObservation = ({ agent, task, parsedLLMOutput }) => {
+  handleObservation({ agent, task, parsedLLMOutput }) {
     agent.store
       .getState()
       .handleAgentObservation({ agent, task, output: parsedLLMOutput });
     const feedbackMessage =
       "Great observation. Please keep going. Let's get to the final answer.";
     return feedbackMessage;
-  };
+  }
 
-  handleWeirdOutput = ({ agent, task, parsedLLMOutput }) => {
+  handleWeirdOutput({ agent, task, parsedLLMOutput }) {
     agent.store
       .getState()
       .handleWeirdOutput({ agent, task, output: parsedLLMOutput });
     const feedbackMessage =
       "Your latest response does not match the way you are expected to output information. Please correct it.";
     return feedbackMessage;
-  };
+  }
 
-  handleAgenticLoopError = ({
+  handleAgenticLoopError({
     agent,
     task,
     error,
     iterations,
     maxAgentIterations,
-  }) => {
+  }) {
     agent.store.getState().handleAgentLoopError({
       agent,
       task,
@@ -627,14 +592,9 @@ class ReactChampionAgent extends BaseAgent {
       iterations,
       maxAgentIterations,
     });
-  };
+  }
 
-  handleMaxIterationsError = ({
-    agent,
-    task,
-    iterations,
-    maxAgentIterations,
-  }) => {
+  handleMaxIterationsError({ agent, task, iterations, maxAgentIterations }) {
     const error = new Error(
       `Agent ${agent.name} reached the maximum number of iterations: [${maxAgentIterations}] without finding a final answer.`
     );
@@ -645,15 +605,15 @@ class ReactChampionAgent extends BaseAgent {
       iterations,
       maxAgentIterations,
     });
-  };
+  }
 
-  handleTaskCompleted = ({
+  handleTaskCompleted({
     agent,
     task,
     parsedResultWithFinalAnswer,
     iterations,
     maxAgentIterations,
-  }) => {
+  }) {
     agent.store.getState().handleAgentTaskCompleted({
       agent,
       task,
@@ -663,7 +623,7 @@ class ReactChampionAgent extends BaseAgent {
     });
     // console.log("Final Answer found:", finalAnswer);
     // console.log("Task completed:", task);
-  };
+  }
 }
 
 export { ReactChampionAgent };
