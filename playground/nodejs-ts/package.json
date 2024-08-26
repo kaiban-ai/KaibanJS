@@ -1,0 +1,19 @@
+{
+  "name": "nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "agenticjs": "latest",
+    "dotenv": "^16.4.5",
+    "typescript": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/agenticjs": "latest"
+  }
+}

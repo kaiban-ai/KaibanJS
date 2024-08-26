@@ -19,6 +19,16 @@ import type {
 
 declare module "agenticjs" {
   /**
+   * ### Agent parameters
+   * @interface IAgentParams
+   * @extends IBaseAgentParams
+   * @property {TAgentTypes} type - The type of agent.
+   */
+  export interface IAgentParams extends IBaseAgentParams {
+    type?: TAgentTypes;
+  }
+
+  /**
    * ### Agent
    * A class representing an agent.
    * @class
@@ -32,10 +42,9 @@ declare module "agenticjs" {
 
     /**
      * Creates an instance of an Agent.
-     * @param {TAgentTypes} type - The type of agent.
-     * @param {IBaseAgentParams} config - The configuration parameters for the agent.
+     * @param {IAgentParams} config - The configuration parameters for the agent.
      */
-    constructor(type: TAgentTypes, config: IBaseAgentParams);
+    constructor(config: IAgentParams);
 
     /**
      * Creates an agent.
@@ -144,7 +153,7 @@ declare module "agenticjs" {
     title?: string;
     description: string;
     expectedOutput: any;
-    agent: BaseAgent;
+    agent: Agent;
     isDeliverable?: boolean;
   }
 
@@ -157,7 +166,7 @@ declare module "agenticjs" {
    * @property {string} description - The task description.
    * @property {string} expectedOutput - The expected output of the task.
    * @property {boolean} isDeliverable - Indicates whether the task is deliverable.
-   * @property {BaseAgent} agent - The agent to execute the task.
+   * @property {Agent} agent - The agent to execute the task.
    * @property {TASK_STATUS_enum} status - The status of the task.
    * @property {any} result - The result of the task.
    * @property {ITaskStats | null} stats - The statistics of the task.
@@ -172,7 +181,7 @@ declare module "agenticjs" {
     description: string;
     expectedOutput: string;
     isDeliverable: boolean;
-    agent: BaseAgent;
+    agent: Agent;
     status: TASK_STATUS_enum;
     result: any; // ? Need more context
     stats: ITaskStats | null;
@@ -206,7 +215,7 @@ declare module "agenticjs" {
    */
   export interface ITeamParams {
     name: string;
-    agents?: BaseAgent[];
+    agents?: Agent[];
     tasks?: Task[];
     logLevel?: string;
     inputs?: Record<string, string>;
