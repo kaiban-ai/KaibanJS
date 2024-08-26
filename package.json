@@ -22,7 +22,7 @@
     "play:sb": "cd playground/react && npm run storybook",
     "play:node": "cd playground/nodejs && node index.js",
     "code-snapshot": "node xscripts/codeSnapshot.js",
-    "test:types": "npx tsc --noEmit"
+    "test:types": "npx tsc"
   },
   "packageManager": "npm@9.8.1",
   "repository": {
