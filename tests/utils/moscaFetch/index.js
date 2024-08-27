@@ -6,7 +6,6 @@ function moscaFetch() {
     // Define your custom fetch function
     let myCustomFetch = async (input, options) => {
         console.log('MoscaFetch -> Using custom fetch for:', input);
-
         for (const mock of mocks) {
             let { body: requestBody, method: requestMethod = 'GET' } = options || {};
             requestMethod = requestMethod.toUpperCase();
@@ -18,8 +17,11 @@ function moscaFetch() {
 
             const urlMatches = mock.url === '*' || input === mock.url;
             const methodMatches = mock.method === '*' || mock.method.toUpperCase() === requestMethod;
-            const bodyMatches = mock.body === '*' || JSON.stringify(requestBody) === JSON.stringify(mock.body);
-
+            
+            const cleanRequestBody = JSON.stringify(requestBody).replace(/\\n\s+/g, "\\n");// Regular Expression to remove spaces between newlines
+            const cleanMockBody = JSON.stringify(mock.body).replace(/\\n\s+/g, "\\n");// Regular Expression to remove spaces between newlines
+        
+            const bodyMatches = mock.body === '*' || cleanRequestBody === cleanMockBody;
             if (urlMatches && methodMatches && bodyMatches) {
                 if (mock.isRecorder) {
                     const response = await originalFetch(input, options);
@@ -54,6 +56,7 @@ function moscaFetch() {
                 }
             }
         }
+        console.log('MoscaFetch -> No mocks or recorders matched:', input);
         return originalFetch(input, options); // Call the original fetch if no mocks or recorders match
     };
 
@@ -67,7 +70,7 @@ function moscaFetch() {
     let mocks = [];
     let records = [];
 
-    function mock(mockConfigs) {                
+    function mock(mockConfigs) { 
         // Ensure the input is always treated as an array, even if it's a single object
         const configs = Array.isArray(mockConfigs) ? mockConfigs : [mockConfigs];
 
