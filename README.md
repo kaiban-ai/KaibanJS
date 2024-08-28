@@ -95,17 +95,15 @@ const team = new Team({
     env: {OPENAI_API_KEY: 'your-open-ai-api-key'}  // Environment variables for the team
 });
 
+// Listen to the workflow status changes
+// team.onWorkflowStatusChange((status) => {
+//   console.log("Workflow status:", status);
+// });
+
 team.start()
   .then((output) => {
-    if (output.status === 'FINISHED') {
-      console.log("Final result:", output.result);
-    } else if (output.status === 'BLOCKED') {
-      console.log("Workflow is blocked");
-      // Handle blocked state (e.g., request human intervention)
-      // team.getTasksByStatus('BLOCKED').forEach(task => {
-      //   team.validateTask(task.id);
-      // });
-    }
+    console.log("Workflow status:", output.status);
+    console.log("Result:", output.result);
   })
   .catch((error) => {
     console.error("Workflow encountered an error:", error);
