@@ -161,21 +161,14 @@ class Team {
                             break;
                         case WORKFLOW_STATUS_enum.ERRORED:
                             unsubscribe();
-                            resolve({
-                                status,
-                                error: new Error('Workflow encountered an error')
-                            });
+                            reject(new Error('Workflow encountered an error'));
                             break;
                         case WORKFLOW_STATUS_enum.BLOCKED:
-                            const blockedTasks = state.tasks.filter(t => 
-                                t.status === TASK_STATUS_enum.BLOCKED || 
-                                t.status === TASK_STATUS_enum.AWAITING_VALIDATION
-                            );
+                            unsubscribe();
                             resolve({
                                 status,
-                                blockedTasks
+                                result: null
                             });
-                            // Note: We don't unsubscribe here, allowing the workflow to continue
                             break;
                         default:
                             // For other statuses (like RUNNING), we don't resolve yet
