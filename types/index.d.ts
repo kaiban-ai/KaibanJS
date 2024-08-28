@@ -56,9 +56,9 @@ export class Agent {
   /**
    * Executes a task.
    * @param {Task} task - The task to be executed.
-   * @returns {Promise<any>} A promise resolving with the task result.
+   * @returns {Promise<string>} A promise resolving with the task result.
    */
-  executeTask(task: Task): Promise<any>;
+  executeTask(task: Task): Promise<string>;
 
   /**
    * Sets the store.
@@ -144,14 +144,14 @@ export class Agent {
  * @interface ITaskParams
  * @property {string} [title] - The title of the task.
  * @property {string} description - The description of the task.
- * @property {any} expectedOutput - The expected output of the task.
+ * @property {string} expectedOutput - The expected output of the task.
  * @property {BaseAgent} agent - The agent to execute the task.
  * @property {boolean} [isDeliverable] - Indicates whether the task is deliverable.
  */
 export interface ITaskParams {
   title?: string;
   description: string;
-  expectedOutput: any;
+  expectedOutput: string;
   agent: Agent;
   isDeliverable?: boolean;
 }
@@ -167,7 +167,7 @@ export interface ITaskParams {
  * @property {boolean} isDeliverable - Indicates whether the task is deliverable.
  * @property {Agent} agent - The agent to execute the task.
  * @property {TASK_STATUS_enum} status - The status of the task.
- * @property {any} result - The result of the task.
+ * @property {string} result - The result of the task.
  * @property {ITaskStats | null} stats - The statistics of the task.
  * @property {number | null} duration - The duration of the task.
  * @property {Task[]} dependencies - The dependencies of the task.
@@ -182,7 +182,7 @@ export class Task {
   isDeliverable: boolean;
   agent: Agent;
   status: TASK_STATUS_enum;
-  result: any; // ? Need more context
+  result: string;
   stats: ITaskStats | null;
   duration: number | null;
   dependencies: Task[];
