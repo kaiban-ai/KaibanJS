@@ -52,6 +52,8 @@ const AGENT_STATUS_enum = {
 // BLOCKED: Progress on the task is halted due to dependencies or obstacles.
 // REVISE: Task requires additional review or adjustments.
 // DONE: Task is completed and requires no further action.
+// AWAITING_VALIDATION: Task is completed but requires validation or approval.
+// VALIDATE: Task has been validated and confirmed as correctly completed.
 // 
 // ─────────────────────────────────────────────────────────────────────
 
@@ -60,7 +62,9 @@ const TASK_STATUS_enum = {
     DOING: 'DOING',
     BLOCKED: 'BLOCKED',
     REVISE: 'REVISE',
-    DONE: 'DONE'
+    DONE: 'DONE',
+    AWAITING_VALIDATION: 'AWAITING_VALIDATION',
+    VALIDATED: 'VALIDATED'
 };
 
 // ──── Workflow Status Definitions ───────────────────────────────────────
@@ -85,4 +89,16 @@ const WORKFLOW_STATUS_enum = {
     BLOCKED: 'BLOCKED'
 };
 
-export { AGENT_STATUS_enum, TASK_STATUS_enum, WORKFLOW_STATUS_enum };
+// ──── Feedback Status Definitions ───────────────────────────────────────
+// 
+// PENDING: Feedback has been received but not yet processed or addressed.
+// PROCESSED: Feedback has been successfully addressed and incorporated.
+// 
+// ───────────────────────────────────────────────────────────────────────
+
+const FEEDBACK_STATUS_enum = {
+    PENDING: 'PENDING',
+    PROCESSED: 'PROCESSED'
+};
+
+export { AGENT_STATUS_enum, TASK_STATUS_enum, WORKFLOW_STATUS_enum, FEEDBACK_STATUS_enum };
