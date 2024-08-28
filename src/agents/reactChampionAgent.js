@@ -36,33 +36,97 @@ import {getChampionReActAgentSystemPrompt} from '../utils/prompts';
 import { LLMInvocationError } from '../utils/errors';
 
 class ReactChampionAgent extends BaseAgent {
+    #executableAgent;
     constructor(config) {
         super(config);
     }
 
-    async executeTask(task, inputs, context) {
-        const _self = this;
-        
-        const agentConfigForExecution = this.buildAgent(_self, task, inputs, context);
-        const ExecutableAgent =  agentConfigForExecution.executableAgent;
-        let feedbackMessage = agentConfigForExecution.initialFeedbackMessage;
-        
+    get executableAgent() {
+        // We don't expose the executable agent directly or stored in the Store
+        return {};
+    }
+
+    initialize(store, env) {
+        // Set up API key and check configuration
+        this.store = store;
+        this.env = env;
+        const apiKey = getApiKey(this.llmConfig, this.env);
+        if (!apiKey) {
+            throw new Error('API key is missing. Please provide it through the Agent llmConfig or through the team env variable.');
+        }
+        this.llmConfig.apiKey = apiKey;
+
+        // Define a mapping of providers to their corresponding chat classes
+        const providers = {
+            anthropic: ChatAnthropic,
+            google: ChatGoogleGenerativeAI,
+            mistral: ChatMistralAI,
+            openai: ChatOpenAI,
+        };
+
+        // Choose the chat class based on the provider
+        const ChatClass = providers[this.llmConfig.provider] || ChatOpenAI;
+        this.llmInstance = new ChatClass(this.llmConfig);
+        this.interactionsHistory = new ChatMessageHistory();
+    }
+
+    async workOnTask(task, inputs, context) {
+        const config = this.prepareAgentForTask(task, inputs, context);
+        this.#executableAgent = config.executableAgent;
+        return await this.agenticLoop(this, task, this.#executableAgent, config.initialFeedbackMessage);
+    }
+
+    async workOnFeedback(task, feedbackList) {
+        const feedbackString = feedbackList.map(f => f.content).join(', ');
+        const feedbackMessage = `Here is some feedback for you to address: ${feedbackString}`;
+        return await this.agenticLoop(this, task, this.#executableAgent, feedbackMessage);
+    }
+
+    prepareAgentForTask(task, inputs, context) {
+        const interpolatedDescription = interpolateTaskDescription(task.description, inputs);
+        const systemMessage = this.buildSystemMessage(this, task, interpolatedDescription);
+        const feedbackMessage = this.buildInitialMessage(this, task, interpolatedDescription, context);
+        this.llmSystemMessage = systemMessage;
+
+        const promptAgent = ChatPromptTemplate.fromMessages([
+            new SystemMessage(systemMessage),
+            ["placeholder", "{chat_history}"],
+            ["human", "{feedbackMessage}"],
+        ]);
+
+        const chainAgent = promptAgent.pipe(this.llmInstance);
+        const chainAgentWithHistory = new RunnableWithMessageHistory({
+            runnable: chainAgent,
+            getMessageHistory: () => this.interactionsHistory,
+            inputMessagesKey: "feedbackMessage",
+            historyMessagesKey: "chat_history",
+        });
+
+        return {
+            executableAgent: chainAgentWithHistory,
+            initialFeedbackMessage: feedbackMessage
+        };
+    }   
+
+    async agenticLoop(agent, task, ExecutableAgent, initialMessage) {  
+        // kickstart the agentic loop
+        let feedbackMessage = initialMessage;
         let parsedResultWithFinalAnswer = null;
         let iterations = 0;
-        const maxAgentIterations = _self.maxIterations;  // Define maximum iterations here
+        const maxAgentIterations = agent.maxIterations;  // Define maximum iterations here
         let loopCriticalError = null;
 
         while (!parsedResultWithFinalAnswer && iterations < maxAgentIterations && !loopCriticalError) {
             try {
-                _self.handleIterationStart({agent: _self, task, iterations, maxAgentIterations});
+                agent.handleIterationStart({agent: agent, task, iterations, maxAgentIterations});
 
                 // Check if we need to force the final answer
-                if (_self.forceFinalAnswer && iterations === maxAgentIterations - 2) {
+                if (agent.forceFinalAnswer && iterations === maxAgentIterations - 2) {
                     feedbackMessage = "We don't have more time to keep looking for the answer. Please use all the information you have gathered until now and give the finalAnswer right away.";
                 }                
 
                 // pure function that returns the result of the agent thinking
-                const thinkingResult = await this.executeThinking(_self, task, ExecutableAgent, feedbackMessage);
+                const thinkingResult = await this.executeThinking(agent, task, ExecutableAgent, feedbackMessage);
                 // sometimes the LLM does not returns a valid JSON object so we try to sanitize the output here
                 const parsedLLMOutput = thinkingResult.parsedLLMOutput;
 
@@ -70,36 +134,36 @@ class ReactChampionAgent extends BaseAgent {
 
                 switch (actionType) {
                     case AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT:
-                        feedbackMessage = this.handleIssuesParsingLLMOutput({agent: _self, task, output: thinkingResult});
+                        feedbackMessage = this.handleIssuesParsingLLMOutput({agent: agent, task, output: thinkingResult});
                         break;
                     case AGENT_STATUS_enum.FINAL_ANSWER:
-                        parsedResultWithFinalAnswer = this.handleFinalAnswer({agent: _self, task, parsedLLMOutput});
+                        parsedResultWithFinalAnswer = this.handleFinalAnswer({agent: agent, task, parsedLLMOutput});
                         break;
                     case AGENT_STATUS_enum.THOUGHT:
-                        feedbackMessage = this.handleThought({agent: _self, task, parsedLLMOutput});
+                        feedbackMessage = this.handleThought({agent: agent, task, parsedLLMOutput});
                         break;
                     case AGENT_STATUS_enum.SELF_QUESTION:
-                        feedbackMessage = this.handleSelfQuestion({agent: _self, task, parsedLLMOutput});
+                        feedbackMessage = this.handleSelfQuestion({agent: agent, task, parsedLLMOutput});
                         break;
                     case AGENT_STATUS_enum.EXECUTING_ACTION:
-                        logger.debug(`⏩ Agent ${_self.name} will be ${AGENT_STATUS_enum.EXECUTING_ACTION}...`);
+                        logger.debug(`⏩ Agent ${agent.name} will be ${AGENT_STATUS_enum.EXECUTING_ACTION}...`);
                         const toolName = parsedLLMOutput.action;
                         const tool = this.tools.find(tool => tool.name === toolName);
                         if (tool) {
                             try {
-                                feedbackMessage = await this.executeUsingTool({agent: _self, task, parsedLLMOutput, tool});
+                                feedbackMessage = await this.executeUsingTool({agent: agent, task, parsedLLMOutput, tool});
                             } catch (error) {
-                                feedbackMessage = this.handleUsingToolError({agent: _self, task, parsedLLMOutput, tool, error});
+                                feedbackMessage = this.handleUsingToolError({agent: agent, task, parsedLLMOutput, tool, error});
                             }
                         } else {
-                            feedbackMessage = this.handleToolDoesNotExist({agent: _self, task, parsedLLMOutput, toolName });
+                            feedbackMessage = this.handleToolDoesNotExist({agent: agent, task, parsedLLMOutput, toolName });
                         }
                         break;
                     case AGENT_STATUS_enum.OBSERVATION:
-                        feedbackMessage = this.handleObservation({agent: _self, task, parsedLLMOutput});
+                        feedbackMessage = this.handleObservation({agent: agent, task, parsedLLMOutput});
                         break;
                     case AGENT_STATUS_enum.WEIRD_LLM_OUTPUT:
-                        feedbackMessage = this.handleWeirdOutput({agent:_self, task, parsedLLMOutput});
+                        feedbackMessage = this.handleWeirdOutput({agent:agent, task, parsedLLMOutput});
                         break;
                     default:
                         logger.warn(`Unhandled agent status: ${actionType}`);
@@ -109,18 +173,18 @@ class ReactChampionAgent extends BaseAgent {
                 // Check if the error is of type 'LLMInvocationError'
                 if (error.name === 'LLMInvocationError') {
                     // Handle specific LLMInvocationError
-                    _self.handleThinkingError({ agent: _self, task, error });
+                    agent.handleThinkingError({ agent: agent, task, error });
                 } else {
                     // Handle other types of errors, perhaps more generally or differently
                     // TODO: Determine actions based on the type or severity of other errors
-                    this.handleAgenticLoopError({agent: _self, task, error, iterations, maxAgentIterations});
+                    this.handleAgenticLoopError({agent: agent, task, error, iterations, maxAgentIterations});
                 }
             
                 // Assign the error to loopCriticalError and break the loop, indicating a critical error has occurred
                 loopCriticalError = error;
                 break; // Break the loop on critical error
             }
-            _self.handleIterationEnd({agent: _self, task, iterations, maxAgentIterations});
+            agent.handleIterationEnd({agent: agent, task, iterations, maxAgentIterations});
             iterations++;      
         }
     
@@ -131,13 +195,13 @@ class ReactChampionAgent extends BaseAgent {
                 metadata: { iterations, maxAgentIterations }
             };
         } else if (parsedResultWithFinalAnswer) {
-            this.handleTaskCompleted({agent: _self, task, parsedResultWithFinalAnswer, iterations, maxAgentIterations});
+            this.handleTaskCompleted({agent: agent, task, parsedResultWithFinalAnswer, iterations, maxAgentIterations});
             return {
                 result: parsedResultWithFinalAnswer,
                 metadata: { iterations, maxAgentIterations }
             };
         } else if (iterations >= maxAgentIterations) {
-            this.handleMaxIterationsError({agent: _self, task, iterations, maxAgentIterations});
+            this.handleMaxIterationsError({agent: agent, task, iterations, maxAgentIterations});
             return {
                 error: "Task incomplete: reached maximum iterations without final answer.",
                 metadata: { iterations, maxAgentIterations }
@@ -168,62 +232,8 @@ class ReactChampionAgent extends BaseAgent {
             Hi ${agent.name}, please complete the following task: ${interpolatedTaskDescription}.
             Your expected output should be: "${task.expectedOutput}".
             ${context ? `Incorporate the following findings and insights from previous tasks: "${context}"` : ""}
-        `;
+        `;       
         return feedbackMessage;
-    }
-
-    buildAgent(agent, task, inputs, context){
-        // Ensure the API key is retrieved and set correctly
-        const apiKey = getApiKey(agent.llmConfig, agent.env);
-        agent.llmConfig.apiKey = apiKey;
-        
-        if (!agent.llmConfig.apiKey) {
-            throw new Error('API key is missing. Please provide it through the Agent llmConfig or throught the team env variable. E.g: new Team ({name: "My Team", env: {OPENAI_API_KEY: "your-api-key"}})');
-        }
-    
-        // Define a mapping of providers to their corresponding chat classes
-        const providers = {
-            anthropic: ChatAnthropic,
-            google: ChatGoogleGenerativeAI,
-            mistral: ChatMistralAI,
-            openai: ChatOpenAI,
-        };
-    
-        // Choose the chat class based on the provider, with a fallback to OpenAI if not found
-        const ChatClass = providers[this.llmConfig.provider];
-    
-        // Initialize the language model instance with the complete configuration
-        this.llmInstance = new ChatClass(this.llmConfig);
-    
-        // Initialize the chat message history
-        this.memory = new ChatMessageHistory();
-        const interpolatedDescription = interpolateTaskDescription(task.description, inputs);
-        const systemMessage = this.buildSystemMessage(agent, task, interpolatedDescription);
-        const feedbackMessage = this.buildInitialMessage(agent, task, interpolatedDescription, context);
-
-        this.llmSystemMessage = systemMessage;
-
-        const promptAgent = ChatPromptTemplate.fromMessages([
-            new SystemMessage(systemMessage),
-            ["placeholder", "{chat_history}"], // like this
-            ["human", "{feedbackMessage}"],
-        ]);
-    
-        const chainAgent = promptAgent.pipe(agent.llmInstance);
-    
-        const chainAgentWithHistory = new RunnableWithMessageHistory({
-            runnable: chainAgent,
-            getMessageHistory: () => {
-               return agent.memory;
-            },
-            inputMessagesKey: "feedbackMessage",
-            historyMessagesKey: "chat_history",
-        });
-
-        return {
-         executableAgent: chainAgentWithHistory,
-         initialFeedbackMessage: feedbackMessage
-        }
     }
 
     determineActionType (parsedResult) {
@@ -412,9 +422,7 @@ class ReactChampionAgent extends BaseAgent {
     }
 
     handleTaskCompleted({agent, task, parsedResultWithFinalAnswer, iterations, maxAgentIterations}) {
-        agent.store.getState().handleAgentTaskCompleted({agent, task, result: parsedResultWithFinalAnswer.finalAnswer, iterations, maxAgentIterations});
-        // console.log("Final Answer found:", finalAnswer);
-        // console.log("Task completed:", task);
+        agent.store.getState().handleAgentTaskCompleted({agent, task, result: parsedResultWithFinalAnswer.finalAnswer, iterations, maxAgentIterations});    
     }   
 }
 
