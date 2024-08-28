@@ -25,7 +25,8 @@ const searchAgent = new Agent({
     llmConfig: {
         provider: "google",
         model: "gemini-1.5-pro",
-    }    
+    },
+    maxIterations: 15,
 });
 
 const contentCreator = new Agent({
@@ -38,7 +39,8 @@ const contentCreator = new Agent({
     llmConfig: {
         provider: "google",
         model: "gemini-1.5-pro",
-    }     
+    },
+    maxIterations: 15,
 });
 
 // Define tasks
