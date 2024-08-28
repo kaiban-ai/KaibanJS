@@ -57,7 +57,7 @@ const subscribeWorkflowStatusUpdates = (useStore) => {
                     case WORKFLOW_STATUS_enum.BLOCKED:
                         logPrettyWorkflowStatus({
                             status: 'Blocked',
-                            message: 'Workflow is blocked due to one or more issues.'
+                            message: 'Workflow is blocked due to one or more blocked tasks.'
                         });
                         break;
                     default:
