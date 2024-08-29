@@ -21,7 +21,7 @@ export const useTaskStore = (set, get) => ({
     getTaskStats(task) {
         const endTime = Date.now();
         const lastDoingLog = get().workflowLogs.slice().reverse().find(log =>
-            log.task && log.task.id === task.id && log.logType === "TaskStatusUpdate" && log.task.status === TASK_STATUS_enum.DOING
+            log.task && log.task.id === task.id && log.logType === "TaskStatusUpdate" && log.taskStatus === TASK_STATUS_enum.DOING
         );
         const startTime = lastDoingLog ? lastDoingLog.timestamp : endTime; // Use endTime if no DOING log is found
         const duration = (endTime - startTime) / 1000; // Calculate duration in seconds
