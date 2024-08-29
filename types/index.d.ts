@@ -3,9 +3,6 @@
 // Author: @darielnoel <github.com/darielnoel>
 // Definitions by: @alienkarma <github.com/alienkarma>
 
-/// <reference path="enums.d.ts" />
-/// <reference path="types.d.ts" />
-
 import { Tool } from "langchain/tools";
 import type { AGENT_STATUS_enum, TASK_STATUS_enum } from "./enums.d.ts";
 import type {
