@@ -1,7 +1,7 @@
 // Assuming agenticjs is a local module or a placeholder for demonstration purposes
 // This file is now a typescript file and all the types are included in the module
-import { Agent, Task, Team } from "agenticjs";
-import type { IAgentParams, ITaskParams } from "agenticjs";
+import { Agent, Task, Team } from "agenticjs/bundle.js";
+import type { IAgentParams, ITaskParams } from "agenticjs/bundle.js";
 import * as dotenv from "dotenv";
 
 dotenv.config({ path: "./.env.local" });

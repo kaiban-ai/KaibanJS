@@ -2,12 +2,26 @@
   "name": "agenticjs",
   "version": "0.1.0",
   "description": "AI Multi-Agent library for Javascript Developers.",
-  "main": "dist/bundle.cjs.js",
-  "module": "dist/bundle.esm.js",
-  "unpkg": "dist/bundle.umd.js",
-  "types": "types/index.d.ts",
+  "type": "module",
+  "main": "./dist/bundle.cjs.js",
+  "types": "./dist/bundle.d.ts",
+  "module": "./dist/bundle.js",
+  "unpkg": "./dist/bundle.umd.js",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/bundle.d.ts",
+        "default": "./dist/bundle.js"
+      },
+      "require": {
+        "types": "./dist/bundle.d.ts",
+        "default": "./dist/bundle.cjs.js"
+      }
+    }
+  },
   "scripts": {
-    "build": "npx rollup -c",
+    "bundle:types": "npx dts-bundle-generator --config dts-generator.config.json",
+    "build": "npx rollup -c && npm run bundle:types",
     "build:test": "NODE_ENV=development TEST_ENV=mocked-llm-apis npx rollup -c",
     "dev": "NODE_ENV=development npx rollup -c -w",
     "test": "npm run build:test && npm run test:integration",
@@ -22,10 +36,7 @@
     "play:sb": "cd playground/react && npm run storybook",
     "play:node": "cd playground/nodejs && node index.js",
     "code-snapshot": "node xscripts/codeSnapshot.js",
-    "test:types": "npx tsc",
-    "bundle:types": "npx dts-bundle-generator -o dist_typed/index.d.ts types/index.d.ts --no-check --umd-module-name agenticjs",
-    "build:esm": "npx rollup -c rollup-typed.config.js",
-    "build:typed": "npm run build:esm && npm run bundle:types"
+    "test:types": "npx tsc"
   },
   "packageManager": "npm@9.8.1",
   "repository": {
@@ -91,6 +102,5 @@
   },
   "engines": {
     "node": ">=12.0.0"
-  },
-  "type": "module"
+  }
 }

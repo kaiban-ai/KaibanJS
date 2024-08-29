@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
+    "baseUrl": "./../../",
     "noEmit": true,
     "strict": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "agenticjs/*": ["./dist/*"]
+    }
   },
   "exclude": ["node_modules"]
 }

@@ -5,10 +5,7 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "start": "tsx index.ts",
-    "copy": "copyfiles -u 3 ../../dist_typed/* node_modules/agenticjs",
-    "package": "node package-generator.js",
-    "build": "npm run copy && npm run package"
+    "start": "tsx index.ts"
   },
   "author": "",
   "license": "ISC",
@@ -19,5 +16,8 @@
     "tslib": "^2.7.0",
     "tsx": "^4.19.0",
     "typescript": "^4.5.4"
+  },
+  "imports": {
+    "agenticjs": "../../dist/"
   }
 }

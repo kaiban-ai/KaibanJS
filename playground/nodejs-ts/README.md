@@ -42,7 +42,7 @@ You can check the index.ts as a good reference to get started.
 
 ### Development
 
-> NOTE: Make sure your local typed package is built. (Use `npm run build:typed` in the root folder to build the typed package if haven't already)
+> NOTE: Make sure your local typed package is built. (Use `npm run build` in the root folder to build the package if haven't already)
 
 For testing the playground example, setup as follows:-
 
@@ -50,10 +50,6 @@ For testing the playground example, setup as follows:-
 
 `npm i`
 
-2. Create mock agenticjs package in node_modules
-
-`npm run build`
-
-3. Run the example!
+2. Run the example!
 
 `npm run start`
