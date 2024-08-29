@@ -2,20 +2,19 @@
   "name": "agenticjs",
   "version": "0.1.0",
   "description": "AI Multi-Agent library for Javascript Developers.",
-  "type": "module",
-  "main": "./dist/bundle.cjs.js",
-  "types": "./dist/bundle.esm.d.ts",
-  "module": "./dist/bundle.esm.js",
-  "unpkg": "./dist/bundle.umd.js",
+  "main": "./dist/bundle.cjs",
+  "types": "./dist/bundle.d.ts",
+  "module": "./dist/bundle.mjs",
+  "unpkg": "./dist/bundle.js",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/bundle.esm.d.ts",
-        "default": "./dist/bundle.esm.js"
+        "types": "./dist/bundle.d.ts",
+        "default": "./dist/bundle.mjs"
       },
       "require": {
-        "types": "./dist/bundle.cjs.d.ts",
-        "default": "./dist/bundle.cjs.js"
+        "types": "./dist/bundle.d.ts",
+        "default": "./dist/bundle.cjs"
       }
     }
   },
@@ -31,11 +30,11 @@
     "test:e2e": "TEST_ENV=real-llm-apis jest --testPathPattern='tests/e2e'",
     "test:unit": "jest --testPathPattern='tests/unit' --watch",
     "test:unit:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --verbose --testPathPattern='tests/unit'",
+    "test:types": "npx tsc",
     "play:react": "cd playground/react && npm run dev",
     "play:sb": "cd playground/react && npm run storybook",
     "play:node": "cd playground/nodejs && node index.js",
-    "code-snapshot": "node xscripts/codeSnapshot.js",
-    "test:types": "npx tsc"
+    "code-snapshot": "node xscripts/codeSnapshot.js"
   },
   "packageManager": "npm@9.8.1",
   "repository": {

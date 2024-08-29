@@ -11,6 +11,8 @@ const isTest = process.env.TEST_ENV === "mocked-llm-apis";
 function generateConfig(format) {
   const isDTS = format === "dts";
   const isESM = format === "es";
+  const isCJS = format === "cjs";
+  const ext = isESM ? "mjs" : isCJS ? "cjs" : "js";
   const external = isESM
     ? ["react", "react-dom", "uuid", "pino", "pino-pretty"]
     : ["uuid", "pino", "pino-pretty"];
@@ -20,12 +22,8 @@ function generateConfig(format) {
       input: "./types/index.d.ts",
       output: [
         {
-          file: "dist/bundle.esm.d.ts",
+          file: "dist/bundle.d.ts",
           format: "es",
-        },
-        {
-          file: "dist/bundle.cjs.d.ts",
-          format: "cjs",
         },
       ],
       plugins: [dts()],
@@ -35,9 +33,7 @@ function generateConfig(format) {
   return {
     input: "src/index.js",
     output: {
-      file: `dist/bundle${
-        format === "cjs" ? ".cjs" : format === "es" ? ".esm" : ".umd"
-      }.js`,
+      file: `dist/bundle.${ext}`,
       format: format,
       inlineDynamicImports: true,
       sourcemap: true,
