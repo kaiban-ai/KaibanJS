@@ -1,0 +1,32 @@
+# See https://docs.npmjs.com/cli/v9/using-npm/developers#keeping-files-out-of-your-package
+
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build Outputs
+.next/
+out/
+build
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Misc
+.DS_Store
+*.pem
+_todo.md
+*storybook.log
+xscripts
+playground
+tests
