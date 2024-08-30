@@ -33,6 +33,8 @@ import { Agent, Task, Team } from 'agenticjs';
 const { Agent, Task, Team } = require("agenticjs");
 ```
 
+> Note: AgenticJS is TypeScript-supported. To learn more, check out the [NodeJS TypeScript example](https://github.com/AI-Champions/AgenticJS/blob/main/playground/nodejs-ts/README.md).
+
 ## Example Usage
 
 In this example, we use AgenticJS to build a resume generation team. If you're looking to create or update your resume, this setup utilizes specialized AI agents to automatically process your information and produce a polished, professional resume tailored to your career goals.
