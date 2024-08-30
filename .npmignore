@@ -1,4 +1,4 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# See https://docs.npmjs.com/cli/v9/using-npm/developers#keeping-files-out-of-your-package
 
 # Dependencies
 node_modules
@@ -12,20 +12,10 @@ node_modules
 .env.test.local
 .env.production.local
 
-# Testing
-coverage
-
-# Turbo
-.turbo
-
-# Vercel
-.vercel
-
 # Build Outputs
 .next/
 out/
 build
-dist
 
 # Debug
 npm-debug.log*
@@ -36,6 +26,7 @@ yarn-error.log*
 .DS_Store
 *.pem
 _todo.md
-
 *storybook.log
-_todo.md
+xscripts
+playground
+tests
