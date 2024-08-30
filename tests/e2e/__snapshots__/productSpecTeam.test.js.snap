@@ -3401,6 +3401,11 @@ This technical specification outlines the requirements and functionalities neces
       "logDescription": "Task awaiting validation: Analyze the founder's.... Awaiting validation.",
       "logType": "TaskStatusUpdate",
       "metadata": {
+        "costDetails": {
+          "costInputTokens": 0.0001,
+          "costOutputTokens": 0.0001,
+          "totalCost": 0.0002,
+        },
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
         "feedback": {},
@@ -14506,6 +14511,11 @@ exports[`Product Spec Team Workflows HITL Features Using OpenAI Agents (1) - han
       "logDescription": "Task awaiting validation: Analyze the founder's.... Awaiting validation.",
       "logType": "TaskStatusUpdate",
       "metadata": {
+        "costDetails": {
+          "costInputTokens": 0.0001,
+          "costOutputTokens": 0.0001,
+          "totalCost": 0.0002,
+        },
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
         "feedback": {},
@@ -18456,6 +18466,11 @@ The successful implementation of these specifications will enhance the effective
       "logDescription": "Task awaiting validation: Analyze the founder's.... Awaiting validation.",
       "logType": "TaskStatusUpdate",
       "metadata": {
+        "costDetails": {
+          "costInputTokens": 0.0001,
+          "costOutputTokens": 0.0002,
+          "totalCost": 0.0003,
+        },
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
         "feedback": {},
@@ -22113,6 +22128,11 @@ The successful implementation of these specifications will enhance the effective
       "logDescription": "Task awaiting validation: Analyze the founder's.... Awaiting validation.",
       "logType": "TaskStatusUpdate",
       "metadata": {
+        "costDetails": {
+          "costInputTokens": 0.0001,
+          "costOutputTokens": 0.0002,
+          "totalCost": 0.0003,
+        },
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
         "feedback": {},
@@ -33584,6 +33604,11 @@ exports[`Product Spec Team Workflows HITL Features Using OpenAI Agents (2) - pro
       "logDescription": "Task awaiting validation: Analyze the founder's.... Awaiting validation.",
       "logType": "TaskStatusUpdate",
       "metadata": {
+        "costDetails": {
+          "costInputTokens": 0.0001,
+          "costOutputTokens": 0.0002,
+          "totalCost": 0.0003,
+        },
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
         "feedback": {},
@@ -37241,6 +37266,11 @@ exports[`Product Spec Team Workflows HITL Features Using OpenAI Agents (2) - pro
       "logDescription": "Task awaiting validation: Analyze the founder's.... Awaiting validation.",
       "logType": "TaskStatusUpdate",
       "metadata": {
+        "costDetails": {
+          "costInputTokens": 0.0001,
+          "costOutputTokens": 0.0002,
+          "totalCost": 0.0003,
+        },
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
         "feedback": {},
@@ -40775,6 +40805,11 @@ exports[`Product Spec Team Workflows HITL Features Using OpenAI Agents (2) - pro
       "logDescription": "Task awaiting validation: Analyze the founder's.... Awaiting validation.",
       "logType": "TaskStatusUpdate",
       "metadata": {
+        "costDetails": {
+          "costInputTokens": 0.0001,
+          "costOutputTokens": 0.0002,
+          "totalCost": 0.0003,
+        },
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
         "feedback": {},

@@ -75,12 +75,16 @@ export const useTaskStore = (set, get) => ({
 
         if (task.externalValidationRequired && task.status !== TASK_STATUS_enum.VALIDATED) {
             task.status = TASK_STATUS_enum.AWAITING_VALIDATION;
+            const modelCode = agent.llmConfig.model; // Assuming this is where the model code is stored
+            // Calculate costs directly using stats
+            const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);            
             const taskLog = get().prepareNewLog({
                 agent,
                 task,
                 logDescription: `Task awaiting validation: ${getTaskTitleForLogs(task)}. Awaiting validation.`,
                 metadata: {
                     ...stats,
+                    costDetails,
                     result
                 },
                 logType: 'TaskStatusUpdate'
@@ -141,6 +145,9 @@ export const useTaskStore = (set, get) => ({
     handleTaskError: ({ task, error }) => {
         const stats = get().getTaskStats(task, get);
         task.status = TASK_STATUS_enum.BLOCKED;
+        const modelCode = task.agent.llmConfig.model; // Assuming this is where the model code is stored
+        // Calculate costs directly using stats
+        const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);              
         const updatedFeedbackHistory = task.feedbackHistory.map(f => 
             f.status === FEEDBACK_STATUS_enum.PENDING 
                 ? { ...f, status: FEEDBACK_STATUS_enum.PROCESSED } 
@@ -152,6 +159,7 @@ export const useTaskStore = (set, get) => ({
             logDescription: `Task error: ${getTaskTitleForLogs(task)}, Error: ${error.message}`,
             metadata: {
                 ...stats,
+                costDetails,
                 error: error.message
             },
             logType: 'TaskStatusUpdate'
@@ -183,6 +191,9 @@ export const useTaskStore = (set, get) => ({
     handleTaskBlocked: ({ task, error }) => {
         const stats = get().getTaskStats(task, get);
         task.status = TASK_STATUS_enum.BLOCKED;
+        const modelCode = task.agent.llmConfig.model; // Assuming this is where the model code is stored
+        // Calculate costs directly using stats
+        const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);            
 
         const updatedFeedbackHistory = task.feedbackHistory.map(f => 
             f.status === FEEDBACK_STATUS_enum.PENDING 
@@ -196,6 +207,7 @@ export const useTaskStore = (set, get) => ({
             logDescription: `Task blocked: ${getTaskTitleForLogs(task)}, Reason: ${error.message}`,
             metadata: {
                 ...stats,
+                costDetails,
                 error
             },
             logType: 'TaskStatusUpdate'
