@@ -1,5 +1,5 @@
 // Assuming agenticjs is a local module or a placeholder for demonstration purposes
-const { Agent, Task, Team } = require('../../dist/bundle.cjs.js');
+const { Agent, Task, Team } = require('agenticjs');
 
 require('dotenv').config({ path: './.env.local' });
 
