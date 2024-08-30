@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 const AgentsBoardDebugger = ({team, title=null}) => {
 
     const useTeamStore = team.useStore(); 
-    const { agents, tasks, workflowLogs, teamWorkflowStatus, workflowResult, inputs, setInputs, workflowContext } = useTeamStore(state => ({
+    const { agents, tasks, workflowLogs, teamWorkflowStatus, workflowResult, inputs, setInputs, workflowContext, provideFeedback, validateTask } = useTeamStore(state => ({
         agents: state.agents,
         tasks: state.tasks,
         workflowLogs: state.workflowLogs,
@@ -11,11 +11,33 @@ const AgentsBoardDebugger = ({team, title=null}) => {
         workflowResult: state.workflowResult,
         inputs: state.inputs,
         setInputs: state.setInputs,
-        workflowContext: state.workflowContext
+        workflowContext: state.workflowContext,
+        provideFeedback: state.provideFeedback,
+        validateTask: state.validateTask
     }));
 
     const [openSystemMessage, setOpenSystemMessage] = useState({});
     const [openWorkflowContext, setOpenWorkflowContext] = useState(false);
+
+    const [feedbackContent, setFeedbackContent] = useState('');
+    const [selectedTaskId, setSelectedTaskId] = useState('');
+
+
+    const handleFeedbackSubmit = () => {
+        if (selectedTaskId && feedbackContent) {
+            provideFeedback(selectedTaskId, feedbackContent);
+            setFeedbackContent('');
+            setSelectedTaskId('');
+        }
+    };
+
+    const handleTaskValidation = (taskId, isApproved) => {
+        if (isApproved) {
+            validateTask(taskId);
+        } else {
+            provideFeedback(taskId, "Task needs revision");
+        }
+    }; 
 
     const toggleSystemMessage = (id) => {
         setOpenSystemMessage(prev => ({
@@ -112,7 +134,60 @@ return (
         <div style={{ margin: '20px 0' }}>
             <h2 style={{ color: '#666', fontSize: '30px' }}>Workflow Result</h2>
             <div>{workflowResult ? workflowResult : 'Not yet available'}</div>
-        </div>       
+        </div> 
+        <div style={{ margin: '20px 0' }}>
+                <h2 style={{ color: '#666', fontSize: '30px' }}>👥 Human in the Loop (HITL)</h2>
+                <select 
+                    value={selectedTaskId} 
+                    onChange={(e) => setSelectedTaskId(e.target.value)}
+                    style={{ marginRight: '10px', padding: '5px' }}
+                >
+                    <option value="">Select a task</option>
+                    {tasks.map(task => (
+                        <option key={task.id} value={task.id}>{task.description}</option>
+                    ))}
+                </select>
+                <input 
+                    type="text" 
+                    value={feedbackContent} 
+                    onChange={(e) => setFeedbackContent(e.target.value)}
+                    placeholder="Enter feedback"
+                    style={{ marginRight: '10px', padding: '5px' }}
+                />
+                <button 
+                    onClick={handleFeedbackSubmit}
+                    style={{ padding: '5px 10px', backgroundColor: '#4CAF50', color: 'white', border: 'none', cursor: 'pointer' }}
+                >
+                    Submit Feedback
+                </button>
+            </div>
+            
+            <div style={{ margin: '20px 0' }}>
+                <h2 style={{ color: '#666', fontSize: '30px' }}>📝 Tasks</h2>
+                {tasks.map(task => (
+                    <div key={task.id} style={{ color: '#999', marginBottom: '10px' }}>
+                        <p>🔘 {task.description} - {task.status}</p>
+                        {task.status === 'AWAITING_VALIDATION' && (
+                            <div>
+                                <button onClick={() => handleTaskValidation(task.id, true)} style={{ marginRight: '10px' }}>Approve</button>
+                                <button onClick={() => handleTaskValidation(task.id, false)}>Request Revision</button>
+                            </div>
+                        )}
+                        {task.feedbackHistory && task.feedbackHistory.length > 0 && (
+                            <div style={{ marginLeft: '20px' }}>
+                                <strong>Feedback History:</strong>
+                                {task.feedbackHistory.map((feedback, index) => (
+                                    <p key={index} style={{ margin: '5px 0' }}>
+                                        - {feedback.content} (Status: {feedback.status})
+                                    </p>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </div>
+
+
         <div style={{ margin: '20px 0' }}>
             <h2 style={{ color: '#666', fontSize: '30px' }}>📋 Workflow Logs</h2>
             {workflowLogs.map((log, index) => (

@@ -22,16 +22,16 @@
       ]
     },
     "response": {
-      "id": "chatcmpl-9taIlKjgx50HrcCY3OlhDsk4uCNBp",
+      "id": "chatcmpl-A0sPtFLpWzmBG9P9r5C36EuZd8Qqy",
       "object": "chat.completion",
-      "created": 1723034611,
+      "created": 1724772541,
       "model": "gpt-4o-mini-2024-07-18",
       "choices": [
         {
           "index": 0,
           "message": {
             "role": "assistant",
-            "content": "{\n    \"finalAnswer\": {\n        \"name\": \"David Llaca\",\n        \"experience\": \"5 years\",\n        \"skills\": [\n            \"JavaScript\",\n            \"React\",\n            \"NextJS\",\n            \"Redux\",\n            \"Vue\",\n            \"Tailwind\"\n        ],\n        \"jobHistory\": [\n            {\n                \"company\": \"Disney\",\n                \"position\": \"JavaScript Developer\",\n                \"duration\": \"3 years\",\n                \"responsibilities\": \"Developed user interfaces for their primary landing pages.\"\n            },\n            {\n                \"company\": \"American Airlines\",\n                \"position\": \"Junior Front-End Developer\",\n                \"duration\": \"2 years\",\n                \"responsibilities\": \"Worked with Vue and Tailwind.\"\n            }\n        ],\n        \"education\": [\n            {\n                \"degree\": \"Bachelor of Science in Computer Science\",\n                \"institution\": \"FIU\",\n                \"year\": 2018\n            },\n            {\n                \"program\": \"JavaScript bootcamp\",\n                \"year\": 2018\n            }\n        ]\n    }\n}",
+            "content": "{\n    \"finalAnswer\": {\n        \"name\": \"David Llaca\",\n        \"experience\": \"5 years\",\n        \"skills\": [\"JavaScript\", \"React\", \"NextJS\", \"Redux\", \"Vue\", \"Tailwind\"],\n        \"jobHistory\": [\n            {\n                \"company\": \"Disney\",\n                \"position\": \"JavaScript Developer\",\n                \"duration\": \"3 years\",\n                \"responsibilities\": \"developed user interfaces for their primary landing pages\"\n            },\n            {\n                \"company\": \"American Airlines\",\n                \"position\": \"Junior Front-End Developer\",\n                \"duration\": \"unspecified\",\n                \"responsibilities\": \"worked with Vue and Tailwind\"\n            }\n        ],\n        \"education\": {\n            \"degree\": \"Bachelor of Science in Computer Science\",\n            \"institution\": \"FIU\",\n            \"yearCompleted\": 2018\n        },\n        \"additionalTraining\": [\n            {\n                \"training\": \"JavaScript bootcamp\",\n                \"yearCompleted\": 2018\n            }\n        ]\n    }\n}",
             "refusal": null
           },
           "logprobs": null,
@@ -40,10 +40,10 @@
       ],
       "usage": {
         "prompt_tokens": 760,
-        "completion_tokens": 217,
-        "total_tokens": 977
+        "completion_tokens": 214,
+        "total_tokens": 974
       },
-      "system_fingerprint": "fp_507c9469a1"
+      "system_fingerprint": "fp_f3db212e1c"
     }
   },
   {
@@ -64,21 +64,21 @@
         },
         {
           "role": "user",
-          "content": "\n            Hi Alex Mercer, please complete the following task: Utilize the structured data to create \n    a detailed and attractive resume. \n    Enrich the resume content by inferring additional details from the provided information.\n    Include sections such as a personal summary, detailed work experience, skills, and educational background..\n            Your expected output should be: \"A professionally formatted resume in markdown format, \n    ready for submission to potential employers.\".\n            Incorporate the following findings and insights from previous tasks: \" \n            Results from task Extract relevant details such as name, \n  experience, skills, and job history from the user's 'aboutMe' input. \n  aboutMe: {aboutMe}: \n {\"name\":\"David Llaca\",\"experience\":\"5 years\",\"skills\":[\"JavaScript\",\"React\",\"NextJS\",\"Redux\",\"Vue\",\"Tailwind\"],\"jobHistory\":[{\"company\":\"Disney\",\"position\":\"JavaScript Developer\",\"duration\":\"3 years\",\"responsibilities\":\"Developed user interfaces for their primary landing pages.\"},{\"company\":\"American Airlines\",\"position\":\"Junior Front-End Developer\",\"duration\":\"2 years\",\"responsibilities\":\"Worked with Vue and Tailwind.\"}],\"education\":[{\"degree\":\"Bachelor of Science in Computer Science\",\"institution\":\"FIU\",\"year\":2018},{\"program\":\"JavaScript bootcamp\",\"year\":2018}]}\n             \n\n\"\n        "
+          "content": "\n            Hi Alex Mercer, please complete the following task: Utilize the structured data to create \n    a detailed and attractive resume. \n    Enrich the resume content by inferring additional details from the provided information.\n    Include sections such as a personal summary, detailed work experience, skills, and educational background..\n            Your expected output should be: \"A professionally formatted resume in markdown format, \n    ready for submission to potential employers.\".\n            Incorporate the following findings and insights from previous tasks: \"Task: Extract relevant details such as name, \n  experience, skills, and job history from the user's 'aboutMe' input. \n  aboutMe: {aboutMe}\nResult: {\"name\":\"David Llaca\",\"experience\":\"5 years\",\"skills\":[\"JavaScript\",\"React\",\"NextJS\",\"Redux\",\"Vue\",\"Tailwind\"],\"jobHistory\":[{\"company\":\"Disney\",\"position\":\"JavaScript Developer\",\"duration\":\"3 years\",\"responsibilities\":\"developed user interfaces for their primary landing pages\"},{\"company\":\"American Airlines\",\"position\":\"Junior Front-End Developer\",\"duration\":\"unspecified\",\"responsibilities\":\"worked with Vue and Tailwind\"}],\"education\":{\"degree\":\"Bachelor of Science in Computer Science\",\"institution\":\"FIU\",\"yearCompleted\":2018},\"additionalTraining\":[{\"training\":\"JavaScript bootcamp\",\"yearCompleted\":2018}]}\n\"\n        "
         }
       ]
     },
     "response": {
-      "id": "chatcmpl-9taIob0QrTLB471djY8mEVTVjBwBh",
+      "id": "chatcmpl-A0sPwEvn3SuOlflhlCXozWuvT4EY5",
       "object": "chat.completion",
-      "created": 1723034614,
+      "created": 1724772544,
       "model": "gpt-4o-mini-2024-07-18",
       "choices": [
         {
           "index": 0,
           "message": {
             "role": "assistant",
-            "content": "{\n    \"finalAnswer\": \"# David Llaca\\n\\n## Personal Summary  \\nDynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.\\n\\n## Work Experience  \\n### JavaScript Developer  \\n**Disney**  \\n*Duration: 3 years*  \\n- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.\\n- Collaborated with design and product teams to implement new features and optimize existing applications.\\n- Ensured cross-browser compatibility and responsiveness to improve overall user experience.\\n\\n### Junior Front-End Developer  \\n**American Airlines**  \\n*Duration: 2 years*  \\n- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.\\n- Assisted in designing and implementing reliable APIs to improve site performance.\\n- Engaged in code reviews and contributed to team knowledge sharing initiatives.\\n\\n## Skills  \\n- JavaScript  \\n- React  \\n- NextJS  \\n- Redux  \\n- Vue  \\n- Tailwind CSS  \\n\\n## Education  \\n**Bachelor of Science in Computer Science**  \\n*Florida International University (FIU)*  \\n*Year: 2018*  \\n\\n**JavaScript Bootcamp**  \\n*Year: 2018*  \\n\\n---  \\n*References available upon request.*\"\n}",
+            "content": "{\n    \"finalAnswer\": \"# David Llaca\\n\\n## Personal Summary\\nDynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.\\n\\n## Work Experience\\n**JavaScript Developer**  \\nDisney  \\n*Duration: 3 years*  \\n- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.\\n- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.\\n\\n**Junior Front-End Developer**  \\nAmerican Airlines  \\n*Duration: Unspecified*  \\n- Worked extensively with Vue and Tailwind to build responsive web applications.\\n- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.\\n\\n## Skills\\n- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  \\n- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  \\n- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication\\n\\n## Education\\n**Bachelor of Science in Computer Science**  \\nFlorida International University (FIU)  \\n*Year Completed: 2018*  \\n\\n## Additional Training\\n**JavaScript Bootcamp**  \\n*Year Completed: 2018*  \\n- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.\\n\\n---\\n*Ready for submission to potential employers.*\"\n}",
             "refusal": null
           },
           "logprobs": null,
@@ -86,11 +86,11 @@
         }
       ],
       "usage": {
-        "prompt_tokens": 899,
-        "completion_tokens": 336,
-        "total_tokens": 1235
+        "prompt_tokens": 898,
+        "completion_tokens": 341,
+        "total_tokens": 1239
       },
-      "system_fingerprint": "fp_507c9469a1"
+      "system_fingerprint": "fp_48196bc67a"
     }
   }
 ]

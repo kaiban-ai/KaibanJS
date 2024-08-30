@@ -10,6 +10,17 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -113,17 +124,6 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Mary",
         "role": "Profile Analyst",
         "status": "TASK_COMPLETED",
@@ -150,6 +150,17 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
         "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -257,17 +268,6 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Alex Mercer",
         "role": "Resume Writer",
         "status": "TASK_COMPLETED",
@@ -307,6 +307,17 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
           "forceFinalAnswer": true,
           "goal": "Extract structured information from conversational user input.",
           "id": "[REDACTED]",
+          "interactionsHistory": {
+            "id": [
+              "langchain",
+              "stores",
+              "message",
+              "in_memory",
+              "InMemoryChatMessageHistory",
+            ],
+            "lc": 1,
+            "type": "not_implemented",
+          },
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -410,17 +421,6 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
           "maxIterations": 10,
-          "memory": {
-            "id": [
-              "langchain",
-              "stores",
-              "message",
-              "in_memory",
-              "InMemoryChatMessageHistory",
-            ],
-            "lc": 1,
-            "type": "not_implemented",
-          },
           "name": "Mary",
           "role": "Profile Analyst",
           "status": "TASK_COMPLETED",
@@ -444,6 +444,8 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
       "duration": "[REDACTED]",
       "endTime": "[REDACTED]",
       "expectedOutput": "Structured data ready to be used for a resume creation.",
+      "externalValidationRequired": false,
+      "feedbackHistory": [],
       "id": "[REDACTED]",
       "inputs": {
         "aboutMe": "My name is David Llaca. 
@@ -473,10 +475,10 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
         "callsCount": 1,
         "callsErrorCount": 0,
         "inputTokens": 760,
-        "outputTokens": 217,
+        "outputTokens": 214,
         "parsingErrors": 0,
       },
-      "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"2 years","responsibilities":"Worked with Vue and Tailwind."}],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018},{"program":"JavaScript bootcamp","year":2018}]}",
+      "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"developed user interfaces for their primary landing pages"},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"unspecified","responsibilities":"worked with Vue and Tailwind"}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","yearCompleted":2018},"additionalTraining":[{"training":"JavaScript bootcamp","yearCompleted":2018}]}",
       "startTime": "[REDACTED]",
       "stats": null,
       "status": "DONE",
@@ -494,6 +496,17 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
           "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
           "id": "[REDACTED]",
+          "interactionsHistory": {
+            "id": [
+              "langchain",
+              "stores",
+              "message",
+              "in_memory",
+              "InMemoryChatMessageHistory",
+            ],
+            "lc": 1,
+            "type": "not_implemented",
+          },
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -601,17 +614,6 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
           "maxIterations": 10,
-          "memory": {
-            "id": [
-              "langchain",
-              "stores",
-              "message",
-              "in_memory",
-              "InMemoryChatMessageHistory",
-            ],
-            "lc": 1,
-            "type": "not_implemented",
-          },
           "name": "Alex Mercer",
           "role": "Resume Writer",
           "status": "TASK_COMPLETED",
@@ -637,6 +639,8 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
       "endTime": "[REDACTED]",
       "expectedOutput": "A professionally formatted resume in markdown format, 
     ready for submission to potential employers.",
+      "externalValidationRequired": false,
+      "feedbackHistory": [],
       "id": "[REDACTED]",
       "inputs": {
         "aboutMe": "My name is David Llaca. 
@@ -658,48 +662,45 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
       "llmUsageStats": {
         "callsCount": 1,
         "callsErrorCount": 0,
-        "inputTokens": 899,
-        "outputTokens": 336,
+        "inputTokens": 898,
+        "outputTokens": 341,
         "parsingErrors": 0,
       },
       "result": "# David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
       "startTime": "[REDACTED]",
       "stats": null,
       "status": "DONE",
@@ -708,59 +709,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
     },
   ],
   "teamWorkflowStatus": "FINISHED",
-  "workflowContext": " 
-            Results from task Extract relevant details such as name, 
-  experience, skills, and job history from the user's 'aboutMe' input. 
-  aboutMe: {aboutMe}: 
- {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"2 years","responsibilities":"Worked with Vue and Tailwind."}],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018},{"program":"JavaScript bootcamp","year":2018}]}
-             
-
- 
-            Results from task Utilize the structured data to create 
-    a detailed and attractive resume. 
-    Enrich the resume content by inferring additional details from the provided information.
-    Include sections such as a personal summary, detailed work experience, skills, and educational background.: 
- # David Llaca
-
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
-
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
-*Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
-
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
-
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
-
-## Education  
-**Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
-
-**JavaScript Bootcamp**  
-*Year: 2018*  
-
----  
-*References available upon request.*
-             
-
-",
+  "workflowContext": "",
   "workflowLogs": [
     {
       "agent": null,
@@ -769,6 +718,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "metadata": {
         "duration": undefined,
         "endTime": undefined,
+        "feedback": {},
         "inputs": null,
         "message": "Workflow has been initialized with input settings.",
         "startTime": undefined,
@@ -785,6 +735,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
           "forceFinalAnswer": true,
           "goal": "Extract structured information from conversational user input.",
           "id": "[REDACTED]",
+          "interactionsHistory": {
+            "id": [
+              "langchain",
+              "stores",
+              "message",
+              "in_memory",
+              "InMemoryChatMessageHistory",
+            ],
+            "lc": 1,
+            "type": "not_implemented",
+          },
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -888,17 +849,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
           "maxIterations": 10,
-          "memory": {
-            "id": [
-              "langchain",
-              "stores",
-              "message",
-              "in_memory",
-              "InMemoryChatMessageHistory",
-            ],
-            "lc": 1,
-            "type": "not_implemented",
-          },
           "name": "Mary",
           "role": "Profile Analyst",
           "status": "TASK_COMPLETED",
@@ -922,6 +872,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "metadata": {
         "duration": undefined,
         "endTime": undefined,
+        "feedback": {},
         "startTime": undefined,
       },
       "task": {
@@ -932,6 +883,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1035,17 +997,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Mary",
             "role": "Profile Analyst",
             "status": "TASK_COMPLETED",
@@ -1069,6 +1020,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
         "expectedOutput": "Structured data ready to be used for a resume creation.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -1093,7 +1046,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
-        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"2 years","responsibilities":"Worked with Vue and Tailwind."}],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018},{"program":"JavaScript bootcamp","year":2018}]}",
+        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"developed user interfaces for their primary landing pages"},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"unspecified","responsibilities":"worked with Vue and Tailwind"}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","yearCompleted":2018},"additionalTraining":[{"training":"JavaScript bootcamp","yearCompleted":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -1112,6 +1065,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -1215,17 +1179,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Mary",
         "role": "Profile Analyst",
         "status": "TASK_COMPLETED",
@@ -1239,6 +1192,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "metadata": {
         "duration": undefined,
         "endTime": undefined,
+        "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
         "startTime": undefined,
@@ -1251,6 +1205,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1354,17 +1319,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Mary",
             "role": "Profile Analyst",
             "status": "TASK_COMPLETED",
@@ -1388,6 +1342,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
         "expectedOutput": "Structured data ready to be used for a resume creation.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -1412,7 +1368,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
-        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"2 years","responsibilities":"Worked with Vue and Tailwind."}],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018},{"program":"JavaScript bootcamp","year":2018}]}",
+        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"developed user interfaces for their primary landing pages"},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"unspecified","responsibilities":"worked with Vue and Tailwind"}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","yearCompleted":2018},"additionalTraining":[{"training":"JavaScript bootcamp","yearCompleted":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -1431,6 +1387,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -1534,17 +1501,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Mary",
         "role": "Profile Analyst",
         "status": "TASK_COMPLETED",
@@ -1558,6 +1514,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "metadata": {
         "duration": undefined,
         "endTime": undefined,
+        "feedback": {},
         "messages": [
           {
             "content": "You are Mary.
@@ -1663,6 +1620,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1766,17 +1734,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Mary",
             "role": "Profile Analyst",
             "status": "TASK_COMPLETED",
@@ -1800,6 +1757,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
         "expectedOutput": "Structured data ready to be used for a resume creation.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -1824,7 +1783,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
-        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"2 years","responsibilities":"Worked with Vue and Tailwind."}],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018},{"program":"JavaScript bootcamp","year":2018}]}",
+        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"developed user interfaces for their primary landing pages"},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"unspecified","responsibilities":"worked with Vue and Tailwind"}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","yearCompleted":2018},"additionalTraining":[{"training":"JavaScript bootcamp","yearCompleted":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -1843,6 +1802,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -1946,17 +1916,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Mary",
         "role": "Profile Analyst",
         "status": "TASK_COMPLETED",
@@ -1970,52 +1929,46 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "metadata": {
         "duration": undefined,
         "endTime": undefined,
+        "feedback": {},
         "output": {
           "llmOutput": "{
     "finalAnswer": {
         "name": "David Llaca",
         "experience": "5 years",
-        "skills": [
-            "JavaScript",
-            "React",
-            "NextJS",
-            "Redux",
-            "Vue",
-            "Tailwind"
-        ],
+        "skills": ["JavaScript", "React", "NextJS", "Redux", "Vue", "Tailwind"],
         "jobHistory": [
             {
                 "company": "Disney",
                 "position": "JavaScript Developer",
                 "duration": "3 years",
-                "responsibilities": "Developed user interfaces for their primary landing pages."
+                "responsibilities": "developed user interfaces for their primary landing pages"
             },
             {
                 "company": "American Airlines",
                 "position": "Junior Front-End Developer",
-                "duration": "2 years",
-                "responsibilities": "Worked with Vue and Tailwind."
+                "duration": "unspecified",
+                "responsibilities": "worked with Vue and Tailwind"
             }
         ],
-        "education": [
+        "education": {
+            "degree": "Bachelor of Science in Computer Science",
+            "institution": "FIU",
+            "yearCompleted": 2018
+        },
+        "additionalTraining": [
             {
-                "degree": "Bachelor of Science in Computer Science",
-                "institution": "FIU",
-                "year": 2018
-            },
-            {
-                "program": "JavaScript bootcamp",
-                "year": 2018
+                "training": "JavaScript bootcamp",
+                "yearCompleted": 2018
             }
         ]
     }
 }",
           "llmUsageStats": {
             "inputTokens": 760,
-            "outputTokens": 217,
+            "outputTokens": 214,
           },
           "parsedLLMOutput": {
-            "finalAnswer": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"2 years","responsibilities":"Worked with Vue and Tailwind."}],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018},{"program":"JavaScript bootcamp","year":2018}]}",
+            "finalAnswer": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"developed user interfaces for their primary landing pages"},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"unspecified","responsibilities":"worked with Vue and Tailwind"}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","yearCompleted":2018},"additionalTraining":[{"training":"JavaScript bootcamp","yearCompleted":2018}]}",
           },
         },
         "startTime": undefined,
@@ -2028,6 +1981,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2131,17 +2095,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Mary",
             "role": "Profile Analyst",
             "status": "TASK_COMPLETED",
@@ -2165,6 +2118,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
         "expectedOutput": "Structured data ready to be used for a resume creation.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -2189,7 +2144,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
-        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"2 years","responsibilities":"Worked with Vue and Tailwind."}],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018},{"program":"JavaScript bootcamp","year":2018}]}",
+        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"developed user interfaces for their primary landing pages"},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"unspecified","responsibilities":"worked with Vue and Tailwind"}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","yearCompleted":2018},"additionalTraining":[{"training":"JavaScript bootcamp","yearCompleted":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -2208,6 +2163,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2311,17 +2277,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Mary",
         "role": "Profile Analyst",
         "status": "TASK_COMPLETED",
@@ -2335,8 +2290,9 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "metadata": {
         "duration": undefined,
         "endTime": undefined,
+        "feedback": {},
         "output": {
-          "finalAnswer": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"2 years","responsibilities":"Worked with Vue and Tailwind."}],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018},{"program":"JavaScript bootcamp","year":2018}]}",
+          "finalAnswer": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"developed user interfaces for their primary landing pages"},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"unspecified","responsibilities":"worked with Vue and Tailwind"}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","yearCompleted":2018},"additionalTraining":[{"training":"JavaScript bootcamp","yearCompleted":2018}]}",
         },
         "startTime": undefined,
       },
@@ -2348,6 +2304,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2451,17 +2418,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Mary",
             "role": "Profile Analyst",
             "status": "TASK_COMPLETED",
@@ -2485,6 +2441,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
         "expectedOutput": "Structured data ready to be used for a resume creation.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -2509,7 +2467,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
-        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"2 years","responsibilities":"Worked with Vue and Tailwind."}],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018},{"program":"JavaScript bootcamp","year":2018}]}",
+        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"developed user interfaces for their primary landing pages"},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"unspecified","responsibilities":"worked with Vue and Tailwind"}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","yearCompleted":2018},"additionalTraining":[{"training":"JavaScript bootcamp","yearCompleted":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -2528,6 +2486,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2631,17 +2600,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Mary",
         "role": "Profile Analyst",
         "status": "TASK_COMPLETED",
@@ -2655,6 +2613,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "metadata": {
         "duration": undefined,
         "endTime": undefined,
+        "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
         "startTime": undefined,
@@ -2667,6 +2626,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2770,17 +2740,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Mary",
             "role": "Profile Analyst",
             "status": "TASK_COMPLETED",
@@ -2804,6 +2763,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
         "expectedOutput": "Structured data ready to be used for a resume creation.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -2828,7 +2789,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
-        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"2 years","responsibilities":"Worked with Vue and Tailwind."}],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018},{"program":"JavaScript bootcamp","year":2018}]}",
+        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"developed user interfaces for their primary landing pages"},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"unspecified","responsibilities":"worked with Vue and Tailwind"}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","yearCompleted":2018},"additionalTraining":[{"training":"JavaScript bootcamp","yearCompleted":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -2847,6 +2808,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2950,17 +2922,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Mary",
         "role": "Profile Analyst",
         "status": "TASK_COMPLETED",
@@ -2974,9 +2935,10 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "metadata": {
         "duration": undefined,
         "endTime": undefined,
+        "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 10,
-        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"2 years","responsibilities":"Worked with Vue and Tailwind."}],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018},{"program":"JavaScript bootcamp","year":2018}]}",
+        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"developed user interfaces for their primary landing pages"},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"unspecified","responsibilities":"worked with Vue and Tailwind"}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","yearCompleted":2018},"additionalTraining":[{"training":"JavaScript bootcamp","yearCompleted":2018}]}",
         "startTime": undefined,
       },
       "task": {
@@ -2987,6 +2949,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3090,17 +3063,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Mary",
             "role": "Profile Analyst",
             "status": "TASK_COMPLETED",
@@ -3124,6 +3086,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
         "expectedOutput": "Structured data ready to be used for a resume creation.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -3148,7 +3112,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
-        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"2 years","responsibilities":"Worked with Vue and Tailwind."}],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018},{"program":"JavaScript bootcamp","year":2018}]}",
+        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"developed user interfaces for their primary landing pages"},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"unspecified","responsibilities":"worked with Vue and Tailwind"}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","yearCompleted":2018},"additionalTraining":[{"training":"JavaScript bootcamp","yearCompleted":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -3167,6 +3131,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3270,17 +3245,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Mary",
         "role": "Profile Analyst",
         "status": "TASK_COMPLETED",
@@ -3299,15 +3263,16 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         },
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
+        "feedback": {},
         "iterationCount": 1,
         "llmUsageStats": {
           "callsCount": 1,
           "callsErrorCount": 0,
           "inputTokens": 760,
-          "outputTokens": 217,
+          "outputTokens": 214,
           "parsingErrors": 0,
         },
-        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"2 years","responsibilities":"Worked with Vue and Tailwind."}],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018},{"program":"JavaScript bootcamp","year":2018}]}",
+        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"developed user interfaces for their primary landing pages"},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"unspecified","responsibilities":"worked with Vue and Tailwind"}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","yearCompleted":2018},"additionalTraining":[{"training":"JavaScript bootcamp","yearCompleted":2018}]}",
         "startTime": "[REDACTED]",
       },
       "task": {
@@ -3318,6 +3283,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3421,17 +3397,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Mary",
             "role": "Profile Analyst",
             "status": "TASK_COMPLETED",
@@ -3455,6 +3420,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
         "expectedOutput": "Structured data ready to be used for a resume creation.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -3479,7 +3446,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
-        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"2 years","responsibilities":"Worked with Vue and Tailwind."}],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018},{"program":"JavaScript bootcamp","year":2018}]}",
+        "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"developed user interfaces for their primary landing pages"},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"unspecified","responsibilities":"worked with Vue and Tailwind"}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","yearCompleted":2018},"additionalTraining":[{"training":"JavaScript bootcamp","yearCompleted":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -3501,6 +3468,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
           "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
           "id": "[REDACTED]",
+          "interactionsHistory": {
+            "id": [
+              "langchain",
+              "stores",
+              "message",
+              "in_memory",
+              "InMemoryChatMessageHistory",
+            ],
+            "lc": 1,
+            "type": "not_implemented",
+          },
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -3608,17 +3586,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
           "maxIterations": 10,
-          "memory": {
-            "id": [
-              "langchain",
-              "stores",
-              "message",
-              "in_memory",
-              "InMemoryChatMessageHistory",
-            ],
-            "lc": 1,
-            "type": "not_implemented",
-          },
           "name": "Alex Mercer",
           "role": "Resume Writer",
           "status": "TASK_COMPLETED",
@@ -3642,6 +3609,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "metadata": {
         "duration": undefined,
         "endTime": undefined,
+        "feedback": {},
         "startTime": undefined,
       },
       "task": {
@@ -3655,6 +3623,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3762,17 +3741,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Alex Mercer",
             "role": "Resume Writer",
             "status": "TASK_COMPLETED",
@@ -3798,6 +3766,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "endTime": "[REDACTED]",
         "expectedOutput": "A professionally formatted resume in markdown format, 
     ready for submission to potential employers.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -3817,42 +3787,39 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "isDeliverable": false,
         "result": "# David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -3874,6 +3841,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3981,17 +3959,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Alex Mercer",
         "role": "Resume Writer",
         "status": "TASK_COMPLETED",
@@ -4005,6 +3972,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "metadata": {
         "duration": undefined,
         "endTime": undefined,
+        "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
         "startTime": undefined,
@@ -4020,6 +3988,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4127,17 +4106,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Alex Mercer",
             "role": "Resume Writer",
             "status": "TASK_COMPLETED",
@@ -4163,6 +4131,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "endTime": "[REDACTED]",
         "expectedOutput": "A professionally formatted resume in markdown format, 
     ready for submission to potential employers.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -4182,42 +4152,39 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "isDeliverable": false,
         "result": "# David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -4239,6 +4206,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -4346,17 +4324,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Alex Mercer",
         "role": "Resume Writer",
         "status": "TASK_COMPLETED",
@@ -4370,6 +4337,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "metadata": {
         "duration": undefined,
         "endTime": undefined,
+        "feedback": {},
         "messages": [
           {
             "content": "You are Alex Mercer.
@@ -4458,13 +4426,10 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
     Include sections such as a personal summary, detailed work experience, skills, and educational background..
             Your expected output should be: "A professionally formatted resume in markdown format, 
     ready for submission to potential employers.".
-            Incorporate the following findings and insights from previous tasks: " 
-            Results from task Extract relevant details such as name, 
+            Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
   experience, skills, and job history from the user's 'aboutMe' input. 
-  aboutMe: {aboutMe}: 
- {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"2 years","responsibilities":"Worked with Vue and Tailwind."}],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018},{"program":"JavaScript bootcamp","year":2018}]}
-             
-
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"developed user interfaces for their primary landing pages"},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"unspecified","responsibilities":"worked with Vue and Tailwind"}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","yearCompleted":2018},"additionalTraining":[{"training":"JavaScript bootcamp","yearCompleted":2018}]}
 "
         ",
             "type": "HumanMessage",
@@ -4483,6 +4448,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4590,17 +4566,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Alex Mercer",
             "role": "Resume Writer",
             "status": "TASK_COMPLETED",
@@ -4626,6 +4591,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "endTime": "[REDACTED]",
         "expectedOutput": "A professionally formatted resume in markdown format, 
     ready for submission to potential employers.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -4645,42 +4612,39 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "isDeliverable": false,
         "result": "# David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -4702,6 +4666,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -4809,17 +4784,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Alex Mercer",
         "role": "Resume Writer",
         "status": "TASK_COMPLETED",
@@ -4833,53 +4797,51 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "metadata": {
         "duration": undefined,
         "endTime": undefined,
+        "feedback": {},
         "output": {
           "llmOutput": "{
-    "finalAnswer": "# David Llaca\\n\\n## Personal Summary  \\nDynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.\\n\\n## Work Experience  \\n### JavaScript Developer  \\n**Disney**  \\n*Duration: 3 years*  \\n- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.\\n- Collaborated with design and product teams to implement new features and optimize existing applications.\\n- Ensured cross-browser compatibility and responsiveness to improve overall user experience.\\n\\n### Junior Front-End Developer  \\n**American Airlines**  \\n*Duration: 2 years*  \\n- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.\\n- Assisted in designing and implementing reliable APIs to improve site performance.\\n- Engaged in code reviews and contributed to team knowledge sharing initiatives.\\n\\n## Skills  \\n- JavaScript  \\n- React  \\n- NextJS  \\n- Redux  \\n- Vue  \\n- Tailwind CSS  \\n\\n## Education  \\n**Bachelor of Science in Computer Science**  \\n*Florida International University (FIU)*  \\n*Year: 2018*  \\n\\n**JavaScript Bootcamp**  \\n*Year: 2018*  \\n\\n---  \\n*References available upon request.*"
+    "finalAnswer": "# David Llaca\\n\\n## Personal Summary\\nDynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.\\n\\n## Work Experience\\n**JavaScript Developer**  \\nDisney  \\n*Duration: 3 years*  \\n- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.\\n- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.\\n\\n**Junior Front-End Developer**  \\nAmerican Airlines  \\n*Duration: Unspecified*  \\n- Worked extensively with Vue and Tailwind to build responsive web applications.\\n- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.\\n\\n## Skills\\n- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  \\n- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  \\n- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication\\n\\n## Education\\n**Bachelor of Science in Computer Science**  \\nFlorida International University (FIU)  \\n*Year Completed: 2018*  \\n\\n## Additional Training\\n**JavaScript Bootcamp**  \\n*Year Completed: 2018*  \\n- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.\\n\\n---\\n*Ready for submission to potential employers.*"
 }",
           "llmUsageStats": {
-            "inputTokens": 899,
-            "outputTokens": 336,
+            "inputTokens": 898,
+            "outputTokens": 341,
           },
           "parsedLLMOutput": {
             "finalAnswer": "# David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
           },
         },
         "startTime": undefined,
@@ -4895,6 +4857,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5002,17 +4975,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Alex Mercer",
             "role": "Resume Writer",
             "status": "TASK_COMPLETED",
@@ -5038,6 +5000,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "endTime": "[REDACTED]",
         "expectedOutput": "A professionally formatted resume in markdown format, 
     ready for submission to potential employers.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -5057,42 +5021,39 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "isDeliverable": false,
         "result": "# David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -5114,6 +5075,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -5221,17 +5193,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Alex Mercer",
         "role": "Resume Writer",
         "status": "TASK_COMPLETED",
@@ -5245,45 +5206,43 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "metadata": {
         "duration": undefined,
         "endTime": undefined,
+        "feedback": {},
         "output": {
           "finalAnswer": "# David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
         },
         "startTime": undefined,
       },
@@ -5298,6 +5257,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5405,17 +5375,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Alex Mercer",
             "role": "Resume Writer",
             "status": "TASK_COMPLETED",
@@ -5441,6 +5400,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "endTime": "[REDACTED]",
         "expectedOutput": "A professionally formatted resume in markdown format, 
     ready for submission to potential employers.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -5460,42 +5421,39 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "isDeliverable": false,
         "result": "# David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -5517,6 +5475,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -5624,17 +5593,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Alex Mercer",
         "role": "Resume Writer",
         "status": "TASK_COMPLETED",
@@ -5648,6 +5606,7 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "metadata": {
         "duration": undefined,
         "endTime": undefined,
+        "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
         "startTime": undefined,
@@ -5663,6 +5622,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5770,17 +5740,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Alex Mercer",
             "role": "Resume Writer",
             "status": "TASK_COMPLETED",
@@ -5806,6 +5765,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "endTime": "[REDACTED]",
         "expectedOutput": "A professionally formatted resume in markdown format, 
     ready for submission to potential employers.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -5825,42 +5786,39 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "isDeliverable": false,
         "result": "# David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -5882,6 +5840,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -5989,17 +5958,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Alex Mercer",
         "role": "Resume Writer",
         "status": "TASK_COMPLETED",
@@ -6013,46 +5971,44 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "metadata": {
         "duration": undefined,
         "endTime": undefined,
+        "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 10,
         "result": "# David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
         "startTime": undefined,
       },
       "task": {
@@ -6066,6 +6022,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -6173,17 +6140,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Alex Mercer",
             "role": "Resume Writer",
             "status": "TASK_COMPLETED",
@@ -6209,6 +6165,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "endTime": "[REDACTED]",
         "expectedOutput": "A professionally formatted resume in markdown format, 
     ready for submission to potential employers.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -6228,42 +6186,39 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "isDeliverable": false,
         "result": "# David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -6285,6 +6240,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
         "id": "[REDACTED]",
+        "interactionsHistory": {
+          "id": [
+            "langchain",
+            "stores",
+            "message",
+            "in_memory",
+            "InMemoryChatMessageHistory",
+          ],
+          "lc": 1,
+          "type": "not_implemented",
+        },
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -6392,17 +6358,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
         "maxIterations": 10,
-        "memory": {
-          "id": [
-            "langchain",
-            "stores",
-            "message",
-            "in_memory",
-            "InMemoryChatMessageHistory",
-          ],
-          "lc": 1,
-          "type": "not_implemented",
-        },
         "name": "Alex Mercer",
         "role": "Resume Writer",
         "status": "TASK_COMPLETED",
@@ -6421,52 +6376,50 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         },
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
+        "feedback": {},
         "iterationCount": 1,
         "llmUsageStats": {
           "callsCount": 1,
           "callsErrorCount": 0,
-          "inputTokens": 899,
-          "outputTokens": 336,
+          "inputTokens": 898,
+          "outputTokens": 341,
           "parsingErrors": 0,
         },
         "result": "# David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
         "startTime": "[REDACTED]",
       },
       "task": {
@@ -6480,6 +6433,17 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
             "goal": "Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.",
             "id": "[REDACTED]",
+            "interactionsHistory": {
+              "id": [
+                "langchain",
+                "stores",
+                "message",
+                "in_memory",
+                "InMemoryChatMessageHistory",
+              ],
+              "lc": 1,
+              "type": "not_implemented",
+            },
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -6587,17 +6551,6 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
         ",
             "maxIterations": 10,
-            "memory": {
-              "id": [
-                "langchain",
-                "stores",
-                "message",
-                "in_memory",
-                "InMemoryChatMessageHistory",
-              ],
-              "lc": 1,
-              "type": "not_implemented",
-            },
             "name": "Alex Mercer",
             "role": "Resume Writer",
             "status": "TASK_COMPLETED",
@@ -6623,6 +6576,8 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "endTime": "[REDACTED]",
         "expectedOutput": "A professionally formatted resume in markdown format, 
     ready for submission to potential employers.",
+        "externalValidationRequired": false,
+        "feedbackHistory": [],
         "id": "[REDACTED]",
         "inputs": {
           "aboutMe": "My name is David Llaca. 
@@ -6642,42 +6597,39 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         "isDeliverable": false,
         "result": "# David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
@@ -6692,42 +6644,39 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
       "agent": null,
       "logDescription": "Workflow finished with result: # David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
       "logType": "WorkflowStatusUpdate",
       "metadata": {
         "agentCount": 2,
@@ -6738,52 +6687,50 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
         },
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
+        "feedback": {},
         "iterationCount": 2,
         "llmUsageStats": {
           "callsCount": 2,
           "callsErrorCount": 0,
-          "inputTokens": 1659,
-          "outputTokens": 553,
+          "inputTokens": 1658,
+          "outputTokens": 555,
           "parsingErrors": 0,
         },
         "result": "# David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
         "startTime": "[REDACTED]",
         "taskCount": 2,
         "teamName": "Resume Creation Team",
@@ -6795,41 +6742,38 @@ Dynamic and results-oriented Front-End Developer with over 5 years of experience
   ],
   "workflowResult": "# David Llaca
 
-## Personal Summary  
-Dynamic and results-oriented Front-End Developer with over 5 years of experience in creating innovative user interfaces. Proficient in JavaScript frameworks with a strong background in responsive web design. Demonstrates a passion for crafting seamless user experiences and keeps abreast of the latest industry trends.
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.
 
-## Work Experience  
-### JavaScript Developer  
-**Disney**  
+## Work Experience
+**JavaScript Developer**  
+Disney  
 *Duration: 3 years*  
-- Developed user interfaces for primary landing pages, enhancing user engagement and accessibility.
-- Collaborated with design and product teams to implement new features and optimize existing applications.
-- Ensured cross-browser compatibility and responsiveness to improve overall user experience.
+- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.
+- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.
 
-### Junior Front-End Developer  
-**American Airlines**  
-*Duration: 2 years*  
-- Worked extensively with Vue and Tailwind to develop scalable and efficient web applications.
-- Assisted in designing and implementing reliable APIs to improve site performance.
-- Engaged in code reviews and contributed to team knowledge sharing initiatives.
+**Junior Front-End Developer**  
+American Airlines  
+*Duration: Unspecified*  
+- Worked extensively with Vue and Tailwind to build responsive web applications.
+- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.
 
-## Skills  
-- JavaScript  
-- React  
-- NextJS  
-- Redux  
-- Vue  
-- Tailwind CSS  
+## Skills
+- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  
+- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  
+- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication
 
-## Education  
+## Education
 **Bachelor of Science in Computer Science**  
-*Florida International University (FIU)*  
-*Year: 2018*  
+Florida International University (FIU)  
+*Year Completed: 2018*  
 
+## Additional Training
 **JavaScript Bootcamp**  
-*Year: 2018*  
+*Year Completed: 2018*  
+- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.
 
----  
-*References available upon request.*",
+---
+*Ready for submission to potential employers.*",
 }
 `;

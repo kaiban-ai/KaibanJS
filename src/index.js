@@ -36,21 +36,21 @@ class Agent {
         }
     }
 
-    executeTask(task, inputs, context) {
-        return this.agentInstance.executeTask(task, inputs, context);
+    workOnTask(task, inputs, context) {
+        return this.agentInstance.workOnTask(task, inputs, context);
     }
 
-    setStore(store) {
-        this.agentInstance.setStore(store);
-    }
-
-    setEnv(env) {
-        this.agentInstance.setEnv(env);
+    workOnFeedback(task, inputs, context) {
+        return this.agentInstance.workOnFeedback(task, inputs, context);
     }
 
     setStatus(status) {
         this.agentInstance.setStatus(status);
-    }    
+    }
+
+    initialize(store, env) {
+        this.agentInstance.initialize(store, env);
+    }
 
     // Proxy property access to the underlying agent instance
     get id() {
@@ -91,7 +91,7 @@ class Agent {
     }    
 }
 class Task {
-    constructor({ title = '', description, expectedOutput, agent, isDeliverable = false }) {
+    constructor({ title = '', description, expectedOutput, agent, isDeliverable = false, externalValidationRequired = false }) {
         this.id = uuidv4();
         this.title = title; // Title is now optional with a default empty string
         this.description = description;
@@ -104,6 +104,8 @@ class Task {
         this.duration = null;
         this.dependencies = [];
         this.interpolatedTaskDescription = null;
+        this.feedbackHistory = [];  // Initialize feedbackHistory as an empty array
+        this.externalValidationRequired = externalValidationRequired;
     }
 
     setStore(store) {
@@ -111,7 +113,23 @@ class Task {
     }
 }
 
+/**
+ * Represents a team of AI agents working on a set of tasks.
+ * This class provides methods to control the workflow, interact with tasks,
+ * and observe the state of the team's operations.
+ */
 class Team {
+    /**
+     * Creates a new Team instance.
+     * 
+     * @param {Object} config - The configuration object for the team.
+     * @param {string} config.name - The name of the team.
+     * @param {Array} config.agents - The list of agents in the team.
+     * @param {Array} config.tasks - The list of tasks for the team to work on.
+     * @param {string} config.logLevel - The logging level for the team's operations.
+     * @param {Object} config.inputs - Initial inputs for the team's tasks.
+     * @param {Object} config.env - Environment variables for the team.
+     */    
     constructor({ name, agents, tasks, logLevel, inputs = {}, env = null }) {
         this.store = createTeamStore({ name, agents:[], tasks:[], inputs, env, logLevel});
              
@@ -120,28 +138,45 @@ class Team {
         this.store.getState().addTasks(tasks);
     }
 
+    /**
+     * Starts the team's workflow.
+     * This method initiates the process of agents working on tasks.
+     * 
+     * @param {Object} inputs - Optional inputs to override or supplement the initial inputs.
+     * @returns {void}
+     */    
     async start(inputs = null) {
-        return new Promise((resolve, reject) => {
-            // Subscribe to the store and save the unsubscribe function for cleanup
-            const unsubscribe = this.store.subscribe(state => state.teamWorkflowStatus, (status) => {
-                switch (status) {
-                    case WORKFLOW_STATUS_enum.FINISHED:
-                        resolve(this.store.getState().workflowResult);
-                        // Unsubscribe to prevent memory leaks
-                        unsubscribe();
-                        break;
-                    case WORKFLOW_STATUS_enum.ERRORED:
-                        reject(new Error('Workflow encountered an error'));
-                        unsubscribe();
-                        break;
-                    case WORKFLOW_STATUS_enum.BLOCKED:
-                        reject(new Error('Workflow blocked'));
-                        unsubscribe();
-                        break;
-                    default:
-                        break;
+        return new Promise((resolve) => {
+            const unsubscribe = this.store.subscribe(
+                state => state.teamWorkflowStatus,
+                (status) => {
+                    const state = this.store.getState();
+                    switch (status) {
+                        case WORKFLOW_STATUS_enum.FINISHED:
+                            unsubscribe();
+                            resolve({
+                                status,
+                                result: state.workflowResult
+                            });
+                            break;
+                        case WORKFLOW_STATUS_enum.ERRORED:
+                            unsubscribe();
+                            reject(new Error('Workflow encountered an error'));
+                            break;
+                        case WORKFLOW_STATUS_enum.BLOCKED:
+                            unsubscribe();
+                            resolve({
+                                status,
+                                result: null
+                            });
+                            break;
+                        default:
+                            // For other statuses (like RUNNING), we don't resolve yet
+                            break;
+                    }
                 }
-            });
+            );
+
             try {
                 // Trigger the workflow
                 this.store.getState().startWorkflow(inputs);
@@ -154,12 +189,25 @@ class Team {
         });
     }
 
-    // More DX friendly for NodeJS Developers
+
+    /**
+     * Provides direct access to the underlying store.
+     * This method is intended for advanced users who need more control over the state.
+     * More DX friendly for NodeJS Developers
+     * 
+     * @returns {Object} The store object.
+     */    
     getStore() {
         return this.store;
     }
 
-    // More DX friendly for React Developers
+    /**
+     * Provides direct access to the underlying store.
+     * This method is intended for advanced users who need more control over the state.
+     * More DX friendly for React Developers
+     * 
+     * @returns {Object} The store object.
+     */        
     useStore() {
         return this.store;
     }
@@ -194,6 +242,87 @@ class Team {
                 listener(newValues);
             }
         });
+    }
+
+    /**
+     * Provides feedback on a specific task.
+     * This method is crucial for the Human-in-the-Loop (HITL) functionality,
+     * allowing for human intervention and guidance in the AI workflow.
+     * 
+     * @param {string} taskId - The ID of the task to provide feedback on.
+     * @param {string} feedbackContent - The feedback to be incorporated into the task.
+     * @returns {void}
+     */
+    provideFeedback(taskId, feedbackContent) {
+        this.store.getState().provideFeedback(taskId, feedbackContent);
+    }
+
+    /**
+     * Marks a task as validated.
+     * This method is used in the HITL process to approve a task that required validation.
+     * 
+     * @param {string} taskId - The ID of the task to be marked as validated.
+     * @returns {void}
+     */    
+    validateTask(taskId) {
+        this.store.getState().validateTask(taskId);
+    }
+
+    /**
+     * Subscribes to changes in the workflow status.
+     * This method allows real-time monitoring of the overall workflow progress.
+     * 
+     * @param {Function} callback - A function to be called when the workflow status changes.
+     * @returns {Function} A function to unsubscribe from the status changes.
+     *
+     */
+    onWorkflowStatusChange(callback) {
+        return this.store.subscribe(state => state.teamWorkflowStatus, callback);
+    }
+
+    /**
+     * Retrieves tasks filtered by a specific status.
+     * 
+     * @param {string} status - The status to filter tasks by. Should be one of TASK_STATUS_enum values.
+     * @returns {Array} An array of tasks with the specified status.
+     */
+    getTasksByStatus(status) {
+        return this.store.getState().tasks.filter(task => task.status === status);
+    }
+
+
+    /**
+     * Retrieves the current status of the workflow.
+     * This method provides a snapshot of the workflow's current state.
+     * 
+     * @returns {string} The current workflow status.
+     */
+    getWorkflowStatus() {
+        return this.store.getState().teamWorkflowStatus;
+    }
+
+    /**
+     * Retrieves the final result of the workflow.
+     * This method should be called only after the workflow has finished.
+     * 
+     * @returns {*|null} The workflow result if finished, null otherwise.
+     */    
+    getWorkflowResult() {
+        const state = this.store.getState();
+        if (state.teamWorkflowStatus === WORKFLOW_STATUS_enum.FINISHED) {
+            return state.workflowResult;
+        }
+        return null;
+    }    
+
+    /**
+     * Retrieves all tasks in the team's workflow.
+     * This method provides a comprehensive view of all tasks and their current states.
+     * 
+     * @returns {Array} An array of all tasks.
+     */
+    getTasks() {
+        return this.store.getState().tasks;
     }
 }
 

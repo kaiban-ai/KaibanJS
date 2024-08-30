@@ -33,7 +33,7 @@ import { Agent, Task, Team } from 'agenticjs';
 const { Agent, Task, Team } = require("agenticjs");
 ```
 
-> Note: AgenticJS is typescript supported. To learn more, check out the [NodeJS TypeScript example](https://github.com/AI-Champions/AgenticJS/blob/main/playground/nodejs-ts/README.md).
+> Note: AgenticJS is TypeScript-supported. To learn more, check out the [NodeJS TypeScript example](https://github.com/AI-Champions/AgenticJS/blob/main/playground/nodejs-ts/README.md).
 
 ## Example Usage
 
@@ -97,9 +97,19 @@ const team = new Team({
     env: {OPENAI_API_KEY: 'your-open-ai-api-key'}  // Environment variables for the team
 });
 
-team.start().then((result) => {
-  console.log("Final Output:", result);
-});
+// Listen to the workflow status changes
+// team.onWorkflowStatusChange((status) => {
+//   console.log("Workflow status:", status);
+// });
+
+team.start()
+  .then((output) => {
+    console.log("Workflow status:", output.status);
+    console.log("Result:", output.result);
+  })
+  .catch((error) => {
+    console.error("Workflow encountered an error:", error);
+  });
 ```
 
 ## Basic Concepts

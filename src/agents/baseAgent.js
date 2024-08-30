@@ -47,8 +47,8 @@ class BaseAgent {
         this.env = env;
     }
 
-    executeTask(task) {
-        throw new Error("executeTask must be implemented by subclasses.");
+    workOnTask(task) {
+        throw new Error("workOnTask must be implemented by subclasses.");
     }
 }
 
