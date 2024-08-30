@@ -33,7 +33,7 @@ import { Agent, Task, Team } from 'agenticjs';
 const { Agent, Task, Team } = require("agenticjs");
 ```
 
-> Note: AgenticJS is typescript supported. To learn more, check out the [NodeJS TypeScript example](https://github.com/AI-Champions/AgenticJS/blob/main/playground/nodejs-ts/README.md).
+> Note: AgenticJS is TypeScript-supported. To learn more, check out the [NodeJS TypeScript example](https://github.com/AI-Champions/AgenticJS/blob/main/playground/nodejs-ts/README.md).
 
 ## Example Usage
 
