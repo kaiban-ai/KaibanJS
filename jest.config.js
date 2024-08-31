@@ -3,7 +3,7 @@ module.exports = {
     "^.+\\.[t|j]sx?$": "babel-jest"
   },
   moduleNameMapper: {
-      '^agenticjs$': '<rootDir>/dist/bundle.cjs'
+      '^kaibanjs$': '<rootDir>/dist/bundle.cjs'
   },
   testTimeout: 300000, // Sets global timeout to 10 seconds for all tests
   testEnvironment: 'node', // Use Node.js environment for executing tests,

@@ -1,6 +1,6 @@
 ---
 name: Doc Issue Report
-about: Create a doc issue report for AgenticJS documentation
+about: Create a doc issue report for KaibanJS documentation
 title: "[DOC ISSUE] - Issue title here"
 labels: documentation
 assignees: ''

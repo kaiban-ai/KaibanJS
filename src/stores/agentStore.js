@@ -1,7 +1,7 @@
 /**
  * Agent Store Configuration.
  *
- * This file configures a Zustand store specifically for managing the state of agents within the AgenticJS library. 
+ * This file configures a Zustand store specifically for managing the state of agents within the KaibanJS library. 
  * It outlines actions and state changes related to the lifecycle of agents, including task execution, status updates, and error handling.
  *
  * Usage:

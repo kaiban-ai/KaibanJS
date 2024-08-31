@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "paths": {
-      "agenticjs/*": ["./dist/*"]
+      "kaibanjs/*": ["./dist/*"]
     }
   },
   "exclude": ["node_modules"]

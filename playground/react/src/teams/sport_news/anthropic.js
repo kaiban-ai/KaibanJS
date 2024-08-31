@@ -1,4 +1,4 @@
-import { Agent, Task, Team } from 'agenticjs';
+import { Agent, Task, Team } from 'kaibanjs';
 import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
 import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
 
@@ -27,7 +27,7 @@ const searchAgent = new Agent({
         model: "claude-3-5-sonnet-20240620",
         temperature: 0.9,
         maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
+        anthropicApiUrl: "https://www.kaibanjs.com/proxy/anthropic",
     }    
 });
 
@@ -43,7 +43,7 @@ const contentCreator = new Agent({
         model: "claude-3-5-sonnet-20240620",
         temperature: 0.9,
         maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
+        anthropicApiUrl: "https://www.kaibanjs.com/proxy/anthropic",
     }     
 });
 

@@ -1,4 +1,4 @@
-const { Agent, Task, Team } = require('agenticjs');
+const { Agent, Task, Team } = require('kaibanjs');
 
 // Define agents
 const requirementsAnalyst = new Agent({

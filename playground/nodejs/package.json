@@ -10,6 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.5",
-    "agenticjs": "file:../.."
+    "kaibanjs": "file:../.."
   }
 }

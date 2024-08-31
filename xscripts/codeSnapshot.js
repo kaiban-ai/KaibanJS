@@ -7,15 +7,15 @@ const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 const stat = util.promisify(fs.stat);
 
-const INSTRUCTIONS_PROMPT = `This markdown document provides a comprehensive snapshot of the entire codebase for the AgenticJS library. It is designed to facilitate easy understanding and navigation of the library's structure and contents for both developers and automated systems.
+const INSTRUCTIONS_PROMPT = `This markdown document provides a comprehensive snapshot of the entire codebase for the KaibanJS library. It is designed to facilitate easy understanding and navigation of the library's structure and contents for both developers and automated systems.
 
 **Directory Structure**
 
-The 'Directory Structure' section visually represents the hierarchical arrangement of all files and directories within the AgenticJS project. This tree-like structure helps in quickly locating files and understanding the organizational layout of the project.
+The 'Directory Structure' section visually represents the hierarchical arrangement of all files and directories within the KaibanJS project. This tree-like structure helps in quickly locating files and understanding the organizational layout of the project.
 
 **File Contents**
 
-Following the directory structure, the 'File Contents' section includes detailed listings of each JavaScript file within the AgenticJS library. Each file entry is prefixed with its relative path from the base directory, ensuring clear context and easy access. The content of each file is enclosed in code blocks, formatted for JavaScript, providing exact details of the code written in the library`;
+Following the directory structure, the 'File Contents' section includes detailed listings of each JavaScript file within the KaibanJS library. Each file entry is prefixed with its relative path from the base directory, ensuring clear context and easy access. The content of each file is enclosed in code blocks, formatted for JavaScript, providing exact details of the code written in the library`;
 
 
 const baseDirectory = './src';  // Adjust the base directory as needed
@@ -49,7 +49,7 @@ async function generateDirStructure(dir, prefix = '') {
 
 // Function to create the markdown document
 async function createMarkdownFile(files, dirStructure) {
-    let markdownContent = `# Code Snapshot for AgenticJS\n\n`;
+    let markdownContent = `# Code Snapshot for KaibanJS\n\n`;
     markdownContent += `${INSTRUCTIONS_PROMPT} \n\n`;
     markdownContent += `## Directory Structure\n\n\`\`\`\n${dirStructure}\`\`\`\n\n`;
     markdownContent += `## File Contents\n\n`;

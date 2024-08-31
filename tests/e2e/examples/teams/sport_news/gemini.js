@@ -1,4 +1,4 @@
-const { Agent, Task, Team } = require('agenticjs');
+const { Agent, Task, Team } = require('kaibanjs');
 const { TavilySearchResults } = require('@langchain/community/tools/tavily_search');
 const { WikipediaQueryRun } = require("@langchain/community/tools/wikipedia_query_run");
 

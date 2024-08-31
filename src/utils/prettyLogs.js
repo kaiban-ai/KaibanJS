@@ -2,7 +2,7 @@
  * Pretty Logging Utilities.
  *
  * Enhances log outputs by formatting them into more readable and visually appealing structures. This file contains functions 
- * that generate styled log entries for various operational states and outcomes within the AgenticJS library, making it easier 
+ * that generate styled log entries for various operational states and outcomes within the KaibanJS library, making it easier 
  * to interpret and review logs.
  *
  * Usage:

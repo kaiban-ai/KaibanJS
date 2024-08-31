@@ -1,5 +1,5 @@
 {
-  "name": "agenticjs",
+  "name": "kaibanjs",
   "version": "0.2.0",
   "description": "AI Multi-Agent library for Javascript Developers.",
   "main": "./dist/bundle.cjs",
@@ -39,13 +39,13 @@
   "packageManager": "npm@9.8.1",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AI-Champions/AgenticJS"
+    "url": "git+https://github.com/kaiban-ai/KaibanJS"
   },
   "author": "AI Champions",
   "license": "MIT",
-  "homepage": "https://agenticjs.com",
+  "homepage": "https://kaibanjs.com",
   "bugs": {
-    "url": "https://github.com/AI-Champions/AgenticJS/issues"
+    "url": "https://github.com/kaiban-ai/KaibanJS/issues"
   },
   "keywords": [
     "ai agents",

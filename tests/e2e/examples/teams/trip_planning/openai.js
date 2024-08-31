@@ -1,4 +1,4 @@
-const { Agent, Task, Team } = require('agenticjs');
+const { Agent, Task, Team } = require('kaibanjs');
 const { TavilySearchResults } = require('@langchain/community/tools/tavily_search');
 // const {calculator} = require('@agentic/stdlib/calculator');
 // const { createLangChainTools } = require('@agentic/stdlib/langchain');

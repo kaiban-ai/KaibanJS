@@ -1,11 +1,11 @@
-// Assuming agenticjs is a local module or a placeholder for demonstration purposes
-const { Agent, Task, Team } = require('agenticjs');
+// Assuming kaibanjs is a local module or a placeholder for demonstration purposes
+const { Agent, Task, Team } = require('kaibanjs');
 
 require('dotenv').config({ path: './.env.local' });
 
 async function main() {
 // ╔══════════════════════════════════════════════════════╗
-// ║ How to Use AgenticJS:                                ║
+// ║ How to Use KaibanJS:                                ║
 // ║ 1. Define your Agents with specific roles and goals  ║
 // ║ 2. Define the Tasks each Agent will perform          ║ 
 // ║ 3. Create the Team and assign Agents and their Tasks ║
@@ -88,7 +88,7 @@ const team = new Team({
 // ──── Listening to Changes────────────────────────────────────────────
 // 
 // Listening to changes in the team's state is crucial for dynamic updates.
-// Yup...AgenticJS utilizes a store similar to Redux for state management.
+// Yup...KaibanJS utilizes a store similar to Redux for state management.
 // 
 // You can subscribe to specific fields or any field on the store.
 //──────────────────────────────────────────────────────────────────────

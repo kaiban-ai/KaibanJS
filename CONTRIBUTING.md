@@ -1,12 +1,12 @@
-## Contributing to AgenticJS
+## Contributing to KaibanJS
 
-We appreciate your interest in contributing to AgenticJS! Here are a few guidelines to help you get started:
+We appreciate your interest in contributing to KaibanJS! Here are a few guidelines to help you get started:
 
 ### How to Contribute
 
-1. **Explore Issues**: Start by looking through the [issues](https://github.com/AI-Champions/AgenticJS/issues) on GitHub. Pick an issue that interests you, and please check if it has the **"in progress"** label, which means someone is already working on it. If you have a new idea or have found a bug, feel free to submit a new issue. Ensure the issue you choose is not already being worked on by someone else.
+1. **Explore Issues**: Start by looking through the [issues](https://github.com/kaiban-ai/KaibanJS/issues) on GitHub. Pick an issue that interests you, and please check if it has the **"in progress"** label, which means someone is already working on it. If you have a new idea or have found a bug, feel free to submit a new issue. Ensure the issue you choose is not already being worked on by someone else.
 
-2. **Fork and Clone**: Fork the AgenticJS repository and then clone your fork. This will set you up with a local version of the project to work on.
+2. **Fork and Clone**: Fork the KaibanJS repository and then clone your fork. This will set you up with a local version of the project to work on.
 
 3. **Branch Creation**: Create a new branch in your local repository. It helps to name your branch in a way that reflects the work you're doing. For example, `feature/add-new-agent` or `bugfix/resolve-dependency-issue`.
 
@@ -18,7 +18,7 @@ We appreciate your interest in contributing to AgenticJS! Here are a few guideli
 
 7. **Commit Messages**: Write clear and concise commit messages, describing what has changed and why.
 
-8. **Pull Request**: Push your changes to your fork and submit a pull request to the main AgenticJS repository. Provide a clear description of the problem and solution, including any relevant issue numbers.
+8. **Pull Request**: Push your changes to your fork and submit a pull request to the main KaibanJS repository. Provide a clear description of the problem and solution, including any relevant issue numbers.
 
 9. **Code Review**: Wait for the code review process. The community or maintainers will review your pull request. Engage in the conversation and make any requested changes. This collaboration greatly increases the chances that your pull request will be accepted.
 
@@ -26,7 +26,7 @@ We appreciate your interest in contributing to AgenticJS! Here are a few guideli
 
 ### Community Guidelines
 
-We're committed to providing a welcoming and inspiring community for all. Everyone participating in the AgenticJS project—including the codebase and issue tracker—is expected to follow our community guidelines:
+We're committed to providing a welcoming and inspiring community for all. Everyone participating in the KaibanJS project—including the codebase and issue tracker—is expected to follow our community guidelines:
 
 - Be respectful of different viewpoints and experiences.
 - Gracefully accept constructive criticism.
