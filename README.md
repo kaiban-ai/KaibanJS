@@ -1,13 +1,34 @@
-![KaibanJS Logo](https://res.cloudinary.com/dnno8pxyy/image/upload/v1724534418/KaibanJS_m0s65j.png)
+<p align="center">
+  <a href="https://www.kaibanjs.com/">  
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://res.cloudinary.com/dnno8pxyy/image/upload/v1724533982/icon_htfer2.png">
+      <img src="https://res.cloudinary.com/dnno8pxyy/image/upload/v1724533982/icon_htfer2.png" height="128">
+    </picture>
+    <h1 align="center">KaibanJS</h1>
+    <h3 align="center">JavaScript-native framework for building multi-agent AI systems.</h3>
+  </a>
+</p>
 
-[![Star on GitHub](https://img.shields.io/github/stars/kaiban-ai/kaibanjs.svg?style=social)](https://github.com/kaiban-ai/KaibanJS)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/kaiban-ai/kaibanjs/blob/main/LICENSE) [![npm version](https://img.shields.io/npm/v/kaibanjs.svg?style=flat)](https://www.npmjs.com/package/kaibanjs)
-[![stability-beta](https://img.shields.io/badge/stability-beta-33bbff.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#beta)
-[![Tests](https://github.com/kaiban-ai/KaibanJS/actions/workflows/stable-main-check-workflow.yml/badge.svg)](https://github.com/kaiban-ai/KaibanJS/actions/workflows/stable-main-check-workflow.yml)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/kaiban-ai/KaibanJS/pulls)
-
-# KaibanJS
-KaibanJS is a JavaScript-native framework for building multi-agent AI systems.
+<p align="center">
+  <a href="https://github.com/kaiban-ai/KaibanJS">
+    <img src="https://img.shields.io/github/stars/kaiban-ai/kaibanjs.svg?style=social" alt="Star on GitHub">
+  </a>
+  <a href="https://github.com/kaiban-ai/kaibanjs/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="GitHub license">
+  </a>
+  <a href="https://www.npmjs.com/package/kaibanjs">
+    <img src="https://img.shields.io/npm/v/kaibanjs.svg?style=flat" alt="npm version">
+  </a>
+  <a href="https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#beta">
+    <img src="https://img.shields.io/badge/stability-beta-33bbff.svg" alt="stability-beta">
+  </a>
+  <a href="https://github.com/kaiban-ai/KaibanJS/actions/workflows/stable-main-check-workflow.yml">
+    <img src="https://github.com/kaiban-ai/KaibanJS/actions/workflows/stable-main-check-workflow.yml/badge.svg" alt="Tests">
+  </a>
+  <a href="https://github.com/kaiban-ai/KaibanJS/pulls">
+    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome">
+  </a>
+</p>
 
 ## Try It Out
 
