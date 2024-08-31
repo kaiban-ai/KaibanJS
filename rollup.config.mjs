@@ -37,7 +37,7 @@ function generateConfig(format) {
       format: format,
       inlineDynamicImports: true,
       sourcemap: true,
-      name: format === "umd" ? "AgenticJS" : undefined,
+      name: format === "umd" ? "KaibanJS" : undefined,
       sourcemap: true,
     },
     external: external,

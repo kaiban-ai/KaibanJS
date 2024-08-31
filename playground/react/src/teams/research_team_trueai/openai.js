@@ -1,4 +1,4 @@
-import { Agent, Task, Team } from 'agenticjs';
+import { Agent, Task, Team } from 'kaibanjs';
 import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
 
 

@@ -1,4 +1,4 @@
-const { Agent, Task, Team } = require('agenticjs');
+const { Agent, Task, Team } = require('kaibanjs');
 
 // Define agents
 const requirementsAnalyst = new Agent({
@@ -12,7 +12,7 @@ const requirementsAnalyst = new Agent({
         model: "claude-3-5-sonnet-20240620",
         temperature: 0.9,
         maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
+        anthropicApiUrl: "https://www.kaibanjs.com/proxy/anthropic",
     }
 });
 
@@ -27,7 +27,7 @@ const technicalWriter = new Agent({
         model: "claude-3-5-sonnet-20240620",
         temperature: 0.9,
         maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
+        anthropicApiUrl: "https://www.kaibanjs.com/proxy/anthropic",
     }    
 });
 
@@ -42,7 +42,7 @@ const validator = new Agent({
         model: "claude-3-5-sonnet-20240620",
         temperature: 0.9,
         maxTokens: 1024,
-        anthropicApiUrl: "https://www.agenticjs.com/proxy/anthropic",
+        anthropicApiUrl: "https://www.kaibanjs.com/proxy/anthropic",
     }    
 });
 

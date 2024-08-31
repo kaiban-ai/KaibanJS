@@ -1,7 +1,7 @@
 /**
  * Prompt Templates for Agents.
  *
- * This file provides templates for constructing prompts that are used to interact with language models within the AgenticJS library. 
+ * This file provides templates for constructing prompts that are used to interact with language models within the KaibanJS library. 
  * These templates ensure that interactions are consistent and properly formatted, facilitating effective communication with LLMs.
  *
  * Usage:

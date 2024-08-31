@@ -1,12 +1,12 @@
-# AgenticJS - NodeJS Typescript Example
+# KaibanJS - NodeJS Typescript Example
 
 ### Getting started
 
-To begin using agenticjs using typescript support.
+To begin using kaibanjs using typescript support.
 
-1. Install the agenticjs library like normal.
+1. Install the kaibanjs library like normal.
 
-`npm install agenticjs`
+`npm install kaibanjs`
 
 2. Install typescript as a dev depedency.
 
@@ -29,14 +29,14 @@ A basic configuration would look something like this:-
 }
 ```
 
-3. And now you can start using agenticjs with full typescript support.
+3. And now you can start using kaibanjs with full typescript support.
    Main classes are typed and can be called directly from the library - `Agent`, `Task` and `Type`.
 
-`import { Agent, Task, Team } from "agenticjs";`
+`import { Agent, Task, Team } from "kaibanjs";`
 
 For any specific types, can call them like below:-
 
-`import type { IAgentParams, ITaskParams } from "agenticjs";`
+`import type { IAgentParams, ITaskParams } from "kaibanjs";`
 
 You can check the index.ts as a good reference to get started.
 

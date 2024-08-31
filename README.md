@@ -1,43 +1,43 @@
-![AgenticJS Logo](https://www.agenticjs.com/logo.svg)
+![KaibanJS Logo](https://res.cloudinary.com/dnno8pxyy/image/upload/v1724534418/KaibanJS_m0s65j.png)
 
-[![Star on GitHub](https://img.shields.io/github/stars/AI-Champions/agenticjs.svg?style=social)](https://github.com/AI-Champions/AgenticJS)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/AI-Champions/agenticjs/blob/main/LICENSE) [![npm version](https://img.shields.io/npm/v/agenticjs.svg?style=flat)](https://www.npmjs.com/package/agenticjs)
+[![Star on GitHub](https://img.shields.io/github/stars/kaiban-ai/kaibanjs.svg?style=social)](https://github.com/kaiban-ai/KaibanJS)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/kaiban-ai/kaibanjs/blob/main/LICENSE) [![npm version](https://img.shields.io/npm/v/kaibanjs.svg?style=flat)](https://www.npmjs.com/package/kaibanjs)
 [![stability-beta](https://img.shields.io/badge/stability-beta-33bbff.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#beta)
-[![Tests](https://github.com/AI-Champions/AgenticJS/actions/workflows/stable-main-check-workflow.yml/badge.svg)](https://github.com/AI-Champions/AgenticJS/actions/workflows/stable-main-check-workflow.yml)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/AI-Champions/AgenticJS/pulls)
+[![Tests](https://github.com/kaiban-ai/KaibanJS/actions/workflows/stable-main-check-workflow.yml/badge.svg)](https://github.com/kaiban-ai/KaibanJS/actions/workflows/stable-main-check-workflow.yml)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/kaiban-ai/KaibanJS/pulls)
 
-# AgenticJS
-AgenticJS is a JavaScript-native framework for building multi-agent AI systems.
+# KaibanJS
+KaibanJS is a JavaScript-native framework for building multi-agent AI systems.
 
 ## Try It Out
 
-[Explore the Playground](https://www.agenticjs.com/playground) — *it's like Trello or Asana, but for AI Agents and humans.*
+[Explore the Playground](https://www.kaibanjs.com/playground) — *it's like Trello or Asana, but for AI Agents and humans.*
 
 ## Getting Started
 
-### Install AgenticJS via npm:
+### Install KaibanJS via npm:
 
 ```bash
-npm install agenticjs
+npm install kaibanjs
 ```
 
-### Import AgenticJS in your JavaScript file:
+### Import KaibanJS in your JavaScript file:
 
 ```js
 // Using ES6 import syntax for NextJS, React, etc.
-import { Agent, Task, Team } from 'agenticjs';
+import { Agent, Task, Team } from 'kaibanjs';
 ```
 
 ```js
 // Using CommonJS syntax for NodeJS
-const { Agent, Task, Team } = require("agenticjs");
+const { Agent, Task, Team } = require("kaibanjs");
 ```
 
-> Note: AgenticJS is TypeScript-supported. To learn more, check out the [NodeJS TypeScript example](https://github.com/AI-Champions/AgenticJS/blob/main/playground/nodejs-ts/README.md).
+> Note: KaibanJS is TypeScript-supported. To learn more, check out the [NodeJS TypeScript example](https://github.com/kaiban-ai/KaibanJS/blob/main/playground/nodejs-ts/README.md).
 
 ## Example Usage
 
-In this example, we use AgenticJS to build a resume generation team. If you're looking to create or update your resume, this setup utilizes specialized AI agents to automatically process your information and produce a polished, professional resume tailored to your career goals.
+In this example, we use KaibanJS to build a resume generation team. If you're looking to create or update your resume, this setup utilizes specialized AI agents to automatically process your information and produce a polished, professional resume tailored to your career goals.
 
 ```js
 
@@ -141,7 +141,7 @@ In this example, our software development team is powered by three specialized A
 </p>
 
 ```js
-import { Agent } from 'agenticjs';
+import { Agent } from 'kaibanjs';
 
 const daveLoper = new Agent({
   name: 'Dave Loper',
@@ -178,7 +178,7 @@ In this example, one of the AI agents, Peter Atlas, leverages the Tavily Search 
 </p>
 
 ```js
-import { Agent, Tool } from 'agenticjs';
+import { Agent, Tool } from 'kaibanjs';
 
 const tavilySearchResults = new Tool({
   name: 'Tavily Search Results',
@@ -195,7 +195,7 @@ const peterAtlas = new Agent({
 });
 ```
 
-*AgenticJS supports all LangchainJS-compatible tools, offering a versatile approach to tool integration. For further details, visit the [documentation](https://github.com/AI-Champions/AgenticJS).*
+*KaibanJS supports all LangchainJS-compatible tools, offering a versatile approach to tool integration. For further details, visit the [documentation](https://github.com/kaiban-ai/KaibanJS).*
 </details>  
 
 
@@ -209,7 +209,7 @@ In this example, the agents—Emma, Lucas, and Mia—use diverse AI models to ha
 </p>
 
 ```js
-import { Agent } from 'agenticjs';
+import { Agent } from 'kaibanjs';
 
 const emma = new Agent({
   name: 'Emma',
@@ -242,22 +242,22 @@ const mia = new Agent({
 });
 ```
 
-*For further details on integrating diverse AI models with AgenticJS, please visit the [documentation](https://github.com/AI-Champions/AgenticJS).*
+*For further details on integrating diverse AI models with KaibanJS, please visit the [documentation](https://github.com/kaiban-ai/KaibanJS).*
   </details>
 
   <details style="margin-bottom:10px;">
   <summary><b style="color:black;">Robust State Management</b></summary>
 
 <p style="margin-top:10px;">
-AgenticJS employs a Redux-inspired architecture, enabling a unified approach to manage the states of AI agents, tasks, and overall flow within your applications. This method ensures consistent state management across complex agent interactions, providing enhanced clarity and control.
+KaibanJS employs a Redux-inspired architecture, enabling a unified approach to manage the states of AI agents, tasks, and overall flow within your applications. This method ensures consistent state management across complex agent interactions, providing enhanced clarity and control.
 
-Here's a simplified example demonstrating how to integrate AgenticJS with state management in a React application:
+Here's a simplified example demonstrating how to integrate KaibanJS with state management in a React application:
 </p>
 
 ```js
 import myAgentsTeam from "./agenticTeam";
 
-const AgenticJSComponent = () => {
+const KaibanJSComponent = () => {
   const useTeamStore = myAgentsTeam.useStore();
 
   const { agents, workflowResult } = useTeamStore(state => ({
@@ -279,10 +279,10 @@ const AgenticJSComponent = () => {
   );
 };
 
-export default AgenticJSComponent;
+export default KaibanJSComponent;
 ```
 
-*For a deeper dive into state management with AgenticJS, visit the [documentation](https://github.com/AI-Champions/AgenticJS).*  
+*For a deeper dive into state management with KaibanJS, visit the [documentation](https://github.com/kaiban-ai/KaibanJS).*  
   </details>
 
   <details style="margin-bottom:10px;">
@@ -291,7 +291,7 @@ export default AgenticJSComponent;
 <p style="margin-top:10px;">
 Easily add AI capabilities to your NextJS, React, Vue, Angular, and Node.js projects.
 
-AgenticJS is designed for seamless integration across a diverse range of JavaScript environments. Whether you’re enhancing user interfaces in React, Vue, or Angular, building scalable applications with NextJS, or implementing server-side solutions in Node.js, the framework integrates smoothly into your existing workflow. 
+KaibanJS is designed for seamless integration across a diverse range of JavaScript environments. Whether you’re enhancing user interfaces in React, Vue, or Angular, building scalable applications with NextJS, or implementing server-side solutions in Node.js, the framework integrates smoothly into your existing workflow. 
 </p>
 
 ```js
@@ -324,7 +324,7 @@ const TaskStatusComponent = () => {
 export default TaskStatusComponent;
 ```
 
-*For a deeper dive visit the [documentation](https://github.com/AI-Champions/AgenticJS).*  
+*For a deeper dive visit the [documentation](https://github.com/kaiban-ai/KaibanJS).*  
   </details>
 
   </details>
@@ -332,7 +332,7 @@ export default TaskStatusComponent;
   <summary><b style="color:black;">Observability and Monitoring</b></summary>
 
 <p style="margin-top:10px;">
-Built into AgenticJS, the observability features enable you to track every state change with detailed stats and logs, ensuring full transparency and control. This functionality provides real-time insights into token usage, operational costs, and state changes, enhancing system reliability and enabling informed decision-making through comprehensive data visibility.
+Built into KaibanJS, the observability features enable you to track every state change with detailed stats and logs, ensuring full transparency and control. This functionality provides real-time insights into token usage, operational costs, and state changes, enhancing system reliability and enabling informed decision-making through comprehensive data visibility.
 
 The following code snippet demonstrates how the state management approach is utilized to monitor and react to changes in workflow logs, providing granular control and deep insights into the operational dynamics of your AI agents:
 </p>
@@ -375,7 +375,7 @@ useStore.subscribe(state => state.workflowLogs, (newLogs, previousLogs) => {
 });
 ```
 
-For more details on how to utilize observability features in AgenticJS, please visit the [documentation](https://github.com/AI-Champions/AgenticJS).  
+For more details on how to utilize observability features in KaibanJS, please visit the [documentation](https://github.com/kaiban-ai/KaibanJS).  
   </details>     
 
   </details>
@@ -393,20 +393,20 @@ Kanban boards are excellent tools for showcasing team workflows in real time, pr
 
 ## Documentation
 
-- [Official Documentation](https://docs.agenticjs.com/category/core-concepts)
+- [Official Documentation](https://docs.kaibanjs.com/category/core-concepts)
 - [Join Our Discord](https://bit.ly/JoinAIChamps)
 
 ### Compatibility
 
-AgenticJS aims to be compatible with major front-end frameworks like React, Vue, Angular, and NextJS, making it a versatile choice for developers. The JavaScript ecosystem is a "bit complex...". If you have any problems, please tell us and we'll help you fix them.
+KaibanJS aims to be compatible with major front-end frameworks like React, Vue, Angular, and NextJS, making it a versatile choice for developers. The JavaScript ecosystem is a "bit complex...". If you have any problems, please tell us and we'll help you fix them.
 
-## Why AgenticJS?
+## Why KaibanJS?
 
 There are about 20 million JavaScript developers worldwide, yet most AI frameworks are originally written in Python. Others are mere adaptations for JavaScript. 
 
 This puts all of us **JavaScript developers at a disadvantage in the AI race**. But not anymore...
 
-AgenticJS changes the game by aiming to offer a robust, easy-to-use AI multi-agent framework designed specifically for the JavaScript ecosystem.
+KaibanJS changes the game by aiming to offer a robust, easy-to-use AI multi-agent framework designed specifically for the JavaScript ecosystem.
 
 ```js
 const writtenBy = `Another JS Dev Who Doesn't Want to Learn Python to do meaningful AI Stuff.`;
@@ -419,8 +419,8 @@ Join the [Discord community](https://bit.ly/JoinAIChamps) to connect with other 
 
 ## Contributing
 
-We welcome contributions from the community. Please read the [contributing guidelines](https://github.com/AI-Champions/AgenticJS/blob/main/CONTRIBUTING.md) before submitting pull requests.
+We welcome contributions from the community. Please read the [contributing guidelines](https://github.com/kaiban-ai/KaibanJS/blob/main/CONTRIBUTING.md) before submitting pull requests.
 
 ## License
 
-AgenticJS is MIT licensed.
+KaibanJS is MIT licensed.

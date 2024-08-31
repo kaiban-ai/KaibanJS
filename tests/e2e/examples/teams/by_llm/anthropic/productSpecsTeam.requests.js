@@ -1,6 +1,6 @@
 const recordedRequests = [
     {
-        "url": "https://www.agenticjs.com/proxy/anthropic/v1/messages",
+        "url": "https://www.kaibanjs.com/proxy/anthropic/v1/messages",
         "method": "POST",
         "body": {
             "model": "claude-3-5-sonnet-20240620",
@@ -37,7 +37,7 @@ const recordedRequests = [
         }
     },
     {
-        "url": "https://www.agenticjs.com/proxy/anthropic/v1/messages",
+        "url": "https://www.kaibanjs.com/proxy/anthropic/v1/messages",
         "method": "POST",
         "body": {
             "model": "claude-3-5-sonnet-20240620",
@@ -74,7 +74,7 @@ const recordedRequests = [
         }
     },
     {
-        "url": "https://www.agenticjs.com/proxy/anthropic/v1/messages",
+        "url": "https://www.kaibanjs.com/proxy/anthropic/v1/messages",
         "method": "POST",
         "body": {
             "model": "claude-3-5-sonnet-20240620",

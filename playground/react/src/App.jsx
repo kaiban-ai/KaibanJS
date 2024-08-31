@@ -4,7 +4,7 @@ import team from './teams/product_specs/openai';
 function App() {
   return (
     <>
-      <h1>AgenticJS Playground</h1>
+      <h1>KaibanJS Playground</h1>
       <AgentsBoardDebugger team={team}/>
     </>
   )

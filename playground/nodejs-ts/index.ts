@@ -1,14 +1,14 @@
-// Assuming agenticjs is a local module or a placeholder for demonstration purposes
+// Assuming kaibanjs is a local module or a placeholder for demonstration purposes
 // This file is now a typescript file and all the types are included in the module
-import { Agent, Task, Team } from "agenticjs";
-import type { IAgentParams, ITaskParams } from "agenticjs";
+import { Agent, Task, Team } from "kaibanjs";
+import type { IAgentParams, ITaskParams } from "kaibanjs";
 import * as dotenv from "dotenv";
 
 dotenv.config({ path: "./.env.local" });
 
 const main = async () => {
   // ╔══════════════════════════════════════════════════════╗
-  // ║ How to Use AgenticJS:                                ║
+  // ║ How to Use KaibanJS:                                ║
   // ║ 1. Define your Agents with specific roles and goals  ║
   // ║ 2. Define the Tasks each Agent will perform          ║
   // ║ 3. Create the Team and assign Agents and their Tasks ║
@@ -107,7 +107,7 @@ const main = async () => {
   // ──── Listening to Changes────────────────────────────────────────────
   //
   // Listening to changes in the team's state is crucial for dynamic updates.
-  // Yup...AgenticJS utilizes a store similar to Redux for state management.
+  // Yup...KaibanJS utilizes a store similar to Redux for state management.
   //
   // You can subscribe to specific fields or any field on the store.
   //──────────────────────────────────────────────────────────────────────
@@ -129,8 +129,8 @@ const main = async () => {
   unsubscribe();
 };
 
-console.log("Starting AgenticJS Workflow...");
+console.log("Starting KaibanJS Workflow...");
 
 main();
 
-console.log("AgenticJS Workflow Completed.");
+console.log("KaibanJS Workflow Completed.");

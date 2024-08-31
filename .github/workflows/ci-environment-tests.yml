@@ -10,48 +10,48 @@ jobs:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       VITE_OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}    
     steps:
-    - name: Checkout AgenticJS Library
+    - name: Checkout KaibanJS Library
       uses: actions/checkout@v2
       with:
-        repository: AI-Champions/AgenticJS
-        path: agenticjs
+        repository: kaiban-ai/KaibanJS
+        path: kaibanjs
 
-    - name: Checkout AgenticJS-React-Vite Repository
+    - name: Checkout KaibanJS-React-Vite Repository
       uses: actions/checkout@v2
       with:
-        repository: darielnoel/AgenticJS-React-Vite
+        repository: darielnoel/KaibanJS-React-Vite
         token: ${{ secrets.GITHUB_TOKEN }} # This is needed to access the repository
         path: react-vite-app
 
-    - name: Checkout AgenticJS-NodeJS Repository
+    - name: Checkout KaibanJS-NodeJS Repository
       uses: actions/checkout@v2
       with:
-        repository: darielnoel/AgenticJS-NodeJS
+        repository: darielnoel/KaibanJS-NodeJS
         token: ${{ secrets.GITHUB_TOKEN }} # This is needed to access the repository        
-        path: agenticjs-nodejs        
+        path: kaibanjs-nodejs        
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
         node-version: 18.x
 
-    - name: Build and Pack AgenticJS Library
+    - name: Build and Pack KaibanJS Library
       run: |
-        cd agenticjs
+        cd kaibanjs
         npm install
         npm run build
         npm pack
-      id: agenticjs-build
+      id: kaibanjs-build
     
     - name: Install other dependencies for React + Vite App
       run: |
         cd react-vite-app
         npm install
 
-    - name: Install AgenticJS in React + Vite App using Pack
+    - name: Install KaibanJS in React + Vite App using Pack
       run: |
         cd react-vite-app
-        npm install ../agenticjs/*.tgz
+        npm install ../kaibanjs/*.tgz
 
     - name: Build React + Vite App
       run: |
@@ -66,15 +66,15 @@ jobs:
     # Handle NodeJS App after React + Vite App
     - name: Install other dependencies for NodeJS App
       run: |
-        cd agenticjs-nodejs
+        cd kaibanjs-nodejs
         npm install
 
-    - name: Install AgenticJS in NodeJS App using Pack
+    - name: Install KaibanJS in NodeJS App using Pack
       run: |
-        cd agenticjs-nodejs
-        npm install ../agenticjs/*.tgz
+        cd kaibanjs-nodejs
+        npm install ../kaibanjs/*.tgz
 
     - name: Test NodeJS App
       run: |
-        cd agenticjs-nodejs
+        cd kaibanjs-nodejs
         npm test

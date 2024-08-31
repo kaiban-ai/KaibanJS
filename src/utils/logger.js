@@ -1,7 +1,7 @@
 /**
  * Logging Utility.
  *
- * This file sets up and configures the logging system used across the AgenticJS library. It allows for setting log levels 
+ * This file sets up and configures the logging system used across the KaibanJS library. It allows for setting log levels 
  * dynamically and provides a centralized logger that can be imported and used throughout the library.
  *
  * Usage:

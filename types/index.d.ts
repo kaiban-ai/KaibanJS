@@ -1,5 +1,5 @@
-// Type definitions for "agenticjs" 0.1.0
-// Project: agenticjs
+// Type definitions for "kaibanjs" 0.1.0
+// Project: kaibanjs
 // Author: @darielnoel <github.com/darielnoel>
 // Definitions by: @alienkarma <github.com/alienkarma>
 

@@ -1,7 +1,7 @@
 /**
  * Custom Error Definitions.
  *
- * This file defines custom error classes for handling specific error scenarios within the AgenticJS library. It includes 
+ * This file defines custom error classes for handling specific error scenarios within the KaibanJS library. It includes 
  * errors for API invocation failures and more nuanced errors that provide detailed diagnostic information. Custom errors 
  * enhance error handling by making it more informative and actionable.
  *

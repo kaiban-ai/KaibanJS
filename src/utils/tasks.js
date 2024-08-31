@@ -1,7 +1,7 @@
 /**
  * Task Utility Functions.
  *
- * This file includes utility functions for managing task properties and behaviors within the AgenticJS library. It offers 
+ * This file includes utility functions for managing task properties and behaviors within the KaibanJS library. It offers 
  * capabilities to interpolate task descriptions with dynamic data and retrieve concise titles for logging purposes.
  *
  * Usage:

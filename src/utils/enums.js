@@ -1,7 +1,7 @@
 /**
  * Enumeration Definitions.
  *
- * This file defines various enumerations used throughout the AgenticJS library, such as agent statuses, task statuses, 
+ * This file defines various enumerations used throughout the KaibanJS library, such as agent statuses, task statuses, 
  * and workflow states. These enums provide a standardized set of constants that facilitate clear and consistent state management 
  * and behavior handling across different components of the library.
  *

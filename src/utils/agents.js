@@ -1,7 +1,7 @@
 /**
  * Agent Utility Functions.
  *
- * This file provides utility functions specifically designed to support agent operations within the AgenticJS library. 
+ * This file provides utility functions specifically designed to support agent operations within the KaibanJS library. 
  * Functions include retrieving API keys based on agent configurations and cleaning JSON strings for parsing. These utilities 
  * aid in configuring agents accurately and handling their data interactions.
  *

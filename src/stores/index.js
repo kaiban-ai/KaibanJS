@@ -1,7 +1,7 @@
 /**
  * Store Modules Centralization.
  *
- * This file acts as the central export point for all state management store modules within the AgenticJS library. It consolidates 
+ * This file acts as the central export point for all state management store modules within the KaibanJS library. It consolidates 
  * the exports of various stores such as agentStore, taskStore, and teamStore, facilitating easier and more organized access across 
  * the library. This centralization supports modular architecture and enhances maintainability by grouping all store-related 
  * exports in one place.
