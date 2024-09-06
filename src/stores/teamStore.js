@@ -155,10 +155,7 @@ const createTeamStore = (initialState = {}) => {
             workflowStatus: WORKFLOW_STATUS_enum.FINISHED,
             metadata: {
                 result: deliverableTask ? deliverableTask.result : lastTaskResult,
-                ...stats,
-                teamName: get().name,
-                taskCount: tasks.length,
-                agentCount: get().agents.length
+                ...stats
             },
             logType: 'WorkflowStatusUpdate'
         };
@@ -178,6 +175,7 @@ const createTeamStore = (initialState = {}) => {
     handleWorkflowError: (task, error) => {
         // Detailed console error logging
         logger.error(`Workflow Error:`, error.message);
+        const stats = get().getWorkflowStats();
         // Prepare the error log with specific workflow context
         const newLog = {
             task,
@@ -186,7 +184,8 @@ const createTeamStore = (initialState = {}) => {
             logDescription: `Workflow error encountered: ${error.message}`,
             workflowStatus: WORKFLOW_STATUS_enum.ERRORED,
             metadata: {
-                error
+                error,
+                ...stats
             },
             logType: 'WorkflowStatusUpdate'
         };
@@ -202,18 +201,27 @@ const createTeamStore = (initialState = {}) => {
     handleWorkflowBlocked: ({ task, error }) => {
         // Detailed console error logging
         logger.warn(`WORKFLOW BLOCKED:`, error.message);
+
+
+        // Get current workflow stats
+        const stats = get().getWorkflowStats();
+
         // Prepare the error log with specific workflow context
         const newLog = {
             task,
             agent: task.agent,
             timestamp: Date.now(),
-            logDescription: `Workflow blocked encountered: ${error.message}`,
+            logDescription: `Workflow blocked: ${error.message}`,
             workflowStatus: WORKFLOW_STATUS_enum.BLOCKED,
             metadata: {
-                error
+                error: error.message,
+                ...stats,
+                teamName: get().name,
+                taskCount: get().tasks.length,
+                agentCount: get().agents.length
             },
             logType: 'WorkflowStatusUpdate'
-        };
+        };        
 
         // Update state with error details and add new log entry
         set(state => ({
@@ -493,7 +501,10 @@ const createTeamStore = (initialState = {}) => {
             duration,
             llmUsageStats,
             iterationCount,
-            costDetails
+            costDetails,
+            taskCount: get().tasks.length,
+            agentCount: get().agents.length,
+            teamName: get().name,            
         };
     },
     getCleanedState() {

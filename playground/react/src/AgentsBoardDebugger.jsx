@@ -1,5 +1,29 @@
 import React, { useState, useEffect } from 'react';
 
+const WorkflowStats = ({ stats }) => {
+    if (!stats) return null;
+  
+    return (
+      <div style={{ margin: '20px 0', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
+        <h3 style={{ color: '#666', fontSize: '24px' }}>📊 Workflow Statistics</h3>
+        <p><strong>Team Name:</strong> {stats.teamName}</p>
+        <p><strong>Duration:</strong> {stats.duration.toFixed(2)} seconds</p>
+        <p><strong>Tasks:</strong> {stats.taskCount}</p>
+        <p><strong>Agents:</strong> {stats.agentCount}</p>
+        <p><strong>Iterations:</strong> {stats.iterationCount}</p>
+        <h4>LLM Usage:</h4>
+        <ul>
+          <li>Input Tokens: {stats.llmUsageStats.inputTokens}</li>
+          <li>Output Tokens: {stats.llmUsageStats.outputTokens}</li>
+          <li>API Calls: {stats.llmUsageStats.callsCount}</li>
+          <li>Errors: {stats.llmUsageStats.callsErrorCount}</li>
+          <li>Parsing Errors: {stats.llmUsageStats.parsingErrors}</li>
+        </ul>
+        <p><strong>Total Cost:</strong> ${stats.costDetails.totalCost.toFixed(4)}</p>
+      </div>
+    );
+  };
+
 const AgentsBoardDebugger = ({team, title=null}) => {
 
     const useTeamStore = team.useStore(); 
@@ -13,7 +37,7 @@ const AgentsBoardDebugger = ({team, title=null}) => {
         setInputs: state.setInputs,
         workflowContext: state.workflowContext,
         provideFeedback: state.provideFeedback,
-        validateTask: state.validateTask
+        validateTask: state.validateTask,
     }));
 
     const [openSystemMessage, setOpenSystemMessage] = useState({});
@@ -22,6 +46,9 @@ const AgentsBoardDebugger = ({team, title=null}) => {
     const [feedbackContent, setFeedbackContent] = useState('');
     const [selectedTaskId, setSelectedTaskId] = useState('');
 
+    const [workflowStats, setWorkflowStats] = useState(null);
+
+    
 
     const handleFeedbackSubmit = () => {
         if (selectedTaskId && feedbackContent) {
@@ -60,10 +87,20 @@ const AgentsBoardDebugger = ({team, title=null}) => {
     //     console.log('Tasks:', tasks);
     // }, [tasks]);
         
-    const startTeam = () => {
-        team.start(inputs)
-            .catch(error => console.log('Error during team workflow execution'));
+    const startTeam = async () => {
+        try {
+            const output = await team.start(inputs);
+            if (output.status === 'FINISHED') {
+                setWorkflowStats(output.stats);
+            } else if (output.status === 'BLOCKED') {
+                setWorkflowStats(output.stats);
+            }
+        } catch (error) {
+            console.error("Workflow encountered an error:", error);
+            setWorkflowStatus('ERRORED');
+        }
     };
+
 
 
 return (
@@ -109,6 +146,7 @@ return (
                 </div>
             ))}
         </div>
+        {workflowStats && <WorkflowStats stats={workflowStats} />}
         <div style={{ marginTop: '20px' }}>
             <h2 style={{ color: '#666', fontSize: '30px', cursor: 'pointer' }} onClick={toggleWorkflowContext}>
             {openWorkflowContext ? '▼' : '▶'} 🧠 Workflow Context
