@@ -156,7 +156,8 @@ class Team {
                             unsubscribe();
                             resolve({
                                 status,
-                                result: state.workflowResult
+                                result: state.workflowResult,
+                                stats: this.getWorkflowStats()
                             });
                             break;
                         case WORKFLOW_STATUS_enum.ERRORED:
@@ -167,7 +168,8 @@ class Team {
                             unsubscribe();
                             resolve({
                                 status,
-                                result: null
+                                result: null,
+                                stats: this.getWorkflowStats()
                             });
                             break;
                         default:
@@ -323,6 +325,68 @@ class Team {
      */
     getTasks() {
         return this.store.getState().tasks;
+    }
+    /**
+     * Retrieves the workflow completion statistics.
+     * This method finds the completion log in the workflow logs and returns the associated statistics.
+     * 
+     * @returns {Object|null} The workflow completion statistics, or null if no completion log is found.
+     * @property {number} startTime - The timestamp representing the workflow start time.
+     * @property {number} endTime - The timestamp representing the workflow end time.
+     * @property {number} duration - The duration of the workflow in seconds.
+     * @property {Object} llmUsageStats - Statistics about the language model usage.
+     * @property {number} llmUsageStats.inputTokens - The number of input tokens used.
+     * @property {number} llmUsageStats.outputTokens - The number of output tokens generated.
+     * @property {number} llmUsageStats.callsCount - The number of LLM API calls made.
+     * @property {number} llmUsageStats.callsErrorCount - The number of failed LLM API calls.
+     * @property {number} llmUsageStats.parsingErrors - The number of parsing errors encountered.
+     * @property {number} iterationCount - The number of iterations in the workflow.
+     * @property {Object} costDetails - Detailed breakdown of costs associated with the workflow.
+     * @property {number} costDetails.costInputTokens - The cost of input tokens.
+     * @property {number} costDetails.costOutputTokens - The cost of output tokens.
+     * @property {number} costDetails.totalCost - The total cost of the workflow.
+     * @property {string} teamName - The name of the team that executed the workflow.
+     * @property {number} taskCount - The total number of tasks in the workflow.
+     * @property {number} agentCount - The number of agents involved in the workflow.
+     */
+    getWorkflowStats() {
+        const state = this.store.getState();
+        const logs = state.workflowLogs;
+
+        // Find the log entry for when the workflow was marked as finished or blocked
+        const completionLog = logs.find(log =>
+            log.logType === "WorkflowStatusUpdate" && 
+            (log.workflowStatus === "FINISHED" || log.workflowStatus === "BLOCKED")
+        );
+
+        // Check if a completion log exists and return the specified statistics
+        if (completionLog) {
+            const {
+                startTime,
+                endTime,
+                duration,
+                llmUsageStats,
+                iterationCount,
+                costDetails,
+                teamName,
+                taskCount,
+                agentCount
+            } = completionLog.metadata;
+
+            return {
+                startTime,
+                endTime,
+                duration,
+                llmUsageStats,
+                iterationCount,
+                costDetails,
+                teamName,
+                taskCount,
+                agentCount
+            };
+        } else {
+            return null;
+        }
     }
 }
 
