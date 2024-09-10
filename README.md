@@ -414,8 +414,8 @@ Kanban boards are excellent tools for showcasing team workflows in real time, pr
 
 ## Documentation
 
-- [Official Documentation](https://docs.kaibanjs.com/category/core-concepts)
-- [Join Our Discord](https://bit.ly/JoinAIChamps)
+- [Official Documentation](https://docs.kaibanjs.com/category/get-started)
+- [Join Our Discord](https://www.kaibanjs.com/discord)
 
 ### Compatibility
 
@@ -436,7 +436,7 @@ console.log(writtenBy);
 
 ## Community and Support
 
-Join the [Discord community](https://bit.ly/JoinAIChamps) to connect with other developers and get support. [Follow us](https://x.com/dariel_noel) on Twitter for the latest updates.
+Join the [Discord community](https://www.kaibanjs.com/discord) to connect with other developers and get support. [Follow us](https://x.com/dariel_noel) on Twitter for the latest updates.
 
 ## Contributing
 
