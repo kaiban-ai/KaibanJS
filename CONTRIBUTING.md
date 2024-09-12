@@ -2,27 +2,87 @@
 
 We appreciate your interest in contributing to KaibanJS! Here are a few guidelines to help you get started:
 
+### Setting Up the Development Environment
+
+Before you start contributing, you'll need to set up your development environment. Follow these steps:
+
+1. **Prerequisites**: Ensure you have Node.js (version 14 or later) and npm installed on your system.
+
+2. **Clone the Repository**: After forking, clone your fork of the KaibanJS repository:
+   ```bash
+   git clone https://github.com/kaiban-ai/KaibanJS.git
+   cd KaibanJS
+   ```
+
+3. **Install Main Dependencies**: In the root directory, run:
+   ```bash
+   npm install
+   ```
+
+4. **Install Playground Dependencies**: Navigate to the playground/react folder and install its dependencies:
+   ```bash
+   cd playground/react
+   npm install
+   cd ../..
+   ```
+
+5. **Set Up Environment Variables**: In the playground/react directory, create a `.env.local` file and add the necessary API keys for the examples you plan to run:
+
+   ```bash
+   cd playground/react
+   touch .env.local
+   ```
+
+   ```bash
+   VITE_OPENAI_API_KEY=your_openai_api_key_here
+   VITE_ANTHROPIC_API_KEY=your_anthropic_api_key_here
+   VITE_GOOGLE_API_KEY=your_google_api_key_here
+   VITE_MISTRAL_API_KEY=your_mistral_api_key_here
+   ```
+
+   Going back to the root directory, run:
+
+   ```bash
+   cd ../..
+   ```
+
+   Note: You only need to add the API keys for the services you'll be using in your examples.
+
+6. **Compile the Library**: In the root directory, run:
+   ```bash
+   npm run dev
+   ```
+
+7. **Launch Storybook Playground**: Open another terminal window To open the Storybook playground, run:
+   ```bash
+   npm run play:sb
+   ```
+
+   This will start a local server and open your browser to the Storybook playground.
+
+Now you're ready to start developing!
+
 ### How to Contribute
 
-1. **Explore Issues**: Start by looking through the [issues](https://github.com/kaiban-ai/KaibanJS/issues) on GitHub. Pick an issue that interests you, and please check if it has the **"in progress"** label, which means someone is already working on it. If you have a new idea or have found a bug, feel free to submit a new issue. Ensure the issue you choose is not already being worked on by someone else.
+1. **Explore Issues**: Start by looking through the [issues](https://github.com/kaiban-ai/KaibanJS/issues) on GitHub. Pick an issue that interests you, or submit a new one if you have a new idea or have found a bug.
 
-2. **Fork and Clone**: Fork the KaibanJS repository and then clone your fork. This will set you up with a local version of the project to work on.
+2. **Branch Creation**: Create a new branch in your local repository for your work.
 
-3. **Branch Creation**: Create a new branch in your local repository. It helps to name your branch in a way that reflects the work you're doing. For example, `feature/add-new-agent` or `bugfix/resolve-dependency-issue`.
+3. **Development**: Make your changes in the newly created branch. You can use the Storybook playground to test your changes:
+   - Create new stories in the `playground/react/src/stories` directory to test your use cases.
+   - Refer to existing stories for examples of how to structure your new stories.
 
-4. **Development**: Make your changes in the newly created branch. Be sure to keep your changes as concise and focused as possible. If the changes are large or complex, consider splitting them into multiple smaller pull requests.
+4. **Write Tests**: Ensure that all tests pass when you run `npm test`. Add new tests for new functionality if necessary.
 
-5. **Write Tests**: We love tests! Writing tests for new code or fixing existing tests are both valuable contributions. Ensure that all tests pass when you run `npm test`.
+5. **Document Your Changes**: Update the documentation to reflect any changes you've made. The documentation repository is located is [here](https://github.com/kaiban-ai/kaibanjs-docs.) 
 
-6. **Document Your Changes**: Update the documentation to reflect any changes you've made. This might include new features, changes to existing functionalities, or updates to the setup/installation process.
+6. **Commit Messages**: Write clear and concise commit messages, describing what has changed and why.
 
-7. **Commit Messages**: Write clear and concise commit messages, describing what has changed and why.
+7. **Pull Request**: Push your changes to your fork and submit a pull request to the main KaibanJS repository.
 
-8. **Pull Request**: Push your changes to your fork and submit a pull request to the main KaibanJS repository. Provide a clear description of the problem and solution, including any relevant issue numbers.
+8. **Code Review**: Wait for the code review process and make any requested changes.
 
-9. **Code Review**: Wait for the code review process. The community or maintainers will review your pull request. Engage in the conversation and make any requested changes. This collaboration greatly increases the chances that your pull request will be accepted.
-
-10. **Stay Updated**: Keep your pull request updated with the main branch, especially if other changes that might affect your contribution are merged.
+9. **Stay Updated**: Keep your pull request updated with the main branch.
 
 ### Community Guidelines
 
