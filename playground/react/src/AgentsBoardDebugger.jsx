@@ -1,33 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
+import Spinner from "./components/Spinner";
 
 const WorkflowStats = ({ stats }) => {
     if (!stats) return null;
-  
+
     return (
-      <div style={{ margin: '20px 0', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
-        <h3 style={{ color: '#666', fontSize: '24px' }}>📊 Workflow Statistics</h3>
-        <p><strong>Team Name:</strong> {stats.teamName}</p>
-        <p><strong>Duration:</strong> {stats.duration.toFixed(2)} seconds</p>
-        <p><strong>Tasks:</strong> {stats.taskCount}</p>
-        <p><strong>Agents:</strong> {stats.agentCount}</p>
-        <p><strong>Iterations:</strong> {stats.iterationCount}</p>
-        <h4>LLM Usage:</h4>
-        <ul>
-          <li>Input Tokens: {stats.llmUsageStats.inputTokens}</li>
-          <li>Output Tokens: {stats.llmUsageStats.outputTokens}</li>
-          <li>API Calls: {stats.llmUsageStats.callsCount}</li>
-          <li>Errors: {stats.llmUsageStats.callsErrorCount}</li>
-          <li>Parsing Errors: {stats.llmUsageStats.parsingErrors}</li>
-        </ul>
-        <p><strong>Total Cost:</strong> ${stats.costDetails.totalCost.toFixed(4)}</p>
-      </div>
+        <div className="section">
+            <h3>📊 Workflow Statistics</h3>
+            <p>
+                <strong>Team Name:</strong> {stats.teamName}
+            </p>
+            <p>
+                <strong>Duration:</strong> {stats.duration.toFixed(2)} seconds
+            </p>
+            <p>
+                <strong>Tasks:</strong> {stats.taskCount}
+            </p>
+            <p>
+                <strong>Agents:</strong> {stats.agentCount}
+            </p>
+            <p>
+                <strong>Iterations:</strong> {stats.iterationCount}
+            </p>
+            <h4>LLM Usage:</h4>
+            <ul>
+                <li>Input Tokens: {stats.llmUsageStats.inputTokens}</li>
+                <li>Output Tokens: {stats.llmUsageStats.outputTokens}</li>
+                <li>API Calls: {stats.llmUsageStats.callsCount}</li>
+                <li>Errors: {stats.llmUsageStats.callsErrorCount}</li>
+                <li>Parsing Errors: {stats.llmUsageStats.parsingErrors}</li>
+            </ul>
+            <p>
+                <strong>Total Cost:</strong> $
+                {stats.costDetails.totalCost.toFixed(4)}
+            </p>
+        </div>
     );
-  };
+};
 
-const AgentsBoardDebugger = ({team, title=null}) => {
-
-    const useTeamStore = team.useStore(); 
-    const { agents, tasks, workflowLogs, teamWorkflowStatus, workflowResult, inputs, setInputs, workflowContext, provideFeedback, validateTask } = useTeamStore(state => ({
+const AgentsBoardDebugger = ({ team, title = null }) => {
+    const useTeamStore = team.useStore();
+    const {
+        agents,
+        tasks,
+        workflowLogs,
+        teamWorkflowStatus,
+        workflowResult,
+        inputs,
+        setInputs,
+        workflowContext,
+        provideFeedback,
+        validateTask,
+    } = useTeamStore((state) => ({
         agents: state.agents,
         tasks: state.tasks,
         workflowLogs: state.workflowLogs,
@@ -43,18 +67,16 @@ const AgentsBoardDebugger = ({team, title=null}) => {
     const [openSystemMessage, setOpenSystemMessage] = useState({});
     const [openWorkflowContext, setOpenWorkflowContext] = useState(false);
 
-    const [feedbackContent, setFeedbackContent] = useState('');
-    const [selectedTaskId, setSelectedTaskId] = useState('');
+    const [feedbackContent, setFeedbackContent] = useState("");
+    const [selectedTaskId, setSelectedTaskId] = useState("");
 
     const [workflowStats, setWorkflowStats] = useState(null);
-
-    
 
     const handleFeedbackSubmit = () => {
         if (selectedTaskId && feedbackContent) {
             provideFeedback(selectedTaskId, feedbackContent);
-            setFeedbackContent('');
-            setSelectedTaskId('');
+            setFeedbackContent("");
+            setSelectedTaskId("");
         }
     };
 
@@ -64,185 +86,312 @@ const AgentsBoardDebugger = ({team, title=null}) => {
         } else {
             provideFeedback(taskId, "Task needs revision");
         }
-    }; 
+    };
 
     const toggleSystemMessage = (id) => {
-        setOpenSystemMessage(prev => ({
+        setOpenSystemMessage((prev) => ({
             ...prev,
-            [id]: !prev[id]
+            [id]: !prev[id],
         }));
-    };    
+    };
 
     const toggleWorkflowContext = () => {
-        setOpenWorkflowContext(prev => !prev);
+        setOpenWorkflowContext((prev) => !prev);
     };
 
     const [statusLog, setStatusLog] = useState([]);
 
     useEffect(() => {
-        setStatusLog(prevLog => [...prevLog, teamWorkflowStatus]);
+        setStatusLog((prevLog) => [...prevLog, teamWorkflowStatus]);
     }, [teamWorkflowStatus]);
 
     // useEffect(() => {
     //     console.log('Tasks:', tasks);
     // }, [tasks]);
-        
+
     const startTeam = async () => {
         try {
             const output = await team.start(inputs);
-            if (output.status === 'FINISHED') {
+            if (output.status === "FINISHED") {
                 setWorkflowStats(output.stats);
-            } else if (output.status === 'BLOCKED') {
+            } else if (output.status === "BLOCKED") {
                 setWorkflowStats(output.stats);
             }
         } catch (error) {
             console.error("Workflow encountered an error:", error);
-            setWorkflowStatus('ERRORED');
         }
     };
 
+    return (
+        <div>
+            <h1 className="title">Agents Team Debugger</h1>
+            {title && <h2 className="sectionTitle">{title}</h2>}
 
-
-return (
-    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-        <h1 style={{ color: '#333' }}>Agents Team Debugger</h1>
-        {title ? <h2 style={{ color: '#666', fontSize: '30px', borderBottom: '1px solid #333' }}>{title}</h2> : null}
-        <div style={{ margin: '20px 0' }}>
-            <h2 style={{ color: '#666', fontSize: '24px' }}>Team Inputs</h2>
-            <textarea value={JSON.stringify(inputs, null, 2)} onChange={(e) => setInputs(JSON.parse(e.target.value))} placeholder="Enter JSON input" style={{ width: '500px' }}/>
-            <p>
-                <button onClick={startTeam} style={{ padding: '10px', backgroundColor: '#0000FF', color: 'white', border: 'none', cursor: 'pointer' }}>Start Workflow</button>
-            </p>
-        </div>        
-        <div style={{ margin: '20px 0' }}>
-            <h2 style={{ color: '#666', fontSize: '30px' }}>🕵️‍♂️ Agents</h2>
-            {agents.map(agent => (
-                <div key={agent.id} style={{ color: '#999', marginBottom: '10px' }}>
-                    {agent.name} - {agent.role} - [{agent.type}] - [{agent.llmConfig.provider}- {agent.llmConfig.model}] - status: ({agent.status})
-                    {agent.llmSystemMessage && (
-                        <div onClick={() => toggleSystemMessage(agent.id)} style={{ cursor: 'pointer', textDecoration: 'underline' }}>
-                            {openSystemMessage[agent.id] ? 'Hide System Message' : 'Show System Message'}
-                        </div>
-                    )}
-                    {openSystemMessage[agent.id] && (
-                        <div style={{ color: '#999' }}>
-                            System Message: {agent.llmSystemMessage}
-                        </div>
-                    )}
-                </div>
-            ))}
-        </div>
-        <div style={{ margin: '20px 0' }}>
-            <h2 style={{ color: '#666', fontSize: '30px' }}>📝 Tasks</h2>
-            {tasks.map(task => (
-                <p key={task.id} style={{ color: '#999' }}>🔘 {task.description} - {task.status}</p>
-            ))}
-        </div>
-        <div style={{ margin: '20px 0' }}>
-            <h2 style={{ color: '#666', fontSize: '30px' }}>🔄 Team Workflow Status Changes</h2>
-            {statusLog.map((status, index) => (
-                <div key={index} style={{ color: '#999', marginBottom: '10px' }}>
-                    <div>🔘 Status: {status}</div>
-                </div>
-            ))}
-        </div>
-        {workflowStats && <WorkflowStats stats={workflowStats} />}
-        <div style={{ marginTop: '20px' }}>
-            <h2 style={{ color: '#666', fontSize: '30px', cursor: 'pointer' }} onClick={toggleWorkflowContext}>
-            {openWorkflowContext ? '▼' : '▶'} 🧠 Workflow Context
-            </h2>
-            {openWorkflowContext && (
-                <div style={{ color: '#999' }}>
-                    {workflowContext ? workflowContext : 'No context available'}
-                </div>
-            )}
-        </div>
-                
-        <div style={{ margin: '20px 0' }}>
-            <h2 style={{ color: '#666', fontSize: '30px' }}>📊 Task Results</h2>
-            {tasks.map(task => (
-                <div key={task.id} style={{ color: '#999', marginBottom: '10px' }}>
-                    <div>🔘 Task: {task.description}</div>
-                    <div>Time: {task.duration ? `${task.duration} seconds` : 'Not yet available'}</div>
-                    <div><strong>Result</strong></div>
-                    <div>{task.result ? task.result : 'Not yet available'}</div>
-                </div>
-            ))}
-        </div>      
-        <div style={{ margin: '20px 0' }}>
-            <h2 style={{ color: '#666', fontSize: '30px' }}>Workflow Result</h2>
-            <div>{workflowResult ? workflowResult : 'Not yet available'}</div>
-        </div> 
-        <div style={{ margin: '20px 0' }}>
-                <h2 style={{ color: '#666', fontSize: '30px' }}>👥 Human in the Loop (HITL)</h2>
-                <select 
-                    value={selectedTaskId} 
-                    onChange={(e) => setSelectedTaskId(e.target.value)}
-                    style={{ marginRight: '10px', padding: '5px' }}
-                >
-                    <option value="">Select a task</option>
-                    {tasks.map(task => (
-                        <option key={task.id} value={task.id}>{task.description}</option>
-                    ))}
-                </select>
-                <input 
-                    type="text" 
-                    value={feedbackContent} 
-                    onChange={(e) => setFeedbackContent(e.target.value)}
-                    placeholder="Enter feedback"
-                    style={{ marginRight: '10px', padding: '5px' }}
+            <div className="inputSection">
+                <h2 className="sectionTitle">Team Inputs</h2>
+                <textarea
+                    className="inputTextarea"
+                    value={JSON.stringify(inputs, null, 2)}
+                    onChange={(e) => setInputs(JSON.parse(e.target.value))}
+                    placeholder="Enter JSON input"
                 />
-                <button 
-                    onClick={handleFeedbackSubmit}
-                    style={{ padding: '5px 10px', backgroundColor: '#4CAF50', color: 'white', border: 'none', cursor: 'pointer' }}
-                >
-                    Submit Feedback
-                </button>
+
+                <div className="actionWrapper">
+                    <button className="actionButton" onClick={startTeam}>
+                        Start Workflow
+                    </button>
+
+                    {teamWorkflowStatus === "running_workflow" && <Spinner />}
+                </div>
             </div>
-            
-            <div style={{ margin: '20px 0' }}>
-                <h2 style={{ color: '#666', fontSize: '30px' }}>📝 Tasks</h2>
-                {tasks.map(task => (
-                    <div key={task.id} style={{ color: '#999', marginBottom: '10px' }}>
-                        <p>🔘 {task.description} - {task.status}</p>
-                        {task.status === 'AWAITING_VALIDATION' && (
-                            <div>
-                                <button onClick={() => handleTaskValidation(task.id, true)} style={{ marginRight: '10px' }}>Approve</button>
-                                <button onClick={() => handleTaskValidation(task.id, false)}>Request Revision</button>
+
+            <div className="section">
+                <h2 className="sectionTitle">🕵️‍♂️ Agents</h2>
+                <ul>
+                    {agents.map((agent) => (
+                        <li key={agent.id} className="listItem agentName">
+                            <span>
+                                🔘{" "}
+                                <strong>
+                                    {agent.name} - {agent.role}{" "}
+                                </strong>{" "}
+                                - [{agent.type}] - [{agent.llmConfig.provider}-{" "}
+                                {agent.llmConfig.model}] - status: (
+                                {agent.status})
+                            </span>
+
+                            {agent.llmSystemMessage && (
+                                <div
+                                    className="llm_system_message"
+                                    onClick={() =>
+                                        toggleSystemMessage(agent.id)
+                                    }
+                                >
+                                    {openSystemMessage[agent.id]
+                                        ? "Hide System Message"
+                                        : "Show System Message"}
+                                </div>
+                            )}
+                            {openSystemMessage[agent.id] && (
+                                <div className="listItem">
+                                    System Message: {agent.llmSystemMessage}
+                                </div>
+                            )}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <div className="section">
+                <h2 className="sectionTitle">📝 Tasks</h2>
+                <ul>
+                    {tasks.map((task) => (
+                        <li key={task.id} className="listItem">
+                            <div className="taskContainer">
+                                <span className="taskDescription">
+                                    🔘 {task.description}
+                                </span>
+                                <span className="taskStatus">
+                                    {task.status}{" "}
+                                    {task.status === "doing" && (
+                                        <Spinner color="white" />
+                                    )}
+                                </span>
                             </div>
-                        )}
-                        {task.feedbackHistory && task.feedbackHistory.length > 0 && (
-                            <div style={{ marginLeft: '20px' }}>
-                                <strong>Feedback History:</strong>
-                                {task.feedbackHistory.map((feedback, index) => (
-                                    <p key={index} style={{ margin: '5px 0' }}>
-                                        - {feedback.content} (Status: {feedback.status})
-                                    </p>
-                                ))}
-                            </div>
-                        )}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <div className="section">
+                <h2 className="sectionTitle">
+                    🔄 Team Workflow Status Changes
+                </h2>
+
+                <ul>
+                    {statusLog.map((status, index) => (
+                        <li key={index} className="listItem">
+                            Status: {status}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            {workflowStats && <WorkflowStats stats={workflowStats} />}
+            <div className="section">
+                <h2 className="sectionTitle" onClick={toggleWorkflowContext}>
+                    {openWorkflowContext ? "▼" : "▶"} 🧠 Workflow Context
+                </h2>
+                {openWorkflowContext && (
+                    <div className="listItem">
+                        {workflowContext
+                            ? workflowContext
+                            : "No context available"}
                     </div>
-                ))}
+                )}
             </div>
 
+            <div className="section">
+                <h2 className="sectionTitle">📊 Task Results</h2>
 
-        <div style={{ margin: '20px 0' }}>
-            <h2 style={{ color: '#666', fontSize: '30px' }}>📋 Workflow Logs</h2>
-            {workflowLogs.map((log, index) => (
-                log.logType !== 'WorkflowStatusUpdate' ? (
-                    <p key={index} style={{ color: '#999' }}>
-                        🔘 ({log.taskStatus}) - ({log.taskTitle}) - ({log.agentName}) - ({log.agentStatus}) - timestamp: {log.timestamp} - {log.agent?.name} - {log.task?.description}
-                    </p>
-                ) : (
-                    <p key={index} style={{ color: '#999' }}>
-                        🔘 Workflow Status Update - ({log.workflowStatus}) timestamp: {log.timestamp}
-                    </p>
-                )
-            ))}
-        </div>           
+                <ul>
+                    {tasks.map((task) => (
+                        <li
+                            key={task.id}
+                            className="listItem taskResult_Container last_child"
+                        >
+                            <div>
+                                <strong className="subtitle">Task:</strong>
+                                <span> {task.description} </span>
+                            </div>
 
-    </div>
-);
+                            <div>
+                                <strong className="subtitle">Time:</strong>
+                                <span>
+                                    {" "}
+                                    {task.duration
+                                        ? `${task.duration} seconds`
+                                        : "Not yet available"}
+                                </span>
+                            </div>
+
+                            <div className="taskResult_response">
+                                <p>
+                                    <strong className="subtitle">
+                                        Result:
+                                    </strong>
+                                </p>
+
+                                <p>
+                                    {task.result
+                                        ? task.result
+                                        : "Not yet available"}
+                                </p>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <div className="section">
+                <h2 className="sectionTitle">Workflow Result</h2>
+                <div>
+                    {workflowResult ? (
+                        workflowResult
+                    ) : (
+                        <div className="noAvailableData">
+                            <span>Not yet available</span>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <div className="section">
+                <h2 className="sectionTitle">👥 Human in the Loop (HITL)</h2>
+                <div className="hitl_Container">
+                    <select
+                        value={selectedTaskId}
+                        className="hitl-select"
+                        onChange={(e) => setSelectedTaskId(e.target.value)}
+                    >
+                        <option value="">Select a task</option>
+                        {tasks.map((task) => (
+                            <option key={task.id} value={task.id}>
+                                {task.description}
+                            </option>
+                        ))}
+                    </select>
+                    <input
+                        type="text"
+                        className="hitl-feedback"
+                        value={feedbackContent}
+                        onChange={(e) => setFeedbackContent(e.target.value)}
+                        placeholder="Enter feedback"
+                    />
+                    <button
+                        className="hitl-button"
+                        onClick={handleFeedbackSubmit}
+                    >
+                        Submit Feedback
+                    </button>
+                </div>
+            </div>
+
+            <div className="section">
+                <h2 className="sectionTitle">📝 Tasks</h2>
+                <ul>
+                    {tasks.map((task) => (
+                        <li key={task.id} className="listItem">
+                            <p>
+                                🔘 {task.description} - {task.status}
+                            </p>
+                            {task.status === "AWAITING_VALIDATION" && (
+                                <div className="awaiting_validation_buttons">
+                                    <button
+                                        onClick={() =>
+                                            handleTaskValidation(task.id, true)
+                                        }
+                                    >
+                                        Approve
+                                    </button>
+                                    <button
+                                        onClick={() =>
+                                            handleTaskValidation(task.id, false)
+                                        }
+                                    >
+                                        Request Revision
+                                    </button>
+                                </div>
+                            )}
+
+                            {task.feedbackHistory &&
+                                task.feedbackHistory.length > 0 && (
+                                    <div>
+                                        <strong>Feedback History:</strong>
+                                        {task.feedbackHistory.map(
+                                            (feedback, index) => (
+                                                <p
+                                                    key={index}
+                                                    className="listItem"
+                                                >
+                                                    - {feedback.content}{" "}
+                                                    (Status: {feedback.status})
+                                                </p>
+                                            )
+                                        )}
+                                    </div>
+                                )}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <div className="section">
+                <h2 className="sectionTitle">📋 Workflow Logs</h2>
+
+                <ul>
+                    {workflowLogs.map((log, index) => (
+                        <li key={index} className="listItem">
+                            {log.logType !== "WorkflowStatusUpdate" ? (
+                                <p>
+                                    🔘 ({log.taskStatus}) - ({log.taskTitle}) -
+                                    ({log.agentName}) - ({log.agentStatus}) -
+                                    timestamp: {log.timestamp} -{" "}
+                                    {log.agent?.name} - {log.task?.description}
+                                </p>
+                            ) : (
+                                <p>
+                                    🔘 Workflow Status Update - (
+                                    {log.workflowStatus}) timestamp:{" "}
+                                    {log.timestamp}
+                                </p>
+                            )}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </div>
+    );
 };
 
 export default AgentsBoardDebugger;
