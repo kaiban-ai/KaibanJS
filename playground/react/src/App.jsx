@@ -1,5 +1,5 @@
 import AgentsBoardDebugger from "./AgentsBoardDebugger";
-import team from "./teams/product_specs/anthropic";
+import team from "./teams/product_specs/openai";
 
 function App() {
     return (
