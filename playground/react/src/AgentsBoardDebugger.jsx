@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { WORKFLOW_STATUS_enum } from "./utils/enums";
 import Spinner from "./components/Spinner";
 
 const WorkflowStats = ({ stats }) => {
