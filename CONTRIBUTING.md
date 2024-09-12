@@ -2,6 +2,10 @@
 
 We appreciate your interest in contributing to KaibanJS! Here are a few guidelines to help you get started:
 
+For a video walkthrough of the contribution process, please watch our contribution guide video:
+
+<div style="position: relative; padding-bottom: 62.5%; height: 0;"><iframe src="https://www.loom.com/embed/3ba1a391a03a45a9ab49b4981ef716c7?sid=fce0a5eb-07a2-4161-b17a-78009d2dc11b" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+
 ### Setting Up the Development Environment
 
 Before you start contributing, you'll need to set up your development environment. Follow these steps:
