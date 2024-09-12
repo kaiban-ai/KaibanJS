@@ -1,0 +1,96 @@
+[
+  {
+    "url": "https://api.openai.com/v1/chat/completions",
+    "method": "POST",
+    "body": {
+      "model": "gpt-4o-mini",
+      "temperature": 1,
+      "top_p": 1,
+      "frequency_penalty": 0,
+      "presence_penalty": 0,
+      "n": 1,
+      "stream": false,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are Mary.\n\n        Your role is: Profile Analyst.\n        Your background is: Data Processor.\n        Your main goal is: Extract structured information from conversational user input.\n        Your are working as part of a team.\n\n        For your work you will have available:\n\n        - Access to a defined set of tools. \n        - Findings and insights from previous tasks. You must use this information to complete your current task.\n        - Must follow an specific format for your output.\n\n        ## Tools available for your use: \n\n        No tools available. You must reply in your internal knowledge.\n\n        **Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n        ## Format of your output\n\n        You will return just one of the following:\n        \n        - Thought + (Action or Self Question)\n        OR\n        - Observation\n        OR\n        - Final Answer\n\n        Below the explanation of each one:\n\n        ### Thought + (Action or Self Question)\n\n        {\n           \"thought\": \"your thoughts about what to next\" // it could be an action or ask yourself a follow up question\n           \"action\":  \"you decide what action to take based on your previous thought\",// the action could be a self follow up question or decide to use a tool from the available tools to use,\n           \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \" to wrap keys and values. Remember to use the Tool Schema.\n        }\n\n        Examples: \n\n        {\n           \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n           \"action\": \"tavily_search_results_json\",\n           \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n        }\n\n        other\n\n        {\n           \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n           \"action\": \"self_question\",\n           \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n        }\n\n        ### Observation\n\n        {\n           \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n            \"isFinalAnswerReady\": false // If you have the final answer or not\n        }\n\n        ### Final Answer\n\n        IMPORTANT: (Please respect the expected output requirements from the user): Structured data ready to be used for a resume creation.\n\n        {\n            \"finalAnswer\": \"The final answer to the Task.\"\n        }\n\n        **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n        "
+        },
+        {
+          "role": "user",
+          "content": "\n            Hi Mary, please complete the following task: Extract relevant details such as name, \n  experience, skills, and job history from the user's 'aboutMe' input. \n  aboutMe: My name is David Llaca. \n    JavaScript Developer for 5 years. \n    I worked for three years at Disney, \n    where I developed user interfaces for their primary landing pages\n     using React, NextJS, and Redux. Before Disney, \n     I was a Junior Front-End Developer at American Airlines, \n     where I worked with Vue and Tailwind. \n     I earned a Bachelor of Science in Computer Science from FIU in 2018, \n     and I completed a JavaScript bootcamp that same year..\n            Your expected output should be: \"Structured data ready to be used for a resume creation.\".\n            \n        "
+        }
+      ]
+    },
+    "response": {
+      "id": "chatcmpl-A0sPtFLpWzmBG9P9r5C36EuZd8Qqy",
+      "object": "chat.completion",
+      "created": 1724772541,
+      "model": "gpt-4o-mini-2024-07-18",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n    \"finalAnswer\": {\n        \"name\": \"David Llaca\",\n        \"experience\": \"5 years\",\n        \"skills\": [\"JavaScript\", \"React\", \"NextJS\", \"Redux\", \"Vue\", \"Tailwind\"],\n        \"jobHistory\": [\n            {\n                \"company\": \"Disney\",\n                \"position\": \"JavaScript Developer\",\n                \"duration\": \"3 years\",\n                \"responsibilities\": \"developed user interfaces for their primary landing pages\"\n            },\n            {\n                \"company\": \"American Airlines\",\n                \"position\": \"Junior Front-End Developer\",\n                \"duration\": \"unspecified\",\n                \"responsibilities\": \"worked with Vue and Tailwind\"\n            }\n        ],\n        \"education\": {\n            \"degree\": \"Bachelor of Science in Computer Science\",\n            \"institution\": \"FIU\",\n            \"yearCompleted\": 2018\n        },\n        \"additionalTraining\": [\n            {\n                \"training\": \"JavaScript bootcamp\",\n                \"yearCompleted\": 2018\n            }\n        ]\n    }\n}",
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 760,
+        "completion_tokens": 214,
+        "total_tokens": 974
+      },
+      "system_fingerprint": "fp_f3db212e1c"
+    }
+  },
+  {
+    "url": "https://api.openai.com/v1/chat/completions",
+    "method": "POST",
+    "body": {
+      "model": "gpt-4o-mini",
+      "temperature": 1,
+      "top_p": 1,
+      "frequency_penalty": 0,
+      "presence_penalty": 0,
+      "n": 1,
+      "stream": false,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are Alex Mercer.\n\n        Your role is: Resume Writer.\n        Your background is: Extensive experience in recruiting, \n    copywriting, and human resources, enabling \n    effective resume design that stands out to employers..\n        Your main goal is: Craft compelling, well-structured resumes \n    that effectively showcase job seekers qualifications and achievements.\n        Your are working as part of a team.\n\n        For your work you will have available:\n\n        - Access to a defined set of tools. \n        - Findings and insights from previous tasks. You must use this information to complete your current task.\n        - Must follow an specific format for your output.\n\n        ## Tools available for your use: \n\n        No tools available. You must reply in your internal knowledge.\n\n        **Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n        ## Format of your output\n\n        You will return just one of the following:\n        \n        - Thought + (Action or Self Question)\n        OR\n        - Observation\n        OR\n        - Final Answer\n\n        Below the explanation of each one:\n\n        ### Thought + (Action or Self Question)\n\n        {\n           \"thought\": \"your thoughts about what to next\" // it could be an action or ask yourself a follow up question\n           \"action\":  \"you decide what action to take based on your previous thought\",// the action could be a self follow up question or decide to use a tool from the available tools to use,\n           \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \" to wrap keys and values. Remember to use the Tool Schema.\n        }\n\n        Examples: \n\n        {\n           \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n           \"action\": \"tavily_search_results_json\",\n           \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n        }\n\n        other\n\n        {\n           \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n           \"action\": \"self_question\",\n           \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n        }\n\n        ### Observation\n\n        {\n           \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n            \"isFinalAnswerReady\": false // If you have the final answer or not\n        }\n\n        ### Final Answer\n\n        IMPORTANT: (Please respect the expected output requirements from the user): A professionally formatted resume in markdown format, \n    ready for submission to potential employers.\n\n        {\n            \"finalAnswer\": \"The final answer to the Task.\"\n        }\n\n        **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n        "
+        },
+        {
+          "role": "user",
+          "content": "\n            Hi Alex Mercer, please complete the following task: Utilize the structured data to create \n    a detailed and attractive resume. \n    Enrich the resume content by inferring additional details from the provided information.\n    Include sections such as a personal summary, detailed work experience, skills, and educational background..\n            Your expected output should be: \"A professionally formatted resume in markdown format, \n    ready for submission to potential employers.\".\n            Incorporate the following findings and insights from previous tasks: \"Task: Extract relevant details such as name, \n  experience, skills, and job history from the user's 'aboutMe' input. \n  aboutMe: {aboutMe}\nResult: {\"name\":\"David Llaca\",\"experience\":\"5 years\",\"skills\":[\"JavaScript\",\"React\",\"NextJS\",\"Redux\",\"Vue\",\"Tailwind\"],\"jobHistory\":[{\"company\":\"Disney\",\"position\":\"JavaScript Developer\",\"duration\":\"3 years\",\"responsibilities\":\"developed user interfaces for their primary landing pages\"},{\"company\":\"American Airlines\",\"position\":\"Junior Front-End Developer\",\"duration\":\"unspecified\",\"responsibilities\":\"worked with Vue and Tailwind\"}],\"education\":{\"degree\":\"Bachelor of Science in Computer Science\",\"institution\":\"FIU\",\"yearCompleted\":2018},\"additionalTraining\":[{\"training\":\"JavaScript bootcamp\",\"yearCompleted\":2018}]}\n\"\n        "
+        }
+      ]
+    },
+    "response": {
+      "id": "chatcmpl-A0sPwEvn3SuOlflhlCXozWuvT4EY5",
+      "object": "chat.completion",
+      "created": 1724772544,
+      "model": "gpt-4o-mini-2024-07-18",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n    \"finalAnswer\": \"# David Llaca\\n\\n## Personal Summary\\nDynamic and detail-oriented JavaScript Developer with over 5 years of experience in creating engaging user interfaces and optimizing web functionality. Passionate about leveraging modern technologies to deliver exceptional digital experiences. Proven ability to collaborate in teams and contribute to successful project outcomes.\\n\\n## Work Experience\\n**JavaScript Developer**  \\nDisney  \\n*Duration: 3 years*  \\n- Developed user interfaces for Disney's primary landing pages, enhancing user engagement and accessibility.\\n- Collaborated with design and back-end teams to streamline frontend processes, resulting in increased efficiency.\\n\\n**Junior Front-End Developer**  \\nAmerican Airlines  \\n*Duration: Unspecified*  \\n- Worked extensively with Vue and Tailwind to build responsive web applications.\\n- Assisted in troubleshooting and debugging code to maintain the functionality of web pages.\\n\\n## Skills\\n- **Languages/Frameworks:** JavaScript, React, NextJS, Redux, Vue, Tailwind  \\n- **Tools & Technologies:** Version Control (Git), Webpack, RESTful APIs  \\n- **Soft Skills:** Team Collaboration, Problem Solving, Effective Communication\\n\\n## Education\\n**Bachelor of Science in Computer Science**  \\nFlorida International University (FIU)  \\n*Year Completed: 2018*  \\n\\n## Additional Training\\n**JavaScript Bootcamp**  \\n*Year Completed: 2018*  \\n- Completed an intensive bootcamp focusing on JavaScript and modern web development practices.\\n\\n---\\n*Ready for submission to potential employers.*\"\n}",
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 898,
+        "completion_tokens": 341,
+        "total_tokens": 1239
+      },
+      "system_fingerprint": "fp_48196bc67a"
+    }
+  }
+]

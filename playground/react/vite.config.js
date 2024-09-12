@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      'agenticjs': path.resolve(__dirname, '../../dist/bundle.esm.js')
+      'kaibanjs': path.resolve(__dirname, '../../dist/bundle.mjs')
     },
   }, 
   optimizeDeps: {

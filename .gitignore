@@ -27,7 +27,6 @@ out/
 build
 dist
 
-
 # Debug
 npm-debug.log*
 yarn-debug.log*
@@ -36,6 +35,7 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+_todo.md
 
 *storybook.log
 _todo.md

@@ -1,0 +1,23 @@
+{
+  "name": "nodejs-ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "tsx index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.5.1",
+    "copyfiles": "^2.4.1",
+    "dotenv": "^16.4.5",
+    "tslib": "^2.7.0",
+    "tsx": "^4.19.0",
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "kaibanjs": "file:../.."
+  }
+}
