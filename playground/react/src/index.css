@@ -229,3 +229,13 @@ button:focus-visible {
 .hitl-feedback {
     padding: 10px;
 }
+
+.awaiting_validation_buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.llm_system_message {
+    cursor: pointer;
+    text-decoration: underline;
+}

@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { WORKFLOW_STATUS_enum } from "./utils/enums";
+import Spinner from "./components/Spinner";
 
 const WorkflowStats = ({ stats }) => {
     if (!stats) return null;
@@ -118,7 +120,6 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
             }
         } catch (error) {
             console.error("Workflow encountered an error:", error);
-            setWorkflowStatus("ERRORED");
         }
     };
 
@@ -162,10 +163,7 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
 
                             {agent.llmSystemMessage && (
                                 <div
-                                    style={{
-                                        cursor: "pointer",
-                                        textDecoration: "underline",
-                                    }}
+                                    className="llm_system_message"
                                     onClick={() =>
                                         toggleSystemMessage(agent.id)
                                     }
@@ -329,7 +327,7 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
                                 🔘 {task.description} - {task.status}
                             </p>
                             {task.status === "AWAITING_VALIDATION" && (
-                                <div>
+                                <div className="awaiting_validation_buttons">
                                     <button
                                         onClick={() =>
                                             handleTaskValidation(task.id, true)
