@@ -1,13 +1,13 @@
-import AgentsBoardDebugger from './AgentsBoardDebugger';
-import team from './teams/product_specs/openai';
+import AgentsBoardDebugger from "./AgentsBoardDebugger";
+import team from "./teams/product_specs/anthropic";
 
 function App() {
-  return (
-    <>
-      <h1>KaibanJS Playground</h1>
-      <AgentsBoardDebugger team={team}/>
-    </>
-  )
+    return (
+        <div className="mainContent">
+            <h1>KaibanJS Playground</h1>
+            <AgentsBoardDebugger team={team} />
+        </div>
+    );
 }
 
-export default App
+export default App;
