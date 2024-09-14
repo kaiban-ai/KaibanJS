@@ -88,7 +88,10 @@ class Agent {
     }    
     get forceFinalAnswer() {
         return this.agentInstance.forceFinalAnswer;
-    }    
+    } 
+    get promptTemplates() {
+        return this.agentInstance.promptTemplates;
+    } 
 }
 class Task {
     constructor({ title = '', description, expectedOutput, agent, isDeliverable = false, externalValidationRequired = false }) {

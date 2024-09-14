@@ -32,9 +32,7 @@ import {
     ChatPromptTemplate,
   } from "@langchain/core/prompts";
 import { logger } from "../utils/logger";
-import {getChampionReActAgentSystemPrompt} from '../utils/prompts';
 import { LLMInvocationError } from '../utils/errors';
-
 class ReactChampionAgent extends BaseAgent {
     #executableAgent;
     constructor(config) {
@@ -78,7 +76,12 @@ class ReactChampionAgent extends BaseAgent {
 
     async workOnFeedback(task, feedbackList) {
         const feedbackString = feedbackList.map(f => f.content).join(', ');
-        const feedbackMessage = `Here is some feedback for you to address: ${feedbackString}`;
+        const feedbackMessage = this.promptTemplates.WORK_ON_FEEDBACK_FEEDBACK({
+            agent: this,
+            task,
+            feedback: feedbackString
+        });
+       // `Here is some feedback for you to address: ${feedbackString}`;
         return await this.agenticLoop(this, task, this.#executableAgent, feedbackMessage);
     }
 
@@ -122,7 +125,14 @@ class ReactChampionAgent extends BaseAgent {
 
                 // Check if we need to force the final answer
                 if (agent.forceFinalAnswer && iterations === maxAgentIterations - 2) {
-                    feedbackMessage = "We don't have more time to keep looking for the answer. Please use all the information you have gathered until now and give the finalAnswer right away.";
+                    feedbackMessage = this.promptTemplates.FORCE_FINAL_ANSWER_FEEDBACK({
+                        agent,
+                        task,
+                        iterations,
+                        maxAgentIterations
+                    });
+                    
+                    // "We don't have more time to keep looking for the answer. Please use all the information you have gathered until now and give the finalAnswer right away.";
                 }                
 
                 // pure function that returns the result of the agent thinking
@@ -214,26 +224,25 @@ class ReactChampionAgent extends BaseAgent {
         }
     }
 
-    buildSystemMessage(agent, task, interpolatedTaskDescription){
-        const systemMessage = getChampionReActAgentSystemPrompt({
-            name: agent.name,
-            role: agent.role,
-            background: agent.background,
-            goal: agent.goal,
-            tools: agent.tools,
-            description: interpolatedTaskDescription,
-            expectedOutput: task.expectedOutput,
+    buildSystemMessage(agent, task, interpolatedTaskDescription) {
+        return this.promptTemplates.SYSTEM_MESSAGE({
+            agent,
+            task: {
+                ...task,
+                description: interpolatedTaskDescription
+            }
         });
-        return systemMessage;
     }
 
-    buildInitialMessage(agent, task, interpolatedTaskDescription, context){
-        const feedbackMessage = `
-            Hi ${agent.name}, please complete the following task: ${interpolatedTaskDescription}.
-            Your expected output should be: "${task.expectedOutput}".
-            ${context ? `Incorporate the following findings and insights from previous tasks: "${context}"` : ""}
-        `;       
-        return feedbackMessage;
+    buildInitialMessage(agent, task, interpolatedTaskDescription, context) {
+        return this.promptTemplates.INITIAL_MESSAGE({
+            agent,
+            task: {
+                ...task,
+                description: interpolatedTaskDescription
+            },
+            context
+        });
     }
 
     determineActionType (parsedResult) {
@@ -338,7 +347,11 @@ class ReactChampionAgent extends BaseAgent {
     handleIssuesParsingLLMOutput({agent, task, output}) { 
         const jSONPArsingError = new Error('Received an invalid JSON object from the LLM. Requesting a correctly formatted JSON response.', output.llmOutput);
         agent.store.getState().handleAgentIssuesParsingLLMOutput({agent, task, output, error: jSONPArsingError});
-        const feedbackMessage = `You returned an invalid JSON object. Please format your answer as a valid JSON object. Just the JSON object not comments or anything else. E.g: {\"finalAnswer\": \"The final answer\"}`;
+        const feedbackMessage = this.promptTemplates.INVALID_JSON_FEEDBACK({
+            agent,
+            task,
+            llmOutput: output.llmOutput
+        });
         return feedbackMessage;
     }
 
@@ -355,17 +368,33 @@ class ReactChampionAgent extends BaseAgent {
 
     handleThought({agent, task, parsedLLMOutput}) {
         agent.store.getState().handleAgentThought({agent, task, output: parsedLLMOutput});
-        let feedbackMessage = "Your toughts are great, let's keep going.";
+        let feedbackMessage =  this.promptTemplates.THOUGHT_FEEDBACK({
+            agent,
+            task,
+            thought: parsedLLMOutput.thought,
+            parsedLLMOutput
+        });
         if(parsedLLMOutput.action === 'self_question' && parsedLLMOutput.actionInput) {
             const actionAsString = typeof parsedLLMOutput.actionInput == 'object' ? JSON.stringify(parsedLLMOutput.actionInput) : parsedLLMOutput.actionInput;
-            feedbackMessage = "Awesome, please answer yourself the question: " + actionAsString;
+            feedbackMessage = this.promptTemplates.THOUGHT_WITH_SELF_QUESTION_FEEDBACK({
+                agent,
+                task,
+                thought: parsedLLMOutput.thought,
+                question: actionAsString,
+                parsedLLMOutput
+            });
         }
         return feedbackMessage;
     }
 
     handleSelfQuestion({agent, task, parsedLLMOutput}) {
         agent.store.getState().handleAgentSelfQuestion({agent, task, output: parsedLLMOutput});
-        const feedbackMessage = "Awesome, please answer yourself the question";
+        const feedbackMessage = this.promptTemplates.SELF_QUESTION_FEEDBACK({
+            agent,
+            task,
+            question: parsedLLMOutput.thought,
+            parsedLLMOutput
+        });
         return feedbackMessage;
     }
 
@@ -376,7 +405,12 @@ class ReactChampionAgent extends BaseAgent {
         const toolResult = await tool.call(toolInput);
         agent.handleUsingToolEnd({agent, task, tool, output: toolResult});
         // console.log(toolResult);
-        const feedbackMessage = "You got this result from the tool: " + JSON.stringify(toolResult);
+        const feedbackMessage = this.promptTemplates.TOOL_RESULT_FEEDBACK({
+            agent,
+            task,
+            toolResult,
+            parsedLLMOutput
+        });
         return feedbackMessage;
     }
 
@@ -390,25 +424,44 @@ class ReactChampionAgent extends BaseAgent {
     handleUsingToolError({agent, task, parsedLLMOutput, tool, error}) {
         agent.store.getState().handleAgentToolError({agent, task, tool, error});
         // console.error(`Error occurred while using the tool ${parsedLLMOutput.action}:`, error);
-        const feedbackMessage = `An error occurred while using the tool ${parsedLLMOutput.action}. Please try again or use a different method.`;
+        const feedbackMessage = this.promptTemplates.TOOL_ERROR_FEEDBACK({
+            agent,
+            task,
+            toolName: parsedLLMOutput.action,
+            error,
+            parsedLLMOutput
+        });
         return feedbackMessage;
     }
 
     handleToolDoesNotExist({agent, task, parsedLLMOutput, toolName}) {
         agent.store.getState().handleAgentToolDoesNotExist({agent, task, toolName});
-        const feedbackMessage = `Hey, the tool ${parsedLLMOutput.action} does not exist. Please find another way.`;
+        const feedbackMessage = this.promptTemplates.TOOL_NOT_EXIST_FEEDBACK({
+            agent,
+            task,
+            toolName: parsedLLMOutput.action,
+            parsedLLMOutput
+        });
         return feedbackMessage;
     }
 
     handleObservation({agent, task, parsedLLMOutput}) {
         agent.store.getState().handleAgentObservation({agent, task, output: parsedLLMOutput});
-        const feedbackMessage = "Great observation. Please keep going. Let's get to the final answer.";
+        const feedbackMessage = this.promptTemplates.OBSERVATION_FEEDBACK({
+            agent,
+            task,
+            parsedLLMOutput
+        });
         return feedbackMessage;
     }
 
     handleWeirdOutput({agent, task, parsedLLMOutput}) {
         agent.store.getState().handleWeirdOutput({agent, task, output: parsedLLMOutput});
-        const feedbackMessage = "Your latest response does not match the way you are expected to output information. Please correct it.";
+        const feedbackMessage = this.promptTemplates.WEIRD_OUTPUT_FEEDBACK({
+            agent,
+            task,
+            parsedLLMOutput
+        });
         return feedbackMessage;
     }
 
