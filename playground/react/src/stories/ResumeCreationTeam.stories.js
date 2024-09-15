@@ -1,5 +1,6 @@
 import AgentsBoardDebugger from "../AgentsBoardDebugger";
 import teamOpenAI from "../teams/resume_creation/openai";
+import teamOpenAICustomPrompts from "../teams/resume_creation/openai_custom_prompts";
 import teamOpenAIHITL from "../teams/resume_creation/openai_with_hitl";
 import teamOpenAIReasoningModels from "../teams/resume_creation/openai_reasoning_models";
 import "../index.css";
@@ -22,6 +23,13 @@ export const withHITLOpenAI = {
     args: {
         team: teamOpenAIHITL,
         title: "With HITL and OpenAI Model",
+    },
+};
+
+export const withCustomPromptsOpenAI = {
+    args: {
+        team: teamOpenAICustomPrompts,
+        title: "With Custom Prompts and OpenAI Model",
     },
 };
 

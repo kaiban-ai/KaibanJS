@@ -11,10 +11,10 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { AGENT_STATUS_enum } from '../utils/enums';
-
+import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from '../utils/prompts';
 
 class BaseAgent {
-    constructor({ name, role, goal, background, tools, llmConfig = {}, maxIterations = 10, forceFinalAnswer = true }) {
+    constructor({ name, role, goal, background, tools, llmConfig = {}, maxIterations = 10, forceFinalAnswer = true, promptTemplates = {} }) {
         this.id = uuidv4();
         this.name = name;
         this.role = role;
@@ -33,6 +33,11 @@ class BaseAgent {
         };
         this.llmSystemMessage = null;
         this.forceFinalAnswer = forceFinalAnswer;
+        
+        // Initialize promptTemplates
+        this.promptTemplates = { ...REACT_CHAMPION_AGENT_DEFAULT_PROMPTS };
+        // Allow custom prompts to override defaults
+        Object.assign(this.promptTemplates, promptTemplates);
     }
 
     setStore(store) {
