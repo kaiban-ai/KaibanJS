@@ -48,23 +48,35 @@ class ReactChampionAgent extends BaseAgent {
         // Set up API key and check configuration
         this.store = store;
         this.env = env;
-        const apiKey = getApiKey(this.llmConfig, this.env);
-        if (!apiKey) {
-            throw new Error('API key is missing. Please provide it through the Agent llmConfig or through the team env variable.');
+
+        // We oppened the door to allow the use of an already instantiated LLM
+        if(!this.llmInstance) {
+            const apiKey = getApiKey(this.llmConfig, this.env);
+            if (!apiKey) {
+                throw new Error('API key is missing. Please provide it through the Agent llmConfig or through the team env variable.');
+            }
+            this.llmConfig.apiKey = apiKey;
+
+            // Define a mapping of providers to their corresponding chat classes
+            const providers = {
+                anthropic: ChatAnthropic,
+                google: ChatGoogleGenerativeAI,
+                mistral: ChatMistralAI,
+                openai: ChatOpenAI,
+            };
+
+            // Choose the chat class based on the provider
+            const ChatClass = providers[this.llmConfig.provider] || ChatOpenAI;
+            this.llmInstance = new ChatClass(this.llmConfig);
+        } else {
+            // this.llmInstance = this.llmConfig;
+            const extractedLlmConfig = {
+                ...this.llmInstance.lc_kwargs,
+                provider: this.llmInstance.lc_namespace[this.llmInstance.lc_namespace.length - 1]
+            };
+            this.llmConfig = extractedLlmConfig;
         }
-        this.llmConfig.apiKey = apiKey;
 
-        // Define a mapping of providers to their corresponding chat classes
-        const providers = {
-            anthropic: ChatAnthropic,
-            google: ChatGoogleGenerativeAI,
-            mistral: ChatMistralAI,
-            openai: ChatOpenAI,
-        };
-
-        // Choose the chat class based on the provider
-        const ChatClass = providers[this.llmConfig.provider] || ChatOpenAI;
-        this.llmInstance = new ChatClass(this.llmConfig);
         this.interactionsHistory = new ChatMessageHistory();
     }
 
