@@ -35,6 +35,7 @@ export interface IBaseAgentParams {
   llmConfig?: ILLMConfig;
   maxIterations?: number;
   forceFinalAnswer?: boolean;
+  llmInstance?: any;
 }
 
 /**
@@ -70,6 +71,7 @@ export declare class BaseAgent {
   llmConfig: ILLMConfig;
   maxIterations: number;
   forceFinalAnswer: boolean;
+  llmInstance: any;
 
   /**
    * Creates an instance of BaseAgent.
