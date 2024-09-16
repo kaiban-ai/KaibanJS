@@ -1,4 +1,5 @@
 const { Agent, Task, Team } = require('kaibanjs');
+const { ChatOpenAI } = require("@langchain/openai");
 
 // Define agents
 const profileAnalyst = new Agent({
@@ -6,7 +7,12 @@ const profileAnalyst = new Agent({
     role: 'Profile Analyst', 
     goal: 'Extract structured information from conversational user input.', 
     background: 'Data Processor',
-    tools: []  // Tools are omitted for now
+    tools: [],  // Tools are omitted for now
+    llmInstance: new ChatOpenAI({
+        model: 'gpt-4o-mini',
+        maxRetries: 1,
+        apiKey: process.env.OPENAI_API_KEY
+    })
 });
 
 const resumeWriter = new Agent({
@@ -17,7 +23,11 @@ const resumeWriter = new Agent({
     background: `Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.`,
-    tools: []
+    tools: [],
+    llmInstance: new ChatOpenAI({
+        model: 'gpt-4o-mini',
+        apiKey: process.env.OPENAI_API_KEY
+    })
 });
 
 // Define tasks
@@ -53,8 +63,8 @@ const team = new Team({
      where I worked with Vue and Tailwind. 
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.` },  // Initial input for the first task
-  env: {OPENAI_API_KEY: process.env.OPENAI_API_KEY},  // Environment variables for the team
-  logLevel: 'error'
+     env: {OPENAI_API_KEY: process.env.OPENAI_API_KEY},  // Environment variables for the team
+     logLevel: 'error'
 });
 
 module.exports = team;

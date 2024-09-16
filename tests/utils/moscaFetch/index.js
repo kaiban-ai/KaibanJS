@@ -5,7 +5,7 @@ function moscaFetch() {
     // Step 1: Define your custom fetch function
     // Define your custom fetch function
     let myCustomFetch = async (input, options) => {
-        console.log('MoscaFetch -> Using custom fetch for:', input);
+        //console.log('MoscaFetch -> Using custom fetch for:', input);
         for (const mock of mocks) {
             let { body: requestBody, method: requestMethod = 'GET' } = options || {};
             requestMethod = requestMethod.toUpperCase();
@@ -56,7 +56,7 @@ function moscaFetch() {
                 }
             }
         }
-        console.log('MoscaFetch -> No mocks or recorders matched:', input);
+        //console.log('MoscaFetch -> No mocks or recorders matched:', input);
         return originalFetch(input, options); // Call the original fetch if no mocks or recorders match
     };
 
