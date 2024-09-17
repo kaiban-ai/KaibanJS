@@ -1,4 +1,4 @@
-const { Agent, Task, Team } = require('kaibanjs');
+import { Agent, Task, Team } from 'kaibanjs';
 
 // Define agents
 const profileAnalyst = new Agent({
@@ -6,7 +6,14 @@ const profileAnalyst = new Agent({
     role: 'Profile Analyst', 
     goal: 'Extract structured information from conversational user input.', 
     background: 'Data Processor',
-    tools: []  // Tools are omitted for now
+    tools: [],
+    llmConfig: {
+        provider: "anthropic",  // or "openai"
+        model: "claude-3-5-sonnet-20240620",
+        temperature: 0.9,
+        maxTokens: 1024,
+        anthropicApiUrl: "https://www.kaibanjs.com/proxy/anthropic",
+    }
 });
 
 const resumeWriter = new Agent({
@@ -17,7 +24,14 @@ const resumeWriter = new Agent({
     background: `Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.`,
-    tools: []
+    tools: [],
+    llmConfig: {
+        provider: "anthropic",  // or "openai"
+        model: "claude-3-5-sonnet-20240620",
+        temperature: 0.9,
+        maxTokens: 1024,
+        anthropicApiUrl: "https://www.kaibanjs.com/proxy/anthropic",
+    } 
 });
 
 // Define tasks
@@ -53,8 +67,8 @@ const team = new Team({
      where I worked with Vue and Tailwind. 
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.` },  // Initial input for the first task
-  env: {OPENAI_API_KEY: process.env.OPENAI_API_KEY},  // Environment variables for the team
-  logLevel: 'error'
+  env: {ANTHROPIC_API_KEY: import.meta.env.VITE_ANTHROPIC_API_KEY}
 });
 
-module.exports = team;
+
+export default team;

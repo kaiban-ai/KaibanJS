@@ -1,4 +1,5 @@
-const { Agent, Task, Team } = require('kaibanjs');
+import { Agent, Task, Team } from 'kaibanjs';
+import { ChatOllama } from "@langchain/ollama";
 
 // Define agents
 const profileAnalyst = new Agent({
@@ -6,7 +7,13 @@ const profileAnalyst = new Agent({
     role: 'Profile Analyst', 
     goal: 'Extract structured information from conversational user input.', 
     background: 'Data Processor',
-    tools: []  // Tools are omitted for now
+    tools: [],
+    llmInstance: new ChatOllama({
+      model: "llama3.1",
+      temperature: 0,
+      maxRetries: 2,
+      // other params...
+    })
 });
 
 const resumeWriter = new Agent({
@@ -17,7 +24,13 @@ const resumeWriter = new Agent({
     background: `Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.`,
-    tools: []
+    tools: [],
+    llmInstance: new ChatOllama({
+      model: "llama3.1",
+      temperature: 0,
+      maxRetries: 2,
+      // other params...
+    })
 });
 
 // Define tasks
@@ -53,8 +66,7 @@ const team = new Team({
      where I worked with Vue and Tailwind. 
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.` },  // Initial input for the first task
-  env: {OPENAI_API_KEY: process.env.OPENAI_API_KEY},  // Environment variables for the team
-  logLevel: 'error'
+  env: {OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY, ANTHROPIC_API_KEY: import.meta.env.VITE_ANTHROPIC_API_KEY}
 });
 
-module.exports = team;
+export default team;

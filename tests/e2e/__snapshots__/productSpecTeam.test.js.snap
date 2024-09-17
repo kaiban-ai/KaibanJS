@@ -463,7 +463,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
   "inputs": {
     "founderIdea": "I want to add a Referral program to our SAAS platform.",
   },
-  "logLevel": undefined,
+  "logLevel": "error",
   "name": "Product Specs Team",
   "tasks": [
     {
@@ -14055,7 +14055,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
   "inputs": {
     "founderIdea": "I want to add a Referral program to our SAAS platform.",
   },
-  "logLevel": undefined,
+  "logLevel": "error",
   "name": "Product Specs Team",
   "tasks": [
     {
@@ -18089,7 +18089,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
   "inputs": {
     "founderIdea": "I want to add a Referral program to our SAAS platform.",
   },
-  "logLevel": undefined,
+  "logLevel": "error",
   "name": "Product Specs Team",
   "tasks": [
     {
@@ -35065,7 +35065,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
   "inputs": {
     "founderIdea": "I want to add a Referral program to our SAAS platform.",
   },
-  "logLevel": undefined,
+  "logLevel": "error",
   "name": "Product Specs Team",
   "tasks": [
     {
@@ -42888,7 +42888,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
   "inputs": {
     "founderIdea": "I want to add a Referral program to our SAAS platform.",
   },
-  "logLevel": undefined,
+  "logLevel": "error",
   "name": "Product Specs Team",
   "tasks": [
     {
@@ -46881,7 +46881,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
   "inputs": {
     "founderIdea": "I want to add a Referral program to our SAAS platform.",
   },
-  "logLevel": undefined,
+  "logLevel": "error",
   "name": "Product Specs Team",
   "tasks": [
     {

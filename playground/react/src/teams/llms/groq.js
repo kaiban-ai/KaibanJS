@@ -1,4 +1,5 @@
-const { Agent, Task, Team } = require('kaibanjs');
+import { Agent, Task, Team } from 'kaibanjs';
+import { ChatGroq } from "@langchain/groq";
 
 // Define agents
 const profileAnalyst = new Agent({
@@ -6,7 +7,15 @@ const profileAnalyst = new Agent({
     role: 'Profile Analyst', 
     goal: 'Extract structured information from conversational user input.', 
     background: 'Data Processor',
-    tools: []  // Tools are omitted for now
+    tools: [],
+    llmInstance: new ChatGroq({
+      model: "llama3-8b-8192",
+      temperature: 0,
+      maxTokens: undefined,
+      maxRetries: 30,
+      apiKey: import.meta.env.VITE_GROQ_API_KEY,
+      // other params...
+    })
 });
 
 const resumeWriter = new Agent({
@@ -17,7 +26,15 @@ const resumeWriter = new Agent({
     background: `Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.`,
-    tools: []
+    tools: [],
+    llmInstance: new ChatGroq({
+      model: "llama3-8b-8192",
+      temperature: 0,
+      maxTokens: undefined,
+      maxRetries: 2,
+      apiKey: import.meta.env.VITE_GROQ_API_KEY,
+      // other params...
+    })
 });
 
 // Define tasks
@@ -53,8 +70,7 @@ const team = new Team({
      where I worked with Vue and Tailwind. 
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.` },  // Initial input for the first task
-  env: {OPENAI_API_KEY: process.env.OPENAI_API_KEY},  // Environment variables for the team
-  logLevel: 'error'
+  env: {COHERE_API_KEY: import.meta.env.VITE_COHERE_API_KEY}
 });
 
-module.exports = team;
+export default team;

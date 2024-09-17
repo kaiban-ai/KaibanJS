@@ -326,7 +326,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
   },
-  "logLevel": undefined,
+  "logLevel": "error",
   "name": "Resume Creation Team",
   "tasks": [
     {

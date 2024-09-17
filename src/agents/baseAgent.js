@@ -14,7 +14,7 @@ import { AGENT_STATUS_enum } from '../utils/enums';
 import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from '../utils/prompts';
 
 class BaseAgent {
-    constructor({ name, role, goal, background, tools, llmConfig = {}, maxIterations = 10, forceFinalAnswer = true, promptTemplates = {} }) {
+    constructor({ name, role, goal, background, tools, llmConfig = {}, maxIterations = 10, forceFinalAnswer = true, promptTemplates = {}, llmInstance = null  }) {
         this.id = uuidv4();
         this.name = name;
         this.role = role;
@@ -25,6 +25,10 @@ class BaseAgent {
         this.store = null;
         this.status = AGENT_STATUS_enum.INITIAL;
         this.env = null;
+
+        this.llmInstance = llmInstance;
+        
+        //TODO: This llmConfig will not match the llmInstance. We need to find a way to reflect it
         this.llmConfig = { 
             provider: "openai", 
             model: "gpt-4o-mini",

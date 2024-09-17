@@ -1,4 +1,5 @@
-const { Agent, Task, Team } = require('kaibanjs');
+import { Agent, Task, Team } from 'kaibanjs';
+import { AzureChatOpenAI } from "@langchain/openai";
 
 // Define agents
 const profileAnalyst = new Agent({
@@ -6,7 +7,17 @@ const profileAnalyst = new Agent({
     role: 'Profile Analyst', 
     goal: 'Extract structured information from conversational user input.', 
     background: 'Data Processor',
-    tools: []  // Tools are omitted for now
+    tools: [],
+    llmInstance: new AzureChatOpenAI({
+      model: "gpt-4o",
+      temperature: 0,
+      maxTokens: undefined,
+      maxRetries: 2,
+      azureOpenAIApiKey:  import.meta.env.VITE_AZURE_OPENAI_API_KEY,
+      azureOpenAIApiInstanceName: import.meta.env.VITE_AZURE_OPENAI_API_INSTANCE_NAME,
+      azureOpenAIApiDeploymentName: import.meta.env.VITE_AZURE_OPENAI_API_DEPLOYMENT_NAME,
+      azureOpenAIApiVersion: import.meta.env.VITE_AZURE_OPENAI_API_VERSION,
+    })
 });
 
 const resumeWriter = new Agent({
@@ -17,7 +28,17 @@ const resumeWriter = new Agent({
     background: `Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.`,
-    tools: []
+    tools: [],
+    llmInstance: new AzureChatOpenAI({
+      model: "gpt-4o",
+      temperature: 0,
+      maxTokens: undefined,
+      maxRetries: 2,
+      azureOpenAIApiKey:  import.meta.env.VITE_AZURE_OPENAI_API_KEY,
+      azureOpenAIApiInstanceName: import.meta.env.VITE_AZURE_OPENAI_API_INSTANCE_NAME,
+      azureOpenAIApiDeploymentName: import.meta.env.VITE_AZURE_OPENAI_API_DEPLOYMENT_NAME,
+      azureOpenAIApiVersion: import.meta.env.VITE_AZURE_OPENAI_API_VERSION,
+    })
 });
 
 // Define tasks
@@ -53,8 +74,7 @@ const team = new Team({
      where I worked with Vue and Tailwind. 
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.` },  // Initial input for the first task
-  env: {OPENAI_API_KEY: process.env.OPENAI_API_KEY},  // Environment variables for the team
-  logLevel: 'error'
+  env: {COHERE_API_KEY: import.meta.env.VITE_COHERE_API_KEY}
 });
 
-module.exports = team;
+export default team;
