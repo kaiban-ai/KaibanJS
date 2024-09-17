@@ -7,7 +7,6 @@ import teamMistral from "../teams/llms/mistral";
 import teamOllama from "../teams/llms/ollama";
 import teamCohere from "../teams/llms/cohere";
 import teamAzureOpenAI from "../teams/llms/azure_openai";
-import teamCloudflare from "../teams/llms/cloudflare";
 import teamGroq from "../teams/llms/groq";
 
 export default {
@@ -61,13 +60,6 @@ export const withAzureOpenAI = {
     args: {
         team: teamAzureOpenAI,
         title: "With Azure OpenAI",
-    },
-};
-
-export const withCloudflare = {
-    args: {
-        team: teamCloudflare,
-        title: "With Cloudflare",
     },
 };
 
