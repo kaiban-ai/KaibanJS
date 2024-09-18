@@ -1,0 +1,102 @@
+[
+  {
+    "url": "https://proxy.kaibanjs.com/llm/openai/chat/completions",
+    "method": "POST",
+    "body": {
+      "model": "gpt-4o-mini",
+      "temperature": 1,
+      "top_p": 1,
+      "frequency_penalty": 0,
+      "presence_penalty": 0,
+      "n": 1,
+      "stream": false,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are Mary.\n\nYour role is: Profile Analyst.\nYour background is: Data Processor.\nYour main goal is: Extract structured information from conversational user input.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\nNo tools available. You must reply using your internal knowledge.\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\" // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): Structured data ready to be used for a resume creation.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
+        },
+        {
+          "role": "user",
+          "content": "Hi Mary, please complete the following task: Extract relevant details such as name, \n  experience, skills, and job history from the user's 'aboutMe' input. \n  aboutMe: My name is David Llaca. \n    JavaScript Developer for 5 years. \n    I worked for three years at Disney, \n    where I developed user interfaces for their primary landing pages\n     using React, NextJS, and Redux. Before Disney, \n     I was a Junior Front-End Developer at American Airlines, \n     where I worked with Vue and Tailwind. \n     I earned a Bachelor of Science in Computer Science from FIU in 2018, \n     and I completed a JavaScript bootcamp that same year.. \n        Your expected output should be: \"Structured data ready to be used for a resume creation.\". \n        "
+        }
+      ]
+    },
+    "response": {
+      "id": "chatcmpl-A8uXFnECouhxinTs22XQ7rWXA8Ezb",
+      "object": "chat.completion",
+      "created": 1726687309,
+      "model": "gpt-4o-mini-2024-07-18",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n    \"finalAnswer\": {\n        \"name\": \"David Llaca\",\n        \"experience\": \"5 years\",\n        \"skills\": [\n            \"JavaScript\",\n            \"React\",\n            \"NextJS\",\n            \"Redux\",\n            \"Vue\",\n            \"Tailwind\"\n        ],\n        \"jobHistory\": [\n            {\n                \"title\": \"JavaScript Developer\",\n                \"company\": \"Disney\",\n                \"duration\": \"3 years\",\n                \"responsibilities\": \"Developed user interfaces for their primary landing pages\"\n            },\n            {\n                \"title\": \"Junior Front-End Developer\",\n                \"company\": \"American Airlines\",\n                \"duration\": \"Duration not specified\",\n                \"responsibilities\": \"Worked with Vue and Tailwind\"\n            }\n        ],\n        \"education\": [\n            {\n                \"degree\": \"Bachelor of Science\",\n                \"field\": \"Computer Science\",\n                \"institution\": \"FIU\",\n                \"year\": 2018\n            },\n            {\n                \"program\": \"JavaScript Bootcamp\",\n                \"year\": 2018\n            }\n        ]\n    }\n}",
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 722,
+        "completion_tokens": 223,
+        "total_tokens": 945,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "system_fingerprint": "fp_2d87079ca9"
+    }
+  },
+  {
+    "url": "https://proxy.kaibanjs.com/llm/openai/chat/completions",
+    "method": "POST",
+    "body": {
+      "model": "gpt-4o-mini",
+      "temperature": 1,
+      "top_p": 1,
+      "frequency_penalty": 0,
+      "presence_penalty": 0,
+      "n": 1,
+      "stream": false,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are Alex Mercer.\n\nYour role is: Resume Writer.\nYour background is: Extensive experience in recruiting, \n    copywriting, and human resources, enabling \n    effective resume design that stands out to employers..\nYour main goal is: Craft compelling, well-structured resumes \n    that effectively showcase job seekers qualifications and achievements.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\nNo tools available. You must reply using your internal knowledge.\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\" // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): A professionally formatted resume in markdown format, \n    ready for submission to potential employers.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
+        },
+        {
+          "role": "user",
+          "content": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create \n    a detailed and attractive resume. \n    Enrich the resume content by inferring additional details from the provided information.\n    Include sections such as a personal summary, detailed work experience, skills, and educational background.. \n        Your expected output should be: \"A professionally formatted resume in markdown format, \n    ready for submission to potential employers.\". \n        Incorporate the following findings and insights from previous tasks: \"Task: Extract relevant details such as name, \n  experience, skills, and job history from the user's 'aboutMe' input. \n  aboutMe: {aboutMe}\nResult: {\"name\":\"David Llaca\",\"experience\":\"5 years\",\"skills\":[\"JavaScript\",\"React\",\"NextJS\",\"Redux\",\"Vue\",\"Tailwind\"],\"jobHistory\":[{\"title\":\"JavaScript Developer\",\"company\":\"Disney\",\"duration\":\"3 years\",\"responsibilities\":\"Developed user interfaces for their primary landing pages\"},{\"title\":\"Junior Front-End Developer\",\"company\":\"American Airlines\",\"duration\":\"Duration not specified\",\"responsibilities\":\"Worked with Vue and Tailwind\"}],\"education\":[{\"degree\":\"Bachelor of Science\",\"field\":\"Computer Science\",\"institution\":\"FIU\",\"year\":2018},{\"program\":\"JavaScript Bootcamp\",\"year\":2018}]}\n\""
+        }
+      ]
+    },
+    "response": {
+      "id": "chatcmpl-A8uXIQC8mrPahfkxeeQHB6ivwploQ",
+      "object": "chat.completion",
+      "created": 1726687312,
+      "model": "gpt-4o-mini-2024-07-18",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n    \"finalAnswer\": \"# David Llaca\\n\\n## Personal Summary\\nDynamic and detail-oriented JavaScript Developer with 5 years of experience in building interactive user interfaces and web applications. Proficient in a variety of front-end technologies, including React, NextJS, and Vue. Adept at collaborating with cross-functional teams to deliver high-quality digital products that enhance user experience.\\n\\n## Work Experience\\n### JavaScript Developer  \\n**Disney**  \\n*Duration: 3 years*  \\n- Developed user interfaces for Disney’s primary landing pages, ensuring an aesthetic and user-friendly design.  \\n- Collaborated with designers and backend developers to create responsive and efficient web applications.  \\n- Utilized JavaScript frameworks including React and NextJS to enhance functionality and improve performance.  \\n\\n### Junior Front-End Developer  \\n**American Airlines**  \\n*Duration: [Insert duration here]*  \\n- Worked with Vue and Tailwind CSS to build and maintain dynamic web applications.  \\n- Assisted in optimizing front-end performance and ensuring cross-browser compatibility.  \\n- Participated in agile sprints, contributing to project planning and development discussions.  \\n\\n## Skills  \\n- **Languages:** JavaScript  \\n- **Frameworks/Libraries:** React, NextJS, Redux, Vue  \\n- **Styling:** Tailwind CSS  \\n- **Tools:** Git, Webpack, npm  \\n- **Methodologies:** Agile, Scrum  \\n\\n## Education  \\n### Bachelor of Science in Computer Science  \\n**FIU**  \\n*Year: 2018*  \\n\\n### JavaScript Bootcamp  \\n*Year: 2018*  \\n\\n---\"\n}",
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 858,
+        "completion_tokens": 373,
+        "total_tokens": 1231,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "system_fingerprint": "fp_71fab63729"
+    }
+  }
+]
