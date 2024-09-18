@@ -52,7 +52,7 @@ class ReactChampionAgent extends BaseAgent {
         // We oppened the door to allow the use of an already instantiated LLM
         if(!this.llmInstance) {
             const apiKey = getApiKey(this.llmConfig, this.env);
-            if (!apiKey) {
+            if (!apiKey && !this.llmConfig.apiBaseUrl) {
                 throw new Error('API key is missing. Please provide it through the Agent llmConfig or through the team env variable.');
             }
             this.llmConfig.apiKey = apiKey;
