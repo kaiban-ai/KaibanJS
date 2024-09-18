@@ -27,14 +27,19 @@ class BaseAgent {
         this.env = null;
 
         this.llmInstance = llmInstance;
+                
         
-        //TODO: This llmConfig will not match the llmInstance. We need to find a way to reflect it
-        this.llmConfig = { 
+        // Create a combined config with defaults and user-provided values
+        const combinedLlmConfig = {
             provider: "openai", 
             model: "gpt-4o-mini",
             maxRetries: 1,
-            ...llmConfig 
+            ...llmConfig
         };
+
+        // Normalizes the llmConfig to match specific llmProviders schemas
+        this.llmConfig = this.normalizeLlmConfig(combinedLlmConfig);
+
         this.llmSystemMessage = null;
         this.forceFinalAnswer = forceFinalAnswer;
         
@@ -42,6 +47,38 @@ class BaseAgent {
         this.promptTemplates = { ...REACT_CHAMPION_AGENT_DEFAULT_PROMPTS };
         // Allow custom prompts to override defaults
         Object.assign(this.promptTemplates, promptTemplates);
+    }
+
+    normalizeLlmConfig(llmConfig) {
+        const { provider, apiBaseUrl} = llmConfig;
+        let normalizedConfig = { ...llmConfig };
+                
+        if(apiBaseUrl){
+            switch (provider) {
+                case 'openai':
+                    normalizedConfig.configuration = {
+                    basePath: apiBaseUrl
+                    };
+                break;
+                
+                case 'anthropic':
+                    normalizedConfig.anthropicApiUrl = apiBaseUrl;
+                    break;
+                    
+                case 'google':
+                    normalizedConfig.baseUrl = apiBaseUrl;
+                    break;
+                    
+                case 'mistral':
+                    normalizedConfig.endpoint = apiBaseUrl;
+                    break;
+                    
+                default:
+                throw new Error(`Unknown provider: ${provider}`);
+            }
+        }
+        
+        return normalizedConfig;
     }
 
     setStore(store) {
