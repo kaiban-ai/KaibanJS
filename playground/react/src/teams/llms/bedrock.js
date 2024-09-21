@@ -1,5 +1,26 @@
 import { Agent, Task, Team } from 'kaibanjs';
-import { AzureChatOpenAI } from "@langchain/openai";
+
+// import { BedrockChat } from "@langchain/community/chat_models/bedrock";
+
+
+
+// const llm = new BedrockChat({
+//   model: "anthropic.claude-3-5-sonnet-20240620-v1:0",
+//   region: import.meta.env.VITE_BEDROCK_AWS_REGION,
+//   credentials: {
+//     accessKeyId: import.meta.env.VITE_BEDROCK_AWS_ACCESS_KEY_ID,
+//     secretAccessKey: import.meta.env.VITE_BEDROCK_AWS_SECRET_ACCESS_KEY,
+//   },
+//   model: "anthropic.claude-3-5-sonnet-20240620-v1:0",
+//   temperature: 0.9,
+//   maxTokens: 1040,
+//   maxRetries: 1,
+//   // endpointUrl: "custom.amazonaws.com",
+//   // modelKwargs: {
+//   //   anthropic_version: "bedrock-2023-05-31",
+//   // },
+// });
+
 
 // Define agents
 const profileAnalyst = new Agent({
@@ -8,16 +29,7 @@ const profileAnalyst = new Agent({
     goal: 'Extract structured information from conversational user input.', 
     background: 'Data Processor',
     tools: [],
-    llmInstance: new AzureChatOpenAI({
-      model: "gpt-4o",
-      temperature: 0,
-      maxTokens: undefined,
-      maxRetries: 2,
-      azureOpenAIApiKey:  import.meta.env.VITE_AZURE_OPENAI_API_KEY,
-      azureOpenAIApiInstanceName: import.meta.env.VITE_AZURE_OPENAI_API_INSTANCE_NAME,
-      azureOpenAIApiDeploymentName: import.meta.env.VITE_AZURE_OPENAI_API_DEPLOYMENT_NAME,
-      azureOpenAIApiVersion: import.meta.env.VITE_AZURE_OPENAI_API_VERSION,
-    })
+    // llmInstance: llm
 });
 
 const resumeWriter = new Agent({
@@ -29,16 +41,7 @@ const resumeWriter = new Agent({
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.`,
     tools: [],
-    llmInstance: new AzureChatOpenAI({
-      model: "gpt-4o",
-      temperature: 0,
-      maxTokens: undefined,
-      maxRetries: 2,
-      azureOpenAIApiKey:  import.meta.env.VITE_AZURE_OPENAI_API_KEY,
-      azureOpenAIApiInstanceName: import.meta.env.VITE_AZURE_OPENAI_API_INSTANCE_NAME,
-      azureOpenAIApiDeploymentName: import.meta.env.VITE_AZURE_OPENAI_API_DEPLOYMENT_NAME,
-      azureOpenAIApiVersion: import.meta.env.VITE_AZURE_OPENAI_API_VERSION,
-    })
+    // llmInstance: llm
 });
 
 // Define tasks

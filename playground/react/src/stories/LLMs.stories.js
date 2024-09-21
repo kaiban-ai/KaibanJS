@@ -8,6 +8,7 @@ import teamOllama from "../teams/llms/ollama";
 import teamCohere from "../teams/llms/cohere";
 import teamAzureOpenAI from "../teams/llms/azure_openai";
 import teamGroq from "../teams/llms/groq";
+import teamBedrock from "../teams/llms/bedrock";
 
 export default {
     title: "LLMs/Playground",
@@ -67,5 +68,11 @@ export const withGroq = {
     args: {
         team: teamGroq,
         title: "With Groq",
+    },
+};
+export const withBedrock = {
+    args: {
+        team: teamBedrock,
+        title: "With Bedrock(Not Working)",
     },
 };
