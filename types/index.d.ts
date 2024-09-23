@@ -3,8 +3,8 @@
 // Author: @darielnoel <github.com/darielnoel>
 // Definitions by: @alienkarma <github.com/alienkarma>
 
-import { Tool } from "langchain/tools";
-import type { AGENT_STATUS_enum, TASK_STATUS_enum } from "./enums.d.ts";
+import { Tool } from 'langchain/tools';
+import type { AGENT_STATUS_enum, TASK_STATUS_enum } from './enums.d.ts';
 import type {
   BaseAgent,
   IBaseAgentParams,
@@ -12,7 +12,7 @@ import type {
   ITaskStats,
   TAgentTypes,
   TStore,
-} from "./types.d.ts";
+} from './types.d.ts';
 
 /**
  * ### Agent parameters
@@ -67,6 +67,7 @@ export class Agent {
    * Sets the environment variables.
    * @param {Record<string, any>} env - The environment variables to be set.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setEnv(env: Record<string, any>): void;
 
   /**
@@ -215,6 +216,7 @@ export interface ITeamParams {
   tasks?: Task[];
   logLevel?: string;
   inputs?: Record<string, string>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   env?: Record<string, any> | null;
 }
 
@@ -258,6 +260,7 @@ export class Team {
    * @returns {() => void} A function to unsubscribe from the changes.
    */
   subscribeToChanges(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     listener: (newValues: any) => void,
     properties?: string[]
   ): () => void;

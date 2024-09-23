@@ -163,7 +163,7 @@ class Team {
    * @returns {void}
    */
   async start(inputs = null) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const unsubscribe = this.store.subscribe(
         (state) => state.teamWorkflowStatus,
         (status) => {
