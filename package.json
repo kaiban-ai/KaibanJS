@@ -38,7 +38,8 @@
     "lint:check": "eslint",
     "lint:fix": "eslint --fix",
     "format:check": "prettier --check .",
-    "format:fix": "prettier --write ."
+    "format:fix": "prettier --write .",
+    "prepare": "husky"
   },
   "packageManager": "npm@9.8.1",
   "repository": {
@@ -123,20 +124,11 @@
   "engines": {
     "node": ">=12.0.0"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "prettier --write",
-      "eslint --fix",
-      "git add"
+      "eslint --cache --fix"
     ],
-    "*.{html,css,scss,sass,less,ejs,mjs,cjs}": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.{html,css,scss,sass,less,ejs,mjs,cjs}": "prettier --write"
   }
 }
