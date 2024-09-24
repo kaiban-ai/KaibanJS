@@ -46,12 +46,12 @@ npm install kaibanjs
 
 ```js
 // Using ES6 import syntax for NextJS, React, etc.
-import { Agent, Task, Team } from 'kaibanjs';
+import { Agent, Task, Team } from "kaibanjs";
 ```
 
 ```js
 // Using CommonJS syntax for NodeJS
-const { Agent, Task, Team } = require('kaibanjs');
+const { Agent, Task, Team } = require("kaibanjs");
 ```
 
 > Note: KaibanJS is TypeScript-supported. To learn more, check out the [NodeJS TypeScript example](https://github.com/kaiban-ai/KaibanJS/blob/main/playground/nodejs-ts/README.md).
@@ -63,16 +63,16 @@ In this example, we use KaibanJS to build a resume generation team. If you're lo
 ```js
 // Define agents with specific roles and goals
 const profileAnalyst = new Agent({
-  name: 'Mary',
-  role: 'Profile Analyst',
-  goal: 'Extract structured information from conversational user input.',
-  background: 'Data Processor',
+  name: "Mary",
+  role: "Profile Analyst",
+  goal: "Extract structured information from conversational user input.",
+  background: "Data Processor",
   tools: [], // Tools are omitted for now
 });
 
 const resumeWriter = new Agent({
-  name: 'Alex Mercer',
-  role: 'Resume Writer',
+  name: "Alex Mercer",
+  role: "Resume Writer",
   goal: `Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.`,
   background: `Extensive experience in recruiting, 
@@ -86,7 +86,7 @@ const processingTask = new Task({
   description: `Extract relevant details such as name, 
   experience, skills, and job history from the user's 'aboutMe' input. 
   aboutMe: {aboutMe}`,
-  expectedOutput: 'Structured data ready to be used for a resume creation.',
+  expectedOutput: "Structured data ready to be used for a resume creation.",
   agent: profileAnalyst,
 });
 
@@ -102,7 +102,7 @@ const resumeCreationTask = new Task({
 
 // Create and start the team
 const team = new Team({
-  name: 'Resume Creation Team',
+  name: "Resume Creation Team",
   agents: [profileAnalyst, resumeWriter],
   tasks: [processingTask, resumeCreationTask],
   inputs: {
@@ -116,7 +116,7 @@ const team = new Team({
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.`,
   }, // Initial input for the first task
-  env: { OPENAI_API_KEY: 'your-open-ai-api-key' }, // Environment variables for the team
+  env: { OPENAI_API_KEY: "your-open-ai-api-key" }, // Environment variables for the team
 });
 
 // Listen to the workflow status changes
@@ -127,11 +127,11 @@ const team = new Team({
 team
   .start()
   .then((output) => {
-    console.log('Workflow status:', output.status);
-    console.log('Result:', output.result);
+    console.log("Workflow status:", output.status);
+    console.log("Result:", output.result);
   })
   .catch((error) => {
-    console.error('Workflow encountered an error:', error);
+    console.error("Workflow encountered an error:", error);
   });
 ```
 
@@ -165,27 +165,27 @@ In this example, our software development team is powered by three specialized A
 </p>
 
 ```js
-import { Agent } from 'kaibanjs';
+import { Agent } from "kaibanjs";
 
 const daveLoper = new Agent({
-  name: 'Dave Loper',
-  role: 'Developer',
-  goal: 'Write and review code',
-  background: 'Experienced in JavaScript, React, and Node.js',
+  name: "Dave Loper",
+  role: "Developer",
+  goal: "Write and review code",
+  background: "Experienced in JavaScript, React, and Node.js",
 });
 
 const ella = new Agent({
-  name: 'Ella',
-  role: 'Product Manager',
-  goal: 'Define product vision and manage roadmap',
-  background: 'Skilled in market analysis and product strategy',
+  name: "Ella",
+  role: "Product Manager",
+  goal: "Define product vision and manage roadmap",
+  background: "Skilled in market analysis and product strategy",
 });
 
 const quinn = new Agent({
-  name: 'Quinn',
-  role: 'QA Specialist',
-  goal: 'Ensure quality and consistency',
-  background: 'Expert in testing, automation, and bug tracking',
+  name: "Quinn",
+  role: "QA Specialist",
+  goal: "Ensure quality and consistency",
+  background: "Expert in testing, automation, and bug tracking",
 });
 ```
 
@@ -202,19 +202,19 @@ In this example, one of the AI agents, Peter Atlas, leverages the Tavily Search 
 </p>
 
 ```js
-import { Agent, Tool } from 'kaibanjs';
+import { Agent, Tool } from "kaibanjs";
 
 const tavilySearchResults = new Tool({
-  name: 'Tavily Search Results',
+  name: "Tavily Search Results",
   maxResults: 1,
-  apiKey: 'ENV_TRAVILY_API_KEY',
+  apiKey: "ENV_TRAVILY_API_KEY",
 });
 
 const peterAtlas = new Agent({
-  name: 'Peter Atlas',
-  role: 'City Selector',
-  goal: 'Choose the best city based on comprehensive travel data',
-  background: 'Experienced in geographical data analysis and travel trends',
+  name: "Peter Atlas",
+  role: "City Selector",
+  goal: "Choose the best city based on comprehensive travel data",
+  background: "Experienced in geographical data analysis and travel trends",
   tools: [tavilySearchResults],
 });
 ```
@@ -234,35 +234,35 @@ In this example, the agents—Emma, Lucas, and Mia—use diverse AI models to ha
 </p>
 
 ```js
-import { Agent } from 'kaibanjs';
+import { Agent } from "kaibanjs";
 
 const emma = new Agent({
-  name: 'Emma',
-  role: 'Initial Drafting',
-  goal: 'Outline core functionalities',
+  name: "Emma",
+  role: "Initial Drafting",
+  goal: "Outline core functionalities",
   llmConfig: {
-    provider: 'google',
-    model: 'gemini-1.5-pro',
+    provider: "google",
+    model: "gemini-1.5-pro",
   },
 });
 
 const lucas = new Agent({
-  name: 'Lucas',
-  role: 'Technical Specification',
-  goal: 'Draft detailed technical specifications',
+  name: "Lucas",
+  role: "Technical Specification",
+  goal: "Draft detailed technical specifications",
   llmConfig: {
-    provider: 'anthropic',
-    model: 'claude-3-5-sonnet-20240620',
+    provider: "anthropic",
+    model: "claude-3-5-sonnet-20240620",
   },
 });
 
 const mia = new Agent({
-  name: 'Mia',
-  role: 'Final Review',
-  goal: 'Ensure accuracy and completeness of the final document',
+  name: "Mia",
+  role: "Final Review",
+  goal: "Ensure accuracy and completeness of the final document",
   llmConfig: {
-    provider: 'openai',
-    model: 'gpt-4o',
+    provider: "openai",
+    model: "gpt-4o",
   },
 });
 ```
@@ -282,7 +282,7 @@ Here's a simplified example demonstrating how to integrate KaibanJS with state m
 </p>
 
 ```js
-import myAgentsTeam from './agenticTeam';
+import myAgentsTeam from "./agenticTeam";
 
 const KaibanJSComponent = () => {
   const useTeamStore = myAgentsTeam.useStore();
@@ -326,8 +326,8 @@ KaibanJS is designed for seamless integration across a diverse range of JavaScri
 </p>
 
 ```js
-import React from 'react';
-import myAgentsTeam from './agenticTeam';
+import React from "react";
+import myAgentsTeam from "./agenticTeam";
 
 const TaskStatusComponent = () => {
   const useTeamStore = myAgentsTeam.useStore();
@@ -380,10 +380,10 @@ useStore.subscribe(
   (newLogs, previousLogs) => {
     if (newLogs.length > previousLogs.length) {
       const { task, agent, metadata } = newLogs[newLogs.length - 1];
-      if (newLogs[newLogs.length - 1].logType === 'TaskStatusUpdate') {
+      if (newLogs[newLogs.length - 1].logType === "TaskStatusUpdate") {
         switch (task.status) {
           case TASK_STATUS_enum.DONE:
-            console.log('Task Completed', {
+            console.log("Task Completed", {
               taskDescription: task.description,
               agentName: agent.name,
               agentModel: agent.llmConfig.model,
@@ -396,14 +396,14 @@ useStore.subscribe(
           case TASK_STATUS_enum.BLOCKED:
           case TASK_STATUS_enum.REVISE:
           case TASK_STATUS_enum.TODO:
-            console.log('Task Status Update', {
+            console.log("Task Status Update", {
               taskDescription: task.description,
               taskStatus: task.status,
               agentName: agent.name,
             });
             break;
           default:
-            console.warn('Encountered an unexpected task status:', task.status);
+            console.warn("Encountered an unexpected task status:", task.status);
             break;
         }
       }

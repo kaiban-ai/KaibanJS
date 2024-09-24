@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import Spinner from './components/Spinner';
+import { useEffect, useState } from "react";
+import Spinner from "./components/Spinner";
 
 const WorkflowStats = ({ stats }) => {
   if (!stats) return null;
@@ -66,16 +66,16 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
   const [openSystemMessage, setOpenSystemMessage] = useState({});
   const [openWorkflowContext, setOpenWorkflowContext] = useState(false);
 
-  const [feedbackContent, setFeedbackContent] = useState('');
-  const [selectedTaskId, setSelectedTaskId] = useState('');
+  const [feedbackContent, setFeedbackContent] = useState("");
+  const [selectedTaskId, setSelectedTaskId] = useState("");
 
   const [workflowStats, setWorkflowStats] = useState(null);
 
   const handleFeedbackSubmit = () => {
     if (selectedTaskId && feedbackContent) {
       provideFeedback(selectedTaskId, feedbackContent);
-      setFeedbackContent('');
-      setSelectedTaskId('');
+      setFeedbackContent("");
+      setSelectedTaskId("");
     }
   };
 
@@ -83,7 +83,7 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
     if (isApproved) {
       validateTask(taskId);
     } else {
-      provideFeedback(taskId, 'Task needs revision');
+      provideFeedback(taskId, "Task needs revision");
     }
   };
 
@@ -111,13 +111,13 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
   const startTeam = async () => {
     try {
       const output = await team.start(inputs);
-      if (output.status === 'FINISHED') {
+      if (output.status === "FINISHED") {
         setWorkflowStats(output.stats);
-      } else if (output.status === 'BLOCKED') {
+      } else if (output.status === "BLOCKED") {
         setWorkflowStats(output.stats);
       }
     } catch (error) {
-      console.error('Workflow encountered an error:', error);
+      console.error("Workflow encountered an error:", error);
     }
   };
 
@@ -140,7 +140,7 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
             Start Workflow
           </button>
 
-          {teamWorkflowStatus === 'running_workflow' && <Spinner />}
+          {teamWorkflowStatus === "running_workflow" && <Spinner />}
         </div>
       </div>
 
@@ -150,11 +150,11 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
           {agents.map((agent) => (
             <li key={agent.id} className="listItem agentName">
               <span>
-                🔘{' '}
+                🔘{" "}
                 <strong>
-                  {agent.name} - {agent.role}{' '}
-                </strong>{' '}
-                - [{agent.type}] - [{agent.llmConfig.provider}-{' '}
+                  {agent.name} - {agent.role}{" "}
+                </strong>{" "}
+                - [{agent.type}] - [{agent.llmConfig.provider}-{" "}
                 {agent.llmConfig.model}] - status: ({agent.status})
               </span>
 
@@ -164,8 +164,8 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
                   onClick={() => toggleSystemMessage(agent.id)}
                 >
                   {openSystemMessage[agent.id]
-                    ? 'Hide System Message'
-                    : 'Show System Message'}
+                    ? "Hide System Message"
+                    : "Show System Message"}
                 </div>
               )}
               {openSystemMessage[agent.id] && (
@@ -186,8 +186,8 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
               <div className="taskContainer">
                 <span className="taskDescription">🔘 {task.description}</span>
                 <span className="taskStatus">
-                  {task.status}{' '}
-                  {task.status === 'doing' && <Spinner color="white" />}
+                  {task.status}{" "}
+                  {task.status === "doing" && <Spinner color="white" />}
                 </span>
               </div>
             </li>
@@ -210,11 +210,11 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
       {workflowStats && <WorkflowStats stats={workflowStats} />}
       <div className="section">
         <h2 className="sectionTitle" onClick={toggleWorkflowContext}>
-          {openWorkflowContext ? '▼' : '▶'} 🧠 Workflow Context
+          {openWorkflowContext ? "▼" : "▶"} 🧠 Workflow Context
         </h2>
         {openWorkflowContext && (
           <div className="listItem">
-            {workflowContext ? workflowContext : 'No context available'}
+            {workflowContext ? workflowContext : "No context available"}
           </div>
         )}
       </div>
@@ -236,10 +236,10 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
               <div>
                 <strong className="subtitle">Time:</strong>
                 <span>
-                  {' '}
+                  {" "}
                   {task.duration
                     ? `${task.duration} seconds`
-                    : 'Not yet available'}
+                    : "Not yet available"}
                 </span>
               </div>
 
@@ -248,7 +248,7 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
                   <strong className="subtitle">Result:</strong>
                 </p>
 
-                <p>{task.result ? task.result : 'Not yet available'}</p>
+                <p>{task.result ? task.result : "Not yet available"}</p>
               </div>
             </li>
           ))}
@@ -304,7 +304,7 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
               <p>
                 🔘 {task.description} - {task.status}
               </p>
-              {task.status === 'AWAITING_VALIDATION' && (
+              {task.status === "AWAITING_VALIDATION" && (
                 <div className="awaiting_validation_buttons">
                   <button onClick={() => handleTaskValidation(task.id, true)}>
                     Approve
@@ -336,15 +336,15 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
         <ul>
           {workflowLogs.map((log, index) => (
             <li key={index} className="listItem">
-              {log.logType !== 'WorkflowStatusUpdate' ? (
+              {log.logType !== "WorkflowStatusUpdate" ? (
                 <p>
                   🔘 ({log.taskStatus}) - ({log.taskTitle}) - ({log.agentName})
-                  - ({log.agentStatus}) - timestamp: {log.timestamp} -{' '}
+                  - ({log.agentStatus}) - timestamp: {log.timestamp} -{" "}
                   {log.agent?.name} - {log.task?.description}
                 </p>
               ) : (
                 <p>
-                  🔘 Workflow Status Update - ({log.workflowStatus}) timestamp:{' '}
+                  🔘 Workflow Status Update - ({log.workflowStatus}) timestamp:{" "}
                   {log.timestamp}
                 </p>
               )}

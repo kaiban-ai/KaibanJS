@@ -9,9 +9,9 @@
  * Extend this class to create specialized agents with specific behaviors suited to different types of tasks and workflows.
  */
 
-import { v4 as uuidv4 } from 'uuid';
-import { AGENT_STATUS_enum } from '../utils/enums';
-import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from '../utils/prompts';
+import { v4 as uuidv4 } from "uuid";
+import { AGENT_STATUS_enum } from "../utils/enums";
+import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from "../utils/prompts";
 
 class BaseAgent {
   constructor({
@@ -41,8 +41,8 @@ class BaseAgent {
 
     // Create a combined config with defaults and user-provided values
     const combinedLlmConfig = {
-      provider: 'openai',
-      model: 'gpt-4o-mini',
+      provider: "openai",
+      model: "gpt-4o-mini",
       maxRetries: 1,
       ...llmConfig,
     };
@@ -65,21 +65,21 @@ class BaseAgent {
 
     if (apiBaseUrl) {
       switch (provider) {
-        case 'openai':
+        case "openai":
           normalizedConfig.configuration = {
             basePath: apiBaseUrl,
           };
           break;
 
-        case 'anthropic':
+        case "anthropic":
           normalizedConfig.anthropicApiUrl = apiBaseUrl;
           break;
 
-        case 'google':
+        case "google":
           normalizedConfig.baseUrl = apiBaseUrl;
           break;
 
-        case 'mistral':
+        case "mistral":
           normalizedConfig.endpoint = apiBaseUrl;
           break;
 
@@ -104,7 +104,7 @@ class BaseAgent {
   }
 
   workOnTask() {
-    throw new Error('workOnTask must be implemented by subclasses.');
+    throw new Error("workOnTask must be implemented by subclasses.");
   }
 }
 

@@ -24,12 +24,12 @@ function getApiKey(llmConfig, env) {
 // Utility function to replace placeholders in the agent prompt.
 function replaceAgentAttributes(template, attributes) {
   return template
-    .replace('{name}', attributes.name)
-    .replace('{role}', attributes.role)
-    .replace('{background}', attributes.background)
-    .replace('{goal}', attributes.goal)
-    .replace('{context}', attributes.context)
-    .replace('{expectedOutput}', attributes.expectedOutput);
+    .replace("{name}", attributes.name)
+    .replace("{role}", attributes.role)
+    .replace("{background}", attributes.background)
+    .replace("{goal}", attributes.goal)
+    .replace("{context}", attributes.context)
+    .replace("{expectedOutput}", attributes.expectedOutput);
 }
 
 // Utility function to clean up JSON string. to be able to parse it. later
@@ -55,7 +55,7 @@ const getParsedJSON = (str) => {
     let sanitizedStr = str
       .trim()
       // Normalize line breaks and spaces
-      .replace(/\s*\n\s*/g, '')
+      .replace(/\s*\n\s*/g, "")
       // Replace single quotes with double quotes
       .replace(/'/g, '"')
       // Ensure proper quoting around keys
@@ -63,16 +63,16 @@ const getParsedJSON = (str) => {
       // Ensure proper quoting around string values that are unquoted
       .replace(/:\s*([^"\s][^,}\s]*)(\s*[},])/g, ': "$1"$2')
       // Add missing commas between key-value pairs, accommodating various edge cases
-      .replace(/(?<=}|\])(\s*{)/g, ',$1')
-      .replace(/(["}\]])(\s*["{])/g, '$1,$2')
+      .replace(/(?<=}|\])(\s*{)/g, ",$1")
+      .replace(/(["}\]])(\s*["{])/g, "$1,$2")
       // Remove trailing commas within objects or arrays
-      .replace(/,\s*([}\]])/g, '$1');
+      .replace(/,\s*([}\]])/g, "$1");
 
     try {
       // Attempt to parse the sanitized string
       return JSON.parse(sanitizedStr);
     } catch (error) {
-      console.error('Error parsing sanitized JSON:', error);
+      console.error("Error parsing sanitized JSON:", error);
       return null;
     }
   }

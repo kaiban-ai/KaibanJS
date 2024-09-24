@@ -12,8 +12,8 @@ function getTaskTitleForLogs(task) {
   return (
     task.title ||
     (task.description
-      ? task.description.split(' ').slice(0, 3).join(' ') + '...'
-      : 'Untitled')
+      ? task.description.split(" ").slice(0, 3).join(" ") + "..."
+      : "Untitled")
   );
 }
 

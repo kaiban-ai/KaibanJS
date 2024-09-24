@@ -8,12 +8,12 @@
  * Deploy this subscriber to actively monitor and respond to changes in task status, enhancing the observability and responsiveness of your application.
  */
 
-import { TASK_STATUS_enum } from '../utils/enums';
-import { getTaskTitleForLogs } from '../utils/tasks';
+import { TASK_STATUS_enum } from "../utils/enums";
+import { getTaskTitleForLogs } from "../utils/tasks";
 import {
   logPrettyTaskCompletion,
   logPrettyTaskStatus,
-} from '../utils/prettyLogs';
+} from "../utils/prettyLogs";
 
 const subscribeTaskStatusUpdates = (useStore) => {
   useStore.subscribe(
@@ -23,7 +23,7 @@ const subscribeTaskStatusUpdates = (useStore) => {
         // Check if a new log has been added
         const newLog = newLogs[newLogs.length - 1]; // Get the latest log
 
-        if (newLog.logType === 'TaskStatusUpdate') {
+        if (newLog.logType === "TaskStatusUpdate") {
           const totalTasks = useStore.getState().tasks.length;
           const taskIndex = useStore
             .getState()

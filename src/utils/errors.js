@@ -18,7 +18,7 @@ class LLMInvocationError extends Error {
     context = {}
   ) {
     super(message);
-    this.name = 'LLMInvocationError';
+    this.name = "LLMInvocationError";
     this.context = context;
     this.originalError = originalError; // Store the original error if there is one
     this.recommendedAction = recommendedAction; // Actionable steps to resolve or mitigate the error
@@ -32,9 +32,9 @@ class PrettyError extends Error {
     rootError = null,
     recommendedAction = null,
     context = {},
-    location = '',
-    type = 'Error',
-    name = 'PrettyError',
+    location = "",
+    type = "Error",
+    name = "PrettyError",
   }) {
     super(message); // Store the original simple message
     this.type = type;

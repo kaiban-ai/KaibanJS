@@ -1,9 +1,9 @@
 ---
 name: Bug report
 about: Create a bug report for KaibanJS
-title: '[BUG] - Bug title here'
+title: "[BUG] - Bug title here"
 labels: bug
-assignees: ''
+assignees: ""
 ---
 
 ### Describe the Bug

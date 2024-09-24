@@ -1,22 +1,22 @@
-const { Agent, Task, Team } = require('kaibanjs');
+const { Agent, Task, Team } = require("kaibanjs");
 
 // Define agents
 const profileAnalyst = new Agent({
-  name: 'Mary',
-  role: 'Profile Analyst',
-  goal: 'Extract structured information from conversational user input.',
-  background: 'Data Processor',
+  name: "Mary",
+  role: "Profile Analyst",
+  goal: "Extract structured information from conversational user input.",
+  background: "Data Processor",
   tools: [], // Tools are omitted for now,
   llmConfig: {
-    provider: 'openai', // or "openai"
-    model: 'o1-mini',
+    provider: "openai", // or "openai"
+    model: "o1-mini",
     apiKey: import.meta.env.VITE_DARIEL_OPENAI_API_KEY,
   },
 });
 
 const resumeWriter = new Agent({
-  name: 'Alex Mercer',
-  role: 'Resume Writer',
+  name: "Alex Mercer",
+  role: "Resume Writer",
   goal: `Craft compelling, well-structured resumes 
     that effectively showcase job seekers qualifications and achievements.`,
   background: `Extensive experience in recruiting, 
@@ -30,7 +30,7 @@ const processingTask = new Task({
   description: `Extract relevant details such as name, 
   experience, skills, and job history from the user's 'aboutMe' input. 
   aboutMe: {aboutMe}`,
-  expectedOutput: 'Structured data ready to be used for a resume creation.',
+  expectedOutput: "Structured data ready to be used for a resume creation.",
   agent: profileAnalyst,
 });
 
@@ -46,7 +46,7 @@ const resumeCreationTask = new Task({
 
 // Create a team
 const team = new Team({
-  name: 'Resume Creation Team',
+  name: "Resume Creation Team",
   agents: [profileAnalyst, resumeWriter],
   tasks: [processingTask, resumeCreationTask],
   inputs: {

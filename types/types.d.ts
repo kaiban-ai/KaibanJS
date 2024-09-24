@@ -1,5 +1,5 @@
-import { Tool } from 'langchain/tools';
-import type { AGENT_STATUS_enum } from './enums.d.ts';
+import { Tool } from "langchain/tools";
+import type { AGENT_STATUS_enum } from "./enums.d.ts";
 
 /**
  * ### Store types
@@ -13,7 +13,7 @@ export type TStore = any;
  * ### Agent types
  * @typedef {"ReactChampionAgent"} TAgentTypes
  */
-export type TAgentTypes = 'ReactChampionAgent';
+export type TAgentTypes = "ReactChampionAgent";
 
 /**
  * ### BaseAgent params
@@ -127,7 +127,7 @@ export interface IApiKeys {
  * @property {IApiKeys} [apiKey] - The API key for the provider.
  */
 export interface ILLMConfig {
-  provider: 'openai' | 'google' | 'anthropic' | 'mistral';
+  provider: "openai" | "google" | "anthropic" | "mistral";
   model: string;
   maxRetries: number;
   apiKey?: IApiKeys;

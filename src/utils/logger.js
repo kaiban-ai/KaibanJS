@@ -9,7 +9,7 @@
  * application flow and state changes.
  */
 
-import log from 'loglevel';
+import log from "loglevel";
 
 // Set initial log level
 log.setLevel(log.levels.INFO); // Default to 'info' level

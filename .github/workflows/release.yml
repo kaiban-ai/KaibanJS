@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Enter the version for this release'
+        description: "Enter the version for this release"
         required: true
 
 jobs:
@@ -19,14 +19,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: 'main' # Ensures the main branch is checked out
+          ref: "main" # Ensures the main branch is checked out
           token: ${{ secrets.PAT_GITHUB }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
-          registry-url: 'https://registry.npmjs.org/'
+          node-version: "18"
+          registry-url: "https://registry.npmjs.org/"
 
       - name: Reset local changes
         run: |

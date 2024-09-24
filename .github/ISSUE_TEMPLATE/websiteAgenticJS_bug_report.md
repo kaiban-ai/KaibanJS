@@ -1,9 +1,9 @@
 ---
 name: Website Issue Report
 about: Create a report to help us improve the KaibanJS website
-title: '[WEBSITE ISSUE] - Brief description of the issue'
+title: "[WEBSITE ISSUE] - Brief description of the issue"
 labels: website, bug
-assignees: ''
+assignees: ""
 ---
 
 ### Describe the Issue

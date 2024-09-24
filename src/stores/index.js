@@ -11,4 +11,4 @@
  * This setup ensures that updates and changes to store configurations are propagated consistently throughout the application.
  */
 
-export * from './teamStore';
+export * from "./teamStore";

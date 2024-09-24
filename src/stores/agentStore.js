@@ -8,8 +8,8 @@
  * Employ this store to handle state updates for agents dynamically throughout the lifecycle of their tasks and interactions.
  */
 
-import { AGENT_STATUS_enum } from '../utils/enums';
-import { logger } from '../utils/logger';
+import { AGENT_STATUS_enum } from "../utils/enums";
+import { logger } from "../utils/logger";
 
 const useAgentStore = (set, get) => ({
   handleAgentIterationStart: ({
@@ -26,7 +26,7 @@ const useAgentStore = (set, get) => ({
         AGENT_STATUS_enum.ITERATION_START
       } (${iterations + 1}/${maxAgentIterations})`,
       metadata: { iterations, maxAgentIterations },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.trace(
@@ -49,7 +49,7 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `🔄 Agent ${agent.name} - ${AGENT_STATUS_enum.ITERATION_END}`,
       metadata: { iterations, maxAgentIterations },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.trace(
@@ -65,15 +65,15 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `🤔 Agent ${agent.name} starts thinking...`,
       metadata: { messages },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.info(
       `🤔 ${AGENT_STATUS_enum.THINKING}: Agent ${agent.name} starts thinking...`
     );
-    logger.debug('System Message:', messages[0]);
-    logger.debug('Feedback Message:', messages[messages.length - 1].content);
-    logger.debug('All Messages', messages);
+    logger.debug("System Message:", messages[0]);
+    logger.debug("Feedback Message:", messages[messages.length - 1].content);
+    logger.debug("All Messages", messages);
     set((state) => ({ workflowLogs: [...state.workflowLogs, newLog] }));
   },
 
@@ -84,7 +84,7 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `🤔 Agent ${agent.name} finished thinking.`,
       metadata: { output },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.info(
@@ -103,14 +103,14 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `🛑 Agent ${agent.name} encountered an error during ${AGENT_STATUS_enum.THINKING}.`,
       metadata: { error: errorToLog },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.error(
       `🛑 ${AGENT_STATUS_enum.THINKING_ERROR}: Agent ${
         agent.name
       } encountered an error thinking. Further details: ${
-        error.name ? error.name : 'No additional error details'
+        error.name ? error.name : "No additional error details"
       }`,
       errorToLog.message
     );
@@ -128,7 +128,7 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `😡 Agent ${agent.name} found some ${AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT}. ${error.message}`,
       metadata: { output, error },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.debug(
@@ -144,7 +144,7 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `Agent action started: ${action}`,
       metadata: { action, runId },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.info(
@@ -161,7 +161,7 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `🛠️⏳ Agent ${agent.name} is ${AGENT_STATUS_enum.USING_TOOL} ${tool.name}...`,
       metadata: { tool, input },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.info(
@@ -178,7 +178,7 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `🛠️✅ ${AGENT_STATUS_enum.USING_TOOL_END}: Agent ${agent.name} - got  results from tool:${tool.name}`,
       metadata: { output },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.info(
@@ -193,9 +193,9 @@ const useAgentStore = (set, get) => ({
     const newLog = get().prepareNewLog({
       agent,
       task,
-      logDescription: 'Error during tool use',
+      logDescription: "Error during tool use",
       metadata: { error },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.error(
@@ -212,7 +212,7 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `🛠️🚫 Agent ${agent.name} - Oops... it seems that the tool:${toolName} ${AGENT_STATUS_enum.TOOL_DOES_NOT_EXIST}.`,
       metadata: { toolName },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.warn(
@@ -228,7 +228,7 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `🥳 Agent ${agent.name} got the ${AGENT_STATUS_enum.FINAL_ANSWER}`,
       metadata: { output },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.info(
@@ -245,7 +245,7 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `💭 Agent ${agent.name} ${AGENT_STATUS_enum.THOUGHT}.`,
       metadata: { output },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.info(
@@ -262,7 +262,7 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `❓Agent ${agent.name} have a ${AGENT_STATUS_enum.SELF_QUESTION}`,
       metadata: { output },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.info(
@@ -279,7 +279,7 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `🔍 Agent ${agent.name} - ${AGENT_STATUS_enum.OBSERVATION}`,
       metadata: { output },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.info(
@@ -296,7 +296,7 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `🤔 Agent ${agent.name} - ${AGENT_STATUS_enum.WEIRD_LLM_OUTPUT}`,
       metadata: { output },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.warn(
@@ -318,7 +318,7 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `🚨 Agent ${agent.name} - ${AGENT_STATUS_enum.AGENTIC_LOOP_ERROR} | Iterations: ${iterations}/${maxAgentIterations}`,
       metadata: { error, iterations, maxAgentIterations },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.error(
@@ -344,7 +344,7 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `🛑 Agent ${agent.name} - ${AGENT_STATUS_enum.MAX_ITERATIONS_ERROR} | Iterations: ${iterations}`,
       metadata: { error, iterations, maxAgentIterations },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
 
@@ -371,7 +371,7 @@ const useAgentStore = (set, get) => ({
       task,
       logDescription: `🏁 Agent ${agent.name} - ${AGENT_STATUS_enum.TASK_COMPLETED}`,
       metadata: { result, iterations, maxAgentIterations },
-      logType: 'AgentStatusUpdate',
+      logType: "AgentStatusUpdate",
       agentStatus: agent.status,
     });
     logger.info(

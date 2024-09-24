@@ -15,22 +15,22 @@
  * optimal performance and nuanced agent behavior.
  */
 
-import { BaseAgent } from './baseAgent';
-import { getApiKey } from '../utils/agents';
-import { getParsedJSON } from '../utils/parser';
-import { AGENT_STATUS_enum } from '../utils/enums';
-import { interpolateTaskDescription } from '../utils/tasks';
-import { ChatOpenAI } from '@langchain/openai';
-import { ChatAnthropic } from '@langchain/anthropic';
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
-import { ChatMistralAI } from '@langchain/mistralai';
-import { SystemMessage } from '@langchain/core/messages';
-import { StringOutputParser } from '@langchain/core/output_parsers';
-import { RunnableWithMessageHistory } from '@langchain/core/runnables';
-import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
-import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { logger } from '../utils/logger';
-import { LLMInvocationError } from '../utils/errors';
+import { BaseAgent } from "./baseAgent";
+import { getApiKey } from "../utils/agents";
+import { getParsedJSON } from "../utils/parser";
+import { AGENT_STATUS_enum } from "../utils/enums";
+import { interpolateTaskDescription } from "../utils/tasks";
+import { ChatOpenAI } from "@langchain/openai";
+import { ChatAnthropic } from "@langchain/anthropic";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { ChatMistralAI } from "@langchain/mistralai";
+import { SystemMessage } from "@langchain/core/messages";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import { RunnableWithMessageHistory } from "@langchain/core/runnables";
+import { ChatMessageHistory } from "langchain/stores/message/in_memory";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { logger } from "../utils/logger";
+import { LLMInvocationError } from "../utils/errors";
 class ReactChampionAgent extends BaseAgent {
   #executableAgent;
   constructor(config) {
@@ -52,7 +52,7 @@ class ReactChampionAgent extends BaseAgent {
       const apiKey = getApiKey(this.llmConfig, this.env);
       if (!apiKey && !this.llmConfig.apiBaseUrl) {
         throw new Error(
-          'API key is missing. Please provide it through the Agent llmConfig or through the team env variable.'
+          "API key is missing. Please provide it through the Agent llmConfig or through the team env variable."
         );
       }
       this.llmConfig.apiKey = apiKey;
@@ -95,7 +95,7 @@ class ReactChampionAgent extends BaseAgent {
   }
 
   async workOnFeedback(task, feedbackList) {
-    const feedbackString = feedbackList.map((f) => f.content).join(', ');
+    const feedbackString = feedbackList.map((f) => f.content).join(", ");
     const feedbackMessage = this.promptTemplates.WORK_ON_FEEDBACK_FEEDBACK({
       agent: this,
       task,
@@ -130,16 +130,16 @@ class ReactChampionAgent extends BaseAgent {
 
     const promptAgent = ChatPromptTemplate.fromMessages([
       new SystemMessage(systemMessage),
-      ['placeholder', '{chat_history}'],
-      ['human', '{feedbackMessage}'],
+      ["placeholder", "{chat_history}"],
+      ["human", "{feedbackMessage}"],
     ]);
 
     const chainAgent = promptAgent.pipe(this.llmInstance);
     const chainAgentWithHistory = new RunnableWithMessageHistory({
       runnable: chainAgent,
       getMessageHistory: () => this.interactionsHistory,
-      inputMessagesKey: 'feedbackMessage',
-      historyMessagesKey: 'chat_history',
+      inputMessagesKey: "feedbackMessage",
+      historyMessagesKey: "chat_history",
     });
 
     return {
@@ -275,7 +275,7 @@ class ReactChampionAgent extends BaseAgent {
         }
       } catch (error) {
         // Check if the error is of type 'LLMInvocationError'
-        if (error.name === 'LLMInvocationError') {
+        if (error.name === "LLMInvocationError") {
           // Handle specific LLMInvocationError
           agent.handleThinkingError({ agent: agent, task, error });
         } else {
@@ -307,7 +307,7 @@ class ReactChampionAgent extends BaseAgent {
     if (loopCriticalError) {
       return {
         error:
-          'Execution stopped due to a critical error: ' +
+          "Execution stopped due to a critical error: " +
           loopCriticalError.message,
         metadata: { iterations, maxAgentIterations },
       };
@@ -332,12 +332,12 @@ class ReactChampionAgent extends BaseAgent {
       });
       return {
         error:
-          'Task incomplete: reached maximum iterations without final answer.',
+          "Task incomplete: reached maximum iterations without final answer.",
         metadata: { iterations, maxAgentIterations },
       };
     } else {
       return {
-        error: 'Execution terminated unexpectedly without results.',
+        error: "Execution terminated unexpectedly without results.",
         metadata: { iterations, maxAgentIterations },
       };
     }
@@ -369,7 +369,7 @@ class ReactChampionAgent extends BaseAgent {
       return AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT;
     } else if (parsedResult.finalAnswer) {
       return AGENT_STATUS_enum.FINAL_ANSWER;
-    } else if (parsedResult.action === 'self_question') {
+    } else if (parsedResult.action === "self_question") {
       return parsedResult.thought
         ? AGENT_STATUS_enum.THOUGHT
         : AGENT_STATUS_enum.SELF_QUESTION;
@@ -427,7 +427,7 @@ class ReactChampionAgent extends BaseAgent {
         !output.generations[0] ||
         !output.generations[0][0].message
       ) {
-        throw new Error('Invalid output structure');
+        throw new Error("Invalid output structure");
       }
 
       const { message } = output.generations[0][0];
@@ -462,7 +462,7 @@ class ReactChampionAgent extends BaseAgent {
       ExecutableAgent.invoke(
         { feedbackMessage },
         {
-          configurable: { sessionId: 'foo-bar-baz' },
+          configurable: { sessionId: "foo-bar-baz" },
           callbacks: [
             {
               handleChatModelStart: (llm, messages) => {
@@ -501,7 +501,7 @@ class ReactChampionAgent extends BaseAgent {
 
   handleIssuesParsingLLMOutput({ agent, task, output }) {
     const jSONPArsingError = new Error(
-      'Received an invalid JSON object from the LLM. Requesting a correctly formatted JSON response.',
+      "Received an invalid JSON object from the LLM. Requesting a correctly formatted JSON response.",
       output.llmOutput
     );
     agent.store.getState().handleAgentIssuesParsingLLMOutput({
@@ -522,7 +522,7 @@ class ReactChampionAgent extends BaseAgent {
     // console.log(parsedJSON.finalAnswer);
     if (parsedLLMOutput.finalAnswer) {
       if (
-        typeof parsedLLMOutput.finalAnswer === 'object' &&
+        typeof parsedLLMOutput.finalAnswer === "object" &&
         parsedLLMOutput.finalAnswer !== null
       ) {
         parsedLLMOutput.finalAnswer = JSON.stringify(
@@ -547,11 +547,11 @@ class ReactChampionAgent extends BaseAgent {
       parsedLLMOutput,
     });
     if (
-      parsedLLMOutput.action === 'self_question' &&
+      parsedLLMOutput.action === "self_question" &&
       parsedLLMOutput.actionInput
     ) {
       const actionAsString =
-        typeof parsedLLMOutput.actionInput == 'object'
+        typeof parsedLLMOutput.actionInput == "object"
           ? JSON.stringify(parsedLLMOutput.actionInput)
           : parsedLLMOutput.actionInput;
       feedbackMessage =

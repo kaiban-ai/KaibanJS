@@ -9,25 +9,25 @@
  * The store is designed to be imported and used directly in components or services where state management
  * is required, offering straightforward access to state properties and actions to modify them.
  */
-import { create } from 'zustand';
-import { devtools, subscribeWithSelector } from 'zustand/middleware';
-import { useAgentStore } from './agentStore';
-import { useTaskStore } from './taskStore';
+import { create } from "zustand";
+import { devtools, subscribeWithSelector } from "zustand/middleware";
+import { useAgentStore } from "./agentStore";
+import { useTaskStore } from "./taskStore";
 import {
   TASK_STATUS_enum,
   AGENT_STATUS_enum,
   WORKFLOW_STATUS_enum,
   FEEDBACK_STATUS_enum,
-} from '../utils/enums';
+} from "../utils/enums";
 import {
   getTaskTitleForLogs,
   interpolateTaskDescription,
-} from '../utils/tasks';
-import { logger, setLogLevel } from '../utils/logger';
-import { calculateTotalWorkflowCost } from '../utils/llmCostCalculator';
-import { subscribeWorkflowStatusUpdates } from '../subscribers/teamSubscriber';
-import { subscribeTaskStatusUpdates } from '../subscribers/taskSubscriber';
-import { setupWorkflowController } from './workflowController';
+} from "../utils/tasks";
+import { logger, setLogLevel } from "../utils/logger";
+import { calculateTotalWorkflowCost } from "../utils/llmCostCalculator";
+import { subscribeWorkflowStatusUpdates } from "../subscribers/teamSubscriber";
+import { subscribeTaskStatusUpdates } from "../subscribers/taskSubscriber";
+import { setupWorkflowController } from "./workflowController";
 
 // ──── Store Factory for Multiple Teams ───────────────────────────────
 //
@@ -52,12 +52,12 @@ const createTeamStore = (initialState = {}) => {
           teamWorkflowStatus:
             initialState.teamWorkflowStatus || WORKFLOW_STATUS_enum.INITIAL,
           workflowResult: initialState.workflowResult || null,
-          name: initialState.name || '',
+          name: initialState.name || "",
           agents: initialState.agents || [],
           tasks: initialState.tasks || [],
           workflowLogs: initialState.workflowLogs || [],
           inputs: initialState.inputs || {},
-          workflowContext: initialState.workflowContext || '',
+          workflowContext: initialState.workflowContext || "",
           env: initialState.env || {},
           logLevel: initialState.logLevel,
 
@@ -107,10 +107,10 @@ const createTeamStore = (initialState = {}) => {
               logDescription: `Workflow initiated for team *${get().name}*.`,
               workflowStatus: WORKFLOW_STATUS_enum.RUNNING, // Using RUNNING as the initial status
               metadata: {
-                message: 'Workflow has been initialized with input settings.',
+                message: "Workflow has been initialized with input settings.",
                 inputs: inputs, // Assuming you want to log the inputs used to start the workflow
               },
-              logType: 'WorkflowStatusUpdate',
+              logType: "WorkflowStatusUpdate",
             };
 
             // Update state with the new log
@@ -131,12 +131,12 @@ const createTeamStore = (initialState = {}) => {
               // Cloning tasks and agents to ensure there are no direct mutations
               const resetTasks = state.tasks.map((task) => ({
                 ...task,
-                status: 'TODO',
+                status: "TODO",
                 // Ensure to reset or clear any other task-specific states if needed
               }));
 
               get().agents.forEach((agent) => {
-                agent.setStatus('INITIAL'); // Update status using agent's method
+                agent.setStatus("INITIAL"); // Update status using agent's method
               });
 
               const resetAgents = [...state.agents];
@@ -146,12 +146,12 @@ const createTeamStore = (initialState = {}) => {
                 tasks: resetTasks,
                 agents: resetAgents,
                 workflowLogs: [],
-                workflowContext: '',
+                workflowContext: "",
                 workflowResult: null,
                 teamWorkflowStatus: WORKFLOW_STATUS_enum.INITIAL,
               };
             });
-            logger.debug('Workflow state has been reset.');
+            logger.debug("Workflow state has been reset.");
           },
 
           // New function to handle finishing workflow
@@ -185,7 +185,7 @@ const createTeamStore = (initialState = {}) => {
                   : lastTaskResult,
                 ...stats,
               },
-              logType: 'WorkflowStatusUpdate',
+              logType: "WorkflowStatusUpdate",
             };
 
             // Update state with the final results and set workflow status
@@ -218,7 +218,7 @@ const createTeamStore = (initialState = {}) => {
                 error,
                 ...stats,
               },
-              logType: 'WorkflowStatusUpdate',
+              logType: "WorkflowStatusUpdate",
             };
 
             // Update state with error details and add new log entry
@@ -250,7 +250,7 @@ const createTeamStore = (initialState = {}) => {
                 taskCount: get().tasks.length,
                 agentCount: get().agents.length,
               },
-              logType: 'WorkflowStatusUpdate',
+              logType: "WorkflowStatusUpdate",
             };
 
             // Update state with error details and add new log entry
@@ -273,7 +273,7 @@ const createTeamStore = (initialState = {}) => {
                   task,
                   logDescription: `Task: ${getTaskTitleForLogs(task)} started.`,
                   metadata: {}, // Initial metadata can be empty or include the start time
-                  logType: 'TaskStatusUpdate',
+                  logType: "TaskStatusUpdate",
                 });
                 return {
                   ...state,
@@ -316,7 +316,7 @@ const createTeamStore = (initialState = {}) => {
                 // Once the task is completed, the handleAgentTaskCompleted will be triggered automatically
               } catch (error) {
                 // We are let it propagate to the task execution and captured later on
-                console.error('An error occurred:', error);
+                console.error("An error occurred:", error);
                 throw error; // Re-throw the error to be caught by the task execution
               }
             }
@@ -333,13 +333,13 @@ const createTeamStore = (initialState = {}) => {
               console.warn(
                 `Current task with ID ${currentTaskId} not found in the task list.`
               );
-              return ''; // Return empty context if current task is not found
+              return ""; // Return empty context if current task is not found
             }
 
             // Iterate through logs to get the most recent result for each task
             for (const log of logs) {
               if (
-                log.logType === 'TaskStatusUpdate' &&
+                log.logType === "TaskStatusUpdate" &&
                 log.taskStatus === TASK_STATUS_enum.DONE
               ) {
                 const taskIndex = tasks.findIndex(
@@ -364,7 +364,7 @@ const createTeamStore = (initialState = {}) => {
                 ({ taskDescription, result }) =>
                   `Task: ${taskDescription}\nResult: ${result}\n`
               )
-              .join('\n');
+              .join("\n");
           },
 
           provideFeedback: async (taskId, feedbackContent) => {
@@ -373,7 +373,7 @@ const createTeamStore = (initialState = {}) => {
             // Find the task
             const taskIndex = tasks.findIndex((t) => t.id === taskId);
             if (taskIndex === -1) {
-              logger.error('Task not found');
+              logger.error("Task not found");
               return;
             }
             const task = tasks[taskIndex];
@@ -394,7 +394,7 @@ const createTeamStore = (initialState = {}) => {
               metadata: {
                 feedback: newFeedback,
               },
-              logType: 'WorkflowStatusUpdate',
+              logType: "WorkflowStatusUpdate",
             };
 
             // Add the feedback to the task
@@ -413,7 +413,7 @@ const createTeamStore = (initialState = {}) => {
               metadata: {
                 feedback: newFeedback,
               },
-              logType: 'TaskStatusUpdate',
+              logType: "TaskStatusUpdate",
             });
 
             set((state) => ({
@@ -429,12 +429,12 @@ const createTeamStore = (initialState = {}) => {
           validateTask: async (taskId) => {
             const task = get().tasks.find((t) => t.id === taskId);
             if (!task) {
-              logger.error('Task not found');
+              logger.error("Task not found");
               // return state;
             }
 
             if (task.status !== TASK_STATUS_enum.AWAITING_VALIDATION) {
-              logger.error('Task is not awaiting validation');
+              logger.error("Task is not awaiting validation");
               // return state;
             }
 
@@ -450,7 +450,7 @@ const createTeamStore = (initialState = {}) => {
               logDescription: `Workflow running cause a task was validated.`,
               workflowStatus: WORKFLOW_STATUS_enum.RUNNING,
               metadata: {},
-              logType: 'WorkflowStatusUpdate',
+              logType: "WorkflowStatusUpdate",
             };
 
             const newTaskLog = get().prepareNewLog({
@@ -460,7 +460,7 @@ const createTeamStore = (initialState = {}) => {
               logDescription: `Task validated: ${getTaskTitleForLogs(
                 updatedTask
               )}.`,
-              logType: 'TaskStatusUpdate',
+              logType: "TaskStatusUpdate",
             });
 
             set((state) => ({
@@ -505,11 +505,11 @@ const createTeamStore = (initialState = {}) => {
               timestamp,
               task,
               agent,
-              agentName: agent ? agent.name : 'Unknown Agent',
-              taskTitle: task ? getTaskTitleForLogs(task) : 'Untitled Task',
+              agentName: agent ? agent.name : "Unknown Agent",
+              taskTitle: task ? getTaskTitleForLogs(task) : "Untitled Task",
               logDescription,
-              taskStatus: task ? task.status : 'Unknown',
-              agentStatus: agent ? agent.status : 'Unknown',
+              taskStatus: task ? task.status : "Unknown",
+              agentStatus: agent ? agent.status : "Unknown",
               metadata,
               logType,
             };
@@ -522,7 +522,7 @@ const createTeamStore = (initialState = {}) => {
               tasks: [],
               inputs: {},
               workflowLogs: [],
-              workflowContext: '',
+              workflowContext: "",
               workflowResult: null,
               teamWorkflowStatus: WORKFLOW_STATUS_enum.INITIAL,
             }),
@@ -534,8 +534,8 @@ const createTeamStore = (initialState = {}) => {
               .reverse()
               .find(
                 (log) =>
-                  log.logType === 'WorkflowStatusUpdate' &&
-                  log.workflowStatus === 'RUNNING'
+                  log.logType === "WorkflowStatusUpdate" &&
+                  log.workflowStatus === "RUNNING"
               );
 
             const startTime = lastWorkflowRunningLog
@@ -556,7 +556,7 @@ const createTeamStore = (initialState = {}) => {
             // Iterate over logs for usage stats, starting from the found 'INITIAL' timestamp
             workflowLogs.forEach((log) => {
               if (
-                log.logType === 'AgentStatusUpdate' &&
+                log.logType === "AgentStatusUpdate" &&
                 log.timestamp >= startTime
               ) {
                 if (log.agentStatus === AGENT_STATUS_enum.THINKING_END) {
@@ -614,23 +614,23 @@ const createTeamStore = (initialState = {}) => {
             // Function to clean individual agent data
             const cleanAgent = (agent) => ({
               ...agent,
-              id: '[REDACTED]', // Clean sensitive ID at the root level
-              env: '[REDACTED]', // Clean sensitive Env in agent
+              id: "[REDACTED]", // Clean sensitive ID at the root level
+              env: "[REDACTED]", // Clean sensitive Env in agent
               llmConfig: agent.llmConfig
                 ? {
                     ...agent.llmConfig,
-                    apiKey: '[REDACTED]', // Clean API key at the root level
+                    apiKey: "[REDACTED]", // Clean API key at the root level
                   }
                 : {}, // Provide an empty object if llmConfig is undefined at the root level
               agentInstance: agent.agentInstance
                 ? {
                     ...agent.agentInstance,
-                    id: '[REDACTED]', // Clean sensitive ID in agentInstance
-                    env: '[REDACTED]', // Clean sensitive Env in agentInstance
+                    id: "[REDACTED]", // Clean sensitive ID in agentInstance
+                    env: "[REDACTED]", // Clean sensitive Env in agentInstance
                     llmConfig: agent.agentInstance.llmConfig
                       ? {
                           ...agent.agentInstance.llmConfig,
-                          apiKey: '[REDACTED]', // Clean API key in agentInstance llmConfig
+                          apiKey: "[REDACTED]", // Clean API key in agentInstance llmConfig
                         }
                       : {}, // Provide an empty object if llmConfig is undefined in agentInstance
                   }
@@ -640,15 +640,15 @@ const createTeamStore = (initialState = {}) => {
             // Function to clean individual task data
             const cleanTask = (task) => ({
               ...task,
-              id: '[REDACTED]', // Clean sensitive ID
+              id: "[REDACTED]", // Clean sensitive ID
               agent: task.agent ? cleanAgent(task.agent) : null, // Clean the nested agent if exists
-              duration: '[REDACTED]',
-              endTime: '[REDACTED]',
-              startTime: '[REDACTED]',
+              duration: "[REDACTED]",
+              endTime: "[REDACTED]",
+              startTime: "[REDACTED]",
               feedbackHistory: task.feedbackHistory
                 ? task.feedbackHistory.map((feedback) => ({
                     ...feedback,
-                    timestamp: '[REDACTED]', // Redact the timestamp
+                    timestamp: "[REDACTED]", // Redact the timestamp
                   }))
                 : [], // Provide an empty array if feedbackHistory is undefined
             });
@@ -656,13 +656,13 @@ const createTeamStore = (initialState = {}) => {
             // Function to clean log metadata
             const cleanMetadata = (metadata) => ({
               ...metadata,
-              duration: metadata.duration ? '[REDACTED]' : metadata.duration,
-              endTime: metadata.endTime ? '[REDACTED]' : metadata.endTime,
-              startTime: metadata.startTime ? '[REDACTED]' : metadata.startTime,
+              duration: metadata.duration ? "[REDACTED]" : metadata.duration,
+              endTime: metadata.endTime ? "[REDACTED]" : metadata.endTime,
+              startTime: metadata.startTime ? "[REDACTED]" : metadata.startTime,
               feedback: metadata.feedback
                 ? {
                     ...metadata.feedback,
-                    timestamp: '[REDACTED]', // Redact the timestamp
+                    timestamp: "[REDACTED]", // Redact the timestamp
                   }
                 : {}, // Provide an empty object if feedback is undefined
             });
@@ -680,7 +680,7 @@ const createTeamStore = (initialState = {}) => {
               ...log,
               agent: log.agent ? cleanAgent(log.agent) : null, // Clean the agent if exists
               task: log.task ? cleanTask(log.task) : null, // Clean the task if exists
-              timestamp: '[REDACTED]',
+              timestamp: "[REDACTED]",
               metadata: log.metadata ? cleanMetadata(log.metadata) : {}, // Clean metadata if exists
             }));
 
@@ -699,7 +699,7 @@ const createTeamStore = (initialState = {}) => {
             };
           },
         }),
-        'teamStore'
+        "teamStore"
       )
     )
   );

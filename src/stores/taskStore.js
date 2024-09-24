@@ -12,11 +12,11 @@ import {
   TASK_STATUS_enum,
   AGENT_STATUS_enum,
   FEEDBACK_STATUS_enum,
-} from '../utils/enums';
-import { getTaskTitleForLogs } from '../utils/tasks';
-import { logger } from '../utils/logger';
-import { PrettyError } from '../utils/errors';
-import { calculateTaskCost } from '../utils/llmCostCalculator';
+} from "../utils/enums";
+import { getTaskTitleForLogs } from "../utils/tasks";
+import { logger } from "../utils/logger";
+import { PrettyError } from "../utils/errors";
+import { calculateTaskCost } from "../utils/llmCostCalculator";
 
 export const useTaskStore = (set, get) => ({
   // state
@@ -31,7 +31,7 @@ export const useTaskStore = (set, get) => ({
         (log) =>
           log.task &&
           log.task.id === task.id &&
-          log.logType === 'TaskStatusUpdate' &&
+          log.logType === "TaskStatusUpdate" &&
           log.taskStatus === TASK_STATUS_enum.DOING
       );
     const startTime = lastDoingLog ? lastDoingLog.timestamp : endTime; // Use endTime if no DOING log is found
@@ -51,7 +51,7 @@ export const useTaskStore = (set, get) => ({
         log.task &&
         log.task.id === task.id &&
         log.timestamp >= startTime &&
-        log.logType === 'AgentStatusUpdate'
+        log.logType === "AgentStatusUpdate"
       ) {
         if (log.agentStatus === AGENT_STATUS_enum.THINKING_END) {
           llmUsageStats.inputTokens +=
@@ -111,7 +111,7 @@ export const useTaskStore = (set, get) => ({
           costDetails,
           result,
         },
-        logType: 'TaskStatusUpdate',
+        logType: "TaskStatusUpdate",
       });
 
       // What status to give the workflow here?
@@ -132,7 +132,7 @@ export const useTaskStore = (set, get) => ({
 
       get().handleWorkflowBlocked({
         task,
-        error: new Error('Task awaiting validation'),
+        error: new Error("Task awaiting validation"),
       });
     } else {
       task.status = TASK_STATUS_enum.DONE;
@@ -148,7 +148,7 @@ export const useTaskStore = (set, get) => ({
           costDetails,
           result,
         },
-        logType: 'TaskStatusUpdate',
+        logType: "TaskStatusUpdate",
       });
       logger.debug(
         `Task completed with ID ${task.id}, Duration: ${stats.duration} seconds`
@@ -203,7 +203,7 @@ export const useTaskStore = (set, get) => ({
         costDetails,
         error: error.message,
       },
-      logType: 'TaskStatusUpdate',
+      logType: "TaskStatusUpdate",
     });
 
     set((state) => ({
@@ -222,12 +222,12 @@ export const useTaskStore = (set, get) => ({
     }));
 
     const prettyError = new PrettyError({
-      message: 'Task Error Encountered',
+      message: "Task Error Encountered",
       recommendedAction:
-        'Try to debug the application to find the root cause of the error.',
+        "Try to debug the application to find the root cause of the error.",
       rootError: error,
       context: { task, error },
-      location: 'taskStore.js -> handleTaskError()',
+      location: "taskStore.js -> handleTaskError()",
     });
 
     logger.error(prettyError.prettyMessage);
@@ -258,12 +258,12 @@ export const useTaskStore = (set, get) => ({
         costDetails,
         error,
       },
-      logType: 'TaskStatusUpdate',
+      logType: "TaskStatusUpdate",
     });
 
     const prettyError = new PrettyError({
-      name: 'TASK BLOCKED',
-      message: 'Task blocked due to a possible error during execution.',
+      name: "TASK BLOCKED",
+      message: "Task blocked due to a possible error during execution.",
       recommendedAction:
         'Enable logLevel: "debug" during team initialization to obtain more detailed logs and facilitate troubleshooting.',
       rootError: error,

@@ -16,20 +16,20 @@
  *   responsible for coordinating the agents to achieve collective goals effectively.
  */
 
-import { v4 as uuidv4 } from 'uuid';
-import { createTeamStore } from './stores';
-import { ReactChampionAgent } from './agents';
-import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from './utils/enums';
+import { v4 as uuidv4 } from "uuid";
+import { createTeamStore } from "./stores";
+import { ReactChampionAgent } from "./agents";
+import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from "./utils/enums";
 
 class Agent {
   constructor({ type, ...config }) {
     this.agentInstance = this.createAgent(type, config);
-    this.type = type || 'ReactChampionAgent';
+    this.type = type || "ReactChampionAgent";
   }
 
   createAgent(type, config) {
     switch (type) {
-      case 'ReactChampionAgent':
+      case "ReactChampionAgent":
         return new ReactChampionAgent(config);
       default:
         return new ReactChampionAgent(config);
@@ -95,7 +95,7 @@ class Agent {
 }
 class Task {
   constructor({
-    title = '',
+    title = "",
     description,
     expectedOutput,
     agent,
@@ -179,7 +179,7 @@ class Team {
               break;
             case WORKFLOW_STATUS_enum.ERRORED:
               unsubscribe();
-              reject(new Error('Workflow encountered an error'));
+              reject(new Error("Workflow encountered an error"));
               break;
             case WORKFLOW_STATUS_enum.BLOCKED:
               unsubscribe();
@@ -374,8 +374,8 @@ class Team {
     // Find the log entry for when the workflow was marked as finished or blocked
     const completionLog = logs.find(
       (log) =>
-        log.logType === 'WorkflowStatusUpdate' &&
-        (log.workflowStatus === 'FINISHED' || log.workflowStatus === 'BLOCKED')
+        log.logType === "WorkflowStatusUpdate" &&
+        (log.workflowStatus === "FINISHED" || log.workflowStatus === "BLOCKED")
     );
 
     // Check if a completion log exists and return the specified statistics

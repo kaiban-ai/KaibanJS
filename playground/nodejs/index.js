@@ -1,8 +1,8 @@
 // Assuming kaibanjs is a local module or a placeholder for demonstration purposes
-import { Agent, Task, Team } from 'kaibanjs';
-import dotenv from 'dotenv';
+import { Agent, Task, Team } from "kaibanjs";
+import dotenv from "dotenv";
 
-dotenv.config({ path: './.env.local' });
+dotenv.config({ path: "./.env.local" });
 
 async function main() {
   // ╔══════════════════════════════════════════════════════╗
@@ -20,26 +20,26 @@ async function main() {
   // ────────────────────────────────────────────────────────
 
   const profileAnalyst = new Agent({
-    name: 'Ivy',
-    role: 'Profile Analyst',
-    goal: 'Extract structured information from conversational user input.',
-    background: 'Data Processor',
+    name: "Ivy",
+    role: "Profile Analyst",
+    goal: "Extract structured information from conversational user input.",
+    background: "Data Processor",
     tools: [], // Tools are omitted for now
   });
 
   const formatter = new Agent({
-    name: 'Formy',
-    role: 'Formatter',
-    goal: 'Format structured information into a professional resume.',
-    background: 'Document Formatter',
+    name: "Formy",
+    role: "Formatter",
+    goal: "Format structured information into a professional resume.",
+    background: "Document Formatter",
     tools: [],
   });
 
   const reviewer = new Agent({
-    name: 'Revy',
-    role: 'Reviewer',
-    goal: 'Review and polish the final resume.',
-    background: 'Quality Assurance Specialist',
+    name: "Revy",
+    role: "Reviewer",
+    goal: "Review and polish the final resume.",
+    background: "Quality Assurance Specialist",
     tools: [],
   });
 
@@ -51,25 +51,25 @@ async function main() {
   // ────────────────────────────────────────────────────────
 
   const processingTask = new Task({
-    title: 'Process User Input',
+    title: "Process User Input",
     description: `Extract relevant details such as name, experience, skills, and job history from the user's 'aboutMe' input. 
     aboutMe: {aboutMe}`,
-    expectedOutput: 'Structured data ready for formatting.',
+    expectedOutput: "Structured data ready for formatting.",
     agent: profileAnalyst,
   });
 
   const formattingTask = new Task({
-    title: 'Format Resume',
+    title: "Format Resume",
     description: `Use the extracted information to create a clean, professional resume layout tailored for a JavaScript Developer.`,
-    expectedOutput: 'A well-formatted resume in PDF format.',
+    expectedOutput: "A well-formatted resume in PDF format.",
     agent: formatter,
   });
 
   const reviewTask = new Task({
-    title: 'Review Resume',
+    title: "Review Resume",
     description: `Ensure the resume is error-free, engaging, and meets professional standards.`,
     expectedOutput:
-      'A polished, final resume ready for job applications. Please do not give any feedback on the resume. Just the final resume.',
+      "A polished, final resume ready for job applications. Please do not give any feedback on the resume. Just the final resume.",
     agent: reviewer,
   });
 
@@ -80,12 +80,12 @@ async function main() {
   // ──────────────────────────────────────────────────────
 
   const team = new Team({
-    name: 'Resume Creation Team',
+    name: "Resume Creation Team",
     agents: [profileAnalyst, formatter, reviewer],
     tasks: [processingTask, formattingTask, reviewTask],
     inputs: {
       aboutMe:
-        'My name is Will, I have been a Javascript Developer for 3 years. I know React, NextJS, and REDUX. My latest job was as a Junior Developer at Disney creating UIs for the main landing page.',
+        "My name is Will, I have been a Javascript Developer for 3 years. I know React, NextJS, and REDUX. My latest job was as a Junior Developer at Disney creating UIs for the main landing page.",
     }, // Initial input for the first task
     env: { OPENAI_API_KEY: process.env.OPENAI_API_KEY },
   });
@@ -100,9 +100,9 @@ async function main() {
 
   const _unsubscribe = team.subscribeToChanges(
     (updatedFields) => {
-      console.log('Workflow Status Updated:', updatedFields);
+      console.log("Workflow Status Updated:", updatedFields);
     },
-    ['teamWorkflowStatus']
+    ["teamWorkflowStatus"]
   );
 
   // ──── Start Team Workflow ───────────────────────────────────────
@@ -110,7 +110,7 @@ async function main() {
   // Begins the predefined team process, producing the final result.
   //─────────────────────────────────────────────────────────────────
   const result = await team.start();
-  console.log('Final Output:', result);
+  console.log("Final Output:", result);
 }
 
 main();

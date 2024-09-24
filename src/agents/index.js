@@ -10,5 +10,5 @@
  * aids in maintaining consistency and ease of updates to the agent architecture.
  */
 
-export * from './baseAgent';
-export * from './reactChampionAgent';
+export * from "./baseAgent";
+export * from "./reactChampionAgent";

@@ -23,26 +23,26 @@
 // ─────────────────────────────────────────────────────────────────────
 
 const AGENT_STATUS_enum = {
-  INITIAL: 'INITIAL',
-  THINKING: 'THINKING', // LangChain Callback: llmStart()
-  THINKING_END: 'THINKING_END', // LangChain Callback: llmEnd()
-  THINKING_ERROR: 'THINKING_ERROR', // LangChain Callback: handleLLMError()
-  THOUGHT: 'THOUGHT', // LangChain Callback: llmEnd() and THOUGH Present in the output
-  EXECUTING_ACTION: 'EXECUTING_ACTION', // LangChain Callback: handleAgentAction()
-  USING_TOOL: 'USING_TOOL', // LangChain Callback: handleToolStart()
-  USING_TOOL_END: 'USING_TOOL_END',
-  USING_TOOL_ERROR: 'USING_TOOL_ERROR', // LangChain Callback: handleToolError()
-  TOOL_DOES_NOT_EXIST: 'TOOL_DOES_NOT_EXIST',
-  OBSERVATION: 'OBSERVATION', // LangChain Callback: handleToolEnd()
-  FINAL_ANSWER: 'FINAL_ANSWER', // LangChain Callback: handleAgentEnd(),
-  TASK_COMPLETED: 'TASK_COMPLETED', // Indicates all task operations, including final outputs, are completed
-  MAX_ITERATIONS_ERROR: 'MAX_ITERATIONS_ERROR',
-  ISSUES_PARSING_LLM_OUTPUT: 'ISSUES_PARSING_LLM_OUTPUT',
-  SELF_QUESTION: 'SELF_QUESTION',
-  ITERATION_START: 'ITERATION_START',
-  ITERATION_END: 'ITERATION_END',
-  AGENTIC_LOOP_ERROR: 'AGENTIC_LOOP_ERROR',
-  WEIRD_LLM_OUTPUT: 'WEIRD_LLM_OUTPUT',
+  INITIAL: "INITIAL",
+  THINKING: "THINKING", // LangChain Callback: llmStart()
+  THINKING_END: "THINKING_END", // LangChain Callback: llmEnd()
+  THINKING_ERROR: "THINKING_ERROR", // LangChain Callback: handleLLMError()
+  THOUGHT: "THOUGHT", // LangChain Callback: llmEnd() and THOUGH Present in the output
+  EXECUTING_ACTION: "EXECUTING_ACTION", // LangChain Callback: handleAgentAction()
+  USING_TOOL: "USING_TOOL", // LangChain Callback: handleToolStart()
+  USING_TOOL_END: "USING_TOOL_END",
+  USING_TOOL_ERROR: "USING_TOOL_ERROR", // LangChain Callback: handleToolError()
+  TOOL_DOES_NOT_EXIST: "TOOL_DOES_NOT_EXIST",
+  OBSERVATION: "OBSERVATION", // LangChain Callback: handleToolEnd()
+  FINAL_ANSWER: "FINAL_ANSWER", // LangChain Callback: handleAgentEnd(),
+  TASK_COMPLETED: "TASK_COMPLETED", // Indicates all task operations, including final outputs, are completed
+  MAX_ITERATIONS_ERROR: "MAX_ITERATIONS_ERROR",
+  ISSUES_PARSING_LLM_OUTPUT: "ISSUES_PARSING_LLM_OUTPUT",
+  SELF_QUESTION: "SELF_QUESTION",
+  ITERATION_START: "ITERATION_START",
+  ITERATION_END: "ITERATION_END",
+  AGENTIC_LOOP_ERROR: "AGENTIC_LOOP_ERROR",
+  WEIRD_LLM_OUTPUT: "WEIRD_LLM_OUTPUT",
 };
 
 // ──── Task Status Definitions ───────────────────────────────────────
@@ -58,13 +58,13 @@ const AGENT_STATUS_enum = {
 // ─────────────────────────────────────────────────────────────────────
 
 const TASK_STATUS_enum = {
-  TODO: 'TODO',
-  DOING: 'DOING',
-  BLOCKED: 'BLOCKED',
-  REVISE: 'REVISE',
-  DONE: 'DONE',
-  AWAITING_VALIDATION: 'AWAITING_VALIDATION',
-  VALIDATED: 'VALIDATED',
+  TODO: "TODO",
+  DOING: "DOING",
+  BLOCKED: "BLOCKED",
+  REVISE: "REVISE",
+  DONE: "DONE",
+  AWAITING_VALIDATION: "AWAITING_VALIDATION",
+  VALIDATED: "VALIDATED",
 };
 
 // ──── Workflow Status Definitions ───────────────────────────────────────
@@ -80,13 +80,13 @@ const TASK_STATUS_enum = {
 // ─────────────────────────────────────────────────────────────────────────
 
 const WORKFLOW_STATUS_enum = {
-  INITIAL: 'INITIAL',
-  RUNNING: 'RUNNING',
-  STOPPING: 'STOPPING',
-  STOPPED: 'STOPPED',
-  ERRORED: 'ERRORED',
-  FINISHED: 'FINISHED',
-  BLOCKED: 'BLOCKED',
+  INITIAL: "INITIAL",
+  RUNNING: "RUNNING",
+  STOPPING: "STOPPING",
+  STOPPED: "STOPPED",
+  ERRORED: "ERRORED",
+  FINISHED: "FINISHED",
+  BLOCKED: "BLOCKED",
 };
 
 // ──── Feedback Status Definitions ───────────────────────────────────────
@@ -97,8 +97,8 @@ const WORKFLOW_STATUS_enum = {
 // ───────────────────────────────────────────────────────────────────────
 
 const FEEDBACK_STATUS_enum = {
-  PENDING: 'PENDING',
-  PROCESSED: 'PROCESSED',
+  PENDING: "PENDING",
+  PROCESSED: "PROCESSED",
 };
 
 export {

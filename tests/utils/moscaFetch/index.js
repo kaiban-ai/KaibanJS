@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require("fs");
 
 function moscaFetch() {
   let originalFetch = globalThis.fetch; // Save the original fetch function
@@ -7,7 +7,7 @@ function moscaFetch() {
   let myCustomFetch = async (input, options) => {
     //console.log('MoscaFetch -> Using custom fetch for:', input);
     for (const mock of mocks) {
-      let { body: requestBody, method: requestMethod = 'GET' } = options || {};
+      let { body: requestBody, method: requestMethod = "GET" } = options || {};
       requestMethod = requestMethod.toUpperCase();
       try {
         requestBody = requestBody ? JSON.parse(requestBody) : undefined;
@@ -15,18 +15,18 @@ function moscaFetch() {
         // requestBody remains unchanged if it's not JSON
       }
 
-      const urlMatches = mock.url === '*' || input === mock.url;
+      const urlMatches = mock.url === "*" || input === mock.url;
       const methodMatches =
-        mock.method === '*' || mock.method.toUpperCase() === requestMethod;
+        mock.method === "*" || mock.method.toUpperCase() === requestMethod;
 
       const cleanRequestBody = JSON.stringify(requestBody).replace(
         /\\n\s+/g,
-        '\\n'
+        "\\n"
       ); // Regular Expression to remove spaces between newlines
-      const cleanMockBody = JSON.stringify(mock.body).replace(/\\n\s+/g, '\\n'); // Regular Expression to remove spaces between newlines
+      const cleanMockBody = JSON.stringify(mock.body).replace(/\\n\s+/g, "\\n"); // Regular Expression to remove spaces between newlines
 
       const bodyMatches =
-        mock.body === '*' || cleanRequestBody === cleanMockBody;
+        mock.body === "*" || cleanRequestBody === cleanMockBody;
       if (urlMatches && methodMatches && bodyMatches) {
         if (mock.isRecorder) {
           const response = await originalFetch(input, options);
@@ -48,7 +48,7 @@ function moscaFetch() {
         } else {
           const mockResponse = new Response(JSON.stringify(mock.response), {
             status: 200,
-            headers: { 'Content-Type': 'application/json' },
+            headers: { "Content-Type": "application/json" },
           });
           if (mock.callback) {
             mock.callback({
@@ -67,7 +67,7 @@ function moscaFetch() {
 
   // Immediately enforce custom fetch
   const withMockedApis =
-    process.env.TEST_ENV === 'mocked-llm-apis' ? true : false;
+    process.env.TEST_ENV === "mocked-llm-apis" ? true : false;
   if (withMockedApis) {
     // Override globalThis.fetch with your custom fetch
     globalThis.fetch = myCustomFetch;
@@ -83,7 +83,7 @@ function moscaFetch() {
     configs.forEach((mockConfig) => {
       if (!mockConfig.url || !mockConfig.method || !mockConfig.response) {
         throw new Error(
-          'Invalid mock configuration: Missing required properties.'
+          "Invalid mock configuration: Missing required properties."
         );
       }
       mockConfig.isRecorder = false; // Explicitly flag mock configurations as non-recorders
@@ -114,7 +114,7 @@ function moscaFetch() {
   function restoreOne(url, method) {
     mocks = mocks.filter(
       (mock) =>
-        !(mock.url === url || mock.url === '*') ||
+        !(mock.url === url || mock.url === "*") ||
         mock.method.toLowerCase() !== method.toLowerCase()
     );
     if (mocks.length === 0) {
@@ -129,11 +129,11 @@ function moscaFetch() {
     }
   }
 
-  function saveRecords(filename = 'recordedData.json') {
+  function saveRecords(filename = "recordedData.json") {
     const filePath = `${process.cwd()}/${filename}`;
     fs.writeFile(filePath, JSON.stringify(records, null, 2), (err) => {
       if (err) {
-        console.error('Error saving records:', err);
+        console.error("Error saving records:", err);
       } else {
         console.log(`Records saved successfully to ${filePath}`);
       }

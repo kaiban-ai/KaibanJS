@@ -30,10 +30,10 @@ const _getParsedJSON_4_tests_passing = (str) => {
   } catch (_error) {
     // Handle JSON strings with complex non-JSON text and real newlines
     // and markdown encapsulation
-    const startMarker = '/```json\n';
-    const endMarker = '\n```';
-    let jsonStartIndex = str.indexOf('{');
-    let jsonEndIndex = str.lastIndexOf('}') + 1;
+    const startMarker = "/```json\n";
+    const endMarker = "\n```";
+    let jsonStartIndex = str.indexOf("{");
+    let jsonEndIndex = str.lastIndexOf("}") + 1;
 
     // If markdown encapsulation is detected
     if (str.includes(startMarker) && str.includes(endMarker)) {
@@ -46,19 +46,19 @@ const _getParsedJSON_4_tests_passing = (str) => {
 
     // Normalize the JSON string by handling line breaks, missing commas, etc.
     let sanitizedStr = jsonPart
-      .replace(/\\n/g, '')
-      .replace(/\n/g, ' ')
-      .replace(/([}\]])(\s*["{])/g, '$1,$2') // Insert missing commas where necessary
-      .replace(/,\s*([}\]])/g, '$1') // Remove trailing commas
+      .replace(/\\n/g, "")
+      .replace(/\n/g, " ")
+      .replace(/([}\]])(\s*["{])/g, "$1,$2") // Insert missing commas where necessary
+      .replace(/,\s*([}\]])/g, "$1") // Remove trailing commas
       .replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2":') // Ensure keys are quoted
       .replace(/([{,]+)(\s*)(['"])?([a-z0-9A-Z_]+)(['"])?(\s*):/g, '$1"$4":') // Properly quote keys
-      .replace(/,\s*}/g, '}'); // Remove any trailing commas before closing braces
+      .replace(/,\s*}/g, "}"); // Remove any trailing commas before closing braces
 
     try {
       // Try parsing again after sanitation
       return JSON.parse(sanitizedStr);
     } catch (finalError) {
-      console.error('Error parsing sanitized JSON: ', finalError);
+      console.error("Error parsing sanitized JSON: ", finalError);
       return null;
     }
   }
@@ -83,15 +83,15 @@ function _getParsedJSONV6(str) {
     const match = str.match(regex);
     if (match) {
       // If the key is found, parse the value appropriately
-      if (key === 'actionInput') {
+      if (key === "actionInput") {
         // Assuming actionInput always contains a JSON-like object
         try {
           result[key] = JSON.parse(match[1].replace(/'/g, '"'));
         } catch (_e) {
           result[key] = null; // Default to null if parsing fails
         }
-      } else if (key === 'isFinalAnswerReady') {
-        result[key] = match[1] === 'true'; // Convert string to boolean
+      } else if (key === "isFinalAnswerReady") {
+        result[key] = match[1] === "true"; // Convert string to boolean
       } else {
         result[key] = match[1];
       }
@@ -124,15 +124,15 @@ function getParsedJSON(str) {
       const match = str.match(regex);
       if (match) {
         // If the key is found, parse the value appropriately
-        if (key === 'actionInput') {
+        if (key === "actionInput") {
           // Assuming actionInput always contains a JSON-like object
           try {
             result[key] = JSON.parse(match[1].replace(/'/g, '"'));
           } catch (_e) {
             result[key] = null; // Default to null if parsing fails
           }
-        } else if (key === 'isFinalAnswerReady') {
-          result[key] = match[1] === 'true'; // Convert string to boolean
+        } else if (key === "isFinalAnswerReady") {
+          result[key] = match[1] === "true"; // Convert string to boolean
         } else {
           result[key] = match[1];
         }

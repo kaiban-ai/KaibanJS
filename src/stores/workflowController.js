@@ -8,8 +8,8 @@
  * Integrate this controller to manage the flow of tasks within your application, ensuring tasks are executed in an orderly and efficient manner.
  */
 
-import PQueue from 'p-queue';
-import { TASK_STATUS_enum } from '../utils/enums';
+import PQueue from "p-queue";
+import { TASK_STATUS_enum } from "../utils/enums";
 
 export const setupWorkflowController = (useTeamStore) => {
   const taskQueue = new PQueue({ concurrency: 1 });
@@ -70,7 +70,7 @@ export const setupWorkflowController = (useTeamStore) => {
 
   // Managing tasks moving to 'DONE'
   useTeamStore.subscribe(
-    (state) => state.tasks.filter((t) => t.status === 'DONE'),
+    (state) => state.tasks.filter((t) => t.status === "DONE"),
     (doneTasks, previousDoneTasks) => {
       if (doneTasks.length > previousDoneTasks.length) {
         const tasks = useTeamStore.getState().tasks;

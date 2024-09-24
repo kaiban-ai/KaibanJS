@@ -8,7 +8,7 @@
  * Utilize these templates when setting up dialogues or commands for agents to ensure they are correctly interpreted by the underlying LLMs.
  */
 
-import { zodToJsonSchema } from 'zod-to-json-schema';
+import { zodToJsonSchema } from "zod-to-json-schema";
 
 /**
  * Default prompt templates for the ReactChampionAgent.
@@ -51,8 +51,8 @@ ${
               zodToJsonSchema(tool.schema)
             )}`
         )
-        .join(', ')
-    : 'No tools available. You must reply using your internal knowledge.'
+        .join(", ")
+    : "No tools available. You must reply using your internal knowledge."
 }
 
 **Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.
@@ -131,7 +131,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${
         ${
           context
             ? `Incorporate the following findings and insights from previous tasks: "${context}"`
-            : ''
+            : ""
         }`;
     return prompt;
   },
