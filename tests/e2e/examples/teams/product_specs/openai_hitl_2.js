@@ -1,4 +1,4 @@
-import { Agent, Task, Team } from 'kaibanjs';
+const { Agent, Task, Team } = require('kaibanjs');
 
 // Define agents
 const requirementsAnalyst = new Agent({

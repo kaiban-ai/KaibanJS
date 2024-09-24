@@ -35,6 +35,7 @@ export default [
           caughtErrorsIgnorePattern: '^_',
         },
       ],
+      '@typescript-eslint/no-require-imports': 'off',
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
     },

@@ -1,4 +1,4 @@
-import { Agent, Task, Team } from 'kaibanjs';
+const { Agent, Task, Team } = require('kaibanjs');
 import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
 
 // const {calculator} = require('@agentic/stdlib/calculator');

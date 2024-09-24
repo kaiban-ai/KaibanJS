@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-
 require('dotenv').config({ path: './.env.local' });
 
 // Setup mock
@@ -56,5 +54,3 @@ describe('Trip Planning Team Workflows', () => {
     });
   });
 });
-
-/* eslint-enable @typescript-eslint/no-require-imports */

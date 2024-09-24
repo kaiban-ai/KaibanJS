@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-
 require('dotenv').config({ path: './.env.local' });
 
 // Setup mock
@@ -81,5 +79,3 @@ describe('LLM Proxy Workflows', () => {
     });
   });
 });
-
-/* eslint-enable @typescript-eslint/no-require-imports */
