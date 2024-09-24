@@ -69,4 +69,4 @@ const team = new Team({
   env: { MISTRAL_API_KEY: process.env.MISTRAL_API_KEY }, // Environment variables for the team
 });
 
-export default team;
+module.exports = team;

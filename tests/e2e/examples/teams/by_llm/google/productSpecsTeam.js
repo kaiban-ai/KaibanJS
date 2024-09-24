@@ -69,4 +69,4 @@ const team = new Team({
   env: { GOOGLE_API_KEY: process.env.GOOGLE_API_KEY }, // Environment variables for the team
 });
 
-export default team;
+module.exports = team;

@@ -78,4 +78,4 @@ const team = new Team({
   env: { ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY }, // Environment variables for the team
 });
 
-export default team;
+module.exports = team;

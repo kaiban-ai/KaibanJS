@@ -73,4 +73,4 @@ const team = new Team({
   logLevel: 'error',
 });
 
-export default team;
+module.exports = team;

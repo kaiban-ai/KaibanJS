@@ -63,4 +63,4 @@ const team = new Team({
   // Results of the latest UEFA Champions League match.
 });
 
-export default team;
+module.exports = team;
