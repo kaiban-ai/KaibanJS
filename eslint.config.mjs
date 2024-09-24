@@ -17,7 +17,7 @@ export default [
       globals: { ...globals.browser, ...globals.node },
       parserOptions: {
         ecmaVersion: 2020,
-        sourceType: 'module',
+        sourceType: 'commonjs',
         ecmaFeatures: { jsx: true },
       },
       parser: parserTs,

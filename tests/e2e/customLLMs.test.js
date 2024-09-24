@@ -1,8 +1,7 @@
-import dotenv from 'dotenv';
+/* eslint-disable @typescript-eslint/no-require-imports */
 
-dotenv.config({ path: './.env.local' });
+require('dotenv').config({ path: './.env.local' });
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const openAITeam = require('./examples/teams/llms/openai');
 
 describe('Custom LLMs Instances Workflows', () => {
@@ -13,3 +12,5 @@ describe('Custom LLMs Instances Workflows', () => {
     });
   });
 });
+
+/* eslint-enable @typescript-eslint/no-require-imports */

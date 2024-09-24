@@ -1,18 +1,13 @@
-import dotenv from 'dotenv';
+/* eslint-disable @typescript-eslint/no-require-imports */
 
-dotenv.config({ path: './.env.local' });
+require('dotenv').config({ path: './.env.local' });
 
 // Setup mock
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { mock, restoreAll } = require('../utils/moscaFetch')();
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const openAITeam = require('./examples/teams/sport_news/openai').default;
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const openAITeamRecordedRequests = require('./examples/teams/sport_news/openai.requests.json');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const geminiTeam = require('./examples/teams/sport_news/gemini');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const geminiTeamRecordedRequests = require('./examples/teams/sport_news/gemini.requests.json');
 
 // Determine if mocks should be applied based on the environment
@@ -65,3 +60,5 @@ describe('Sport News Team Workflows', () => {
     });
   });
 });
+
+/* eslint-enable @typescript-eslint/no-require-imports */
