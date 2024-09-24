@@ -1,4 +1,4 @@
-import fs from 'fs';
+const fs = require('fs');
 
 function moscaFetch() {
   let originalFetch = globalThis.fetch; // Save the original fetch function
