@@ -3,7 +3,7 @@ require('dotenv').config({ path: './.env.local' });
 // Setup mock
 const { mock, restoreAll } = require('../utils/moscaFetch')();
 
-const openAITeam = require('./examples/teams/sport_news/openai').default;
+const openAITeam = require('./examples/teams/sport_news/openai');
 const openAITeamRecordedRequests = require('./examples/teams/sport_news/openai.requests.json');
 const geminiTeam = require('./examples/teams/sport_news/gemini');
 const geminiTeamRecordedRequests = require('./examples/teams/sport_news/gemini.requests.json');
