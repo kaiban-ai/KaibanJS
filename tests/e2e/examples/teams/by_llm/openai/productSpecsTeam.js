@@ -1,5 +1,7 @@
 const { Agent, Task, Team } = require('kaibanjs');
-import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
+const {
+  TavilySearchResults,
+} = require('@langchain/community/tools/tavily_search');
 
 // Define tools
 const _searchTool = new TavilySearchResults({

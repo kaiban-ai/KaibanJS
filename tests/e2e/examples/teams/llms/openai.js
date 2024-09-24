@@ -1,5 +1,5 @@
 const { Agent, Task, Team } = require('kaibanjs');
-import { ChatOpenAI } from '@langchain/openai';
+const { ChatOpenAI } = require('@langchain/openai');
 
 // Define agents
 const profileAnalyst = new Agent({

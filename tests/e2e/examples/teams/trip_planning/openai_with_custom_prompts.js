@@ -1,6 +1,8 @@
 const { Agent, Task, Team } = require('kaibanjs');
-import { TavilySearchResults } from '@langchain/community/tools/tavily_search';
-import { zodToJsonSchema } from 'zod-to-json-schema';
+const {
+  TavilySearchResults,
+} = require('@langchain/community/tools/tavily_search');
+const { zodToJsonSchema } = require('zod-to-json-schema');
 
 // Define tools
 const searchInternetTool = new TavilySearchResults({
