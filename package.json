@@ -6,6 +6,13 @@
   "types": "./dist/bundle.d.ts",
   "module": "./dist/bundle.mjs",
   "unpkg": "./dist/bundle.js",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "package.json",
+    "xscripts/cli.mjs"
+  ],
   "exports": {
     ".": {
       "import": {
