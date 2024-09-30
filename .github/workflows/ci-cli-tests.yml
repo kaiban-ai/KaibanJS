@@ -1,0 +1,126 @@
+name: CI CLI Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-cli:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: List current directory
+      run: |
+        echo "Listing current directory"
+        ls -la
+
+    - name: Checkout ai-pastelito Repository
+      uses: actions/checkout@v2
+      with:
+        repository: darielnoel/ai-pastelito
+        token: ${{ secrets.GITHUB_TOKEN }}
+        path: ai-pastelito
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+
+    - name: Create .env file
+      run: |
+        cd ai-pastelito
+        echo "VITE_OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > .env
+        echo ".env file created with VITE_OPENAI_API_KEY"
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build and pack KaibanJS
+      run: |
+        npm run build
+        npm pack
+
+    - name: Test KaibanJS CLI init command
+      run: |
+        cd ai-pastelito
+        echo "Running 'npx ../kaibanjs-*.tgz init'"
+        npx ../kaibanjs-*.tgz init | tee init_output.log &
+        PID=$!
+        echo "Waiting for server to start..."
+        timeout=300  # 5 minutes timeout
+        start_time=$(date +%s)
+        while true; do
+          echo "Checking for server start message..."
+          echo "------------------------------------------"
+          echo "Last 20 lines of init_output.log:"
+          tail -n 20 init_output.log
+          echo "------------------------------------------"          
+          if grep -F "localhost" init_output.log; then
+            echo "Server start message found!"
+            break
+          fi
+          current_time=$(date +%s)
+          if (( current_time - start_time > timeout )); then
+            echo "Timeout: Server did not start within 5 minutes"
+            kill $PID
+            exit 1
+          fi
+          echo "Server not ready yet, waiting 5 seconds..."
+          sleep 5
+        done
+        echo "Attempting to curl the server:"
+        if curl -s -o /dev/null -w "%{http_code}" http://localhost:5173 | grep -q "200"; then
+          echo "Server is responding successfully"
+        else
+          echo "Server is not responding properly"
+          echo "Curl verbose output:"
+          curl -v http://localhost:5173
+          kill $PID
+          exit 1
+        fi
+        echo "Killing the server process"
+        kill $PID
+
+    - name: Test KaibanJS CLI run command
+      run: |
+        cd ai-pastelito
+        echo "Running 'npx ../kaibanjs-*.tgz run'"
+        npx ../kaibanjs-*.tgz run | tee run_output.log &
+        PID=$!
+        echo "Waiting for server to start..."
+        timeout=300  # 5 minutes timeout
+        start_time=$(date +%s)
+        while true; do
+          echo "Checking for server start message..."
+          echo "------------------------------------------"
+          echo "Last 20 lines of run_output.log:"
+          tail -n 20 run_output.log
+          echo "------------------------------------------"
+          if grep -F "localhost" run_output.log; then
+            echo "Server start message found!"
+            break
+          fi
+          current_time=$(date +%s)
+          if (( current_time - start_time > timeout )); then
+            echo "Timeout: Server did not start within 5 minutes"
+            kill $PID
+            exit 1
+          fi
+          echo "Server not ready yet, waiting 5 seconds..."
+          sleep 5
+        done
+        echo "Attempting to curl the server:"
+        if curl -s -o /dev/null -w "%{http_code}" http://localhost:5173 | grep -q "200"; then
+          echo "Server is responding successfully"
+        else
+          echo "Server is not responding properly"
+          echo "Curl verbose output:"
+          curl -v http://localhost:5173
+          kill $PID
+          exit 1
+        fi
+        echo "Killing the server process"
+        kill $PID
