@@ -36,9 +36,8 @@ function generateConfig(format) {
       file: `dist/bundle.${ext}`,
       format: format,
       inlineDynamicImports: true,
-      sourcemap: true,
+      sourcemap: isDevelopment, // Only generate sourcemaps in development
       name: format === "umd" ? "KaibanJS" : undefined,
-      sourcemap: true,
     },
     external: external,
     plugins: [
