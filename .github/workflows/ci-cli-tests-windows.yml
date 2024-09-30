@@ -57,49 +57,51 @@ jobs:
         npm pack
 
     - name: Test KaibanJS CLI init command
+      shell: pwsh
       run: |
         cd ai-pastelito
-        echo Running 'npx ../kaibanjs-*.tgz init'
-        start /b cmd /c "npx ../kaibanjs-*.tgz init > init_output.log 2>&1"
-        echo Waiting for server to start...
-        powershell -Command "& {
-          $timeout = 300
-          $start = Get-Date
-          while ($true) {
-            echo 'Checking for server start message...'
-            echo '------------------------------------------'
-            echo 'Last 20 lines of init_output.log:'
-            Get-Content init_output.log -Tail 20
-            echo '------------------------------------------'
-            if (Select-String -Path init_output.log -Pattern 'localhost' -Quiet) {
-              echo 'Server start message found!'
-              break
-            }
-            if ((New-TimeSpan -Start $start -End (Get-Date)).TotalSeconds -gt $timeout) {
-              echo 'Timeout: Server did not start within 5 minutes'
-              taskkill /F /IM node.exe
-              exit 1
-            }
-            echo 'Server not ready yet, waiting 5 seconds...'
-            Start-Sleep -Seconds 5
+        Write-Host "Running 'npx ../kaibanjs-*.tgz init'"
+        Start-Process -FilePath "npx" -ArgumentList "../kaibanjs-*.tgz", "init" -RedirectStandardOutput init_output.log -RedirectStandardError init_error.log -NoNewWindow
+        Write-Host "Waiting for server to start..."
+        $timeout = 300
+        $start = Get-Date
+        while ($true) {
+          Write-Host "Checking for server start message..."
+          Write-Host "------------------------------------------"
+          Write-Host "Last 20 lines of init_output.log:"
+          Get-Content init_output.log -Tail 20
+          Write-Host "------------------------------------------"
+          if (Select-String -Path init_output.log -Pattern 'localhost' -Quiet) {
+            Write-Host "Server start message found!"
+            break
           }
-        }"
-        echo Attempting to curl the server:
-        powershell -Command "& {
-          $response = Invoke-WebRequest -Uri http://localhost:5173 -UseBasicParsing
-          if ($response.StatusCode -eq 200) {
-            echo 'Server is responding successfully'
-          } else {
-            echo 'Server is not responding properly'
-            echo 'Curl verbose output:'
-            Invoke-WebRequest -Uri http://localhost:5173 -Verbose
-            taskkill /F /IM node.exe
+          if ((New-TimeSpan -Start $start -End (Get-Date)).TotalSeconds -gt $timeout) {
+            Write-Host "Timeout: Server did not start within 5 minutes"
+            Get-Process -Name node | Stop-Process -Force
             exit 1
           }
-        }"
-        echo Killing the server process
-        taskkill /F /IM node.exe
-      shell: cmd
+          Write-Host "Server not ready yet, waiting 5 seconds..."
+          Start-Sleep -Seconds 5
+        }
+        Write-Host "Attempting to invoke web request to the server:"
+        try {
+          $response = Invoke-WebRequest -Uri http://localhost:5173 -UseBasicParsing
+          if ($response.StatusCode -eq 200) {
+            Write-Host "Server is responding successfully"
+          } else {
+            Write-Host "Server is not responding properly"
+            Write-Host "Web request verbose output:"
+            Invoke-WebRequest -Uri http://localhost:5173 -Verbose
+            Get-Process -Name node | Stop-Process -Force
+            exit 1
+          }
+        } catch {
+          Write-Host "Error invoking web request: $_"
+          Get-Process -Name node | Stop-Process -Force
+          exit 1
+        }
+        Write-Host "Stopping the server process"
+        Get-Process -Name node | Stop-Process -Force
 
     - name: Test KaibanJS CLI run command
       run: |
