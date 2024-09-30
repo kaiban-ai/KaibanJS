@@ -1,0 +1,147 @@
+name: CI CLI Tests (Windows)
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  test-cli-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout KaibanJS Repository
+      uses: actions/checkout@v2
+
+    - name: List current directory
+      run: dir
+      shell: cmd
+
+    - name: Checkout ai-pastelito Repository
+      uses: actions/checkout@v2
+      with:
+        repository: darielnoel/ai-pastelito
+        token: ${{ secrets.GITHUB_TOKEN }}
+        path: ai-pastelito
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+
+    - name: List directories and files
+      run: |
+        echo "Current directory:"
+        cd
+        echo "Contents of current directory:"
+        dir
+        echo "Contents of ai-pastelito directory:"
+        dir ai-pastelito
+      shell: cmd
+
+    - name: Create .env file
+      run: |
+        cd ai-pastelito
+        echo VITE_OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} > .env
+        echo .env file created with VITE_OPENAI_API_KEY
+      shell: cmd
+
+    - name: Install dependencies
+      run: |
+        npm ci
+        cd ai-pastelito
+        npm ci
+
+    - name: Build and pack KaibanJS
+      run: |
+        npm run build
+        npm pack
+
+    - name: Test KaibanJS CLI init command
+      run: |
+        cd ai-pastelito
+        echo Running 'npx ../kaibanjs-*.tgz init'
+        start /b cmd /c "npx ../kaibanjs-*.tgz init > init_output.log 2>&1"
+        echo Waiting for server to start...
+        powershell -Command "& {
+          $timeout = 300
+          $start = Get-Date
+          while ($true) {
+            echo 'Checking for server start message...'
+            echo '------------------------------------------'
+            echo 'Last 20 lines of init_output.log:'
+            Get-Content init_output.log -Tail 20
+            echo '------------------------------------------'
+            if (Select-String -Path init_output.log -Pattern 'localhost' -Quiet) {
+              echo 'Server start message found!'
+              break
+            }
+            if ((New-TimeSpan -Start $start -End (Get-Date)).TotalSeconds -gt $timeout) {
+              echo 'Timeout: Server did not start within 5 minutes'
+              taskkill /F /IM node.exe
+              exit 1
+            }
+            echo 'Server not ready yet, waiting 5 seconds...'
+            Start-Sleep -Seconds 5
+          }
+        }"
+        echo Attempting to curl the server:
+        powershell -Command "& {
+          $response = Invoke-WebRequest -Uri http://localhost:5173 -UseBasicParsing
+          if ($response.StatusCode -eq 200) {
+            echo 'Server is responding successfully'
+          } else {
+            echo 'Server is not responding properly'
+            echo 'Curl verbose output:'
+            Invoke-WebRequest -Uri http://localhost:5173 -Verbose
+            taskkill /F /IM node.exe
+            exit 1
+          }
+        }"
+        echo Killing the server process
+        taskkill /F /IM node.exe
+      shell: cmd
+
+    - name: Test KaibanJS CLI run command
+      run: |
+        cd ai-pastelito
+        echo Running 'npx ../kaibanjs-*.tgz run'
+        start /b cmd /c "npx ../kaibanjs-*.tgz run > run_output.log 2>&1"
+        echo Waiting for server to start...
+        powershell -Command "& {
+          $timeout = 300
+          $start = Get-Date
+          while ($true) {
+            echo 'Checking for server start message...'
+            echo '------------------------------------------'
+            echo 'Last 20 lines of run_output.log:'
+            Get-Content run_output.log -Tail 20
+            echo '------------------------------------------'
+            if (Select-String -Path run_output.log -Pattern 'localhost' -Quiet) {
+              echo 'Server start message found!'
+              break
+            }
+            if ((New-TimeSpan -Start $start -End (Get-Date)).TotalSeconds -gt $timeout) {
+              echo 'Timeout: Server did not start within 5 minutes'
+              taskkill /F /IM node.exe
+              exit 1
+            }
+            echo 'Server not ready yet, waiting 5 seconds...'
+            Start-Sleep -Seconds 5
+          }
+        }"
+        echo Attempting to curl the server:
+        powershell -Command "& {
+          $response = Invoke-WebRequest -Uri http://localhost:5173 -UseBasicParsing
+          if ($response.StatusCode -eq 200) {
+            echo 'Server is responding successfully'
+          } else {
+            echo 'Server is not responding properly'
+            echo 'Curl verbose output:'
+            Invoke-WebRequest -Uri http://localhost:5173 -Verbose
+            taskkill /F /IM node.exe
+            exit 1
+          }
+        }"
+        echo Killing the server process
+        taskkill /F /IM node.exe
+      shell: cmd
