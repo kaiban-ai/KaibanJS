@@ -12,6 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout KaibanJS Repository
+      uses: actions/checkout@v2
+
     - name: List current directory
       run: |
         echo "Listing current directory"
@@ -29,6 +32,15 @@ jobs:
       with:
         node-version: '18'
 
+    - name: List directories and files
+      run: |
+        echo "Current directory:"
+        pwd
+        echo "Contents of current directory:"
+        ls -la
+        echo "Contents of ai-pastelito directory:"
+        ls -la ai-pastelito
+
     - name: Create .env file
       run: |
         cd ai-pastelito
@@ -36,7 +48,10 @@ jobs:
         echo ".env file created with VITE_OPENAI_API_KEY"
 
     - name: Install dependencies
-      run: npm ci
+      run: |
+        npm ci
+        cd ai-pastelito
+        npm ci
 
     - name: Build and pack KaibanJS
       run: |
