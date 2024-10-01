@@ -1,0 +1,126 @@
+name: CI CLI Tests (Windows)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-cli-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout KaibanJS Repository
+      uses: actions/checkout@v2
+
+    - name: List current directory
+      run: dir
+      shell: cmd
+
+    - name: Checkout ai-pastelito Repository
+      uses: actions/checkout@v2
+      with:
+        repository: darielnoel/ai-pastelito
+        token: ${{ secrets.GITHUB_TOKEN }}
+        path: ai-pastelito
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+
+    - name: List directories and files
+      run: |
+        echo "Current directory:"
+        cd
+        echo "Contents of current directory:"
+        dir
+        echo "Contents of ai-pastelito directory:"
+        dir ai-pastelito
+      shell: cmd
+
+    - name: Create .env file
+      run: |
+        cd ai-pastelito
+        echo VITE_OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} > .env
+        echo .env file created with VITE_OPENAI_API_KEY
+      shell: cmd
+
+    - name: Install dependencies
+      run: |
+        npm ci
+        cd ai-pastelito
+        npm ci
+
+    - name: Build and pack KaibanJS
+      run: |
+        npm run build
+        npm pack
+
+    - name: Test KaibanJS CLI run command
+      shell: pwsh
+      run: |
+        $currentDir = Get-Location
+        Write-Host "Current directory: $currentDir"
+
+        # Get the version from package.json
+        $version = (Get-Content package.json | ConvertFrom-Json).version
+        $packageName = "kaibanjs-$version.tgz"
+
+        # Check if the package file exists
+        if (Test-Path -Path $packageName) {
+          Write-Host "KaibanJS package found: $packageName"
+          
+          # Check if ai-pastelito directory exists inside KaibanJS
+          if (Test-Path -Path "ai-pastelito") {
+            Set-Location ai-pastelito
+            
+            Write-Host "Running 'npx ../$packageName run'"
+            Start-Process -FilePath "npx" -ArgumentList "../$packageName", "run" -NoNewWindow
+            
+            Write-Host "Waiting for server to start..."
+            $timeout = 300
+            $start = Get-Date
+            $url = "http://localhost:5173"
+
+            while ($true) {
+              Write-Host "Attempting to connect to $url"
+              try {
+                $response = Invoke-WebRequest -Uri $url -Method Head -UseBasicParsing
+                if ($response.StatusCode -eq 200) {
+                  Write-Host "Server is up and running!"
+                  break
+                }
+              } catch {
+                Write-Host "Server not ready yet..."
+              }
+
+              if ((New-TimeSpan -Start $start -End (Get-Date)).TotalSeconds -gt $timeout) {
+                Write-Host "Timeout: Server did not start within 5 minutes"
+                Get-Process -Name node | Stop-Process -Force
+                exit 1
+              }
+
+              Start-Sleep -Seconds 5
+            }
+
+            Write-Host "Server is responding. Attempting to fetch content:"
+            try {
+              $response = Invoke-WebRequest -Uri $url -UseBasicParsing
+              Write-Host "Server responded with status code: $($response.StatusCode)"
+              Write-Host "First 1000 characters of the response:"
+              Write-Host $response.Content.Substring(0, [Math]::Min(1000, $response.Content.Length))
+            } catch {
+              Write-Host "Error fetching content from the server: $_"
+              Get-Process -Name node | Stop-Process -Force
+              exit 1
+            }
+
+            Write-Host "Stopping the server process"
+            Get-Process -Name node | Stop-Process -Force
+          } else {
+            Write-Host "Error: ai-pastelito directory not found inside KaibanJS."
+            exit 1
+          }
+        } else {
+          Write-Host "Error: KaibanJS package not found. Make sure you've run 'npm pack' in the KaibanJS directory."
+          exit 1
+        }

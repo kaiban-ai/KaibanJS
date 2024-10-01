@@ -79,8 +79,10 @@ function cloneDevtoolsRepo() {
     const spinner = ora('Cloning kaibanjs-devtools repository...').start();
     try {
       execSync('git clone https://github.com/kaiban-ai/kaibanjs-devtools.git .kaiban', { stdio: 'inherit' });
-      // Remove the .git directory after cloning
-      execSync('rm -rf .kaiban/.git', { stdio: 'inherit' });
+      // Remove the .git directory after cloning (Windows-compatible)
+      const isWindows = process.platform === 'win32';
+      const removeGitCommand = isWindows ? 'rmdir /s /q .kaiban\\.git' : 'rm -rf .kaiban/.git';
+      execSync(removeGitCommand, { stdio: 'inherit' });
       spinner.succeed('Repository cloned and .git directory removed successfully.');
     } catch (error) {
       spinner.fail('Failed to clone repository.');
@@ -121,7 +123,7 @@ function loadEnvVariables() {
 // Function to run Vite server using spawn
 function runViteServer() {
   // const spinner = ora('Starting Vite server...').start();
-  const viteProcess = spawn('npm', ['run', 'dev'], { cwd: '.kaiban', stdio: 'inherit' });
+  const viteProcess = spawn('npm', ['run', 'dev'], { cwd: '.kaiban', stdio: 'inherit', shell: true });
 
   viteProcess.on('close', (code) => {
     if (code === 0) {
@@ -309,7 +311,7 @@ function isKaibanJSInstalled() {
 function installKaibanJS() {
   const spinner = ora('Installing KaibanJS...').start();
   try {
-    execSync('npm install kaibanjs', { stdio: 'inherit' });
+    execSync('npm install kaibanjs --legacy-peer-deps', { stdio: 'inherit' });
     spinner.succeed('KaibanJS installed successfully.');
   } catch (error) {
     spinner.fail('Failed to install KaibanJS.');
