@@ -246,9 +246,35 @@ function deployToVercel() {
   });
 }
 
+// Function to update package.json with Kaiban scripts
+function updatePackageJson() {
+  const packageJsonPath = path.resolve(process.cwd(), 'package.json');
+  
+  if (fs.existsSync(packageJsonPath)) {
+    const spinner = ora('Updating package.json with Kaiban scripts...').start();
+    try {
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+      
+      if (!packageJson.scripts) {
+        packageJson.scripts = {};
+      }
+      
+      packageJson.scripts.kaiban = 'kaiban run';
+      packageJson.scripts['kaiban:deploy'] = 'kaiban deploy';
+      
+      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8');
+      spinner.succeed('package.json updated successfully.');
+    } catch (error) {
+      spinner.fail('Failed to update package.json.');
+      console.error(chalk.red('Error updating package.json:'), error);
+    }
+  } else {
+    console.log(chalk.yellow('package.json not found in the project root. Skipping script addition.'));
+  }
+}
+
 // Function to initialize the Kaiban project
 async function initKaibanProject() {
-
   // Step 1: Load environment variables from .env.* files
   console.log(chalk.bold('Step 1: Loading environment variables...'));
   loadEnvVariables();
@@ -281,6 +307,11 @@ async function initKaibanProject() {
   // Step 6: Copy VITE environment variables to .kaiban/.env
   console.log(chalk.bold('Step 4: Copying VITE environment variables...'));
   copyViteEnvVariables();
+  console.log('\n');
+
+  // New Step 7: Update package.json with Kaiban scripts
+  console.log(chalk.bold('Step 5: Updating package.json...'));
+  updatePackageJson();
   console.log('\n');
 }
 
