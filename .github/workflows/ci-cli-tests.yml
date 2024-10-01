@@ -58,19 +58,14 @@ jobs:
       run: |
         cd ai-pastelito
         echo "Running 'npx ../kaibanjs-*.tgz init'"
-        npx ../kaibanjs-*.tgz init | tee init_output.log &
+        npx ../kaibanjs-*.tgz init > init_output.log 2>&1 &
         PID=$!
         echo "Waiting for server to start..."
         timeout=300  # 5 minutes timeout
         start_time=$(date +%s)
         while true; do
-          echo "Checking for server start message..."
-          echo "------------------------------------------"
-          echo "Last 20 lines of init_output.log:"
-          tail -n 20 init_output.log
-          echo "------------------------------------------"          
-          if grep -F "localhost" init_output.log; then
-            echo "Server start message found!"
+          if curl -s -o /dev/null -w "%{http_code}" http://localhost:5173 | grep -q "200"; then
+            echo "Server is responding successfully"
             break
           fi
           current_time=$(date +%s)
@@ -82,16 +77,6 @@ jobs:
           echo "Server not ready yet, waiting 5 seconds..."
           sleep 5
         done
-        echo "Attempting to curl the server:"
-        if curl -s -o /dev/null -w "%{http_code}" http://localhost:5173 | grep -q "200"; then
-          echo "Server is responding successfully"
-        else
-          echo "Server is not responding properly"
-          echo "Curl verbose output:"
-          curl -v http://localhost:5173
-          kill $PID
-          exit 1
-        fi
         echo "Killing the server process"
         kill $PID
 
@@ -99,19 +84,14 @@ jobs:
       run: |
         cd ai-pastelito
         echo "Running 'npx ../kaibanjs-*.tgz run'"
-        npx ../kaibanjs-*.tgz run | tee run_output.log &
+        npx ../kaibanjs-*.tgz run > run_output.log 2>&1 &
         PID=$!
         echo "Waiting for server to start..."
         timeout=300  # 5 minutes timeout
         start_time=$(date +%s)
         while true; do
-          echo "Checking for server start message..."
-          echo "------------------------------------------"
-          echo "Last 20 lines of run_output.log:"
-          tail -n 20 run_output.log
-          echo "------------------------------------------"
-          if grep -F "localhost" run_output.log; then
-            echo "Server start message found!"
+          if curl -s -o /dev/null -w "%{http_code}" http://localhost:5173 | grep -q "200"; then
+            echo "Server is responding successfully"
             break
           fi
           current_time=$(date +%s)
@@ -123,15 +103,5 @@ jobs:
           echo "Server not ready yet, waiting 5 seconds..."
           sleep 5
         done
-        echo "Attempting to curl the server:"
-        if curl -s -o /dev/null -w "%{http_code}" http://localhost:5173 | grep -q "200"; then
-          echo "Server is responding successfully"
-        else
-          echo "Server is not responding properly"
-          echo "Curl verbose output:"
-          curl -v http://localhost:5173
-          kill $PID
-          exit 1
-        fi
         echo "Killing the server process"
         kill $PID
