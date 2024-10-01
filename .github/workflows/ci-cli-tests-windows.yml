@@ -59,48 +59,85 @@ jobs:
     - name: Test KaibanJS CLI init command
       shell: pwsh
       run: |
-        cd ai-pastelito
+        cd ..
 
-        Write-Host "Running 'npx ../KaibanJS/kaibanjs-*.tgz run'"
-        Start-Process -FilePath "npx" -ArgumentList "../KaibanJS/kaibanjs-*.tgz", "run" -NoNewWindow
+        Write-Host "Contents of the current directory:"
+        Get-ChildItem
 
-        Write-Host "Waiting for server to start..."
-        $timeout = 300
-        $start = Get-Date
-        $url = "http://localhost:5173"
+        # Check if KaibanJS directory exists
+        if (Test-Path -Path "KaibanJS") {
+            cd KaibanJS
+            
+            # List contents of the KaibanJS directory
+            Write-Host "Contents of the KaibanJS directory:"
+            Get-ChildItem
+            
+            # Check if package.json exists
+            if (Test-Path -Path "package.json") {
+                # Get the version from package.json
+                $version = (Get-Content package.json | ConvertFrom-Json).version
+                $packageName = "kaibanjs-$version.tgz"
+                
+                # Check if the package file exists
+                if (Test-Path -Path $packageName) {
+                    Write-Host "KaibanJS package found: $packageName"
+                    
+                    # Navigate back to ai-pastelito
+                    cd ..\ai-pastelito
+                    
+                    Write-Host "Running 'npx ../KaibanJS/$packageName run'"
+                    Start-Process -FilePath "npx" -ArgumentList "../KaibanJS/$packageName", "run" -NoNewWindow
+                    
+                    # Rest of the script remains the same
+                    Write-Host "Waiting for server to start..."
+                    $timeout = 300
+                    $start = Get-Date
+                    $url = "http://localhost:5173"
 
-        while ($true) {
-          Write-Host "Attempting to connect to $url"
-          try {
-            $response = Invoke-WebRequest -Uri $url -Method Head -UseBasicParsing
-            if ($response.StatusCode -eq 200) {
-              Write-Host "Server is up and running!"
-              break
+                    while ($true) {
+                        Write-Host "Attempting to connect to $url"
+                        try {
+                            $response = Invoke-WebRequest -Uri $url -Method Head -UseBasicParsing
+                            if ($response.StatusCode -eq 200) {
+                                Write-Host "Server is up and running!"
+                                break
+                            }
+                        } catch {
+                            Write-Host "Server not ready yet..."
+                        }
+
+                        if ((New-TimeSpan -Start $start -End (Get-Date)).TotalSeconds -gt $timeout) {
+                            Write-Host "Timeout: Server did not start within 5 minutes"
+                            Get-Process -Name node | Stop-Process -Force
+                            exit 1
+                        }
+
+                        Start-Sleep -Seconds 5
+                    }
+
+                    Write-Host "Server is responding. Attempting to fetch content:"
+                    try {
+                        $response = Invoke-WebRequest -Uri $url -UseBasicParsing
+                        Write-Host "Server responded with status code: $($response.StatusCode)"
+                        Write-Host "First 1000 characters of the response:"
+                        Write-Host $response.Content.Substring(0, [Math]::Min(1000, $response.Content.Length))
+                    } catch {
+                        Write-Host "Error fetching content from the server: $_"
+                        Get-Process -Name node | Stop-Process -Force
+                        exit 1
+                    }
+
+                    Write-Host "Stopping the server process"
+                    Get-Process -Name node | Stop-Process -Force
+                } else {
+                    Write-Host "Error: KaibanJS package not found. Make sure you've run 'npm pack' in the KaibanJS directory."
+                    exit 1
+                }
+            } else {
+                Write-Host "Error: package.json not found in KaibanJS directory."
+                exit 1
             }
-          } catch {
-            Write-Host "Server not ready yet..."
-          }
-
-          if ((New-TimeSpan -Start $start -End (Get-Date)).TotalSeconds -gt $timeout) {
-            Write-Host "Timeout: Server did not start within 5 minutes"
-            Get-Process -Name node | Stop-Process -Force
+        } else {
+            Write-Host "Error: KaibanJS directory not found."
             exit 1
-          }
-
-          Start-Sleep -Seconds 5
         }
-
-        Write-Host "Server is responding. Attempting to fetch content:"
-        try {
-          $response = Invoke-WebRequest -Uri $url -UseBasicParsing
-          Write-Host "Server responded with status code: $($response.StatusCode)"
-          Write-Host "First 1000 characters of the response:"
-          Write-Host $response.Content.Substring(0, [Math]::Min(1000, $response.Content.Length))
-        } catch {
-          Write-Host "Error fetching content from the server: $_"
-          Get-Process -Name node | Stop-Process -Force
-          exit 1
-        }
-
-        Write-Host "Stopping the server process"
-        Get-Process -Name node | Stop-Process -Force
