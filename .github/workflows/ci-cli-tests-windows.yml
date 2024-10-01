@@ -59,31 +59,29 @@ jobs:
     - name: Test KaibanJS CLI init command
       shell: pwsh
       run: |
-        cd ..
+        $currentDir = Get-Location
+        Write-Host "Current directory: $currentDir"
 
+        # List contents of the current directory
         Write-Host "Contents of the current directory:"
         Get-ChildItem
 
-        # Check if KaibanJS directory exists
-        if (Test-Path -Path "KaibanJS") {
-            cd KaibanJS
+        # Check if package.json exists
+        if (Test-Path -Path "package.json") {
+            # Get the version from package.json
+            $version = (Get-Content package.json | ConvertFrom-Json).version
+            $packageName = "kaibanjs-$version.tgz"
             
-            # List contents of the KaibanJS directory
-            Write-Host "Contents of the KaibanJS directory:"
-            Get-ChildItem
-            
-            # Check if package.json exists
-            if (Test-Path -Path "package.json") {
-                # Get the version from package.json
-                $version = (Get-Content package.json | ConvertFrom-Json).version
-                $packageName = "kaibanjs-$version.tgz"
+            # Check if the package file exists
+            if (Test-Path -Path $packageName) {
+                Write-Host "KaibanJS package found: $packageName"
                 
-                # Check if the package file exists
-                if (Test-Path -Path $packageName) {
-                    Write-Host "KaibanJS package found: $packageName"
-                    
-                    # Navigate back to ai-pastelito
-                    cd ..\ai-pastelito
+                # Navigate to the parent directory
+                cd ..
+                
+                # Check if ai-pastelito directory exists
+                if (Test-Path -Path "ai-pastelito") {
+                    cd ai-pastelito
                     
                     Write-Host "Running 'npx ../KaibanJS/$packageName run'"
                     Start-Process -FilePath "npx" -ArgumentList "../KaibanJS/$packageName", "run" -NoNewWindow
@@ -130,14 +128,14 @@ jobs:
                     Write-Host "Stopping the server process"
                     Get-Process -Name node | Stop-Process -Force
                 } else {
-                    Write-Host "Error: KaibanJS package not found. Make sure you've run 'npm pack' in the KaibanJS directory."
+                    Write-Host "Error: ai-pastelito directory not found."
                     exit 1
                 }
             } else {
-                Write-Host "Error: package.json not found in KaibanJS directory."
+                Write-Host "Error: KaibanJS package not found. Make sure you've run 'npm pack' in the KaibanJS directory."
                 exit 1
             }
         } else {
-            Write-Host "Error: KaibanJS directory not found."
+            Write-Host "Error: package.json not found in current directory."
             exit 1
         }
