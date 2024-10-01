@@ -250,26 +250,45 @@ function deployToVercel() {
 function updatePackageJson() {
   const packageJsonPath = path.resolve(process.cwd(), 'package.json');
   
-  if (fs.existsSync(packageJsonPath)) {
-    const spinner = ora('Updating package.json with Kaiban scripts...').start();
-    try {
-      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-      
-      if (!packageJson.scripts) {
-        packageJson.scripts = {};
-      }
-      
-      packageJson.scripts.kaiban = 'kaiban run';
-      packageJson.scripts['kaiban:deploy'] = 'kaiban deploy';
-      
-      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8');
-      spinner.succeed('package.json updated successfully.');
-    } catch (error) {
-      spinner.fail('Failed to update package.json.');
-      console.error(chalk.red('Error updating package.json:'), error);
-    }
+  let packageJson;
+  let spinner = ora('Updating package.json with Kaiban scripts...').start();
+
+  if (!fs.existsSync(packageJsonPath)) {
+    spinner.text = 'Creating a basic package.json...';
+    packageJson = {
+      name: path.basename(process.cwd()),
+      version: '1.0.0',
+      description: 'A Kaiban project',
+      scripts: {},
+      keywords: ['kaiban'],
+      author: '',
+      license: 'ISC'
+    };
+    spinner.succeed('Created a basic package.json');
+    spinner = ora('Adding Kaiban scripts...').start();
   } else {
-    console.log(chalk.yellow('package.json not found in the project root. Skipping script addition.'));
+    try {
+      packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    } catch (error) {
+      spinner.fail('Failed to read package.json');
+      console.error(chalk.red('Error reading package.json:'), error);
+      return;
+    }
+  }
+
+  if (!packageJson.scripts) {
+    packageJson.scripts = {};
+  }
+  
+  packageJson.scripts.kaiban = 'kaiban run';
+  packageJson.scripts['kaiban:deploy'] = 'kaiban deploy';
+  
+  try {
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8');
+    spinner.succeed('package.json updated successfully.');
+  } catch (error) {
+    spinner.fail('Failed to update package.json.');
+    console.error(chalk.red('Error updating package.json:'), error);
   }
 }
 
@@ -351,6 +370,22 @@ function installKaibanJS() {
   }
 }
 
+// Add this new function
+function ensurePackageJson() {
+  const packageJsonPath = path.resolve(process.cwd(), 'package.json');
+  if (!fs.existsSync(packageJsonPath)) {
+    const spinner = ora('Creating package.json...').start();
+    try {
+      execSync('npm init -y', { stdio: 'ignore' });
+      spinner.succeed('Created package.json');
+    } catch (error) {
+      spinner.fail('Failed to create package.json');
+      console.error(chalk.red('Error creating package.json:'), error);
+      process.exit(1);
+    }
+  }
+}
+
 // Main CLI flow
 async function main() {
   // Display CLI banner for all commands
@@ -359,6 +394,9 @@ async function main() {
   const command = process.argv[2];
 
   if (command === 'init' || command === 'run') {
+    // Ensure package.json exists
+    ensurePackageJson();
+
     if (!isKaibanJSInstalled()) {
       console.log(chalk.yellow('KaibanJS is not installed in this project. Installing now...'));
       installKaibanJS();
