@@ -2,7 +2,6 @@ name: CI CLI Tests (Windows)
 
 on:
   workflow_dispatch:
-  pull_request:
 
 jobs:
   test-cli-windows:
