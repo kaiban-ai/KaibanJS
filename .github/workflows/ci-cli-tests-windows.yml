@@ -56,86 +56,72 @@ jobs:
         npm run build
         npm pack
 
-    - name: Test KaibanJS CLI init command
+    - name: Test KaibanJS CLI run command
       shell: pwsh
       run: |
         $currentDir = Get-Location
         Write-Host "Current directory: $currentDir"
 
-        # List contents of the current directory
-        Write-Host "Contents of the current directory:"
-        Get-ChildItem
+        # Get the version from package.json
+        $version = (Get-Content package.json | ConvertFrom-Json).version
+        $packageName = "kaibanjs-$version.tgz"
 
-        # Check if package.json exists
-        if (Test-Path -Path "package.json") {
-            # Get the version from package.json
-            $version = (Get-Content package.json | ConvertFrom-Json).version
-            $packageName = "kaibanjs-$version.tgz"
+        # Check if the package file exists
+        if (Test-Path -Path $packageName) {
+          Write-Host "KaibanJS package found: $packageName"
+          
+          # Check if ai-pastelito directory exists inside KaibanJS
+          if (Test-Path -Path "ai-pastelito") {
+            Set-Location ai-pastelito
             
-            # Check if the package file exists
-            if (Test-Path -Path $packageName) {
-                Write-Host "KaibanJS package found: $packageName"
-                
-                # Navigate to the parent directory
-                cd ..
-                
-                # Check if ai-pastelito directory exists
-                if (Test-Path -Path "ai-pastelito") {
-                    cd ai-pastelito
-                    
-                    Write-Host "Running 'npx ../KaibanJS/$packageName run'"
-                    Start-Process -FilePath "npx" -ArgumentList "../KaibanJS/$packageName", "run" -NoNewWindow
-                    
-                    # Rest of the script remains the same
-                    Write-Host "Waiting for server to start..."
-                    $timeout = 300
-                    $start = Get-Date
-                    $url = "http://localhost:5173"
+            Write-Host "Running 'npx ../$packageName run'"
+            Start-Process -FilePath "npx" -ArgumentList "../$packageName", "run" -NoNewWindow
+            
+            Write-Host "Waiting for server to start..."
+            $timeout = 300
+            $start = Get-Date
+            $url = "http://localhost:5173"
 
-                    while ($true) {
-                        Write-Host "Attempting to connect to $url"
-                        try {
-                            $response = Invoke-WebRequest -Uri $url -Method Head -UseBasicParsing
-                            if ($response.StatusCode -eq 200) {
-                                Write-Host "Server is up and running!"
-                                break
-                            }
-                        } catch {
-                            Write-Host "Server not ready yet..."
-                        }
-
-                        if ((New-TimeSpan -Start $start -End (Get-Date)).TotalSeconds -gt $timeout) {
-                            Write-Host "Timeout: Server did not start within 5 minutes"
-                            Get-Process -Name node | Stop-Process -Force
-                            exit 1
-                        }
-
-                        Start-Sleep -Seconds 5
-                    }
-
-                    Write-Host "Server is responding. Attempting to fetch content:"
-                    try {
-                        $response = Invoke-WebRequest -Uri $url -UseBasicParsing
-                        Write-Host "Server responded with status code: $($response.StatusCode)"
-                        Write-Host "First 1000 characters of the response:"
-                        Write-Host $response.Content.Substring(0, [Math]::Min(1000, $response.Content.Length))
-                    } catch {
-                        Write-Host "Error fetching content from the server: $_"
-                        Get-Process -Name node | Stop-Process -Force
-                        exit 1
-                    }
-
-                    Write-Host "Stopping the server process"
-                    Get-Process -Name node | Stop-Process -Force
-                } else {
-                    Write-Host "Error: ai-pastelito directory not found."
-                    exit 1
+            while ($true) {
+              Write-Host "Attempting to connect to $url"
+              try {
+                $response = Invoke-WebRequest -Uri $url -Method Head -UseBasicParsing
+                if ($response.StatusCode -eq 200) {
+                  Write-Host "Server is up and running!"
+                  break
                 }
-            } else {
-                Write-Host "Error: KaibanJS package not found. Make sure you've run 'npm pack' in the KaibanJS directory."
+              } catch {
+                Write-Host "Server not ready yet..."
+              }
+
+              if ((New-TimeSpan -Start $start -End (Get-Date)).TotalSeconds -gt $timeout) {
+                Write-Host "Timeout: Server did not start within 5 minutes"
+                Get-Process -Name node | Stop-Process -Force
                 exit 1
+              }
+
+              Start-Sleep -Seconds 5
             }
-        } else {
-            Write-Host "Error: package.json not found in current directory."
+
+            Write-Host "Server is responding. Attempting to fetch content:"
+            try {
+              $response = Invoke-WebRequest -Uri $url -UseBasicParsing
+              Write-Host "Server responded with status code: $($response.StatusCode)"
+              Write-Host "First 1000 characters of the response:"
+              Write-Host $response.Content.Substring(0, [Math]::Min(1000, $response.Content.Length))
+            } catch {
+              Write-Host "Error fetching content from the server: $_"
+              Get-Process -Name node | Stop-Process -Force
+              exit 1
+            }
+
+            Write-Host "Stopping the server process"
+            Get-Process -Name node | Stop-Process -Force
+          } else {
+            Write-Host "Error: ai-pastelito directory not found inside KaibanJS."
             exit 1
+          }
+        } else {
+          Write-Host "Error: KaibanJS package not found. Make sure you've run 'npm pack' in the KaibanJS directory."
+          exit 1
         }
