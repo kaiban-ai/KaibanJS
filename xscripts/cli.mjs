@@ -123,7 +123,7 @@ function loadEnvVariables() {
 // Function to run Vite server using spawn
 function runViteServer() {
   // const spinner = ora('Starting Vite server...').start();
-  const viteProcess = spawn('npm', ['run', 'dev'], { cwd: '.kaiban', stdio: 'inherit' });
+  const viteProcess = spawn('npm', ['run', 'dev'], { cwd: '.kaiban', stdio: 'inherit', shell: true });
 
   viteProcess.on('close', (code) => {
     if (code === 0) {
