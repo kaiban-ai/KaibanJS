@@ -76,16 +76,13 @@ function cloneDevtoolsRepo() {
   const kaibanPath = path.resolve('.kaiban');
   
   if (!fs.existsSync(kaibanPath)) {
-    const spinner = ora('Cloning kaibanjs-devtools repository...').start();
+    const spinner = ora('Downloading kaibanjs-devtools...').start();
     try {
-      execSync('git clone https://github.com/kaiban-ai/kaibanjs-devtools.git .kaiban', { stdio: 'inherit' });
-      // Remove the .git directory after cloning (Windows-compatible)
-      const isWindows = process.platform === 'win32';
-      const removeGitCommand = isWindows ? 'rmdir /s /q .kaiban\\.git' : 'rm -rf .kaiban/.git';
-      execSync(removeGitCommand, { stdio: 'inherit' });
-      spinner.succeed('Repository cloned and .git directory removed successfully.');
+      execSync('npx degit kaiban-ai/kaibanjs-devtools#main .kaiban', { stdio: 'inherit' });
+      spinner.succeed('kaibanjs-devtools downloaded successfully.');
     } catch (error) {
-      spinner.fail('Failed to clone repository.');
+      spinner.fail('Failed to download kaibanjs-devtools.');
+      console.error(chalk.red('Error:'), error);
       throw error;
     }
 
@@ -105,7 +102,7 @@ function cloneDevtoolsRepo() {
       console.log(chalk.green('\n.gitignore file created and .kaiban has been added.'));
     }
   } else {
-    console.log(chalk.magenta('.kaiban folder already exists, skipping clone.'));
+    console.log(chalk.magenta('.kaiban folder already exists, skipping download.'));
   }
 }
 
