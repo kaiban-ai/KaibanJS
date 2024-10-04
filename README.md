@@ -81,7 +81,7 @@ npm run kaiban
 
 ## Flexible Integration
 
-> KaibanJS isn't limited to the Kaiban Board. You can integrate it directly into your projects, create custom UIs, or run agents without a UI. Explore our tutorials for [React](http://localhost:3000/get-started/Tutorial:%20React%20+%20AI%20Agents) and [Node.js](http://localhost:3000/get-started/Tutorial:%20Node.js%20+%20AI%20Agents) integration to unleash the full potential of KaibanJS in various development contexts.
+> KaibanJS isn't limited to the Kaiban Board. You can integrate it directly into your projects, create custom UIs, or run agents without a UI. Explore our tutorials for [React](https://docs.kaibanjs.com/get-started/Tutorial:%20React%20+%20AI%20Agents) and [Node.js](https://docs.kaibanjs.com/get-started/Tutorial:%20Node.js%20+%20AI%20Agents) integration to unleash the full potential of KaibanJS in various development contexts.
 
 ## Manual Installation and Usage
 
