@@ -54,7 +54,7 @@ If you've used tools like Trello, Jira, or ClickUp, you'll be familiar with how 
 
 Get started with KaibanJS in under a minute:
 
-[![Quick Start Video](https://res.cloudinary.com/dnno8pxyy/image/upload/v1728039764/KaibanJS_QuickStart_Guide_2_asuyvu.jpg)](https://www.youtube.com/embed/NFpqFEl-URY?si=vi7jyHVD1jL1eFaB "Quick Start Video")
+[![Quick Start Video](https://res.cloudinary.com/dnno8pxyy/image/upload/v1728039764/KaibanJS_QuickStart_Guide_2_asuyvu.jpg)](https://youtu.be/NFpqFEl-URY?si=_JCkJuprRxqD0Uo "Quick Start Video")
 
 ## Setup
 
