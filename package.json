@@ -1,7 +1,7 @@
 {
   "name": "kaibanjs",
-  "version": "0.8.1",
-  "description": "AI Multi-Agent library for Javascript Developers.",
+  "version": "0.8.2",
+  "description": "AI Multi-Agent library for Javascript Developers with Groq integration.",
   "main": "./dist/bundle.cjs",
   "types": "./dist/bundle.d.ts",
   "module": "./dist/bundle.mjs",
@@ -50,13 +50,13 @@
   "packageManager": "npm@9.8.1",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kaiban-ai/KaibanJS"
+    "url": "git+https://github.com/Walchshofer/KaibanJS.git"
   },
   "author": "AI Champions",
   "license": "MIT",
-  "homepage": "https://kaibanjs.com",
+  "homepage": "https://github.com/Walchshofer/KaibanJS#readme",
   "bugs": {
-    "url": "https://github.com/kaiban-ai/KaibanJS/issues"
+    "url": "https://github.com/Walchshofer/KaibanJS/issues"
   },
   "keywords": [
     "ai agents",
@@ -79,7 +79,8 @@
     "prompt engineering",
     "react",
     "nodejs",
-    "nextjs"
+    "nextjs",
+    "groq"
   ],
   "dependencies": {
     "@langchain/anthropic": "0.2.3",
@@ -88,6 +89,7 @@
     "@langchain/google-genai": "0.0.21",
     "@langchain/mistralai": "0.0.25",
     "@langchain/openai": "0.2.2",
+    "@langchain/groq": "0.0.3",
     "ansis": "^3.3.2",
     "chalk": "^5.3.0",
     "dotenv": "^16.4.5",

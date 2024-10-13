@@ -19,65 +19,59 @@ import { BaseAgent } from './baseAgent';
 import { getApiKey } from '../utils/agents';
 import { getParsedJSON } from '../utils/parser';
 import { AGENT_STATUS_enum } from '../utils/enums';
-import { interpolateTaskDescription, } from '../utils/tasks';
+import { interpolateTaskDescription } from '../utils/tasks';
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatMistralAI } from "@langchain/mistralai";
+import { ChatGroq } from "@langchain/groq"; // Add this import
 import { SystemMessage } from "@langchain/core/messages";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { RunnableWithMessageHistory } from "@langchain/core/runnables";
-import { ChatMessageHistory } from "langchain/stores/message/in_memory";
-import {
-    ChatPromptTemplate,
-  } from "@langchain/core/prompts";
+import CustomMessageHistory from '../utils/CustomMessageHistory';
+import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { logger } from "../utils/logger";
 import { LLMInvocationError } from '../utils/errors';
+
 class ReactChampionAgent extends BaseAgent {
     #executableAgent;
     constructor(config) {
         super(config);
+        this.messageHistory = new CustomMessageHistory();
     }
 
     get executableAgent() {
-        // We don't expose the executable agent directly or stored in the Store
         return {};
     }
 
     initialize(store, env) {
-        // Set up API key and check configuration
         this.store = store;
         this.env = env;
 
-        // We oppened the door to allow the use of an already instantiated LLM
-        if(!this.llmInstance) {
+        if (!this.llmInstance) {
             const apiKey = getApiKey(this.llmConfig, this.env);
             if (!apiKey && !this.llmConfig.apiBaseUrl) {
                 throw new Error('API key is missing. Please provide it through the Agent llmConfig or through the team env variable.');
             }
             this.llmConfig.apiKey = apiKey;
 
-            // Define a mapping of providers to their corresponding chat classes
             const providers = {
                 anthropic: ChatAnthropic,
                 google: ChatGoogleGenerativeAI,
                 mistral: ChatMistralAI,
                 openai: ChatOpenAI,
+                groq: ChatGroq, // Add Groq to the providers
             };
 
-            // Choose the chat class based on the provider
             const ChatClass = providers[this.llmConfig.provider] || ChatOpenAI;
             this.llmInstance = new ChatClass(this.llmConfig);
         } else {
-            // this.llmInstance = this.llmConfig;
             const extractedLlmConfig = {
                 ...this.llmInstance.lc_kwargs,
                 provider: this.llmInstance.lc_namespace[this.llmInstance.lc_namespace.length - 1]
             };
             this.llmConfig = extractedLlmConfig;
         }
-
-        this.interactionsHistory = new ChatMessageHistory();
     }
 
     async workOnTask(task, inputs, context) {
@@ -93,7 +87,6 @@ class ReactChampionAgent extends BaseAgent {
             task,
             feedback: feedbackString
         });
-       // `Here is some feedback for you to address: ${feedbackString}`;
         return await this.agenticLoop(this, task, this.#executableAgent, feedbackMessage);
     }
 
@@ -112,7 +105,7 @@ class ReactChampionAgent extends BaseAgent {
         const chainAgent = promptAgent.pipe(this.llmInstance);
         const chainAgentWithHistory = new RunnableWithMessageHistory({
             runnable: chainAgent,
-            getMessageHistory: () => this.interactionsHistory,
+            getMessageHistory: () => this.messageHistory,
             inputMessagesKey: "feedbackMessage",
             historyMessagesKey: "chat_history",
         });
@@ -124,18 +117,16 @@ class ReactChampionAgent extends BaseAgent {
     }   
 
     async agenticLoop(agent, task, ExecutableAgent, initialMessage) {  
-        // kickstart the agentic loop
         let feedbackMessage = initialMessage;
         let parsedResultWithFinalAnswer = null;
         let iterations = 0;
-        const maxAgentIterations = agent.maxIterations;  // Define maximum iterations here
+        const maxAgentIterations = agent.maxIterations;
         let loopCriticalError = null;
 
         while (!parsedResultWithFinalAnswer && iterations < maxAgentIterations && !loopCriticalError) {
             try {
                 agent.handleIterationStart({agent: agent, task, iterations, maxAgentIterations});
 
-                // Check if we need to force the final answer
                 if (agent.forceFinalAnswer && iterations === maxAgentIterations - 2) {
                     feedbackMessage = this.promptTemplates.FORCE_FINAL_ANSWER_FEEDBACK({
                         agent,
@@ -143,13 +134,9 @@ class ReactChampionAgent extends BaseAgent {
                         iterations,
                         maxAgentIterations
                     });
-                    
-                    // "We don't have more time to keep looking for the answer. Please use all the information you have gathered until now and give the finalAnswer right away.";
                 }                
 
-                // pure function that returns the result of the agent thinking
                 const thinkingResult = await this.executeThinking(agent, task, ExecutableAgent, feedbackMessage);
-                // sometimes the LLM does not returns a valid JSON object so we try to sanitize the output here
                 const parsedLLMOutput = thinkingResult.parsedLLMOutput;
 
                 const actionType = this.determineActionType(parsedLLMOutput);
@@ -191,26 +178,26 @@ class ReactChampionAgent extends BaseAgent {
                         logger.warn(`Unhandled agent status: ${actionType}`);
                         break;
                 }
+                
+                this.messageHistory.addMessage({
+                    role: actionType === AGENT_STATUS_enum.FINAL_ANSWER ? 'assistant' : 'user',
+                    content: feedbackMessage
+                });
+
             } catch (error) {
-                // Check if the error is of type 'LLMInvocationError'
                 if (error.name === 'LLMInvocationError') {
-                    // Handle specific LLMInvocationError
                     agent.handleThinkingError({ agent: agent, task, error });
                 } else {
-                    // Handle other types of errors, perhaps more generally or differently
-                    // TODO: Determine actions based on the type or severity of other errors
                     this.handleAgenticLoopError({agent: agent, task, error, iterations, maxAgentIterations});
                 }
             
-                // Assign the error to loopCriticalError and break the loop, indicating a critical error has occurred
                 loopCriticalError = error;
-                break; // Break the loop on critical error
+                break;
             }
             agent.handleIterationEnd({agent: agent, task, iterations, maxAgentIterations});
             iterations++;      
         }
     
-        // Return based on the loop outcomes
         if (loopCriticalError) {
             return {
                 error: "Execution stopped due to a critical error: " + loopCriticalError.message,
@@ -342,7 +329,13 @@ class ReactChampionAgent extends BaseAgent {
     
                         handleLLMEnd: async (output) => {
                             agent.handleThinkingEnd({ agent, task, output })
-                                .then(thinkingResult => resolve(thinkingResult))
+                                .then(thinkingResult => {
+                                    this.messageHistory.addMessage({
+                                        role: 'assistant',
+                                        content: thinkingResult.llmOutput
+                                    });
+                                    resolve(thinkingResult);
+                                })
                                 .catch(error => {
                                     reject(error);
                                 });

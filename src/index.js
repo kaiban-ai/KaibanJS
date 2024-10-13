@@ -20,11 +20,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { createTeamStore } from './stores';
 import { ReactChampionAgent } from './agents';
 import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from './utils/enums';
+import CustomMessageHistory from './utils/CustomMessageHistory';
+
 
 class Agent {
     constructor({ type, ...config }) {
         this.agentInstance = this.createAgent(type, config);
         this.type = type || 'ReactChampionAgent';
+        this.messageHistory = new CustomMessageHistory();
     }
  
     createAgent(type, config) {
@@ -37,7 +40,21 @@ class Agent {
     }
 
     workOnTask(task, inputs, context) {
-        return this.agentInstance.workOnTask(task, inputs, context);
+        const message = {
+            role: 'user',
+            content: `Task: ${task.description}\nInputs: ${JSON.stringify(inputs)}\nContext: ${context}`
+        };
+        this.messageHistory.addMessage(message);
+        
+        const result = this.agentInstance.workOnTask(task, inputs, context);
+        
+        const responseMessage = {
+            role: 'assistant',
+            content: result
+        };
+        this.messageHistory.addMessage(responseMessage);
+        
+        return result;
     }
 
     workOnFeedback(task, inputs, context) {
@@ -135,6 +152,7 @@ class Team {
      */    
     constructor({ name, agents, tasks, logLevel, inputs = {}, env = null }) {
         this.store = createTeamStore({ name, agents:[], tasks:[], inputs, env, logLevel});
+        this.messageHistory = new CustomMessageHistory();
              
         // Add agents and tasks to the store, they will be set with the store automatically
         this.store.getState().addAgents(agents);
@@ -149,7 +167,7 @@ class Team {
      * @returns {void}
      */    
     async start(inputs = null) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             const unsubscribe = this.store.subscribe(
                 state => state.teamWorkflowStatus,
                 (status) => {
@@ -175,14 +193,17 @@ class Team {
                                 stats: this.getWorkflowStats()
                             });
                             break;
-                        default:
-                            // For other statuses (like RUNNING), we don't resolve yet
-                            break;
                     }
                 }
             );
 
             try {
+                // Add a message to the team's message history
+                this.messageHistory.addMessage({
+                    role: 'system',
+                    content: `Starting workflow with inputs: ${JSON.stringify(inputs)}`
+                });
+                
                 // Trigger the workflow
                 this.store.getState().startWorkflow(inputs);
             } catch (error) {
@@ -356,13 +377,11 @@ class Team {
         const state = this.store.getState();
         const logs = state.workflowLogs;
 
-        // Find the log entry for when the workflow was marked as finished or blocked
         const completionLog = logs.find(log =>
             log.logType === "WorkflowStatusUpdate" && 
             (log.workflowStatus === "FINISHED" || log.workflowStatus === "BLOCKED")
         );
 
-        // Check if a completion log exists and return the specified statistics
         if (completionLog) {
             const {
                 startTime,
@@ -385,7 +404,8 @@ class Team {
                 costDetails,
                 teamName,
                 taskCount,
-                agentCount
+                agentCount,
+                messageCount: this.messageHistory.length // Add this line to include message count
             };
         } else {
             return null;
