@@ -1,4 +1,5 @@
 /**
+ * Path: C:\Users\pwalc\Documents\GroqEmailAssistant\node_modules\kaibanjs\src\stores\index.js
  * Store Modules Centralization.
  *
  * This file acts as the central export point for all state management store modules within the KaibanJS library. It consolidates 

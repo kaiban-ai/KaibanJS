@@ -1,4 +1,5 @@
 /**
+ * Path: C:\Users\pwalc\Documents\GroqEmailAssistant\node_modules\kaibanjs\src\index.js
  * Agent Exports Centralization.
  *
  * This file serves as the central export point for all agent-related classes within the KaibanJS library. By consolidating 
@@ -10,5 +11,5 @@
  * aids in maintaining consistency and ease of updates to the agent architecture.
  */
 
-export * from './baseAgent';
+export * from './baseAgent.js';
 export * from './reactChampionAgent';

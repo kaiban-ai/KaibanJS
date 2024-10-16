@@ -1,14 +1,21 @@
 {
   "compilerOptions": {
-    "noEmit": true,
-    "strict": true,
-    "checkJs": false,
+    "target": "ES2018",
     "module": "ESNext",
-    "moduleResolution": "Bundler",
-    // "allowImportingTsExtensions": true,
+    "moduleResolution": "Node",
+    "lib": ["ES2018", "DOM"],
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "allowJs": true,
+    "checkJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "types/**/*.d.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*", "types/**/*.d.ts"],
+  "exclude": ["node_modules", "dist"]
 }

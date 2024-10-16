@@ -90,6 +90,19 @@ class ReactChampionAgent extends BaseAgent {
         return await this.agenticLoop(this, task, this.#executableAgent, feedbackMessage);
     }
 
+    handleTaskCompleted({ agent, task, parsedResultWithFinalAnswer, iterations, maxAgentIterations }) {
+        if (!task.feedbackHistory) {
+            task.feedbackHistory = [];
+        }
+        agent.store.getState().handleAgentTaskCompleted({
+            agent, 
+            task, 
+            result: parsedResultWithFinalAnswer.finalAnswer, 
+            iterations, 
+            maxAgentIterations
+        });    
+    }
+
     prepareAgentForTask(task, inputs, context) {
         const interpolatedDescription = interpolateTaskDescription(task.description, inputs);
         const systemMessage = this.buildSystemMessage(this, task, interpolatedDescription);
@@ -114,7 +127,7 @@ class ReactChampionAgent extends BaseAgent {
             executableAgent: chainAgentWithHistory,
             initialFeedbackMessage: feedbackMessage
         };
-    }   
+    }  
 
     async agenticLoop(agent, task, ExecutableAgent, initialMessage) {  
         let feedbackMessage = initialMessage;

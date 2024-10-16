@@ -1,4 +1,5 @@
 /**
+ * Path: C:\Users\pwalc\Documents\GroqEmailAssistant\node_modules\kaibanjs\src\index.js
  * API module for the Library.
  *    
  * This module defines the primary classes used throughout the library, encapsulating
