@@ -1,4 +1,5 @@
 /**
+ * C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\agents.ts
  * Agent Utility Functions.
  *
  * This file provides utility functions specifically designed to support agent operations within the KaibanJS library. 
@@ -9,20 +10,31 @@
  * Use these utilities to manage agent configurations and preprocess data formats essential for the smooth operation of agents.
  */
 
-function getApiKey(llmConfig, env) {
+/**
+ * Retrieves the API key for a given LLM configuration and environment.
+ * @param {Object} llmConfig - The LLM configuration object.
+ * @param {Object} env - The environment object containing API keys.
+ * @returns {string | undefined} The API key if found, undefined otherwise.
+ */
+export function getApiKey(llmConfig: { apiKey?: string; provider?: string }, env: Record<string, string>): string | undefined {
     if (llmConfig?.apiKey) return llmConfig.apiKey;
 
-    const apiKeys = {
+    const apiKeys: Record<string, string | undefined> = {
         anthropic: env.ANTHROPIC_API_KEY,
         google: env.GOOGLE_API_KEY,
         mistral: env.MISTRAL_API_KEY,
         openai: env.OPENAI_API_KEY
     };
-    return apiKeys[llmConfig?.provider];    
+    return apiKeys[llmConfig?.provider || ''];    
 }
 
-// Utility function to replace placeholders in the agent prompt.
-function replaceAgentAttributes(template, attributes) {
+/**
+ * Replaces placeholders in the agent prompt with actual attributes.
+ * @param {string} template - The template string with placeholders.
+ * @param {Object} attributes - The object containing attribute values.
+ * @returns {string} The template with placeholders replaced by actual values.
+ */
+export function replaceAgentAttributes(template: string, attributes: Record<string, string>): string {
     return template
         .replace('{name}', attributes.name)
         .replace('{role}', attributes.role)
@@ -32,21 +44,12 @@ function replaceAgentAttributes(template, attributes) {
         .replace('{expectedOutput}', attributes.expectedOutput);
 }
 
-// Utility function to clean up JSON string. to be able to parse it. later
-
-//Examples Input
-
-// Example 1
-// "{
-//    "thought": "To find detailed information about the Copa America 2024 winner, I need to search for the most recent and relevant information. Since this is a future event (as of my last update), I should verify if it has already taken place or if there are any changes to the schedule."
-//    "action": "tavily_search_results_json",
-//    "actionInput": {"query":"Copa America 2024 winner results details"}
-// }"
-
-// Example 2
-// {\n   "thought": "To find detailed information about the Copa America 2024 winner, I need to search for the most recent and relevant information. Since this is a future event, I should be cautious about the results and verify if the tournament has actually taken place."\n   "action": "tavily_search_results_json",\n   "actionInput": {"query":"Copa America 2024 winner results details"}\n}
-
-const getParsedJSON = (str) => {
+/**
+ * Attempts to parse a JSON string, cleaning it up if necessary.
+ * @param {string} str - The JSON string to parse.
+ * @returns {Object | null} The parsed JSON object or null if parsing fails.
+ */
+export const getParsedJSON = (str: string): Record<string, any> | null => {
     try {
         // Directly attempt to parse the JSON first
         return JSON.parse(str);
@@ -77,6 +80,3 @@ const getParsedJSON = (str) => {
         }
     }
 };
-
-
-export { getApiKey, replaceAgentAttributes, getParsedJSON };

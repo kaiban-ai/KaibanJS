@@ -1,4 +1,5 @@
-/**
+/** 
+ * C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\logger.ts
  * Logging Utility.
  *
  * This file sets up and configures the logging system used across the KaibanJS library. It allows for setting log levels 
@@ -14,9 +15,14 @@ import log from 'loglevel';
 // Set initial log level
 log.setLevel(log.levels.INFO);  // Default to 'info' level
 
-// To set log level dynamically
-const setLogLevel = (level) => {
-  log.setLevel(log.levels[level.toUpperCase()]);
+/**
+ * Dynamically sets the log level for the application.
+ * 
+ * @param {string} level - The log level to set ('trace', 'debug', 'info', 'warn', 'error', 'silent').
+ */
+const setLogLevel = (level: string): void => {
+  const logLevel = level.toUpperCase() as keyof typeof log.levels;
+  log.setLevel(log.levels[logLevel]);
 };
 
 export { log as logger, setLogLevel };

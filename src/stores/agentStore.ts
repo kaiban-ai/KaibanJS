@@ -1,4 +1,6 @@
 /**
+ * C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\stores\agentStore.ts
+ * 
  * Agent Store Configuration.
  *
  * This file configures a Zustand store specifically for managing the state of agents within the KaibanJS library. 
@@ -8,28 +10,35 @@
  * Employ this store to handle state updates for agents dynamically throughout the lifecycle of their tasks and interactions.
  */
 
-import { AGENT_STATUS_enum } from "../utils/enums";
+import { AGENT_STATUS_enum, TASK_STATUS_enum } from "../utils/enums";
 import { logger } from "../utils/logger";
-import { validateTask } from '../utils/tasks';
+import { Agent, Task, Output, ErrorType, AgentStoreState, PrepareNewLogParams, Log } from './storeTypes';
 
-const useAgentStore = (set, get) => ({
+export const useAgentStore = (
+    set: (fn: (state: AgentStoreState) => Partial<AgentStoreState>) => void,
+    get: () => AgentStoreState
+): AgentStoreState => ({
+    name: '',
+    agents: [],
+    tasks: [],
+    workflowLogs: [],
 
-    handleAgentIterationStart: ({ agent, task, iterations, maxAgentIterations }) => {
-        agent.status = AGENT_STATUS_enum.ITERATION_START;
+    handleAgentIterationStart: ({ agent, task, iterations, maxAgentIterations }: { agent: Agent; task: Task; iterations: number; maxAgentIterations: number }) => {
+        agent.status = 'ITERATION_START' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
-            logDescription: `🏁 Agent ${agent.name} - ${AGENT_STATUS_enum.ITERATION_START} (${iterations + 1}/${maxAgentIterations})`,
+            logDescription: `🏁 Agent ${agent.name} - ${AGENT_STATUS_enum.ITERATION_START} (${iterations+1}/${maxAgentIterations})`,
             metadata: { iterations, maxAgentIterations },
             logType: 'AgentStatusUpdate',
             agentStatus: agent.status
         });
-        logger.trace(`🏁 ${AGENT_STATUS_enum.ITERATION_START}: Agent ${agent.name} -  (${iterations + 1}/${maxAgentIterations})`);
+        logger.trace(`🏁 ${AGENT_STATUS_enum.ITERATION_START}: Agent ${agent.name} -  (${iterations+1}/${maxAgentIterations})`);
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));        
     },
     
-    handleAgentIterationEnd: ({ agent, task, iterations, maxAgentIterations }) => {
-        agent.status = AGENT_STATUS_enum.ITERATION_END;
+    handleAgentIterationEnd: ({ agent, task, iterations, maxAgentIterations }: { agent: Agent; task: Task; iterations: number; maxAgentIterations: number }) => {
+        agent.status = 'ITERATION_END' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
@@ -42,8 +51,8 @@ const useAgentStore = (set, get) => ({
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));     
     },   
 
-    handleAgentThinkingStart: ({ agent, task, messages }) => {
-        agent.status = AGENT_STATUS_enum.THINKING;
+    handleAgentThinkingStart: ({ agent, task, messages }: { agent: Agent; task: Task; messages: any[] }) => {
+        agent.status = 'THINKING' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
@@ -59,8 +68,8 @@ const useAgentStore = (set, get) => ({
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
 
-    handleAgentThinkingEnd: ({ agent, task, output }) => {
-        agent.status = AGENT_STATUS_enum.THINKING_END;
+    handleAgentThinkingEnd: ({ agent, task, output }: { agent: Agent; task: Task; output: Output }) => {
+        agent.status = 'THINKING_END' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
@@ -75,9 +84,9 @@ const useAgentStore = (set, get) => ({
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
 
-    handleAgentThinkingError: ({ agent, task, error }) => {
+    handleAgentThinkingError: ({ agent, task, error }: { agent: Agent; task: Task; error: ErrorType }) => {
         const errorToLog = error.originalError || error;
-        agent.status = AGENT_STATUS_enum.THINKING_ERROR;
+        agent.status = 'THINKING_ERROR' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
@@ -93,8 +102,8 @@ const useAgentStore = (set, get) => ({
         get().handleTaskBlocked({ task, error });
     },
 
-    handleAgentIssuesParsingLLMOutput: ({ agent, task, output, error }) => {
-        agent.status = AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT;
+    handleAgentIssuesParsingLLMOutput: ({ agent, task, output, error}: { agent: Agent; task: Task; output: Output; error: ErrorType }) => {
+        agent.status = 'ISSUES_PARSING_LLM_OUTPUT' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
@@ -107,8 +116,8 @@ const useAgentStore = (set, get) => ({
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
 
-    handleAgentActionStart: ({ agent, task, action, runId }) => {
-        agent.status = AGENT_STATUS_enum.EXECUTING_ACTION;
+    handleAgentActionStart: ({ agent, task, action, runId }: { agent: Agent; task: Task; action: any; runId: string }) => {
+        agent.status = 'EXECUTING_ACTION' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
@@ -117,12 +126,12 @@ const useAgentStore = (set, get) => ({
             logType: 'AgentStatusUpdate',
             agentStatus: agent.status
         });
-        logger.info(`▶️ EXECUTE_ACTION: Agent ${agent.name} use tool ${action.tool} with the following input:  ${action.toolInput}`, action);
+        logger.info(`▶️ EXECUTE_ACTION: Agent ${agent.name} use tool ${action.tool} with the following input:  ${action.toolInput}` , action);
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
 
-    handleAgentToolStart: ({ agent, task, tool, input }) => {
-        agent.status = AGENT_STATUS_enum.USING_TOOL;
+    handleAgentToolStart: ({ agent, task, tool, input }: { agent: Agent; task: Task; tool: any; input: any }) => {
+        agent.status = 'USING_TOOL' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
@@ -136,23 +145,23 @@ const useAgentStore = (set, get) => ({
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
 
-    handleAgentToolEnd: ({ agent, task, output, tool }) => {
-        agent.status = AGENT_STATUS_enum.USING_TOOL_END;
+    handleAgentToolEnd: ({ agent, task, output, tool }: { agent: Agent; task: Task; output: any; tool: any }) => {
+        agent.status = 'USING_TOOL_END' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
-            logDescription: `🛠️✅ ${AGENT_STATUS_enum.USING_TOOL_END}: Agent ${agent.name} - got results from tool:${tool.name}`,
+            logDescription: `🛠️✅ ${AGENT_STATUS_enum.USING_TOOL_END}: Agent ${agent.name} - got  results from tool:${tool.name}`,
             metadata: { output },
             logType: 'AgentStatusUpdate',
             agentStatus: agent.status,
         });
-        logger.info(`🛠️✅ ${AGENT_STATUS_enum.USING_TOOL_END}: Agent ${agent.name} - got results from tool:${tool.name}`);
+        logger.info(`🛠️✅ ${AGENT_STATUS_enum.USING_TOOL_END}: Agent ${agent.name} - got  results from tool:${tool.name}`);
         logger.debug(`Tool Output:`, output);
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
 
-    handleAgentToolError: ({ agent, task, tool, error }) => {
-        agent.status = AGENT_STATUS_enum.USING_TOOL_ERROR;
+    handleAgentToolError: ({ agent, task, tool, error }: { agent: Agent; task: Task; tool: any; error: ErrorType }) => {
+        agent.status = 'USING_TOOL_ERROR' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
@@ -166,8 +175,8 @@ const useAgentStore = (set, get) => ({
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
 
-    handleAgentToolDoesNotExist: ({ agent, task, toolName }) => {
-        agent.status = AGENT_STATUS_enum.USING_TOOL_ERROR;
+    handleAgentToolDoesNotExist: ({ agent, task, toolName }: { agent: Agent; task: Task; toolName: string }) => {
+        agent.status = 'TOOL_DOES_NOT_EXIST' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
@@ -180,8 +189,8 @@ const useAgentStore = (set, get) => ({
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },    
 
-    handleAgentFinalAnswer: ({ agent, task, output }) => {
-        agent.status = AGENT_STATUS_enum.FINAL_ANSWER;
+    handleAgentFinalAnswer: ({ agent, task, output }: { agent: Agent; task: Task; output: Output }) => {
+        agent.status = 'FINAL_ANSWER' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
@@ -195,8 +204,8 @@ const useAgentStore = (set, get) => ({
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
 
-    handleAgentThought: ({ agent, task, output }) => {
-        agent.status = AGENT_STATUS_enum.THOUGHT;
+    handleAgentThought: ({ agent, task, output }: { agent: Agent; task: Task; output: Output }) => {
+        agent.status = 'THOUGHT' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
@@ -210,23 +219,23 @@ const useAgentStore = (set, get) => ({
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
     
-    handleAgentSelfQuestion: ({ agent, task, output }) => {
-        agent.status = AGENT_STATUS_enum.SELF_QUESTION;
+    handleAgentSelfQuestion: ({ agent, task, output }: { agent: Agent; task: Task; output: Output }) => {
+        agent.status = 'SELF_QUESTION' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
-            logDescription: `❓Agent ${agent.name} has a ${AGENT_STATUS_enum.SELF_QUESTION}`,
+            logDescription: `❓Agent ${agent.name} have a ${AGENT_STATUS_enum.SELF_QUESTION}`,
             metadata: { output },
             logType: 'AgentStatusUpdate',
             agentStatus: agent.status,
         });
-        logger.info(`❓${AGENT_STATUS_enum.SELF_QUESTION}: Agent ${agent.name} has a self question.`);
+        logger.info(`❓${AGENT_STATUS_enum.SELF_QUESTION}: Agent ${agent.name} have a self question.`);
         logger.debug(output);
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
     
-    handleAgentObservation: ({ agent, task, output }) => {
-        agent.status = AGENT_STATUS_enum.OBSERVATION;
+    handleAgentObservation: ({ agent, task, output }: { agent: Agent; task: Task; output: Output }) => {
+        agent.status = 'OBSERVATION' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
@@ -240,8 +249,8 @@ const useAgentStore = (set, get) => ({
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
     
-    handleWeirdOutput: ({ agent, task, output }) => {
-        agent.status = AGENT_STATUS_enum.WEIRD_LLM_OUTPUT;
+    handleWeirdOutput: ({ agent, task, output }: { agent: Agent; task: Task; output: Output }) => {
+        agent.status = 'WEIRD_LLM_OUTPUT' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
@@ -254,8 +263,8 @@ const useAgentStore = (set, get) => ({
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
     
-    handleAgentLoopError: ({ agent, task, error, iterations, maxAgentIterations }) => {
-        agent.status = AGENT_STATUS_enum.AGENTIC_LOOP_ERROR;
+    handleAgentLoopError: ({ agent, task, error, iterations, maxAgentIterations }: { agent: Agent; task: Task; error: ErrorType; iterations: number; maxAgentIterations: number }) => {
+        agent.status = 'AGENTIC_LOOP_ERROR' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
@@ -271,8 +280,8 @@ const useAgentStore = (set, get) => ({
         get().handleTaskBlocked({ task, error });
     },    
 
-    handleAgentMaxIterationsError: ({ agent, task, error, iterations = -1, maxAgentIterations = -1 }) => {
-        agent.status = AGENT_STATUS_enum.MAX_ITERATIONS_ERROR;
+    handleAgentMaxIterationsError: ({ agent, task, error, iterations = -1, maxAgentIterations = -1 }: { agent: Agent; task: Task; error: ErrorType; iterations?: number; maxAgentIterations?: number }) => {
+        agent.status = 'MAX_ITERATIONS_ERROR' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
             agent,
             task,
@@ -289,20 +298,8 @@ const useAgentStore = (set, get) => ({
         get().handleTaskBlocked({ task, error });
     },
 
-    handleAgentTaskCompleted: ({ agent, task, result }) => {
-        // Validate the task structure before proceeding
-        if (!validateTask(task)) {
-            logger.error(`Invalid task structure in handleAgentTaskCompleted for agent: ${agent.name}`);
-            return;
-        }
-
-        // Ensure feedbackHistory exists
-        if (!Array.isArray(task.feedbackHistory)) {
-            logger.warn(`Expected feedbackHistory to be an array, but got ${typeof task.feedbackHistory}`);
-            task.feedbackHistory = [];
-        }
-
-        agent.status = AGENT_STATUS_enum.TASK_COMPLETED;
+    handleAgentTaskCompleted: ({ agent, task, result }: { agent: Agent; task: Task; result: any }) => {
+        agent.status = 'TASK_COMPLETED' as keyof typeof AGENT_STATUS_enum;
         const agentLog = get().prepareNewLog({
             agent,
             task,
@@ -312,12 +309,37 @@ const useAgentStore = (set, get) => ({
             agentStatus: agent.status,
         });
         logger.info(`🏁 ${AGENT_STATUS_enum.TASK_COMPLETED}: Agent ${agent.name} finished the given task.`);
-
         set(state => ({
             workflowLogs: [...state.workflowLogs, agentLog],
         }));
         get().handleTaskCompleted({ agent, task, result });
-    }
-});
+    },
 
-export { useAgentStore };
+    handleTaskBlocked: ({ task, error }: { task: Task; error: ErrorType }) => {
+        // Call the taskStore's handleTaskBlocked
+        get().handleTaskBlocked({ task, error });
+    },
+
+    handleTaskCompleted: ({ agent, task, result }: { agent: Agent; task: Task; result: any }) => {
+        logger.debug(`Task completed by agent: ${agent.name}, result: ${result}`);
+        // Additional logic for task completion can be added here
+    },
+
+    prepareNewLog: (params: PrepareNewLogParams): Log => {
+        const { agent, task, logDescription, metadata, logType, agentStatus } = params;
+        const timestamp = Date.now();
+
+        return {
+            timestamp,
+            task,
+            agent,
+            agentName: agent ? agent.name : 'Unknown Agent',
+            taskTitle: task ? task.title : 'Untitled Task',
+            logDescription,
+            taskStatus: (task?.status || TASK_STATUS_enum.TODO) as keyof typeof TASK_STATUS_enum,
+            agentStatus: agentStatus as keyof typeof AGENT_STATUS_enum,
+            metadata,
+            logType,
+        };
+    },
+});

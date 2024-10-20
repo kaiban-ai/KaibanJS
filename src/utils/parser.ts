@@ -1,4 +1,5 @@
 /**
+ * C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\parser.ts
  * Data Parsing Utilities.
  *
  * This file offers functions for parsing and sanitizing data formats, particularly focusing on JSON structures that agents 
@@ -9,27 +10,24 @@
  * Leverage these parsing utilities to preprocess or clean data before it is fed into agents or other processing functions within the library.
  */
 
-// Utility function to clean up JSON string. to be able to parse it. later
+// Utility function to clean up JSON string and prepare it for parsing
 
-//Examples Input
+interface ParsedJSON {
+    thought?: string;
+    action?: string;
+    actionInput?: object | null;
+    observation?: string;
+    isFinalAnswerReady?: boolean;
+    finalAnswer?: string;
+    [key: string]: any;  // This allows for dynamic key indexing
+}
 
-// Example 1
-// "{
-//    "thought": "To find detailed information about the Copa America 2024 winner, I need to search for the most recent and relevant information. Since this is a future event (as of my last update), I should verify if it has already taken place or if there are any changes to the schedule."
-//    "action": "tavily_search_results_json",
-//    "actionInput": {"query":"Copa America 2024 winner results details"}
-// }"
-
-// Example 2
-// {\n   "thought": "To find detailed information about the Copa America 2024 winner, I need to search for the most recent and relevant information. Since this is a future event, I should be cautious about the results and verify if the tournament has actually taken place."\n   "action": "tavily_search_results_json",\n   "actionInput": {"query":"Copa America 2024 winner results details"}\n}
-
-const getParsedJSON_4_tests_passing = (str) => {
+const getParsedJSON_4_tests_passing = (str: string): object | null => {
     try {
         // Attempt to directly parse the JSON first
         return JSON.parse(str);
     } catch (error) {
         // Handle JSON strings with complex non-JSON text and real newlines
-        // and markdown encapsulation
         const startMarker = "/```json\n";
         const endMarker = "\n```";
         let jsonStartIndex = str.indexOf('{');
@@ -64,9 +62,9 @@ const getParsedJSON_4_tests_passing = (str) => {
     }
 };
 
-function getParsedJSONV6(str) {
+function getParsedJSONV6(str: string): ParsedJSON {
     // Define a schema based on expected keys and their patterns
-    const schema = {
+    const schema: { [key: string]: RegExp } = {
         "thought": /"thought"\s*:\s*"([^"]*)"/,
         "action": /"action"\s*:\s*"([^"]*)"/,
         "actionInput": /"actionInput"\s*:\s*({[^}]*})/,
@@ -75,14 +73,13 @@ function getParsedJSONV6(str) {
         "finalAnswer": /"finalAnswer"\s*:\s*"([^"]*)"/
     };
 
-    let result = {};
+    let result: ParsedJSON = {};
 
     // Iterate over each key in the schema to find matches in the input string
     for (let key in schema) {
         const regex = schema[key];
         const match = str.match(regex);
         if (match) {
-            // If the key is found, parse the value appropriately
             if (key === "actionInput") {
                 // Assuming actionInput always contains a JSON-like object
                 try {
@@ -101,13 +98,13 @@ function getParsedJSONV6(str) {
     return result;
 }
 
-function getParsedJSON(str) {
+function getParsedJSON(str: string): ParsedJSON {
     try {
         // First attempt to parse the JSON string directly
         return JSON.parse(str);
     } catch (e) {
         // If JSON parsing fails, fall back to regex extraction
-        const schema = {
+        const schema: { [key: string]: RegExp } = {
             "thought": /"thought"\s*:\s*"([^"]*)"/,
             "action": /"action"\s*:\s*"([^"]*)"/,
             "actionInput": /"actionInput"\s*:\s*({[^}]*})/,
@@ -116,14 +113,13 @@ function getParsedJSON(str) {
             "finalAnswer": /"finalAnswer"\s*:\s*"([^"]*)"/
         };
 
-        let result = {};
+        let result: ParsedJSON = {};
 
         // Iterate over each key in the schema to find matches in the input string
         for (let key in schema) {
             const regex = schema[key];
             const match = str.match(regex);
             if (match) {
-                // If the key is found, parse the value appropriately
                 if (key === "actionInput") {
                     // Assuming actionInput always contains a JSON-like object
                     try {
@@ -143,5 +139,4 @@ function getParsedJSON(str) {
     }
 }
 
-
-export { getParsedJSON };
+export { getParsedJSON, getParsedJSON_4_tests_passing, getParsedJSONV6 };

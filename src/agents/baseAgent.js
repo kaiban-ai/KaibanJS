@@ -1,4 +1,5 @@
 /**
+ * C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\agents\baseAgent.js
  * Base Agent Definition.
  *
  * This file defines the BaseAgent class, which serves as the foundational component for all agents within the library. 

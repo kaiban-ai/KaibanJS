@@ -1,30 +1,24 @@
-/**
- * Task Store Management.
- *
- * Defines the Zustand store slice for task management, handling task lifecycle events such as completion, updates, and errors.
- * It ensures tasks are managed consistently with the ability to react to changes in task status and handle errors effectively.
- *
- * Usage:
- * Use this store to manage tasks within your application, providing a robust system for updating and tracking task progress and state.
- */
-
 import { TASK_STATUS_enum, AGENT_STATUS_enum, FEEDBACK_STATUS_enum, WORKFLOW_STATUS_enum } from "../utils/enums";
-import { getTaskTitleForLogs, validateTask } from '../utils/tasks'; // Import validateTask
+import { getTaskTitleForLogs, validateTask } from '../utils/tasks';
 import { logger } from "../utils/logger";
 import { PrettyError } from "../utils/errors";
 import { calculateTaskCost } from "../utils/llmCostCalculator";
+import { TaskStoreState, TaskType, AgentType, ErrorType, FeedbackObject, Log, PrepareNewLogParams } from './storeTypes';
 
-export const useTaskStore = (set, get) => ({
-    // state
+export const useTaskStore = (set: (fn: (state: TaskStoreState) => Partial<TaskStoreState>) => void, get: () => TaskStoreState): TaskStoreState => ({
     tasksInitialized: false,
+    workflowLogs: [],
+    tasks: [],
+    agents: [],
+    name: '',
 
-    getTaskStats(task) {
+    getTaskStats(task: TaskType) {
         const endTime = Date.now();
         const lastDoingLog = get().workflowLogs.slice().reverse().find(log =>
-            log.task && log.task.id === task.id && log.logType === "TaskStatusUpdate" && log.taskStatus === TASK_STATUS_enum.DOING
+            log.task && log.task.id === task.id && log.logType === "TaskStatusUpdate" && log.taskStatus === 'DOING' as keyof typeof TASK_STATUS_enum
         );
-        const startTime = lastDoingLog ? lastDoingLog.timestamp : endTime; // Use endTime if no DOING log is found
-        const duration = (endTime - startTime) / 1000; // Calculate duration in seconds
+        const startTime = lastDoingLog ? lastDoingLog.timestamp : endTime;
+        const duration = (endTime - startTime) / 1000;
     
         let llmUsageStats = {
             inputTokens: 0,
@@ -37,18 +31,18 @@ export const useTaskStore = (set, get) => ({
     
         get().workflowLogs.forEach(log => {
             if (log.task && log.task.id === task.id && log.timestamp >= startTime && log.logType === 'AgentStatusUpdate') {
-                if (log.agentStatus === AGENT_STATUS_enum.THINKING_END) {
+                if (log.agentStatus === 'THINKING_END' as keyof typeof AGENT_STATUS_enum) {
                     llmUsageStats.inputTokens += log.metadata.output.llmUsageStats.inputTokens;
                     llmUsageStats.outputTokens += log.metadata.output.llmUsageStats.outputTokens;
                     llmUsageStats.callsCount += 1;
                 }
-                if (log.agentStatus === AGENT_STATUS_enum.THINKING_ERROR) {
+                if (log.agentStatus === 'THINKING_ERROR' as keyof typeof AGENT_STATUS_enum) {
                     llmUsageStats.callsErrorCount += 1;
                 }
-                if (log.agentStatus === AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT) {
+                if (log.agentStatus === 'ISSUES_PARSING_LLM_OUTPUT' as keyof typeof AGENT_STATUS_enum) {
                     llmUsageStats.parsingErrors += 1;
                 }
-                if (log.agentStatus === AGENT_STATUS_enum.ITERATION_END) {
+                if (log.agentStatus === 'ITERATION_END' as keyof typeof AGENT_STATUS_enum) {
                     iterationCount += 1;
                 }
             }
@@ -69,24 +63,23 @@ export const useTaskStore = (set, get) => ({
             return;
         }
 
-        const stats = get().getTaskStats(task, get);
+        const stats = get().getTaskStats(task);
         task.result = result;
 
-        // Ensure feedbackHistory is always an array
         if (!Array.isArray(task.feedbackHistory)) {
             logger.warn(`Expected feedbackHistory to be an array, but got ${typeof task.feedbackHistory}`);
             task.feedbackHistory = [];
         }
 
-        const updatedFeedbackHistory = task.feedbackHistory.map(feedback =>
-            feedback.status === FEEDBACK_STATUS_enum.PENDING ?
-            { ...feedback, status: FEEDBACK_STATUS_enum.PROCESSED } :
+        const updatedFeedbackHistory = task.feedbackHistory.map((feedback: FeedbackObject) =>
+            feedback.status === 'PENDING' as keyof typeof FEEDBACK_STATUS_enum ?
+            { ...feedback, status: 'PROCESSED' as keyof typeof FEEDBACK_STATUS_enum } :
             feedback
         );
 
-        if (task.externalValidationRequired && task.status !== TASK_STATUS_enum.VALIDATED) {
-            task.status = TASK_STATUS_enum.AWAITING_VALIDATION;
-            const modelCode = agent.llmConfig.model; // Assuming this is where the model code is stored
+        if (task.externalValidationRequired && task.status !== 'VALIDATED' as keyof typeof TASK_STATUS_enum) {
+            task.status = 'AWAITING_VALIDATION' as keyof typeof TASK_STATUS_enum;
+            const modelCode = agent.llmConfig.model;
             const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
             const taskLog = get().prepareNewLog({
                 agent,
@@ -97,14 +90,15 @@ export const useTaskStore = (set, get) => ({
                     costDetails,
                     result
                 },
-                logType: 'TaskStatusUpdate'
+                logType: 'TaskStatusUpdate',
+                agentStatus: agent.status
             });
 
             set(state => ({
                 tasks: state.tasks.map(t => t.id === task.id ? {
                     ...t,
                     ...stats,
-                    status: TASK_STATUS_enum.AWAITING_VALIDATION,
+                    status: 'AWAITING_VALIDATION' as keyof typeof TASK_STATUS_enum,
                     result: result,
                     feedbackHistory: updatedFeedbackHistory
                 } : t),
@@ -113,8 +107,8 @@ export const useTaskStore = (set, get) => ({
 
             get().handleWorkflowBlocked({ task, error: new Error('Task awaiting validation') });
         } else {
-            task.status = TASK_STATUS_enum.DONE;
-            const modelCode = agent.llmConfig.model; // Assuming this is where the model code is stored
+            task.status = 'DONE' as keyof typeof TASK_STATUS_enum;
+            const modelCode = agent.llmConfig.model;
             const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
             const taskLog = get().prepareNewLog({
                 agent,
@@ -125,7 +119,8 @@ export const useTaskStore = (set, get) => ({
                     costDetails,
                     result
                 },
-                logType: 'TaskStatusUpdate'
+                logType: 'TaskStatusUpdate',
+                agentStatus: agent.status
             });
             logger.debug(`Task completed with ID ${task.id}, Duration: ${stats.duration} seconds`);
             set(state => ({
@@ -134,21 +129,21 @@ export const useTaskStore = (set, get) => ({
                 tasks: state.tasks.map(t => t.id === task.id ? {
                     ...t,
                     ...stats,
-                    status: TASK_STATUS_enum.DONE,
+                    status: 'DONE' as keyof typeof TASK_STATUS_enum,
                     result: result,
                     feedbackHistory: updatedFeedbackHistory
                 } : t)
             }));
 
             const tasks = get().tasks;
-            const allTasksDone = tasks.every(t => t.status === TASK_STATUS_enum.DONE);
+            const allTasksDone = tasks.every(t => t.status === 'DONE' as keyof typeof TASK_STATUS_enum);
             if (allTasksDone) {
                 get().finishWorkflowAction();
             }
         }
     },
 
-    provideFeedback: async (taskId, feedbackContent) => {
+    provideFeedback: async (taskId: string, feedbackContent: string) => {
         const { tasks } = get();
         const taskIndex = tasks.findIndex(t => t.id === taskId);
         if (taskIndex === -1) {
@@ -167,16 +162,18 @@ export const useTaskStore = (set, get) => ({
             task.feedbackHistory = [];
         }
 
-        const newFeedback = {
+        const newFeedback: FeedbackObject = {
+            id: `feedback-${Date.now()}`,
             content: feedbackContent,
-            status: FEEDBACK_STATUS_enum.PENDING,
-            timestamp: Date.now()
+            status: 'PENDING' as keyof typeof FEEDBACK_STATUS_enum,
+            timestamp: new Date(),
+            userId: 'system'
         };
 
-        const updatedTask = {
+        const updatedTask: TaskType = {
             ...task,
             feedbackHistory: [...task.feedbackHistory, newFeedback],
-            status: TASK_STATUS_enum.REVISE
+            status: 'REVISE' as keyof typeof TASK_STATUS_enum
         };
 
         set(state => ({
@@ -186,19 +183,19 @@ export const useTaskStore = (set, get) => ({
         logger.debug(`Feedback added to task ${task.id}`);
     },
 
-    handleTaskError: ({ task, error }) => {
+    handleTaskError: ({ task, error }: { task: TaskType; error: ErrorType }) => {
         if (!validateTask(task)) {
             logger.error(`Invalid task structure in handleTaskError`);
             return;
         }
 
-        const stats = get().getTaskStats(task, get);
-        task.status = TASK_STATUS_enum.BLOCKED;
-        const modelCode = task.agent.llmConfig.model; // Assuming this is where the model code is stored
+        const stats = get().getTaskStats(task);
+        task.status = 'BLOCKED' as keyof typeof TASK_STATUS_enum;
+        const modelCode = task.agent.llmConfig.model;
         const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
-        const updatedFeedbackHistory = task.feedbackHistory.map(f =>
-            f.status === FEEDBACK_STATUS_enum.PENDING ?
-            { ...f, status: FEEDBACK_STATUS_enum.PROCESSED } :
+        const updatedFeedbackHistory = task.feedbackHistory.map((f: FeedbackObject) =>
+            f.status === 'PENDING' as keyof typeof FEEDBACK_STATUS_enum ?
+            { ...f, status: 'PROCESSED' as keyof typeof FEEDBACK_STATUS_enum } :
             f
         );
         const taskLog = get().prepareNewLog({
@@ -210,14 +207,15 @@ export const useTaskStore = (set, get) => ({
                 costDetails,
                 error: error.message
             },
-            logType: 'TaskStatusUpdate'
+            logType: 'TaskStatusUpdate',
+            agentStatus: task.agent.status
         });
 
         set(state => ({
             tasks: state.tasks.map(t => t.id === task.id ? {
                 ...t,
                 ...stats,
-                status: TASK_STATUS_enum.BLOCKED,
+                status: 'BLOCKED' as keyof typeof TASK_STATUS_enum,
                 error: error.message,
                 feedbackHistory: updatedFeedbackHistory
             } : t),
@@ -228,27 +226,26 @@ export const useTaskStore = (set, get) => ({
             message: 'Task Error Encountered',
             recommendedAction: 'Try to debug the application to find the root cause of the error.',
             rootError: error,
-            context: { task, error },
-            location: 'taskStore.js -> handleTaskError()'
+            context: { task, error }
         });
 
         logger.error(prettyError.prettyMessage);
     },
 
-    handleTaskBlocked: ({ task, error }) => {
+    handleTaskBlocked: ({ task, error }: { task: TaskType; error: ErrorType }) => {
         if (!validateTask(task)) {
             logger.error(`Invalid task structure in handleTaskBlocked`);
             return;
         }
 
-        const stats = get().getTaskStats(task, get);
-        task.status = TASK_STATUS_enum.BLOCKED;
-        const modelCode = task.agent.llmConfig.model; // Assuming this is where the model code is stored
+        const stats = get().getTaskStats(task);
+        task.status = 'BLOCKED' as keyof typeof TASK_STATUS_enum;
+        const modelCode = task.agent.llmConfig.model;
         const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
 
-        const updatedFeedbackHistory = task.feedbackHistory.map(f =>
-            f.status === FEEDBACK_STATUS_enum.PENDING ?
-            { ...f, status: FEEDBACK_STATUS_enum.PROCESSED } :
+        const updatedFeedbackHistory = task.feedbackHistory.map((f: FeedbackObject) =>
+            f.status === 'PENDING' as keyof typeof FEEDBACK_STATUS_enum ?
+            { ...f, status: 'PROCESSED' as keyof typeof FEEDBACK_STATUS_enum } :
             f
         );
 
@@ -261,7 +258,8 @@ export const useTaskStore = (set, get) => ({
                 costDetails,
                 error
             },
-            logType: 'TaskStatusUpdate'
+            logType: 'TaskStatusUpdate',
+            agentStatus: task.agent.status
         });
 
         const prettyError = new PrettyError({
@@ -278,11 +276,27 @@ export const useTaskStore = (set, get) => ({
             tasks: state.tasks.map(t => t.id === task.id ? {
                 ...t,
                 ...stats,
-                status: TASK_STATUS_enum.BLOCKED,
+                status: 'BLOCKED' as keyof typeof TASK_STATUS_enum,
                 feedbackHistory: updatedFeedbackHistory
             } : t),
             workflowLogs: [...state.workflowLogs, taskLog]
         }));
         get().handleWorkflowBlocked({ task, error });
-    }
+    },
+
+    prepareNewLog: (params: PrepareNewLogParams): Log => {
+        return get().prepareNewLog(params);
+    },
+
+    handleWorkflowBlocked: ({ task, error }: { task: TaskType; error: ErrorType }): void => {
+        get().handleWorkflowBlocked({ task, error });
+    },
+
+    finishWorkflowAction: (): void => {
+        get().finishWorkflowAction();
+    },
+
+    getWorkflowStats: (): Record<string, any> => {
+        return get().getWorkflowStats();
+    },
 });

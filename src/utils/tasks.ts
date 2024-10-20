@@ -1,4 +1,5 @@
 /**
+ * C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\tasks.ts
  * Task Utility Functions.
  *
  * This file includes utility functions for managing task properties and behaviors within the KaibanJS library. It offers 
@@ -12,13 +13,21 @@
 
 import { logger } from "./logger";
 
+interface Task {
+    id?: string;
+    title?: string;
+    description?: string;
+    feedbackHistory?: any[];
+    [key: string]: any; // Additional properties
+}
+
 /**
  * Retrieves a concise title for a task, suitable for logging purposes.
  * 
- * @param {Object} task - The task object.
+ * @param {Task} task - The task object.
  * @returns {string} A short title derived from the task's title or description.
  */
-function getTaskTitleForLogs(task) {
+function getTaskTitleForLogs(task: Task): string {
     return task.title || (task.description ? task.description.split(" ").slice(0, 3).join(" ") + '...' : 'Untitled');
 }
 
@@ -26,10 +35,10 @@ function getTaskTitleForLogs(task) {
  * Interpolates placeholders in the task description with actual input values.
  * 
  * @param {string} description - The task description with placeholders.
- * @param {Object} inputs - An object containing input values to replace placeholders.
+ * @param {Record<string, string>} inputs - An object containing input values to replace placeholders.
  * @returns {string} The interpolated task description.
  */
-function interpolateTaskDescription(description, inputs) {
+function interpolateTaskDescription(description: string, inputs: Record<string, string>): string {
     let result = description;
 
     for (const key in inputs) {
@@ -43,10 +52,10 @@ function interpolateTaskDescription(description, inputs) {
 /**
  * Validates the structure and data types of a task object.
  * 
- * @param {Object} task - The task object to validate.
+ * @param {Task} task - The task object to validate.
  * @returns {boolean} True if the task is valid, false otherwise.
  */
-function validateTask(task) {
+function validateTask(task: Task): boolean {
     if (!task) {
         logger.error("Task is undefined or null");
         return false;

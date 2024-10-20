@@ -1,4 +1,6 @@
 /**
+ * C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\subscribers\taskSubscriber.ts
+ * 
  * Task Status Subscriber.
  *
  * Listens to changes in task status within the library's state management system, providing logs and reactive behaviors to these changes.
@@ -11,44 +13,48 @@
 import { TASK_STATUS_enum } from '../utils/enums';
 import { getTaskTitleForLogs } from '../utils/tasks';
 import { logPrettyTaskCompletion, logPrettyTaskStatus } from "../utils/prettyLogs";
+import { TeamState, Log, TaskType, AgentType } from '../stores/storeTypes';
+import { StoreApi, UseBoundStore } from 'zustand';
 
-const subscribeTaskStatusUpdates = (useStore) => {
-    useStore.subscribe(state => state.workflowLogs, (newLogs, previousLogs) => {
+export const subscribeTaskStatusUpdates = (useStore: UseBoundStore<StoreApi<TeamState>>): void => {
+    useStore.subscribe((state: TeamState) => {
+        const newLogs = state.workflowLogs;
+        const previousLogs = state.workflowLogs.slice(0, -1); // All logs except the last one
+
         if (newLogs.length > previousLogs.length) { // Check if a new log has been added
             const newLog = newLogs[newLogs.length - 1]; // Get the latest log
 
-            if (newLog.logType === 'TaskStatusUpdate') {
-                const totalTasks = useStore.getState().tasks.length;
-                const taskIndex = useStore.getState().tasks.findIndex(t => t.id === newLog.task.id);
+            if (newLog.logType === 'TaskStatusUpdate' && newLog.task) {
+                const totalTasks = state.tasks.length;
+                const taskIndex = state.tasks.findIndex((t: TaskType) => t.id === newLog.task?.id);
                 const currentTaskNumber = taskIndex + 1;  // Adding 1 because index is 0-based
 
                 switch (newLog.task.status) {
-                    case TASK_STATUS_enum.DONE:
+                    case 'DONE':
                         logPrettyTaskCompletion({
-                            task: newLog.task,
                             llmUsageStats: newLog.metadata.llmUsageStats,
                             iterationCount: newLog.metadata.iterationCount,
                             duration: newLog.metadata.duration,
-                            agentName: newLog.agent.name,
-                            agentModel: newLog.agent.llmConfig.model,
+                            agentName: newLog.agent?.name || '',
+                            agentModel: newLog.agent?.llmConfig.model || '',
                             taskTitle: getTaskTitleForLogs(newLog.task),
                             currentTaskNumber,
                             costDetails: newLog.metadata.costDetails,
                             totalTasks
                         });
                         break;
-                    case TASK_STATUS_enum.DOING:
-                    case TASK_STATUS_enum.BLOCKED:
-                    case TASK_STATUS_enum.REVISE:
-                    case TASK_STATUS_enum.AWAITING_VALIDATION:
-                    case TASK_STATUS_enum.VALIDATED:
-                    case TASK_STATUS_enum.TODO:
+                    case 'DOING':
+                    case 'BLOCKED':
+                    case 'REVISE':
+                    case 'AWAITING_VALIDATION':
+                    case 'VALIDATED':
+                    case 'TODO':
                         logPrettyTaskStatus({
                             currentTaskNumber,
                             totalTasks,
                             taskTitle: getTaskTitleForLogs(newLog.task),
                             taskStatus: newLog.task.status,
-                            agentName: newLog.agent.name
+                            agentName: newLog.agent?.name || ''
                         });
                         break;
                     default:
@@ -58,6 +64,4 @@ const subscribeTaskStatusUpdates = (useStore) => {
             }
         }
     });
-}
-
-export { subscribeTaskStatusUpdates };
+};
