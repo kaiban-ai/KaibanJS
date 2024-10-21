@@ -164,7 +164,6 @@ class Team {
                     switch (status) {
                         case WORKFLOW_STATUS_enum.FINISHED:
                             unsubscribe();
-                            td.signal('workflow_finished');
                             resolve({
                                 status,
                                 result: state.workflowResult,
@@ -173,12 +172,10 @@ class Team {
                             break;
                         case WORKFLOW_STATUS_enum.ERRORED:
                             unsubscribe();
-                            td.signal('workflow_errored');
                             reject(new Error('Workflow encountered an error'));
                             break;
                         case WORKFLOW_STATUS_enum.BLOCKED:
                             unsubscribe();
-                            td.signal('workflow_blocked');
                             resolve({
                                 status,
                                 result: null,
