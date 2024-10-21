@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { spawn, execSync } from 'child_process';
 import fs from 'fs';
 import dotenv from 'dotenv';
@@ -9,7 +10,10 @@ import ora from 'ora';
 import figlet from 'figlet';
 import readline from 'readline';
 
-import { initializeTelemetry } from './telemetry.mjs';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const { initializeTelemetry } = await import(path.join(__dirname, 'telemetry.mjs'));
 
 // Initialize telemetry at the beginning
 const td = initializeTelemetry(); 
