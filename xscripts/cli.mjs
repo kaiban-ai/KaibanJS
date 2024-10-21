@@ -8,6 +8,41 @@ import chalk from 'chalk';
 import ora from 'ora';
 import figlet from 'figlet';
 import readline from 'readline';
+import TelemetryDeck from '@telemetrydeck/sdk';
+import crypto from 'crypto';
+
+// Mock telemetry instance for when users opt out
+const mockTelemetry = {
+  signal: () => {}, // No-op function
+  // Add other methods as needed to match TelemetryDeck's interface
+};
+
+function generateProjectId() {
+  const projectName = path.basename(process.cwd());
+  const userHome = process.env.HOME || process.env.USERPROFILE || '';
+  const machineId = crypto.createHash('md5').update(userHome).digest('hex');
+  const uniqueString = `${projectName}-${machineId}`;
+  
+  return crypto.createHash('md5').update(uniqueString).digest('hex');
+}
+
+function initializeTelemetry(appID = '95BF7A3E-9D86-432D-9633-3526DD3A8977') {
+  if (process.env.KAIBAN_TELEMETRY_OPT_OUT) {
+    console.log('Telemetry is disabled due to KAIBAN_TELEMETRY_OPT_OUT environment variable.');
+    return mockTelemetry;
+  }
+
+  const projectId = generateProjectId();
+  
+  return new TelemetryDeck({
+    appID,
+    clientUser: projectId,
+    subtleCrypto: crypto.webcrypto.subtle,
+  });
+}
+
+// Initialize telemetry at the beginning
+const td = initializeTelemetry();
 
 // Function to display a banner
 function displayBanner() {
@@ -396,17 +431,21 @@ async function main() {
 
     if (!isKaibanJSInstalled()) {
       console.log(chalk.yellow('KaibanJS is not installed in this project. Installing now...'));
+      td.signal('install_kaibanjs');
       installKaibanJS();
     }
     
     if (command === 'init') {
       await initKaibanProject();
+      td.signal('init_board');
       runKaibanServer();
     } else {
       await initKaibanProject();
+      td.signal('run_board');
       runKaibanServer();
     }
   } else if (command === 'deploy') {
+    td.signal('deploy_board');
     deployToVercel();
   } else {
     console.log(chalk.red('Invalid command. Use "init" to initialize, "run" to start the server, or "deploy" to deploy.'));

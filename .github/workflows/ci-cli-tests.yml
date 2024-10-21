@@ -64,6 +64,10 @@ jobs:
         timeout=300  # 5 minutes timeout
         start_time=$(date +%s)
         while true; do
+          if ! ps -p $PID > /dev/null; then
+            echo "Process has already terminated"
+            break
+          fi
           if curl -s -o /dev/null -w "%{http_code}" http://localhost:5173 | grep -q "200"; then
             echo "Server is responding successfully"
             break
@@ -71,14 +75,14 @@ jobs:
           current_time=$(date +%s)
           if (( current_time - start_time > timeout )); then
             echo "Timeout: Server did not start within 5 minutes"
-            kill $PID
+            kill -9 $PID 2>/dev/null || true
             exit 1
           fi
           echo "Server not ready yet, waiting 5 seconds..."
           sleep 5
         done
-        echo "Killing the server process"
-        kill $PID
+        echo "Attempting to kill the server process"
+        kill -9 $PID 2>/dev/null || true
 
     - name: Test KaibanJS CLI run command
       run: |
@@ -90,6 +94,10 @@ jobs:
         timeout=300  # 5 minutes timeout
         start_time=$(date +%s)
         while true; do
+          if ! ps -p $PID > /dev/null; then
+            echo "Process has already terminated"
+            break
+          fi
           if curl -s -o /dev/null -w "%{http_code}" http://localhost:5173 | grep -q "200"; then
             echo "Server is responding successfully"
             break
@@ -97,11 +105,11 @@ jobs:
           current_time=$(date +%s)
           if (( current_time - start_time > timeout )); then
             echo "Timeout: Server did not start within 5 minutes"
-            kill $PID
+            kill -9 $PID 2>/dev/null || true
             exit 1
           fi
           echo "Server not ready yet, waiting 5 seconds..."
           sleep 5
         done
-        echo "Killing the server process"
-        kill $PID
+        echo "Attempting to kill the server process"
+        kill -9 $PID 2>/dev/null || true
