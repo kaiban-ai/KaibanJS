@@ -11,8 +11,6 @@ import readline from 'readline';
 import TelemetryDeck from '@telemetrydeck/sdk';
 import crypto from 'crypto';
 
-let tdInstance = null;
-
 // Mock telemetry instance for when users opt out
 const mockTelemetry = {
   signal: () => {}, // No-op function
@@ -31,17 +29,16 @@ function generateProjectId() {
 function initializeTelemetry(appID = '95BF7A3E-9D86-432D-9633-3526DD3A8977') {
   if (process.env.KAIBAN_TELEMETRY_OPT_OUT) {
     console.log('Telemetry is disabled due to KAIBAN_TELEMETRY_OPT_OUT environment variable.');
-    tdInstance = mockTelemetry;
-  } else if (!tdInstance) {
-    const projectId = generateProjectId();
-    // console.log(`Generated project ID: ${projectId}`);
-    
-    tdInstance = new TelemetryDeck({
-      appID,
-      clientUser: projectId,
-    });
+    return mockTelemetry;
   }
-  return tdInstance;
+
+  const projectId = generateProjectId();
+  
+  return new TelemetryDeck({
+    appID,
+    clientUser: projectId,
+    subtleCrypto: crypto.webcrypto.subtle,
+  });
 }
 
 // Initialize telemetry at the beginning
