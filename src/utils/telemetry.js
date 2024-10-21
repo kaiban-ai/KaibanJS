@@ -17,8 +17,10 @@
  */
 
 import TelemetryDeck from '@telemetrydeck/sdk';
+import { v4 as uuidv4 } from 'uuid';
 
 let tdInstance = null;
+const CLIENT_USER = uuidv4();
 
 // Mock telemetry instance for when users opt out
 const mockTelemetry = {
@@ -30,10 +32,19 @@ function getSubtleCrypto() {
   if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
     // Browser environment
     return window.crypto.subtle;
-  } else if (typeof crypto !== 'undefined' && crypto.webcrypto && crypto.webcrypto.subtle) {
+  } else if (typeof global !== 'undefined' && global.crypto && global.crypto.subtle) {
     // Node.js environment
-    return crypto.webcrypto.subtle;
+    return global.crypto.subtle;
   } else {
+    // Fallback for older Node.js versions
+    try {
+      const crypto = require('crypto');
+      if (crypto.webcrypto && crypto.webcrypto.subtle) {
+        return crypto.webcrypto.subtle;
+      }
+    } catch (error) {
+      // crypto module not available
+    }
     console.warn('SubtleCrypto is not available. TelemetryDeck might not function correctly.');
     return null;
   }
@@ -51,7 +62,7 @@ function isTelemetryOptedOut() {
   return false;
 }
 
-export function initializeTelemetry(appID, clientUser) {
+export function initializeTelemetry(appID = '15E9347E-9EE5-4971-A8FB-61D91F3EBA12', clientUser = CLIENT_USER) {
   if (isTelemetryOptedOut()) {
     tdInstance = mockTelemetry;
   } else if (!tdInstance) {
