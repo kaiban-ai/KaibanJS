@@ -20,6 +20,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { createTeamStore } from './stores';
 import { ReactChampionAgent } from './agents';
 import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from './utils/enums';
+import { initializeTelemetry } from './utils/telemetry';
+
+// Initialize telemetry with default values
+const td = initializeTelemetry();
 
 class Agent {
     constructor({ type, ...config }) {
@@ -139,6 +143,7 @@ class Team {
         // Add agents and tasks to the store, they will be set with the store automatically
         this.store.getState().addAgents(agents);
         this.store.getState().addTasks(tasks);
+
     }
 
     /**
@@ -149,7 +154,9 @@ class Team {
      * @returns {void}
      */    
     async start(inputs = null) {
-        return new Promise((resolve) => {
+        td.signal('workflow_started');
+
+        return new Promise((resolve, reject) => {
             const unsubscribe = this.store.subscribe(
                 state => state.teamWorkflowStatus,
                 (status) => {
@@ -157,6 +164,7 @@ class Team {
                     switch (status) {
                         case WORKFLOW_STATUS_enum.FINISHED:
                             unsubscribe();
+                            td.signal('workflow_finished');
                             resolve({
                                 status,
                                 result: state.workflowResult,
@@ -165,10 +173,12 @@ class Team {
                             break;
                         case WORKFLOW_STATUS_enum.ERRORED:
                             unsubscribe();
+                            td.signal('workflow_errored');
                             reject(new Error('Workflow encountered an error'));
                             break;
                         case WORKFLOW_STATUS_enum.BLOCKED:
                             unsubscribe();
+                            td.signal('workflow_blocked');
                             resolve({
                                 status,
                                 result: null,
@@ -187,6 +197,7 @@ class Team {
                 this.store.getState().startWorkflow(inputs);
             } catch (error) {
                 // If an error occurs during the workflow execution, reject the promise
+                td.signal('workflow_start_error', { errorMessage: error.message });
                 reject(error);
                 // Unsubscribe to prevent memory leaks in case of an error
                 unsubscribe();

@@ -9,6 +9,11 @@ import ora from 'ora';
 import figlet from 'figlet';
 import readline from 'readline';
 
+import { initializeTelemetry } from './telemetry.mjs';
+
+// Initialize telemetry at the beginning
+const td = initializeTelemetry(); 
+
 // Function to display a banner
 function displayBanner() {
   console.log(chalk.cyan(figlet.textSync('Kaiban CLI', {
@@ -396,17 +401,21 @@ async function main() {
 
     if (!isKaibanJSInstalled()) {
       console.log(chalk.yellow('KaibanJS is not installed in this project. Installing now...'));
+      td.signal('install_kaibanjs');
       installKaibanJS();
     }
     
     if (command === 'init') {
       await initKaibanProject();
+      td.signal('init_board');
       runKaibanServer();
     } else {
       await initKaibanProject();
+      td.signal('run_board');
       runKaibanServer();
     }
   } else if (command === 'deploy') {
+    td.signal('deploy_board');
     deployToVercel();
   } else {
     console.log(chalk.red('Invalid command. Use "init" to initialize, "run" to start the server, or "deploy" to deploy.'));
