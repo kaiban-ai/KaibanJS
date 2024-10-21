@@ -20,10 +20,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { createTeamStore } from './stores';
 import { ReactChampionAgent } from './agents';
 import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from './utils/enums';
-import { initializeTelemetry } from './utils/telemetry';
-
-// Initialize telemetry with default values
-const td = initializeTelemetry();
 
 class Agent {
     constructor({ type, ...config }) {
@@ -154,7 +150,6 @@ class Team {
      * @returns {void}
      */    
     async start(inputs = null) {
-        td.signal('workflow_started');
 
         return new Promise((resolve, reject) => {
             const unsubscribe = this.store.subscribe(
