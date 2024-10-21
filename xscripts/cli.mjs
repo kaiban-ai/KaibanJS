@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { spawn, execSync } from 'child_process';
 import fs from 'fs';
 import dotenv from 'dotenv';
@@ -9,14 +8,44 @@ import chalk from 'chalk';
 import ora from 'ora';
 import figlet from 'figlet';
 import readline from 'readline';
+import TelemetryDeck from '@telemetrydeck/sdk';
+import crypto from 'crypto';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+let tdInstance = null;
 
-const { initializeTelemetry } = await import(path.join(__dirname, 'telemetry.mjs'));
+// Mock telemetry instance for when users opt out
+const mockTelemetry = {
+  signal: () => {}, // No-op function
+  // Add other methods as needed to match TelemetryDeck's interface
+};
+
+function generateProjectId() {
+  const projectName = path.basename(process.cwd());
+  const userHome = process.env.HOME || process.env.USERPROFILE || '';
+  const machineId = crypto.createHash('md5').update(userHome).digest('hex');
+  const uniqueString = `${projectName}-${machineId}`;
+  
+  return crypto.createHash('md5').update(uniqueString).digest('hex');
+}
+
+function initializeTelemetry(appID = '95BF7A3E-9D86-432D-9633-3526DD3A8977') {
+  if (process.env.KAIBAN_TELEMETRY_OPT_OUT) {
+    console.log('Telemetry is disabled due to KAIBAN_TELEMETRY_OPT_OUT environment variable.');
+    tdInstance = mockTelemetry;
+  } else if (!tdInstance) {
+    const projectId = generateProjectId();
+    // console.log(`Generated project ID: ${projectId}`);
+    
+    tdInstance = new TelemetryDeck({
+      appID,
+      clientUser: projectId,
+    });
+  }
+  return tdInstance;
+}
 
 // Initialize telemetry at the beginning
-const td = initializeTelemetry(); 
+const td = initializeTelemetry();
 
 // Function to display a banner
 function displayBanner() {
