@@ -1,51 +1,193 @@
-/**
- * Path: src/stores/workflowController.ts
- * 
- * Workflow Controller Setup.
- *
- * Configures and controls the task execution workflow within a team context, using a queue system to manage the sequential
- * execution of tasks based on their statuses. It ensures tasks are processed in the correct order and handles status updates.
- *
- * Usage:
- * Integrate this controller to manage the flow of tasks within your application, ensuring tasks are executed in an orderly and efficient manner.
- */
-
 import PQueue from 'p-queue';
-import { TASK_STATUS_enum } from '../utils/enums';
-import { TaskType, TeamStoreApi } from './storeTypes';
+import { logger } from '../utils/logger';
+import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from '../utils/enums';
+import { TaskType, TeamStore, ErrorType } from '../../types/types';
+import { PrettyError } from '../utils/errors';
 
-export const setupWorkflowController = (teamStore: TeamStoreApi): void => {
-    const taskQueue = new PQueue({ concurrency: 1 });
+/**
+ * Configuration interface for the workflow controller
+ */
+interface WorkflowControllerConfig {
+    concurrency?: number;
+    taskTimeout?: number;
+    progressCheckInterval?: number;
+}
 
-    // Managing tasks moving to 'DOING'
-    teamStore.subscribe((state) => {
-        const doingTasks = state.tasks.filter((t: TaskType) => t.status === TASK_STATUS_enum.DOING);
-        doingTasks.forEach(task => {
-            if (!task.agent) return; // Skip if the task has no assigned agent
-            taskQueue.add(() => teamStore.getState().workOnTask(task.agent, task))
-                .catch(error => {
-                    teamStore.getState().handleTaskError({ task, error });
-                    teamStore.getState().handleWorkflowError(task, error);
+/**
+ * Default configuration values
+ */
+const DEFAULT_CONFIG: Required<WorkflowControllerConfig> = {
+    concurrency: 1,
+    taskTimeout: 300000, // 5 minutes
+    progressCheckInterval: 60000 // 1 minute
+};
+
+export const setupWorkflowController = (
+    teamStore: TeamStore,
+    userConfig: WorkflowControllerConfig = {}
+): () => void => {
+    // Merge user config with defaults
+    const config: Required<WorkflowControllerConfig> = {
+        ...DEFAULT_CONFIG,
+        ...userConfig
+    };
+
+    // Initialize task queue with configured concurrency
+    const taskQueue = new PQueue({
+        concurrency: config.concurrency
+    });
+
+    // Controller state
+    const state = {
+        isActive: true,
+        lastTaskUpdateTime: Date.now(),
+        timeoutTimerId: undefined as NodeJS.Timeout | undefined,
+        progressCheckTimerId: undefined as NodeJS.Timeout | undefined
+    };
+
+    // Task processing function with error handling
+    const processTask = async (task: TaskType): Promise<void> => {
+        if (!state.isActive) return;
+
+        try {
+            if (!task.agent) {
+                throw new PrettyError({
+                    message: 'Cannot process task without an assigned agent',
+                    type: 'TaskProcessingError',
+                    context: { taskId: task.id, taskTitle: task.title }
                 });
-        });
-    });
+            }
 
-    // Implement a timeout mechanism for tasks
-    const TASK_TIMEOUT = 300000; // 5 minutes in milliseconds
+            logger.debug(`Processing task: ${task.title}`);
+            await teamStore.workOnTask(task.agent, task);
+            state.lastTaskUpdateTime = Date.now();
 
-    let lastTaskUpdateTime = Date.now();
+        } catch (error) {
+            const prettyError = new PrettyError({
+                message: 'Task processing failed',
+                rootError: error as Error,
+                type: 'TaskProcessingError',
+                context: {
+                    taskId: task.id,
+                    taskTitle: task.title,
+                    agentName: task.agent?.name
+                }
+            });
 
-    teamStore.subscribe((state) => {
-        lastTaskUpdateTime = Date.now();
-    });
+            logger.error(prettyError.prettyMessage);
 
-    const checkWorkflowProgress = (): void => {
-        const currentTime = Date.now();
-        if (currentTime - lastTaskUpdateTime > TASK_TIMEOUT) {
-            console.error('Workflow appears to be stuck. No task updates in the last 5 minutes.');
-            // Implement recovery logic here, e.g., restarting the workflow or notifying an administrator
+            teamStore.handleTaskError({
+                task,
+                error: prettyError as ErrorType
+            });
+
+            teamStore.handleWorkflowError(
+                task,
+                prettyError as ErrorType
+            );
         }
     };
 
-    setInterval(checkWorkflowProgress, 60000); // Check every minute
+    // Subscribe to task status changes
+    const taskStatusUnsubscribe = teamStore.subscribe(
+        (state) => state.tasks,
+        (tasks) => {
+            if (!state.isActive) return;
+
+            const doingTasks = tasks.filter(
+                (task) => task.status === TASK_STATUS_enum.DOING
+            );
+
+            doingTasks.forEach((task) => {
+                taskQueue.add(() => processTask(task))
+                    .catch((error) => {
+                        logger.error('Task queue processing error:', error);
+                    });
+            });
+        }
+    );
+
+    // Subscribe to workflow status changes
+    const workflowStatusUnsubscribe = teamStore.subscribe(
+        (state) => state.teamWorkflowStatus,
+        (status) => {
+            if (status === WORKFLOW_STATUS_enum.FINISHED ||
+                status === WORKFLOW_STATUS_enum.ERRORED) {
+                cleanup();
+            }
+        }
+    );
+
+    // Monitor task timeouts
+    const startTimeoutMonitor = () => {
+        state.timeoutTimerId = setInterval(() => {
+            const currentTime = Date.now();
+
+            if (currentTime - state.lastTaskUpdateTime > config.taskTimeout) {
+                const error = new PrettyError({
+                    message: 'Workflow timeout: No task updates received within the specified timeout period',
+                    type: 'WorkflowTimeoutError',
+                    context: {
+                        lastUpdateTime: new Date(state.lastTaskUpdateTime).toISOString(),
+                        timeoutDuration: `${config.taskTimeout / 1000} seconds`
+                    }
+                });
+
+                logger.error(error.prettyMessage);
+
+                const currentTasks = teamStore.getState().tasks;
+                const runningTask = currentTasks.find(
+                    task => task.status === TASK_STATUS_enum.DOING
+                );
+
+                if (runningTask) {
+                    teamStore.handleTaskError({
+                        task: runningTask,
+                        error: error as ErrorType
+                    });
+                }
+
+                cleanup();
+            }
+        }, config.progressCheckInterval);
+    };
+
+    // Initialize timeout monitoring
+    startTimeoutMonitor();
+
+    // Cleanup function
+    const cleanup = () => {
+        if (!state.isActive) return;
+
+        logger.debug('Cleaning up workflow controller');
+
+        state.isActive = false;
+
+        // Clear timers
+        if (state.timeoutTimerId) {
+            clearInterval(state.timeoutTimerId);
+            state.timeoutTimerId = undefined;
+        }
+
+        if (state.progressCheckTimerId) {
+            clearInterval(state.progressCheckTimerId);
+            state.progressCheckTimerId = undefined;
+        }
+
+        // Clear task queue
+        taskQueue.clear();
+
+        // Remove subscribers
+        taskStatusUnsubscribe();
+        workflowStatusUnsubscribe();
+
+        logger.debug('Workflow controller cleanup completed');
+    };
+
+    // Handle process termination
+    process.on('SIGTERM', cleanup);
+    process.on('SIGINT', cleanup);
+
+    // Return cleanup function for manual controller shutdown
+    return cleanup;
 };

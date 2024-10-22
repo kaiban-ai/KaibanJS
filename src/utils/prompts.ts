@@ -10,47 +10,102 @@
  */
 
 import { zodToJsonSchema } from "zod-to-json-schema";
+import type { 
+    IBaseAgent,
+    TaskType,
+    Output
+} from '../../types/types';
 
-interface Agent {
-    name: string;
-    role: string;
-    background: string;
-    goal: string;
-    tools: { name: string; description: string; schema: any }[];
+export interface REACTChampionAgentPrompts {
+    SYSTEM_MESSAGE: (params: { 
+        agent: IBaseAgent; 
+        task: TaskType 
+    }) => string;
+
+    INITIAL_MESSAGE: (params: { 
+        agent: IBaseAgent; 
+        task: TaskType; 
+        context?: string 
+    }) => string;
+
+    INVALID_JSON_FEEDBACK: (params: { 
+        agent: IBaseAgent; 
+        task: TaskType; 
+        llmOutput: string 
+    }) => string;
+
+    THOUGHT_WITH_SELF_QUESTION_FEEDBACK: (params: { 
+        agent: IBaseAgent; 
+        task: TaskType; 
+        thought: string; 
+        question: string; 
+        parsedLLMOutput: Output 
+    }) => string;
+
+    THOUGHT_FEEDBACK: (params: { 
+        agent: IBaseAgent; 
+        task: TaskType; 
+        thought: string; 
+        parsedLLMOutput: Output 
+    }) => string;
+
+    SELF_QUESTION_FEEDBACK: (params: { 
+        agent: IBaseAgent; 
+        task: TaskType; 
+        question: string; 
+        parsedLLMOutput: Output 
+    }) => string;
+
+    TOOL_RESULT_FEEDBACK: (params: { 
+        agent: IBaseAgent; 
+        task: TaskType; 
+        toolResult: string; 
+        parsedLLMOutput: Output 
+    }) => string;
+
+    TOOL_ERROR_FEEDBACK: (params: { 
+        agent: IBaseAgent; 
+        task: TaskType; 
+        toolName: string; 
+        error: Error; 
+        parsedLLMOutput: Output 
+    }) => string;
+
+    TOOL_NOT_EXIST_FEEDBACK: (params: { 
+        agent: IBaseAgent; 
+        task: TaskType; 
+        toolName: string; 
+        parsedLLMOutput: Output 
+    }) => string;
+
+    OBSERVATION_FEEDBACK: (params: { 
+        agent: IBaseAgent; 
+        task: TaskType; 
+        parsedLLMOutput: Output 
+    }) => string;
+
+    WEIRD_OUTPUT_FEEDBACK: (params: { 
+        agent: IBaseAgent; 
+        task: TaskType; 
+        parsedLLMOutput: Output 
+    }) => string;
+
+    FORCE_FINAL_ANSWER_FEEDBACK: (params: { 
+        agent: IBaseAgent; 
+        task: TaskType; 
+        iterations: number; 
+        maxAgentIterations: number 
+    }) => string;
+
+    WORK_ON_FEEDBACK_FEEDBACK: (params: { 
+        agent: IBaseAgent; 
+        task: TaskType; 
+        feedback: string 
+    }) => string;
 }
 
-interface Task {
-    description: string;
-    expectedOutput: string;
-}
-
-interface LLMOutput {
-    thought?: string;
-    action?: string;
-    actionInput?: object;
-    observation?: string;
-    isFinalAnswerReady?: boolean;
-    finalAnswer?: string;
-}
-
-interface REACTChampionAgentPrompts {
-    SYSTEM_MESSAGE: ({ agent, task }: { agent: Agent; task: Task }) => string;
-    INITIAL_MESSAGE: ({ agent, task, context }: { agent: Agent; task: Task; context?: string }) => string;
-    INVALID_JSON_FEEDBACK: ({ agent, task, llmOutput }: { agent: Agent; task: Task; llmOutput: string }) => string;
-    THOUGHT_WITH_SELF_QUESTION_FEEDBACK: ({ agent, task, thought, question, parsedLLMOutput }: { agent: Agent; task: Task; thought: string; question: string; parsedLLMOutput: string }) => string;
-    THOUGHT_FEEDBACK: ({ agent, task, thought, parsedLLMOutput }: { agent: Agent; task: Task; thought: string; parsedLLMOutput: string }) => string;
-    SELF_QUESTION_FEEDBACK: ({ agent, task, question, parsedLLMOutput }: { agent: Agent; task: Task; question: string; parsedLLMOutput: string }) => string;
-    TOOL_RESULT_FEEDBACK: ({ agent, task, toolResult, parsedLLMOutput }: { agent: Agent; task: Task; toolResult: string; parsedLLMOutput: string }) => string;
-    TOOL_ERROR_FEEDBACK: ({ agent, task, toolName, error, parsedLLMOutput }: { agent: Agent; task: Task; toolName: string; error: string; parsedLLMOutput: string }) => string;
-    TOOL_NOT_EXIST_FEEDBACK: ({ agent, task, toolName, parsedLLMOutput }: { agent: Agent; task: Task; toolName: string; parsedLLMOutput: string }) => string;
-    OBSERVATION_FEEDBACK: ({ agent, task, parsedLLMOutput }: { agent: Agent; task: Task; parsedLLMOutput: string }) => string;
-    WEIRD_OUTPUT_FEEDBACK: ({ agent, task, parsedLLMOutput }: { agent: Agent; task: Task; parsedLLMOutput: string }) => string;
-    FORCE_FINAL_ANSWER_FEEDBACK: ({ agent, task, iterations, maxAgentIterations }: { agent: Agent; task: Task; iterations: number; maxAgentIterations: number }) => string;
-    WORK_ON_FEEDBACK_FEEDBACK: ({ agent, task, feedback }: { agent: Agent; task: Task; feedback: string }) => string;
-}
-
-const REACT_CHAMPION_AGENT_DEFAULT_PROMPTS: REACTChampionAgentPrompts = {
-    SYSTEM_MESSAGE: ({ agent, task }) => {
+export const REACT_CHAMPION_AGENT_DEFAULT_PROMPTS: REACTChampionAgentPrompts = {
+    SYSTEM_MESSAGE: ({ agent, task }: { agent: IBaseAgent; task: TaskType }): string => {
         const prompt = `You are ${agent.name}.
         
 Your role is: ${agent.role}.
@@ -92,22 +147,6 @@ Below is the explanation of each one:
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
 
-Examples: 
-
-{
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
-   "action": "tavily_search_results_json",
-   "actionInput": {"query":"Copa America 2024 winner"}
-}
-
-other
-
-{
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
-   "action": "self_question",
-   "actionInput": {"query":"Copa America 2024 winner"}
-}
-
 ### Observation
 
 {
@@ -126,44 +165,74 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
 **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.`;
         return prompt;
     },
-    INITIAL_MESSAGE: ({ agent, task, context }) => {
+
+    INITIAL_MESSAGE: ({ agent, task, context }: { agent: IBaseAgent; task: TaskType; context?: string }): string => {
         return `Hi ${agent.name}, please complete the following task: ${task.description}. 
         Your expected output should be: "${task.expectedOutput}". 
         ${context ? `Incorporate the following findings and insights from previous tasks: "${context}"` : ''}`;
     },
-    INVALID_JSON_FEEDBACK: ({ agent, task, llmOutput }) => {
+
+    INVALID_JSON_FEEDBACK: ({ agent, task, llmOutput }: { agent: IBaseAgent; task: TaskType; llmOutput: string }): string => {
         return `You returned an invalid JSON object. Please format your answer as a valid JSON object. Just the JSON object not comments or anything else. E.g: {\"finalAnswer\": \"The final answer\"}`;
     },
-    THOUGHT_WITH_SELF_QUESTION_FEEDBACK: ({ agent, task, thought, question, parsedLLMOutput }) => {
+
+    THOUGHT_WITH_SELF_QUESTION_FEEDBACK: ({ agent, task, thought, question, parsedLLMOutput }: { 
+        agent: IBaseAgent; task: TaskType; thought: string; question: string; parsedLLMOutput: Output 
+    }): string => {
         return `Awesome, please answer yourself the question: ${question}.`;
     },
-    THOUGHT_FEEDBACK: ({ agent, task, thought, parsedLLMOutput }) => {
+
+    THOUGHT_FEEDBACK: ({ agent, task, thought, parsedLLMOutput }: {
+        agent: IBaseAgent; task: TaskType; thought: string; parsedLLMOutput: Output
+    }): string => {
         return `Your thoughts are great, let's keep going.`;
     },
-    SELF_QUESTION_FEEDBACK: ({ agent, task, question, parsedLLMOutput }) => {
+
+    SELF_QUESTION_FEEDBACK: ({ agent, task, question, parsedLLMOutput }: {
+        agent: IBaseAgent; task: TaskType; question: string; parsedLLMOutput: Output
+    }): string => {
         return `Awesome, please answer yourself the question.`;
     },
-    TOOL_RESULT_FEEDBACK: ({ agent, task, toolResult, parsedLLMOutput }) => {
+
+    TOOL_RESULT_FEEDBACK: ({ agent, task, toolResult, parsedLLMOutput }: {
+        agent: IBaseAgent; task: TaskType; toolResult: string; parsedLLMOutput: Output
+    }): string => {
         return `You got this result from the tool: ${JSON.stringify(toolResult)}`;
     },
-    TOOL_ERROR_FEEDBACK: ({ agent, task, toolName, error, parsedLLMOutput }) => {
+
+    TOOL_ERROR_FEEDBACK: ({ agent, task, toolName, error, parsedLLMOutput }: {
+        agent: IBaseAgent; task: TaskType; toolName: string; error: Error; parsedLLMOutput: Output
+    }): string => {
         return `An error occurred while using the tool ${toolName}. Please try again or use a different method.`;
     },
-    TOOL_NOT_EXIST_FEEDBACK: ({ agent, task, toolName, parsedLLMOutput }) => {
+
+    TOOL_NOT_EXIST_FEEDBACK: ({ agent, task, toolName, parsedLLMOutput }: {
+        agent: IBaseAgent; task: TaskType; toolName: string; parsedLLMOutput: Output
+    }): string => {
         return `Hey, the tool ${toolName} does not exist. Please find another way.`;
     },
-    OBSERVATION_FEEDBACK: ({ agent, task, parsedLLMOutput }) => {
+
+    OBSERVATION_FEEDBACK: ({ agent, task, parsedLLMOutput }: {
+        agent: IBaseAgent; task: TaskType; parsedLLMOutput: Output
+    }): string => {
         return `Great observation. Please keep going. Let's get to the final answer.`;
     },
-    WEIRD_OUTPUT_FEEDBACK: ({ agent, task, parsedLLMOutput }) => {
+
+    WEIRD_OUTPUT_FEEDBACK: ({ agent, task, parsedLLMOutput }: {
+        agent: IBaseAgent; task: TaskType; parsedLLMOutput: Output
+    }): string => {
         return `Your latest response does not match the way you are expected to output information. Please correct it.`;
     },
-    FORCE_FINAL_ANSWER_FEEDBACK: ({ agent, task, iterations, maxAgentIterations }) => {
+
+    FORCE_FINAL_ANSWER_FEEDBACK: ({ agent, task, iterations, maxAgentIterations }: {
+        agent: IBaseAgent; task: TaskType; iterations: number; maxAgentIterations: number
+    }): string => {
         return `We don't have more time to keep looking for the answer. Please use all the information you have gathered until now and give the finalAnswer right away.`;
     },
-    WORK_ON_FEEDBACK_FEEDBACK: ({ agent, task, feedback }) => {
+
+    WORK_ON_FEEDBACK_FEEDBACK: ({ agent, task, feedback }: {
+        agent: IBaseAgent; task: TaskType; feedback: string
+    }): string => {
         return `Here is some feedback for you to address: ${feedback}`;
     },
 };
-
-export { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS };

@@ -1,11 +1,32 @@
+/**
+ * Path: C:/Users/pwalc/Documents/GroqEmailAssistant/KaibanJS/src/stores/taskStore.ts
+ * Task Store Implementation.
+ *
+ * This module implements the task management store functionality, handling task-related state
+ * changes, status updates, and associated operations within the KaibanJS library.
+ */
+
 import { TASK_STATUS_enum, AGENT_STATUS_enum, FEEDBACK_STATUS_enum, WORKFLOW_STATUS_enum } from "../utils/enums";
 import { getTaskTitleForLogs, validateTask } from '../utils/tasks';
 import { logger } from "../utils/logger";
 import { PrettyError } from "../utils/errors";
 import { calculateTaskCost } from "../utils/llmCostCalculator";
-import { TaskStoreState, TaskType, AgentType, ErrorType, FeedbackObject, Log, PrepareNewLogParams } from './storeTypes';
+import type {
+    TaskStoreState,
+    TaskType,
+    AgentType,
+    ErrorType,
+    FeedbackObject,
+    Log,
+    PrepareNewLogParams,
+    TaskResult
+} from '../../types/types';
 
-export const useTaskStore = (set: (fn: (state: TaskStoreState) => Partial<TaskStoreState>) => void, get: () => TaskStoreState): TaskStoreState => ({
+export const useTaskStore = (
+    set: (fn: (state: TaskStoreState) => Partial<TaskStoreState>) => void,
+    get: () => TaskStoreState
+): TaskStoreState => ({
+    // Initialize base state properties
     tasksInitialized: false,
     workflowLogs: [],
     tasks: [],
@@ -15,7 +36,8 @@ export const useTaskStore = (set: (fn: (state: TaskStoreState) => Partial<TaskSt
     getTaskStats(task: TaskType) {
         const endTime = Date.now();
         const lastDoingLog = get().workflowLogs.slice().reverse().find(log =>
-            log.task && log.task.id === task.id && log.logType === "TaskStatusUpdate" && log.taskStatus === 'DOING' as keyof typeof TASK_STATUS_enum
+            log.task && log.task.id === task.id && log.logType === "TaskStatusUpdate" && 
+            log.taskStatus === TASK_STATUS_enum.DOING
         );
         const startTime = lastDoingLog ? lastDoingLog.timestamp : endTime;
         const duration = (endTime - startTime) / 1000;
@@ -30,19 +52,20 @@ export const useTaskStore = (set: (fn: (state: TaskStoreState) => Partial<TaskSt
         let iterationCount = 0;
     
         get().workflowLogs.forEach(log => {
-            if (log.task && log.task.id === task.id && log.timestamp >= startTime && log.logType === 'AgentStatusUpdate') {
-                if (log.agentStatus === 'THINKING_END' as keyof typeof AGENT_STATUS_enum) {
+            if (log.task && log.task.id === task.id && log.timestamp >= startTime && 
+                log.logType === 'AgentStatusUpdate') {
+                if (log.agentStatus === AGENT_STATUS_enum.THINKING_END) {
                     llmUsageStats.inputTokens += log.metadata.output.llmUsageStats.inputTokens;
                     llmUsageStats.outputTokens += log.metadata.output.llmUsageStats.outputTokens;
                     llmUsageStats.callsCount += 1;
                 }
-                if (log.agentStatus === 'THINKING_ERROR' as keyof typeof AGENT_STATUS_enum) {
+                if (log.agentStatus === AGENT_STATUS_enum.THINKING_ERROR) {
                     llmUsageStats.callsErrorCount += 1;
                 }
-                if (log.agentStatus === 'ISSUES_PARSING_LLM_OUTPUT' as keyof typeof AGENT_STATUS_enum) {
+                if (log.agentStatus === AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT) {
                     llmUsageStats.parsingErrors += 1;
                 }
-                if (log.agentStatus === 'ITERATION_END' as keyof typeof AGENT_STATUS_enum) {
+                if (log.agentStatus === AGENT_STATUS_enum.ITERATION_END) {
                     iterationCount += 1;
                 }
             }
@@ -57,7 +80,11 @@ export const useTaskStore = (set: (fn: (state: TaskStoreState) => Partial<TaskSt
         };
     },
 
-    handleTaskCompleted: ({ agent, task, result }) => {
+    handleTaskCompleted: ({ agent, task, result }: { 
+        agent: AgentType; 
+        task: TaskType; 
+        result: TaskResult;
+    }): void => {
         if (!validateTask(task)) {
             logger.error(`Invalid task structure in handleTaskCompleted`);
             return;
@@ -72,15 +99,16 @@ export const useTaskStore = (set: (fn: (state: TaskStoreState) => Partial<TaskSt
         }
 
         const updatedFeedbackHistory = task.feedbackHistory.map((feedback: FeedbackObject) =>
-            feedback.status === 'PENDING' as keyof typeof FEEDBACK_STATUS_enum ?
-            { ...feedback, status: 'PROCESSED' as keyof typeof FEEDBACK_STATUS_enum } :
+            feedback.status === FEEDBACK_STATUS_enum.PENDING ?
+            { ...feedback, status: FEEDBACK_STATUS_enum.PROCESSED } :
             feedback
         );
 
-        if (task.externalValidationRequired && task.status !== 'VALIDATED' as keyof typeof TASK_STATUS_enum) {
-            task.status = 'AWAITING_VALIDATION' as keyof typeof TASK_STATUS_enum;
+        if (task.externalValidationRequired && task.status !== TASK_STATUS_enum.VALIDATED) {
+            task.status = TASK_STATUS_enum.AWAITING_VALIDATION;
             const modelCode = agent.llmConfig.model;
             const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
+            
             const taskLog = get().prepareNewLog({
                 agent,
                 task,
@@ -98,18 +126,22 @@ export const useTaskStore = (set: (fn: (state: TaskStoreState) => Partial<TaskSt
                 tasks: state.tasks.map(t => t.id === task.id ? {
                     ...t,
                     ...stats,
-                    status: 'AWAITING_VALIDATION' as keyof typeof TASK_STATUS_enum,
+                    status: TASK_STATUS_enum.AWAITING_VALIDATION,
                     result: result,
                     feedbackHistory: updatedFeedbackHistory
                 } : t),
                 workflowLogs: [...state.workflowLogs, taskLog]
             }));
 
-            get().handleWorkflowBlocked({ task, error: new Error('Task awaiting validation') });
+            get().handleWorkflowBlocked({ 
+                task, 
+                error: new Error('Task awaiting validation') 
+            });
         } else {
-            task.status = 'DONE' as keyof typeof TASK_STATUS_enum;
+            task.status = TASK_STATUS_enum.DONE;
             const modelCode = agent.llmConfig.model;
             const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
+            
             const taskLog = get().prepareNewLog({
                 agent,
                 task,
@@ -122,28 +154,29 @@ export const useTaskStore = (set: (fn: (state: TaskStoreState) => Partial<TaskSt
                 logType: 'TaskStatusUpdate',
                 agentStatus: agent.status
             });
+
             logger.debug(`Task completed with ID ${task.id}, Duration: ${stats.duration} seconds`);
+            
             set(state => ({
-                ...state,
                 workflowLogs: [...state.workflowLogs, taskLog],
                 tasks: state.tasks.map(t => t.id === task.id ? {
                     ...t,
                     ...stats,
-                    status: 'DONE' as keyof typeof TASK_STATUS_enum,
+                    status: TASK_STATUS_enum.DONE,
                     result: result,
                     feedbackHistory: updatedFeedbackHistory
                 } : t)
             }));
 
             const tasks = get().tasks;
-            const allTasksDone = tasks.every(t => t.status === 'DONE' as keyof typeof TASK_STATUS_enum);
+            const allTasksDone = tasks.every(t => t.status === TASK_STATUS_enum.DONE);
             if (allTasksDone) {
                 get().finishWorkflowAction();
             }
         }
     },
 
-    provideFeedback: async (taskId: string, feedbackContent: string) => {
+    provideFeedback: async (taskId: string, feedbackContent: string): Promise<void> => {
         const { tasks } = get();
         const taskIndex = tasks.findIndex(t => t.id === taskId);
         if (taskIndex === -1) {
@@ -165,7 +198,7 @@ export const useTaskStore = (set: (fn: (state: TaskStoreState) => Partial<TaskSt
         const newFeedback: FeedbackObject = {
             id: `feedback-${Date.now()}`,
             content: feedbackContent,
-            status: 'PENDING' as keyof typeof FEEDBACK_STATUS_enum,
+            status: FEEDBACK_STATUS_enum.PENDING,
             timestamp: new Date(),
             userId: 'system'
         };
@@ -173,7 +206,7 @@ export const useTaskStore = (set: (fn: (state: TaskStoreState) => Partial<TaskSt
         const updatedTask: TaskType = {
             ...task,
             feedbackHistory: [...task.feedbackHistory, newFeedback],
-            status: 'REVISE' as keyof typeof TASK_STATUS_enum
+            status: TASK_STATUS_enum.REVISE
         };
 
         set(state => ({
@@ -183,21 +216,26 @@ export const useTaskStore = (set: (fn: (state: TaskStoreState) => Partial<TaskSt
         logger.debug(`Feedback added to task ${task.id}`);
     },
 
-    handleTaskError: ({ task, error }: { task: TaskType; error: ErrorType }) => {
+    handleTaskError: ({ task, error }: { 
+        task: TaskType; 
+        error: ErrorType 
+    }): void => {
         if (!validateTask(task)) {
             logger.error(`Invalid task structure in handleTaskError`);
             return;
         }
 
         const stats = get().getTaskStats(task);
-        task.status = 'BLOCKED' as keyof typeof TASK_STATUS_enum;
+        task.status = TASK_STATUS_enum.BLOCKED;
         const modelCode = task.agent.llmConfig.model;
         const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
+        
         const updatedFeedbackHistory = task.feedbackHistory.map((f: FeedbackObject) =>
-            f.status === 'PENDING' as keyof typeof FEEDBACK_STATUS_enum ?
-            { ...f, status: 'PROCESSED' as keyof typeof FEEDBACK_STATUS_enum } :
+            f.status === FEEDBACK_STATUS_enum.PENDING ?
+            { ...f, status: FEEDBACK_STATUS_enum.PROCESSED } :
             f
         );
+
         const taskLog = get().prepareNewLog({
             agent: task.agent,
             task,
@@ -215,7 +253,7 @@ export const useTaskStore = (set: (fn: (state: TaskStoreState) => Partial<TaskSt
             tasks: state.tasks.map(t => t.id === task.id ? {
                 ...t,
                 ...stats,
-                status: 'BLOCKED' as keyof typeof TASK_STATUS_enum,
+                status: TASK_STATUS_enum.BLOCKED,
                 error: error.message,
                 feedbackHistory: updatedFeedbackHistory
             } : t),
@@ -232,20 +270,23 @@ export const useTaskStore = (set: (fn: (state: TaskStoreState) => Partial<TaskSt
         logger.error(prettyError.prettyMessage);
     },
 
-    handleTaskBlocked: ({ task, error }: { task: TaskType; error: ErrorType }) => {
+    handleTaskBlocked: ({ task, error }: { 
+        task: TaskType; 
+        error: ErrorType 
+    }): void => {
         if (!validateTask(task)) {
             logger.error(`Invalid task structure in handleTaskBlocked`);
             return;
         }
 
         const stats = get().getTaskStats(task);
-        task.status = 'BLOCKED' as keyof typeof TASK_STATUS_enum;
+        task.status = TASK_STATUS_enum.BLOCKED;
         const modelCode = task.agent.llmConfig.model;
         const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
 
         const updatedFeedbackHistory = task.feedbackHistory.map((f: FeedbackObject) =>
-            f.status === 'PENDING' as keyof typeof FEEDBACK_STATUS_enum ?
-            { ...f, status: 'PROCESSED' as keyof typeof FEEDBACK_STATUS_enum } :
+            f.status === FEEDBACK_STATUS_enum.PENDING ?
+            { ...f, status: FEEDBACK_STATUS_enum.PROCESSED } :
             f
         );
 
@@ -272,23 +313,29 @@ export const useTaskStore = (set: (fn: (state: TaskStoreState) => Partial<TaskSt
 
         logger.warn(prettyError.prettyMessage);
         logger.debug(prettyError.context);
+        
         set(state => ({
             tasks: state.tasks.map(t => t.id === task.id ? {
                 ...t,
                 ...stats,
-                status: 'BLOCKED' as keyof typeof TASK_STATUS_enum,
+                status: TASK_STATUS_enum.BLOCKED,
                 feedbackHistory: updatedFeedbackHistory
             } : t),
             workflowLogs: [...state.workflowLogs, taskLog]
         }));
+        
         get().handleWorkflowBlocked({ task, error });
     },
 
+    // Required implementations from TaskStoreState interface
     prepareNewLog: (params: PrepareNewLogParams): Log => {
         return get().prepareNewLog(params);
     },
 
-    handleWorkflowBlocked: ({ task, error }: { task: TaskType; error: ErrorType }): void => {
+    handleWorkflowBlocked: ({ task, error }: { 
+        task: TaskType; 
+        error: ErrorType 
+    }): void => {
         get().handleWorkflowBlocked({ task, error });
     },
 

@@ -1,54 +1,95 @@
 // C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\CustomMessageHistory.ts
 
-/**
- * Represents a custom message history for storing and managing conversation messages.
- */
-interface Message {
-  role: string;
+import { BaseListChatMessageHistory } from "@langchain/core/chat_history";
+import {
+  BaseMessage,
+  HumanMessage,
+  AIMessage,
+  SystemMessage,
+  FunctionMessage,
+  ChatMessage,
+  ChatMessageChunk,
+} from "@langchain/core/messages";
+
+interface ChatMessageFieldsWithRole {
   content: string;
+  role: string;
 }
 
-class CustomMessageHistory {
-  private messages: Message[];
+class CustomMessageHistory extends BaseListChatMessageHistory {
+  private messages: BaseMessage[];
+  public lc_namespace: string[] = ["langchain", "memory", "custom_chat_history"];
 
   constructor() {
+    super();
     this.messages = [];
   }
 
-  /**
-   * Adds a new message to the history.
-   * @param message The message to be added.
-   * @throws {Error} If the message format is invalid.
-   */
-  addMessage(message: Message): void {
-    if (typeof message === 'object' && 'role' in message && 'content' in message) {
-      this.messages.push(message);
-    } else {
-      throw new Error('Invalid message format. Expected {role, content}');
-    }
+  async addMessage(message: BaseMessage): Promise<void> {
+    this.messages.push(message);
   }
 
-  /**
-   * Retrieves all messages in the history.
-   * @returns An array of all messages.
-   */
-  getMessages(): Message[] {
+  async getMessages(): Promise<BaseMessage[]> {
     return this.messages;
   }
 
-  /**
-   * Clears all messages from the history.
-   */
-  clear(): void {
+  async clear(): Promise<void> {
     this.messages = [];
   }
 
-  /**
-   * Gets the number of messages in the history.
-   * @returns The number of messages.
-   */
   get length(): number {
     return this.messages.length;
+  }
+
+  async addUserMessage(message: string): Promise<void> {
+    await this.addMessage(new HumanMessage(message));
+  }
+
+  async addAIMessage(message: string): Promise<void> {
+    await this.addMessage(new AIMessage(message));
+  }
+
+  async addSystemMessage(message: string): Promise<void> {
+    await this.addMessage(new SystemMessage(message));
+  }
+
+  async addFunctionMessage(name: string, content: string): Promise<void> {
+    await this.addMessage(new FunctionMessage(content, name));
+  }
+
+  async addChatMessage(fields: ChatMessageFieldsWithRole): Promise<void> {
+    await this.addMessage(new ChatMessage(fields));
+  }
+
+  getMessageRole(message: BaseMessage): string {
+    if (message instanceof HumanMessage) return 'human';
+    if (message instanceof AIMessage) return 'ai';
+    if (message instanceof SystemMessage) return 'system';
+    if (message instanceof FunctionMessage) return 'function';
+    if (message instanceof ChatMessage) return (message as ChatMessage).role;
+    return 'unknown';
+  }
+
+  getMessageType(message: BaseMessage): string {
+    return message._getType();
+  }
+
+  isMessageChunk(message: BaseMessage): boolean {
+    return message instanceof ChatMessageChunk;
+  }
+
+  // New method to handle message chunks if needed
+  async addMessageChunk(chunk: BaseMessage): Promise<void> {
+    if (this.isMessageChunk(chunk)) {
+      if (this.messages.length > 0 && this.isMessageChunk(this.messages[this.messages.length - 1])) {
+        const lastMessage = this.messages[this.messages.length - 1] as ChatMessageChunk;
+        this.messages[this.messages.length - 1] = lastMessage.concat(chunk as ChatMessageChunk);
+      } else {
+        await this.addMessage(chunk);
+      }
+    } else {
+      await this.addMessage(chunk);
+    }
   }
 }
 

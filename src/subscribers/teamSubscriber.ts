@@ -1,36 +1,23 @@
-/**
- * Path: src/subscribers/teamSubscriber.ts
- * 
- * Workflow Status Subscriber.
- *
- * Monitors changes in the workflow status, logging significant events and updating the system state accordingly. 
- * This is crucial for maintaining a clear overview of workflow progress and handling potential issues promptly.
- *
- * Usage:
- * Use this subscriber to keep track of workflow statuses, enabling proactive management of workflows and their states.
- */
-
 import { logPrettyWorkflowStatus, logPrettyWorkflowResult, WorkflowResultProps } from "../utils/prettyLogs";
 import { WORKFLOW_STATUS_enum } from '../utils/enums';
-import { TeamState, Log, TeamStoreWithSubscribe } from '../stores/storeTypes';
+import { TeamState, Log, TeamStoreApi } from '../../types/types';  // Import TeamStoreApi
+import { UseBoundStore } from 'zustand';  // Use the correct export from zustand
 import { shallow } from 'zustand/shallow';
 
-export const subscribeWorkflowStatusUpdates = (useStore: TeamStoreWithSubscribe): void => {
-    useStore.subscribe(
-        (state: TeamState) => state.workflowLogs,
-        (newLogs: Log[], previousLogs: Log[]) => {
-            const newLogsCount = newLogs.length - previousLogs.length;
-            if (newLogsCount > 0) {
-                for (let i = newLogs.length - newLogsCount; i < newLogs.length; i++) {
-                    const log = newLogs[i];
-                    if (log.logType === 'WorkflowStatusUpdate') {
-                        handleWorkflowStatusUpdate(log);
-                    }
+export const subscribeWorkflowStatusUpdates = (store: UseBoundStore<TeamStoreApi>): void => {
+    store.subscribe((state: TeamState) => {  // Use a single argument to subscribe
+        const newLogs = state.workflowLogs;
+        const previousLogs = newLogs.slice(0, -1); // Get all logs except the last one
+        const newLogsCount = newLogs.length - previousLogs.length;
+        if (newLogsCount > 0) {
+            for (let i = newLogs.length - newLogsCount; i < newLogs.length; i++) {
+                const log = newLogs[i];
+                if (log.logType === 'WorkflowStatusUpdate') {
+                    handleWorkflowStatusUpdate(log);
                 }
             }
-        },
-        { equalityFn: shallow }
-    );
+        }
+    });
 };
 
 const handleWorkflowStatusUpdate = (log: Log) => {

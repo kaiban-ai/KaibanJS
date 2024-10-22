@@ -1,163 +1,776 @@
+/**
+ * Path: C:/Users/pwalc/Documents/GroqEmailAssistant/KaibanJS/types/types.d.ts
+ * 
+ * Central Type Definitions
+ * This file serves as the single source of truth for all TypeScript type definitions
+ * used throughout the KaibanJS library.
+ */
+
+import { AGENT_STATUS_enum, TASK_STATUS_enum, WORKFLOW_STATUS_enum, FEEDBACK_STATUS_enum } from "./enums";
 import { Tool } from "langchain/tools";
-import type { AGENT_STATUS_enum } from "./enums.d.ts";
+import { StateCreator, StoreApi, UseBoundStore } from 'zustand';
+import { BaseMessage } from "@langchain/core/messages";
+import CustomMessageHistory from "../utils/CustomMessageHistory";
+import { ChatGroqInput } from "@langchain/groq";
+import { GoogleGenerativeAIChatInput } from "@langchain/google-genai";
+
+// ─── LLM Configuration Types ──────────────────────────────────────────────────
+
+export type LLMProvider = 'groq' | 'openai' | 'anthropic' | 'google' | 'mistral';
+
+// Base Configuration Interface
+export interface BaseLLMConfig {
+    provider: LLMProvider;
+    model: string;
+    apiKey?: string;
+    temperature?: number;
+    streaming?: boolean;
+    apiBaseUrl?: string;
+    [key: string]: any;
+}
+
+// Provider-Specific Input Types
+export { ChatGroqInput } from "@langchain/groq";
+export { GoogleGenerativeAIChatInput } from "@langchain/google-genai";
+
+// Keep other chat input interfaces that don't have LangChain imports yet
+export interface ChatOpenAIInput {
+    apiKey: string;
+    model: string;
+    modelName: string;
+    temperature: number;
+    maxTokens?: number;
+    streaming: boolean;
+    frequencyPenalty: number;
+    presencePenalty: number;
+    topP: number;
+    n: number;
+    stop?: string[];
+    stopSequences?: string[];
+    streamUsage?: boolean;
+    modelKwargs?: Record<string, any>;
+}
+
+export interface ChatAnthropicInput {
+    apiKey: string;
+    modelName: string;
+    temperature?: number;
+    maxTokens?: number;
+    maxTokensToSample?: number;
+    stopSequences?: string[];
+    streaming?: boolean;
+    anthropicApiUrl?: string;
+    topK?: number;
+    topP?: number;
+}
+
+export interface ChatMistralInput {
+    apiKey: string;
+    modelName: string;
+    temperature?: number;
+    maxTokens?: number;
+    topP?: number;
+    safeMode?: boolean;
+    randomSeed?: number;
+    streaming?: boolean;
+    endpoint?: string;
+    streamUsage?: boolean;
+}
+
+// Provider-Specific Configurations
+export interface GroqConfig extends BaseLLMConfig {
+    provider: 'groq';
+    model: string;
+    stop?: string | null | Array<string>;
+    streaming?: boolean;
+    temperature?: number;
+}
+
+export interface OpenAIConfig extends BaseLLMConfig {
+    provider: 'openai';
+    model: string;
+    frequencyPenalty?: number;
+    presencePenalty?: number;
+    topP?: number;
+    n?: number;
+    stop?: string[];
+    modelKwargs?: Record<string, any>;
+}
+
+export interface AnthropicConfig extends BaseLLMConfig {
+    provider: 'anthropic';
+    model: string;
+    maxTokensToSample?: number;
+    stopSequences?: string[];
+    anthropicApiUrl?: string;
+    topK?: number;
+    topP?: number;
+}
+
+export interface GoogleConfig extends BaseLLMConfig {
+    provider: 'google';
+    model: string;
+    maxOutputTokens?: number;
+    topK?: number;
+    topP?: number;
+    stopSequences?: string[];
+    safetySettings?: any;
+    apiVersion?: string;
+}
+
+export interface MistralConfig extends BaseLLMConfig {
+    provider: 'mistral';
+    model: string;
+    topP?: number;
+    safeMode?: boolean;
+    randomSeed?: number;
+    endpoint?: string;
+}
+
+export type LLMConfig = GroqConfig | OpenAIConfig | AnthropicConfig | GoogleConfig | MistralConfig;
+export type LLMInstance = any;
+
+// Type Guards
+export function isGroqConfig(config: LLMConfig): config is GroqConfig {
+    return config.provider === 'groq' && !!config.model;
+}
+
+export function isOpenAIConfig(config: LLMConfig): config is OpenAIConfig {
+    return config.provider === 'openai' && !!config.model;
+}
+
+export function isAnthropicConfig(config: LLMConfig): config is AnthropicConfig {
+    return config.provider === 'anthropic' && !!config.model;
+}
+
+export function isGoogleConfig(config: LLMConfig): config is GoogleConfig {
+    return config.provider === 'google' && !!config.model;
+}
+
+export function isMistralConfig(config: LLMConfig): config is MistralConfig {
+    return config.provider === 'mistral' && !!config.model;
+}
+
+// ─── Agent Types ───────────────────────────────────────────────────────────
 
 /**
- * ### Store types
- * @typedef {any} TStore
- * @todo Implement various stores later on.
+ * Base configuration for creating an agent
  */
-export type TStore = any;
-
-/**
- * ### Agent types
- * @typedef {"ReactChampionAgent"} TAgentTypes
- */
-export type TAgentTypes = "ReactChampionAgent";
-
-/**
- * ### BaseAgent params
- * @interface IBaseAgentParams
- * @property {string} name - The name of the agent.
- * @property {string} role - The role of the agent.
- * @property {string} goal - The goal of the agent.
- * @property {string} background - The background of the agent.
- * @property {Tool[]} [tools] - The tools available to the agent.
- * @property {ILLMConfig} [llmConfig] - The language model configuration.
- * @property {number} [maxIterations] - The maximum number of iterations.
- * @property {boolean} [forceFinalAnswer] - Whether to force the final answer.
- */
-export interface IBaseAgentParams {
-  name: string;
-  role: string;
-  goal: string;
-  background: string;
-  tools?: Tool[];
-  llmConfig?: ILLMConfig;
-  maxIterations?: number;
-  forceFinalAnswer?: boolean;
-  llmInstance?: any;
+export interface BaseAgentConfig {
+    name: string;
+    role: string;
+    goal: string;
+    background: string;
+    tools: Tool[];
+    llmConfig?: LLMConfig;
+    maxIterations?: number;
+    forceFinalAnswer?: boolean;
+    promptTemplates?: Record<string, any>;
+    llmInstance?: any;
 }
 
 /**
- * ### BaseAgent
- * Used to reference the core BaseAgent class type.
- * @class
- * @property {string} id - The agent's unique identifier.
- * @property {TStore} store - The store used by the agent.
- * @property {AGENT_STATUS_enum} status - The agent's current status.
- * @property {Record<string, any> | null} env - The agent's environment variables.
- * @property {string} llmSystemMessage - The agent's system message.
- * @property {string} name - The agent's name.
- * @property {string} role - The agent's role.
- * @property {string} goal - The agent's goal.
- * @property {string} background - The agent's background.
- * @property {Tool[]} tools - The tools available to the agent.
- * @property {ILLMConfig} llmConfig - The language model configuration.
- * @property {number} maxIterations - The maximum number of iterations.
- * @property {boolean} forceFinalAnswer - Whether to force the final answer.
+ * Base interface for all agent implementations
  */
-export declare class BaseAgent {
-  id: string;
-  store: TStore;
-  status: AGENT_STATUS_enum;
-  env: Record<string, any> | null;
-  llmSystemMessage: string;
+export interface IBaseAgent {
+    id: string;
+    name: string;
+    role: string;
+    goal: string;
+    background: string;
+    tools: Tool[];
+    maxIterations: number;
+    store: TeamStore | null;  // More specific type instead of any
+    status: keyof typeof AGENT_STATUS_enum;
+    env: Record<string, any> | null;  // More specific type instead of any
+    llmInstance: LLMInstance | null;
+    llmConfig: LLMConfig;
+    llmSystemMessage: string | null;
+    forceFinalAnswer: boolean;
+    promptTemplates: Record<string, any>;
 
-  name: string;
-  role: string;
-  goal: string;
-  background: string;
-  tools: Tool[];
-  llmConfig: ILLMConfig;
-  maxIterations: number;
-  forceFinalAnswer: boolean;
-  llmInstance: any;
-
-  /**
-   * Creates an instance of BaseAgent.
-   * @param {IBaseAgentParams} params - The agent's parameters.
-   */
-  constructor(params: IBaseAgentParams);
-
-  /**
-   * Sets the store.
-   * @param {TStore} store - The store to be set.
-   */
-  setStore(store: TStore): void;
-
-  /**
-   * Sets the status of the agent.
-   * @param {AGENT_STATUS_enum} status - The status to be set.
-   */
-  setStatus(status: AGENT_STATUS_enum): void;
-
-  /**
-   * Sets the environment variables.
-   * @param {Record<string, any>} env - The environment variables to be set.
-   */
-  setEnv(env: Record<string, any>): void;
+    initialize(store: TeamStore, env: Record<string, any>): void;  // Add initialize method
+    setStore(store: TeamStore): void;  // Update type from any to TeamStore
+    setStatus(status: keyof typeof AGENT_STATUS_enum): void;
+    setEnv(env: Record<string, any>): void;
+    workOnTask(task: TaskType): Promise<AgenticLoopResult>;
+    workOnFeedback(task: TaskType, feedbackList: FeedbackObject[], context: string): Promise<void>;
+    normalizeLlmConfig(llmConfig: LLMConfig): LLMConfig;
+    createLLMInstance(): void;
 }
 
 /**
- * ### Various api keys
- * @interface IApiKeys
- * @property {string} [openai] - The OpenAI API key.
- * @property {string} [google] - The Google API key.
- * @property {string} [anthropic] - The Anthropic API key.
- * @property {string} [mistral] - The Mistral API key.
+ * Extended interface for ReactChampionAgent
  */
-export interface IApiKeys {
-  openai?: string;
-  google?: string;
-  anthropic?: string;
-  mistral?: string;
+export interface IReactChampionAgent extends IBaseAgent {
+    messageHistory: CustomMessageHistory;
+    executableAgent: any;
 }
 
 /**
- * ### LLM configuration
- * @interface ILLMConfig
- * @property {("openai" | "google" | "anthropic" | "mistral")} provider - The provider of the language model.
- * @property {string} model - The model to be used.
- * @property {number} maxRetries - The maximum number of retries.
- * @property {IApiKeys} [apiKey] - The API key for the provider.
+ * Union type for all possible agent implementations
  */
-export interface ILLMConfig {
-  provider: "openai" | "google" | "anthropic" | "mistral";
-  model: string;
-  maxRetries: number;
-  apiKey?: IApiKeys;
+export type AgentType = IBaseAgent | IReactChampionAgent;
+
+// ─── Task Types ────────────────────────────────────────────────────────────
+
+/**
+ * Core task interface
+ */
+export interface TaskType {
+    id: string;
+    title: string;
+    description: string;
+    expectedOutput: string;
+    agent: AgentType;
+    isDeliverable: boolean;
+    externalValidationRequired: boolean;
+    inputs: Record<string, any>;
+    feedbackHistory: FeedbackObject[];
+    status: keyof typeof TASK_STATUS_enum;
+    result?: TaskResult;
+    interpolatedTaskDescription?: string;
+    duration?: number;
+    startTime?: number;
+    endTime?: number;
+    llmUsageStats?: LLMUsageStats;
+    iterationCount?: number;
+    error?: string;
+    setStore: (store: any) => void;
+    execute: (data: any) => Promise<any>;
+}
+
+export type TaskResult = string | Record<string, any> | null;
+
+/**
+ * Statistics for task execution
+ */
+export interface TaskStats {
+    startTime: number;
+    endTime: number;
+    duration: number;
+    llmUsageStats: LLMUsageStats;
+    iterationCount: number;
 }
 
 /**
- * ### LLM usage stats
- * @interface ILLMUsageStats
- * @property {number} inputTokens - The number of input tokens.
- * @property {number} outputTokens - The number of output tokens.
- * @property {number} callsCount - The number of calls.
- * @property {number} callsErrorCount - The number of calls with errors.
- * @property {number} parsingErrors - The number of parsing errors.
+ * Feedback object for task interactions
  */
-export interface ILLMUsageStats {
-  inputTokens: number;
-  outputTokens: number;
-  callsCount: number;
-  callsErrorCount: number;
-  parsingErrors: number;
+export interface FeedbackObject {
+    id: string;
+    content: string;
+    status: keyof typeof FEEDBACK_STATUS_enum;
+    timestamp: Date;
+    userId: string;
+    category?: string;
+    priority?: 'low' | 'medium' | 'high';
+    assignedTo?: string;
 }
 
 /**
- * ### Task stats
- * @interface ITaskStats
- * @property {number} startTime - The start time of the task.
- * @property {number} endTime - The end time of the task.
- * @property {number} duration - The duration of the task.
- * @property {ILLMUsageStats} llmUsageStats - The LLM usage statistics.
- * @property {number} iterationCount - The iteration count.
+ * Usage statistics for LLM interactions
  */
-export interface ITaskStats {
-  startTime: number;
-  endTime: number;
-  duration: number;
-  llmUsageStats: ILLMUsageStats;
-  iterationCount: number;
+export interface LLMUsageStats {
+    inputTokens: number;
+    outputTokens: number;
+    callsCount: number;
+    callsErrorCount: number;
+    parsingErrors: number;
 }
+
+/**
+ * Result types for agent operations
+ */
+export interface AgenticLoopResult {
+    error?: string;
+    result?: any;
+    metadata: {
+        iterations: number;
+        maxAgentIterations: number;
+    };
+}
+
+export interface Output {
+    parsedLLMOutput?: any;
+    llmUsageStats?: LLMUsageStats;
+    thought?: string;
+    action?: string;
+    actionInput?: Record<string, any>;
+    observation?: string;
+    isFinalAnswerReady?: boolean;
+    finalAnswer?: string;
+}
+
+export interface ThinkingResult {
+    parsedLLMOutput: any;
+    llmOutput: string;
+    llmUsageStats: {
+        inputTokens: number;
+        outputTokens: number;
+    };
+}
+
+// ─── Handler Types ──────────────────────────────────────────────────────────
+
+/**
+ * Base interface for handler parameters
+ */
+export interface HandlerBaseParams {
+    agent: IBaseAgent;
+    task: TaskType;
+}
+
+/**
+ * Parameters for thinking operations
+ */
+export interface ThinkingHandlerParams extends HandlerBaseParams {
+    messages?: BaseMessage[];
+    output?: any;
+}
+
+/**
+ * Parameters for tool operations
+ */
+export interface ToolHandlerParams extends HandlerBaseParams {
+    parsedLLMOutput: any;
+    tool?: any;
+    toolName?: string;
+    error?: Error;
+}
+
+/**
+ * Parameters for status updates
+ */
+export interface StatusHandlerParams extends HandlerBaseParams {
+    parsedLLMOutput: any;
+    output?: any;
+}
+
+/**
+ * Parameters for iteration handling
+ */
+export interface IterationHandlerParams {
+    task: TaskType;
+    iterations: number;
+    maxAgentIterations: number;
+}
+
+/**
+ * Parameters for task completion
+ */
+export interface TaskCompletionParams {
+    task: TaskType;
+    parsedResultWithFinalAnswer: any;
+    iterations: number;
+    maxAgentIterations: number;
+}
+
+/**
+ * Parameters for message building
+ */
+export interface MessageBuildParams extends HandlerBaseParams {
+    interpolatedTaskDescription: string;
+    context?: string;
+}
+
+/**
+ * Parameters for preparing new logs
+ */
+export interface PrepareNewLogParams {
+    agent: IBaseAgent;
+    task: TaskType;
+    logDescription: string;
+    metadata: Record<string, any>;
+    logType: string;
+    agentStatus: keyof typeof AGENT_STATUS_enum;
+}
+
+// ─── Store Types ───────────────────────────────────────────────────────────
+
+/**
+ * Zustand specific store types
+ */
+export interface StoreSubscribe<T> {
+    (listener: (state: T, previousState: T) => void): () => void;
+    <U>(
+        selector: (state: T) => U,
+        listener: (selectedState: U, previousSelectedState: U) => void,
+        options?: {
+            equalityFn?: (a: U, b: U) => boolean;
+            fireImmediately?: boolean;
+        }
+    ): () => void;
+}
+
+/**
+ * Base store state interface with indexable signature
+ */
+export interface BaseStoreState {
+    name: string;
+    agents: AgentType[];
+    tasks: TaskType[];
+    workflowLogs: Log[];
+    [key: string]: any;
+}
+
+/**
+ * Task store state interface extending base store
+ */
+export interface TaskStoreState extends BaseStoreState {
+    tasksInitialized: boolean;
+    getTaskStats(task: TaskType): TaskStats;
+    handleTaskCompleted(params: { agent: AgentType; task: TaskType; result: any }): void;
+    provideFeedback(taskId: string, feedbackContent: string): Promise<void>;
+    handleTaskError(params: { task: TaskType; error: ErrorType }): void;
+    handleTaskBlocked(params: { task: TaskType; error: ErrorType }): void;
+    prepareNewLog(params: PrepareNewLogParams): Log;
+    handleWorkflowBlocked(params: { task: TaskType; error: ErrorType }): void;
+    finishWorkflowAction(): void;
+    getWorkflowStats(): Record<string, any>;
+}
+
+/**
+ * Agent store state interface extending task store
+ */
+export interface AgentStoreState extends TaskStoreState {
+    handleAgentIterationStart(params: { agent: AgentType; task: TaskType; iterations: number; maxAgentIterations: number }): void;
+    handleAgentIterationEnd(params: { agent: AgentType; task: TaskType; iterations: number; maxAgentIterations: number }): void;
+    handleAgentThinkingStart(params: { agent: AgentType; task: TaskType; messages: any[] }): void;
+    handleAgentThinkingEnd(params: { agent: AgentType; task: TaskType; output: Output }): void;
+    handleAgentThinkingError(params: { agent: AgentType; task: TaskType; error: ErrorType }): void;
+    handleAgentIssuesParsingLLMOutput(params: { agent: AgentType; task: TaskType; output: Output; error: ErrorType }): void;
+    handleAgentActionStart(params: { agent: AgentType; task: TaskType; action: any; runId: string }): void;
+    handleAgentToolStart(params: { agent: AgentType; task: TaskType; tool: any; input: any }): void;
+    handleAgentToolEnd(params: { agent: AgentType; task: TaskType; output: any; tool: any }): void;
+    handleAgentToolError(params: { agent: AgentType; task: TaskType; tool: any; error: ErrorType }): void;
+    handleAgentToolDoesNotExist(params: { agent: AgentType; task: TaskType; toolName: string }): void;
+    handleAgentFinalAnswer(params: { agent: AgentType; task: TaskType; output: Output }): void;
+    handleAgentThought(params: { agent: AgentType; task: TaskType; output: Output }): void;
+    handleAgentSelfQuestion(params: { agent: AgentType; task: TaskType; output: Output }): void;
+    handleAgentObservation(params: { agent: AgentType; task: TaskType; output: Output }): void;
+    handleWeirdOutput(params: { agent: AgentType; task: TaskType; output: Output }): void;
+    handleAgentLoopError(params: { agent: AgentType; task: TaskType; error: ErrorType; iterations: number; maxAgentIterations: number }): void;
+    handleAgentMaxIterationsError(params: { agent: AgentType; task: TaskType; error: ErrorType; iterations?: number; maxAgentIterations?: number }): void;
+    handleAgentTaskCompleted(params: { agent: AgentType; task: TaskType; result: any }): void;
+}
+
+/**
+ * Team state interface extending agent store state
+ */
+export interface TeamState extends AgentStoreState {
+    teamWorkflowStatus: keyof typeof WORKFLOW_STATUS_enum;
+    workflowResult: any;
+    inputs: Record<string, any>;
+    workflowContext: string;
+    env: Record<string, any>;
+    logLevel: string | undefined;
+    [key: string]: any;
+}
+
+/**
+ * Actions available in the team state
+ */
+export interface TeamStateActions {
+    setInputs(inputs: Record<string, any>): void;
+    setName(name: string): void;
+    setEnv(env: Record<string, any>): void;
+    addAgents(agents: AgentType[]): void;
+    addTasks(tasks: TaskType[]): void;
+    updateTaskStatus(taskId: string, status: keyof typeof TASK_STATUS_enum): void;
+    startWorkflow(inputs?: Record<string, any>): Promise<void>;
+    resetWorkflowStateAction(): void;
+    setTeamWorkflowStatus(status: keyof typeof WORKFLOW_STATUS_enum): void;
+    handleWorkflowError(task: TaskType, error: ErrorType): void;
+    workOnTask(agent: AgentType, task: TaskType): Promise<void>;
+    deriveContextFromLogs(logs: Log[], currentTaskId: string): string;
+    validateTask(taskId: string): Promise<void>;
+    clearAll(): void;
+    getCleanedState(): any;
+    getWorkflowStats(): Record<string, any>;
+    finishWorkflowAction(): void;
+    handleWorkflowBlocked(params: { task: TaskType; error: ErrorType }): void;
+    provideFeedback(taskId: string, feedbackContent: string): Promise<void>;
+    [key: string]: any;
+}
+
+/**
+ * Base store interface with Zustand methods
+ */
+export interface BaseStore<T> {
+    getState: () => T;
+    setState: (partial: Partial<T> | ((state: T) => Partial<T>)) => void;
+    subscribe: StoreSubscribe<T>;
+    destroy: () => void;
+}
+
+/**
+ * Complete team store type combining state and actions with Zustand integration
+ */
+export interface TeamStore extends TeamState, TeamStateActions, BaseStore<TeamStore> {
+}
+
+/**
+ * Proxied team store interface extending team store
+ */
+export interface ProxiedTeamStore extends TeamStore {
+    state: TeamState;
+}
+
+/**
+ * Store configuration types
+ */
+export type TeamStoreApi = StoreApi<TeamStore>;
+
+export type UseBoundTeamStore = UseBoundStore<TeamStoreApi>;
+
+export type CreateTeamStore = (initialState?: Partial<TeamState>) => UseBoundTeamStore;
+
+export type TeamStoreMiddlewares = [
+    ['zustand/devtools', never],
+    ['zustand/subscribeWithSelector', never]
+];
+
+export type TeamStoreCreator = StateCreator<
+    TeamStore,
+    TeamStoreMiddlewares,
+    [],
+    TeamStore
+>;
+
+/**
+ * Store utility types
+ */
+export type StoreConverter<T> = T extends UseBoundStore<infer R> 
+    ? R extends StoreApi<infer S> 
+        ? S 
+        : never 
+    : never;
+
+export interface StoreSubscribeWithSelector<T> extends StoreSubscribe<T> {
+    <U>(
+        selector: (state: T) => U,
+        listener: (selectedState: U, previousSelectedState: U) => void,
+        options?: {
+            equalityFn?: (a: U, b: U) => boolean;
+            fireImmediately?: boolean;
+        }
+    ): () => void;
+}
+
+export type ExtendedStoreApi = UseBoundTeamStore & {
+    use: {
+        <U>(selector: (state: TeamStore) => U): U;
+        <U>(selector: (state: TeamStore) => U, equalityFn: (a: U, b: U) => boolean): U;
+    };
+};
+
+export type TeamStoreWithSubscribe = TeamStore & {
+    subscribe: StoreSubscribeWithSelector<TeamStore>;
+};
+
+// Type guard for store validation
+export function isTeamStore(store: any): store is TeamStore {
+    return (
+        typeof store === 'object' &&
+        store !== null &&
+        'getState' in store &&
+        'setState' in store &&
+        'subscribe' in store
+    );
+}
+
+// ─── Logging and Display Types ───────────────────────────────────────────────
+
+/**
+ * Properties for task completion logging
+ */
+export interface TaskCompletionProps {
+    iterationCount: number;
+    duration: number;
+    llmUsageStats: LLMUsageStats;
+    agentName: string;
+    agentModel: string;
+    taskTitle: string;
+    currentTaskNumber: number;
+    totalTasks: number;
+    costDetails: CostDetails;
+}
+
+/**
+ * Properties for task status logging
+ */
+export interface TaskStatusProps {
+    currentTaskNumber: number;
+    totalTasks: number;
+    taskTitle: string;
+    taskStatus: string;
+    agentName: string;
+}
+
+/**
+ * Properties for workflow status logging
+ */
+export interface WorkflowStatusProps {
+    status: string;
+    message: string;
+}
+
+/**
+ * Properties for workflow result logging
+ */
+export interface WorkflowResultProps {
+    metadata: {
+        result: string;
+        duration: number;
+        llmUsageStats: LLMUsageStats;
+        iterationCount: number;
+        costDetails: CostDetails;
+        teamName: string;
+        taskCount: number;
+        agentCount: number;
+    };
+}
+
+/**
+ * Log entry interface
+ */
+export interface Log {
+    timestamp: number;
+    task: TaskType | null;
+    agent: IBaseAgent | null;
+    agentName: string;
+    taskTitle: string;
+    logDescription: string;
+    taskStatus: keyof typeof TASK_STATUS_enum;
+    agentStatus: keyof typeof AGENT_STATUS_enum;
+    metadata: Record<string, any>;
+    logType: string;
+    workflowStatus?: keyof typeof WORKFLOW_STATUS_enum;
+}
+
+// ─── Error Types ────────────────────────────────────────────────────────────
+
+/**
+ * Base error type extension
+ */
+export interface ErrorType extends Error {
+    name: string;
+    message: string;
+    stack?: string;
+    context?: any;
+    originalError?: Error;
+    recommendedAction?: string | null;
+}
+
+/**
+ * Pretty error type for formatted error display
+ */
+export interface PrettyErrorType {
+    name: string;
+    message: string;
+    recommendedAction?: string;
+    rootError: Error;
+    context?: any;
+    location?: string;
+    type?: string;
+}
+
+// ─── Response Types ────────────────────────────────────────────────────────
+
+/**
+ * Configuration for streaming responses
+ */
+export interface StreamingHandlerConfig {
+    content?: string;
+    chunk?: any;
+    metadata?: Record<string, any>;
+}
+
+/**
+ * Structure for completion responses
+ */
+export interface CompletionResponse {
+    content?: string;
+    usage?: {
+        prompt_tokens?: number;
+        completion_tokens?: number;
+    };
+    message?: {
+        content: string;
+    };
+}
+
+// ─── Chain Configuration Types ──────────────────────────────────────────────
+
+/**
+ * Configuration for chain agents
+ */
+export interface ChainAgentConfig {
+    runnable: any;
+    getMessageHistory: () => CustomMessageHistory;
+    inputMessagesKey: string;
+    historyMessagesKey: string;
+}
+
+/**
+ * Configuration for prepared agents
+ */
+export interface PreparedAgentConfig {
+    executableAgent: any;
+    initialFeedbackMessage: string;
+}
+
+// ─── Cost Calculation Types ──────────────────────────────────────────────────
+
+/**
+ * Details of cost calculations
+ */
+export interface CostDetails {
+    costInputTokens: number;
+    costOutputTokens: number;
+    totalCost: number;
+}
+
+/**
+ * Pricing structure for models
+ */
+export interface ModelPricing {
+    modelCode: string;
+    provider: string;
+    inputPricePerMillionTokens: number;
+    outputPricePerMillionTokens: number;
+    features: string;
+}
+
+// ─── Parser Types ──────────────────────────────────────────────────────────
+
+/**
+ * Structure for parsed JSON output
+ */
+export interface ParsedJSON {
+    thought?: string;
+    action?: string;
+    actionInput?: object | null;
+    observation?: string;
+    isFinalAnswerReady?: boolean;
+    finalAnswer?: string;
+    [key: string]: any;
+}
+
+// ─── Factory Pattern Interfaces ──────────────────────────────────────────────
+
+/**
+ * Factory for creating LLM instances
+ */
+export interface LLMFactory {
+    createInstance(config: LLMConfig): LLMInstance;
+}
+
+/**
+ * Creator for LLM factories
+ */
+export interface LLMFactoryCreator {
+    getFactory(provider: LLMProvider): LLMFactory;
+}
+
+// End of types.d.ts

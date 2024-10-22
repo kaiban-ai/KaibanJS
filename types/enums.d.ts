@@ -1,4 +1,5 @@
 /**
+ * path: C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\types\enums.d.ts
  * ### Agent status
  * @enum {string}
  * @readonly
@@ -43,13 +44,17 @@ export declare enum AGENT_STATUS_enum {
  * @property {string} BLOCKED - Progress on the task is halted due to dependencies or obstacles.
  * @property {string} REVISE - Task requires additional review or adjustments.
  * @property {string} DONE - Task is completed and requires no further action.
+ * @property {string} AWAITING_VALIDATION - Task is completed but waiting for external validation or approval.
+ * @property {string} VALIDATED - Task has been validated and confirmed as correctly completed.
  */
 export declare enum TASK_STATUS_enum {
-  TODO = "TODO",
-  DOING = "DOING",
-  BLOCKED = "BLOCKED",
-  REVISE = "REVISE",
-  DONE = "DONE",
+  TODO = 'TODO',
+  DOING = 'DOING',
+  BLOCKED = 'BLOCKED',
+  REVISE = 'REVISE',
+  DONE = 'DONE',
+  AWAITING_VALIDATION = 'AWAITING_VALIDATION',
+  VALIDATED = 'VALIDATED'
 }
 
 /**

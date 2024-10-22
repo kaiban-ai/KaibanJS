@@ -12,15 +12,7 @@
 
 // Utility function to clean up JSON string and prepare it for parsing
 
-interface ParsedJSON {
-    thought?: string;
-    action?: string;
-    actionInput?: object | null;
-    observation?: string;
-    isFinalAnswerReady?: boolean;
-    finalAnswer?: string;
-    [key: string]: any;  // This allows for dynamic key indexing
-}
+import type { ParsedJSON } from '../../types/types';
 
 const getParsedJSON_4_tests_passing = (str: string): object | null => {
     try {

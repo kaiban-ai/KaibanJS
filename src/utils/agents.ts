@@ -23,7 +23,8 @@ export function getApiKey(llmConfig: { apiKey?: string; provider?: string }, env
         anthropic: env.ANTHROPIC_API_KEY,
         google: env.GOOGLE_API_KEY,
         mistral: env.MISTRAL_API_KEY,
-        openai: env.OPENAI_API_KEY
+        openai: env.OPENAI_API_KEY,
+        groq: env.GROQ_API_KEY
     };
     return apiKeys[llmConfig?.provider || ''];    
 }

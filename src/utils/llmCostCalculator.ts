@@ -1,38 +1,10 @@
 /**
  * C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\llmCostCalculator.ts
  * LLM Cost Calculation Utilities.
- *
- * This file contains functions for calculating the costs associated with using large language models (LLMs) based on 
- * token usage and model-specific pricing. It helps in budgeting and monitoring the financial aspects of using LLMs within 
- * the KaibanJS library.
- *
- * Usage:
- * Apply these functions to compute and track costs as part of operational management and optimization of LLM usage in projects.
  */
 
 import { logger } from "./logger";
-
-interface ModelPricing {
-  modelCode: string;
-  provider: string;
-  inputPricePerMillionTokens: number;
-  outputPricePerMillionTokens: number;
-  features: string;
-}
-
-interface LLMUsageStats {
-  inputTokens: number;
-  outputTokens: number;
-  callsCount: number;
-  callsErrorCount: number;
-  parsingErrors: number;
-}
-
-interface CostDetails {
-  costInputTokens: number;
-  costOutputTokens: number;
-  totalCost: number;
-}
+import type { LLMUsageStats, ModelPricing, CostDetails } from '../../types/types';
 
 const modelsPricing: ModelPricing[] = [
   // GPT Models from OpenAI
@@ -88,12 +60,10 @@ const modelsPricing: ModelPricing[] = [
     outputPricePerMillionTokens: 3,
     features: "State-of-the-art Mistral model trained specifically for code tasks"
   }
-  // (other models can be added here)
 ];
 
 /**
  * Calculates the approximate cost of using a specified AI model based on the number of input and output tokens.
- * If the model code does not match any in the predefined list, it returns a standardized error response with costs set to -1.
  *
  * @param {string} modelCode - The unique code identifier for the AI model.
  * @param {LLMUsageStats} llmUsageStats - An object containing usage statistics.

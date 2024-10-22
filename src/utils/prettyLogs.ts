@@ -12,58 +12,12 @@
 
 import ansis from "ansis";
 import { logger } from "./logger";
-
-interface LLMUsageStats {
-  inputTokens: number;
-  outputTokens: number;
-  callsCount: number;
-  callsErrorCount: number;
-  parsingErrors: number;
-}
-
-interface CostDetails {
-  costInputTokens: number;
-  costOutputTokens: number;
-  totalCost: number;
-}
-
-interface TaskCompletionProps {
-  iterationCount: number;
-  duration: number;
-  llmUsageStats: LLMUsageStats;
-  agentName: string;
-  agentModel: string;
-  taskTitle: string;
-  currentTaskNumber: number;
-  totalTasks: number;
-  costDetails: CostDetails;
-}
-
-interface TaskStatusProps {
-  currentTaskNumber: number;
-  totalTasks: number;
-  taskTitle: string;
-  taskStatus: string;
-  agentName: string;
-}
-
-interface WorkflowStatusProps {
-  status: string;
-  message: string;
-}
-
-interface WorkflowResultProps {
-  metadata: {
-    result: string;
-    duration: number;
-    llmUsageStats: LLMUsageStats;
-    iterationCount: number;
-    costDetails: CostDetails;
-    teamName: string;
-    taskCount: number;
-    agentCount: number;
-  };
-}
+import type { 
+  TaskCompletionProps,
+  TaskStatusProps,
+  WorkflowStatusProps,
+  WorkflowResultProps 
+} from '../../types/types';
 
 function logPrettyTaskCompletion({
   iterationCount,

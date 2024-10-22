@@ -1,23 +1,12 @@
-/**
- * C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\subscribers\taskSubscriber.ts
- * 
- * Task Status Subscriber.
- *
- * Listens to changes in task status within the library's state management system, providing logs and reactive behaviors to these changes.
- * This helps in monitoring task progression and debugging issues in real-time.
- *
- * Usage:
- * Deploy this subscriber to actively monitor and respond to changes in task status, enhancing the observability and responsiveness of your application.
- */
-
 import { TASK_STATUS_enum } from '../utils/enums';
 import { getTaskTitleForLogs } from '../utils/tasks';
 import { logPrettyTaskCompletion, logPrettyTaskStatus } from "../utils/prettyLogs";
-import { TeamState, Log, TaskType, AgentType } from '../stores/storeTypes';
-import { StoreApi, UseBoundStore } from 'zustand';
+import { TeamState, Log, TaskType, AgentType } from '../../types/types';
+import { UseBoundStore } from 'zustand';
+import { TeamStoreApi } from '../../types/types';  // Import correct type for store
 
-export const subscribeTaskStatusUpdates = (useStore: UseBoundStore<StoreApi<TeamState>>): void => {
-    useStore.subscribe((state: TeamState) => {
+export const subscribeTaskStatusUpdates = (store: UseBoundStore<TeamStoreApi>): void => {
+    store.subscribe((state: TeamState) => {
         const newLogs = state.workflowLogs;
         const previousLogs = state.workflowLogs.slice(0, -1); // All logs except the last one
 

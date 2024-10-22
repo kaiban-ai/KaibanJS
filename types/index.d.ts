@@ -1,27 +1,34 @@
+// Path: C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\types\index.d.ts
 // Type definitions for "kaibanjs" 0.1.0
 // Project: kaibanjs
 // Author: @darielnoel <github.com/darielnoel>
 // Definitions by: @alienkarma <github.com/alienkarma>
 
 import { Tool } from "langchain/tools";
-import type { AGENT_STATUS_enum, TASK_STATUS_enum } from "./enums.d.ts";
+import type { AGENT_STATUS_enum, TASK_STATUS_enum } from "./enums";
 import type {
-  BaseAgent,
-  IBaseAgentParams,
-  ILLMConfig,
-  ITaskStats,
-  TAgentTypes,
-  TStore,
-} from "./types.d.ts";
+    BaseAgent,
+    BaseAgentConfig,
+    LLMConfig,
+    TaskStats,
+    AgentType,
+    TaskType,
+    TaskResult,
+    Output,
+    Log,
+    ErrorType,
+    TeamState,
+    TeamStateActions,
+    TeamStore
+} from "./types";
 
 /**
  * ### Agent parameters
  * @interface IAgentParams
- * @extends IBaseAgentParams
- * @property {TAgentTypes} type - The type of agent.
+ * @extends BaseAgentConfig
  */
-export interface IAgentParams extends IBaseAgentParams {
-  type?: TAgentTypes;
+export interface IAgentParams extends BaseAgentConfig {
+    type?: string;
 }
 
 /**
@@ -32,233 +39,156 @@ export interface IAgentParams extends IBaseAgentParams {
  * @property {BaseAgent} agentInstance - The agent instance.
  * @property {string} type - The type of agent.
  */
-export class Agent {
-  agentInstance: BaseAgent;
-  type: string;
+export class Agent implements AgentType {
+    agentInstance: BaseAgent;
+    type: string;
 
-  /**
-   * Creates an instance of an Agent.
-   * @param {IAgentParams} config - The configuration parameters for the agent.
-   */
-  constructor(config: IAgentParams);
+    /**
+     * Creates an instance of an Agent.
+     * @param {IAgentParams} config - The configuration parameters for the agent.
+     */
+    constructor(config: IAgentParams);
 
-  /**
-   * Creates an agent.
-   * @param {TAgentTypes} type - The type of agent.
-   * @param {IBaseAgentParams} config - The configuration parameters for the agent.
-   * @returns {BaseAgent} The created agent instance.
-   */
-  createAgent(type: TAgentTypes, config: IBaseAgentParams): BaseAgent;
+    /**
+     * Creates an agent.
+     * @param {string} type - The type of agent.
+     * @param {BaseAgentConfig} config - The configuration parameters for the agent.
+     * @returns {BaseAgent} The created agent instance.
+     */
+    createAgent(type: string, config: BaseAgentConfig): BaseAgent;
 
-  /**
-   * Executes a task.
-   * @param {Task} task - The task to be executed.
-   * @returns {Promise<string>} A promise resolving with the task result.
-   */
-  executeTask(task: Task): Promise<string>;
+    /**
+     * Executes a task.
+     * @param {TaskType} task - The task to be executed.
+     * @returns {Promise<string>} A promise resolving with the task result.
+     */
+    executeTask(task: TaskType): Promise<string>;
 
-  /**
-   * Sets the store.
-   * @param {TStore} store - The store to be set.
-   */
-  setStore(store: TStore): void;
+    /**
+     * Sets the store.
+     * @param {any} store - The store to be set.
+     */
+    setStore(store: any): void;
 
-  /**
-   * Sets the environment variables.
-   * @param {Record<string, any>} env - The environment variables to be set.
-   */
-  setEnv(env: Record<string, any>): void;
+    /**
+     * Sets the environment variables.
+     * @param {Record<string, any>} env - The environment variables to be set.
+     */
+    setEnv(env: Record<string, any>): void;
 
-  /**
-   * Sets the status of the agent.
-   * @param {AGENT_STATUS_enum} status - The status to be set.
-   */
-  setStatus(status: AGENT_STATUS_enum): void;
-
-  /**
-   * Returns the agent ID.
-   * @returns {string} The agent ID.
-   */
-  id(): string;
-
-  /**
-   * Returns the agent name.
-   * @returns {string} The agent name.
-   */
-  name(): string;
-
-  /**
-   * Returns the agent role.
-   * @returns {string} The agent role.
-   */
-  role(): string;
-
-  /**
-   * Returns the agent goal.
-   * @returns {string} The agent goal.
-   */
-  goal(): string;
-
-  /**
-   * Returns the agent background.
-   * @returns {string} The agent background.
-   */
-  background(): string;
-
-  /**
-   * Returns the tools available to the agent.
-   * @returns {Tool[]} The list of tools.
-   */
-  tools(): Tool[];
-
-  /**
-   * Returns the status of the agent.
-   * @returns {AGENT_STATUS_enum} The agent's status.
-   */
-  status(): AGENT_STATUS_enum;
-
-  /**
-   * Returns the configuration for the language model.
-   * @returns {ILLMConfig} The language model configuration.
-   */
-  llmConfig(): ILLMConfig;
-
-  /**
-   * Returns the system message for the language model.
-   * @returns {string} The language model system message.
-   */
-  llmSystemMessage(): string;
-
-  /**
-   * Indicates whether the agent is forced to provide a final answer.
-   * @returns {boolean} True if the agent is forced to give a final answer, otherwise false.
-   */
-  forceFinalAnswer(): boolean;
+    /**
+     * Sets the status of the agent.
+     * @param {keyof typeof AGENT_STATUS_enum} status - The status to be set.
+     */
+    setStatus(status: keyof typeof AGENT_STATUS_enum): void;
 }
 
 /**
  * ### Task parameters
  * @interface ITaskParams
- * @property {string} [title] - The title of the task.
- * @property {string} description - The description of the task.
- * @property {string} expectedOutput - The expected output of the task.
- * @property {BaseAgent} agent - The agent to execute the task.
- * @property {boolean} [isDeliverable] - Indicates whether the task is deliverable.
  */
 export interface ITaskParams {
-  title?: string;
-  description: string;
-  expectedOutput: string;
-  agent: Agent;
-  isDeliverable?: boolean;
+    title?: string;
+    description: string;
+    expectedOutput: string;
+    agent: AgentType;
+    isDeliverable?: boolean;
 }
 
 /**
  * ### Task
  * A class representing a task.
  * @class
- * @property {string} id - The task ID.
- * @property {string} title - The task title.
- * @property {string} description - The task description.
- * @property {string} expectedOutput - The expected output of the task.
- * @property {boolean} isDeliverable - Indicates whether the task is deliverable.
- * @property {Agent} agent - The agent to execute the task.
- * @property {TASK_STATUS_enum} status - The status of the task.
- * @property {string} result - The result of the task.
- * @property {ITaskStats | null} stats - The statistics of the task.
- * @property {number | null} duration - The duration of the task.
- * @property {Task[]} dependencies - The dependencies of the task.
- * @property {string | null} interpolatedTaskDescription - The interpolated task description.
- * @property {TStore} store - The store.
  */
-export class Task {
-  id: string;
-  title: string;
-  description: string;
-  expectedOutput: string;
-  isDeliverable: boolean;
-  agent: Agent;
-  status: TASK_STATUS_enum;
-  result: string;
-  stats: ITaskStats | null;
-  duration: number | null;
-  dependencies: Task[];
-  interpolatedTaskDescription: string | null;
-  store: TStore;
+export class Task implements TaskType {
+    id: string;
+    title: string;
+    description: string;
+    expectedOutput: string;
+    agent: AgentType;
+    isDeliverable: boolean;
+    externalValidationRequired: boolean;
+    inputs: Record<string, any>;
+    feedbackHistory: any[];
+    status: keyof typeof TASK_STATUS_enum;
+    result: TaskResult;
+    stats: TaskStats | null;
+    duration: number | null;
+    interpolatedTaskDescription: string | null;
+    store: any;
 
-  /**
-   * Creates an instance of a Task.
-   * @param {ITaskParams} params - The parameters for the task.
-   */
-  constructor(params: ITaskParams);
+    /**
+     * Creates an instance of a Task.
+     * @param {ITaskParams} params - The parameters for the task.
+     */
+    constructor(params: ITaskParams);
 
-  /**
-   * Executes the task.
-   * @param {TStore} store - The store.
-   */
-  setStore(store: TStore): void;
+    /**
+     * Sets the store for the task.
+     * @param {any} store - The store.
+     */
+    setStore(store: any): void;
+
+    /**
+     * Executes the task.
+     * @param {any} data - The data for task execution.
+     */
+    execute(data: any): Promise<any>;
 }
 
 /**
  * ### Team parameters
  * @interface ITeamParams
- * @property {string} name - The name of the team.
- * @property {BaseAgent[]} [agents] - The agents in the team.
- * @property {Task[]} [tasks] - The tasks for the team.
- * @property {string} [logLevel] - The log level for the team.
- * @property {Record<string, string>} [inputs] - The inputs for the team.
- * @property {Record<string, any> | null} [env] - The environment variables for the team.
  */
 export interface ITeamParams {
-  name: string;
-  agents?: Agent[];
-  tasks?: Task[];
-  logLevel?: string;
-  inputs?: Record<string, string>;
-  env?: Record<string, any> | null;
+    name: string;
+    agents?: AgentType[];
+    tasks?: TaskType[];
+    logLevel?: string;
+    inputs?: Record<string, string>;
+    env?: Record<string, any> | null;
 }
 
 /**
  * ### Team
  * A class representing a team.
  * @class
- * @property {TStore} store - The store instance.
  */
-export class Team {
-  store: TStore;
+export class Team implements TeamStore {
+    store: any;
 
-  /**
-   * Creates an instance of a Team.
-   * @param {ITeamParams} params - The parameters for the team.
-   */
-  constructor(params: ITeamParams);
+    /**
+     * Creates an instance of a Team.
+     * @param {ITeamParams} params - The parameters for the team.
+     */
+    constructor(params: ITeamParams);
 
-  /**
-   * Starts the team operations.
-   * @returns {Promise<void>} A promise resolving when the team has started.
-   */
-  start(): Promise<void>;
+    /**
+     * Starts the team operations.
+     * @returns {Promise<{ status: string; result: any; stats: Record<string, any> }>} A promise resolving with the team's status and results.
+     */
+    start(inputs?: Record<string, any>): Promise<{ status: string; result: any; stats: Record<string, any> }>;
 
-  /**
-   * Returns the store.
-   * @returns {TStore} The store instance.
-   */
-  getStore(): TStore;
+    /**
+     * Returns the store.
+     * @returns {any} The store instance.
+     */
+    getStore(): any;
 
-  /**
-   * Returns the store instance in use.
-   * @returns {TStore} The store instance.
-   */
-  useStore(): TStore;
+    /**
+     * Returns the store instance in use.
+     * @returns {any} The store instance.
+     */
+    useStore(): any;
 
-  /**
-   * Subscribes to changes in the team.
-   * @param {(newValues: any) => void} listener - The listener function that will be called on changes.
-   * @param {string[]} [properties] - The specific properties to listen to.
-   * @returns {() => void} A function to unsubscribe from the changes.
-   */
-  subscribeToChanges(
-    listener: (newValues: any) => void,
-    properties?: string[]
-  ): () => void;
+    /**
+     * Subscribes to changes in the team.
+     * @param {(newValues: any) => void} listener - The listener function that will be called on changes.
+     * @param {string[]} [properties] - The specific properties to listen to.
+     * @returns {() => void} A function to unsubscribe from the changes.
+     */
+    subscribeToChanges(
+        listener: (newValues: any) => void,
+        properties?: string[]
+    ): () => void;
 }
