@@ -14,7 +14,7 @@ import { AGENT_STATUS_enum } from '../utils/enums';
 import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from '../utils/prompts';
 
 class BaseAgent {
-    constructor({ name, role, goal, background, tools, llmConfig = {}, maxIterations = 10, forceFinalAnswer = true, promptTemplates = {}, llmInstance = null  }) {
+    constructor({ name, role, goal, background, tools = [], llmConfig = {}, maxIterations = 10, forceFinalAnswer = true, promptTemplates = {}, llmInstance = null  }) {
         this.id = uuidv4();
         this.name = name;
         this.role = role;
