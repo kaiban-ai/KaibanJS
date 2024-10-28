@@ -1,0 +1,234 @@
+/* Main container */
+.agent-tools-preview {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Team sections */
+.team-header,
+.team-controls,
+.agents-container,
+.agent-logs-section,
+.workflow-result {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.team-header {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.team-info {
+  width: 100%;
+}
+
+.team-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f5f5f5;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+/* Input controls */
+.input-controls {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inputs-editor {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.4;
+  resize: vertical;
+  background: white;
+  color: #333;
+  tab-size: 2;
+  box-sizing: border-box;
+}
+
+.inputs-editor:focus {
+  outline: none;
+  border-color: #2196f3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+/* Start button */
+.start-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  background: #2196f3;
+  color: white;
+  align-self: flex-start;
+}
+
+.workflow-status {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Workflow result */
+.workflow-result {
+  margin: 20px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  flex-shrink: 0;
+}
+
+.workflow-result h3 {
+  margin: 0 0 15px 0;
+  color: #2196f3;
+}
+
+.result-content {
+  background: white;
+  padding: 15px;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+}
+
+/* Add or update these styles */
+
+/* Ensure pre elements don't cause horizontal scroll */
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-all; /* Added for very long strings without spaces */
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.tool-input pre, 
+.tool-output pre {
+  margin: 8px 0 0;
+  padding: 8px;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.result-content pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Agents container */
+.agents-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+.agent-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+/* Logs section */
+.agent-logs-section {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.agent-logs-section h3 {
+  margin: 0;
+  padding: 15px 20px;
+  font-size: 16px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #eee;
+}
+
+.logs-container {
+  height: 500px; /* Increased from 300px */
+  overflow-y: auto;
+  padding: 15px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.log-entry {
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.log-timestamp {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.log-agent {
+  font-weight: 500;
+  color: #2196f3;
+}
+
+.log-content {
+  flex: 1 1 100%;
+  min-width: 0; /* Prevents flex item from overflowing */
+  word-break: break-word;
+}
+
+.tool-details {
+  margin-top: 8px;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  font-size: 13px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Status colors */
+.status-idle { color: #666; }
+.status-running { color: #2196f3; }
+.status-thinking { color: #2e7d32; }
+.status-waiting { color: #f57c00; }
+.status-completed { color: #2e7d32; }
+.status-error { color: #c62828; }
+.status-using_tool { color: #1976d2; }
+.status-using_tool_end { color: #2e7d32; }
