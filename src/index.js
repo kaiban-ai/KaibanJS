@@ -26,7 +26,7 @@ class Agent {
         this.agentInstance = this.createAgent(type, config);
         this.type = type || 'ReactChampionAgent';
     }
- 
+
     createAgent(type, config) {
         switch (type) {
             case 'ReactChampionAgent':
@@ -73,25 +73,29 @@ class Agent {
         return this.agentInstance.background;
     }
 
+    get contexts() {
+        return this.agentInstance.contexts;
+    }
+
     get tools() {
         return this.agentInstance.tools;
-    }    
+    }
     get status() {
         return this.agentInstance.status;
     }
 
     get llmConfig() {
         return this.agentInstance.llmConfig;
-    }    
+    }
     get llmSystemMessage() {
         return this.agentInstance.llmSystemMessage;
-    }    
+    }
     get forceFinalAnswer() {
         return this.agentInstance.forceFinalAnswer;
-    } 
+    }
     get promptTemplates() {
         return this.agentInstance.promptTemplates;
-    } 
+    }
 }
 class Task {
     constructor({ title = '', description, expectedOutput, agent, isDeliverable = false, externalValidationRequired = false }) {
@@ -132,10 +136,10 @@ class Team {
      * @param {string} config.logLevel - The logging level for the team's operations.
      * @param {Object} config.inputs - Initial inputs for the team's tasks.
      * @param {Object} config.env - Environment variables for the team.
-     */    
+     */
     constructor({ name, agents, tasks, logLevel, inputs = {}, env = null }) {
-        this.store = createTeamStore({ name, agents:[], tasks:[], inputs, env, logLevel});
-             
+        this.store = createTeamStore({ name, agents: [], tasks: [], inputs, env, logLevel });
+
         // Add agents and tasks to the store, they will be set with the store automatically
         this.store.getState().addAgents(agents);
         this.store.getState().addTasks(tasks);
@@ -148,7 +152,7 @@ class Team {
      * 
      * @param {Object} inputs - Optional inputs to override or supplement the initial inputs.
      * @returns {void}
-     */    
+     */
     async start(inputs = null) {
 
         return new Promise((resolve, reject) => {
@@ -204,7 +208,7 @@ class Team {
      * More DX friendly for NodeJS Developers
      * 
      * @returns {Object} The store object.
-     */    
+     */
     getStore() {
         return this.store;
     }
@@ -215,7 +219,7 @@ class Team {
      * More DX friendly for React Developers
      * 
      * @returns {Object} The store object.
-     */        
+     */
     useStore() {
         return this.store;
     }
@@ -271,7 +275,7 @@ class Team {
      * 
      * @param {string} taskId - The ID of the task to be marked as validated.
      * @returns {void}
-     */    
+     */
     validateTask(taskId) {
         this.store.getState().validateTask(taskId);
     }
@@ -314,14 +318,14 @@ class Team {
      * This method should be called only after the workflow has finished.
      * 
      * @returns {*|null} The workflow result if finished, null otherwise.
-     */    
+     */
     getWorkflowResult() {
         const state = this.store.getState();
         if (state.teamWorkflowStatus === WORKFLOW_STATUS_enum.FINISHED) {
             return state.workflowResult;
         }
         return null;
-    }    
+    }
 
     /**
      * Retrieves all tasks in the team's workflow.
@@ -361,7 +365,7 @@ class Team {
 
         // Find the log entry for when the workflow was marked as finished or blocked
         const completionLog = logs.find(log =>
-            log.logType === "WorkflowStatusUpdate" && 
+            log.logType === "WorkflowStatusUpdate" &&
             (log.workflowStatus === "FINISHED" || log.workflowStatus === "BLOCKED")
         );
 
