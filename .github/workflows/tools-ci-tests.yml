@@ -1,4 +1,4 @@
-name: Tools Package CI
+name: Tools - CI Tests
 
 on:
   push:

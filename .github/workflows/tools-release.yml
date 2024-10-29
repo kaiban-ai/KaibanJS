@@ -1,4 +1,4 @@
-name: Release Tools Package
+name: Tools - Release Package
 
 on:
   workflow_dispatch:
