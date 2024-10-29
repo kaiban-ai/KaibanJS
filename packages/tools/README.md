@@ -16,7 +16,7 @@ The Kaiban Tools package offers a set of tools that can be integrated into AI ag
 ## Installation
 
 ```bash
-npm install @kaiban/tools
+npm install @kaibanjs/tools
 ```
 
 ## Available Tools
