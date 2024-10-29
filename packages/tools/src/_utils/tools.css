@@ -1,0 +1,55 @@
+.firecrawl-tool {
+  display: flex;
+  flex-direction: column;
+  /* height: 100vh; */
+  padding: 20px;
+  width: 800px;
+  box-sizing: border-box;
+}
+
+.input-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.input-container input {
+  flex-grow: 1;
+  padding: 8px;
+  font-size: 16px;
+}
+
+.input-container button {
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.editor-container {
+  flex-grow: 1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  /* height: calc(100vh - 140px); Adjust this value as needed */
+}
+
+.no-content-message {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+.tool-executor h2, .tool-executor h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.tool-executor .input-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.tool-executor .output-container {
+  margin-top: 20px;
+}

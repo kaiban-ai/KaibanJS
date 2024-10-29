@@ -1,0 +1,102 @@
+{
+  "name": "@kaibanjs/tools",
+  "version": "0.1.0",
+  "description": "A set of tools to work with LLMs and KaibanJS",
+  "private": false,
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js"
+    },
+    "./firecrawl": {
+      "import": "./dist/firecrawl/index.esm.js",
+      "require": "./dist/firecrawl/index.cjs.js"
+    },
+    "./tavily": {
+      "import": "./dist/tavily/index.esm.js",
+      "require": "./dist/tavily/index.cjs.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src/**/*.js",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "build": "rollup -c"
+  },
+  "keywords": [
+    "kaiban",
+    "llm",
+    "ai",
+    "tools",
+    "ai agents",
+    "multi-agent systems",
+    "agentic",
+    "javascript",
+    "framework",
+    "node.js",
+    "kaibanjs",
+    "langchain",
+    "workflow automation",
+    "task orchestration",
+    "autonomous agents",
+    "collaborative ai",
+    "ai-powered applications",
+    "human-ai interaction",
+    "ai workflow",
+    "large language models",
+    "llm",
+    "prompt engineering",
+    "react",
+    "nodejs",
+    "nextjs"    
+  ],
+  "author": "Kaiban Team",
+  "license": "MIT",
+  "dependencies": {
+    "@langchain/core": "0.2.16",
+    "ky": "^1.7.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.9",
+    "@babel/preset-env": "^7.26.0",
+    "@chromatic-com/storybook": "^1.9.0",
+    "@rollup/plugin-commonjs": "^25.0.8",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@storybook/addon-essentials": "^8.3.6",
+    "@storybook/addon-interactions": "^8.3.6",
+    "@storybook/addon-links": "^8.3.6",
+    "@storybook/addon-onboarding": "^8.3.6",
+    "@storybook/blocks": "^8.3.6",
+    "@storybook/react": "^8.3.6",
+    "@storybook/react-vite": "^8.3.6",
+    "@storybook/test": "^8.3.6",
+    "babel-jest": "^29.7.0",
+    "eslint": "^8.4.1",
+    "eslint-plugin-storybook": "^0.10.1",
+    "jest": "^27.5.1",
+    "prop-types": "^15.8.1",
+    "react-monaco-editor": "^0.56.2",
+    "rollup": "^4.24.0",
+    "rollup-plugin-node-polyfills": "^0.2.1",
+    "storybook": "^8.3.6",
+    "undici": "^6.20.1"
+  },
+  "eslintConfig": {
+    "extends": [
+      "plugin:storybook/recommended"
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
+  }  
+}
