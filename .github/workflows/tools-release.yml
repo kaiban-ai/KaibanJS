@@ -54,7 +54,9 @@ jobs:
 
     - name: Push changes and tags
       run: |
-        git push origin main --follow-tags
+        git push origin main
+        git tag -a "tools-v${{ github.event.inputs.version }}" -m "Release version ${{ github.event.inputs.version }} for @kaibanjs/tools"
+        git push origin "tools-v${{ github.event.inputs.version }}"
       env:
         GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}        
 
