@@ -18,7 +18,7 @@ function getApiKey(llmConfig, env) {
         mistral: env.MISTRAL_API_KEY,
         openai: env.OPENAI_API_KEY
     };
-    return apiKeys[llmConfig?.provider];    
+    return apiKeys[llmConfig?.provider];
 }
 
 // Utility function to replace placeholders in the agent prompt.
@@ -29,6 +29,7 @@ function replaceAgentAttributes(template, attributes) {
         .replace('{background}', attributes.background)
         .replace('{goal}', attributes.goal)
         .replace('{context}', attributes.context)
+        .replace('{contexts}', attributes.contexts)
         .replace('{expectedOutput}', attributes.expectedOutput);
 }
 

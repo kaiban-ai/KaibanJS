@@ -23,7 +23,7 @@ const REACT_CHAMPION_AGENT_DEFAULT_PROMPTS = {
      * @param {Object} params.agent - The agent object containing its properties.
      * @param {Object} params.task - The task object describing the current task.
      * @returns {string} The formatted system message.
-     */    
+     */
     SYSTEM_MESSAGE: ({ agent, task }) => {
         const prompt = `You are ${agent.name}.
 
@@ -31,6 +31,8 @@ Your role is: ${agent.role}.
 Your background is: ${agent.background}.
 Your main goal is: ${agent.goal}
 You are working as part of a team.
+
+${agent.contexts ? `You are also aware of the following context: \n${agent.contexts}` : ''}
 
 For your work you will have available:
 
@@ -40,9 +42,9 @@ For your work you will have available:
 
 ## Tools available for your use: 
 
-${agent.tools.length > 0 ? 
-    agent.tools.map(tool => `${tool.name}: ${tool.description} Tool Input Schema: ${JSON.stringify(zodToJsonSchema(tool.schema))}`).join(', ') : 
-    "No tools available. You must reply using your internal knowledge."}
+${agent.tools.length > 0 ?
+                agent.tools.map(tool => `${tool.name}: ${tool.description} Tool Input Schema: ${JSON.stringify(zodToJsonSchema(tool.schema))}`).join(', ') :
+                "No tools available. You must reply using your internal knowledge."}
 
 **Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.
 
@@ -97,6 +99,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
     "finalAnswer": "The final answer to the Task."
 }
 
+**IMPORTANT**: finalAnswer must be a string.
 **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.
 `;
         return prompt;
@@ -154,7 +157,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {string} params.thought - The agent's thought.
      * @param {string} params.parsedLLMOutput - The parsed LLM output.
      * @returns {string} The formatted feedback message.
-     */    
+     */
     THOUGHT_FEEDBACK: ({ agent, task, thought, parsedLLMOutput }) => {
         const prompt = `Your thoughts are great, let's keep going.`;
         return prompt;
@@ -197,11 +200,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {string} params.parsedLLMOutput - The parsed LLM output.
      * @returns {string} The formatted feedback message.
      */
-    TOOL_ERROR_FEEDBACK: ({ agent, task, toolName, error, parsedLLMOutput}) => {
+    TOOL_ERROR_FEEDBACK: ({ agent, task, toolName, error, parsedLLMOutput }) => {
         const prompt = `An error occurred while using the tool ${toolName}. Please try again or use a different method.`;
         return prompt;
     },
-    
+
     /**
      * Generates feedback when the agent tries to use a non-existent tool.
      * This prompt informs the agent that the tool doesn't exist and suggests finding another way to accomplish the task.
@@ -225,7 +228,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {string} params.parsedLLMOutput - The parsed LLM output.
      * @returns {string} The formatted feedback message.
      */
-    OBSERVATION_FEEDBACK: ({agent, task, parsedLLMOutput}) => {
+    OBSERVATION_FEEDBACK: ({ agent, task, parsedLLMOutput }) => {
         const prompt = `Great observation. Please keep going. Let's get to the final answer.`;
         return prompt;
     },
@@ -239,8 +242,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {Object} params.task - The task object describing the current task.
      * @param {string} params.output - The unexpected output from the agent.
      * @returns {string} The formatted feedback message.
-     */    
-    WEIRD_OUTPUT_FEEDBACK: ({agent, task, parsedLLMOutput}) => {
+     */
+    WEIRD_OUTPUT_FEEDBACK: ({ agent, task, parsedLLMOutput }) => {
         const prompt = `Your latest response does not match the way you are expected to output information. Please correct it.`;
         return prompt;
     },
@@ -255,7 +258,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {number} params.iterations - The number of iterations the agent has gone through.
      * @param {number} params.maxAgentIterations - The maximum number of iterations the agent is allowed to go through.
      * @returns {string} The formatted feedback message.
-     */     
+     */
     FORCE_FINAL_ANSWER_FEEDBACK: ({ agent, task, iterations, maxAgentIterations }) => {
         const prompt = `We don't have more time to keep looking for the answer. Please use all the information you have gathered until now and give the finalAnswer right away.`;
         return prompt;
@@ -270,7 +273,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {Object} params.task - The task object describing the current task.
      * @param {string} params.feedback - The feedback received from the previous agent.
      * @returns {string} The formatted feedback message. 
-     */       
+     */
     WORK_ON_FEEDBACK_FEEDBACK: ({ agent, task, feedback }) => {
         const prompt = `Here is some feedback for you to address: ${feedback}`;
         return prompt;
