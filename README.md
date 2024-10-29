@@ -36,7 +36,7 @@
 
 **KaibanJS** is inspired by the tried-and-true [Kanban methodology](https://en.wikipedia.org/wiki/Kanban_(development)), which is well-known for helping teams organize and manage their work. We’ve adapted these concepts to meet the **unique challenges of AI agent management**.
 
-If you've used tools like Trello, Jira, or ClickUp, you'll be familiar with how Kanban helps manage tasks. Now, KaibanJS uses that same system to help you manage AI agents and their tasks in real-time.
+If you've used tools like Trello, Jira, or ClickUp, you'll be familiar with how Kanban helps manage tasks. Now, KaibanJS uses that same system to help you manage AI agents and their tasks in real time.
 
 **With KaibanJS, you can:**
 
