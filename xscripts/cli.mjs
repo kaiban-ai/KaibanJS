@@ -391,13 +391,13 @@ function isKaibanJSInstalled() {
 
 // Function to install KaibanJS
 function installKaibanJS() {
-  const spinner = ora('Installing KaibanJS...').start();
+  const spinner = ora('Installing KaibanJS and tools...').start();
   try {
-    execSync('npm install kaibanjs --legacy-peer-deps', { stdio: 'inherit' });
-    spinner.succeed('KaibanJS installed successfully.');
+    execSync('npm install kaibanjs @kaibanjs/tools --legacy-peer-deps', { stdio: 'inherit' });
+    spinner.succeed('KaibanJS and tools installed successfully.');
   } catch (error) {
-    spinner.fail('Failed to install KaibanJS.');
-    console.error(chalk.red('Error installing KaibanJS:'), error);
+    spinner.fail('Failed to install KaibanJS and tools.');
+    console.error(chalk.red('Error installing packages:'), error);
     process.exit(1);
   }
 }
