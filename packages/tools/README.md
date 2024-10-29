@@ -35,37 +35,60 @@ Learn more: https://tavily.com/
 
 ### Local Setup
 
-1. Install dependencies:
+1. Clone the repository:
+
+```bash
+git clone https://github.com/kaiban-ai/KaibanJS.git
+```
+
+2. Navigate to the tools package:
+```bash
+cd packages/tools
+```
+
+3. Install dependencies:
 ```bash
 npm install
 ```
 
-2. Build the package:
-```bash
-npm run build
-```
-
-3. Run Storybook to view and test components:
-```bash
-npm run storybook
-```
-
-4. Run tests:
-```bash
-npm run test
-```
-
-### Environment Variables
+4. Environment Variables: 
 
 Create a `.env` file in the root directory with your API keys:
+
 ```env
 VITE_FIRECRAWL_API_KEY=your_firecrawl_api_key
 VITE_TAVILY_API_KEY=your_tavily_api_key
 ```
 
+
+5. Run Storybook to view and test components:
+
+```bash
+npm run storybook
+```
+
+5. Build the package:
+```bash
+npm run build
+```
+
+6. Run tests:
+```bash
+npm run test
+```
+
 ## Contributing
 
-[Information about how to contribute to the package]
+To contribute a new tool:
+
+1. Follow the Development steps above to set up your local environment
+2. Use an existing tool as reference (check `src/firecrawl` or `src/tavily` for examples)
+3. Remember to create:
+   - Your tool implementation
+   - A Storybook story
+   - Tests
+
+For questions or discussions, join our [Discord](https://kaibanjs.com/discord).
 
 ## License
 
