@@ -1,0 +1,1 @@
+// Path: C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\managers\statusManager.ts
