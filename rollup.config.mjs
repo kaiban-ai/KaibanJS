@@ -3,57 +3,46 @@ import replace from "@rollup/plugin-replace";
 import commonjs from "@rollup/plugin-commonjs";
 import babel from "@rollup/plugin-babel";
 import terser from "@rollup/plugin-terser";
-import dts from "rollup-plugin-dts";
-import typescript from "@rollup/plugin-typescript"; // Add TypeScript plugin
+import typescript from "@rollup/plugin-typescript";
+import alias from '@rollup/plugin-alias';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const isDevelopment = process.env.NODE_ENV === "development";
-const isTest = process.env.TEST_ENV === "mocked-llm-apis";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const external = [
+  "react",
+  "react-dom",
+  "uuid",
+  "pino",
+  "pino-pretty",
+  "zod-to-json-schema",
+  "langchain",
+  "@langchain/core",
+  "@langchain/community",
+  "@langchain/openai",
+  "@langchain/anthropic",
+  "@langchain/google-genai",
+  "@langchain/groq",
+  "openai",
+  "groq-sdk",
+  "@anthropic-ai/sdk",
+];
 
 function generateConfig(format) {
-  const isDTS = format === "dts";
   const isESM = format === "es";
   const isCJS = format === "cjs";
   const ext = isESM ? "mjs" : isCJS ? "cjs" : "js";
-  const external = [
-    "react",
-    "react-dom",
-    "uuid",
-    "pino",
-    "pino-pretty",
-    "zod-to-json-schema",
-    "langchain",
-    "@langchain/core",
-    "@langchain/community",
-    "@langchain/openai",
-    "@langchain/anthropic",
-    "@langchain/google-genai",
-    "@langchain/groq",
-    "openai",
-    "groq-sdk",
-    "@anthropic-ai/sdk",
-  ];
-
-  if (isDTS) {
-    return {
-      input: "./types/index.d.ts",
-      output: [
-        {
-          file: "dist/bundle.d.ts",
-          format: "es",
-        },
-      ],
-      plugins: [dts()],
-    };
-  }
 
   return {
-    input: "src/index.ts", // Change to TypeScript entry point if using TypeScript
+    input: "src/index.ts",
     output: {
       dir: "dist",
       format: format,
       entryFileNames: `bundle.${ext}`,
       inlineDynamicImports: true,
-      sourcemap: isDevelopment,
+      sourcemap: process.env.NODE_ENV === "development",
       name: format === "umd" ? "KaibanJS" : undefined,
       globals: format === "umd" ? {
         react: 'React',
@@ -72,29 +61,31 @@ function generateConfig(format) {
         'zod-to-json-schema': 'zodToJsonSchema'
       } : undefined,
     },
-    external: external,
-    onwarn: (warning, warn) => {
-      if (
-        warning.code === "CIRCULAR_DEPENDENCY" ||
-        (warning.code === "THIS_IS_UNDEFINED" && /node_modules/.test(warning.loc?.file || ""))
-      ) {
-        return;
-      }
-      warn(warning);
-    },
+    external,
     plugins: [
+      alias({
+        entries: [
+          { find: '@', replacement: path.resolve(__dirname, 'src') },
+          { find: '@types', replacement: path.resolve(__dirname, 'types') }
+        ]
+      }),
       resolve({
         browser: true,
         preferBuiltins: false,
         mainFields: ["browser", "module", "main"],
-        extensions: ['.js', '.jsx', '.ts', '.tsx'], // Include .ts and .tsx
+        extensions: ['.js', '.jsx', '.ts', '.tsx']
       }),
       commonjs({
         include: /node_modules/,
         requireReturnsDefault: "auto",
       }),
-      typescript({ tsconfig: './tsconfig.json' }), // Add TypeScript plugin
-      ...(isTest
+      typescript({ 
+        tsconfig: './tsconfig.json',
+        declaration: true,
+        declarationDir: './dist/types',
+        rootDir: './src'
+      }),
+      ...(process.env.TEST_ENV === "mocked-llm-apis"
         ? [
             replace({
               "shims.fetch": `(...args) => { return global.fetch(...args); };`,
@@ -105,9 +96,9 @@ function generateConfig(format) {
       babel({
         babelHelpers: "bundled",
         exclude: "node_modules/**",
-        extensions: ['.js', '.jsx', '.ts', '.tsx'], // Include .ts and .tsx
+        extensions: ['.js', '.jsx', '.ts', '.tsx']
       }),
-      ...(!isDevelopment
+      ...(!process.env.NODE_ENV === "development"
         ? [
             terser({
               mangle: {
@@ -126,9 +117,17 @@ function generateConfig(format) {
   };
 }
 
+// Separate configuration for .d.ts generation
+const dtsConfig = {
+  input: "src/index.ts",
+  output: [{ file: "dist/bundle.d.ts", format: "es" }],
+  plugins: [typescript({ tsconfig: './tsconfig.json' })],
+  external
+};
+
 export default [
   generateConfig("cjs"),
   generateConfig("es"),
   generateConfig("umd"),
-  generateConfig("dts"),
+  dtsConfig
 ];

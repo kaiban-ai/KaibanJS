@@ -1,39 +1,38 @@
-/**
- * Path: C:/Users/pwalc/Documents/GroqEmailAssistant/KaibanJS/src/agents/reactChampionAgent.ts
- * 
- * ReactChampionAgent Class Implementation
- * This class implements an AI agent capable of performing tasks using various language models.
- */
-
-// Base Implementation
-import { BaseAgent as BaseAgentImplementation } from './baseAgent';
-
-// LangChain LLM Providers
-import { ChatGroq, ChatGroqInput } from "@langchain/groq";
-import { ChatOpenAI } from "@langchain/openai";
-import { ChatAnthropic } from "@langchain/anthropic";
-import { ChatGoogleGenerativeAI, GoogleGenerativeAIChatInput } from "@langchain/google-genai";
-import { ChatMistralAI } from "@langchain/mistralai";
-
-// LangChain Core Components
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { SystemMessage, HumanMessage, AIMessage, BaseMessage } from "@langchain/core/messages";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { RunnableWithMessageHistory } from "@langchain/core/runnables";
+import { ChatGroq, ChatGroqInput } from "@langchain/groq";
+import { ChatOpenAI } from "@langchain/openai";
+import { ChatAnthropic } from "@langchain/anthropic";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import type { GoogleGenerativeAIChatInput } from "@langchain/google-genai";
+import { ChatMistralAI } from "@langchain/mistralai";
+import { Tool } from "langchain/tools";
 
-// Local Utilities
-import CustomMessageHistory from '../utils/CustomMessageHistory';
-import { interpolateTaskDescription } from '../utils/tasks';
-import { getParsedJSON } from '../utils/parser';
-import { logger } from "../utils/logger";
-import { LLMInvocationError } from '../utils/errors';
-import { AGENT_STATUS_enum } from '../utils/enums';
+import { BaseAgent as BaseAgentImplementation } from './baseAgent';
+import CustomMessageHistory from '@/utils/CustomMessageHistory';
+import { interpolateTaskDescription } from '@/utils/tasks';
+import { getParsedJSON } from '@/utils/parsers/parser';
+import { logger } from "@/utils/core/logger";
+import { LLMInvocationError } from '@/utils/core/errors';
+import { AGENT_STATUS_enum } from '@/utils/core/enums';
+import { 
+    REACTChampionAgentPrompts, 
+    REACT_CHAMPION_AGENT_DEFAULT_PROMPTS 
+} from '@/utils/helpers/prompts';
 
-// Import types from centralized types.d.ts
 import {
+    isGroqConfig,
+    isOpenAIConfig,
+    isAnthropicConfig,
+    isGoogleConfig,
+    isMistralConfig
+} from '@/utils/types';
+
+import type {
     BaseAgentConfig,
     TaskType,
-    FeedbackObject,
     Output,
     LLMConfig,
     GroqConfig,
@@ -41,40 +40,76 @@ import {
     AnthropicConfig,
     GoogleConfig,
     MistralConfig,
+    FeedbackObject,
     ThinkingResult,
     AgenticLoopResult,
     ThinkingHandlerParams,
-    ToolHandlerParams,
-    StatusHandlerParams,
-    IterationHandlerParams,
-    TaskCompletionParams,
-    MessageBuildParams,
-    StreamingHandlerConfig,
-    CompletionResponse,
+    ParsedOutput,
+    AgentType,
+    LLMUsageStats,
     IReactChampionAgent
-} from '../../types/types';
-
-// Import type guard functions
-import {
-    isGroqConfig,
-    isOpenAIConfig,
-    isAnthropicConfig,
-    isGoogleConfig,
-    isMistralConfig
-} from '../../types/types';
+} from '@/utils/types';
 
 class ReactChampionAgent extends BaseAgentImplementation implements IReactChampionAgent {
     executableAgent: any;
     messageHistory: CustomMessageHistory;
+    promptTemplates: REACTChampionAgentPrompts & Record<string, unknown>;
+    public llmInstance: any;
+    public llmSystemMessage: string | null = null;
 
-    constructor(config: BaseAgentConfig) {
+    constructor(config: BaseAgentConfig & { 
+        promptTemplates?: Partial<REACTChampionAgentPrompts> 
+    }) {
         super(config);
         this.messageHistory = new CustomMessageHistory();
         this.executableAgent = null;
+        
+        // Merge provided templates with defaults
+        this.promptTemplates = {
+            ...REACT_CHAMPION_AGENT_DEFAULT_PROMPTS,
+            ...config.promptTemplates
+        } as REACTChampionAgentPrompts & Record<string, unknown>;
+
+        if (this.llmConfig) {
+            this.createLLMInstance();
+        }
     }
 
-    // Creates the appropriate LLM instance based on the provider configuration
+    public  checkStore(): void {
+        if (!this.store) {
+            throw new Error('Store is not initialized.');
+        }
+    }
+
+    public  async addMessageToHistory(role: 'ai' | 'human', content: string): Promise<void> {
+        await this.messageHistory.addMessage(
+            role === 'ai' ? new AIMessage(content) : new HumanMessage(content)
+        );
+    }
+
+    public  parseOutput(content: string): ParsedOutput | null {
+        try {
+            const parsed = getParsedJSON(content);
+            if (!parsed) return null;
+
+            return {
+                thought: parsed.thought,
+                action: parsed.action,
+                actionInput: parsed.actionInput || undefined,
+                observation: parsed.observation,
+                isFinalAnswerReady: parsed.isFinalAnswerReady,
+                finalAnswer: parsed.finalAnswer
+            };
+        } catch (error) {
+            logger.error('Error parsing output:', error);
+            return null;
+        }
+    }
+
     createLLMInstance(): void {
+        if (!this.llmConfig) {
+            throw new Error("LLM configuration is missing");
+        }
         if (!this.llmConfig.provider) {
             throw new Error("LLM provider must be specified");
         }
@@ -105,173 +140,161 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
         }
     }
 
-    // Creates a Groq LLM instance
-    private createGroqInstance(): void {
-        if (!isGroqConfig(this.llmConfig)) {
+    public  createGroqInstance(): void {
+        if (!this.llmConfig || !isGroqConfig(this.llmConfig)) {
             throw new Error('Invalid Groq configuration');
         }
-    
-        const groqConfig: Partial<ChatGroqInput> = {
-            apiKey: this.llmConfig.apiKey,
+
+        const groqConfig: ChatGroqInput = {
+            apiKey: this.llmConfig.apiKey ?? '',
             modelName: this.llmConfig.model,
             temperature: this.llmConfig.temperature ?? 0.7,
             stop: this.llmConfig.stop,
             streaming: this.llmConfig.streaming ?? false,
         };
-    
-        // Remove undefined properties
-        Object.keys(groqConfig).forEach(key => 
-            groqConfig[key as keyof typeof groqConfig] === undefined && 
-            delete groqConfig[key as keyof typeof groqConfig]
-        );
-    
+
         this.llmInstance = new ChatGroq(groqConfig);
     }
-	// Creates an OpenAI LLM instance
-    private createOpenAIInstance(): void {
-        if (!isOpenAIConfig(this.llmConfig)) {
+
+    public  createOpenAIInstance(): void {
+        if (!this.llmConfig || !isOpenAIConfig(this.llmConfig)) {
             throw new Error('Invalid OpenAI configuration');
         }
-    
+
         const openAIConfig = {
-            apiKey: this.llmConfig.apiKey,
+            apiKey: this.llmConfig.apiKey ?? '',
             modelName: this.llmConfig.model,
             temperature: this.llmConfig.temperature ?? 0.7,
-            maxTokens: this.llmConfig.maxTokens,
+            maxTokens: this.llmConfig.max_tokens,
             stop: this.llmConfig.stop,
             streaming: this.llmConfig.streaming ?? false,
-            callbacks: this.llmConfig.callbacks,
-            frequencyPenalty: this.llmConfig.frequencyPenalty ?? 0,
-            presencePenalty: this.llmConfig.presencePenalty ?? 0,
-            topP: this.llmConfig.topP ?? 1,
+            frequencyPenalty: this.llmConfig.frequency_penalty ?? 0,
+            presencePenalty: this.llmConfig.presence_penalty ?? 0,
+            topP: this.llmConfig.top_p ?? 1,
             n: this.llmConfig.n ?? 1,
         };
-    
-        // Remove undefined properties
-        Object.keys(openAIConfig).forEach(key => 
-            openAIConfig[key as keyof typeof openAIConfig] === undefined && 
-            delete openAIConfig[key as keyof typeof openAIConfig]
-        );
-    
+
+        Object.keys(openAIConfig).forEach(key => {
+            if (openAIConfig[key as keyof typeof openAIConfig] === undefined) {
+                delete openAIConfig[key as keyof typeof openAIConfig];
+            }
+        });
+
         this.llmInstance = new ChatOpenAI(openAIConfig);
     }
-    
-    // Creates an Anthropic LLM instance
-    private createAnthropicInstance(): void {
-        if (!isAnthropicConfig(this.llmConfig)) {
+
+    public  createAnthropicInstance(): void {
+        if (!this.llmConfig || !isAnthropicConfig(this.llmConfig)) {
             throw new Error('Invalid Anthropic configuration');
         }
-    
+
         const anthropicConfig = {
-            apiKey: this.llmConfig.apiKey,
+            apiKey: this.llmConfig.apiKey ?? '',
             modelName: this.llmConfig.model,
             temperature: this.llmConfig.temperature,
-            maxTokens: this.llmConfig.maxTokens,
-            stopSequences: this.llmConfig.stopSequences,
+            maxTokensToSample: this.llmConfig.max_tokens_to_sample,
+            stopSequences: this.llmConfig.stop_sequences,
             streaming: this.llmConfig.streaming,
-            anthropicApiUrl: this.llmConfig.anthropicApiUrl,
+            system: this.llmConfig.system,
         };
-    
-        // Remove undefined properties
-        Object.keys(anthropicConfig).forEach(key => 
-            anthropicConfig[key as keyof typeof anthropicConfig] === undefined && 
-            delete anthropicConfig[key as keyof typeof anthropicConfig]
-        );
-    
+
+        Object.keys(anthropicConfig).forEach(key => {
+            if (anthropicConfig[key as keyof typeof anthropicConfig] === undefined) {
+                delete anthropicConfig[key as keyof typeof anthropicConfig];
+            }
+        });
+
         this.llmInstance = new ChatAnthropic(anthropicConfig);
     }
-    
-    // Creates a Google LLM instance
-    private createGoogleInstance(): void {
-        if (!isGoogleConfig(this.llmConfig)) {
+
+    public  createGoogleInstance(): void {
+        if (!this.llmConfig || !isGoogleConfig(this.llmConfig)) {
             throw new Error('Invalid Google configuration');
         }
-    
+
         const googleConfig: Partial<GoogleGenerativeAIChatInput> = {
             apiKey: this.llmConfig.apiKey,
             modelName: this.llmConfig.model,
             temperature: this.llmConfig.temperature,
             maxOutputTokens: this.llmConfig.maxOutputTokens,
-            topK: this.llmConfig.topK,
             topP: this.llmConfig.topP,
+            topK: this.llmConfig.topK,
             stopSequences: this.llmConfig.stopSequences,
             safetySettings: this.llmConfig.safetySettings,
             streaming: this.llmConfig.streaming ?? false,
+            streamUsage: this.llmConfig.streamUsage ?? true,
             apiVersion: this.llmConfig.apiVersion,
-            baseUrl: this.llmConfig.apiBaseUrl,
+            baseUrl: this.llmConfig.baseUrl,
         };
-    
-        // Remove undefined properties
-        Object.keys(googleConfig).forEach(key => 
-            googleConfig[key as keyof typeof googleConfig] === undefined && 
-            delete googleConfig[key as keyof typeof googleConfig]
-        );
-    
+
+        Object.keys(googleConfig).forEach(key => {
+            if (googleConfig[key as keyof typeof googleConfig] === undefined) {
+                delete googleConfig[key as keyof typeof googleConfig];
+            }
+        });
+
         this.llmInstance = new ChatGoogleGenerativeAI(googleConfig);
     }
-    
-    // Creates a Mistral LLM instance
-    private createMistralInstance(): void {
-        if (!isMistralConfig(this.llmConfig)) {
+
+    public  createMistralInstance(): void {
+        if (!this.llmConfig || !isMistralConfig(this.llmConfig)) {
             throw new Error('Invalid Mistral configuration');
         }
-    
+
         const mistralConfig = {
-            apiKey: this.llmConfig.apiKey,
+            apiKey: this.llmConfig.apiKey ?? '',
             modelName: this.llmConfig.model,
             temperature: this.llmConfig.temperature,
-            maxTokens: this.llmConfig.maxTokens,
-            topP: this.llmConfig.topP,
-            safeMode: this.llmConfig.safeMode,
-            randomSeed: this.llmConfig.randomSeed,
+            maxTokens: this.llmConfig.max_tokens,
+            topP: this.llmConfig.top_p,
+            safeMode: this.llmConfig.safe_mode,
+            randomSeed: this.llmConfig.random_seed,
             streaming: this.llmConfig.streaming,
         };
-    
-        // Remove undefined properties
-        Object.keys(mistralConfig).forEach(key => 
-            mistralConfig[key as keyof typeof mistralConfig] === undefined && 
-            delete mistralConfig[key as keyof typeof mistralConfig]
-        );
-    
+
+        Object.keys(mistralConfig).forEach(key => {
+            if (mistralConfig[key as keyof typeof mistralConfig] === undefined) {
+                delete mistralConfig[key as keyof typeof mistralConfig];
+            }
+        });
+
         this.llmInstance = new ChatMistralAI(mistralConfig);
     }
 
-    // Executes a task using the agent
     async workOnTask(task: TaskType): Promise<AgenticLoopResult> {
-        const config = this.prepareAgentForTask(task, task.inputs, task.interpolatedTaskDescription || '');
+        const config = this.prepareAgentForTask(task, task.inputs || {}, task.interpolatedTaskDescription || '');
         this.executableAgent = config.executableAgent;
         return await this.agenticLoop(this, task, this.executableAgent, config.initialFeedbackMessage);
     }
 
-    // Processes feedback for a task
-    async workOnFeedback(task: TaskType, feedbackList: FeedbackObject[], context: string): Promise<void> {
-        const feedbackString = feedbackList.map(f => f.content).join(', ');
-        const feedbackMessage = this.promptTemplates.WORK_ON_FEEDBACK_FEEDBACK({
-            agent: this,
-            task,
-            feedback: feedbackString,
-            context
-        });
-        await this.agenticLoop(this, task, this.executableAgent, feedbackMessage);
-    }
-	// Prepares the agent for task execution
-    private prepareAgentForTask(
-        task: TaskType, 
-        inputs: Record<string, any>, 
+    public  prepareAgentForTask(
+        task: TaskType,
+        inputs: Record<string, unknown>,
         context: string
     ): { executableAgent: any; initialFeedbackMessage: string } {
-        const interpolatedDescription = interpolateTaskDescription(task.description, inputs);
-        const systemMessage = this.buildSystemMessage({
-            agent: this,
-            task,
-            interpolatedTaskDescription: interpolatedDescription
+        const interpolatedDescription = interpolateTaskDescription(
+            task.description, 
+            Object.fromEntries(
+                Object.entries(inputs).map(([key, value]) => [key, String(value)])
+            )
+        );
+        const systemMessage = this.promptTemplates.SYSTEM_MESSAGE({
+            agent: this as unknown as IReactChampionAgent,
+            task: {
+                ...task,
+                description: interpolatedDescription
+            }
         });
-        const feedbackMessage = this.buildInitialMessage({
-            agent: this,
-            task,
-            interpolatedTaskDescription: interpolatedDescription,
+
+        const feedbackMessage = this.promptTemplates.INITIAL_MESSAGE({
+            agent: this as unknown as IReactChampionAgent,
+            task: {
+                ...task,
+                description: interpolatedDescription
+            },
             context
         });
+
         this.llmSystemMessage = systemMessage;
 
         const promptAgent = ChatPromptTemplate.fromMessages([
@@ -294,18 +317,85 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
         };
     }
 
-    // Main agent execution loop
-    private async agenticLoop(
+    public  determineActionType(parsedResult: ParsedOutput | null): keyof typeof AGENT_STATUS_enum {
+        if (parsedResult === null) {
+            return AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT;
+        } else if (parsedResult.finalAnswer) {
+            return AGENT_STATUS_enum.FINAL_ANSWER;
+        } else if (parsedResult.action === "self_question") {
+            return parsedResult.thought ? AGENT_STATUS_enum.THOUGHT : AGENT_STATUS_enum.SELF_QUESTION;
+        } else if (parsedResult.action) {
+            return AGENT_STATUS_enum.EXECUTING_ACTION;
+        } else if (parsedResult.observation) {
+            return AGENT_STATUS_enum.OBSERVATION;
+        } else {
+            return AGENT_STATUS_enum.WEIRD_LLM_OUTPUT;
+        }
+    }
+
+    public  async executeThinking(
+        agent: ReactChampionAgent,
+        task: TaskType,
+        ExecutableAgent: any,
+        feedbackMessage: string
+    ): Promise<ThinkingResult> {
+        return new Promise((resolve, reject) => {
+            const callOptions = {
+                stop: (this.llmConfig as LLMConfig).stopSequences,
+                timeout: 60000,
+                metadata: { taskId: task.id },
+                tags: ['thinking'],
+                callbacks: [{
+                    handleChatModelStart: (llm: any, messages: BaseMessage[]) => {
+                        agent.handleThinkingStart({ 
+                            agent: this as unknown as AgentType, 
+                            task, 
+                            messages 
+                        }).catch((error: unknown) => {
+                            reject(error instanceof Error ? error : new Error(String(error)));
+                        });
+                    },
+                    handleLLMEnd: async (output: any) => {
+                        try {
+                            const thinkingResult = await agent.handleThinkingEnd({ 
+                                agent: this as unknown as AgentType, 
+                                task, 
+                                output 
+                            });
+                            await this.messageHistory.addMessage(new AIMessage(thinkingResult.llmOutput));
+                            resolve(thinkingResult);
+                        } catch (error: unknown) {
+                            reject(error instanceof Error ? error : new Error(String(error)));
+                        }
+                    }
+                }]
+            };
+
+            ExecutableAgent.invoke(
+                { feedbackMessage },
+                callOptions
+            ).catch((error: unknown) => {
+                logger.error(`LLM_INVOCATION_ERROR: Error during LLM API call for Agent: ${agent.name}, Task: ${task.id}. Details:`, error);
+                reject(new LLMInvocationError(
+                    `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
+                    error instanceof Error ? error : new Error(String(error))
+                ));
+            });
+        });
+    }
+
+    public  async agenticLoop(
         agent: ReactChampionAgent,
         task: TaskType,
         ExecutableAgent: any,
         initialMessage: string
     ): Promise<AgenticLoopResult> {
         let feedbackMessage = initialMessage;
-        let parsedResultWithFinalAnswer = null;
+        let parsedResultWithFinalAnswer: ParsedOutput | null = null;
         let iterations = 0;
         const maxAgentIterations = agent.maxIterations;
-        let loopCriticalError = null;
+        let loopCriticalError: Error | null = null;
+        let currentParsedOutput: Output | null = null;
 
         while (!parsedResultWithFinalAnswer && iterations < maxAgentIterations && !loopCriticalError) {
             try {
@@ -317,7 +407,7 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
 
                 if (agent.forceFinalAnswer && iterations === maxAgentIterations - 2) {
                     feedbackMessage = this.promptTemplates.FORCE_FINAL_ANSWER_FEEDBACK({
-                        agent,
+                        agent: this as unknown as IReactChampionAgent,
                         task,
                         iterations,
                         maxAgentIterations
@@ -326,83 +416,97 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
 
                 const thinkingResult = await this.executeThinking(agent, task, ExecutableAgent, feedbackMessage);
                 const parsedLLMOutput = thinkingResult.parsedLLMOutput;
+                currentParsedOutput = thinkingResult;
+
+                if (parsedLLMOutput === null) {
+                    feedbackMessage = this.handleIssuesParsingLLMOutput({
+                        agent: this as unknown as IReactChampionAgent,
+                        task,
+                        output: thinkingResult,
+                        llmOutput: thinkingResult.llmOutput
+                    });
+                    continue;
+                }
 
                 const actionType = this.determineActionType(parsedLLMOutput);
-
                 switch (actionType) {
-                    case AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT:
-                        feedbackMessage = this.handleIssuesParsingLLMOutput({
-                            agent,
-                            task,
-                            parsedLLMOutput,
-                            output: thinkingResult
-                        });
-                        break;
                     case AGENT_STATUS_enum.FINAL_ANSWER:
                         parsedResultWithFinalAnswer = this.handleFinalAnswer({
-                            agent,
+                            agent: this as unknown as IReactChampionAgent,
                             task,
                             parsedLLMOutput
                         });
                         break;
+
                     case AGENT_STATUS_enum.THOUGHT:
-                        feedbackMessage = this.handleThought({
-                            agent,
-                            task,
-                            parsedLLMOutput
-                        });
-                        break;
-                    case AGENT_STATUS_enum.SELF_QUESTION:
-                        feedbackMessage = this.handleSelfQuestion({
-                            agent,
-                            task,
-                            parsedLLMOutput
-                        });
-                        break;
-                    case AGENT_STATUS_enum.EXECUTING_ACTION:
-                        logger.debug(`⏩ Agent ${agent.name} will be ${AGENT_STATUS_enum.EXECUTING_ACTION}...`);
-                        const toolName = parsedLLMOutput.action;
-                        const tool = this.tools.find(tool => tool.name === toolName);
-                        if (tool) {
-                            try {
-                                feedbackMessage = await this.executeUsingTool({
-                                    agent,
-                                    task,
-                                    parsedLLMOutput,
-                                    tool
-                                });
-                            } catch (error) {
-                                feedbackMessage = this.handleUsingToolError({
-                                    agent,
-                                    task,
-                                    parsedLLMOutput,
-                                    tool,
-                                    error: error instanceof Error ? error : new Error(String(error))
-                                });
-                            }
-                        } else {
-                            feedbackMessage = this.handleToolDoesNotExist({
-                                agent,
+                        if (parsedLLMOutput.action === "self_question" && parsedLLMOutput.thought) {
+                            feedbackMessage = this.promptTemplates.THOUGHT_WITH_SELF_QUESTION_FEEDBACK({
+                                agent: this as unknown as IReactChampionAgent,
                                 task,
-                                parsedLLMOutput,
-                                toolName
+                                thought: parsedLLMOutput.thought,
+                                question: parsedLLMOutput.actionInput?.question as string || '',
+                                parsedLLMOutput: currentParsedOutput
+                            });
+                        } else {
+                            feedbackMessage = this.promptTemplates.THOUGHT_FEEDBACK({
+                                agent: this as unknown as IReactChampionAgent,
+                                task,
+                                thought: parsedLLMOutput.thought || '',
+                                parsedLLMOutput: currentParsedOutput
                             });
                         }
                         break;
+
+                    case AGENT_STATUS_enum.SELF_QUESTION:
+                        feedbackMessage = this.promptTemplates.SELF_QUESTION_FEEDBACK({
+                            agent: this as unknown as IReactChampionAgent,
+                            task,
+                            question: parsedLLMOutput.actionInput?.question as string || '',
+                            parsedLLMOutput: currentParsedOutput
+                        });
+                        break;
+
+                    case AGENT_STATUS_enum.EXECUTING_ACTION:
+                        if (!parsedLLMOutput.action) {
+                            feedbackMessage = "No action specified in parsed output.";
+                            break;
+                        }
+
+                        const tool = this.tools.find(t => t.name === parsedLLMOutput.action);
+                        if (tool) {
+                            feedbackMessage = await this.executeUsingTool({
+                                agent,
+                                task,
+                                tool,
+                                toolResult: JSON.stringify(parsedLLMOutput.actionInput || {}),
+                                parsedLLMOutput: currentParsedOutput
+                            });
+                        } else {
+                            feedbackMessage = this.handleToolDoesNotExist({
+                                agent: this as unknown as IReactChampionAgent,
+                                task,
+                                toolName: parsedLLMOutput.action,
+                                parsedLLMOutput: currentParsedOutput
+                            });
+                        }
+                        break;
+
                     case AGENT_STATUS_enum.OBSERVATION:
-                        feedbackMessage = this.handleObservation({
-                            agent,
+                        feedbackMessage = this.promptTemplates.OBSERVATION_FEEDBACK({
+                            agent: this as unknown as IReactChampionAgent,
                             task,
-                            parsedLLMOutput
+                            parsedLLMOutput: currentParsedOutput
                         });
                         break;
+
                     case AGENT_STATUS_enum.WEIRD_LLM_OUTPUT:
-                        feedbackMessage = this.handleWeirdOutput({
-                            agent,
+                        feedbackMessage = this.promptTemplates.WEIRD_OUTPUT_FEEDBACK({
+                            agent: this as unknown as IReactChampionAgent,
                             task,
-                            parsedLLMOutput
+                            parsedLLMOutput: currentParsedOutput
                         });
                         break;
+
                     default:
                         logger.warn(`Unhandled agent status: ${actionType}`);
                         break;
@@ -417,10 +521,9 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
                 if (error instanceof LLMInvocationError) {
                     this.handleThinkingError({ task, error });
                 } else {
-                    const errorToHandle = error instanceof Error ? error : new Error(String(error));
                     this.handleAgenticLoopError({
                         task,
-                        error: errorToHandle,
+                        error: error instanceof Error ? error : new Error(String(error)),
                         iterations,
                         maxAgentIterations
                     });
@@ -438,6 +541,16 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
             iterations++;
         }
 
+        return this.handleLoopCompletion(loopCriticalError, parsedResultWithFinalAnswer, task, iterations, maxAgentIterations);
+    }
+
+    public handleLoopCompletion(
+        loopCriticalError: Error | null,
+        parsedResultWithFinalAnswer: ParsedOutput | null,
+        task: TaskType,
+        iterations: number,
+        maxAgentIterations: number
+    ): AgenticLoopResult {
         if (loopCriticalError) {
             return {
                 error: "Execution stopped due to a critical error: " + loopCriticalError.message,
@@ -471,519 +584,427 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
             };
         }
     }
-	// Executes the thinking phase of the agent
-    private async executeThinking(
-        agent: ReactChampionAgent,
-        task: TaskType,
-        ExecutableAgent: any,
-        feedbackMessage: string
-    ): Promise<ThinkingResult> {
-        return new Promise((resolve, reject) => {
-            const callOptions = {
-                stop: this.llmConfig.stopSequences,
-                timeout: 60000,
-                metadata: { taskId: task.id },
-                tags: ['thinking'],
-                callbacks: [{
-                    handleChatModelStart: (llm: any, messages: BaseMessage[]) => {
-                        agent.handleThinkingStart({ agent, task, messages }).catch((error: unknown) => {
-                            reject(error instanceof Error ? error : new Error(String(error)));
-                        });
-                    },
-                    handleLLMEnd: async (output: any) => {
-                        try {
-                            const thinkingResult = await agent.handleThinkingEnd({ agent, task, output });
-                            await this.messageHistory.addMessage(new AIMessage(thinkingResult.llmOutput));
-                            resolve(thinkingResult);
-                        } catch (error: unknown) {
-                            reject(error instanceof Error ? error : new Error(String(error)));
-                        }
-                    }
-                }]
-            };
 
-            ExecutableAgent.invoke(
-                { feedbackMessage },
-                callOptions
-            ).catch((error: unknown) => {
-                logger.error(`LLM_INVOCATION_ERROR: Error during LLM API call for Agent: ${agent.name}, Task: ${task.id}. Details:`, error);
-                reject(new LLMInvocationError(
-                    `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
-                    error instanceof Error ? error : new Error(String(error))
-                ));
-            });
-        });
-    }
-
-    // Determines the type of action to take based on parsed LLM output
-    private determineActionType(parsedResult: any): keyof typeof AGENT_STATUS_enum {
-        if (parsedResult === null) {
-            return AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT;
-        } else if (parsedResult.finalAnswer) {
-            return AGENT_STATUS_enum.FINAL_ANSWER;
-        } else if (parsedResult.action === "self_question") {
-            return parsedResult.thought ? AGENT_STATUS_enum.THOUGHT : AGENT_STATUS_enum.SELF_QUESTION;
-        } else if (parsedResult.action) {
-            return AGENT_STATUS_enum.EXECUTING_ACTION;
-        } else if (parsedResult.observation) {
-            return AGENT_STATUS_enum.OBSERVATION;
-        } else {
-            return AGENT_STATUS_enum.WEIRD_LLM_OUTPUT;
-        }
-    }
-
-    // Executes a tool action
-    private async executeUsingTool(params: ToolHandlerParams): Promise<string> {
-        const { agent, task, parsedLLMOutput, tool } = params;
-        const toolInput = parsedLLMOutput.actionInput;
+    public  async executeUsingTool(params: { 
+        agent: ReactChampionAgent; 
+        task: TaskType; 
+        tool: Tool;
+        toolResult: string;
+        parsedLLMOutput: Output;
+    }): Promise<string> {
+        const { task, tool, toolResult, parsedLLMOutput } = params;
         this.setStatus(AGENT_STATUS_enum.USING_TOOL);
-        
-        const newLog = this.store.getState().prepareNewLog({
-            agent: this,
+        this.checkStore();
+
+        const newLog = this.store.prepareNewLog({
+            agent: this as unknown as AgentType,
             task,
-            logDescription: `🛠️⏳ Agent ${this.name} is ${AGENT_STATUS_enum.USING_TOOL} ${tool.name}...`,
-            metadata: { tool, input: toolInput },
+            logDescription: `🛠️ Using tool: ${tool.name}`,
+            metadata: { tool, input: toolResult },
             logType: 'AgentStatusUpdate',
             agentStatus: this.status,
         });
-        
-        logger.info(`🛠️⏳ ${AGENT_STATUS_enum.USING_TOOL}: Agent ${this.name} is using ${tool.name}...`);
-        logger.debug(`Tool Input:`, toolInput);
-        this.store.getState().workflowLogs.push(newLog);
-        
+
+        if (newLog) {
+            logger.info(`🛠️ ${AGENT_STATUS_enum.USING_TOOL}: Using ${tool.name}`);
+            logger.debug(`Tool Input:`, toolResult);
+            this.store.workflowLogs.push(newLog);
+        }
+
         try {
-            const toolResult = await tool.call(toolInput);
-            
-            this.setStatus(AGENT_STATUS_enum.USING_TOOL_END);
-            const endLog = this.store.getState().prepareNewLog({
-                agent: this,
+            const result = await tool.call(toolResult);
+
+            this.store.handleToolExecution({
+                agent: this as unknown as AgentType,
                 task,
-                logDescription: `🛠️✅ ${AGENT_STATUS_enum.USING_TOOL_END}: Agent ${this.name} - got results from tool:${tool.name}`,
-                metadata: { output: toolResult },
+                tool,
+                input: toolResult,
+                result
+            });
+
+            this.setStatus(AGENT_STATUS_enum.USING_TOOL_END);
+
+            const endLog = this.store.prepareNewLog({
+                agent: this as unknown as AgentType,
+                task,
+                logDescription: `🛠️✅ Tool execution complete: ${tool.name}`,
+                metadata: { output: result },
                 logType: 'AgentStatusUpdate',
                 agentStatus: this.status,
             });
-            
-            logger.info(`🛠️✅ ${AGENT_STATUS_enum.USING_TOOL_END}: Agent ${this.name} - got results from tool:${tool.name}`);
-            logger.debug(`Tool Output:`, toolResult);
-            this.store.getState().workflowLogs.push(endLog);
-            
+
+            if (endLog) {
+                logger.info(`🛠️✅ ${AGENT_STATUS_enum.USING_TOOL_END}: Got results from ${tool.name}`);
+                logger.debug(`Tool Output:`, result);
+                this.store.workflowLogs.push(endLog);
+            }
+
             return this.promptTemplates.TOOL_RESULT_FEEDBACK({
-                agent,
+                agent: this as unknown as IReactChampionAgent,
                 task,
-                toolResult,
+                toolResult: result,
                 parsedLLMOutput
             });
         } catch (error) {
             const errorToHandle = error instanceof Error ? error : new Error(String(error));
-            return this.handleUsingToolError({ ...params, error: errorToHandle });
-        }
-    }
-
-    // Adds a message to the message history
-    private async addMessageToHistory(role: string, content: string): Promise<void> {
-        await this.messageHistory.addMessage(
-            role === 'ai' ? new AIMessage(content) : new HumanMessage(content)
-        );
-    }
-
-    // Handles streaming response from LLM
-    private async handleStreamingResponse(stream: AsyncIterable<StreamingHandlerConfig>): Promise<string> {
-        let fullResponse = '';
-        try {
-            for await (const chunk of stream) {
-                const content = chunk?.content || '';
-                fullResponse += content;
-            }
-            return fullResponse;
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            throw new Error(`Error processing streaming response: ${errorMessage}`);
-        }
-    }
-
-    // Formats the completion response
-    private async formatCompletionResponse(response: CompletionResponse): Promise<ThinkingResult> {
-        try {
-            const usageStats = {
-                inputTokens: response?.usage?.prompt_tokens || -1,
-                outputTokens: response?.usage?.completion_tokens || -1
-            };
-
-            const content = response?.content || response?.message?.content || '';
-            
-            return {
-                parsedLLMOutput: this.parseOutput(content),
-                llmOutput: content,
-                llmUsageStats: usageStats
-            };
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            throw new Error(`Error formatting completion response: ${errorMessage}`);
-        }
-    }
-	
-	// Handles the start of the thinking process
-    private async handleThinkingStart(params: ThinkingHandlerParams): Promise<void> {
-        const { agent, task, messages } = params;
-        try {
-            const transformedMessages = messages?.map(message => ({
-                type: message.constructor.name,
-                content: message.content
-            }));
-            this.setStatus(AGENT_STATUS_enum.THINKING);
-            const newLog = this.store.getState().prepareNewLog({
-                agent: this,
+            return this.handleUsingToolError({
+                agent: this as unknown as IReactChampionAgent,
                 task,
-                logDescription: `🤔 Agent ${this.name} starts thinking...`,
-                metadata: { messages: transformedMessages },
-                logType: 'AgentStatusUpdate',
-                agentStatus: this.status,
-            });
-            logger.info(`🤔 ${AGENT_STATUS_enum.THINKING}: Agent ${this.name} starts thinking...`);
-            logger.debug('System Message:', transformedMessages?.[0]);
-            logger.debug('Feedback Message:', transformedMessages?.[transformedMessages.length - 1].content);
-            logger.debug('All Messages', transformedMessages);
-            this.store.getState().workflowLogs.push(newLog);
-        } catch (error: unknown) {
-            logger.debug(`AGENT/handleThinkingStart: Error processing thinking messages: ${error}`);
-            throw error instanceof Error ? error : new Error(String(error));
-        }
-    }
-
-    // Handles the end of the thinking process
-    private async handleThinkingEnd(params: ThinkingHandlerParams): Promise<ThinkingResult> {
-        const { agent, task, output } = params;
-        try {
-            const agentResultParser = new StringOutputParser();
-            if (!output?.generations?.[0]?.[0]?.message) {
-                throw new Error('Invalid output structure');
-            }
-
-            const { message } = output.generations[0][0];
-            const parsedResult = await agentResultParser.invoke(message);
-            const parsedLLMOutput = getParsedJSON(parsedResult);
-            const thinkingResult: ThinkingResult = {
-                parsedLLMOutput,
-                llmOutput: parsedResult,
-                llmUsageStats: {
-                    inputTokens: message.usage_metadata?.input_tokens ?? -1,
-                    outputTokens: message.usage_metadata?.output_tokens ?? -1
-                }
-            };
-            this.setStatus(AGENT_STATUS_enum.THINKING_END);
-            const newLog = this.store.getState().prepareNewLog({
-                agent: this,
-                task,
-                logDescription: `🤔 Agent ${this.name} finished thinking.`,
-                metadata: { output: thinkingResult },
-                logType: 'AgentStatusUpdate',
-                agentStatus: this.status,
-            });
-            logger.info(`💡 ${AGENT_STATUS_enum.THINKING_END}: Agent ${this.name} finished thinking.`);
-            logger.trace(`Output:`, thinkingResult.parsedLLMOutput);
-            logger.trace(`Usage:`, thinkingResult.llmUsageStats);
-            this.store.getState().workflowLogs.push(newLog);
-            return thinkingResult;
-        } catch (error: unknown) {
-            logger.debug(`AGENT/handleThinkingEnd: Error processing thinking result: ${error}`);
-            throw error instanceof Error ? error : new Error(String(error));
-        }
-    }
-
-    // Handles issues parsing LLM output
-    private handleIssuesParsingLLMOutput(params: StatusHandlerParams): string {
-        const { agent, task, output } = params;
-        const JSONParsingError = new Error('Received an invalid JSON object from the LLM. Requesting a correctly formatted JSON response.');
-        this.setStatus(AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT);
-        const newLog = this.store.getState().prepareNewLog({
-            agent: this,
-            task,
-            logDescription: `😡 Agent ${this.name} found some ${AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT}. ${JSONParsingError.message}`,
-            metadata: { output, error: JSONParsingError },
-            logType: 'AgentStatusUpdate',
-            agentStatus: this.status,
-        });        
-        logger.debug(`😡 ${AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT}: Agent ${this.name} found issues parsing the LLM output. ${JSONParsingError.message}`);
-        this.store.getState().workflowLogs.push(newLog);
-        return this.promptTemplates.INVALID_JSON_FEEDBACK({
-            agent,
-            task,
-            llmOutput: output.llmOutput
-        });
-    }
-
-    // Handles final answer from LLM
-    private handleFinalAnswer(params: StatusHandlerParams): any {
-        const { agent, task, parsedLLMOutput } = params;
-        const finalAnswer = typeof parsedLLMOutput.finalAnswer === 'object' && parsedLLMOutput.finalAnswer !== null
-            ? JSON.stringify(parsedLLMOutput.finalAnswer)
-            : parsedLLMOutput.finalAnswer;
-
-        const outputWithFormattedAnswer = {
-            ...parsedLLMOutput,
-            finalAnswer
-        };
-
-        this.setStatus(AGENT_STATUS_enum.FINAL_ANSWER);
-        const newLog = this.store.getState().prepareNewLog({
-            agent: this,
-            task,
-            logDescription: `🥳 Agent ${this.name} got the ${AGENT_STATUS_enum.FINAL_ANSWER}`,
-            metadata: { output: outputWithFormattedAnswer },
-            logType: 'AgentStatusUpdate',
-            agentStatus: this.status,
-        });
-        logger.info(`🥳 ${AGENT_STATUS_enum.FINAL_ANSWER}: Agent ${this.name} arrived to the Final Answer.`);
-        logger.debug(`${finalAnswer}`);
-        this.store.getState().workflowLogs.push(newLog);
-        return outputWithFormattedAnswer;
-    }
-
-    // Handles thought from LLM
-    private handleThought(params: StatusHandlerParams): string {
-        const { agent, task, parsedLLMOutput } = params;
-        this.setStatus(AGENT_STATUS_enum.THOUGHT);
-        const newLog = this.store.getState().prepareNewLog({
-            agent: this,
-            task,
-            logDescription: `💭 Agent ${this.name} ${AGENT_STATUS_enum.THOUGHT}.`,
-            metadata: { output: parsedLLMOutput },
-            logType: 'AgentStatusUpdate',
-            agentStatus: this.status,
-        });
-        logger.info(`💭 ${AGENT_STATUS_enum.THOUGHT}: Agent ${this.name} has a cool thought.`);
-        logger.info(`${parsedLLMOutput.thought}`);
-        this.store.getState().workflowLogs.push(newLog);
-        
-        let feedbackMessage = this.promptTemplates.THOUGHT_FEEDBACK({
-            agent,
-            task,
-            thought: parsedLLMOutput.thought,
-            parsedLLMOutput
-        });
-
-        if(parsedLLMOutput.action === 'self_question' && parsedLLMOutput.actionInput) {
-            const actionAsString = typeof parsedLLMOutput.actionInput === 'object' ? 
-                JSON.stringify(parsedLLMOutput.actionInput) : parsedLLMOutput.actionInput;
-            feedbackMessage = this.promptTemplates.THOUGHT_WITH_SELF_QUESTION_FEEDBACK({
-                agent,
-                task,
-                thought: parsedLLMOutput.thought,
-                question: actionAsString,
+                tool,
+                toolName: tool.name,
+                error: errorToHandle,
                 parsedLLMOutput
             });
         }
-        return feedbackMessage;
     }
 
-    // Handles self-question from LLM
-    private handleSelfQuestion(params: StatusHandlerParams): string {
-        const { agent, task, parsedLLMOutput } = params;
-        this.setStatus(AGENT_STATUS_enum.SELF_QUESTION);
-        const newLog = this.store.getState().prepareNewLog({
-            agent: this,
-            task,
-            logDescription: `❓Agent ${this.name} have a ${AGENT_STATUS_enum.SELF_QUESTION}`,
-            metadata: { output: parsedLLMOutput },
-            logType: 'AgentStatusUpdate',
-            agentStatus: this.status,
-        });
-        logger.info(`❓${AGENT_STATUS_enum.SELF_QUESTION}: Agent ${this.name} have a self question.`);
-        logger.debug(parsedLLMOutput);
-        this.store.getState().workflowLogs.push(newLog);
-        return this.promptTemplates.SELF_QUESTION_FEEDBACK({
-            agent,
-            task,
-            question: parsedLLMOutput.thought,
-            parsedLLMOutput
-        });
-    }
-
-    // Handles tool usage error
-    private handleUsingToolError(params: ToolHandlerParams): string {
-        const { agent, task, parsedLLMOutput, tool, error } = params;
+    public handleUsingToolError(params: { 
+        agent: IReactChampionAgent; 
+        task: TaskType; 
+        tool: Tool;
+        toolName: string;
+        error: Error;
+        parsedLLMOutput: Output;
+    }): string {
+        const { task, tool, toolName, error, parsedLLMOutput } = params;
         this.setStatus(AGENT_STATUS_enum.USING_TOOL_ERROR);
-        const newLog = this.store.getState().prepareNewLog({
-            agent: this,
+        this.checkStore();
+
+        this.store.handleToolError({
+            agent: this as unknown as AgentType,
             task,
-            logDescription: 'Error during tool use',
-            metadata: { error },
+            tool,
+            error,
+            toolName
+        });
+
+        const newLog = this.store.prepareNewLog({
+            agent: this as unknown as AgentType,
+            task,
+            logDescription: `🛠️🛑 Tool error: ${toolName}`,
+            metadata: { error, toolName },
             logType: 'AgentStatusUpdate',
             agentStatus: this.status,
         });
-        logger.error(`🛠️🛑 ${AGENT_STATUS_enum.USING_TOOL_ERROR}: Agent ${this.name} found an error using the tool: ${tool.name}`);
-        logger.error(error);        
-        this.store.getState().workflowLogs.push(newLog);
+
+        if (newLog) {
+            logger.error(`🛠️🛑 ${AGENT_STATUS_enum.USING_TOOL_ERROR}: Error using tool: ${toolName}`);
+            logger.error(error);
+            this.store.workflowLogs.push(newLog);
+        }
+
         return this.promptTemplates.TOOL_ERROR_FEEDBACK({
-            agent,
+            agent: this as unknown as IReactChampionAgent,
             task,
-            toolName: parsedLLMOutput.action,
+            toolName,
             error,
             parsedLLMOutput
         });
     }
 
-    // Handles case when tool does not exist
-    private handleToolDoesNotExist(params: ToolHandlerParams): string {
-        const { agent, task, parsedLLMOutput, toolName } = params;
+    public handleToolDoesNotExist(params: { 
+        agent: IReactChampionAgent; 
+        task: TaskType; 
+        toolName: string;
+        parsedLLMOutput: Output;
+    }): string {
+        const { task, toolName, parsedLLMOutput } = params;
         this.setStatus(AGENT_STATUS_enum.TOOL_DOES_NOT_EXIST);
-        const newLog = this.store.getState().prepareNewLog({
-            agent: this,
+        this.checkStore();
+
+        this.store.handleToolDoesNotExist({
+            agent: this as unknown as AgentType,
             task,
-            logDescription: `🛠️🚫 Agent ${this.name} - Oops... it seems that the tool:${toolName} ${AGENT_STATUS_enum.TOOL_DOES_NOT_EXIST}.`,
+            toolName
+        });
+
+        const newLog = this.store.prepareNewLog({
+            agent: this as unknown as AgentType,
+            task,
+            logDescription: `🛠️🚫 Unknown tool: ${toolName}`,
             metadata: { toolName },
             logType: 'AgentStatusUpdate',
             agentStatus: this.status,
         });
-        logger.warn(`🛠️🚫 ${AGENT_STATUS_enum.TOOL_DOES_NOT_EXIST}: Agent ${this.name} - is trying to use a tool that does not exist. Tool Name:${toolName}.`);  
-        this.store.getState().workflowLogs.push(newLog);
-        return this.promptTemplates.TOOL_NOT_EXIST_FEEDBACK({
-            agent,
-            task,
-            toolName: parsedLLMOutput.action,
-            parsedLLMOutput
-        });
-    }
 
-    // Handles observation from LLM
-    private handleObservation(params: StatusHandlerParams): string {
-        const { agent, task, parsedLLMOutput } = params;
-        this.setStatus(AGENT_STATUS_enum.OBSERVATION);
-        const newLog = this.store.getState().prepareNewLog({
-            agent: this,
-            task,
-            logDescription: `🔍 Agent ${this.name} - ${AGENT_STATUS_enum.OBSERVATION}`,
-            metadata: { output: parsedLLMOutput },
-            logType: 'AgentStatusUpdate',
-            agentStatus: this.status,
-        });
-        logger.info(`🔍 ${AGENT_STATUS_enum.OBSERVATION}: Agent ${this.name} made an observation.`);
-        logger.debug(`${parsedLLMOutput.observation}`);
-        this.store.getState().workflowLogs.push(newLog);
-        return this.promptTemplates.OBSERVATION_FEEDBACK({
-            agent,
-            task,
-            parsedLLMOutput
-        });
-    }
-
-    // Handles weird output from LLM
-    private handleWeirdOutput(params: StatusHandlerParams): string {
-        const { agent, task, parsedLLMOutput } = params;
-        this.setStatus(AGENT_STATUS_enum.WEIRD_LLM_OUTPUT);
-        const newLog = this.store.getState().prepareNewLog({
-            agent: this,
-            task,
-            logDescription: `🤔 Agent ${this.name} - ${AGENT_STATUS_enum.WEIRD_LLM_OUTPUT}`,
-            metadata: { output: parsedLLMOutput },
-            logType: 'AgentStatusUpdate',
-            agentStatus: this.status,
-        });
-        logger.warn(`🤔 ${AGENT_STATUS_enum.WEIRD_LLM_OUTPUT} - Agent: ${this.name}`);
-        this.store.getState().workflowLogs.push(newLog);
-        return this.promptTemplates.WEIRD_OUTPUT_FEEDBACK({
-            agent,
-            task,
-            parsedLLMOutput
-        });
-    }
-
-    // Handles agentic loop error
-    private handleAgenticLoopError(params: IterationHandlerParams & { error: Error }): void {
-        const { task, error, iterations, maxAgentIterations } = params;
-        this.setStatus(AGENT_STATUS_enum.AGENTIC_LOOP_ERROR);
-        const newLog = this.store.getState().prepareNewLog({
-            agent: this,
-            task,
-            logDescription: `🚨 Agent ${this.name} - ${AGENT_STATUS_enum.AGENTIC_LOOP_ERROR} | Iterations: ${iterations}/${maxAgentIterations}`,
-            metadata: { error, iterations, maxAgentIterations },
-            logType: 'AgentStatusUpdate',
-            agentStatus: this.status,
-        });
-        logger.error(`🚨 ${AGENT_STATUS_enum.AGENTIC_LOOP_ERROR}  - Agent: ${this.name} | Iterations: ${iterations}/${maxAgentIterations}`, error.message);   
-        this.store.getState().workflowLogs.push(newLog);
-        this.store.getState().handleTaskBlocked({ task, error });
-    }
-
-    // Handles maximum iterations error
-    private handleMaxIterationsError(params: IterationHandlerParams): void {
-        const { task, iterations, maxAgentIterations } = params;
-        const error = new Error(`Agent ${this.name} reached the maximum number of iterations: [${maxAgentIterations}] without finding a final answer.`);
-        this.setStatus(AGENT_STATUS_enum.MAX_ITERATIONS_ERROR);
-        const newLog = this.store.getState().prepareNewLog({
-            agent: this,
-            task,
-            logDescription: `🛑 Agent ${this.name} - ${AGENT_STATUS_enum.MAX_ITERATIONS_ERROR} | Iterations: ${iterations}`,
-            metadata: { error, iterations, maxAgentIterations },
-            logType: 'AgentStatusUpdate',
-            agentStatus: this.status,
-        });
-        logger.error(`🛑 ${AGENT_STATUS_enum.MAX_ITERATIONS_ERROR} - Agent ${this.name} | Iterations: ${iterations}/${maxAgentIterations}. You can adjust the maxAgentIterations property in the agent initialization. Current value is ${maxAgentIterations}`);
-        this.store.getState().workflowLogs.push(newLog);
-        this.store.getState().handleTaskBlocked({ task, error });
-    }
-
-    // Handles task completion
-    private handleTaskCompleted(params: TaskCompletionParams): void {
-        const { task, parsedResultWithFinalAnswer, iterations, maxAgentIterations } = params;
-        this.setStatus(AGENT_STATUS_enum.TASK_COMPLETED);
-        const agentLog = this.store.getState().prepareNewLog({
-            agent: this,
-            task,
-            logDescription: `🏁 Agent ${this.name} - ${AGENT_STATUS_enum.TASK_COMPLETED}`,
-            metadata: { 
-                result: parsedResultWithFinalAnswer.finalAnswer, 
-                iterations, 
-                maxAgentIterations 
-            },
-            logType: 'AgentStatusUpdate',
-            agentStatus: this.status,
-        });
-        logger.info(`🏁 ${AGENT_STATUS_enum.TASK_COMPLETED}: Agent ${this.name} finished the given task.`);
-        this.store.getState().workflowLogs.push(agentLog);
-        this.store.getState().handleTaskCompleted({ 
-            agent: this, 
-            task, 
-            result: parsedResultWithFinalAnswer.finalAnswer 
-        });
-    }
-
-    // Builds a system message for the agent
-    private buildSystemMessage(params: MessageBuildParams): string {
-        const { agent, task, interpolatedTaskDescription } = params;
-        return this.promptTemplates.SYSTEM_MESSAGE({
-            agent,
-            task: {
-                ...task,
-                description: interpolatedTaskDescription
-            }
-        });
-    }
-
-    // Builds an initial message for the agent
-    private buildInitialMessage(params: MessageBuildParams): string {
-        const { agent, task, interpolatedTaskDescription, context } = params;
-        return this.promptTemplates.INITIAL_MESSAGE({
-            agent,
-            task: {
-                ...task,
-                description: interpolatedTaskDescription
-            },
-            context
-        });
-    }
-
-    // Parses the LLM output
-    private parseOutput(content: string): any {
-        try {
-            return getParsedJSON(content);
-        } catch (error) {
-            logger.error('Error parsing output:', error);
-            return null;
+        if (newLog) {
+            logger.warn(`🛠️🚫 ${AGENT_STATUS_enum.TOOL_DOES_NOT_EXIST}: Unknown tool: ${toolName}`);
+            this.store.workflowLogs.push(newLog);
         }
+
+        return this.promptTemplates.TOOL_NOT_EXIST_FEEDBACK({
+            agent: this as unknown as IReactChampionAgent,
+            task,
+            toolName,
+            parsedLLMOutput
+        });
+    }
+
+    public handleIterationStart(params: {
+        task: TaskType;
+        iterations: number;
+        maxAgentIterations: number;
+    }): void {
+        const { iterations, maxAgentIterations } = params;
+        logger.info(`📍 Starting iteration ${iterations + 1}/${maxAgentIterations}`);
+    }
+
+    public handleIterationEnd(params: {
+        task: TaskType;
+        iterations: number;
+        maxAgentIterations: number;
+    }): void {
+        const { iterations, maxAgentIterations } = params;
+        logger.info(`✓ Completed iteration ${iterations + 1}/${maxAgentIterations}`);
+    }
+
+    public handleThinkingStart(params: ThinkingHandlerParams): Promise<void> {
+        const { task, messages } = params;
+        this.setStatus(AGENT_STATUS_enum.THINKING);
+        this.checkStore();
+
+        const newLog = this.store.prepareNewLog({
+            agent: this as unknown as AgentType,
+            task,
+            logDescription: `🤔 Starting to think`,
+            metadata: { messages },
+            logType: 'AgentStatusUpdate',
+            agentStatus: this.status,
+        });
+
+        if (newLog) {
+            logger.info(`🤔 ${AGENT_STATUS_enum.THINKING}: Starting thought process`);
+            this.store.workflowLogs.push(newLog);
+        }
+        return Promise.resolve();
+    }
+
+    public  async handleThinkingEnd(params: ThinkingHandlerParams): Promise<ThinkingResult> {
+        const { task, output } = params;
+        this.setStatus(AGENT_STATUS_enum.THINKING_END);
+        this.checkStore();
+
+        const parsedOutput = output ? this.parseOutput(output.llmOutput || '') : null;
+        const llmUsageStats: LLMUsageStats = output?.llmUsageStats || {
+            inputTokens: 0,
+            outputTokens: 0,
+            callsCount: 0,
+            callsErrorCount: 0,
+            parsingErrors: 0,
+            totalLatency: 0,
+            averageLatency: 0,
+            lastUsed: Date.now(),
+            memoryUtilization: {
+                peakMemoryUsage: 0,
+                averageMemoryUsage: 0,
+                cleanupEvents: 0
+            },
+            costBreakdown: {
+                input: 0,
+                output: 0,
+                total: 0,
+                currency: 'USD'
+            }
+        };
+
+        const result: ThinkingResult = {
+            parsedLLMOutput: parsedOutput,
+            llmOutput: output?.llmOutput || '',
+            llmUsageStats
+        };
+
+        const newLog = this.store.prepareNewLog({
+            agent: this as unknown as AgentType,
+            task,
+            logDescription: `🤔✅ Finished thinking`,
+            metadata: { output, parsedOutput },
+            logType: 'AgentStatusUpdate',
+            agentStatus: this.status,
+        });
+
+        if (newLog) {
+            logger.info(`🤔✅ ${AGENT_STATUS_enum.THINKING_END}: Completed thought process`);
+            this.store.workflowLogs.push(newLog);
+        }
+
+        return result;
+    }
+
+    public handleThinkingError(params: { task: TaskType; error: Error }): void {
+        const { task, error } = params;
+        this.setStatus(AGENT_STATUS_enum.THINKING_ERROR);
+        this.checkStore();
+
+        const newLog = this.store.prepareNewLog({
+            agent: this as unknown as AgentType,
+            task,
+            logDescription: `🛑 Thinking error occurred`,
+            metadata: { error },
+            logType: 'AgentStatusUpdate',
+            agentStatus: this.status,
+        });
+
+        if (newLog) {
+            logger.error(`🛑 ${AGENT_STATUS_enum.THINKING_ERROR}: Error during thought process`);
+            logger.error(error);
+            this.store.workflowLogs.push(newLog);
+        }
+
+        this.store.handleTaskBlocked({
+            task,
+            error
+        });
+    }
+
+    public handleTaskCompleted(params: {
+        task: TaskType;
+        parsedResultWithFinalAnswer: ParsedOutput;
+        iterations: number;
+        maxAgentIterations: number;
+    }): void {
+        const { task, parsedResultWithFinalAnswer } = params;
+        this.setStatus(AGENT_STATUS_enum.TASK_COMPLETED);
+        this.checkStore();
+
+        const newLog = this.store.prepareNewLog({
+            agent: this as unknown as AgentType,
+            task,
+            logDescription: `🎉 Task completed successfully`,
+            metadata: { output: parsedResultWithFinalAnswer },
+            logType: 'AgentStatusUpdate',
+            agentStatus: this.status,
+        });
+
+        if (newLog) {
+            logger.info(`🎉 ${AGENT_STATUS_enum.TASK_COMPLETED}: Task completed successfully`);
+            this.store.workflowLogs.push(newLog);
+        }
+
+        this.store.handleTaskCompletion({
+            agent: this as unknown as AgentType,
+            task,
+            result: parsedResultWithFinalAnswer.finalAnswer
+        });
+    }
+
+    public handleMaxIterationsError(params: {
+        task: TaskType;
+        iterations: number;
+        maxAgentIterations: number;
+    }): void {
+        const { task, iterations, maxAgentIterations } = params;
+        const errorMessage = `Maximum iterations [${maxAgentIterations}] reached without final answer`;
+        this.setStatus(AGENT_STATUS_enum.MAX_ITERATIONS_ERROR);
+        this.checkStore();
+
+        const newLog = this.store.prepareNewLog({
+            agent: this as unknown as AgentType,
+            task,
+            logDescription: `⚠️ ${errorMessage}`,
+            metadata: { iterations, maxAgentIterations },
+            logType: 'AgentStatusUpdate',
+            agentStatus: this.status,
+        });
+
+        if (newLog) {
+            logger.warn(`⚠️ ${AGENT_STATUS_enum.MAX_ITERATIONS_ERROR}: ${errorMessage}`);
+            this.store.workflowLogs.push(newLog);
+        }
+
+        this.store.handleTaskIncomplete({
+            agent: this as unknown as AgentType,
+            task,
+            error: new Error(errorMessage)
+        });
+    }
+
+    public handleAgenticLoopError(params: {
+        task: TaskType;
+        error: Error;
+        iterations: number;
+        maxAgentIterations: number;
+    }): void {
+        const { task, error } = params;
+        this.setStatus(AGENT_STATUS_enum.AGENTIC_LOOP_ERROR);
+        this.checkStore();
+
+        const newLog = this.store.prepareNewLog({
+            agent: this as unknown as AgentType,
+            task,
+            logDescription: `🚨 Agentic loop error`,
+            metadata: { error },
+            logType: 'AgentStatusUpdate',
+            agentStatus: this.status,
+        });
+
+        if (newLog) {
+            logger.error(`🚨 ${AGENT_STATUS_enum.AGENTIC_LOOP_ERROR}: ${error.message}`);
+            logger.error(error);
+            this.store.workflowLogs.push(newLog);
+        }
+
+        this.store.handleTaskBlocked({
+            task,
+            error
+        });
+    }
+
+    public handleIssuesParsingLLMOutput(params: { 
+        agent: IReactChampionAgent; 
+        task: TaskType; 
+        output: Output;
+        llmOutput: string;
+    }): string {
+        const { task, llmOutput } = params;
+        this.setStatus(AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT);
+        this.checkStore();
+
+        const newLog = this.store.prepareNewLog({
+            agent: this as unknown as AgentType,
+            task,
+            logDescription: `😡 JSON parsing issues`,
+            metadata: { llmOutput },
+            logType: 'AgentStatusUpdate',
+            agentStatus: this.status,
+        });
+
+        if (newLog) {
+            logger.error(`😡 ${AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT}: Invalid JSON from LLM`);
+            logger.debug('Raw output:', llmOutput);
+            this.store.workflowLogs.push(newLog);
+        }
+
+        return this.promptTemplates.INVALID_JSON_FEEDBACK({
+            agent: this as unknown as IReactChampionAgent,
+            task,
+            llmOutput
+        });
+    }
+
+    public handleFinalAnswer(params: { 
+        agent: IReactChampionAgent; 
+        task: TaskType; 
+        parsedLLMOutput: ParsedOutput;
+    }): ParsedOutput {
+        const { parsedLLMOutput } = params;
+        return {
+            ...parsedLLMOutput,
+            finalAnswer: typeof parsedLLMOutput.finalAnswer === 'object' 
+                ? JSON.stringify(parsedLLMOutput.finalAnswer)
+                : parsedLLMOutput.finalAnswer
+        };
+    }
+
+    public  setStatus(status: keyof typeof AGENT_STATUS_enum): void {
+        this.status = status;
+    }
+
+    // Required by IReactChampionAgent interface but implemented in parent class
+    async workOnFeedback(task: TaskType, feedbackList: FeedbackObject[], context: string): Promise<void> {
+        // Implementation inherited from BaseAgentImplementation
+        throw new Error("Method not implemented.");
     }
 }
 
+// Export the ReactChampionAgent class
 export { ReactChampionAgent };
-	

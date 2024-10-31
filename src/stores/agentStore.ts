@@ -1,22 +1,11 @@
-/**
- * C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\stores\agentStore.ts
- * 
- * Agent Store Configuration.
- */
-
-import { AGENT_STATUS_enum, TASK_STATUS_enum } from "../utils/enums";
-import { logger } from "../utils/logger";
+import { logger } from "@/utils/core/logger";
+import { AGENT_STATUS_enum, TASK_STATUS_enum } from '@/utils/core/enums';
 import type { 
-    AgentType, 
-    TaskType, 
-    Output, 
-    ErrorType, 
-    AgentStoreState, 
-    PrepareNewLogParams, 
-    Log,
-    TaskStats,
-    FeedbackObject
-} from '../../types/types';
+    AgentType, TaskType, Output, ErrorType, AgentStoreState, 
+    PrepareNewLogParams, Log, TaskStats, FeedbackObject,
+    WorkflowStats, LLMUsageStats, CostDetails, AgentLogMetadata
+} from '@/utils/types';
+import { calculateTaskStats } from '@/utils/helpers/stats';
 
 export const useAgentStore = (
     set: (fn: (state: AgentStoreState) => Partial<AgentStoreState>) => void,
@@ -32,48 +21,7 @@ export const useAgentStore = (
     tasksInitialized: false,
     
     getTaskStats: (task: TaskType): TaskStats => {
-        const endTime = Date.now();
-        const lastDoingLog = get().workflowLogs.slice().reverse().find(log =>
-            log.task && log.task.id === task.id && log.logType === "TaskStatusUpdate" && log.taskStatus === 'DOING'
-        );
-        const startTime = lastDoingLog ? lastDoingLog.timestamp : endTime;
-        const duration = (endTime - startTime) / 1000;
-    
-        let llmUsageStats = {
-            inputTokens: 0,
-            outputTokens: 0,
-            callsCount: 0,
-            callsErrorCount: 0,
-            parsingErrors: 0
-        };
-        let iterationCount = 0;
-    
-        get().workflowLogs.forEach(log => {
-            if (log.task && log.task.id === task.id && log.timestamp >= startTime && log.logType === 'AgentStatusUpdate') {
-                if (log.agentStatus === 'THINKING_END') {
-                    llmUsageStats.inputTokens += log.metadata.output.llmUsageStats.inputTokens;
-                    llmUsageStats.outputTokens += log.metadata.output.llmUsageStats.outputTokens;
-                    llmUsageStats.callsCount += 1;
-                }
-                if (log.agentStatus === 'THINKING_ERROR') {
-                    llmUsageStats.callsErrorCount += 1;
-                }
-                if (log.agentStatus === 'ISSUES_PARSING_LLM_OUTPUT') {
-                    llmUsageStats.parsingErrors += 1;
-                }
-                if (log.agentStatus === 'ITERATION_END') {
-                    iterationCount += 1;
-                }
-            }
-        });
-    
-        return {
-            startTime,
-            endTime,
-            duration,
-            llmUsageStats,
-            iterationCount
-        };
+        return calculateTaskStats(task, get().workflowLogs);
     },
 
     provideFeedback: async (taskId: string, feedbackContent: string): Promise<void> => {
@@ -99,7 +47,6 @@ export const useAgentStore = (
             } : t)
         }));
     },
-
     handleTaskError: (params: { task: TaskType; error: ErrorType }): void => {
         const { task, error } = params;
         logger.error(`Task error for ${task.id}: ${error.message}`);
@@ -148,14 +95,145 @@ export const useAgentStore = (
             )
         }));
     },
+    
+    getWorkflowStats: (): WorkflowStats => {
+        const endTime = Date.now();
+        const lastWorkflowRunningLog = get().workflowLogs
+            .slice()
+            .reverse()
+            .find((log) => log.logType === 'WorkflowStatusUpdate' && log.workflowStatus === 'RUNNING');
+    
+        const startTime = lastWorkflowRunningLog ? lastWorkflowRunningLog.timestamp : endTime;
+        const duration = (endTime - startTime) / 1000;
+        
+        let llmUsageStats: LLMUsageStats = {
+            inputTokens: 0,
+            outputTokens: 0,
+            callsCount: 0,
+            callsErrorCount: 0,
+            parsingErrors: 0,
+            totalLatency: 0,
+            averageLatency: 0,
+            lastUsed: Date.now(),
+            memoryUtilization: {
+                peakMemoryUsage: 0,
+                averageMemoryUsage: 0,
+                cleanupEvents: 0
+            },
+            costBreakdown: {
+                input: 0,
+                output: 0,
+                total: 0,
+                currency: 'USD'
+            }
+        };
+        
+        const modelUsage: Record<string, LLMUsageStats> = {};
+        let iterationCount = 0;
+        let messageCount = 0;
+        
+        get().workflowLogs.forEach((log) => {
+            if (log.logType === 'AgentStatusUpdate' && log.timestamp >= startTime) {
+                if (log.agentStatus === 'THINKING_END') {
+                    const output = log.metadata as AgentLogMetadata;
+                    if (output.output?.llmUsageStats) {
+                        const modelCode = log.agent?.llmConfig?.model;
+                        if (modelCode) {
+                            if (!modelUsage[modelCode]) {
+                                modelUsage[modelCode] = {
+                                    inputTokens: 0,
+                                    outputTokens: 0,
+                                    callsCount: 0,
+                                    callsErrorCount: 0,
+                                    parsingErrors: 0,
+                                    totalLatency: 0,
+                                    averageLatency: 0,
+                                    lastUsed: Date.now(),
+                                    memoryUtilization: {
+                                        peakMemoryUsage: 0,
+                                        averageMemoryUsage: 0,
+                                        cleanupEvents: 0
+                                    },
+                                    costBreakdown: {
+                                        input: 0,
+                                        output: 0,
+                                        total: 0,
+                                        currency: 'USD'
+                                    }
+                                };
+                            }
+                            
+                            const stats = output.output.llmUsageStats;
+                            modelUsage[modelCode].inputTokens += stats.inputTokens;
+                            modelUsage[modelCode].outputTokens += stats.outputTokens;
+                            modelUsage[modelCode].callsCount += 1;
+                            
+                            llmUsageStats.inputTokens += stats.inputTokens;
+                            llmUsageStats.outputTokens += stats.outputTokens;
+                            llmUsageStats.callsCount += 1;
+                        }
+                    }
+                } else if (log.agentStatus === 'THINKING_ERROR') {
+                    llmUsageStats.callsErrorCount += 1;
+                    const modelCode = log.agent?.llmConfig?.model;
+                    if (modelCode && modelUsage[modelCode]) {
+                        modelUsage[modelCode].callsErrorCount += 1;
+                    }
+                } else if (log.agentStatus === 'ISSUES_PARSING_LLM_OUTPUT') {
+                    llmUsageStats.parsingErrors += 1;
+                    const modelCode = log.agent?.llmConfig?.model;
+                    if (modelCode && modelUsage[modelCode]) {
+                        modelUsage[modelCode].parsingErrors += 1;
+                    }
+                } else if (log.agentStatus === 'ITERATION_END') {
+                    iterationCount += 1;
+                }
+                messageCount += 1;
+            }
+        });
+        // Calculate costs
+        const costDetails: CostDetails = {
+            inputCost: 0,
+            outputCost: 0,
+            totalCost: 0,
+            currency: 'USD',
+            breakdown: {
+                promptTokens: {
+                    count: 0,
+                    cost: 0
+                },
+                completionTokens: {
+                    count: 0,
+                    cost: 0
+                }
+            }
+        };
 
-    getWorkflowStats: (): Record<string, any> => {
-        const tasks = get().tasks;
+        Object.entries(modelUsage).forEach(([model, usage]) => {
+            const tokenCost = (usage.inputTokens / 1000000) * 0.0001;
+            const outputCost = (usage.outputTokens / 1000000) * 0.0002;
+            
+            costDetails.inputCost += tokenCost;
+            costDetails.outputCost += outputCost;
+            costDetails.breakdown.promptTokens.count += usage.inputTokens;
+            costDetails.breakdown.promptTokens.cost += tokenCost;
+            costDetails.breakdown.completionTokens.count += usage.outputTokens;
+            costDetails.breakdown.completionTokens.cost += outputCost;
+        });
+        costDetails.totalCost = costDetails.inputCost + costDetails.outputCost;
+
         return {
-            taskCount: tasks.length,
-            completedTasks: tasks.filter(t => t.status === 'DONE').length,
-            blockedTasks: tasks.filter(t => t.status === 'BLOCKED').length,
-            taskStats: tasks.map(task => get().getTaskStats(task))
+            startTime,
+            endTime,
+            duration,
+            llmUsageStats,
+            iterationCount,
+            costDetails,
+            taskCount: get().tasks.length,
+            agentCount: get().agents.length,
+            teamName: get().name,
+            messageCount,
+            modelUsage,
         };
     },
 
@@ -180,7 +258,7 @@ export const useAgentStore = (
             ]
         }));
     },
-
+    
     // Agent-specific methods
     handleAgentIterationStart: ({ agent, task, iterations, maxAgentIterations }: { agent: AgentType; task: TaskType; iterations: number; maxAgentIterations: number }) => {
         agent.status = 'ITERATION_START' as keyof typeof AGENT_STATUS_enum;
@@ -209,7 +287,6 @@ export const useAgentStore = (
         logger.trace(`🔄 ${AGENT_STATUS_enum.ITERATION_END}: Agent ${agent.name} ended another iteration.`);
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));     
     },
-
     handleAgentThinkingStart: ({ agent, task, messages }: { agent: AgentType; task: TaskType; messages: any[] }) => {
         agent.status = 'THINKING' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
@@ -238,8 +315,13 @@ export const useAgentStore = (
             agentStatus: agent.status,
         });
         logger.info(`💡 ${AGENT_STATUS_enum.THINKING_END}: Agent ${agent.name} finished thinking.`);
-        logger.trace(`Output:`, output.parsedLLMOutput);
-        logger.trace(`Usage:`, output.llmUsageStats);
+        logger.trace(`Output:`, {
+            thought: output.thought,
+            action: output.action,
+            actionInput: output.actionInput,
+            observation: output.observation,
+            finalAnswer: output.finalAnswer
+        });
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
 
@@ -274,7 +356,6 @@ export const useAgentStore = (
         logger.debug(`😡 ${AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT}: Agent ${agent.name} found issues parsing the LLM output. ${error.message}`);
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
-
     handleAgentActionStart: ({ agent, task, action, runId }: { agent: AgentType; task: TaskType; action: any; runId: string }) => {
         agent.status = 'EXECUTING_ACTION' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
@@ -332,7 +413,7 @@ export const useAgentStore = (
         logger.error(`🛠️🛑 ${AGENT_STATUS_enum.USING_TOOL_ERROR}: Agent ${agent.name} found an error using the tool: ${tool.name}`);
         logger.error(error);        
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
-    },    
+    },
 
     handleAgentToolDoesNotExist: ({ agent, task, toolName }: { agent: AgentType; task: TaskType; toolName: string }) => {
         agent.status = 'TOOL_DOES_NOT_EXIST' as keyof typeof AGENT_STATUS_enum;
@@ -346,8 +427,7 @@ export const useAgentStore = (
         });
         logger.warn(`🛠️🚫 ${AGENT_STATUS_enum.TOOL_DOES_NOT_EXIST}: Agent ${agent.name} - is trying to use a tool that does not exist. Tool Name:${toolName}.`);  
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
-    },    
-
+    },
     handleAgentFinalAnswer: ({ agent, task, output }: { agent: AgentType; task: TaskType; output: Output }) => {
         agent.status = 'FINAL_ANSWER' as keyof typeof AGENT_STATUS_enum;
         const newLog = get().prepareNewLog({
@@ -421,12 +501,10 @@ export const useAgentStore = (
         logger.warn(`🤔 ${AGENT_STATUS_enum.WEIRD_LLM_OUTPUT} - Agent: ${agent.name}`);
         set(state => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     },
-
     handleWorkflowBlocked: ({ task, error }: { task: TaskType; error: ErrorType }): void => {
         logger.warn(`Workflow blocked due to task ${task.id}: ${error.message}`);
         const stats = get().getTaskStats(task);
         
-        // Create a workflow blocked log
         const newLog = get().prepareNewLog({
             agent: task.agent,
             task,
@@ -465,7 +543,7 @@ export const useAgentStore = (
             logType: 'AgentStatusUpdate',
             agentStatus: agent.status,
         });
-        logger.error(`🚨 ${AGENT_STATUS_enum.AGENTIC_LOOP_ERROR}  - Agent: ${agent.name} | Iterations: ${iterations}/${maxAgentIterations}`, error.message);   
+        logger.error(`🚨 ${AGENT_STATUS_enum.AGENTIC_LOOP_ERROR} - Agent: ${agent.name} | Iterations: ${iterations}/${maxAgentIterations}`, error.message);   
         set(state => ({ 
             workflowLogs: [...state.workflowLogs, newLog],
         }));

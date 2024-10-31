@@ -18,7 +18,6 @@ import { GoogleGenerativeAIChatInput } from "@langchain/google-genai";
 
 export type LLMProvider = 'groq' | 'openai' | 'anthropic' | 'google' | 'mistral';
 
-// Base Configuration Interface
 export interface BaseLLMConfig {
     provider: LLMProvider;
     model: string;
@@ -33,7 +32,6 @@ export interface BaseLLMConfig {
 export { ChatGroqInput } from "@langchain/groq";
 export { GoogleGenerativeAIChatInput } from "@langchain/google-genai";
 
-// Keep other chat input interfaces that don't have LangChain imports yet
 export interface ChatOpenAIInput {
     apiKey: string;
     model: string;
@@ -130,7 +128,6 @@ export interface MistralConfig extends BaseLLMConfig {
 export type LLMConfig = GroqConfig | OpenAIConfig | AnthropicConfig | GoogleConfig | MistralConfig;
 export type LLMInstance = any;
 
-// Type Guards
 export function isGroqConfig(config: LLMConfig): config is GroqConfig {
     return config.provider === 'groq' && !!config.model;
 }
@@ -153,9 +150,6 @@ export function isMistralConfig(config: LLMConfig): config is MistralConfig {
 
 // ─── Agent Types ───────────────────────────────────────────────────────────
 
-/**
- * Base configuration for creating an agent
- */
 export interface BaseAgentConfig {
     name: string;
     role: string;
@@ -169,9 +163,6 @@ export interface BaseAgentConfig {
     llmInstance?: any;
 }
 
-/**
- * Base interface for all agent implementations
- */
 export interface IBaseAgent {
     id: string;
     name: string;
@@ -180,17 +171,17 @@ export interface IBaseAgent {
     background: string;
     tools: Tool[];
     maxIterations: number;
-    store: TeamStore | null;  // More specific type instead of any
+    store: TeamStore | null;
     status: keyof typeof AGENT_STATUS_enum;
-    env: Record<string, any> | null;  // More specific type instead of any
+    env: Record<string, any> | null;
     llmInstance: LLMInstance | null;
     llmConfig: LLMConfig;
     llmSystemMessage: string | null;
     forceFinalAnswer: boolean;
     promptTemplates: Record<string, any>;
 
-    initialize(store: TeamStore, env: Record<string, any>): void;  // Add initialize method
-    setStore(store: TeamStore): void;  // Update type from any to TeamStore
+    initialize(store: TeamStore, env: Record<string, any>): void;
+    setStore(store: TeamStore): void;
     setStatus(status: keyof typeof AGENT_STATUS_enum): void;
     setEnv(env: Record<string, any>): void;
     workOnTask(task: TaskType): Promise<AgenticLoopResult>;
@@ -199,24 +190,15 @@ export interface IBaseAgent {
     createLLMInstance(): void;
 }
 
-/**
- * Extended interface for ReactChampionAgent
- */
 export interface IReactChampionAgent extends IBaseAgent {
     messageHistory: CustomMessageHistory;
     executableAgent: any;
 }
 
-/**
- * Union type for all possible agent implementations
- */
 export type AgentType = IBaseAgent | IReactChampionAgent;
 
 // ─── Task Types ────────────────────────────────────────────────────────────
 
-/**
- * Core task interface
- */
 export interface TaskType {
     id: string;
     title: string;
@@ -242,9 +224,6 @@ export interface TaskType {
 
 export type TaskResult = string | Record<string, any> | null;
 
-/**
- * Statistics for task execution
- */
 export interface TaskStats {
     startTime: number;
     endTime: number;
@@ -253,9 +232,6 @@ export interface TaskStats {
     iterationCount: number;
 }
 
-/**
- * Feedback object for task interactions
- */
 export interface FeedbackObject {
     id: string;
     content: string;
@@ -267,9 +243,6 @@ export interface FeedbackObject {
     assignedTo?: string;
 }
 
-/**
- * Usage statistics for LLM interactions
- */
 export interface LLMUsageStats {
     inputTokens: number;
     outputTokens: number;
@@ -278,9 +251,6 @@ export interface LLMUsageStats {
     parsingErrors: number;
 }
 
-/**
- * Result types for agent operations
- */
 export interface AgenticLoopResult {
     error?: string;
     result?: any;
@@ -312,25 +282,16 @@ export interface ThinkingResult {
 
 // ─── Handler Types ──────────────────────────────────────────────────────────
 
-/**
- * Base interface for handler parameters
- */
 export interface HandlerBaseParams {
     agent: IBaseAgent;
     task: TaskType;
 }
 
-/**
- * Parameters for thinking operations
- */
 export interface ThinkingHandlerParams extends HandlerBaseParams {
     messages?: BaseMessage[];
     output?: any;
 }
 
-/**
- * Parameters for tool operations
- */
 export interface ToolHandlerParams extends HandlerBaseParams {
     parsedLLMOutput: any;
     tool?: any;
@@ -338,26 +299,17 @@ export interface ToolHandlerParams extends HandlerBaseParams {
     error?: Error;
 }
 
-/**
- * Parameters for status updates
- */
 export interface StatusHandlerParams extends HandlerBaseParams {
     parsedLLMOutput: any;
     output?: any;
 }
 
-/**
- * Parameters for iteration handling
- */
 export interface IterationHandlerParams {
     task: TaskType;
     iterations: number;
     maxAgentIterations: number;
 }
 
-/**
- * Parameters for task completion
- */
 export interface TaskCompletionParams {
     task: TaskType;
     parsedResultWithFinalAnswer: any;
@@ -365,17 +317,11 @@ export interface TaskCompletionParams {
     maxAgentIterations: number;
 }
 
-/**
- * Parameters for message building
- */
 export interface MessageBuildParams extends HandlerBaseParams {
     interpolatedTaskDescription: string;
     context?: string;
 }
 
-/**
- * Parameters for preparing new logs
- */
 export interface PrepareNewLogParams {
     agent: IBaseAgent;
     task: TaskType;
@@ -387,9 +333,6 @@ export interface PrepareNewLogParams {
 
 // ─── Store Types ───────────────────────────────────────────────────────────
 
-/**
- * Zustand specific store types
- */
 export interface StoreSubscribe<T> {
     (listener: (state: T, previousState: T) => void): () => void;
     <U>(
@@ -402,9 +345,6 @@ export interface StoreSubscribe<T> {
     ): () => void;
 }
 
-/**
- * Base store state interface with indexable signature
- */
 export interface BaseStoreState {
     name: string;
     agents: AgentType[];
@@ -413,9 +353,6 @@ export interface BaseStoreState {
     [key: string]: any;
 }
 
-/**
- * Task store state interface extending base store
- */
 export interface TaskStoreState extends BaseStoreState {
     tasksInitialized: boolean;
     getTaskStats(task: TaskType): TaskStats;
@@ -429,9 +366,6 @@ export interface TaskStoreState extends BaseStoreState {
     getWorkflowStats(): Record<string, any>;
 }
 
-/**
- * Agent store state interface extending task store
- */
 export interface AgentStoreState extends TaskStoreState {
     handleAgentIterationStart(params: { agent: AgentType; task: TaskType; iterations: number; maxAgentIterations: number }): void;
     handleAgentIterationEnd(params: { agent: AgentType; task: TaskType; iterations: number; maxAgentIterations: number }): void;
@@ -454,9 +388,6 @@ export interface AgentStoreState extends TaskStoreState {
     handleAgentTaskCompleted(params: { agent: AgentType; task: TaskType; result: any }): void;
 }
 
-/**
- * Team state interface extending agent store state
- */
 export interface TeamState extends AgentStoreState {
     teamWorkflowStatus: keyof typeof WORKFLOW_STATUS_enum;
     workflowResult: any;
@@ -467,9 +398,6 @@ export interface TeamState extends AgentStoreState {
     [key: string]: any;
 }
 
-/**
- * Actions available in the team state
- */
 export interface TeamStateActions {
     setInputs(inputs: Record<string, any>): void;
     setName(name: string): void;
@@ -493,9 +421,6 @@ export interface TeamStateActions {
     [key: string]: any;
 }
 
-/**
- * Base store interface with Zustand methods
- */
 export interface BaseStore<T> {
     getState: () => T;
     setState: (partial: Partial<T> | ((state: T) => Partial<T>)) => void;
@@ -503,22 +428,13 @@ export interface BaseStore<T> {
     destroy: () => void;
 }
 
-/**
- * Complete team store type combining state and actions with Zustand integration
- */
 export interface TeamStore extends TeamState, TeamStateActions, BaseStore<TeamStore> {
 }
 
-/**
- * Proxied team store interface extending team store
- */
 export interface ProxiedTeamStore extends TeamStore {
     state: TeamState;
 }
 
-/**
- * Store configuration types
- */
 export type TeamStoreApi = StoreApi<TeamStore>;
 
 export type UseBoundTeamStore = UseBoundStore<TeamStoreApi>;
@@ -537,9 +453,6 @@ export type TeamStoreCreator = StateCreator<
     TeamStore
 >;
 
-/**
- * Store utility types
- */
 export type StoreConverter<T> = T extends UseBoundStore<infer R> 
     ? R extends StoreApi<infer S> 
         ? S 
@@ -568,7 +481,6 @@ export type TeamStoreWithSubscribe = TeamStore & {
     subscribe: StoreSubscribeWithSelector<TeamStore>;
 };
 
-// Type guard for store validation
 export function isTeamStore(store: any): store is TeamStore {
     return (
         typeof store === 'object' &&
@@ -581,9 +493,6 @@ export function isTeamStore(store: any): store is TeamStore {
 
 // ─── Logging and Display Types ───────────────────────────────────────────────
 
-/**
- * Properties for task completion logging
- */
 export interface TaskCompletionProps {
     iterationCount: number;
     duration: number;
@@ -596,9 +505,6 @@ export interface TaskCompletionProps {
     costDetails: CostDetails;
 }
 
-/**
- * Properties for task status logging
- */
 export interface TaskStatusProps {
     currentTaskNumber: number;
     totalTasks: number;
@@ -607,17 +513,11 @@ export interface TaskStatusProps {
     agentName: string;
 }
 
-/**
- * Properties for workflow status logging
- */
 export interface WorkflowStatusProps {
     status: string;
     message: string;
 }
 
-/**
- * Properties for workflow result logging
- */
 export interface WorkflowResultProps {
     metadata: {
         result: string;
@@ -631,9 +531,6 @@ export interface WorkflowResultProps {
     };
 }
 
-/**
- * Log entry interface
- */
 export interface Log {
     timestamp: number;
     task: TaskType | null;
@@ -650,9 +547,6 @@ export interface Log {
 
 // ─── Error Types ────────────────────────────────────────────────────────────
 
-/**
- * Base error type extension
- */
 export interface ErrorType extends Error {
     name: string;
     message: string;
@@ -662,9 +556,6 @@ export interface ErrorType extends Error {
     recommendedAction?: string | null;
 }
 
-/**
- * Pretty error type for formatted error display
- */
 export interface PrettyErrorType {
     name: string;
     message: string;
@@ -677,18 +568,12 @@ export interface PrettyErrorType {
 
 // ─── Response Types ────────────────────────────────────────────────────────
 
-/**
- * Configuration for streaming responses
- */
 export interface StreamingHandlerConfig {
     content?: string;
     chunk?: any;
     metadata?: Record<string, any>;
 }
 
-/**
- * Structure for completion responses
- */
 export interface CompletionResponse {
     content?: string;
     usage?: {
@@ -702,9 +587,6 @@ export interface CompletionResponse {
 
 // ─── Chain Configuration Types ──────────────────────────────────────────────
 
-/**
- * Configuration for chain agents
- */
 export interface ChainAgentConfig {
     runnable: any;
     getMessageHistory: () => CustomMessageHistory;
@@ -712,28 +594,14 @@ export interface ChainAgentConfig {
     historyMessagesKey: string;
 }
 
-/**
- * Configuration for prepared agents
- */
-export interface PreparedAgentConfig {
-    executableAgent: any;
-    initialFeedbackMessage: string;
-}
-
 // ─── Cost Calculation Types ──────────────────────────────────────────────────
 
-/**
- * Details of cost calculations
- */
 export interface CostDetails {
     costInputTokens: number;
     costOutputTokens: number;
     totalCost: number;
 }
 
-/**
- * Pricing structure for models
- */
 export interface ModelPricing {
     modelCode: string;
     provider: string;
@@ -744,9 +612,6 @@ export interface ModelPricing {
 
 // ─── Parser Types ──────────────────────────────────────────────────────────
 
-/**
- * Structure for parsed JSON output
- */
 export interface ParsedJSON {
     thought?: string;
     action?: string;
@@ -759,18 +624,10 @@ export interface ParsedJSON {
 
 // ─── Factory Pattern Interfaces ──────────────────────────────────────────────
 
-/**
- * Factory for creating LLM instances
- */
 export interface LLMFactory {
     createInstance(config: LLMConfig): LLMInstance;
 }
 
-/**
- * Creator for LLM factories
- */
 export interface LLMFactoryCreator {
     getFactory(provider: LLMProvider): LLMFactory;
 }
-
-// End of types.d.ts

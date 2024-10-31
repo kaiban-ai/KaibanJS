@@ -6,21 +6,15 @@
  * changes, status updates, and associated operations within the KaibanJS library.
  */
 
-import { TASK_STATUS_enum, AGENT_STATUS_enum, FEEDBACK_STATUS_enum, WORKFLOW_STATUS_enum } from "../utils/enums";
-import { getTaskTitleForLogs, validateTask } from '../utils/tasks';
-import { logger } from "../utils/logger";
-import { PrettyError } from "../utils/errors";
-import { calculateTaskCost } from "../utils/llmCostCalculator";
+import { getTaskTitleForLogs, validateTask } from '@/utils/tasks';
+import { logger } from "@/utils/core/logger";
+import { PrettyError } from "@/utils/core/errors";
+import { calculateTaskCost } from "@/utils/helpers/llmCostCalculator";
+import { TASK_STATUS_enum, AGENT_STATUS_enum, FEEDBACK_STATUS_enum, WORKFLOW_STATUS_enum } from '@/utils/core/enums';
 import type {
-    TaskStoreState,
-    TaskType,
-    AgentType,
-    ErrorType,
-    FeedbackObject,
-    Log,
-    PrepareNewLogParams,
-    TaskResult
-} from '../../types/types';
+    TaskStoreState, TaskType, AgentType, ErrorType, FeedbackObject,
+    Log, PrepareNewLogParams, TaskResult, LLMUsageStats, WorkflowStats, AgentLogMetadata
+} from '@/utils/types';
 
 export const useTaskStore = (
     set: (fn: (state: TaskStoreState) => Partial<TaskStoreState>) => void,
@@ -41,22 +35,36 @@ export const useTaskStore = (
         );
         const startTime = lastDoingLog ? lastDoingLog.timestamp : endTime;
         const duration = (endTime - startTime) / 1000;
-    
-        let llmUsageStats = {
+
+        let llmUsageStats: LLMUsageStats = {
             inputTokens: 0,
             outputTokens: 0,
             callsCount: 0,
             callsErrorCount: 0,
-            parsingErrors: 0
+            parsingErrors: 0,
+            totalLatency: 0,
+            averageLatency: 0,
+            lastUsed: Date.now(),
+            memoryUtilization: {
+                peakMemoryUsage: 0,
+                averageMemoryUsage: 0,
+                cleanupEvents: 0
+            },
+            costBreakdown: {
+                input: 0,
+                output: 0,
+                total: 0,
+                currency: 'USD'
+            }
         };
         let iterationCount = 0;
-    
         get().workflowLogs.forEach(log => {
             if (log.task && log.task.id === task.id && log.timestamp >= startTime && 
                 log.logType === 'AgentStatusUpdate') {
-                if (log.agentStatus === AGENT_STATUS_enum.THINKING_END) {
-                    llmUsageStats.inputTokens += log.metadata.output.llmUsageStats.inputTokens;
-                    llmUsageStats.outputTokens += log.metadata.output.llmUsageStats.outputTokens;
+                const agentLogMetadata = log.metadata as AgentLogMetadata; // Type assertion
+                if (log.agentStatus === AGENT_STATUS_enum.THINKING_END && agentLogMetadata.output?.llmUsageStats) {
+                    llmUsageStats.inputTokens += agentLogMetadata.output.llmUsageStats.inputTokens;
+                    llmUsageStats.outputTokens += agentLogMetadata.output.llmUsageStats.outputTokens;
                     llmUsageStats.callsCount += 1;
                 }
                 if (log.agentStatus === AGENT_STATUS_enum.THINKING_ERROR) {
@@ -70,7 +78,7 @@ export const useTaskStore = (
                 }
             }
         });
-    
+
         return {
             startTime,
             endTime,
@@ -89,7 +97,6 @@ export const useTaskStore = (
             logger.error(`Invalid task structure in handleTaskCompleted`);
             return;
         }
-
         const stats = get().getTaskStats(task);
         task.result = result;
 
@@ -97,11 +104,10 @@ export const useTaskStore = (
             logger.warn(`Expected feedbackHistory to be an array, but got ${typeof task.feedbackHistory}`);
             task.feedbackHistory = [];
         }
-
         const updatedFeedbackHistory = task.feedbackHistory.map((feedback: FeedbackObject) =>
-            feedback.status === FEEDBACK_STATUS_enum.PENDING ?
-            { ...feedback, status: FEEDBACK_STATUS_enum.PROCESSED } :
-            feedback
+            feedback.status === FEEDBACK_STATUS_enum.PENDING
+                ? { ...feedback, status: FEEDBACK_STATUS_enum.PROCESSED }
+                : feedback
         );
 
         if (task.externalValidationRequired && task.status !== TASK_STATUS_enum.VALIDATED) {
@@ -154,9 +160,8 @@ export const useTaskStore = (
                 logType: 'TaskStatusUpdate',
                 agentStatus: agent.status
             });
-
             logger.debug(`Task completed with ID ${task.id}, Duration: ${stats.duration} seconds`);
-            
+
             set(state => ({
                 workflowLogs: [...state.workflowLogs, taskLog],
                 tasks: state.tasks.map(t => t.id === task.id ? {
@@ -202,7 +207,6 @@ export const useTaskStore = (
             timestamp: new Date(),
             userId: 'system'
         };
-
         const updatedTask: TaskType = {
             ...task,
             feedbackHistory: [...task.feedbackHistory, newFeedback],
@@ -248,7 +252,6 @@ export const useTaskStore = (
             logType: 'TaskStatusUpdate',
             agentStatus: task.agent.status
         });
-
         set(state => ({
             tasks: state.tasks.map(t => t.id === task.id ? {
                 ...t,
@@ -283,11 +286,10 @@ export const useTaskStore = (
         task.status = TASK_STATUS_enum.BLOCKED;
         const modelCode = task.agent.llmConfig.model;
         const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
-
         const updatedFeedbackHistory = task.feedbackHistory.map((f: FeedbackObject) =>
-            f.status === FEEDBACK_STATUS_enum.PENDING ?
-            { ...f, status: FEEDBACK_STATUS_enum.PROCESSED } :
-            f
+            f.status === FEEDBACK_STATUS_enum.PENDING
+                ? { ...f, status: FEEDBACK_STATUS_enum.PROCESSED }
+                : f
         );
 
         const taskLog = get().prepareNewLog({
@@ -326,10 +328,23 @@ export const useTaskStore = (
         
         get().handleWorkflowBlocked({ task, error });
     },
-
     // Required implementations from TaskStoreState interface
     prepareNewLog: (params: PrepareNewLogParams): Log => {
-        return get().prepareNewLog(params);
+        const { agent, task, logDescription, metadata, logType, agentStatus, taskStatus, workflowStatus } = params;
+        
+        return {
+            timestamp: Date.now(),
+            task,
+            agent,
+            agentName: agent?.name || 'unknown',
+            taskTitle: task ? getTaskTitleForLogs(task) : 'unknown',
+            logDescription,
+            taskStatus: taskStatus || (task?.status as keyof typeof TASK_STATUS_enum) || TASK_STATUS_enum.PENDING,
+            agentStatus: agentStatus || (agent?.status as keyof typeof AGENT_STATUS_enum) || AGENT_STATUS_enum.IDLE,
+            workflowStatus,
+            metadata,
+            logType
+        };
     },
 
     handleWorkflowBlocked: ({ task, error }: { 
@@ -343,7 +358,66 @@ export const useTaskStore = (
         get().finishWorkflowAction();
     },
 
-    getWorkflowStats: (): Record<string, any> => {
-        return get().getWorkflowStats();
-    },
+    getWorkflowStats: (): WorkflowStats => {
+        const logs = get().workflowLogs;
+        const firstLog = logs[0];
+        const lastLog = logs[logs.length - 1];
+        const startTime = firstLog ? firstLog.timestamp : Date.now();
+        const endTime = lastLog ? lastLog.timestamp : Date.now();
+
+        let totalLLMUsageStats: LLMUsageStats = {
+            inputTokens: 0,
+            outputTokens: 0,
+            callsCount: 0,
+            callsErrorCount: 0,
+            parsingErrors: 0,
+            totalLatency: 0,
+            averageLatency: 0,
+            lastUsed: endTime,
+            memoryUtilization: {
+                peakMemoryUsage: 0,
+                averageMemoryUsage: 0,
+                cleanupEvents: 0
+            },
+            costBreakdown: {
+                input: 0,
+                output: 0,
+                total: 0,
+                currency: 'USD'
+            }
+        };
+        let iterationCount = 0;
+        const modelUsage: Record<string, LLMUsageStats> = {};
+
+        logs.forEach(log => {
+            if (log.logType === 'AgentStatusUpdate') {
+                const agentLogMetadata = log.metadata as AgentLogMetadata;
+                if (agentLogMetadata.output?.llmUsageStats) {
+                    totalLLMUsageStats.inputTokens += agentLogMetadata.output.llmUsageStats.inputTokens;
+                    totalLLMUsageStats.outputTokens += agentLogMetadata.output.llmUsageStats.outputTokens;
+                    totalLLMUsageStats.callsCount += 1;
+                }
+                if (log.agentStatus === AGENT_STATUS_enum.ITERATION_END) {
+                    iterationCount += 1;
+                }
+            }
+        });
+
+        const costDetails = calculateTaskCost('default', totalLLMUsageStats);
+
+        return {
+            startTime,
+            endTime,
+            duration: (endTime - startTime) / 1000,
+            llmUsageStats: totalLLMUsageStats,
+            iterationCount,
+            costDetails,
+            taskCount: get().tasks.length,
+            agentCount: get().agents.length,
+            teamName: get().name,
+            messageCount: logs.length,
+            modelUsage
+        };
+    }
 });
+

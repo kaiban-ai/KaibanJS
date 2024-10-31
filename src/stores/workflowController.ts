@@ -1,8 +1,10 @@
 import PQueue from 'p-queue';
-import { logger } from '../utils/logger';
-import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from '../utils/enums';
-import { TaskType, TeamStore, ErrorType } from '../../types/types';
-import { PrettyError } from '../utils/errors';
+import { logger } from '@/utils/core/logger';
+import { PrettyError } from '@/utils/core/errors';
+import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from '@/utils/core/enums';
+import type {
+    TaskType, TeamStore, ErrorType
+} from '@/utils/types';
 
 /**
  * Configuration interface for the workflow controller
@@ -81,10 +83,10 @@ export const setupWorkflowController = (
                 error: prettyError as ErrorType
             });
 
-            teamStore.handleWorkflowError(
+            teamStore.handleWorkflowError({
                 task,
-                prettyError as ErrorType
-            );
+                error: prettyError as ErrorType
+            });
         }
     };
 

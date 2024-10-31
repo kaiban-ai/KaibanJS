@@ -1,38 +1,70 @@
-import { logPrettyWorkflowStatus, logPrettyWorkflowResult, WorkflowResultProps } from "../utils/prettyLogs";
-import { WORKFLOW_STATUS_enum } from '../utils/enums';
-import { TeamState, Log, TeamStoreApi } from '../../types/types';  // Import TeamStoreApi
-import { UseBoundStore } from 'zustand';  // Use the correct export from zustand
-import { shallow } from 'zustand/shallow';
+/**
+ * Path: src/subscribers/teamSubscriber.ts
+ */
 
-export const subscribeWorkflowStatusUpdates = (store: UseBoundStore<TeamStoreApi>): void => {
-    store.subscribe((state: TeamState) => {  // Use a single argument to subscribe
-        const newLogs = state.workflowLogs;
-        const previousLogs = newLogs.slice(0, -1); // Get all logs except the last one
-        const newLogsCount = newLogs.length - previousLogs.length;
-        if (newLogsCount > 0) {
-            for (let i = newLogs.length - newLogsCount; i < newLogs.length; i++) {
-                const log = newLogs[i];
-                if (log.logType === 'WorkflowStatusUpdate') {
-                    handleWorkflowStatusUpdate(log);
+import { UseBoundStore } from 'zustand';
+import { logPrettyWorkflowStatus, logPrettyWorkflowResult } from "@/utils/helpers/prettyLogs";
+import { WORKFLOW_STATUS_enum } from '@/utils/core/enums';
+import { logger } from "@/utils/core/logger";
+import type {
+    TeamStoreApi,
+    Log,
+    WorkflowResultProps,
+    WorkflowMetadata,
+    LLMUsageStats,
+    CostDetails
+} from '@/utils/types';
+
+/**
+ * Subscribes to workflow status updates and handles them appropriately.
+ */
+export const subscribeWorkflowStatusUpdates = (
+    store: UseBoundStore<TeamStoreApi>
+): (() => void) => {
+    try {
+        return store.subscribe((state) => {
+            const newLogs = state.workflowLogs;
+            const previousLogs = newLogs.slice(0, -1);
+            const newLogsCount = newLogs.length - previousLogs.length;
+
+            if (newLogsCount > 0) {
+                for (let i = newLogs.length - newLogsCount; i < newLogs.length; i++) {
+                    const log = newLogs[i];
+                    if (log.logType === 'WorkflowStatusUpdate') {
+                        handleWorkflowStatusUpdate(log);
+                    }
                 }
             }
-        }
-    });
+        });
+    } catch (error) {
+        logger.error('Error setting up workflow status subscription:', error);
+        return () => {};
+    }
 };
 
-const handleWorkflowStatusUpdate = (log: Log) => {
-    if (log.workflowStatus) {
-        logPrettyWorkflowStatus({
-            status: log.workflowStatus,
-            message: getStatusMessage(log.workflowStatus)
-        });
+/**
+ * Handles individual workflow status updates
+ */
+const handleWorkflowStatusUpdate = (log: Log): void => {
+    if (!log.workflowStatus) return;
 
-        if (log.workflowStatus === WORKFLOW_STATUS_enum.FINISHED) {
+    logPrettyWorkflowStatus({
+        status: log.workflowStatus,
+        message: getStatusMessage(log.workflowStatus)
+    });
+
+    if (log.workflowStatus === WORKFLOW_STATUS_enum.FINISHED) {
+        try {
             logWorkflowResult(log);
+        } catch (error) {
+            logger.error('Failed to log workflow result:', error);
         }
     }
 };
 
+/**
+ * Gets a descriptive message for each workflow status
+ */
 const getStatusMessage = (status: keyof typeof WORKFLOW_STATUS_enum): string => {
     switch (status) {
         case WORKFLOW_STATUS_enum.INITIAL:
@@ -54,30 +86,102 @@ const getStatusMessage = (status: keyof typeof WORKFLOW_STATUS_enum): string => 
     }
 };
 
-const logWorkflowResult = (log: Log) => {
-    if (log.metadata && typeof log.metadata === 'object') {
-        const workflowResult: WorkflowResultProps = {
-            metadata: {
-                result: log.metadata.result as string || '',
-                duration: log.metadata.duration as number || 0,
-                llmUsageStats: log.metadata.llmUsageStats as WorkflowResultProps['metadata']['llmUsageStats'] || {
-                    inputTokens: 0,
-                    outputTokens: 0,
-                    callsCount: 0,
-                    callsErrorCount: 0,
-                    parsingErrors: 0
-                },
-                iterationCount: log.metadata.iterationCount as number || 0,
-                costDetails: log.metadata.costDetails as WorkflowResultProps['metadata']['costDetails'] || {
-                    costInputTokens: 0,
-                    costOutputTokens: 0,
-                    totalCost: 0
-                },
-                teamName: log.metadata.teamName as string || '',
-                taskCount: log.metadata.taskCount as number || 0,
-                agentCount: log.metadata.agentCount as number || 0
-            }
-        };
+/**
+ * Validates and processes the workflow metadata
+ */
+const validateWorkflowMetadata = (metadata: unknown): metadata is WorkflowMetadata => {
+    if (!metadata || typeof metadata !== 'object') {
+        return false;
+    }
+
+    const required = [
+        'result',
+        'duration',
+        'llmUsageStats',
+        'iterationCount',
+        'costDetails',
+        'teamName',
+        'taskCount',
+        'agentCount'
+    ];
+
+    const m = metadata as Record<string, unknown>;
+    
+    // Check all required properties exist
+    const hasAllProps = required.every(prop => prop in m);
+    if (!hasAllProps) return false;
+
+    // Type checks
+    return (
+        typeof m.duration === 'number' &&
+        typeof m.iterationCount === 'number' &&
+        typeof m.taskCount === 'number' &&
+        typeof m.agentCount === 'number' &&
+        typeof m.teamName === 'string' &&
+        typeof m.result === 'string' &&
+        isLLMUsageStats(m.llmUsageStats) &&
+        isCostDetails(m.costDetails)
+    );
+};
+
+/**
+ * Type guard for LLMUsageStats
+ */
+const isLLMUsageStats = (stats: unknown): stats is LLMUsageStats => {
+    if (!stats || typeof stats !== 'object') return false;
+    
+    const s = stats as Record<string, unknown>;
+    return (
+        typeof s.inputTokens === 'number' &&
+        typeof s.outputTokens === 'number' &&
+        typeof s.callsCount === 'number' &&
+        typeof s.callsErrorCount === 'number' &&
+        typeof s.parsingErrors === 'number'
+    );
+};
+
+/**
+ * Type guard for CostDetails
+ */
+const isCostDetails = (details: unknown): details is CostDetails => {
+    if (!details || typeof details !== 'object') return false;
+    
+    const d = details as Record<string, unknown>;
+    return (
+        typeof d.inputCost === 'number' &&
+        typeof d.outputCost === 'number' &&
+        typeof d.totalCost === 'number' &&
+        typeof d.currency === 'string' &&
+        typeof d.breakdown === 'object' &&
+        d.breakdown !== null
+    );
+};
+
+/**
+ * Processes and logs the workflow result
+ */
+const logWorkflowResult = (log: Log): void => {
+    if (!validateWorkflowMetadata(log.metadata)) {
+        logger.error('Invalid workflow metadata format:', log.metadata);
+        return;
+    }
+
+    const workflowResult: WorkflowResultProps = {
+        metadata: {
+            result: log.metadata.result,
+            duration: log.metadata.duration,
+            llmUsageStats: log.metadata.llmUsageStats,
+            iterationCount: log.metadata.iterationCount,
+            costDetails: log.metadata.costDetails,
+            teamName: log.metadata.teamName,
+            taskCount: log.metadata.taskCount,
+            agentCount: log.metadata.agentCount
+        }
+    };
+
+    try {
         logPrettyWorkflowResult(workflowResult);
+    } catch (error) {
+        logger.error('Failed to format workflow result:', error);
     }
 };

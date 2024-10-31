@@ -1,7 +1,7 @@
 /**
- * Path: C:\Users\pwalc\Documents\GroqEmailAssistant\node_modules\kaibanjs\src\index.ts
+ * Path: C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\index.ts
  * API module for the Library.
- *    
+  *    
  * This module defines the primary classes used throughout the library, encapsulating
  * the core functionalities of agents, tasks, and team coordination. It serves as the
  * public interface for the library, allowing external applications to interact with
@@ -17,87 +17,157 @@
  *   responsible for coordinating the agents to achieve collective goals effectively.
  */
 
+
 import { v4 as uuidv4 } from 'uuid';
 import { createTeamStore } from './stores';
 import { ReactChampionAgent } from './agents';
-import { TASK_STATUS_enum, WORKFLOW_STATUS_enum, AGENT_STATUS_enum } from './utils/enums';
+import { TASK_STATUS_enum, WORKFLOW_STATUS_enum, AGENT_STATUS_enum } from './utils/core/enums';
 import CustomMessageHistory from './utils/CustomMessageHistory';
-import { AgentType, TaskType, FeedbackObject, TaskResult } from './stores/storeTypes';
+import { 
+    AgentType, 
+    TaskType, 
+    FeedbackObject, 
+    TaskResult, 
+    TeamStore,
+    LLMConfig,
+    GroqConfig,
+    BaseAgentConfig,
+    IReactChampionAgent,
+    AgenticLoopResult,
+    UseBoundTeamStore
+} from '../types/types';
+import {
+    SystemMessage,
+    HumanMessage,
+    AIMessage
+} from "@langchain/core/messages";
 
-class Agent implements AgentType {
-    private agentInstance: ReactChampionAgent;
-    public type: string;
-    public messageHistory: CustomMessageHistory;
-    
-    constructor({ type, ...config }: { type: string; [key: string]: any }) {
-        this.agentInstance = this.createAgent(type, config);
-        this.type = type || 'ReactChampionAgent';
-        this.messageHistory = new CustomMessageHistory();
-    }
- 
-    private createAgent(type: string, config: any): ReactChampionAgent {
-        switch (type) {
-            case 'ReactChampionAgent':
-                return new ReactChampionAgent(config);
-            default:
-                return new ReactChampionAgent(config);
-        }
+const defaultGroqConfig: GroqConfig = {
+    provider: 'groq',
+    model: 'llama3-groq-70b-8192-tool-use-preview',
+    temperature: 0.1,
+    streaming: true,
+    apiKey: process.env.GROQ_API_KEY || '',
+    maxTokens: 8192,
+    stop: null
+};
+
+interface ExtendedBaseAgentConfig extends BaseAgentConfig {
+    messageHistory?: CustomMessageHistory;
+}
+
+class Agent implements IReactChampionAgent {
+    id: string;
+    name: string;
+    role: string;
+    goal: string;
+    background: string;
+    tools: any[];
+    maxIterations: number;
+    store: TeamStore | null;
+    status: keyof typeof AGENT_STATUS_enum;
+    env: Record<string, any>;
+    llmInstance: any;
+    llmConfig: LLMConfig;
+    llmSystemMessage: string | null;
+    forceFinalAnswer: boolean;
+    promptTemplates: Record<string, any>;
+    executableAgent: ReactChampionAgent;
+    messageHistory: CustomMessageHistory;
+
+    constructor(config: ExtendedBaseAgentConfig) {
+        this.id = uuidv4();
+        this.name = config.name;
+        this.role = config.role;
+        this.goal = config.goal;
+        this.background = config.background;
+        this.tools = config.tools;
+        this.maxIterations = config.maxIterations || 10;
+        this.store = null;
+        this.status = 'INITIAL';
+        this.env = {};
+        this.llmInstance = null;
+        this.llmConfig = this.normalizeLlmConfig(config.llmConfig || defaultGroqConfig);
+        this.llmSystemMessage = null;
+        this.forceFinalAnswer = config.forceFinalAnswer ?? true;
+        this.promptTemplates = config.promptTemplates || {};
+        this.messageHistory = config.messageHistory || new CustomMessageHistory();
+        this.executableAgent = new ReactChampionAgent({
+            ...config,
+            llmConfig: this.llmConfig
+        });
     }
 
-    async workOnTask(task: TaskType): Promise<{ error?: string; result?: any; metadata: { iterations: number; maxAgentIterations: number } }> {
-        const message = {
-            role: 'user',
-            content: `Task: ${task.description}\nInputs: ${JSON.stringify(task.inputs)}\nContext: ${task.interpolatedTaskDescription || ''}`
-        };
-        this.messageHistory.addMessage(message);
+    async workOnTask(task: TaskType): Promise<AgenticLoopResult> {
+        const message = new HumanMessage(
+            `Task: ${task.description}\nInputs: ${JSON.stringify(task.inputs)}\nContext: ${task.interpolatedTaskDescription || ''}`
+        );
+        await this.messageHistory.addMessage(message);
         
-        const result = await this.agentInstance.workOnTask(task);
+        const result = await this.executableAgent.workOnTask(task);
         
-        const responseMessage = {
-            role: 'assistant',
-            content: JSON.stringify(result)
-        };
-        this.messageHistory.addMessage(responseMessage);
+        const responseMessage = new AIMessage(JSON.stringify(result));
+        await this.messageHistory.addMessage(responseMessage);
 
         return result;
     }
 
     async workOnFeedback(task: TaskType, feedbackList: FeedbackObject[], context: string): Promise<void> {
-        await this.agentInstance.workOnFeedback(task, feedbackList, context);
+        if (!this.executableAgent) {
+            throw new Error("Agent not properly initialized");
+        }
+        await this.executableAgent.workOnFeedback(task, feedbackList, context);
     }
 
     setStatus(status: keyof typeof AGENT_STATUS_enum): void {
-        this.agentInstance.setStatus(status);
+        this.status = status;
+        if (this.executableAgent) {
+            this.executableAgent.setStatus(status);
+        }
     }
 
-    initialize(store: any, env: Record<string, any>): void {
-        this.agentInstance.initialize(store, env);
+    initialize(store: TeamStore, env: Record<string, any>): void {
+        this.store = store;
+        this.env = env;
+        if (this.executableAgent) {
+            this.executableAgent.initialize(store, env);
+        }
     }
 
-    // Proxy properties to the underlying agent instance
-    get id(): string { return this.agentInstance.id; }
-    get name(): string { return this.agentInstance.name; }
-    get role(): string { return this.agentInstance.role; }
-    get goal(): string { return this.agentInstance.goal; }
-    get background(): string { return this.agentInstance.background; }
-    get tools(): any[] { return this.agentInstance.tools; }
-    get status(): keyof typeof AGENT_STATUS_enum { return this.agentInstance.status; }
-    get llmConfig(): any { return this.agentInstance.llmConfig; }
-    get llmSystemMessage(): string | null { return this.agentInstance.llmSystemMessage; }
-    get forceFinalAnswer(): boolean { return this.agentInstance.forceFinalAnswer; }
-    get promptTemplates(): any { return this.agentInstance.promptTemplates; }
-
-    // Implement other required methods from AgentType interface
-    setStore(store: any): void {
-        this.agentInstance.setStore(store);
+    setStore(store: TeamStore): void {
+        this.store = store;
+        if (this.executableAgent) {
+            this.executableAgent.setStore(store);
+        }
     }
 
     setEnv(env: Record<string, any>): void {
-        this.agentInstance.setEnv(env);
+        this.env = env;
+        if (this.executableAgent) {
+            this.executableAgent.setEnv(env);
+        }
     }
 
-    normalizeLlmConfig(): void {
-        this.agentInstance.normalizeLlmConfig();
+    createLLMInstance(): void {
+        if (!this.executableAgent) {
+            throw new Error("Executable agent not initialized");
+        }
+        this.executableAgent.createLLMInstance();
+    }
+
+    normalizeLlmConfig(config: LLMConfig): LLMConfig {
+        // Ensure we're creating a new config object that matches GroqConfig type
+        const normalizedConfig: GroqConfig = {
+            provider: 'groq',
+            model: config.model || defaultGroqConfig.model,
+            temperature: config.temperature ?? defaultGroqConfig.temperature,
+            streaming: config.streaming ?? defaultGroqConfig.streaming,
+            maxTokens: config.maxTokens ?? defaultGroqConfig.maxTokens,
+            apiKey: config.apiKey || process.env.GROQ_API_KEY || '',
+            stop: config.stop ?? null
+        };
+
+        return normalizedConfig;
     }
 }
 
@@ -106,7 +176,7 @@ class Task implements TaskType {
     title: string;
     description: string;
     expectedOutput: string;
-    agent: AgentType;
+    agent: IReactChampionAgent;
     isDeliverable: boolean;
     externalValidationRequired: boolean;
     inputs: Record<string, any>;
@@ -120,162 +190,128 @@ class Task implements TaskType {
     llmUsageStats?: any;
     iterationCount?: number;
     error?: string;
-    store: any;
+    store: TeamStore;
 
     constructor({ 
-        title = '', 
+        title, 
         description, 
         expectedOutput, 
         agent, 
         isDeliverable = false, 
         externalValidationRequired = false 
     }: {
-        title?: string;
+        title: string;
         description: string;
         expectedOutput: string;
-        agent: AgentType;
+        agent: IReactChampionAgent;
         isDeliverable?: boolean;
         externalValidationRequired?: boolean;
     }) {
+        if (!agent.store) {
+            throw new Error("Agent must be initialized with a store before creating a task");
+        }
+
         this.id = uuidv4();
         this.title = title;
         this.description = description;
         this.expectedOutput = expectedOutput;
-        this.isDeliverable = isDeliverable;
         this.agent = agent;
+        this.isDeliverable = isDeliverable;
         this.status = 'TODO';
         this.result = null;
         this.inputs = {};
         this.feedbackHistory = [];
         this.externalValidationRequired = externalValidationRequired;
+        this.store = agent.store;
     }
 
-    setStore(store: any): void {
+    setStore(store: TeamStore): void {
         this.store = store;
     }
 
     async execute(data: any): Promise<any> {
-        // Implement task execution logic here
-        throw new Error("Method not implemented.");
+        throw new Error("Execute method must be implemented by specific task types");
     }
 }
 
 class Team {
-    private store: ReturnType<typeof createTeamStore>;
+    private store: UseBoundTeamStore;
     private messageHistory: CustomMessageHistory;
 
     constructor({ 
         name, 
-        agents, 
-        tasks, 
-        logLevel, 
+        agents = [], 
+        tasks = [], 
+        logLevel = 'info', 
         inputs = {}, 
-        env = undefined 
+        env = {} 
     }: {
         name: string;
-        agents: AgentType[];
-        tasks: TaskType[];
+        agents?: IReactChampionAgent[];
+        tasks?: TaskType[];
         logLevel?: string;
         inputs?: Record<string, any>;
-        env?: Record<string, any> | undefined;
+        env?: Record<string, any>;
     }) {
-        this.store = createTeamStore({ name, agents:[], tasks:[], inputs, env, logLevel});
+        this.store = createTeamStore({ name, agents: [], tasks: [], inputs, env, logLevel });
         this.messageHistory = new CustomMessageHistory();
-             
-        // Add agents and tasks to the store, they will be set with the store automatically
+
+        agents.forEach(agent => agent.initialize(this.store.getState(), env));
+        tasks.forEach(task => task.setStore(this.store.getState()));
+        
         this.store.getState().addAgents(agents);
         this.store.getState().addTasks(tasks);
     }
 
-    async start(inputs: Record<string, any> | undefined = undefined): Promise<{ status: string; result: any; stats: Record<string, any> }> {
+    async start(inputs: Record<string, any> = {}): Promise<{ status: string; result: any; stats: Record<string, any> }> {
         return new Promise((resolve, reject) => {
-            const unsubscribe = this.store.subscribe(
-                state => state.teamWorkflowStatus,
-                (status) => {
-                    const state = this.store.getState();
-                    switch (status) {
-                        case WORKFLOW_STATUS_enum.FINISHED:
-                            unsubscribe();
-                            resolve({
-                                status,
-                                result: state.workflowResult,
-                                stats: this.getWorkflowStats()
-                            });
-                            break;
-                        case WORKFLOW_STATUS_enum.ERRORED:
-                            unsubscribe();
-                            reject(new Error('Workflow encountered an error'));
-                            break;
-                        case WORKFLOW_STATUS_enum.BLOCKED:
-                            unsubscribe();
-                            resolve({
-                                status,
-                                result: null,
-                                stats: this.getWorkflowStats()
-                            });
-                            break;
-                    }
+            const unsubscribe = this.store.subscribe((state) => {
+                const status = state.teamWorkflowStatus;
+                switch (status) {
+                    case WORKFLOW_STATUS_enum.FINISHED:
+                        unsubscribe();
+                        resolve({
+                            status,
+                            result: state.workflowResult,
+                            stats: this.getWorkflowStats()
+                        });
+                        break;
+                    case WORKFLOW_STATUS_enum.ERRORED:
+                        unsubscribe();
+                        reject(new Error('Workflow encountered an error'));
+                        break;
+                    case WORKFLOW_STATUS_enum.BLOCKED:
+                        unsubscribe();
+                        resolve({
+                            status,
+                            result: null,
+                            stats: this.getWorkflowStats()
+                        });
+                        break;
                 }
-            );
+            });
 
             try {
-                // Add a message to the team's message history
-                this.messageHistory.addMessage({
-                    role: 'system',
-                    content: JSON.stringify({ inputs })
-                });
-                
-                // Trigger the workflow
-                this.store.getState().startWorkflow(inputs || {});
+                const message = new SystemMessage(JSON.stringify({ inputs }));
+                this.messageHistory.addMessage(message);
+                this.store.getState().startWorkflow(inputs);
             } catch (error) {
-                // If an error occurs during the workflow execution, reject the promise
                 reject(error);
-                // Unsubscribe to prevent memory leaks in case of an error
                 unsubscribe();
             }
         });
     }
 
-    getStore(): ReturnType<typeof createTeamStore> {
+    getStore(): UseBoundTeamStore {
         return this.store;
     }
 
-    useStore(): ReturnType<typeof createTeamStore> {
+    useStore(): UseBoundTeamStore {
         return this.store;
     }
 
-    subscribeToChanges(
-        listener: (newValues: Partial<ReturnType<typeof this.store.getState>>) => void, 
-        properties: (keyof ReturnType<typeof this.store.getState>)[] = []
-    ): () => void {
-        if (properties.length === 0) {
-            // No specific properties, return global subscription
-            return this.store.subscribe(listener);
-        }
-
-        let currentValues = properties.reduce((acc, prop) => ({
-            ...acc,
-            [prop]: this.store.getState()[prop]
-        }), {} as Partial<ReturnType<typeof this.store.getState>>);
-
-        return this.store.subscribe(() => {
-            const state = this.store.getState();
-            let hasChanged = false;
-            const newValues: Partial<ReturnType<typeof this.store.getState>> = {};
-
-            properties.forEach(prop => {
-                const newValue = state[prop];
-                if (newValue !== currentValues[prop]) {
-                    hasChanged = true;
-                    newValues[prop] = newValue;
-                }
-            });
-
-            if (hasChanged) {
-                currentValues = { ...currentValues, ...newValues };
-                listener(newValues);
-            }
-        });
+    subscribeToChanges(listener: (newValues: ReturnType<typeof this.store.getState>) => void): () => void {
+        return this.store.subscribe(listener);
     }
 
     provideFeedback(taskId: string, feedbackContent: string): void {
@@ -287,7 +323,9 @@ class Team {
     }
 
     onWorkflowStatusChange(callback: (status: keyof typeof WORKFLOW_STATUS_enum) => void): () => void {
-        return this.store.subscribe(state => state.teamWorkflowStatus, callback);
+        return this.store.subscribe((state) => {
+            callback(state.teamWorkflowStatus);
+        });
     }
 
     getTasksByStatus(status: keyof typeof TASK_STATUS_enum): TaskType[] {
@@ -344,10 +382,38 @@ class Team {
                 agentCount,
                 messageCount: this.messageHistory.length
             };
-        } else {
-            return {}; // Return an empty object instead of null
         }
+        
+        return {
+            startTime: 0,
+            endTime: 0,
+            duration: 0,
+            llmUsageStats: {
+                inputTokens: 0,
+                outputTokens: 0,
+                callsCount: 0,
+                callsErrorCount: 0,
+                parsingErrors: 0
+            },
+            iterationCount: 0,
+            costDetails: {
+                costInputTokens: 0,
+                costOutputTokens: 0,
+                totalCost: 0
+            },
+            teamName: this.store.getState().name,
+            taskCount: this.store.getState().tasks.length,
+            agentCount: this.store.getState().agents.length,
+            messageCount: this.messageHistory.length
+        };
     }
 }
 
-export { Agent, Task, Team };
+// Consolidated exports at the end of the file
+export {
+    Agent,
+    Task,
+    Team,
+    defaultGroqConfig,
+    ExtendedBaseAgentConfig
+};
