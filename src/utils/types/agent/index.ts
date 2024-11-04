@@ -1,85 +1,71 @@
 /**
  * @file index.ts
  * @path src/utils/types/agent/index.ts
+ * @description Central export point for agent-related types and interfaces
  */
 
 // Base agent types
-export {
+export type {
     IBaseAgent,
     IReactChampionAgent,
     SystemAgent,
-    AgentType,
+    AgentType
+} from './base';
+
+export {
     AgentTypeGuards
 } from './base';
 
 // Configuration types
-export {
+export type {
     BaseAgentConfig,
-    IAgentParams
+    ExtendedBaseAgentConfig,
+    IAgentParams,
+    AgentValidationSchema,
+    AgentCreationResult
 } from './config';
 
 // Handler types
-export {
+export type {
     HandlerBaseParams,
     ThinkingHandlerParams,
     ToolHandlerParams,
     ToolExecutionResult,
     IterationHandlerParams,
-    TaskCompletionParams,
+    TaskCompletionParams as AgentTaskCompletionParams, // Renamed to avoid conflict
     StreamHandlerParams,
-    ErrorHandlerParams,
+    RetryHandlerParams,
     ValidationHandlerParams,
-    StatusHandlerParams
+    StatusHandlerParams,
+    ErrorHandlerParams,
+    ParsingHandlerParams as AgentParsingHandlerParams, // Renamed to show it extends the LLM version
+    HandlerResult,
+    IErrorHandler,
+    ThinkingResult
 } from './handlers';
 
-// Re-export common types from external dependencies
-export type { Tool } from "langchain/tools";
-export type { BaseMessage } from "@langchain/core/messages";
+// Prompt types
+export type {
+    BasePromptParams,
+    SystemMessageParams,
+    InitialMessageParams,
+    InvalidJSONFeedbackParams,
+    ThoughtWithSelfQuestionParams,
+    ThoughtFeedbackParams,
+    SelfQuestionParams,
+    ToolResultParams,
+    ToolErrorParams,
+    ToolNotExistParams,
+    ForceFinalAnswerParams,
+    FeedbackMessageParams,
+    ObservationFeedbackParams,
+    WeirdOutputFeedbackParams,
+    REACTChampionAgentPrompts
+} from './prompts';
 
-// Import types needed for type guards
-import type { BaseAgentConfig, IAgentParams } from './config';
-import type { ToolHandlerParams, StreamHandlerParams } from './handlers';
-
-// Type utility functions
-export const AgentTypeUtils = {
-    isAgentConfig: (value: unknown): value is BaseAgentConfig => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'name' in value &&
-            'role' in value &&
-            'goal' in value &&
-            'background' in value
-        );
-    },
-
-    isAgentParams: (value: unknown): value is IAgentParams => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'name' in value &&
-            'role' in value &&
-            'goal' in value &&
-            'background' in value
-        );
-    },
-
-    isToolHandlerParams: (value: unknown): value is ToolHandlerParams => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'agent' in value &&
-            'task' in value
-        );
-    },
-
-    isStreamHandlerParams: (value: unknown): value is StreamHandlerParams => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'buffer' in value &&
-            'bufferSize' in value &&
-            Array.isArray((value as StreamHandlerParams).buffer)
-        );
-    }
-};
+// Utility types
+export type {
+    AgentAttributes,
+    ApiKeyConfig,
+    TemplateOptions
+} from './utils';

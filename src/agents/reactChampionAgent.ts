@@ -11,16 +11,25 @@ import { ChatMistralAI } from "@langchain/mistralai";
 import { Tool } from "langchain/tools";
 
 import { BaseAgent as BaseAgentImplementation } from './baseAgent';
-import CustomMessageHistory from '@/utils/CustomMessageHistory';
-import { interpolateTaskDescription } from '@/utils/tasks';
+import MessageHistoryManager from '@/utils/managers/messageHistoryManager';
+import { interpolateTaskDescription } from "@/utils/helpers/tasks";
 import { getParsedJSON } from '@/utils/parsers/parser';
 import { logger } from "@/utils/core/logger";
 import { LLMInvocationError } from '@/utils/core/errors';
-import { AGENT_STATUS_enum } from '@/utils/core/enums';
-import { 
-    REACTChampionAgentPrompts, 
-    REACT_CHAMPION_AGENT_DEFAULT_PROMPTS 
-} from '@/utils/helpers/prompts';
+import { AGENT_STATUS_enum } from "@/utils/types/common/enums";
+import type { REACTChampionAgentPrompts } from '@/utils/types/agent/prompts';
+import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from '@/utils/helpers/prompts/prompts';
+
+import { ThinkingResult } from "@/utils/types/agent/handlers";
+
+import type {
+    AgenticLoopResult
+} from '@/utils/types/llm/instance';
+
+import type {
+    ParsedOutput,
+    Output
+} from '@/utils/types/llm/responses';
 
 import {
     isGroqConfig,
@@ -33,7 +42,6 @@ import {
 import type {
     BaseAgentConfig,
     TaskType,
-    Output,
     LLMConfig,
     GroqConfig,
     OpenAIConfig,
@@ -41,10 +49,7 @@ import type {
     GoogleConfig,
     MistralConfig,
     FeedbackObject,
-    ThinkingResult,
-    AgenticLoopResult,
     ThinkingHandlerParams,
-    ParsedOutput,
     AgentType,
     LLMUsageStats,
     IReactChampionAgent
@@ -52,7 +57,7 @@ import type {
 
 class ReactChampionAgent extends BaseAgentImplementation implements IReactChampionAgent {
     executableAgent: any;
-    messageHistory: CustomMessageHistory;
+    messageHistory: MessageHistoryManager; // Updated type
     promptTemplates: REACTChampionAgentPrompts & Record<string, unknown>;
     public llmInstance: any;
     public llmSystemMessage: string | null = null;
@@ -61,7 +66,7 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
         promptTemplates?: Partial<REACTChampionAgentPrompts> 
     }) {
         super(config);
-        this.messageHistory = new CustomMessageHistory();
+        this.messageHistory = new MessageHistoryManager(); // Updated initialization
         this.executableAgent = null;
         
         // Merge provided templates with defaults
@@ -75,19 +80,19 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
         }
     }
 
-    public  checkStore(): void {
+    public checkStore(): void {
         if (!this.store) {
             throw new Error('Store is not initialized.');
         }
     }
 
-    public  async addMessageToHistory(role: 'ai' | 'human', content: string): Promise<void> {
+    public async addMessageToHistory(role: 'ai' | 'human', content: string): Promise<void> {
         await this.messageHistory.addMessage(
             role === 'ai' ? new AIMessage(content) : new HumanMessage(content)
         );
     }
 
-    public  parseOutput(content: string): ParsedOutput | null {
+    public parseOutput(content: string): ParsedOutput | null {
         try {
             const parsed = getParsedJSON(content);
             if (!parsed) return null;
@@ -140,7 +145,7 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
         }
     }
 
-    public  createGroqInstance(): void {
+    public createGroqInstance(): void {
         if (!this.llmConfig || !isGroqConfig(this.llmConfig)) {
             throw new Error('Invalid Groq configuration');
         }
@@ -156,7 +161,7 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
         this.llmInstance = new ChatGroq(groqConfig);
     }
 
-    public  createOpenAIInstance(): void {
+    public createOpenAIInstance(): void {
         if (!this.llmConfig || !isOpenAIConfig(this.llmConfig)) {
             throw new Error('Invalid OpenAI configuration');
         }
@@ -183,7 +188,7 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
         this.llmInstance = new ChatOpenAI(openAIConfig);
     }
 
-    public  createAnthropicInstance(): void {
+    public createAnthropicInstance(): void {
         if (!this.llmConfig || !isAnthropicConfig(this.llmConfig)) {
             throw new Error('Invalid Anthropic configuration');
         }
@@ -207,7 +212,7 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
         this.llmInstance = new ChatAnthropic(anthropicConfig);
     }
 
-    public  createGoogleInstance(): void {
+    public createGoogleInstance(): void {
         if (!this.llmConfig || !isGoogleConfig(this.llmConfig)) {
             throw new Error('Invalid Google configuration');
         }
@@ -236,7 +241,7 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
         this.llmInstance = new ChatGoogleGenerativeAI(googleConfig);
     }
 
-    public  createMistralInstance(): void {
+    public createMistralInstance(): void {
         if (!this.llmConfig || !isMistralConfig(this.llmConfig)) {
             throw new Error('Invalid Mistral configuration');
         }
@@ -267,7 +272,7 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
         return await this.agenticLoop(this, task, this.executableAgent, config.initialFeedbackMessage);
     }
 
-    public  prepareAgentForTask(
+    public prepareAgentForTask(
         task: TaskType,
         inputs: Record<string, unknown>,
         context: string
@@ -317,7 +322,7 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
         };
     }
 
-    public  determineActionType(parsedResult: ParsedOutput | null): keyof typeof AGENT_STATUS_enum {
+    public determineActionType(parsedResult: ParsedOutput | null): keyof typeof AGENT_STATUS_enum {
         if (parsedResult === null) {
             return AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT;
         } else if (parsedResult.finalAnswer) {
@@ -333,7 +338,7 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
         }
     }
 
-    public  async executeThinking(
+    public async executeThinking(
         agent: ReactChampionAgent,
         task: TaskType,
         ExecutableAgent: any,
@@ -378,13 +383,16 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
                 logger.error(`LLM_INVOCATION_ERROR: Error during LLM API call for Agent: ${agent.name}, Task: ${task.id}. Details:`, error);
                 reject(new LLMInvocationError(
                     `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
-                    error instanceof Error ? error : new Error(String(error))
+                    this.llmConfig.provider || 'unknown', // Added provider
+                    error instanceof Error ? error : new Error(String(error)),
+                    'Check API configuration and retry',
+                    { taskId: task.id, agentName: agent.name }
                 ));
             });
         });
     }
 
-    public  async agenticLoop(
+    public async agenticLoop(
         agent: ReactChampionAgent,
         task: TaskType,
         ExecutableAgent: any,
@@ -585,7 +593,7 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
         }
     }
 
-    public  async executeUsingTool(params: { 
+    public async executeUsingTool(params: { 
         agent: ReactChampionAgent; 
         task: TaskType; 
         tool: Tool;
@@ -779,7 +787,7 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
         return Promise.resolve();
     }
 
-    public  async handleThinkingEnd(params: ThinkingHandlerParams): Promise<ThinkingResult> {
+    public async handleThinkingEnd(params: ThinkingHandlerParams): Promise<ThinkingResult> {
         const { task, output } = params;
         this.setStatus(AGENT_STATUS_enum.THINKING_END);
         this.checkStore();
@@ -866,24 +874,12 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
         this.setStatus(AGENT_STATUS_enum.TASK_COMPLETED);
         this.checkStore();
 
-        const newLog = this.store.prepareNewLog({
-            agent: this as unknown as AgentType,
-            task,
-            logDescription: `🎉 Task completed successfully`,
-            metadata: { output: parsedResultWithFinalAnswer },
-            logType: 'AgentStatusUpdate',
-            agentStatus: this.status,
-        });
-
-        if (newLog) {
-            logger.info(`🎉 ${AGENT_STATUS_enum.TASK_COMPLETED}: Task completed successfully`);
-            this.store.workflowLogs.push(newLog);
-        }
-
         this.store.handleTaskCompletion({
             agent: this as unknown as AgentType,
             task,
-            result: parsedResultWithFinalAnswer.finalAnswer
+            result: typeof parsedResultWithFinalAnswer.finalAnswer === 'string' 
+                ? parsedResultWithFinalAnswer.finalAnswer 
+                : JSON.stringify(parsedResultWithFinalAnswer.finalAnswer) // Updated
         });
     }
 
@@ -991,11 +987,11 @@ class ReactChampionAgent extends BaseAgentImplementation implements IReactChampi
             ...parsedLLMOutput,
             finalAnswer: typeof parsedLLMOutput.finalAnswer === 'object' 
                 ? JSON.stringify(parsedLLMOutput.finalAnswer)
-                : parsedLLMOutput.finalAnswer
+                : parsedLLMOutput.finalAnswer // Corrected reference
         };
     }
 
-    public  setStatus(status: keyof typeof AGENT_STATUS_enum): void {
+    public setStatus(status: keyof typeof AGENT_STATUS_enum): void {
         this.status = status;
     }
 

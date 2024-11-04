@@ -1,27 +1,46 @@
 /**
  * @file index.ts
- * @path src/types/messaging/index.ts
- * @description Central export point for all messaging-related types
- *
- * @packageDocumentation
- * @module @types/messaging
+ * @path src/utils/types/messaging/index.ts
+ * @description Central export point for messaging-related types and interfaces
  */
 
-// Base message types
-export * from './base';
+// Base types and utilities
+export type {
+    MessageRole,
+    FunctionCall,
+    ToolCall,
+    AdditionalKwargs,
+    BaseMessageMetadataFields,
+    ChatMessageMetadataFields,
+    LogMessageMetadataFields,
+    MessageMetadataFields,
+    InternalChatMessage,
+    ChatMessage,
+    MessageContext
+} from './base';
 
-// Message handler types
-export * from './handlers';
+export {
+    MessageTypeUtils
+} from './base';
 
-// Message history types
-export * from './history';
+// History types
+export type {
+    MessageHistoryConfig,
+    IMessageHistory,
+    MessageHistoryState,
+    MessageHistoryMetrics
+} from './history';
 
-// Re-export common types from external dependencies
-export type { 
-    BaseMessage,
-    SystemMessage,
-    HumanMessage,
-    AIMessage,
-    FunctionMessage,
-    ChatMessage as LangChainChatMessage
-} from "@langchain/core/messages";
+export {
+    MessageTypeGuards
+} from './history';
+
+// Handler types
+export type {
+    MessageHandlerConfig,
+    MessageStreamConfig,
+    MessageValidationConfig,
+    MessageBuildParams,
+    MessageProcessResult,
+    MessageTransformOptions
+} from './handlers';

@@ -1,17 +1,14 @@
 /**
  * @file logs.ts
- * @path src/types/team/logs.ts
- * @description Team logging interfaces and types
- *
- * @packageDocumentation
- * @module @types/team
+ * @path src/utils/types/team/logs.ts
+ * @description Type definitions for team logs and logging functionality
  */
 
 import { 
     TASK_STATUS_enum, 
     AGENT_STATUS_enum, 
     WORKFLOW_STATUS_enum 
-} from "@/utils/core/enums";
+} from "@/utils/types/common/enums";
 import { AgentType } from "../agent";
 import { TaskType } from "../task";
 import { LLMUsageStats } from "../llm";
@@ -25,7 +22,7 @@ export type MessageLogType = 'SystemMessage' | 'UserMessage' | 'AIMessage' | 'Fu
 export type LogType = StatusLogType | MessageLogType;
 
 /**
- * Base log metadata
+ * Base log metadata interface
  */
 export interface LogMetadata {
     llmUsageStats?: LLMUsageStats;
@@ -44,7 +41,7 @@ export interface LogMetadata {
 }
 
 /**
- * Agent log metadata
+ * Agent log metadata interface
  */
 export interface AgentLogMetadata extends LogMetadata {
     output?: {
@@ -69,7 +66,7 @@ export interface AgentLogMetadata extends LogMetadata {
 }
 
 /**
- * Task log metadata
+ * Task log metadata interface
  */
 export interface TaskLogMetadata extends LogMetadata {
     llmUsageStats?: LLMUsageStats;
@@ -80,7 +77,7 @@ export interface TaskLogMetadata extends LogMetadata {
 }
 
 /**
- * Workflow log metadata
+ * Workflow log metadata interface
  */
 export interface WorkflowLogMetadata extends LogMetadata {
     result: string;
@@ -94,7 +91,7 @@ export interface WorkflowLogMetadata extends LogMetadata {
 }
 
 /**
- * Message log metadata
+ * Message log metadata interface
  */
 export interface MessageLogMetadata extends LogMetadata {
     role: string;
@@ -106,7 +103,7 @@ export interface MessageLogMetadata extends LogMetadata {
 }
 
 /**
- * Log preparation parameters
+ * Log preparation parameters interface
  */
 export interface PrepareNewLogParams {
     agent: AgentType;
@@ -171,6 +168,16 @@ export const LogTypeGuards = {
             'teamName' in metadata &&
             'taskCount' in metadata &&
             'agentCount' in metadata
+        );
+    },
+
+    isMessageLogMetadata: (metadata: LogMetadata): metadata is MessageLogMetadata => {
+        return (
+            'role' in metadata &&
+            'content' in metadata &&
+            'timestamp' in metadata &&
+            'llmUsageStats' in metadata &&
+            'costDetails' in metadata
         );
     }
 };

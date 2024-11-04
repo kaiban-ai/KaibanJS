@@ -9,59 +9,11 @@
 
 import { SafetySetting } from "@google/generative-ai";
 import { Tool } from "langchain/tools";
-import { ChatGroqCallbacks } from "./callbacks";
-
-/**
- * Available LLM providers
- */
-export const LLMProviders = {
-    GROQ: 'groq',
-    OPENAI: 'openai',
-    ANTHROPIC: 'anthropic',
-    GOOGLE: 'google',
-    MISTRAL: 'mistral'
-} as const;
-
-export type LLMProvider = typeof LLMProviders[keyof typeof LLMProviders];
-
-/**
- * Token limits for different models
- */
-export const TOKEN_LIMITS = {
-    GROQ_DEFAULT: 8192,
-    OPENAI_GPT4: 8192,
-    ANTHROPIC_CLAUDE: 100000,
-    GOOGLE_GEMINI: 32768,
-    MISTRAL_LARGE: 32768
-} as const;
-
-/**
- * Base configuration interface for all LLM providers
- */
-export interface BaseLLMConfig {
-    provider: LLMProvider;
-    model: string;
-    apiKey?: string;
-    temperature?: number;
-    streaming?: boolean;
-    apiBaseUrl?: string;
-    maxRetries?: number;
-    timeout?: number;
-    maxConcurrency?: number;
-    headers?: Record<string, string>;
-    debug?: boolean;
-    stopSequences?: string[];
-}
-
-/**
- * Runtime options for LLM requests
- */
-export interface LLMRuntimeOptions {
-    timeoutMs?: number;
-    maxRetries?: number;
-    abortSignal?: AbortSignal;
-    metadata?: Record<string, unknown>;
-}
+import { 
+    LLMProvider, 
+    BaseLLMConfig, 
+    LLMRuntimeOptions 
+} from './common';
 
 /**
  * Groq-specific configuration
@@ -75,7 +27,6 @@ export interface GroqConfig extends BaseLLMConfig {
     topK?: number;
     presencePenalty?: number;
     frequencyPenalty?: number;
-    callbacks?: ChatGroqCallbacks;
 }
 
 /**

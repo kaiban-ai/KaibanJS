@@ -7,7 +7,7 @@
  * @module @types/llm
  */
 
-import { LLMProvider } from "./providers";
+import { LLMProvider } from "./common";
 
 /**
  * Token usage statistics
@@ -31,19 +31,62 @@ export interface ResponseMetadata {
 }
 
 /**
- * Parsed output from LLM responses
+ * Enhanced parsed output from LLM responses
+ * @breaking-change v2.0.0 Added metadata field with additional context
  */
 export interface ParsedOutput {
+    /** Reasoning or thought process */
     thought?: string;
+    
+    /** Action to take */
     action?: string;
+    
+    /** Input for the action */
     actionInput?: Record<string, unknown>;
+    
+    /** Observation from action */
     observation?: string;
+    
+    /** Final answer readiness flag */
     isFinalAnswerReady?: boolean;
+    
+    /** Final answer content */
     finalAnswer?: string | Record<string, unknown>;
+    
+    /** Enhanced metadata */
     metadata?: {
+        /** Reasoning behind decisions */
         reasoning?: string;
+        
+        /** Confidence level (0-1) */
         confidence?: number;
+        
+        /** Alternative actions considered */
         alternativeActions?: string[];
+        
+        /** Processing metrics */
+        metrics?: {
+            /** Time taken to process */
+            processingTime?: number;
+            
+            /** Number of tokens processed */
+            tokenCount?: number;
+            
+            /** Memory usage */
+            memoryUsage?: number;
+        };
+        
+        /** Context information */
+        context?: {
+            /** Input context length */
+            inputContextLength?: number;
+            
+            /** Key information used */
+            keyFactors?: string[];
+            
+            /** Relevant constraints */
+            constraints?: string[];
+        };
     };
 }
 

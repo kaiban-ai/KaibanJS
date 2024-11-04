@@ -1,19 +1,19 @@
 /**
- * Path: C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\helpers\stats.ts
- * Utility functions for calculating statistics
+ * @file stats.ts
+ * @path src/utils/helpers/stats.ts
+ * @description Statistical calculation and analysis utilities
  */
 
-import { TASK_STATUS_enum, AGENT_STATUS_enum } from '@/utils/core/enums';
-import type { 
-    TaskType, 
-    TaskStats, 
-    Log, 
-    LLMUsageStats,
-    AgentLogMetadata,
-    Output
-} from '@/utils/types';
+import { logger } from "../core/logger";
+import { TASK_STATUS_enum, AGENT_STATUS_enum } from "@/utils/types/common/enums";
+import { TaskType, TaskStats } from "@/utils/types/task/base";
+import { Log, AgentLogMetadata } from "@/utils/types/team/logs";
+import { LLMUsageStats, Output } from "@/utils/types/llm/responses";
+import { formatCost } from "./costs/llmCostCalculator";
 
-// Type guard to check if metadata is AgentLogMetadata
+/**
+ * Type guard to check if metadata is AgentLogMetadata
+ */
 function isAgentLogMetadata(metadata: unknown): metadata is AgentLogMetadata {
     return (
         typeof metadata === 'object' &&
@@ -25,7 +25,9 @@ function isAgentLogMetadata(metadata: unknown): metadata is AgentLogMetadata {
     );
 }
 
-// Type guard to check if output has llmUsageStats
+/**
+ * Type guard to check if output has LLM usage stats
+ */
 function hasLLMUsageStats(output: unknown): output is { llmUsageStats: LLMUsageStats } {
     return (
         typeof output === 'object' &&
@@ -35,6 +37,12 @@ function hasLLMUsageStats(output: unknown): output is { llmUsageStats: LLMUsageS
     );
 }
 
+/**
+ * Calculates comprehensive statistics for a given task
+ * @param task - Task to calculate statistics for
+ * @param logs - Workflow logs to analyze
+ * @returns TaskStats object containing calculated statistics
+ */
 export function calculateTaskStats(
     task: TaskType,
     logs: Log[]
@@ -53,7 +61,6 @@ export function calculateTaskStats(
     const duration = (endTime - startTime) / 1000;
 
     let llmUsageStats: LLMUsageStats = {
-        // Required base properties
         inputTokens: 0,
         outputTokens: 0,
         callsCount: 0,
@@ -62,25 +69,22 @@ export function calculateTaskStats(
         totalLatency: 0,
         averageLatency: 0,
         lastUsed: endTime,
-        
-        // Required cost breakdown
+        memoryUtilization: {
+            peakMemoryUsage: 0,
+            averageMemoryUsage: 0,
+            cleanupEvents: 0
+        },
         costBreakdown: {
             input: 0,
             output: 0,
             total: 0,
             currency: 'USD'
-        },
-        
-        // Required memory utilization
-        memoryUtilization: {
-            peakMemoryUsage: 0,
-            averageMemoryUsage: 0,
-            cleanupEvents: 0
         }
     };
     
     let iterationCount = 0;
     let totalLatency = 0;
+    const modelUsage: Record<string, LLMUsageStats> = {};
 
     logs.forEach(log => {
         if (log.task?.id === task.id && 
@@ -101,32 +105,58 @@ export function calculateTaskStats(
                         llmUsageStats.averageLatency = totalLatency / llmUsageStats.callsCount;
                     }
 
-                    // Update cost breakdown if available
+                    // Update cost breakdown
                     if (stats.costBreakdown) {
                         llmUsageStats.costBreakdown.input += stats.costBreakdown.input;
                         llmUsageStats.costBreakdown.output += stats.costBreakdown.output;
                         llmUsageStats.costBreakdown.total += stats.costBreakdown.total;
                     }
 
-                    // Update memory utilization if available
+                    // Update memory utilization
                     if (stats.memoryUtilization) {
                         llmUsageStats.memoryUtilization.peakMemoryUsage = Math.max(
                             llmUsageStats.memoryUtilization.peakMemoryUsage,
                             stats.memoryUtilization.peakMemoryUsage
                         );
-                        // Calculate running average for memory usage
                         llmUsageStats.memoryUtilization.averageMemoryUsage = 
                             (llmUsageStats.memoryUtilization.averageMemoryUsage * (llmUsageStats.callsCount - 1) + 
                             stats.memoryUtilization.averageMemoryUsage) / llmUsageStats.callsCount;
                         llmUsageStats.memoryUtilization.cleanupEvents += stats.memoryUtilization.cleanupEvents;
                     }
+
+                    // Update model-specific usage
+                    const modelName = log.agent?.llmConfig?.model;
+                    if (modelName) {
+                        if (!modelUsage[modelName]) {
+                            modelUsage[modelName] = {
+                                ...llmUsageStats,
+                                inputTokens: 0,
+                                outputTokens: 0,
+                                callsCount: 0,
+                                callsErrorCount: 0,
+                                parsingErrors: 0
+                            };
+                        }
+                        const modelStats = modelUsage[modelName];
+                        modelStats.inputTokens += stats.inputTokens;
+                        modelStats.outputTokens += stats.outputTokens;
+                        modelStats.callsCount += 1;
+                    }
                 }
             }
             if (log.agentStatus === AGENT_STATUS_enum.THINKING_ERROR) {
                 llmUsageStats.callsErrorCount += 1;
+                const modelName = log.agent?.llmConfig?.model;
+                if (modelName && modelUsage[modelName]) {
+                    modelUsage[modelName].callsErrorCount += 1;
+                }
             }
             if (log.agentStatus === AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT) {
                 llmUsageStats.parsingErrors += 1;
+                const modelName = log.agent?.llmConfig?.model;
+                if (modelName && modelUsage[modelName]) {
+                    modelUsage[modelName].parsingErrors += 1;
+                }
             }
             if (log.agentStatus === AGENT_STATUS_enum.ITERATION_END) {
                 iterationCount += 1;
@@ -143,3 +173,34 @@ export function calculateTaskStats(
         modelUsage
     };
 }
+
+/**
+ * Calculate average cost per token across all models
+ * @param modelUsage - Usage statistics per model
+ * @returns Average cost per token
+ */
+export function calculateAverageCostPerToken(modelUsage: Record<string, LLMUsageStats>): number {
+    let totalCost = 0;
+    let totalTokens = 0;
+
+    Object.values(modelUsage).forEach(stats => {
+        totalCost += stats.costBreakdown.total;
+        totalTokens += stats.inputTokens + stats.outputTokens;
+    });
+
+    return totalTokens > 0 ? totalCost / totalTokens : 0;
+}
+
+/**
+ * Calculate token processing rate
+ * @param startTime - Start timestamp
+ * @param endTime - End timestamp
+ * @param totalTokens - Total tokens processed
+ * @returns Tokens per second
+ */
+export function calculateTokenRate(startTime: number, endTime: number, totalTokens: number): number {
+    const duration = Math.max((endTime - startTime) / 1000, 1); // Minimum 1 second
+    return totalTokens / duration;
+}
+
+export { formatCost };

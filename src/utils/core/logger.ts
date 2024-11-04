@@ -1,28 +1,78 @@
-/** 
- * C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\core\logger.ts
- * Logging Utility.
- *
- * This file sets up and configures the logging system used across the KaibanJS library. It allows for setting log levels 
- * dynamically and provides a centralized logger that can be imported and used throughout the library.
- *
- * Usage:
- * Import this logger to add logging capabilities to any part of the application, facilitating debugging and tracking of 
- * application flow and state changes.
+/**
+ * @file logger.ts
+ * @path src/utils/core/logger.ts
+ * @description Core logging implementation
  */
 
 import log from 'loglevel';
-
-// Set initial log level
-log.setLevel(log.levels.INFO);  // Default to 'info' level
+import type { 
+    LogLevel, 
+    LoggerConfig,
+    LogFormattingOptions,
+    LogDestinationConfig,
+    LogFilterOptions
+} from '@/utils/types/common/logging';
 
 /**
- * Dynamically sets the log level for the application.
- * 
- * @param {string} level - The log level to set ('trace', 'debug', 'info', 'warn', 'error', 'silent').
+ * Default logger configuration
  */
-const setLogLevel = (level: string): void => {
-  const logLevel = level.toUpperCase() as keyof typeof log.levels;
-  log.setLevel(log.levels[logLevel]);
+const DEFAULT_CONFIG: Required<LoggerConfig> = {
+    level: 'info',
+    timestamp: true,
+    showLevel: true,
+    formatter: (level: string, message: string) => 
+        `[${new Date().toISOString()}] ${level.toUpperCase()}: ${message}`,
+    serializer: (obj: unknown) => 
+        typeof obj === 'object' ? JSON.stringify(obj, null, 2) : String(obj)
 };
 
-export { log as logger, setLogLevel };
+/**
+ * Configure the logger
+ */
+export function configureLogger(config: LoggerConfig = {}): void {
+    const finalConfig = { ...DEFAULT_CONFIG, ...config };
+    
+    // Set log level
+    log.setLevel(finalConfig.level);
+
+    // Override logging methods to add formatting
+    const originalFactory = log.methodFactory;
+    log.methodFactory = function (methodName, logLevel, loggerName) {
+        const rawMethod = originalFactory(methodName, logLevel, loggerName);
+        
+        return function (message: unknown) {
+            let formattedMessage = typeof message === 'string' 
+                ? message 
+                : finalConfig.serializer(message);
+
+            if (finalConfig.showLevel) {
+                formattedMessage = finalConfig.formatter(methodName, formattedMessage);
+            }
+
+            rawMethod(formattedMessage);
+        };
+    };
+
+    log.setLevel(log.getLevel()); // Apply factory changes
+}
+
+/**
+ * Set the log level
+ */
+export function setLogLevel(level: LogLevel): void {
+    const logLevel = level.toUpperCase() as keyof typeof log.levels;
+    log.setLevel(log.levels[logLevel]);
+}
+
+/**
+ * Create a named logger instance
+ */
+export function createLogger(name: string) {
+    return log.getLogger(name);
+}
+
+// Export configured logger
+export const logger = log;
+
+// Initial configuration
+configureLogger();

@@ -8,6 +8,7 @@
  */
 
 import { BaseMessage } from "@langchain/core/messages";
+import { LLMProvider, LLMEventMetadata, StreamingChunk } from "./common";
 import { Output } from "./responses";
 
 /**
@@ -46,11 +47,7 @@ export interface LLMEvent {
     type: LLMEventType;
     timestamp: number;
     data: Record<string, unknown>;
-    metadata?: {
-        provider: string;
-        model: string;
-        requestId?: string;
-    };
+    metadata?: LLMEventMetadata;
 }
 
 /**
@@ -74,14 +71,4 @@ export interface StreamingHandlerConfig {
     onToken?: (token: string) => void;
     onComplete?: (fullContent: string) => void;
     onError?: (error: Error) => void;
-}
-
-/**
- * Streaming chunk interface
- */
-interface StreamingChunk {
-    content: string;
-    metadata?: Record<string, unknown>;
-    finishReason?: string;
-    done: boolean;
 }

@@ -11,9 +11,11 @@
 import { Tool } from "langchain/tools";
 import { BaseMessage } from "@langchain/core/messages";
 import { AgentType } from "./base";
-import { TaskType } from "../task/base";
-import { Output, ParsedOutput } from "../llm/responses";
-import { ErrorType } from "@/utils/core/errors";
+import { TaskType } from "@/utils/types/task";
+import { Output, ParsedOutput, LLMUsageStats } from "@/utils/types/llm";
+import { ErrorType } from "@/utils/types/common";
+import { TaskCompletionParams as BaseTaskCompletionParams } from "@/utils/types/task";
+import { ParsingHandlerParams as BaseLLMParsingParams } from "@/utils/types/llm";
 
 /**
  * Base parameters interface for all handler types
@@ -91,7 +93,7 @@ export interface IterationHandlerParams extends HandlerBaseParams {
 /**
  * Parameters for task completion handling
  */
-export interface TaskCompletionParams extends IterationHandlerParams {
+export interface TaskCompletionParams extends BaseTaskCompletionParams, IterationHandlerParams {
     /** Final parsed result with answer */
     parsedResultWithFinalAnswer: ParsedOutput;
 }
@@ -161,4 +163,51 @@ export interface ErrorHandlerParams extends HandlerBaseParams {
     
     /** Additional error context */
     context?: Record<string, unknown>;
+    
+    /** Store reference for state management */
+    store?: {
+        /** Get current state */
+        getState: () => unknown;
+        
+        /** Update state */
+        setState: (fn: (state: unknown) => unknown) => void;
+        
+        /** Create new log entry */
+        prepareNewLog: (params: unknown) => unknown;
+    };
+}
+
+/**
+ * Parameters for parsing error handling
+ */
+export interface ParsingHandlerParams extends HandlerBaseParams, BaseLLMParsingParams {}
+
+/**
+ * Base result interface for all handlers
+ */
+export interface HandlerResult {
+    success: boolean;
+    error?: Error;
+    data?: unknown;
+}
+
+/**
+ * Base error handler interface
+ */
+export interface IErrorHandler {
+    handleError(params: ErrorHandlerParams & { store: Required<ErrorHandlerParams>['store'] }): Promise<HandlerResult>;
+    handleLLMError(params: ErrorHandlerParams & { store: Required<ErrorHandlerParams>['store'] }): Promise<HandlerResult>;
+    handleToolError(params: ToolHandlerParams & { 
+        store: Required<ErrorHandlerParams>['store'];
+        tool: Required<ToolHandlerParams>['tool'];
+    }): Promise<HandlerResult>;
+}
+
+/**
+ * Structure for thinking process results
+ */
+export interface ThinkingResult {
+    parsedLLMOutput: ParsedOutput | null;
+    llmOutput: string;
+    llmUsageStats: LLMUsageStats;
 }

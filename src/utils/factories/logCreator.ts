@@ -15,10 +15,14 @@ import {
     AgentLogMetadata, 
     TaskLogMetadata, 
     WorkflowLogMetadata,
+} from '@/utils/types';
+
+import { 
     TASK_STATUS_enum,
     AGENT_STATUS_enum,
     WORKFLOW_STATUS_enum
-} from '@/utils/types';
+} from "@/utils/types/common/enums";
+
 import { getTaskTitleForLogs } from '@/utils/tasks';
 import DefaultFactory from './defaultFactory';
 

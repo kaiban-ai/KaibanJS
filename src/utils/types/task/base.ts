@@ -10,7 +10,7 @@
 import { IBaseAgent } from "../agent/base";
 import { TeamStore } from "@/utils/types/team/base";
 import { LLMUsageStats } from "../llm/responses";
-import { TASK_STATUS_enum, FEEDBACK_STATUS_enum } from "@/utils/core/enums";
+import { TASK_STATUS_enum, FEEDBACK_STATUS_enum } from "@/utils/types/common/enums";
 
 /**
  * Task result type

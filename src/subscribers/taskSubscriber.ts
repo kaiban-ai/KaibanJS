@@ -3,21 +3,59 @@
  */
 
 import { UseBoundStore } from 'zustand';
-import { getTaskTitleForLogs } from '@/utils/tasks';
-import { logPrettyTaskCompletion, logPrettyTaskStatus } from "@/utils/helpers/prettyLogs";
-import { TASK_STATUS_enum } from '@/utils/core/enums';
+import { getTaskTitleForLogs } from '@/utils/helpers/tasks';
+import { logPrettyTaskCompletion, logPrettyTaskStatus } from "@/utils/helpers/formatting/prettyLogs";
+import { TASK_STATUS_enum } from "@/utils/types/common/enums";
 import { logger } from "@/utils/core/logger";
-import type {
-    TaskType,
-    TeamStoreApi,
-    TaskMetadata,
-    Log
-} from '@/utils/types';
+
+// Import types from their specific locations
+import type { TaskType } from '@/utils/types/task/base';
+import type { TeamStore } from '@/utils/types/team/base';
+import type { 
+    Log, 
+    TaskLogMetadata 
+} from '@/utils/types/team/logs';
+import type { LLMUsageStats } from '@/utils/types/llm/responses';
+import type { CostDetails } from '@/utils/types/workflow/stats';
+
+// Default values for required stats
+const DEFAULT_LLM_STATS: LLMUsageStats = {
+    inputTokens: 0,
+    outputTokens: 0,
+    callsCount: 0,
+    callsErrorCount: 0,
+    parsingErrors: 0,
+    totalLatency: 0,
+    averageLatency: 0,
+    lastUsed: Date.now(),
+    memoryUtilization: {
+        peakMemoryUsage: 0,
+        averageMemoryUsage: 0,
+        cleanupEvents: 0
+    },
+    costBreakdown: {
+        input: 0,
+        output: 0,
+        total: 0,
+        currency: 'USD'
+    }
+};
+
+const DEFAULT_COST_DETAILS: CostDetails = {
+    inputCost: 0,
+    outputCost: 0,
+    totalCost: 0,
+    currency: 'USD',
+    breakdown: {
+        promptTokens: { count: 0, cost: 0 },
+        completionTokens: { count: 0, cost: 0 }
+    }
+};
 
 /**
- * Type guard to check if the metadata matches TaskMetadata structure
+ * Type guard to check if metadata matches TaskLogMetadata structure
  */
-function isTaskMetadata(metadata: unknown): metadata is TaskMetadata {
+function isTaskMetadata(metadata: unknown): metadata is TaskLogMetadata {
     if (!metadata || typeof metadata !== 'object') {
         return false;
     }
@@ -58,14 +96,14 @@ const handleTaskStatusUpdate = (
             }
 
             logPrettyTaskCompletion({
-                llmUsageStats: log.metadata.llmUsageStats,
-                iterationCount: log.metadata.iterationCount,
-                duration: log.metadata.duration,
+                llmUsageStats: log.metadata.llmUsageStats || DEFAULT_LLM_STATS,
+                iterationCount: log.metadata.iterationCount || 0,
+                duration: log.metadata.duration || 0,
                 agentName: log.agent?.name || '',
                 agentModel: log.agent?.llmConfig.model || '',
                 taskTitle: getTaskTitleForLogs(log.task),
                 currentTaskNumber,
-                costDetails: log.metadata.costDetails,
+                costDetails: log.metadata.costDetails || DEFAULT_COST_DETAILS,
                 totalTasks
             });
             break;
@@ -97,7 +135,7 @@ const handleTaskStatusUpdate = (
  * @returns Cleanup function to unsubscribe
  */
 export const subscribeTaskStatusUpdates = (
-    store: UseBoundStore<TeamStoreApi>
+    store: UseBoundStore<TeamStore>
 ): (() => void) => {
     try {
         return store.subscribe((state) => {

@@ -2,51 +2,62 @@
  * @file base.ts
  * @path src/types/workflow/base.ts
  * @description Core workflow interfaces and types
- *
- * @packageDocumentation
- * @module @types/workflow
  */
 
-import { WORKFLOW_STATUS_enum } from "@/utils/core/enums";
-import { WorkflowStats } from "../workflow/stats";
+import { WORKFLOW_STATUS_enum } from "@/utils/types/common/enums";
+import { LLMUsageStats } from "../llm/responses";
+import { CostDetails } from "./stats";
+import { WorkflowMetadata, isCompleteMetadata, createDefaultMetadata } from "./metadata";
+import { WorkflowState, WorkflowEvent } from '../store/workflow';
 
 /**
  * Workflow error interface
  */
 export interface WorkflowError {
-    /** Error message */
     message: string;
-    
-    /** Error type */
     type: string;
-    
-    /** Error context */
     context?: Record<string, unknown>;
-    
-    /** Error timestamp */
     timestamp: number;
-    
-    /** Task ID if applicable */
     taskId?: string;
-    
-    /** Agent ID if applicable */
     agentId?: string;
+}
+
+/**
+ * Model usage statistics
+ */
+export interface ModelUsageStats {
+    callsCount: number;
+    callsErrorCount: number;
+    modelName: string;
+    provider?: string;
+    usageStats: Partial<LLMUsageStats>;
+}
+
+/**
+ * Workflow statistics interface
+ */
+export interface WorkflowStats {
+    startTime: number;
+    endTime: number;
+    duration: number;
+    llmUsageStats: LLMUsageStats;
+    iterationCount: number;
+    costDetails: CostDetails;
+    taskCount: number;
+    agentCount: number;
+    teamName: string;
+    messageCount: number;
+    modelUsage: Record<string, ModelUsageStats>;
+    error?: WorkflowError;
 }
 
 /**
  * Successful workflow completion
  */
 export interface WorkflowSuccess {
-    /** Status must be FINISHED */
     status: Extract<keyof typeof WORKFLOW_STATUS_enum, 'FINISHED'>;
-    
-    /** Result data */
     result: unknown;
-    
-    /** Workflow statistics */
-    metadata: WorkflowStats;
-    
-    /** Completion timestamp */
+    metadata: WorkflowMetadata;
     completionTime: number;
 }
 
@@ -54,34 +65,22 @@ export interface WorkflowSuccess {
  * Blocked workflow state
  */
 export interface WorkflowBlocked {
-    /** Status must be BLOCKED */
     status: Extract<keyof typeof WORKFLOW_STATUS_enum, 'BLOCKED'>;
-    
-    /** List of blocked tasks */
     blockedTasks: {
         taskId: string;
         taskTitle: string;
         reason: string;
     }[];
-    
-    /** Workflow statistics */
-    metadata: WorkflowStats;
+    metadata: WorkflowMetadata;
 }
 
 /**
  * Stopped workflow state
  */
 export interface WorkflowStopped {
-    /** Status must be STOPPED or STOPPING */
     status: Extract<keyof typeof WORKFLOW_STATUS_enum, 'STOPPED' | 'STOPPING'>;
-    
-    /** Reason for stopping */
     reason: string;
-    
-    /** Workflow statistics */
-    metadata: WorkflowStats;
-    
-    /** Stop timestamp */
+    metadata: WorkflowMetadata;
     stoppedAt: number;
 }
 
@@ -89,16 +88,9 @@ export interface WorkflowStopped {
  * Errored workflow state
  */
 export interface WorkflowErrored {
-    /** Status must be ERRORED */
     status: Extract<keyof typeof WORKFLOW_STATUS_enum, 'ERRORED'>;
-    
-    /** Error details */
     error: WorkflowError;
-    
-    /** Workflow statistics */
-    metadata: WorkflowStats;
-    
-    /** Error timestamp */
+    metadata: WorkflowMetadata;
     erroredAt: number;
 }
 
@@ -113,51 +105,79 @@ export type WorkflowResult =
     | null;
 
 /**
- * Workflow metadata interface
+ * Type guard to check if a result has valid metadata
  */
-export interface WorkflowMetadata {
-    /** Final result */
-    result: string;
-    
-    /** Duration in seconds */
-    duration: number;
-    
-    /** LLM usage statistics */
-    llmUsageStats: any; // Reference LLMUsageStats from llm types
-    
-    /** Number of iterations */
-    iterationCount: number;
-    
-    /** Cost details */
-    costDetails: any; // Reference CostDetails from workflow/stats
-    
-    /** Team name */
-    teamName: string;
-    
-    /** Task count */
-    taskCount: number;
-    
-    /** Agent count */
-    agentCount: number;
+function isWorkflowWithMetadata(result: WorkflowResult): result is WorkflowSuccess | WorkflowBlocked | WorkflowStopped | WorkflowErrored {
+    return result !== null && 'metadata' in result;
 }
 
 /**
- * Type guards for workflow results
+ * Consolidated type guards for workflows
  */
 export const WorkflowTypeGuards = {
-    isWorkflowSuccess: (result: WorkflowResult): result is WorkflowSuccess => {
+    /**
+     * Result-related type guards
+     */
+    isSuccess: (result: WorkflowResult): result is WorkflowSuccess => {
         return result !== null && result.status === 'FINISHED';
     },
 
-    isWorkflowBlocked: (result: WorkflowResult): result is WorkflowBlocked => {
+    isBlocked: (result: WorkflowResult): result is WorkflowBlocked => {
         return result !== null && result.status === 'BLOCKED';
     },
 
-    isWorkflowStopped: (result: WorkflowResult): result is WorkflowStopped => {
+    isStopped: (result: WorkflowResult): result is WorkflowStopped => {
         return result !== null && (result.status === 'STOPPED' || result.status === 'STOPPING');
     },
 
-    isWorkflowErrored: (result: WorkflowResult): result is WorkflowErrored => {
+    isErrored: (result: WorkflowResult): result is WorkflowErrored => {
         return result !== null && result.status === 'ERRORED';
+    },
+
+    hasMetadata: isWorkflowWithMetadata,
+    isCompleteMetadata,
+
+    /**
+     * Model usage type guard
+     */
+    isValidModelUsage: (usage: unknown): usage is ModelUsageStats => {
+        if (typeof usage !== 'object' || usage === null) return false;
+        const modelUsage = usage as Partial<ModelUsageStats>;
+        return (
+            typeof modelUsage.callsCount === 'number' &&
+            typeof modelUsage.callsErrorCount === 'number' &&
+            typeof modelUsage.modelName === 'string'
+        );
+    },
+
+    /**
+     * Store-related type guards
+     */
+    isWorkflowState: (value: unknown): value is WorkflowState => {
+        return (
+            typeof value === 'object' &&
+            value !== null &&
+            'runtime' in value &&
+            'stats' in value &&
+            'progress' in value &&
+            'context' in value &&
+            'env' in value
+        );
+    },
+
+    isWorkflowEvent: (value: unknown): value is WorkflowEvent => {
+        if (typeof value !== 'object' || value === null) return false;
+        const event = value as Partial<WorkflowEvent>;
+        return (
+            typeof event.type === 'string' &&
+            (event.type.includes('workflow.') ||
+            event.type.includes('task.') ||
+            event.type.includes('agent.')) &&
+            typeof event.timestamp === 'number' &&
+            typeof event.data === 'object'
+        );
     }
-};
+} as const;
+
+// Re-export metadata utilities
+export { createDefaultMetadata };

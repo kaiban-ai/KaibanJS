@@ -1,15 +1,19 @@
 /**
- * Path: C:\Users\pwalc\Documents\GroqEmailAssistant\node_modules\kaibanjs\src\index.js
- * Agent Exports Centralization.
- *
- * This file serves as the central export point for all agent-related classes within the KaibanJS library. By consolidating 
- * agent exports here, it simplifies the import process for external files and maintains a clean and organized code structure. 
- * This setup enhances modularity and reusability of agent components.
- *
- * Usage:
- * Import agent classes from this file to access and utilize different types of agents across the library. This centralization 
- * aids in maintaining consistency and ease of updates to the agent architecture.
+ * @file index.ts
+ * @path src/agents/index.ts
+ * @description Central export point for agent implementations
  */
 
-export * from './baseAgent.js';
-export * from './reactChampionAgent';
+export { BaseAgent } from './baseAgent';
+export { ReactChampionAgent } from './reactChampionAgent';
+
+/**
+ * Re-export agent types
+ */
+export type {
+    IBaseAgent,
+    IReactChampionAgent,
+    AgentType,
+    BaseAgentConfig,
+    IAgentParams
+} from '@/utils/types/agent';

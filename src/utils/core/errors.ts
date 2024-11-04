@@ -1,177 +1,211 @@
 /**
- * Path: C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\core\errors.ts
- * 
- * Custom Error Definitions.
- *
- * This file defines custom error classes and interfaces for handling specific error scenarios 
- * within the KaibanJS library. It includes errors for API invocation failures and more nuanced 
- * errors that provide detailed diagnostic information.
- *
- * @packageDocumentation
+ * @file errors.ts
+ * @path src/utils/core/errors.ts
+ * @description Error implementation classes
  */
+
+import { logger } from "./logger";
+import type {
+    ErrorType,
+    PrettyErrorType,
+    ErrorConfig,
+    LLMError,
+    ConfigurationError
+} from '@/utils/types/common/errors';
 
 /**
- * Base error type with extended functionality
+ * Creates a formatted error message with context
  */
-export interface ErrorType extends Error {
-    /** Additional context information */
-    context?: Record<string, any>;
-    /** Original error that caused this error */
-    originalError?: Error | null;
-    /** Suggested action to resolve the error */
-    recommendedAction?: string | null;
-}
+function createPrettyMessage(error: ErrorConfig): string {
+    const parts: string[] = [
+        `🚨 ${error.name || 'Error'}: ${error.message}`
+    ];
 
-/**
- * Enhanced error type with formatting and context
- */
-export interface PrettyErrorType extends ErrorType {
-    /** Error category or classification */
-    type: string;
-    /** Original error that caused this error */
-    rootError: Error | null;
-    /** Where the error occurred */
-    location?: string;
-    /** Formatted error message */
-    prettyMessage: string;
-}
-
-/**
- * Represents an error that occurs during LLM API invocation.
- */
-export class LLMInvocationError extends Error implements ErrorType {
-    context: Record<string, any>;
-    originalError: Error | null;
-    recommendedAction: string | null;
-
-    /**
-     * Creates an instance of LLMInvocationError.
-     * @param message - The error message
-     * @param originalError - The original error that caused this error, if any
-     * @param recommendedAction - Suggested action to resolve the error
-     * @param context - Additional context information about the error
-     */
-    constructor(
-        message: string, 
-        originalError: Error | null = null, 
-        recommendedAction: string | null = null, 
-        context: Record<string, any> = {}
-    ) {
-        super(message);
-        this.name = "LLMInvocationError";
-        this.context = context;
-        this.originalError = originalError;
-        this.recommendedAction = recommendedAction;
-        Error.captureStackTrace(this, this.constructor);
+    if (error.location) {
+        parts.push(`📍 Location: ${error.location}`);
     }
 
-    /**
-     * Get formatted error message
-     */
-    get formattedMessage(): string {
-        const parts: string[] = [
-            `🚨 ${this.name}: ${this.message}`
-        ];
-
-        if (this.originalError?.message) {
-            parts.push(`📋 Original Error: ${this.originalError.message}`);
+    if (error.rootError?.message) {
+        parts.push(`📋 Root Cause: ${error.rootError.message}`);
+        if (error.rootError.stack) {
+            parts.push('Stack Trace:');
+            parts.push(error.rootError.stack);
         }
-
-        if (this.recommendedAction) {
-            parts.push(`💡 Recommended Action: ${this.recommendedAction}`);
-        }
-
-        if (Object.keys(this.context).length > 0) {
-            parts.push('📄 Context:');
-            parts.push(JSON.stringify(this.context, null, 2));
-        }
-
-        return parts.join('\n');
     }
+
+    if (error.recommendedAction) {
+        parts.push(`💡 Recommended Action: ${error.recommendedAction}`);
+    }
+
+    if (error.context && Object.keys(error.context).length > 0) {
+        parts.push('📄 Context:');
+        parts.push(JSON.stringify(error.context, null, 2));
+    }
+
+    return parts.join('\n');
 }
 
 /**
- * Represents a formatted error with additional context and recommendations.
+ * Enhanced error class with formatting capabilities
  */
 export class PrettyError extends Error implements PrettyErrorType {
     type: string;
     rootError: Error | null;
     recommendedAction: string | null;
-    context: Record<string, any>;
+    context: Record<string, unknown>;
     location: string;
     prettyMessage: string;
     originalError?: Error | null;
 
-    /**
-     * Creates an instance of PrettyError.
-     * @param options - Configuration options for the error
-     */
-    constructor(options: {
-        message: string;
-        rootError?: Error | null;
-        recommendedAction?: string | null;
-        context?: Record<string, any>;
-        location?: string;
-        type?: string;
-        name?: string;
-    }) {
-        super(options.message);
-        this.type = options.type || "Error";
-        this.name = options.name || "PrettyError";
-        this.rootError = options.rootError || null;
-        this.originalError = this.rootError; // For ErrorType compatibility
-        this.recommendedAction = options.recommendedAction || null;
-        this.context = options.context || {};
-        this.location = options.location || "";
+    constructor(config: ErrorConfig) {
+        super(config.message);
+        this.type = config.type || "Error";
+        this.name = config.name || "PrettyError";
+        this.rootError = config.rootError || null;
+        this.originalError = this.rootError;
+        this.recommendedAction = config.recommendedAction || null;
+        this.context = config.context || {};
+        this.location = config.location || "";
+        this.prettyMessage = createPrettyMessage(config);
+        
         Error.captureStackTrace(this, this.constructor);
-
-        this.prettyMessage = this.createPrettyMessage();
-    }
-
-    /**
-     * Creates a standardized error message incorporating all relevant information.
-     * @returns Formatted error message with context and recommendations
-     */
-    private createPrettyMessage(): string {
-        const parts: string[] = [
-            `🚨 ${this.name}: ${this.message}`
-        ];
-
-        if (this.location) {
-            parts.push(`📍 Location: ${this.location}`);
-        }
-
-        if (this.rootError?.message) {
-            parts.push(`📋 Root Cause: ${this.rootError.message}`);
-            if (this.rootError.stack) {
-                parts.push('Stack Trace:');
-                parts.push(this.rootError.stack);
-            }
-        }
-
-        if (this.recommendedAction) {
-            parts.push(`💡 Recommended Action: ${this.recommendedAction}`);
-        }
-
-        if (Object.keys(this.context).length > 0) {
-            parts.push('📄 Context:');
-            parts.push(JSON.stringify(this.context, null, 2));
-        }
-
-        return parts.join('\n');
+        logger.error(this.prettyMessage);
     }
 }
 
 /**
- * Type guard to check if an error is a PrettyError
+ * LLM invocation error implementation
+ */
+export class LLMInvocationError extends Error implements LLMError {
+    code: string;
+    provider: string;
+    retryable: boolean;
+    context: Record<string, unknown>;
+    originalError: Error | null;
+    recommendedAction: string | null;
+    details?: Record<string, unknown>;
+
+    constructor(
+        message: string,
+        provider: string,
+        originalError: Error | null = null,
+        recommendedAction: string | null = null,
+        context: Record<string, unknown> = {}
+    ) {
+        super(message);
+        this.name = "LLMInvocationError";
+        this.code = "LLM_INVOCATION_ERROR";
+        this.provider = provider;
+        this.retryable = false;
+        this.context = context;
+        this.originalError = originalError;
+        this.recommendedAction = recommendedAction;
+
+        Error.captureStackTrace(this, this.constructor);
+        logger.error(this.formattedMessage);
+    }
+
+    get formattedMessage(): string {
+        return createPrettyMessage({
+            message: this.message,
+            name: this.name,
+            rootError: this.originalError,
+            recommendedAction: this.recommendedAction,
+            context: this.context
+        });
+    }
+}
+
+/**
+ * LLM configuration error implementation
+ */
+export class LLMConfigurationError extends Error implements ConfigurationError {
+    code: string;
+    provider: string;
+    retryable: boolean;
+    details?: Record<string, unknown>;
+    parameter?: string;
+    invalidValue?: unknown;
+    expectedFormat?: string;
+
+    constructor(
+        message: string,
+        provider: string,
+        parameter?: string,
+        invalidValue?: unknown,
+        expectedFormat?: string
+    ) {
+        super(message);
+        this.name = "LLMConfigurationError";
+        this.code = "INVALID_CONFIG";
+        this.provider = provider;
+        this.retryable = false;
+        this.parameter = parameter;
+        this.invalidValue = invalidValue;
+        this.expectedFormat = expectedFormat;
+        this.details = {
+            parameter,
+            invalidValue,
+            expectedFormat
+        };
+
+        Error.captureStackTrace(this, this.constructor);
+        logger.error(this.formattedMessage);
+    }
+
+    get formattedMessage(): string {
+        return createPrettyMessage({
+            message: this.message,
+            name: this.name,
+            context: {
+                provider: this.provider,
+                parameter: this.parameter,
+                invalidValue: this.invalidValue,
+                expectedFormat: this.expectedFormat
+            }
+        });
+    }
+}
+
+/**
+ * Error handler utility functions
  */
 export function isPrettyError(error: unknown): error is PrettyError {
     return error instanceof PrettyError;
 }
 
-/**
- * Type guard to check if an error is an LLMInvocationError
- */
-export function isLLMInvocationError(error: unknown): error is LLMInvocationError {
-    return error instanceof LLMInvocationError;
+export function isLLMError(error: unknown): error is LLMError {
+    return (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        'provider' in error &&
+        'retryable' in error
+    );
+}
+
+export function wrapError(
+    error: Error,
+    context?: Record<string, unknown>,
+    recommendedAction?: string
+): PrettyError {
+    return new PrettyError({
+        message: error.message,
+        rootError: error,
+        context,
+        recommendedAction
+    });
+}
+
+export function createUserError(
+    message: string,
+    recommendedAction?: string,
+    context?: Record<string, unknown>
+): PrettyError {
+    return new PrettyError({
+        message,
+        type: 'UserError',
+        recommendedAction,
+        context
+    });
 }

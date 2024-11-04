@@ -24,7 +24,7 @@ import {
     TASK_STATUS_enum, 
     AGENT_STATUS_enum, 
     WORKFLOW_STATUS_enum 
-} from '@/utils/core/enums';
+} from "@/utils/types/common/enums";
 
 /**
  * Factory for creating default objects used throughout the application

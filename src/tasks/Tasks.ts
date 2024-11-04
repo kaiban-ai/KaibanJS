@@ -6,7 +6,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { TASK_STATUS_enum } from '@/utils/core/enums';
+import { TASK_STATUS_enum } from "@/utils/types/common/enums";
 import { logger } from '@/utils/core/logger';
 import type {
     TaskType,

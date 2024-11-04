@@ -1,134 +1,135 @@
 /**
- * C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\parsers\parser.ts
- * Data Parsing Utilities.
- *
- * This file offers functions for parsing and sanitizing data formats, particularly focusing on JSON structures that agents 
- * might receive or need to process. These utilities ensure that data handled by agents is in the correct format and free of 
- * errors that could disrupt processing.
- *
- * Usage:
- * Leverage these parsing utilities to preprocess or clean data before it is fed into agents or other processing functions within the library.
+ * @file parser.ts
+ * @path src/utils/parsers/parser.ts
+ * @description JSON parsing and recovery utilities
  */
 
-// Utility function to clean up JSON string and prepare it for parsing
+import { logger } from "../core/logger";
+import { ParsedJSON, ParserConfig, ParserResult } from '../types/common/parser';
 
-import type { ParsedJSON } from '@/utils/types';
-
-const getParsedJSON_4_tests_passing = (str: string): object | null => {
-    try {
-        // Attempt to directly parse the JSON first
-        return JSON.parse(str);
-    } catch (error) {
-        // Handle JSON strings with complex non-JSON text and real newlines
-        const startMarker = "/```json\n";
-        const endMarker = "\n```";
-        let jsonStartIndex = str.indexOf('{');
-        let jsonEndIndex = str.lastIndexOf('}') + 1;
-        
-        // If markdown encapsulation is detected
-        if (str.includes(startMarker) && str.includes(endMarker)) {
-            jsonStartIndex = str.indexOf(startMarker) + startMarker.length;
-            jsonEndIndex = str.indexOf(endMarker);
-        }
-
-        // Extract the JSON part from the string
-        let jsonPart = str.substring(jsonStartIndex, jsonEndIndex);
-
-        // Normalize the JSON string by handling line breaks, missing commas, etc.
-        let sanitizedStr = jsonPart
-            .replace(/\\n/g, "")
-            .replace(/\n/g, " ")
-            .replace(/([}\]])(\s*["{])/g, '$1,$2') // Insert missing commas where necessary
-            .replace(/,\s*([}\]])/g, '$1') // Remove trailing commas
-            .replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2":') // Ensure keys are quoted
-            .replace(/([{,]+)(\s*)(['"])?([a-z0-9A-Z_]+)(['"])?(\s*):/g, '$1"$4":') // Properly quote keys
-            .replace(/,\s*}/g, '}'); // Remove any trailing commas before closing braces
-
-        try {
-            // Try parsing again after sanitation
-            return JSON.parse(sanitizedStr);
-        } catch (finalError) {
-            console.error("Error parsing sanitized JSON: ", finalError);
-            return null;
-        }
-    }
+/**
+ * Default parser configuration
+ */
+const DEFAULT_CONFIG: Required<ParserConfig> = {
+    attemptRecovery: true,
+    maxDepth: 10,
+    allowNonStringProps: true,
+    sanitizers: []
 };
 
-function getParsedJSONV6(str: string): ParsedJSON {
-    // Define a schema based on expected keys and their patterns
-    const schema: { [key: string]: RegExp } = {
-        "thought": /"thought"\s*:\s*"([^"]*)"/,
-        "action": /"action"\s*:\s*"([^"]*)"/,
-        "actionInput": /"actionInput"\s*:\s*({[^}]*})/,
-        "observation": /"observation"\s*:\s*"([^"]*)"/,
-        "isFinalAnswerReady": /"isFinalAnswerReady"\s*:\s*(true|false)/,
-        "finalAnswer": /"finalAnswer"\s*:\s*"([^"]*)"/
-    };
-
-    let result: ParsedJSON = {};
-
-    // Iterate over each key in the schema to find matches in the input string
-    for (let key in schema) {
-        const regex = schema[key];
-        const match = str.match(regex);
-        if (match) {
-            if (key === "actionInput") {
-                // Assuming actionInput always contains a JSON-like object
-                try {
-                    result[key] = JSON.parse(match[1].replace(/'/g, '"'));
-                } catch (e) {
-                    result[key] = null; // Default to null if parsing fails
-                }
-            } else if (key === "isFinalAnswerReady") {
-                result[key] = match[1] === 'true'; // Convert string to boolean
-            } else {
-                result[key] = match[1];
-            }
-        }
-    }
-
-    return result;
+/**
+ * Sanitizes a JSON string for parsing
+ * @param str - Input string to sanitize
+ * @returns Sanitized string ready for parsing
+ */
+function sanitizeJsonString(str: string): string {
+    return str
+        .replace(/\\n/g, "")          // Remove escaped newlines
+        .replace(/\n/g, " ")          // Replace actual newlines with spaces
+        .replace(/([}\]])(\s*["{])/g, '$1,$2')  // Add missing commas
+        .replace(/,\s*([}\]])/g, '$1')  // Remove trailing commas
+        .replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2":')  // Quote unquoted keys
+        .replace(/([{,]+)(\s*)(['"])?([a-z0-9A-Z_]+)(['"])?(\s*):/g, '$1"$4":')  // Fix key formatting
+        .replace(/,\s*}/g, '}');  // Remove trailing comma before closing brace
 }
 
-function getParsedJSON(str: string): ParsedJSON {
+/**
+ * Recovers JSON from a malformed string
+ * @param str - Malformed JSON string
+ * @returns Recovered JSON string or null if recovery failed
+ */
+function recoverJson(str: string): string | null {
     try {
-        // First attempt to parse the JSON string directly
-        return JSON.parse(str);
-    } catch (e) {
-        // If JSON parsing fails, fall back to regex extraction
-        const schema: { [key: string]: RegExp } = {
-            "thought": /"thought"\s*:\s*"([^"]*)"/,
-            "action": /"action"\s*:\s*"([^"]*)"/,
-            "actionInput": /"actionInput"\s*:\s*({[^}]*})/,
-            "observation": /"observation"\s*:\s*"([^"]*)"/,
-            "isFinalAnswerReady": /"isFinalAnswerReady"\s*:\s*(true|false)/,
-            "finalAnswer": /"finalAnswer"\s*:\s*"([^"]*)"/
-        };
+        // Extract JSON-like content
+        const jsonStart = str.indexOf('{');
+        const jsonEnd = str.lastIndexOf('}') + 1;
+        
+        if (jsonStart === -1 || jsonEnd === 0) {
+            return null;
+        }
 
-        let result: ParsedJSON = {};
+        // Extract and sanitize the JSON part
+        let jsonPart = str.substring(jsonStart, jsonEnd);
 
-        // Iterate over each key in the schema to find matches in the input string
-        for (let key in schema) {
-            const regex = schema[key];
-            const match = str.match(regex);
-            if (match) {
-                if (key === "actionInput") {
-                    // Assuming actionInput always contains a JSON-like object
-                    try {
-                        result[key] = JSON.parse(match[1].replace(/'/g, '"'));
-                    } catch (e) {
-                        result[key] = null; // Default to null if parsing fails
-                    }
-                } else if (key === "isFinalAnswerReady") {
-                    result[key] = match[1] === 'true'; // Convert string to boolean
-                } else {
-                    result[key] = match[1];
-                }
+        // Handle markdown code blocks
+        if (str.includes("/```json\n")) {
+            const startMarker = "/```json\n";
+            const endMarker = "\n```";
+            const start = str.indexOf(startMarker) + startMarker.length;
+            const end = str.indexOf(endMarker);
+            if (start !== -1 && end !== -1) {
+                jsonPart = str.substring(start, end);
             }
         }
 
-        return result;
+        return sanitizeJsonString(jsonPart);
+    } catch {
+        return null;
     }
 }
 
-export { getParsedJSON, getParsedJSON_4_tests_passing, getParsedJSONV6 };
+/**
+ * Parses a string into a JSON object with recovery attempts
+ * @param str - String to parse
+ * @param config - Parser configuration
+ * @returns Parser result with parsed data or error
+ */
+export function parseJSON<T = any>(str: string, config: ParserConfig = {}): ParserResult<T> {
+    const finalConfig = { ...DEFAULT_CONFIG, ...config };
+    
+    try {
+        // Direct parse attempt
+        const result = JSON.parse(str) as T;
+        return {
+            success: true,
+            data: result,
+            originalInput: str
+        };
+    } catch (initialError) {
+        // Recovery attempt if enabled
+        if (finalConfig.attemptRecovery) {
+            try {
+                const recovered = recoverJson(str);
+                if (recovered) {
+                    const result = JSON.parse(recovered) as T;
+                    return {
+                        success: true,
+                        data: result,
+                        recoveryAttempted: true,
+                        originalInput: str
+                    };
+                }
+            } catch (recoveryError) {
+                logger.debug('Recovery attempt failed:', recoveryError);
+            }
+        }
+
+        // Return error result
+        return {
+            success: false,
+            error: {
+                message: initialError instanceof Error ? initialError.message : 'Unknown parsing error',
+                context: str
+            },
+            recoveryAttempted: finalConfig.attemptRecovery,
+            originalInput: str
+        };
+    }
+}
+
+/**
+ * Main parsing function for application JSON
+ * @param str - Input string to parse
+ * @returns Parsed JSON object or null if parsing fails
+ */
+export function getParsedJSON(str: string): ParsedJSON | null {
+    const result = parseJSON<ParsedJSON>(str);
+    
+    if (!result.success) {
+        logger.error("Failed to parse JSON:", result.error?.message);
+        logger.debug("Original input:", result.originalInput);
+        return null;
+    }
+
+    return result.data || null;
+}

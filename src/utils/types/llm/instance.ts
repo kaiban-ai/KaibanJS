@@ -8,7 +8,7 @@
  */
 
 import { LLMResponse } from './responses';
-import { LLMRuntimeOptions } from './providers';
+import { LLMRuntimeOptions } from './common';
 import { StreamingChunk } from './responses';
 import { Output } from './responses';
 

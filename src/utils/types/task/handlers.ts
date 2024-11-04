@@ -10,11 +10,11 @@
 import { Tool } from "langchain/tools";
 import { AgentType } from "@/utils/types/agent/base";
 import { TaskType } from "@/utils/types/task/base";
-import { ErrorType } from "@/utils/core/errors";
+import { ErrorType } from "../common";
 import { Output } from "@/utils/types/llm/responses";
 import { LLMUsageStats } from "@/utils/types/llm/responses";
 import { CostDetails } from "@/utils/types/workflow/stats";
-import { TASK_STATUS_enum } from "@/utils/core/enums";
+import { TASK_STATUS_enum } from "@/utils/types/common/enums";
 
 /**
  * Task execution handler parameters

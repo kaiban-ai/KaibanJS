@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ReactChampionAgent } from './reactChampionAgent';
 import { logger } from '@/utils/core/logger';
 import CustomMessageHistory from '@/utils/CustomMessageHistory';
-import { AGENT_STATUS_enum, TASK_STATUS_enum } from '@/utils/core/enums';
+import { AGENT_STATUS_enum, TASK_STATUS_enum } from "@/utils/types/common/enums";
 import { create } from 'zustand';
 import { BaseMessage } from "@langchain/core/messages";
 import { useAgentStore } from '@/stores/agentStore';

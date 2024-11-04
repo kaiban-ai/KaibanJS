@@ -7,7 +7,7 @@
  * @module @types/task
  */
 
-import { TASK_STATUS_enum } from "@/utils/core/enums";
+import { TASK_STATUS_enum } from "@/utils/types/common/enums";
 import { LLMUsageStats } from "@/utils/types/llm/responses";
 import { TaskType } from "./base";
 

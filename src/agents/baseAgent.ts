@@ -1,38 +1,51 @@
 /**
- * Path: src/agents/baseAgent.ts
+ * @file baseAgent.ts
+ * @path src/agents/baseAgent.ts
+ * @description Base agent implementation
  */
+
 import { v4 as uuidv4 } from 'uuid';
 import { Tool } from "langchain/tools";
 import { logger } from "@/utils/core/logger";
-import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from '@/utils/helpers/prompts';
-import { AGENT_STATUS_enum } from '@/utils/core/enums';
-import type { 
+import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from '@/utils/helpers/prompts/prompts';
+import { getApiKey } from '@/utils/helpers/agent/agentUtils';
+import { errorHandler } from '@/utils/handlers';
+import { 
     IBaseAgent,
     BaseAgentConfig,
-    LLMConfig,
-    TaskType,
-    TeamStore,
-    FeedbackObject,
-    AgenticLoopResult,
+    HandlerBaseParams,
     AgentType
+} from '@/utils/types/agent';
+import { 
+    LLMConfig,
+    TaskType, 
+    TeamStore,
+    FeedbackObject
 } from '@/utils/types';
+import { AgenticLoopResult } from '@/utils/types/llm';
+import { AGENT_STATUS_enum } from "@/utils/types/common/enums";
+import CustomMessageHistory from '@/utils/managers/messageHistoryManager';
 
-export class BaseAgentImplementation implements IBaseAgent {
-    id: string;
-    name: string;
-    role: string;
-    goal: string;
-    background: string;
-    tools: Tool[];
-    maxIterations: number;
-    store!: TeamStore; // Using definite assignment assertion
-    status: keyof typeof AGENT_STATUS_enum;
-    env: Record<string, any> | null;
-    llmInstance: any | null;
-    llmConfig: LLMConfig;
-    llmSystemMessage: string | null;
-    forceFinalAnswer: boolean;
-    promptTemplates: Record<string, any>;
+/**
+ * Base agent implementation
+ */
+export class BaseAgent implements IBaseAgent {
+    public id: string;
+    public name: string;
+    public role: string;
+    public goal: string;
+    public background: string;
+    public tools: Tool[];
+    public maxIterations: number;
+    public store!: TeamStore; // Using definite assignment assertion
+    public status: keyof typeof AGENT_STATUS_enum;
+    public env: Record<string, any> | null;
+    public llmInstance: any | null;
+    public llmConfig: LLMConfig;
+    public llmSystemMessage: string | null;
+    public forceFinalAnswer: boolean;
+    public promptTemplates: Record<string, any>;
+    public messageHistory: CustomMessageHistory;
 
     constructor({ 
         name, 
@@ -46,6 +59,7 @@ export class BaseAgentImplementation implements IBaseAgent {
         promptTemplates = {}, 
         llmInstance = null 
     }: BaseAgentConfig) {
+        // Initialize required properties
         this.id = uuidv4();
         this.name = name;
         this.role = role;
@@ -60,6 +74,12 @@ export class BaseAgentImplementation implements IBaseAgent {
         this.llmSystemMessage = null;
         this.forceFinalAnswer = forceFinalAnswer;
         this.promptTemplates = { ...REACT_CHAMPION_AGENT_DEFAULT_PROMPTS, ...promptTemplates };
+        this.messageHistory = new CustomMessageHistory();
+
+        // Validate required fields
+        if (!name || !role || !goal || !background) {
+            throw new Error('Required agent configuration fields missing');
+        }
     }
 
     initialize(store: TeamStore, env: Record<string, any>): void {
@@ -70,13 +90,15 @@ export class BaseAgentImplementation implements IBaseAgent {
         this.env = env;
 
         if (!this.llmInstance) {
-            const apiKey = this.getApiKey(this.llmConfig, this.env);
+            const apiKey = getApiKey(this.llmConfig, this.env);
             if (!apiKey && !this.llmConfig.apiBaseUrl) {
-                throw new Error('API key is missing. Please provide it through the Agent llmConfig or through the team env variable.');
+                throw new Error('API key is required via config or environment');
             }
             this.llmConfig.apiKey = apiKey;
             this.createLLMInstance();
         }
+
+        logger.info(`Initialized agent: ${this.name}`);
     }
 
     setStore(store: TeamStore): void {
@@ -88,99 +110,102 @@ export class BaseAgentImplementation implements IBaseAgent {
 
     setStatus(status: keyof typeof AGENT_STATUS_enum): void {
         this.status = status;
+        logger.debug(`Updated agent ${this.name} status to: ${status}`);
     }
 
     setEnv(env: Record<string, any>): void {
         this.env = env;
     }
 
-    public handleIterationStart({task, iterations, maxAgentIterations}: { 
-        task: TaskType; 
-        iterations: number; 
-        maxAgentIterations: number 
-    }): void {
-        this.setStatus(AGENT_STATUS_enum.ITERATION_START);
-        const newLog = this.store?.getState().prepareNewLog({
-            agent: this as unknown as AgentType,
-            task,
-            logDescription: `🏁 Agent ${this.name} - ${AGENT_STATUS_enum.ITERATION_START} (${iterations+1}/${maxAgentIterations})`,
-            metadata: { iterations, maxAgentIterations },
-            logType: 'AgentStatusUpdate',
-            agentStatus: this.status
-        });
-        logger.trace(`🏁 ${AGENT_STATUS_enum.ITERATION_START}: Agent ${this.name} -  (${iterations+1}/${maxAgentIterations})`);
-        if (newLog) {
-            this.store.getState().workflowLogs.push(newLog);
-        }
-    }
-
-    public handleIterationEnd({task, iterations, maxAgentIterations}: { 
-        task: TaskType; 
-        iterations: number; 
-        maxAgentIterations: number 
-    }): void {
-        this.setStatus(AGENT_STATUS_enum.ITERATION_END);
-        const newLog = this.store.getState().prepareNewLog({
-            agent: this as unknown as AgentType,
-            task,
-            logDescription: `🔄 Agent ${this.name} - ${AGENT_STATUS_enum.ITERATION_END}`,
-            metadata: { iterations, maxAgentIterations },
-            logType: 'AgentStatusUpdate',
-            agentStatus: this.status,
-        });
-        logger.trace(`🔄 ${AGENT_STATUS_enum.ITERATION_END}: Agent ${this.name} ended another iteration.`);
-        if (newLog) {
-            this.store.getState().workflowLogs.push(newLog);
-        }
-    }
-
-    public handleThinkingError({ task, error }: { task: TaskType; error: Error }): void {
-        this.setStatus(AGENT_STATUS_enum.THINKING_ERROR);
-        const newLog = this.store.getState().prepareNewLog({
-            agent: this as unknown as AgentType,
-            task,
-            logDescription: `🛑 Agent ${this.name} encountered an error during ${AGENT_STATUS_enum.THINKING}.`,
-            metadata: { error },
-            logType: 'AgentStatusUpdate',
-            agentStatus: this.status,
-        });
-        logger.error(`🛑 ${AGENT_STATUS_enum.THINKING_ERROR}: Agent ${this.name} encountered an error thinking. Further details: ${error.name ? error.name : 'No additional error details'}`, error.message);
-        if (newLog) {
-            this.store.getState().workflowLogs.push(newLog);
-        }
-        this.store.getState().handleTaskBlocked({ task, error });
-    }
-
-    // Abstract methods that must be implemented by subclasses
+    /**
+     * Abstract method to be implemented by subclasses
+     */
     createLLMInstance(): void {
-        throw new Error("createLLMInstance must be implemented by subclasses.");
+        throw new Error("createLLMInstance must be implemented by subclasses");
     }
 
+    /**
+     * Abstract method to be implemented by subclasses
+     */
     async workOnTask(task: TaskType): Promise<AgenticLoopResult> {
-        throw new Error("workOnTask must be implemented by subclasses.");
+        throw new Error("workOnTask must be implemented by subclasses");
     }
 
+    /**
+     * Abstract method to be implemented by subclasses
+     */
     async workOnFeedback(task: TaskType, feedbackList: FeedbackObject[], context: string): Promise<void> {
-        throw new Error("workOnFeedback must be implemented by subclasses.");
+        throw new Error("workOnFeedback must be implemented by subclasses");
     }
 
+    /**
+     * Normalize LLM configuration
+     */
     normalizeLlmConfig(llmConfig: LLMConfig): LLMConfig {
-        // Implementation remains the same
         return llmConfig;
     }
 
-    private getApiKey(llmConfig: LLMConfig, env: Record<string, any>): string | undefined {
-        if (llmConfig?.apiKey) return llmConfig.apiKey;
+    /**
+     * Handle agent iteration start
+     */
+    public handleIterationStart(params: { 
+        task: TaskType; 
+        iterations: number; 
+        maxAgentIterations: number 
+    }): void {
+        const { task, iterations, maxAgentIterations } = params;
 
-        const apiKeys: Record<string, string | undefined> = {
-            anthropic: env.ANTHROPIC_API_KEY,
-            google: env.GOOGLE_API_KEY,
-            mistral: env.MISTRAL_API_KEY,
-            openai: env.OPENAI_API_KEY,
-            groq: env.GROQ_API_KEY
-        };
-        return apiKeys[llmConfig?.provider || ''];    
+        this.setStatus(AGENT_STATUS_enum.ITERATION_START);
+        logger.debug(`Starting iteration ${iterations + 1}/${maxAgentIterations} for agent ${this.name}`);
+
+        const log = this.store.prepareNewLog({
+            agent: this as AgentType,
+            task,
+            logDescription: `Starting iteration ${iterations + 1}/${maxAgentIterations}`,
+            metadata: {
+                iterations,
+                maxAgentIterations,
+                timestamp: Date.now()
+            },
+            logType: 'AgentStatusUpdate',
+            agentStatus: AGENT_STATUS_enum.ITERATION_START
+        });
+
+        this.store.setState(state => ({
+            workflowLogs: [...state.workflowLogs, log]
+        }));
+    }
+
+    /**
+     * Handle iteration end
+     */
+    public handleIterationEnd(params: { 
+        task: TaskType; 
+        iterations: number; 
+        maxAgentIterations: number 
+    }): void {
+        const { task, iterations, maxAgentIterations } = params;
+
+        this.setStatus(AGENT_STATUS_enum.ITERATION_END);
+        logger.debug(`Completed iteration ${iterations + 1}/${maxAgentIterations} for agent ${this.name}`);
+
+        const log = this.store.prepareNewLog({
+            agent: this as AgentType,
+            task,
+            logDescription: `Completed iteration ${iterations + 1}/${maxAgentIterations}`,
+            metadata: {
+                iterations,
+                maxAgentIterations,
+                timestamp: Date.now()
+            },
+            logType: 'AgentStatusUpdate',
+            agentStatus: AGENT_STATUS_enum.ITERATION_END
+        });
+
+        this.store.setState(state => ({
+            workflowLogs: [...state.workflowLogs, log]
+        }));
     }
 }
 
-export { BaseAgentImplementation as BaseAgent };
+export { BaseAgent as BaseAgentImplementation };

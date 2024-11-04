@@ -1,132 +1,210 @@
 /**
- * Path: src/utils/types/index.ts
- * 
- * Type Definitions Index
- * ---------------------
- * Main entry point for types in the KaibanJS library. This file centralizes all type exports,
- * making them available through a single import point. Types are organized by category
- * for better maintainability and clarity.
- * 
- * Usage:
- * import { SomeType } from '@/utils/types';
+ * @file index.ts
+ * @path src/utils/index.ts
+ * @description Central export point for KaibanJS utilities
  */
 
-// Re-export all enums
-export {
-    AGENT_STATUS_enum,
-    TASK_STATUS_enum,
-    WORKFLOW_STATUS_enum,
-    FEEDBACK_STATUS_enum
-} from './core/enums';
+/**
+ * Core Utilities
+ */
+export { logger, setLogLevel } from './core/logger';
+export { 
+    PrettyError, 
+    LLMInvocationError, 
+    LLMConfigurationError,
+    isPrettyError, 
+    isLLMError,
+    wrapError,
+    createUserError
+} from './core/errors';
 
-// LLM-related types
+/**
+ * Factory Implementations
+ */
+export { DefaultFactory } from './factories/defaultFactory';
+export { LogCreator } from './factories/logCreator';
+export { MetadataFactory } from './factories/metadataFactory';
+
+/**
+ * Handler Implementations
+ */
+export {
+    errorHandler,
+    messageHandler,
+    storeHandler,
+    taskHandler,
+    teamHandler
+} from './handlers';
+
+/**
+ * Helper Functions
+ */
+// Cost calculation
+export {
+    calculateTaskCost,
+    calculateTotalWorkflowCost,
+    formatCost
+} from './helpers/costs/llmCostCalculator';
+
+// Agent utils
+export {
+    getApiKey,
+    replaceAgentAttributes,
+    validateAgentAttributes
+} from './helpers/agent/agentUtils';
+
+// Log formatting
+export {
+    logPrettyTaskCompletion,
+    logPrettyTaskStatus,
+    logPrettyWorkflowStatus,
+    logPrettyWorkflowResult
+} from './helpers/formatting/prettyLogs';
+
+// Statistics calculation
+export {
+    calculateTaskStats,
+    calculateAverageCostPerToken,
+    calculateTokenRate
+} from './helpers/stats';
+
+/**
+ * Manager Implementations
+ */
+export { MessageHistoryManager } from './managers/messageHistoryManager';
+
+/**
+ * Parser Implementations
+ */
+export {
+    parseJSON,
+    getParsedJSON
+} from './parsers/parser';
+
+/**
+ * Type Guard Exports
+ */
+// Common type guards
+export { EnumTypeGuards } from './types/common/enums';
+export { LogTypeGuards } from './types/team/logs';
+export { MessageTypeUtils } from './types/messaging/base';
+export { AgentTypeGuards } from './types/agent/base';
+export { TaskTypeGuards } from './types/task/base';
+export { TeamTypeGuards } from './types/team/base';
+export { WorkflowTypeGuards } from './types/workflow/base';
+
+/**
+ * Type Exports
+ */
+export type {
+    // Agent types
+    IBaseAgent,
+    IReactChampionAgent,
+    AgentType,
+    SystemAgent,
+    BaseAgentConfig,
+    IAgentParams
+} from './types/agent';
+
+// Common types
+export type {
+    ErrorType,
+    PrettyErrorType,
+    ConfigurationError,
+    RateLimitError,
+    TokenLimitError,
+    ErrorConfig,
+    ParsedJSON,
+    ParserConfig,
+    ParserResult
+} from './types/common';
+
+// LLM types
 export type {
     LLMProvider,
+    LLMConfig,
     BaseLLMConfig,
     GroqConfig,
     OpenAIConfig,
     AnthropicConfig,
     GoogleConfig,
     MistralConfig,
-    LLMConfig,
-    LLMInstance
-} from '@/utils/types';
+    Output,
+    LLMResponse,
+    CompletionResponse,
+    LLMUsageStats,
+    TokenUsage,
+    ResponseMetadata,
+    ParsedOutput
+} from './types/llm';
 
-// Agent-related types
+// Messaging types
 export type {
-    BaseAgentConfig,
-    IBaseAgent,
-    IReactChampionAgent,
-    AgentType,
-    IAgentParams
-} from '@/utils/types';
+    MessageRole,
+    FunctionCall,
+    ToolCall,
+    AdditionalKwargs,
+    MessageMetadataFields,
+    InternalChatMessage,
+    ChatMessage,
+    MessageContext,
+    IMessageHistory
+} from './types/messaging';
 
-// Task-related types
+// Task types
 export type {
     TaskType,
     TaskResult,
     TaskStats,
     FeedbackObject,
-    ITaskParams,
-    ITask
-} from '@/utils/types';
+    ITaskParams
+} from './types/task';
 
-// Store-related types
+// Team types
 export type {
-    StoreSubscribe,
-    BaseStoreState,
-    TaskStoreState,
     TeamState,
-    TeamStateActions,
     TeamStore,
-    ITeamParams,
-    ITeam
-} from '@/utils/types';
-
-// Output and Response types
-export type {
-    Output,
-    LLMUsageStats,
-    AgenticLoopResult,
-    StreamingHandlerConfig,
-    CompletionResponse
-} from '@/utils/types';
-
-// Handler types
-export type {
-    HandlerBaseParams,
-    ThinkingHandlerParams,
-    ToolHandlerParams,
-    StatusHandlerParams,
-    IterationHandlerParams,
-    TaskCompletionParams,
-    MessageBuildParams,
+    TeamEnvironment,
+    TeamInputs,
+    Log,
+    LogType,
+    LogMetadata,
+    AgentLogMetadata,
+    TaskLogMetadata,
+    WorkflowLogMetadata,
+    MessageLogMetadata,
     PrepareNewLogParams
-} from '@/utils/types';
+} from './types/team';
 
-// Logging and Display types
+// Workflow types
 export type {
-    TaskCompletionProps,
-    TaskStatusProps,
-    WorkflowStatusProps,
-    WorkflowResultProps,
-    Log
-} from '@/utils/types';
+    WorkflowResult,
+    WorkflowError,
+    WorkflowStats,
+    CostDetails
+} from './types/workflow';
 
-// Error types
-export type {
-    ErrorType,
-    PrettyErrorType
-} from '@/utils/types';
 
-// Cost Calculation types
-export type {
-    CostDetails,
-    ModelPricing
-} from '@/utils/types';
 
-// Parser types
-export type {
-    ParsedJSON
-} from '@/utils/types';
-
-// Factory Pattern types
-export type {
-    LLMFactory,
-    LLMFactoryCreator
-} from '@/utils/types';
-
-// Type guard functions
+/**
+ * Enum Exports
+ */
 export {
-    isGroqConfig,
-    isOpenAIConfig,
-    isAnthropicConfig,
-    isGoogleConfig,
-    isMistralConfig
-} from '@/utils/types';
+    AGENT_STATUS_enum,
+    TASK_STATUS_enum,
+    WORKFLOW_STATUS_enum,
+    FEEDBACK_STATUS_enum
+} from './types/common/enums';
 
-// External type re-exports
-export type { Tool } from "langchain/tools";
-export type { BaseMessage } from "@langchain/core/messages";
-export type { ChatGroqInput } from "@langchain/groq";
-export type { GoogleGenerativeAIChatInput } from "@langchain/google-genai";
+/**
+ * Constants
+ */
+export {
+    TOKEN_LIMITS,
+    LLMProviders
+} from './types/llm/common';
+
+/**
+ * Default Configurations
+ */
+export { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from './helpers/prompts/prompts';

@@ -1,49 +1,61 @@
 /**
  * @file history.ts
  * @path src/utils/types/messaging/history.ts
- * @description Message history types and interfaces
- *
- * @packageDocumentation
- * @module @types/messaging
+ * @description Type definitions for message history management
  */
 
-import { BaseMessage, SystemMessage, HumanMessage, AIMessage, FunctionMessage, ChatMessage } from "@langchain/core/messages";
-import { LLMUsageStats } from "../llm/responses";
-import { CostDetails } from "../workflow/stats";
+import { 
+    BaseMessage, 
+    SystemMessage, 
+    HumanMessage, 
+    AIMessage, 
+    FunctionMessage 
+} from "@langchain/core/messages";
 
 /**
- * Message history configuration options
+ * Configuration options for message history
  */
 export interface MessageHistoryConfig {
+    /** Maximum number of messages to retain */
     maxMessages?: number;
+    
+    /** Maximum tokens to retain */
     maxTokens?: number;
+    
+    /** Strategy for pruning messages */
     pruningStrategy?: 'fifo' | 'lru' | 'relevance';
+    
+    /** Retention period in milliseconds */
     retentionPeriod?: number;
+    
+    /** Whether to enable persistence */
     persistenceEnabled?: boolean;
+    
+    /** Whether to enable compression */
     compressionEnabled?: boolean;
 }
 
 /**
- * Message history interface
+ * Core message history interface
  */
 export interface IMessageHistory {
     /**
-     * Add a message to history
+     * Add a message to the history
      */
     addMessage(message: BaseMessage): Promise<void>;
 
     /**
-     * Get all messages
+     * Retrieve all messages
      */
     getMessages(): Promise<BaseMessage[]>;
 
     /**
-     * Clear all messages
+     * Clear the message history
      */
     clear(): Promise<void>;
 
     /**
-     * Current message count
+     * Current number of messages
      */
     readonly length: number;
 
@@ -69,10 +81,13 @@ export interface IMessageHistory {
 }
 
 /**
- * Message history state
+ * Message history state interface
  */
 export interface MessageHistoryState {
+    /** List of messages */
     messages: BaseMessage[];
+    
+    /** History metadata */
     metadata: {
         totalMessages: number;
         totalTokens: number;
@@ -82,14 +97,25 @@ export interface MessageHistoryState {
 }
 
 /**
- * Message history metrics
+ * Message history metrics interface
  */
 export interface MessageHistoryMetrics {
+    /** Message count */
     messageCount: number;
+    
+    /** Token count */
     tokenCount: number;
+    
+    /** Average message size */
     averageMessageSize: number;
+    
+    /** Number of prunes */
     pruneCount: number;
+    
+    /** Compression ratio */
     compressionRatio?: number;
+    
+    /** Load time metrics */
     loadTimes: {
         average: number;
         max: number;
@@ -98,25 +124,34 @@ export interface MessageHistoryMetrics {
 }
 
 /**
- * Message type guards
+ * Type guards for message types
  */
 export const MessageTypeGuards = {
-    isBaseMessage: (message: unknown): message is BaseMessage => {
-        return message instanceof BaseMessage;
-    },
+    /**
+     * Check if value is a system message
+     */
     isSystemMessage: (message: unknown): message is SystemMessage => {
         return message instanceof SystemMessage;
     },
+
+    /**
+     * Check if value is a human message
+     */
     isHumanMessage: (message: unknown): message is HumanMessage => {
         return message instanceof HumanMessage;
     },
+
+    /**
+     * Check if value is an AI message
+     */
     isAIMessage: (message: unknown): message is AIMessage => {
         return message instanceof AIMessage;
     },
+
+    /**
+     * Check if value is a function message
+     */
     isFunctionMessage: (message: unknown): message is FunctionMessage => {
         return message instanceof FunctionMessage;
-    },
-    isChatMessage: (message: unknown): message is ChatMessage => {
-        return message instanceof ChatMessage;
     }
 };
