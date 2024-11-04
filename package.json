@@ -101,13 +101,12 @@
     "@rollup/plugin-replace": "5.0.7",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
-    "@types/eslint__js": "^8.42.3",
     "@types/init-package-json": "^1.10.3",
+    "@typescript-eslint/eslint-plugin": "^8.6.0",
     "@typescript-eslint/parser": "^8.6.0",
     "babel-jest": "^29.7.0",
     "dotenv": "16.4.5",
     "eslint": "^9.11.0",
-    "eslint-plugin-jest": "^28.8.3",
     "eslint-plugin-react": "^7.36.1",
     "globals": "^15.9.0",
     "husky": "^9.1.6",
@@ -119,7 +118,7 @@
     "rollup-plugin-dts": "6.1.1",
     "rollup-plugin-peer-deps-external": "2.2.4",
     "tslib": "^2.7.0",
-    "typescript": "^5.6.2",
+    "typescript": "^5.5.4",
     "typescript-eslint": "^8.6.0"
   },
   "engines": {
@@ -130,6 +129,6 @@
       "prettier --write",
       "eslint --cache --fix"
     ],
-    "*.{md,html,css,scss,sass,less,ejs,mjs,cjs,json}": "prettier --write"
+    "*.{html,css,scss,sass,less,ejs,mjs,cjs}": "prettier --write"
   }
 }
