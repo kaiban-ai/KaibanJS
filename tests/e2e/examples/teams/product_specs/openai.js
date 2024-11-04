@@ -13,7 +13,7 @@ const requirementsAnalyst = new Agent({
     role: 'Requirements Analyst', 
     goal: 'Outline core functionalities and objectives for new features based on the founder’s input.', 
     background: 'Business Analysis',
-    tools: []
+    // tools: []
 });
 
 const technicalWriter = new Agent({

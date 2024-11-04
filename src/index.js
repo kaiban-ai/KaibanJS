@@ -129,70 +129,109 @@ class Task {
  * and observe the state of the team's operations.
  */
 class Team {
-  /**
-   * Creates a new Team instance.
-   *
-   * @param {Object} config - The configuration object for the team.
-   * @param {string} config.name - The name of the team.
-   * @param {Array} config.agents - The list of agents in the team.
-   * @param {Array} config.tasks - The list of tasks for the team to work on.
-   * @param {string} config.logLevel - The logging level for the team's operations.
-   * @param {Object} config.inputs - Initial inputs for the team's tasks.
-   * @param {Object} config.env - Environment variables for the team.
-   */
-  constructor({ name, agents, tasks, logLevel, inputs = {}, env = null }) {
-    this.store = createTeamStore({
-      name,
-      agents: [],
-      tasks: [],
-      inputs,
-      env,
-      logLevel,
-    });
+    /**
+     * Creates a new Team instance.
+     * 
+     * @param {Object} config - The configuration object for the team.
+     * @param {string} config.name - The name of the team.
+     * @param {Array} config.agents - The list of agents in the team.
+     * @param {Array} config.tasks - The list of tasks for the team to work on.
+     * @param {string} config.logLevel - The logging level for the team's operations.
+     * @param {Object} config.inputs - Initial inputs for the team's tasks.
+     * @param {Object} config.env - Environment variables for the team.
+     */    
+    constructor({ name, agents, tasks, logLevel, inputs = {}, env = null }) {
+        this.store = createTeamStore({ name, agents:[], tasks:[], inputs, env, logLevel});
+             
+        // Add agents and tasks to the store, they will be set with the store automatically
+        this.store.getState().addAgents(agents);
+        this.store.getState().addTasks(tasks);
 
-    // Add agents and tasks to the store, they will be set with the store automatically
-    this.store.getState().addAgents(agents);
-    this.store.getState().addTasks(tasks);
-  }
+    }
 
-  /**
-   * Starts the team's workflow.
-   * This method initiates the process of agents working on tasks.
-   *
-   * @param {Object} inputs - Optional inputs to override or supplement the initial inputs.
-   * @returns {void}
-   */
-  async start(inputs = null) {
-    return new Promise((resolve) => {
-      const unsubscribe = this.store.subscribe(
-        (state) => state.teamWorkflowStatus,
-        (status) => {
-          const state = this.store.getState();
-          switch (status) {
-            case WORKFLOW_STATUS_enum.FINISHED:
-              unsubscribe();
-              resolve({
-                status,
-                result: state.workflowResult,
-                stats: this.getWorkflowStats(),
-              });
-              break;
-            case WORKFLOW_STATUS_enum.ERRORED:
-              unsubscribe();
-              reject(new Error("Workflow encountered an error"));
-              break;
-            case WORKFLOW_STATUS_enum.BLOCKED:
-              unsubscribe();
-              resolve({
-                status,
-                result: null,
-                stats: this.getWorkflowStats(),
-              });
-              break;
-            default:
-              // For other statuses (like RUNNING), we don't resolve yet
-              break;
-          }
+    /**
+     * Starts the team's workflow.
+     * This method initiates the process of agents working on tasks.
+     * 
+     * @param {Object} inputs - Optional inputs to override or supplement the initial inputs.
+     * @returns {void}
+     */    
+    async start(inputs = null) {
+
+        return new Promise((resolve, reject) => {
+            const unsubscribe = this.store.subscribe(
+                state => state.teamWorkflowStatus,
+                (status) => {
+                    const state = this.store.getState();
+                    switch (status) {
+                        case WORKFLOW_STATUS_enum.FINISHED:
+                            unsubscribe();
+                            resolve({
+                                status,
+                                result: state.workflowResult,
+                                stats: this.getWorkflowStats()
+                            });
+                            break;
+                        case WORKFLOW_STATUS_enum.ERRORED:
+                            unsubscribe();
+                            reject(new Error('Workflow encountered an error'));
+                            break;
+                        case WORKFLOW_STATUS_enum.BLOCKED:
+                            unsubscribe();
+                            resolve({
+                                status,
+                                result: null,
+                                stats: this.getWorkflowStats()
+                            });
+                            break;
+                        default:
+                            // For other statuses (like RUNNING), we don't resolve yet
+                            break;
+                    }
+                }
+            );
+
+            try {
+                // Trigger the workflow
+                this.store.getState().startWorkflow(inputs);
+            } catch (error) {
+                // If an error occurs during the workflow execution, reject the promise
+                td.signal('workflow_start_error', { errorMessage: error.message });
+                reject(error);
+                // Unsubscribe to prevent memory leaks in case of an error
+                unsubscribe();
+            }
+        });
+    }
+
+
+    /**
+     * Provides direct access to the underlying store.
+     * This method is intended for advanced users who need more control over the state.
+     * More DX friendly for NodeJS Developers
+     * 
+     * @returns {Object} The store object.
+     */    
+    getStore() {
+        return this.store;
+    }
+
+    /**
+     * Provides direct access to the underlying store.
+     * This method is intended for advanced users who need more control over the state.
+     * More DX friendly for React Developers
+     * 
+     * @returns {Object} The store object.
+     */        
+    useStore() {
+        return this.store;
+    }
+
+    // Enhanced subscribeToChanges to listen for specific properties
+    subscribeToChanges(listener, properties = []) {
+        if (properties.length === 0) {
+            // No specific properties, return global subscription
+            return this.store.subscribe(listener);
         }
       );
 

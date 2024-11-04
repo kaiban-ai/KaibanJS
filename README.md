@@ -5,7 +5,7 @@
       <img src="https://res.cloudinary.com/dnno8pxyy/image/upload/v1724533982/icon_htfer2.png" height="128">
     </picture>
     <h1 align="center">KaibanJS</h1>
-    <h3 align="center">JavaScript-native framework for building multi-agent AI systems.</h3>
+    <h3 align="center">The JavaScript Framework for Building Multi-agent Systems.</h3>
   </a>
 </p>
 
@@ -30,19 +30,73 @@
   </a>
 </p>
 
+---
+
+## Kanban for AI Agents? 🤖📋
+
+**KaibanJS** is inspired by the tried-and-true [Kanban methodology](https://en.wikipedia.org/wiki/Kanban_(development)), which is well-known for helping teams organize and manage their work. We’ve adapted these concepts to meet the **unique challenges of AI agent management**.
+
+If you've used tools like Trello, Jira, or ClickUp, you'll be familiar with how Kanban helps manage tasks. Now, KaibanJS uses that same system to help you manage AI agents and their tasks in real time.
+
+**With KaibanJS, you can:**
+
+- 🔨 Create, visualize, and manage AI agents, tasks, tools, and teams  
+- 🎯 Orchestrate AI workflows seamlessly  
+- 📊 Visualize workflows in real-time  
+- 🔍 Track progress as tasks move through different stages  
+- 🤝 Collaborate more effectively on AI projects
+
 ## Try It Out
 
-[Explore the Playground](https://www.kaibanjs.com/playground) — *it's like Trello or Asana, but for AI Agents and humans.*
+[Explore the Kaiban Board](https://www.kaibanjs.com/playground) — *it's like Trello or Asana, but for AI Agents and humans.*
 
-## Getting Started
+## Quick Start
 
-### Install KaibanJS via npm:
+Get started with KaibanJS in under a minute:
+
+[![Quick Start Video](https://res.cloudinary.com/dnno8pxyy/image/upload/v1728039764/KaibanJS_QuickStart_Guide_2_asuyvu.jpg)](https://youtu.be/NFpqFEl-URY?si=_JCkJuprRxqD0Uo "Quick Start Video")
+
+## Setup
+
+**1. Run the KaibanJS initializer in your project directory:**
+```bash
+npx kaibanjs@latest init
+```
+
+**2. Add your AI service API key to the `.env` file:**
+```
+VITE_OPENAI_API_KEY=your-api-key-here
+```
+
+**3. Restart your Kaiban Board:**
+```bash
+npm run kaiban
+```
+
+### Using Your Kaiban Board
+
+1. Click "Start Workflow" to run the default example.
+2. Watch agents complete tasks in real-time on the Task Board.
+3. View the final output in the Results Overview.
+
+## Flexible Integration
+
+> KaibanJS isn't limited to the Kaiban Board. You can integrate it directly into your projects, create custom UIs, or run agents without a UI. Explore our tutorials for [React](https://docs.kaibanjs.com/get-started/Tutorial:%20React%20+%20AI%20Agents) and [Node.js](https://docs.kaibanjs.com/get-started/Tutorial:%20Node.js%20+%20AI%20Agents) integration to unleash the full potential of KaibanJS in various development contexts.
+
+## Manual Installation and Usage
+
+If you prefer to set up KaibanJS manually follow these steps:
+
+<details style="margin-bottom:10px;">
+  <summary><b style="color:black;">1. Install KaibanJS via npm:</b></summary>
 
 ```bash
 npm install kaibanjs
 ```
+</details>  
 
-### Import KaibanJS in your JavaScript file:
+<details style="margin-bottom:10px;">
+  <summary><b style="color:black;">2. Import KaibanJS in your JavaScript file:</b></summary>
 
 ```js
 // Using ES6 import syntax for NextJS, React, etc.
@@ -53,85 +107,43 @@ import { Agent, Task, Team } from "kaibanjs";
 // Using CommonJS syntax for NodeJS
 const { Agent, Task, Team } = require("kaibanjs");
 ```
-
-> Note: KaibanJS is TypeScript-supported. To learn more, check out the [NodeJS TypeScript example](https://github.com/kaiban-ai/KaibanJS/blob/main/playground/nodejs-ts/README.md).
-
-## Example Usage
-
-In this example, we use KaibanJS to build a resume generation team. If you're looking to create or update your resume, this setup utilizes specialized AI agents to automatically process your information and produce a polished, professional resume tailored to your career goals.
+</details>
+<details style="margin-bottom:10px;">
+  <summary><b style="color:black;">3. Basic Usage Example</b></summary>
 
 ```js
-
-// Define agents with specific roles and goals
-const profileAnalyst = new Agent({
-    name: 'Mary', 
-    role: 'Profile Analyst', 
-    goal: 'Extract structured information from conversational user input.', 
-    background: 'Data Processor',
-    tools: []  // Tools are omitted for now
+// Define an agent
+const researchAgent = new Agent({
+  name: 'Researcher',
+  role: 'Information Gatherer',
+  goal: 'Find relevant information on a given topic'
 });
 
-const resumeWriter = new Agent({
-    name: 'Alex Mercer', 
-    role: 'Resume Writer', 
-    goal: `Craft compelling, well-structured resumes 
-    that effectively showcase job seekers qualifications and achievements.`,
-    background: `Extensive experience in recruiting, 
-    copywriting, and human resources, enabling 
-    effective resume design that stands out to employers.`,
-    tools: []
+// Create a task
+const researchTask = new Task({
+  description: 'Research recent AI developments',
+  agent: researchAgent
 });
 
-// Define the tasks for each agent
-const processingTask = new Task({ 
-  description: `Extract relevant details such as name, 
-  experience, skills, and job history from the user's 'aboutMe' input. 
-  aboutMe: {aboutMe}`,
-  expectedOutput: 'Structured data ready to be used for a resume creation.', 
-  agent: profileAnalyst
-});
-
-const resumeCreationTask = new Task({ 
-    description: `Utilize the structured data to create 
-    a detailed and attractive resume. 
-    Enrich the resume content by inferring additional details from the provided information.
-    Include sections such as a personal summary, detailed work experience, skills, and educational background.`,
-    expectedOutput: `A professionally formatted resume in markdown format, 
-    ready for submission to potential employers.`, 
-    agent: resumeWriter 
-});
-
-// Create and start the team
+// Set up a team
 const team = new Team({
-  name: "Resume Creation Team",
-  agents: [profileAnalyst, resumeWriter],
-  tasks: [processingTask, resumeCreationTask],
-  inputs: { aboutMe: `My name is David Llaca. 
-    JavaScript Developer for 5 years. 
-    I worked for three years at Disney, 
-    where I developed user interfaces for their primary landing pages
-     using React, NextJS, and Redux. Before Disney, 
-     I was a Junior Front-End Developer at American Airlines, 
-     where I worked with Vue and Tailwind. 
-     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
-     and I completed a JavaScript bootcamp that same year.` },  // Initial input for the first task
-    env: {OPENAI_API_KEY: 'your-open-ai-api-key'}  // Environment variables for the team
+  name: 'AI Research Team',
+  agents: [researchAgent],
+  tasks: [researchTask],
+  env: {OPENAI_API_KEY: 'your-api-key-here'}
 });
 
-// Listen to the workflow status changes
-// team.onWorkflowStatusChange((status) => {
-//   console.log("Workflow status:", status);
-// });
-
+// Start the workflow
 team.start()
   .then((output) => {
-    console.log("Workflow status:", output.status);
-    console.log("Result:", output.result);
+    console.log("Workflow completed:", output.result);
   })
   .catch((error) => {
-    console.error("Workflow encountered an error:", error);
+    console.error("Workflow error:", error);
   });
 ```
+</details>
+
 
 ## Basic Concepts
 
@@ -144,13 +156,19 @@ Tasks define the specific actions each agent must take, their expected outputs, 
 **Team**
 The Team coordinates the agents and their tasks. It starts with an initial input and manages the flow of information between tasks.
 
+Watch this video to learn more about the concepts: [KaibanJS Concepts](https://youtu.be/VxfOIZLvBug?si=550uEiB3nriZ6trQ)
+
 ## Key Features
 
-<!-- - **Role-Based Agent Design:** Design agents with specific roles and goals.
-- **Redux-Inspired Architecture:** This architecture offers a unified approach to managing the states of all AI agents. As a big plus, it integrates effortlessly into your React applications.
-- **Real-Time Visualizer:** Built-in UI visualizer for development and debugging.
-- **Browser and Server Compatibility:** Works seamlessly across client and server environments.
-- **Multi-Model Support:** Integrates with various AI models including OpenAI, Gemini, Claude, and Mistral, enhancing versatility and adaptability. -->
+  <details style="margin-bottom:10px;">
+  <summary><b style="color:black;">The Kaiban Board</b></summary>
+
+Kanban boards are excellent tools for showcasing team workflows in real time, providing a clear and interactive snapshot of each member's progress. 
+
+>We’ve adapted this concept for AI agents. 
+
+Now, you can visualize the workflow of your AI agents as team members, with tasks moving from "To Do" to "Done" right before your eyes. This visual representation simplifies understanding and managing complex AI operations, making it accessible to anyone, anywhere.
+</details> 
 
 <details style="margin-bottom:10px;">
   <summary><b style="color:black;">Role-Based Agent Design</b></summary>
@@ -399,18 +417,7 @@ useStore.subscribe(state => state.workflowLogs, (newLogs, previousLogs) => {
 For more details on how to utilize observability features in KaibanJS, please visit the [documentation](https://github.com/kaiban-ai/KaibanJS).  
   </details>     
 
-  </details>
-  <details style="margin-bottom:10px;">
-  <summary><b style="color:black;">Real-Time Agentic Kanban Board</b></summary>
 
-<p style="margin-top:10px;">
-Work, prototype, run, and share your AI agents effortlessly with your teams and clients—no installations, complex commands, or servers required. Who said that AI is hard anymore?
-</p>
-
-**Why a Kanban Board?**
-
-Kanban boards are excellent tools for showcasing team workflows in real time, providing a clear and interactive snapshot of each member's progress. We’ve adapted this concept for AI agents. Now, you can visualize the workflow of your AI agents as team members, with tasks moving from "To Do" to "Done" right before your eyes. This visual representation simplifies understanding and managing complex AI operations, making it accessible to anyone, anywhere.
-</details> 
 
 ## Documentation
 

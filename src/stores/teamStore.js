@@ -20,6 +20,10 @@ import {calculateTotalWorkflowCost} from '../utils/llmCostCalculator';
 import { subscribeWorkflowStatusUpdates } from '../subscribers/teamSubscriber';
 import { subscribeTaskStatusUpdates } from '../subscribers/taskSubscriber';
 import { setupWorkflowController } from './workflowController';
+import { initializeTelemetry } from '../utils/telemetry';
+
+// Initialize telemetry with default values
+const td = initializeTelemetry();
 
 // ──── Store Factory for Multiple Teams ───────────────────────────────
 // 
@@ -75,6 +79,7 @@ const createTeamStore = (initialState = {}) => {
     startWorkflow: async (inputs) => {
         // Start the first task or set all to 'TODO' initially
         logger.info(`🚀 Team *${get().name}* is starting to work.`);
+        td.signal('workflow_started');
         get().resetWorkflowStateAction();
 
         if(inputs){
