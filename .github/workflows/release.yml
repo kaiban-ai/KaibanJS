@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Enter the version for this release"
+        description: 'Enter the version for this release'
         required: true
 
 jobs:

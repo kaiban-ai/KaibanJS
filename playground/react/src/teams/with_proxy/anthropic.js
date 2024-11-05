@@ -1,4 +1,4 @@
-const { Agent, Task, Team } = require("kaibanjs");
+import { Agent, Task, Team } from 'kaibanjs';
 
 // Define agents
 const profileAnalyst = new Agent({
@@ -55,7 +55,7 @@ const resumeCreationTask = new Task({
 
 // Create a team
 const team = new Team({
-  name: "Resume Creation Team",
+  name: 'Resume Creation Team',
   agents: [profileAnalyst, resumeWriter],
   tasks: [processingTask, resumeCreationTask],
   inputs: { aboutMe: `My name is David Llaca. 

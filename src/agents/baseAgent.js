@@ -9,9 +9,9 @@
  * Extend this class to create specialized agents with specific behaviors suited to different types of tasks and workflows.
  */
 
-import { v4 as uuidv4 } from "uuid";
-import { AGENT_STATUS_enum } from "../utils/enums";
-import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from "../utils/prompts";
+import { v4 as uuidv4 } from 'uuid';
+import { AGENT_STATUS_enum } from '../utils/enums';
+import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from '../utils/prompts';
 
 class BaseAgent {
     constructor({ name, role, goal, background, tools = [], llmConfig = {}, maxIterations = 10, forceFinalAnswer = true, promptTemplates = {}, llmInstance = null  }) {

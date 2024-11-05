@@ -118,7 +118,7 @@ const createTeamStore = (initialState = {}) => {
             // Cloning tasks and agents to ensure there are no direct mutations
             const resetTasks = state.tasks.map(task => ({
                 ...task,
-                status: "TODO",
+                status: 'TODO',
                 // Ensure to reset or clear any other task-specific states if needed
             }));
 
@@ -133,7 +133,7 @@ const createTeamStore = (initialState = {}) => {
                 tasks: resetTasks,
                 agents: resetAgents,
                 workflowLogs: [],
-                workflowContext: "",
+                workflowContext: '',
                 workflowResult: null,
                 teamWorkflowStatus: WORKFLOW_STATUS_enum.INITIAL
             };

@@ -17,7 +17,7 @@
 #### Importing
 
 ```js
-const { mock, record, restoreAll, getRecords } = require("moscaFetch");
+const { mock, record, restoreAll, getRecords } = require('moscaFetch');
 ```
 
 #### Mocking Requests

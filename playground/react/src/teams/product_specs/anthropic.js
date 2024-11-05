@@ -1,4 +1,4 @@
-import { Agent, Task, Team } from "kaibanjs";
+import { Agent, Task, Team } from 'kaibanjs';
 
 // Define agents
 const requirementsAnalyst = new Agent({
@@ -66,7 +66,7 @@ const validationTask = new Task({
 
 // Create a team
 const team = new Team({
-  name: "Product Specs Team",
+  name: 'Product Specs Team',
   agents: [requirementsAnalyst, technicalWriter, validator],
   tasks: [analysisTask, writingTask, validationTask],
   inputs: { founderIdea: 'I want to add a Referral program to our SAAS platform.' },  // Initial input for the first task

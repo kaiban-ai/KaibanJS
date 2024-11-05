@@ -100,7 +100,7 @@ npm install kaibanjs
 
 ```js
 // Using ES6 import syntax for NextJS, React, etc.
-import { Agent, Task, Team } from "kaibanjs";
+import { Agent, Task, Team } from 'kaibanjs';
 ```
 
 ```js
@@ -180,7 +180,7 @@ In this example, our software development team is powered by three specialized A
 </p>
 
 ```js
-import { Agent } from "kaibanjs";
+import { Agent } from 'kaibanjs';
 
 const daveLoper = new Agent({
   name: 'Dave Loper',
@@ -217,12 +217,12 @@ In this example, one of the AI agents, Peter Atlas, leverages the Tavily Search 
 </p>
 
 ```js
-import { Agent, Tool } from "kaibanjs";
+import { Agent, Tool } from 'kaibanjs';
 
 const tavilySearchResults = new Tool({
-  name: "Tavily Search Results",
+  name: 'Tavily Search Results',
   maxResults: 1,
-  apiKey: "ENV_TRAVILY_API_KEY",
+  apiKey: 'ENV_TRAVILY_API_KEY',
 });
 
 const peterAtlas = new Agent({
@@ -248,12 +248,12 @@ In this example, the agents—Emma, Lucas, and Mia—use diverse AI models to ha
 </p>
 
 ```js
-import { Agent } from "kaibanjs";
+import { Agent } from 'kaibanjs';
 
 const emma = new Agent({
-  name: "Emma",
-  role: "Initial Drafting",
-  goal: "Outline core functionalities",
+  name: 'Emma',
+  role: 'Initial Drafting',
+  goal: 'Outline core functionalities',
   llmConfig: {
     provider: "google",
     model: "gemini-1.5-pro",
@@ -261,9 +261,9 @@ const emma = new Agent({
 });
 
 const lucas = new Agent({
-  name: "Lucas",
-  role: "Technical Specification",
-  goal: "Draft detailed technical specifications",
+  name: 'Lucas',
+  role: 'Technical Specification',
+  goal: 'Draft detailed technical specifications',
   llmConfig: {
     provider: "anthropic",
     model: "claude-3-5-sonnet-20240620",
@@ -271,9 +271,9 @@ const lucas = new Agent({
 });
 
 const mia = new Agent({
-  name: "Mia",
-  role: "Final Review",
-  goal: "Ensure accuracy and completeness of the final document",
+  name: 'Mia',
+  role: 'Final Review',
+  goal: 'Ensure accuracy and completeness of the final document',
   llmConfig: {
     provider: "openai",
     model: "gpt-4o",
