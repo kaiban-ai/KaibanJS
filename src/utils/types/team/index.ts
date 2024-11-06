@@ -10,27 +10,18 @@ export type {
     StoreSubscribe 
 } from '../store/base';
 
-// Export team types from core modules
+// Export team core types
 export type {
     TeamState,
     TeamEnvironment,
     TeamInputs,
-    TeamStoreMethods,
-    TeamMessageMethods,
-    TeamTaskMethods,
-    TeamToolMethods,
-    TeamAgentMethods,
-    TeamWorkflowMethods,
-    TeamFeedbackMethods,
-    TeamStateActions,
-    TeamStreamingMethods,
-    TeamValidationMethods,
     TeamStore,
-    TeamTypeGuards,
-    TeamUtils
+    TeamStateKey,
+    ITeam,
+    ITeamParams
 } from './base';
 
-// Export store-specific types
+// Export store-specific types and methods
 export type {
     TeamStoreApi,
     UseBoundTeamStore,
@@ -38,11 +29,13 @@ export type {
     TeamStoreConfig,
     TeamStoreOptions,
     CreateTeamStore,
+    TeamStoreMethods,
     TeamStoreTypeGuards
 } from './store';
 
-// Export handler types
+// Export handler types and methods
 export type {
+    // Base handler params
     HandlerBaseParams,
     TeamMessageParams,
     TeamTaskParams,
@@ -52,6 +45,19 @@ export type {
     TeamFeedbackParams,
     HandlerResult,
     WorkflowStartResult,
+    
+    // Method interfaces
+    TeamMessageMethods,
+    TeamTaskMethods,
+    TeamToolMethods,
+    TeamAgentMethods,
+    TeamWorkflowMethods,
+    TeamFeedbackMethods,
+    TeamStreamingMethods,
+    TeamValidationMethods,
+    TeamStateActions,
+    
+    // Type guards
     HandlerTypeGuards
 } from './handlers';
 
@@ -89,5 +95,11 @@ export {
     isCompleteTeamState,
     isTeamStore,
     LegacyTeamStore
-} from './utils';
+} from './typeUtils';
 
+// Export enums
+export {
+    WORKFLOW_STATUS_enum,
+    TASK_STATUS_enum,
+    AGENT_STATUS_enum
+} from '../common/enums';

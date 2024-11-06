@@ -1,17 +1,13 @@
 /**
  * @file utils.ts
  * @path src/utils/types/team/utils.ts
- * @description Team utility types and helper interfaces
+ * @description Team utility types and interfaces
  */
 
-import { AgentType } from '../agent/base';
-import { TaskType } from '../task/base';
+import { AgentType, TaskType } from '@/utils/types';
+import { WORKFLOW_STATUS_enum, TASK_STATUS_enum } from '../common/enums';
 import { LLMUsageStats } from '../llm/responses';
 import { CostDetails } from '../workflow/stats';
-import { WORKFLOW_STATUS_enum, TASK_STATUS_enum } from '../common/enums';
-import { Log } from './logs';
-import type { TeamState, TeamStore } from './base';
-import type { WorkflowStartResult } from './handlers';
 
 /**
  * Team initialization parameters
@@ -19,14 +15,19 @@ import type { WorkflowStartResult } from './handlers';
 export interface TeamInitParams {
     /** Team name */
     name: string;
+    
     /** Initial agents */
     agents?: AgentType[];
+    
     /** Initial tasks */
     tasks?: TaskType[];
+    
     /** Initial inputs */
     inputs?: Record<string, unknown>;
+    
     /** Environment variables */
     env?: Record<string, unknown>;
+    
     /** Log level */
     logLevel?: string;
 }
@@ -35,16 +36,20 @@ export interface TeamInitParams {
  * Team operation configuration
  */
 export interface TeamOperationConfig {
-    /** Operation timeout in milliseconds */
+    /** Execution timeout */
     timeout?: number;
+    
     /** Maximum retries */
     maxRetries?: number;
+    
     /** Retry delay in milliseconds */
     retryDelay?: number;
-    /** Whether to use exponential backoff */
-    useExponentialBackoff?: boolean;
-    /** Maximum concurrent operations */
-    maxConcurrent?: number;
+    
+    /** Abort signal */
+    signal?: AbortSignal;
+    
+    /** Operation metadata */
+    metadata?: Record<string, unknown>;
 }
 
 /**
@@ -53,71 +58,90 @@ export interface TeamOperationConfig {
 export interface TeamExecutionContext {
     /** Start timestamp */
     startTime: number;
-    /** End timestamp */
-    endTime?: number;
-    /** Current status */
+    
+    /** Workflow status */
     status: keyof typeof WORKFLOW_STATUS_enum;
-    /** Active agents */
+    
+    /** Active agent IDs */
     activeAgents: string[];
-    /** Completed tasks */
+    
+    /** Completed task IDs */
     completedTasks: string[];
-    /** Current task */
-    currentTask?: string;
-    /** Last error */
-    lastError?: Error;
-    /** Execution metrics */
-    metrics: {
+    
+    /** Statistics */
+    stats: {
         /** Total tasks */
-        totalTasks: number;
+        taskCount: number;
         /** Completed tasks */
-        completedTasks: number;
-        /** Failed tasks */
-        failedTasks: number;
-        /** Total iterations */
-        totalIterations: number;
+        completedTaskCount: number;
+        /** Task completion percentage */
+        completionPercentage: number;
+        /** Task status counts */
+        taskStatusCounts: Record<keyof typeof TASK_STATUS_enum, number>;
         /** LLM usage stats */
         llmUsageStats: LLMUsageStats;
         /** Cost details */
         costDetails: CostDetails;
     };
+    
+    /** Last error */
+    lastError?: Error;
 }
 
 /**
  * Team performance metrics
  */
 export interface TeamPerformanceMetrics {
-    /** Task completion rate */
-    taskCompletionRate: number;
-    /** Average task duration */
-    averageTaskDuration: number;
-    /** Error rate */
-    errorRate: number;
-    /** Average iterations per task */
-    averageIterations: number;
-    /** Resource utilization */
-    resourceUtilization: {
-        /** Memory usage */
-        memoryUsage: number;
-        /** CPU usage */
-        cpuUsage: number;
-        /** Token usage */
-        tokenUsage: {
-            /** Input tokens */
-            input: number;
-            /** Output tokens */
-            output: number;
-            /** Total tokens */
-            total: number;
-        };
+    /** Task metrics */
+    tasks: {
+        /** Total tasks */
+        total: number;
+        /** Completed tasks */
+        completed: number;
+        /** Failed tasks */
+        failed: number;
+        /** Average task duration */
+        averageDuration: number;
+        /** Task success rate */
+        successRate: number;
     };
+    
+    /** Resource metrics */
+    resources: {
+        /** Memory usage */
+        memory: number;
+        /** CPU usage */
+        cpu: number;
+        /** Average latency */
+        averageLatency: number;
+        /** Maximum latency */
+        maxLatency: number;
+    };
+    
     /** Cost metrics */
-    costMetrics: {
+    costs: {
+        /** Total cost */
+        total: number;
+        /** Cost breakdown */
+        breakdown: CostDetails;
         /** Cost per task */
         costPerTask: number;
         /** Cost per token */
         costPerToken: number;
-        /** Total cost */
-        totalCost: number;
+    };
+    
+    /** LLM metrics */
+    llm: {
+        /** Total tokens */
+        totalTokens: number;
+        /** Input tokens */
+        inputTokens: number;
+        /** Output tokens */
+        outputTokens: number;
+        /** Average tokens per task */
+        tokensPerTask: number;
+        /** Token rate */
+        tokensPerSecond: number;
     };
 }
 
@@ -125,58 +149,127 @@ export interface TeamPerformanceMetrics {
  * Team validation result
  */
 export interface TeamValidationResult {
-    /** Is valid flag */
+    /** Validation success */
     isValid: boolean;
+    
     /** Validation errors */
     errors: string[];
+    
     /** Optional warnings */
     warnings?: string[];
-    /** Validation metadata */
-    metadata?: {
-        /** Timestamp */
-        timestamp: number;
-        /** Validator name */
-        validator: string;
-        /** Validation context */
-        context?: Record<string, unknown>;
-    };
+    
+    /** Validation context */
+    context?: Record<string, unknown>;
 }
 
 /**
  * Team state snapshot
  */
 export interface TeamStateSnapshot {
-    /** Timestamp */
+    /** Snapshot timestamp */
     timestamp: number;
+    
     /** Workflow status */
-    workflowStatus: keyof typeof WORKFLOW_STATUS_enum;
-    /** Task statuses */
-    taskStatuses: Record<string, keyof typeof TASK_STATUS_enum>;
+    status: keyof typeof WORKFLOW_STATUS_enum;
+    
     /** Active agents */
-    activeAgents: string[];
+    agents: {
+        id: string;
+        name: string;
+        status: string;
+    }[];
+    
+    /** Active tasks */
+    tasks: {
+        id: string;
+        title: string;
+        status: string;
+    }[];
+    
     /** Performance metrics */
     metrics: TeamPerformanceMetrics;
-    /** Execution context */
-    context: TeamExecutionContext;
+    
+    /** Resource usage */
+    resources: {
+        memory: number;
+        cpu: number;
+        tokens: number;
+    };
 }
 
 /**
- * Utility functions for team operations
+ * Team utility type guards
+ */
+export const TeamUtilityGuards = {
+    /**
+     * Check if value is team init params
+     */
+    isTeamInitParams: (value: unknown): value is TeamInitParams => {
+        if (typeof value !== 'object' || value === null) return false;
+        const params = value as Partial<TeamInitParams>;
+        return typeof params.name === 'string';
+    },
+
+    /**
+     * Check if value is team execution context
+     */
+    isTeamExecutionContext: (value: unknown): value is TeamExecutionContext => {
+        if (typeof value !== 'object' || value === null) return false;
+        const context = value as Partial<TeamExecutionContext>;
+        return (
+            typeof context.startTime === 'number' &&
+            typeof context.status === 'string' &&
+            Array.isArray(context.activeAgents) &&
+            Array.isArray(context.completedTasks)
+        );
+    },
+
+    /**
+     * Check if value is team performance metrics
+     */
+    isTeamPerformanceMetrics: (value: unknown): value is TeamPerformanceMetrics => {
+        if (typeof value !== 'object' || value === null) return false;
+        const metrics = value as Partial<TeamPerformanceMetrics>;
+        return (
+            typeof metrics.tasks === 'object' &&
+            metrics.tasks !== null &&
+            typeof metrics.resources === 'object' &&
+            metrics.resources !== null &&
+            typeof metrics.costs === 'object' &&
+            metrics.costs !== null &&
+            typeof metrics.llm === 'object' &&
+            metrics.llm !== null
+        );
+    }
+};
+
+/**
+ * Team utility functions
  */
 export const TeamUtils = {
     /**
-     * Create a new execution context
+     * Create empty execution context
      */
-    createExecutionContext: (teamName: string): TeamExecutionContext => ({
+    createEmptyContext: (): TeamExecutionContext => ({
         startTime: Date.now(),
         status: 'INITIAL',
         activeAgents: [],
         completedTasks: [],
-        metrics: {
-            totalTasks: 0,
-            completedTasks: 0,
-            failedTasks: 0,
-            totalIterations: 0,
+        stats: {
+            taskCount: 0,
+            completedTaskCount: 0,
+            completionPercentage: 0,
+            taskStatusCounts: {
+                PENDING: 0,
+                TODO: 0,
+                DOING: 0,
+                BLOCKED: 0,
+                REVISE: 0,
+                DONE: 0,
+                ERROR: 0,
+                AWAITING_VALIDATION: 0,
+                VALIDATED: 0
+            },
             llmUsageStats: {
                 inputTokens: 0,
                 outputTokens: 0,
@@ -212,165 +305,49 @@ export const TeamUtils = {
     }),
 
     /**
-     * Calculate team performance metrics
+     * Create empty performance metrics
      */
-    calculateMetrics: (
-        tasks: TaskType[],
-        logs: Log[],
-        context: TeamExecutionContext
-    ): TeamPerformanceMetrics => {
-        const completedTasks = tasks.filter(t => t.status === 'DONE').length;
-        const failedTasks = tasks.filter(t => t.status === 'ERROR').length;
-        const totalTasks = tasks.length;
-
-        return {
-            taskCompletionRate: totalTasks ? (completedTasks / totalTasks) * 100 : 0,
-            averageTaskDuration: context.metrics.totalTasks ? 
-                (context.endTime || Date.now() - context.startTime) / context.metrics.totalTasks : 0,
-            errorRate: totalTasks ? (failedTasks / totalTasks) * 100 : 0,
-            averageIterations: totalTasks ? context.metrics.totalIterations / totalTasks : 0,
-            resourceUtilization: {
-                memoryUsage: context.metrics.llmUsageStats.memoryUtilization.averageMemoryUsage,
-                cpuUsage: 0, // Would need actual CPU metrics
-                tokenUsage: {
-                    input: context.metrics.llmUsageStats.inputTokens,
-                    output: context.metrics.llmUsageStats.outputTokens,
-                    total: context.metrics.llmUsageStats.inputTokens + context.metrics.llmUsageStats.outputTokens
+    createEmptyMetrics: (): TeamPerformanceMetrics => ({
+        tasks: {
+            total: 0,
+            completed: 0,
+            failed: 0,
+            averageDuration: 0,
+            successRate: 0
+        },
+        resources: {
+            memory: 0,
+            cpu: 0,
+            averageLatency: 0,
+            maxLatency: 0
+        },
+        costs: {
+            total: 0,
+            breakdown: {
+                inputCost: 0,
+                outputCost: 0,
+                totalCost: 0,
+                currency: 'USD',
+                breakdown: {
+                    promptTokens: { count: 0, cost: 0 },
+                    completionTokens: { count: 0, cost: 0 }
                 }
             },
-            costMetrics: {
-                costPerTask: totalTasks ? context.metrics.costDetails.totalCost / totalTasks : 0,
-                costPerToken: context.metrics.llmUsageStats.inputTokens + context.metrics.llmUsageStats.outputTokens ? 
-                    context.metrics.costDetails.totalCost / (context.metrics.llmUsageStats.inputTokens + context.metrics.llmUsageStats.outputTokens) : 0,
-                totalCost: context.metrics.costDetails.totalCost
-            }
-        };
-    },
-
-    /**
-     * Create a state snapshot
-     */
-    createSnapshot: (
-        tasks: TaskType[],
-        agents: AgentType[],
-        context: TeamExecutionContext
-    ): TeamStateSnapshot => ({
-        timestamp: Date.now(),
-        workflowStatus: context.status,
-        taskStatuses: tasks.reduce((acc, task) => ({
-            ...acc,
-            [task.id]: task.status
-        }), {}),
-        activeAgents: agents.filter(a => a.status !== 'IDLE').map(a => a.id),
-        metrics: TeamUtils.calculateMetrics(tasks, [], context),
-        context
+            costPerTask: 0,
+            costPerToken: 0
+        },
+        llm: {
+            totalTokens: 0,
+            inputTokens: 0,
+            outputTokens: 0,
+            tokensPerTask: 0,
+            tokensPerSecond: 0
+        }
     })
 };
 
-/**
- * Type guards for team utilities
- */
-export const TeamUtilityGuards = {
-    /**
-     * Check if value is TeamInitParams
-     */
-    isTeamInitParams: (value: unknown): value is TeamInitParams => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'name' in value &&
-            typeof (value as TeamInitParams).name === 'string'
-        );
-    },
-
-    /**
-     * Check if value is TeamExecutionContext
-     */
-    isTeamExecutionContext: (value: unknown): value is TeamExecutionContext => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'startTime' in value &&
-            'status' in value &&
-            'activeAgents' in value &&
-            'completedTasks' in value &&
-            'metrics' in value
-        );
-    },
-
-    /**
-     * Check if value is TeamStateSnapshot
-     */
-    isTeamStateSnapshot: (value: unknown): value is TeamStateSnapshot => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'timestamp' in value &&
-            'workflowStatus' in value &&
-            'taskStatuses' in value &&
-            'activeAgents' in value &&
-            'metrics' in value &&
-            'context' in value
-        );
-    }
-};
-
-/**
- * Convenience type for store subscription
- */
-export type TeamStoreSubscriber<U = TeamState> = (
-    state: TeamState,
-    previousState: TeamState
-) => void | ((selectedState: U, previousSelectedState: U) => void);
-
-/**
- * Type guard utilities for team functionality
- */
-export const TeamTypeUtils = {
-    /**
-     * Type guard to check if a value is a complete team state
-     */
-    isCompleteTeamState(value: unknown): value is TeamState {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'name' in value &&
-            'agents' in value &&
-            'tasks' in value &&
-            'workflowLogs' in value &&
-            'teamWorkflowStatus' in value &&
-            'workflowResult' in value &&
-            'inputs' in value &&
-            'workflowContext' in value &&
-            'env' in value &&
-            'logLevel' in value &&
-            'tasksInitialized' in value
-        );
-    },
-
-    /**
-     * Type guard to check if a value is a valid team store
-     */
-    isTeamStore(value: unknown): value is TeamStore {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'getState' in value &&
-            'setState' in value &&
-            'subscribe' in value &&
-            'destroy' in value &&
-            this.isCompleteTeamState((value as TeamStore).getState())
-        );
-    }
-};
-
-// Re-export guards for backward compatibility
+// Re-export utility functions with explicit names
 export const {
-    isCompleteTeamState,
-    isTeamStore
-} = TeamTypeUtils;
-
-/**
- * @deprecated Use TeamStore type instead
- */
-export type LegacyTeamStore = TeamStore;
+    createEmptyContext,
+    createEmptyMetrics
+} = TeamUtils;

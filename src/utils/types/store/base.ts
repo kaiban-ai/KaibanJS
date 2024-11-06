@@ -1,7 +1,7 @@
 /**
  * @file base.ts
  * @path src/utils/types/store/base.ts
- * @description Base store types and interfaces used across all stores
+ * @description Core store types and interfaces used across all stores
  */
 
 import { StateCreator, StoreApi, UseBoundStore } from 'zustand';
@@ -139,7 +139,7 @@ export interface StoreMiddlewareConfig {
     devtools?: boolean;
 
     /** Enable subscriptions */
-    subscriptions?: boolean;
+    subscribeWithSelector?: boolean;
 
     /** Enable persistence */
     persistence?: boolean;

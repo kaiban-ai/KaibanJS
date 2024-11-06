@@ -6,7 +6,7 @@
 
 import { Tool } from 'langchain/tools';
 import { BaseMessage } from "@langchain/core/messages";
-import { WORKFLOW_STATUS_enum, TASK_STATUS_enum } from '../common/enums';
+import { WORKFLOW_STATUS_enum, TASK_STATUS_enum, AGENT_STATUS_enum } from '../common/enums';
 import { ErrorType } from '../common/errors';
 import { Output } from '../llm/responses';
 import { LLMUsageStats } from '../llm/responses';
@@ -189,6 +189,15 @@ export interface TeamToolMethods {
 }
 
 /**
+ * Team agent methods interface
+ */
+export interface TeamAgentMethods {
+    handleAgentStatusChange(agent: AgentType, status: keyof typeof AGENT_STATUS_enum): Promise<HandlerResult>;
+    handleAgentError(params: TeamAgentParams): Promise<HandlerResult>;
+    handleAgentThinking(params: TeamAgentParams & { messages: BaseMessage[] }): Promise<HandlerResult>;
+}
+
+/**
  * Team workflow methods interface
  */
 export interface TeamWorkflowMethods {
@@ -203,6 +212,35 @@ export interface TeamWorkflowMethods {
 export interface TeamFeedbackMethods {
     provideFeedback(taskId: string, feedback: string): Promise<HandlerResult>;
     processFeedback(taskId: string, feedbackId: string): Promise<HandlerResult>;
+}
+
+/**
+ * Team streaming methods interface
+ */
+export interface TeamStreamingMethods {
+    handleStreamingOutput(params: {
+        agent: AgentType;
+        task: TaskType;
+        chunk: string;
+        isDone: boolean;
+    }): void;
+}
+
+/**
+ * Team validation methods interface
+ */
+export interface TeamValidationMethods {
+    validateTask(taskId: string): Promise<HandlerResult>;
+    validateWorkflowState(): Promise<HandlerResult>;
+}
+
+/**
+ * Team state action methods
+ */
+export interface TeamStateActions {
+    resetWorkflowState(): void;
+    clearWorkflowLogs(): void;
+    cleanup(): Promise<void>;
 }
 
 /**

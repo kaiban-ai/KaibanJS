@@ -1,19 +1,68 @@
 /**
  * @file base.ts
- * @path src/utils/types/store/base.ts
- * @description Core store types and interfaces used across all stores
+ * @path src/utils/types/team/base.ts
+ * @description Core team interfaces and types
  */
 
-import { StateCreator, StoreApi, UseBoundStore } from 'zustand';
-import type { AgentType } from '../agent/base';
-import type { TaskType } from '../task/base';
-import type { Log } from '../team/logs';
+import { BaseStoreState, StoreSubscribe } from '../store/base';
+import { WORKFLOW_STATUS_enum } from '../common/enums';
+import { WorkflowResult } from '../workflow/base';
+import { AgentType } from '../agent/base';
+import { TaskType } from '../task/base';
+import { Log } from './logs';
+import { WorkflowStats } from '../workflow/stats';
 
 /**
- * Base store state interface
+ * Team environment configuration
  */
-export interface BaseStoreState {
-    /** Store/Team name */
+export interface TeamEnvironment {
+    [key: string]: unknown;
+}
+
+/**
+ * Team inputs interface
+ */
+export interface TeamInputs {
+    [key: string]: unknown;
+}
+
+/**
+ * Team runtime state
+ */
+export interface TeamRuntimeState {
+    /** Workflow status */
+    teamWorkflowStatus: keyof typeof WORKFLOW_STATUS_enum;
+    
+    /** Workflow result */
+    workflowResult: WorkflowResult;
+    
+    /** Team inputs */
+    inputs: TeamInputs;
+    
+    /** Workflow context */
+    workflowContext: string;
+    
+    /** Environment variables */
+    env: TeamEnvironment;
+    
+    /** Log level */
+    logLevel?: 'debug' | 'info' | 'warn' | 'error';
+    
+    /** Task initialization flag */
+    tasksInitialized: boolean;
+}
+
+/**
+ * Core team state interface
+ */
+export interface TeamState extends BaseStoreState {
+    /** Workflow status */
+    teamWorkflowStatus: keyof typeof WORKFLOW_STATUS_enum;
+    
+    /** Workflow result */
+    workflowResult: WorkflowResult | null;
+    
+    /** Team name */
     name: string;
     
     /** Active agents */
@@ -24,221 +73,146 @@ export interface BaseStoreState {
     
     /** Workflow logs */
     workflowLogs: Log[];
+    
+    /** Team inputs */
+    inputs: TeamInputs;
+    
+    /** Workflow context */
+    workflowContext: string;
+    
+    /** Environment variables */
+    env: TeamEnvironment;
+    
+    /** Log level */
+    logLevel: 'debug' | 'info' | 'warn' | 'error';
+    
+    /** Task initialization flag */
+    tasksInitialized: boolean;
 }
 
 /**
- * Base store methods interface
+ * Core team store interface
  */
-export interface BaseStoreMethods<T extends BaseStoreState> {
-    /** Get current state */
-    getState: () => T;
+export interface TeamStore extends TeamState {
+    /** Get workflow status */
+    getWorkflowStatus: () => keyof typeof WORKFLOW_STATUS_enum;
+    
+    /** Get workflow result */
+    getWorkflowResult: () => WorkflowResult | null;
+    
+    /** Get workflow statistics */
+    getWorkflowStats: () => WorkflowStats;
 
-    /** Update state */
-    setState: (
-        partial: Partial<T> | ((state: T) => Partial<T>),
-        replace?: boolean
-    ) => void;
-
-    /** Subscribe to state changes */
-    subscribe: StoreSubscribe<T>;
-
-    /** Clean up store resources */
+    /** Store management methods */
+    getState: () => TeamState;
+    setState: (fn: (state: TeamState) => Partial<TeamState>) => void;
+    subscribe: StoreSubscribe<TeamState>;
     destroy: () => void;
 }
 
 /**
- * Store subscription interface
+ * Team initialization parameters
  */
-export interface StoreSubscribe<T> {
-    (listener: (state: T, previousState: T) => void): () => void;
-    
-    <U>(
-        selector: (state: T) => U,
-        listener: (selectedState: U, previousSelectedState: U) => void,
-        options?: {
-            equalityFn?: (a: U, b: U) => boolean;
-            fireImmediately?: boolean;
-        }
-    ): () => void;
-}
-
-/**
- * Type safe store setter
- */
-export type SetStoreState<T extends BaseStoreState> = (
-    partial: Partial<T> | ((state: T) => Partial<T>),
-    replace?: boolean
-) => void;
-
-/**
- * Type safe store getter
- */
-export type GetStoreState<T extends BaseStoreState> = () => T;
-
-/**
- * Store API types
- */
-export type IStoreApi<T extends BaseStoreState> = StoreApi<T>;
-export type BoundStore<T extends BaseStoreState> = UseBoundStore<IStoreApi<T>>;
-
-/**
- * Store creator type
- */
-export type StoreCreator<T extends BaseStoreState> = StateCreator<
-    T,
-    [['zustand/devtools', never], ['zustand/subscribeWithSelector', never]],
-    [],
-    T
->;
-
-/**
- * Store configuration options
- */
-export interface StoreConfig {
-    /** Store name for devtools */
+export interface ITeamParams {
+    /** Team name */
     name: string;
-
+    /** Initial agents */
+    agents?: AgentType[];
+    /** Initial tasks */
+    tasks?: TaskType[];
     /** Log level */
     logLevel?: 'debug' | 'info' | 'warn' | 'error';
-
-    /** Development mode flag */
-    devMode?: boolean;
-
-    /** Serialization options */
-    serialize?: {
-        /** Properties to exclude from serialization */
-        exclude?: string[];
-        
-        /** Custom serializer functions */
-        serializers?: Record<string, (value: unknown) => unknown>;
-        
-        /** Enable parsing of undefined */
-        parseUndefined?: boolean;
-    };
+    /** Initial inputs */
+    inputs?: TeamInputs;
+    /** Environment variables */
+    env?: TeamEnvironment;
 }
 
 /**
- * Store validation result
+ * Team interface
  */
-export interface StoreValidationResult {
-    /** Is the store valid */
-    isValid: boolean;
-    
-    /** Validation errors */
-    errors: string[];
-    
-    /** Optional warnings */
-    warnings?: string[];
+export interface ITeam {
+    /** Team store */
+    store: TeamStore;
+
+    /** Start workflow */
+    start(inputs?: TeamInputs): Promise<WorkflowStartResult>;
+
+    /** Get team store */
+    getStore(): TeamStore;
+
+    /** Get bound team store */
+    useStore(): TeamStore;
+
+    /** Subscribe to state changes */
+    subscribeToChanges(
+        listener: (newValues: Partial<TeamState>) => void,
+        properties?: Array<keyof TeamState>
+    ): () => void;
+
+    /** Provide feedback for task */
+    provideFeedback(taskId: string, feedbackContent: string): void;
+
+    /** Validate task */
+    validateTask(taskId: string): void;
+
+    /** Get workflow status */
+    getWorkflowStatus(): keyof typeof WORKFLOW_STATUS_enum;
+
+    /** Get workflow result */
+    getWorkflowResult(): WorkflowResult;
+
+    /** Get workflow statistics */
+    getWorkflowStats(): WorkflowStats;
 }
 
 /**
- * Store middleware configuration
+ * Type utilities for team types
  */
-export interface StoreMiddlewareConfig {
-    /** Enable devtools */
-    devtools?: boolean;
-
-    /** Enable subscriptions */
-    subscribeWithSelector?: boolean;
-
-    /** Enable persistence */
-    persistence?: boolean;
-
-    /** Custom middleware */
-    custom?: Array<
-        (config: StoreConfig) => 
-            <T extends BaseStoreState>(
-                creator: StateCreator<T, [], [], T>
-            ) => StateCreator<T, [], [], T>
-    >;
-}
-
-/**
- * Store selection config
- */
-export interface StoreSelector<T extends BaseStoreState, U> {
-    /** Selector function */
-    selector: (state: T) => U;
-    
-    /** Equality comparison function */
-    equals?: (a: U, b: U) => boolean;
-}
-
-/**
- * Store event types
- */
-export type StoreEventType = 
-    | 'init'
-    | 'destroy'
-    | 'stateChange'
-    | 'error'
-    | 'middleware';
-
-/**
- * Store event interface
- */
-export interface StoreEvent {
-    /** Event type */
-    type: StoreEventType;
-    
-    /** Event data */
-    data: unknown;
-    
-    /** Event timestamp */
-    timestamp: number;
-    
-    /** Event metadata */
-    metadata?: Record<string, unknown>;
-}
-
-/**
- * Type guard utilities for base store types
- */
-export const StoreTypeGuards = {
+export const TeamTypeGuards = {
     /**
-     * Check if value is BaseStoreState
+     * Check if value is TeamEnvironment
      */
-    isBaseStoreState: (value: unknown): value is BaseStoreState => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'name' in value &&
-            'agents' in value &&
-            'tasks' in value &&
-            'workflowLogs' in value &&
-            Array.isArray((value as BaseStoreState).agents) &&
-            Array.isArray((value as BaseStoreState).tasks) &&
-            Array.isArray((value as BaseStoreState).workflowLogs)
-        );
+    isTeamEnvironment: (value: unknown): value is TeamEnvironment => {
+        return typeof value === 'object' && value !== null;
     },
 
     /**
-     * Check if value has store methods
+     * Check if value is TeamInputs
      */
-    hasStoreMethods: <T extends BaseStoreState>(
-        value: unknown
-    ): value is BaseStoreMethods<T> => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'getState' in value &&
-            'setState' in value &&
-            'subscribe' in value &&
-            'destroy' in value
-        );
+    isTeamInputs: (value: unknown): value is TeamInputs => {
+        return typeof value === 'object' && value !== null;
     },
 
     /**
-     * Check if value is a store selector
+     * Check if value is TeamState
      */
-    isStoreSelector: <T extends BaseStoreState, U>(
-        value: unknown
-    ): value is StoreSelector<T, U> => {
+    isTeamState: (value: unknown): value is TeamState => {
+        if (typeof value !== 'object' || value === null) return false;
+        const state = value as Partial<TeamState>;
         return (
-            typeof value === 'object' &&
-            value !== null &&
-            'selector' in value &&
-            typeof (value as StoreSelector<T, U>).selector === 'function'
+            typeof state.name === 'string' &&
+            Array.isArray(state.agents) &&
+            Array.isArray(state.tasks) &&
+            Array.isArray(state.workflowLogs) &&
+            typeof state.teamWorkflowStatus === 'string' &&
+            typeof state.workflowContext === 'string' &&
+            typeof state.inputs === 'object' &&
+            typeof state.env === 'object' &&
+            typeof state.tasksInitialized === 'boolean'
         );
     }
 };
+
+export type TeamStateKey = keyof TeamState;
+
+export interface WorkflowStartResult {
+    /** Workflow status */
+    status: keyof typeof WORKFLOW_STATUS_enum;
+    
+    /** Workflow result */
+    result: WorkflowResult;
+    
+    /** Workflow statistics */
+    stats: WorkflowStats;
+}

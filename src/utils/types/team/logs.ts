@@ -9,9 +9,9 @@ import {
     AGENT_STATUS_enum, 
     WORKFLOW_STATUS_enum 
 } from "@/utils/types/common/enums";
-import { AgentType } from "../agent";
-import { TaskType } from "../task";
-import { LLMUsageStats } from "../llm";
+import { AgentType } from "../agent/base";
+import { TaskType } from "../task/base";
+import { LLMUsageStats } from "../llm/responses";
 import { CostDetails } from "../workflow/stats";
 
 /**
@@ -137,14 +137,23 @@ export interface Log {
  * Type guards for log types
  */
 export const LogTypeGuards = {
+    /**
+     * Check if value is a status log
+     */
     isStatusLog: (logType: LogType): logType is StatusLogType => {
         return ['AgentStatusUpdate', 'TaskStatusUpdate', 'WorkflowStatusUpdate'].includes(logType);
     },
 
+    /**
+     * Check if value is a message log
+     */
     isMessageLog: (logType: LogType): logType is MessageLogType => {
         return ['SystemMessage', 'UserMessage', 'AIMessage', 'FunctionMessage'].includes(logType);
     },
 
+    /**
+     * Check if value is agent log metadata
+     */
     isAgentLogMetadata: (metadata: LogMetadata): metadata is AgentLogMetadata => {
         return (
             'output' in metadata &&
@@ -154,6 +163,9 @@ export const LogTypeGuards = {
         );
     },
 
+    /**
+     * Check if value is task log metadata
+     */
     isTaskLogMetadata: (metadata: LogMetadata): metadata is TaskLogMetadata => {
         return (
             'llmUsageStats' in metadata &&
@@ -161,6 +173,9 @@ export const LogTypeGuards = {
         );
     },
 
+    /**
+     * Check if value is workflow log metadata
+     */
     isWorkflowLogMetadata: (metadata: LogMetadata): metadata is WorkflowLogMetadata => {
         return (
             'result' in metadata &&
@@ -171,6 +186,9 @@ export const LogTypeGuards = {
         );
     },
 
+    /**
+     * Check if value is message log metadata
+     */
     isMessageLogMetadata: (metadata: LogMetadata): metadata is MessageLogMetadata => {
         return (
             'role' in metadata &&
