@@ -9,7 +9,7 @@
 
 import { Tool } from "langchain/tools";
 import { LLMConfig } from "../llm/providers";
-import { TeamStore } from "../team/base";
+import { TeamStore } from "../team/store
 import { IMessageHistory } from "../messaging/history";
 import { IBaseAgent } from "./base";
 

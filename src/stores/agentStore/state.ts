@@ -4,57 +4,27 @@
  * @description Agent store state interface and initial state definition
  */
 
-import { 
-    AgentType, 
-    TaskType, 
-    Log, 
-    Output, 
-    TeamStore, 
-    AgentLogMetadata, 
-    LLMUsageStats,
-    CostDetails 
-} from '@/utils/types';
-import { AGENT_STATUS_enum } from '@/utils/types/common/enums';
 import { DefaultFactory } from '@/utils/factories/defaultFactory';
+import { AgentStoreState } from '@/utils/types/agent/store';
+import { AGENT_STATUS_enum } from '@/utils/types/common/enums';
 
 /**
- * Core agent store state
+ * Initial agent store state
  */
-export interface AgentState {
-    // Base store properties
-    name: string;
-    agents: AgentType[];
-    tasks: TaskType[];
-    workflowLogs: Log[];
-    tasksInitialized: boolean;
-
-    // Stats and metrics
-    stats: {
-        llmUsageStats: LLMUsageStats;
-        iterationCount: number;
-        totalCalls: number;
-        errorCount: number;
-        averageLatency: number;
-        costDetails: CostDetails;
-    };
-
-    // Runtime state
-    currentAgent: AgentType | null;
-    currentTask: TaskType | null;
-    lastError: Error | null;
-    status: keyof typeof AGENT_STATUS_enum;
-}
-
-/**
- * Default initial agent state
- */
-export const initialAgentState: AgentState = {
+export const initialAgentState: AgentStoreState = {
     // Base store properties
     name: '',
     agents: [],
     tasks: [],
     workflowLogs: [],
-    tasksInitialized: false,
+
+    // Runtime state
+    runtime: {
+        currentAgent: null,
+        currentTask: null,
+        lastError: null,
+        status: 'INITIAL'
+    },
 
     // Stats and metrics
     stats: {
@@ -64,26 +34,21 @@ export const initialAgentState: AgentState = {
         errorCount: 0,
         averageLatency: 0,
         costDetails: DefaultFactory.createCostDetails()
-    },
-
-    // Runtime state
-    currentAgent: null,
-    currentTask: null,
-    lastError: null,
-    status: 'INITIAL'
+    }
 };
 
 /**
  * State validator for agent store
  */
-export function validateAgentState(state: Partial<AgentState>): state is AgentState {
+export function validateAgentState(state: Partial<AgentStoreState>): state is AgentStoreState {
     return (
         typeof state === 'object' &&
         state !== null &&
         Array.isArray(state.agents) &&
         Array.isArray(state.tasks) &&
         Array.isArray(state.workflowLogs) &&
-        typeof state.tasksInitialized === 'boolean' &&
+        typeof state.runtime === 'object' &&
+        state.runtime !== null &&
         typeof state.stats === 'object' &&
         state.stats !== null &&
         typeof state.stats.iterationCount === 'number' &&
@@ -96,13 +61,12 @@ export function validateAgentState(state: Partial<AgentState>): state is AgentSt
 /**
  * Helper function to create a sanitized version of the state for logging
  */
-export function getSanitizedState(state: AgentState): Record<string, unknown> {
+export function getSanitizedState(state: AgentStoreState): Record<string, unknown> {
     return {
         name: state.name,
         agentCount: state.agents.length,
         taskCount: state.tasks.length,
         logCount: state.workflowLogs.length,
-        tasksInitialized: state.tasksInitialized,
         stats: {
             ...state.stats,
             llmUsageStats: {
@@ -112,9 +76,9 @@ export function getSanitizedState(state: AgentState): Record<string, unknown> {
                 credentials: '[REDACTED]'
             }
         },
-        status: state.status,
-        hasCurrentAgent: state.currentAgent !== null,
-        hasCurrentTask: state.currentTask !== null,
-        hasError: state.lastError !== null
+        status: state.runtime.status,
+        hasCurrentAgent: state.runtime.currentAgent !== null,
+        hasCurrentTask: state.runtime.currentTask !== null,
+        hasError: state.runtime.lastError !== null
     };
 }

@@ -1,10 +1,7 @@
 /**
  * @file base.ts
- * @path src/types/task/base.ts
+ * @path src/utils/types/task/base.ts
  * @description Core task interfaces and types
- *
- * @packageDocumentation
- * @module @types/task
  */
 
 import { IBaseAgent } from "../agent/base";
@@ -207,6 +204,9 @@ export interface TaskValidationResult {
  * Type guards for task-related types
  */
 export const TaskTypeGuards = {
+    /**
+     * Check if value is TaskType
+     */
     isTaskType: (value: unknown): value is TaskType => {
         return (
             typeof value === 'object' &&
@@ -219,6 +219,9 @@ export const TaskTypeGuards = {
         );
     },
 
+    /**
+     * Check if value is FeedbackObject
+     */
     isFeedbackObject: (value: unknown): value is FeedbackObject => {
         return (
             typeof value === 'object' &&

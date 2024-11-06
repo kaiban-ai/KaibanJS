@@ -4,23 +4,27 @@
  * @description Central export point for task-related types and interfaces
  */
 
-// Base types
-export type {
+export {
+    TaskType,
     TaskResult,
     TaskStats,
     TaskMetadata,
     FeedbackObject,
-    TaskType,
     ITaskParams,
-    TaskValidationResult
-} from './base';
-
-export {
+    TaskValidationResult,
     TaskTypeGuards
 } from './base';
 
-// Handler types
-export type {
+export {
+    TaskRuntimeState,
+    TaskExecutionMetrics,
+    TaskStatusUpdateParams,
+    TaskStoreState,
+    TaskStoreActions,
+    TaskStoreTypeGuards
+} from './store';
+
+export {
     TaskExecutionParams,
     TaskCompletionParams,
     TaskErrorParams,
@@ -29,36 +33,24 @@ export type {
     TaskFeedbackParams,
     TaskToolExecutionParams,
     TaskObservationParams,
-    TaskIterationParams
+    TaskIterationParams,
+    HandlerResult,
+    ITaskHandler,
+    HandlerTypeGuards
 } from './handlers';
 
-// Store types - importing from canonical source
-export type {
-    TaskStoreState
-} from '@/utils/types/store/task';
-
 export {
-    TaskStoreTypeGuards
-} from '@/utils/types/store/task';
-
-// Additional store types specific to task module
-export type {
-    TaskStoreMutations,
-    TaskStoreAPI,
-    TaskStoreCreator,
-    TaskStoreSelector,
-    TaskStoreSubscriber
-} from './store';
-
-// Tracking types
-export type {
     TaskProgress,
     TaskMetrics,
     TaskHistoryEntry,
     TaskDependencyTracking,
-    TaskAuditRecord
+    TaskAuditRecord,
+    TaskTrackingUtils,
+    TaskTrackingTypeGuards
 } from './tracking';
 
 export {
-    TaskTrackingUtils
-} from './tracking';
+    ComprehensiveTaskType,
+    hasTrackingData,
+    enrichTaskWithTracking
+} from './utils';

@@ -1,17 +1,20 @@
 /**
- * @file index.ts 
+ * @file index.ts
  * @path src/utils/types/team/index.ts
  * @description Central export point for team-related types and interfaces
  */
 
-// Import base store types from canonical source
-import type { BaseStoreState, StoreSubscribe } from '../store';
+// Export base store types
+export type { 
+    BaseStoreState, 
+    StoreSubscribe 
+} from '../store/base';
 
-// Export them alongside team types
+// Export team types from core modules
 export type {
+    TeamState,
     TeamEnvironment,
     TeamInputs,
-    TeamState,
     TeamStoreMethods,
     TeamMessageMethods,
     TeamTaskMethods,
@@ -23,35 +26,36 @@ export type {
     TeamStreamingMethods,
     TeamValidationMethods,
     TeamStore,
-    SetTeamState,
-    GetTeamState,
-    TeamStateApi,
-    BoundTeamStore,
-    TeamStoreCreator,
-    WorkflowStartResult,
-    TeamInitParams,
-    TeamOperationParams,
-    TeamMessageConfig,
-    TeamValidationResult,
-    TeamExecutionContext
-} from './base';
-
-export {
     TeamTypeGuards,
     TeamUtils
 } from './base';
 
-// Store types
+// Export store-specific types
 export type {
     TeamStoreApi,
     UseBoundTeamStore,
     TeamStoreWithSubscribe,
     TeamStoreConfig,
     TeamStoreOptions,
-    CreateTeamStore
+    CreateTeamStore,
+    TeamStoreTypeGuards
 } from './store';
 
-// Log types
+// Export handler types
+export type {
+    HandlerBaseParams,
+    TeamMessageParams,
+    TeamTaskParams,
+    TeamAgentParams,
+    TeamToolParams,
+    TeamWorkflowParams,
+    TeamFeedbackParams,
+    HandlerResult,
+    WorkflowStartResult,
+    HandlerTypeGuards
+} from './handlers';
+
+// Export log types
 export type {
     StatusLogType,
     MessageLogType,
@@ -62,9 +66,28 @@ export type {
     WorkflowLogMetadata,
     MessageLogMetadata,
     PrepareNewLogParams,
-    Log
-} from './logs';
-
-export {
+    Log,
     LogTypeGuards
 } from './logs';
+
+// Export utility types
+export type {
+    TeamInitParams,
+    TeamOperationConfig,
+    TeamExecutionContext,
+    TeamPerformanceMetrics,
+    TeamValidationResult,
+    TeamStateSnapshot,
+    TeamUtilityGuards,
+    TeamUtils as TeamUtilities
+} from './utils';
+
+// Export type guards and utilities
+export {
+    TeamTypeUtils,
+    TeamStoreSubscriber,
+    isCompleteTeamState,
+    isTeamStore,
+    LegacyTeamStore
+} from './utils';
+

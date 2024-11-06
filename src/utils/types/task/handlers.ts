@@ -1,20 +1,17 @@
 /**
  * @file handlers.ts
- * @path src/types/task/handlers.ts
- * @description Task handler interfaces and types
- *
- * @packageDocumentation
- * @module @types/task
+ * @path src/utils/types/task/handlers.ts
+ * @description Task handler interfaces and types for managing task operations
  */
 
 import { Tool } from "langchain/tools";
 import { AgentType } from "@/utils/types/agent/base";
-import { TaskType } from "@/utils/types/task/base";
-import { ErrorType } from "../common";
-import { Output } from "@/utils/types/llm/responses";
-import { LLMUsageStats } from "@/utils/types/llm/responses";
-import { CostDetails } from "@/utils/types/workflow/stats";
-import { TASK_STATUS_enum } from "@/utils/types/common/enums";
+import { TaskType } from "./base";
+import { ErrorType } from "../common/errors";
+import { Output } from "../llm/responses";
+import { TASK_STATUS_enum } from "../common/enums";
+import { LLMUsageStats } from "../llm/responses";
+import { CostDetails } from "../workflow/stats";
 
 /**
  * Task execution handler parameters
@@ -54,6 +51,14 @@ export interface TaskCompletionParams {
         llmUsageStats?: LLMUsageStats;
         costDetails?: CostDetails;
     };
+
+    /** Store reference */
+    store?: {
+        getTaskStats: (task: TaskType) => any;
+        setState: (fn: (state: any) => any) => void;
+        prepareNewLog: (params: any) => any;
+        getState: () => any;
+    };
 }
 
 /**
@@ -72,6 +77,12 @@ export interface TaskErrorParams {
         attemptNumber?: number;
         lastSuccessfulOperation?: string;
         recoveryPossible?: boolean;
+    };
+
+    /** Store reference */
+    store?: {
+        setState: (fn: (state: any) => any) => void;
+        prepareNewLog: (params: any) => any;
     };
 }
 
@@ -182,3 +193,66 @@ export interface TaskIterationParams {
     /** Iteration result */
     result?: Output;
 }
+
+/**
+ * Task handler result interface
+ */
+export interface HandlerResult {
+    /** Success indicator */
+    success: boolean;
+    
+    /** Error if handler failed */
+    error?: Error;
+    
+    /** Result data if successful */
+    data?: unknown;
+    
+    /** Handler metadata */
+    metadata?: Record<string, unknown>;
+}
+
+/**
+ * Task handler interface
+ */
+export interface ITaskHandler {
+    /**
+     * Handle task completion
+     */
+    handleCompletion(params: TaskCompletionParams): Promise<HandlerResult>;
+
+    /**
+     * Handle task error
+     */
+    handleError(params: TaskErrorParams): Promise<HandlerResult>;
+
+    /**
+     * Handle task validation
+     */
+    handleValidation(task: TaskType): Promise<HandlerResult>;
+}
+
+/**
+ * Type guards for handler parameters
+ */
+export const HandlerTypeGuards = {
+    /** Check if value is task completion parameters */
+    isTaskCompletionParams: (value: unknown): value is TaskCompletionParams => {
+        return (
+            typeof value === 'object' &&
+            value !== null &&
+            'agent' in value &&
+            'task' in value &&
+            'result' in value
+        );
+    },
+
+    /** Check if value is task error parameters */
+    isTaskErrorParams: (value: unknown): value is TaskErrorParams => {
+        return (
+            typeof value === 'object' &&
+            value !== null &&
+            'task' in value &&
+            'error' in value
+        );
+    }
+};

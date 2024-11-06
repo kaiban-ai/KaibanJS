@@ -12,14 +12,8 @@ import { AGENT_STATUS_enum } from "@/utils/types/common/enums";
 import { ErrorType } from "../common";
 import { BaseMessage } from "@langchain/core/messages";
 import { LLMConfig } from "../llm/providers";
-import { 
-    Output, 
-    ParsedOutput 
-} from "../llm/responses";
-import { 
-    LLMInstance,
-    AgenticLoopResult 
-} from "../llm/instance";
+import { Output, ParsedOutput } from "../llm/responses";
+import { LLMInstance, AgenticLoopResult } from "../llm/instance";
 import { TeamStore } from "../team/base";
 import { TaskType, FeedbackObject } from "../task/base";
 import { IMessageHistory } from "../messaging/history";
@@ -79,50 +73,36 @@ export interface IBaseAgent {
 
     /**
      * Initialize the agent
-     * @param store - Team store instance
-     * @param env - Environment variables
      */
     initialize(store: TeamStore, env: Record<string, unknown>): void;
 
     /**
      * Set the team store
-     * @param store - Team store instance
      */
     setStore(store: TeamStore): void;
 
     /**
      * Update agent status
-     * @param status - New agent status
      */
     setStatus(status: keyof typeof AGENT_STATUS_enum): void;
 
     /**
      * Set environment variables
-     * @param env - Environment variables
      */
     setEnv(env: Record<string, unknown>): void;
 
     /**
      * Process a task
-     * @param task - Task to work on
      */
     workOnTask(task: TaskType): Promise<AgenticLoopResult>;
 
     /**
      * Process feedback for a task
-     * @param task - Task to process feedback for
-     * @param feedbackList - List of feedback objects
-     * @param context - Context for feedback processing
      */
-    workOnFeedback(
-        task: TaskType, 
-        feedbackList: FeedbackObject[], 
-        context: string
-    ): Promise<void>;
+    workOnFeedback(task: TaskType, feedbackList: FeedbackObject[], context: string): Promise<void>;
 
     /**
      * Normalize LLM configuration
-     * @param llmConfig - Configuration to normalize
      */
     normalizeLlmConfig(llmConfig: LLMConfig): LLMConfig;
 

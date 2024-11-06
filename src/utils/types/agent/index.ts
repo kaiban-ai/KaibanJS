@@ -31,18 +31,34 @@ export type {
     ThinkingHandlerParams,
     ToolHandlerParams,
     ToolExecutionResult,
+    ToolExecutionParams,
     IterationHandlerParams,
-    TaskCompletionParams as AgentTaskCompletionParams, // Renamed to avoid conflict
+    TaskCompletionParams,
     StreamHandlerParams,
     RetryHandlerParams,
     ValidationHandlerParams,
     StatusHandlerParams,
     ErrorHandlerParams,
-    ParsingHandlerParams as AgentParsingHandlerParams, // Renamed to show it extends the LLM version
+    ParsingHandlerParams,
     HandlerResult,
     IErrorHandler,
     ThinkingResult
 } from './handlers';
+
+// Store types
+export type {
+    AgentRuntimeState,
+    AgentExecutionMetrics,
+    AgentExecutionContext,
+    AgentStoreState,
+    AgentStoreActions,
+    AgentExecutionResult,
+    AgentSelectionCriteria
+} from './store';
+
+export {
+    AgentStoreTypeGuards
+} from './store';
 
 // Prompt types
 export type {

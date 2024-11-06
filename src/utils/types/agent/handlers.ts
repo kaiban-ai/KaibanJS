@@ -80,6 +80,32 @@ export interface ToolExecutionResult {
 }
 
 /**
+ * Parameters for tool execution
+ */
+export interface ToolExecutionParams {
+    /** Agent instance */
+    agent: AgentType;
+    
+    /** Current task */
+    task: TaskType;
+    
+    /** Tool to execute */
+    tool: Tool;
+    
+    /** Tool input */
+    input: string;
+    
+    /** Tool result */
+    result?: string;
+    
+    /** Execution error */
+    error?: Error;
+    
+    /** Execution context */
+    context?: Record<string, unknown>;
+}
+
+/**
  * Parameters for iteration control
  */
 export interface IterationHandlerParams extends HandlerBaseParams {

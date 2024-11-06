@@ -1,14 +1,11 @@
 /**
  * @file tracking.ts
- * @path src/types/task/tracking.ts
+ * @path src/utils/types/task/tracking.ts
  * @description Task tracking and monitoring interfaces
- *
- * @packageDocumentation
- * @module @types/task
  */
 
-import { TASK_STATUS_enum } from "@/utils/types/common/enums";
-import { LLMUsageStats } from "@/utils/types/llm/responses";
+import { TASK_STATUS_enum } from "../common/enums";
+import { LLMUsageStats } from "../llm/responses";
 import { TaskType } from "./base";
 
 /**
@@ -171,11 +168,10 @@ export const TaskTrackingUtils = {
         if (task.status === TASK_STATUS_enum.DONE) return 100;
         if (task.status === TASK_STATUS_enum.PENDING) return 0;
         
-        // Since maxIterations is not in TaskType, we'll use iteration count if available
+        // Calculate progress based on iterations if available
         if (task.iterationCount !== undefined) {
-            // Assuming a default max of 10 iterations if not specified
-            const maxIterations = 10;
-            return (task.iterationCount / maxIterations) * 100;
+            const maxIterations = 10; // Default max iterations
+            return Math.min((task.iterationCount / maxIterations) * 100, 99);
         }
         
         // Default progress based on status
@@ -198,13 +194,73 @@ export const TaskTrackingUtils = {
      * Calculate resource utilization
      */
     calculateResourceUtilization: (task: TaskType): Record<string, number> => {
-        const inputTokens = task.llmUsageStats?.inputTokens || 0;
-        const outputTokens = task.llmUsageStats?.outputTokens || 0;
-        
         return {
-            tokens: inputTokens + outputTokens,
+            tokens: (task.llmUsageStats?.inputTokens || 0) + (task.llmUsageStats?.outputTokens || 0),
             cost: task.llmUsageStats?.costBreakdown?.total || 0,
-            time: task.duration || 0
+            time: task.duration || 0,
+            memory: task.llmUsageStats?.memoryUtilization?.peakMemoryUsage || 0
         };
+    },
+
+    /**
+     * Format duration for display
+     */
+    formatDuration: (milliseconds: number): string => {
+        const seconds = Math.floor(milliseconds / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        
+        if (hours > 0) {
+            return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+        }
+        if (minutes > 0) {
+            return `${minutes}m ${seconds % 60}s`;
+        }
+        return `${seconds}s`;
+    }
+};
+
+/**
+ * Task tracking type guards
+ */
+export const TaskTrackingTypeGuards = {
+    /**
+     * Check if value is task progress
+     */
+    isTaskProgress: (value: unknown): value is TaskProgress => {
+        return (
+            typeof value === 'object' &&
+            value !== null &&
+            'taskId' in value &&
+            'status' in value &&
+            'progress' in value &&
+            'timeElapsed' in value
+        );
+    },
+
+    /**
+     * Check if value is task history entry
+     */
+    isTaskHistoryEntry: (value: unknown): value is TaskHistoryEntry => {
+        return (
+            typeof value === 'object' &&
+            value !== null &&
+            'timestamp' in value &&
+            'eventType' in value
+        );
+    },
+
+    /**
+     * Check if value is task dependency tracking
+     */
+    isTaskDependencyTracking: (value: unknown): value is TaskDependencyTracking => {
+        return (
+            typeof value === 'object' &&
+            value !== null &&
+            'taskId' in value &&
+            'dependencies' in value &&
+            'dependents' in value &&
+            'status' in value
+        );
     }
 };

@@ -1,23 +1,16 @@
 /**
- * @file agent.ts
- * @path src/utils/types/store/agent.ts
- * @description Agent store types and interfaces for agent state management
+ * @file store.ts
+ * @path src/utils/types/agent/store.ts
+ * @description Agent store types, interfaces and type guards
  */
 
-import type { BaseStoreState } from './base';
-import type { BaseMessage } from "@langchain/core/messages";
-import type { Tool } from "langchain/tools";
-import type { AGENT_STATUS_enum, TASK_STATUS_enum } from '../common/enums';
-import type { ErrorType } from '../common/errors';
-import type { ParsedOutput } from '../llm';
-import type { ThinkingResult } from '../agent/handlers';
-import type { AgenticLoopResult } from '../llm';
-import type { 
-    AgentType,
-    TaskType,
-    Output,
-    LLMUsageStats,
-} from '@/utils/types';
+import { BaseStoreState } from '../store/base';
+import { AGENT_STATUS_enum } from '../common/enums';
+import { AgentType } from './base';
+import { TaskType } from '@/utils/types';
+import { Output, ParsedOutput, LLMUsageStats } from '../llm/responses';
+import { ThinkingResult } from './handlers';
+import { AgenticLoopResult } from '../llm/instance';
 
 /**
  * Agent runtime state
@@ -109,66 +102,6 @@ export interface AgentStoreState extends BaseStoreState {
 }
 
 /**
- * Agent thinking parameters
- */
-export interface AgentThinkingParams {
-    /** Agent instance */
-    agent: AgentType;
-    
-    /** Current task */
-    task: TaskType;
-    
-    /** Message history */
-    messages?: BaseMessage[];
-    
-    /** LLM output */
-    output?: Output;
-}
-
-/**
- * Agent iteration parameters
- */
-export interface AgentIterationParams {
-    /** Agent instance */
-    agent: AgentType;
-    
-    /** Current task */
-    task: TaskType;
-    
-    /** Current iteration */
-    iterations: number;
-    
-    /** Maximum iterations */
-    maxAgentIterations: number;
-}
-
-/**
- * Tool execution parameters
- */
-export interface ToolExecutionParams {
-    /** Agent instance */
-    agent: AgentType;
-    
-    /** Current task */
-    task: TaskType;
-    
-    /** Tool to execute */
-    tool: Tool;
-    
-    /** Tool input */
-    input: string;
-    
-    /** Tool result */
-    result?: string;
-    
-    /** Execution error */
-    error?: Error;
-    
-    /** Execution context */
-    context?: Record<string, unknown>;
-}
-
-/**
  * Agent store actions interface
  */
 export interface AgentStoreActions {
@@ -184,36 +117,37 @@ export interface AgentStoreActions {
      * Handle agent thinking
      */
     handleAgentThinking: (
-        params: AgentThinkingParams
+        params: {
+            agent: AgentType;
+            task: TaskType;
+            messages?: any[];
+            output?: Output;
+        }
     ) => Promise<ThinkingResult>;
 
     /**
      * Handle iteration start
      */
     handleIterationStart: (
-        params: AgentIterationParams
+        params: {
+            agent: AgentType;
+            task: TaskType;
+            iterations: number;
+            maxAgentIterations: number;
+        }
     ) => void;
 
     /**
      * Handle iteration end
      */
     handleIterationEnd: (
-        params: AgentIterationParams
+        params: {
+            agent: AgentType;
+            task: TaskType;
+            iterations: number;
+            maxAgentIterations: number;
+        }
     ) => void;
-
-    /**
-     * Handle tool execution
-     */
-    handleToolExecution: (
-        params: ToolExecutionParams
-    ) => Promise<string>;
-
-    /**
-     * Handle tool error
-     */
-    handleToolError: (
-        params: ToolExecutionParams
-    ) => string;
 
     /**
      * Handle final answer
@@ -246,7 +180,7 @@ export interface AgentExecutionResult {
     result?: AgenticLoopResult;
     
     /** Error if failed */
-    error?: ErrorType;
+    error?: Error;
     
     /** Execution stats */
     stats?: {
@@ -283,7 +217,7 @@ export interface AgentSelectionCriteria {
 }
 
 /**
- * Type guards for agent store types
+ * Type guard utilities for agent store
  */
 export const AgentStoreTypeGuards = {
     /**
@@ -294,8 +228,7 @@ export const AgentStoreTypeGuards = {
             typeof value === 'object' &&
             value !== null &&
             'runtime' in value &&
-            'stats' in value &&
-            AgentStoreTypeGuards.isAgentStoreState(value)
+            'stats' in value
         );
     },
 
@@ -303,22 +236,24 @@ export const AgentStoreTypeGuards = {
      * Check if value is AgentExecutionResult
      */
     isAgentExecutionResult: (value: unknown): value is AgentExecutionResult => {
-        if (typeof value !== 'object' || value === null) return false;
-        const result = value as Partial<AgentExecutionResult>;
-        return typeof result.success === 'boolean';
+        return (
+            typeof value === 'object' &&
+            value !== null &&
+            'success' in value
+        );
     },
 
     /**
      * Check if value is AgentExecutionContext
      */
     isAgentExecutionContext: (value: unknown): value is AgentExecutionContext => {
-        if (typeof value !== 'object' || value === null) return false;
-        const context = value as Partial<AgentExecutionContext>;
         return (
-            typeof context.startTime === 'number' &&
-            typeof context.totalExecutions === 'number' &&
-            typeof context.consecutiveFailures === 'number' &&
-            typeof context.totalDuration === 'number'
+            typeof value === 'object' &&
+            value !== null &&
+            'startTime' in value &&
+            'totalExecutions' in value &&
+            'consecutiveFailures' in value &&
+            'totalDuration' in value
         );
     },
 
@@ -331,7 +266,7 @@ export const AgentStoreTypeGuards = {
             value !== null &&
             'handleAgentStatusChange' in value &&
             'handleAgentThinking' in value &&
-            'handleToolExecution' in value
+            'handleAgentOutput' in value
         );
     }
 };

@@ -5,8 +5,8 @@
  */
 
 import { StoreApi, UseBoundStore } from 'zustand';
-import { TeamState } from './base';
 import { StoreSubscribe } from '../store/base';
+import { TeamState } from './base';
 
 /**
  * Team store API interface
@@ -59,6 +59,21 @@ export interface TeamStoreConfig {
         /** Enable persistence */
         persist?: boolean;
     };
+    /** Maximum concurrent tasks */
+    maxConcurrentTasks?: number;
+    /** Task timeout in milliseconds */
+    taskTimeout?: number;
+    /** Progress check interval */
+    progressCheckInterval?: number;
+    /** Task retry settings */
+    retry?: {
+        /** Maximum retries per task */
+        maxRetries?: number;
+        /** Delay between retries (ms) */
+        retryDelay?: number;
+        /** Whether to use exponential backoff */
+        useExponentialBackoff?: boolean;
+    };
 }
 
 /**
@@ -75,3 +90,49 @@ export interface TeamStoreOptions {
  * Team store creator type
  */
 export type CreateTeamStore = (options?: TeamStoreOptions) => UseBoundTeamStore;
+
+/**
+ * Type guard utilities for team store
+ */
+export const TeamStoreTypeGuards = {
+    /**
+     * Check if value is TeamStoreApi
+     */
+    isTeamStoreApi: (value: unknown): value is TeamStoreApi => {
+        return (
+            typeof value === 'object' &&
+            value !== null &&
+            'subscribe' in value &&
+            'setState' in value &&
+            'getState' in value
+        );
+    },
+
+    /**
+     * Check if value is UseBoundTeamStore
+     */
+    isUseBoundTeamStore: (value: unknown): value is UseBoundTeamStore => {
+        return (
+            typeof value === 'object' &&
+            value !== null &&
+            'subscribe' in value &&
+            'setState' in value &&
+            'getState' in value &&
+            'destroy' in value &&
+            typeof (value as UseBoundTeamStore)() === 'object'
+        );
+    },
+
+    /**
+     * Check if value is TeamStoreConfig
+     */
+    isTeamStoreConfig: (value: unknown): value is TeamStoreConfig => {
+        if (typeof value !== 'object' || value === null) return false;
+        const config = value as TeamStoreConfig;
+        return (
+            typeof config.name === 'string' &&
+            (config.logLevel === undefined || 
+             ['debug', 'info', 'warn', 'error'].includes(config.logLevel))
+        );
+    }
+};
