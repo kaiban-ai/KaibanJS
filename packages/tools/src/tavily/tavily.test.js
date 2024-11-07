@@ -1,5 +1,4 @@
 const { TavilySearchResults } = require('../../dist/tavily/index.cjs.js');
-const { expect, test } = require('@jest/globals');
 
 
 describe('TavilySearchResults', () => {
@@ -82,7 +81,7 @@ describe('TavilySearchResults', () => {
       }
     });
 
-    const result = await tool._call({ searchQuery: 'latest AI developments' });
+    await tool._call({ searchQuery: 'latest AI developments' });
 
     // Check request
     expect(capturedRequest.url).toBe('https://api.tavily.com/search');

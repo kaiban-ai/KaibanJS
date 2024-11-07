@@ -1,6 +1,4 @@
 const { Firecrawl } = require('../../dist/firecrawl/index.cjs.js');
-const { expect, test } = require('@jest/globals');
-
 
 describe('Firecrawl', () => {
   test('Firecrawl sends correct default parameters and receives markdown', async () => {

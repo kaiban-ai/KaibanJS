@@ -14,7 +14,6 @@ export const AgentWithToolPreviewer = ({ team }) => {
     setInputs,
     inputs,
     workflowResult,
-    workflowLogs
   } = useTeamStore(state => ({
     agents: state.agents,
     tasks: state.tasks,
@@ -23,7 +22,6 @@ export const AgentWithToolPreviewer = ({ team }) => {
     setInputs: state.setInputs,
     inputs: state.inputs,
     workflowResult: state.workflowResult,
-    workflowLogs: state.workflowLogs
   }));
 
   // Subscribe to workflow logs
@@ -61,7 +59,7 @@ export const AgentWithToolPreviewer = ({ team }) => {
     try {
       const newInputs = JSON.parse(e.target.value);
       setInputs(newInputs);
-    } catch (error) {
+    } catch {
       // Invalid JSON - don't update the store
       console.warn('Invalid JSON input');
     }
