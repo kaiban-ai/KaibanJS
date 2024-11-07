@@ -714,12 +714,12 @@ This victory marks Argentina's 16th Copa América title, further solidifying the
       "logDescription": "Workflow initiated for team *Sports Content Creation Team*.",
       "logType": "WorkflowStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "inputs": null,
         "message": "Workflow has been initialized with input settings.",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": null,
       "timestamp": "[REDACTED]",
@@ -893,10 +893,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "Task: Search for detailed... started.",
       "logType": "TaskStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -1243,12 +1243,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🏁 Agent Scout - ITERATION_START (1/15)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 15,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -1595,8 +1595,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🤔 Agent Scout starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -1681,7 +1681,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -2028,8 +2028,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🤔 Agent Scout finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "\`\`\`json
@@ -2051,7 +2051,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "thought": "To find out who won the Copa America in 2024, I need to search for information about the tournament.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -2398,13 +2398,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🛠️⏳ Agent Scout is USING_TOOL tavily_search_results_json...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "input": {
           "input": "Copa America 2024 winner",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
         "tool": {
           "id": [
             "langchain",
@@ -2760,11 +2760,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🛠️✅ USING_TOOL_END: Agent Scout - got  results from tool:tavily_search_results_json",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": "[{"title":"Argentina wins the 2024 Copa América title over Colombia ... - NBC News","url":"https://www.nbcnews.com/news/sports/argentina-wins-2024-copa-america-title-colombia-late-goal-rcna161821","content":"July 14, 2024, 9:09 PM PDT. By Greg Rosenstein. Argentina won the 2024 Copa América championship 1-0 over Colombia, snatching victory with an extra-time goal in the 112th minute of a scoreless ...","score":0.999685,"raw_content":null},{"title":"Argentina tops Colombia in extra time to win Copa America final - NBC 6 ...","url":"https://www.nbcmiami.com/news/sports/soccer/copa-america-final-score-result-argentina-colombia/3361502/?os=roku&ref=app","content":"Lautaro Martinez scored the extra-time winner as Argentina beat Colombia in the 2024 Copa America Final Sunday despite Lionel Messi's injury.","score":0.99858415,"raw_content":null},{"title":"Argentina beats Colombia to win record-breaking Copa America title","url":"https://www.nytimes.com/athletic/5637691/2024/07/15/argentina-colombia-result-copa-america-final/","content":"Jul 15, 2024. A Lionel Messi -less Argentina beat Colombia to win a record-breaking 16th Copa America title after a dramatic final in Miami. Argentina captain Messi was forced off with injury in ...","score":0.99845725,"raw_content":null}]",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -3111,12 +3111,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🔄 Agent Scout - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 15,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -3463,12 +3463,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🏁 Agent Scout - ITERATION_START (2/15)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 15,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -3815,8 +3815,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🤔 Agent Scout starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -3915,7 +3915,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -4262,8 +4262,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🤔 Agent Scout finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "\`\`\`json
@@ -4281,7 +4281,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "observation": "I got the following results from the tool: Argentina won the Copa America in 2024, defeating Colombia in the final.  I can extract key information like key players, the final score, and key moments from these results.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -4628,14 +4628,14 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🔍 Agent Scout - OBSERVATION",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "isFinalAnswerReady": false,
           "observation": "I got the following results from the tool: Argentina won the Copa America in 2024, defeating Colombia in the final.  I can extract key information like key players, the final score, and key moments from these results.",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -4982,12 +4982,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🔄 Agent Scout - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 15,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -5334,12 +5334,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🏁 Agent Scout - ITERATION_START (3/15)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 2,
         "maxAgentIterations": 15,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -5686,8 +5686,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🤔 Agent Scout starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -5799,7 +5799,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -6146,8 +6146,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🤔 Agent Scout finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "\`\`\`json
@@ -6169,7 +6169,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "thought": "I can now compile the final answer using the information from the search results.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -6516,8 +6516,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "💭 Agent Scout THOUGHT.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "action": "self_question",
@@ -6526,7 +6526,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           },
           "thought": "I can now compile the final answer using the information from the search results.",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -6873,12 +6873,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🔄 Agent Scout - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 2,
         "maxAgentIterations": 15,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -7225,12 +7225,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🏁 Agent Scout - ITERATION_START (4/15)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 3,
         "maxAgentIterations": 15,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -7577,8 +7577,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🤔 Agent Scout starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -7704,7 +7704,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -8051,8 +8051,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🤔 Agent Scout finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "\`\`\`json
@@ -8070,7 +8070,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -8417,13 +8417,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🥳 Agent Scout got the FINAL_ANSWER",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -8770,12 +8770,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🔄 Agent Scout - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 3,
         "maxAgentIterations": 15,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -9122,13 +9122,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🏁 Agent Scout - TASK_COMPLETED",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 4,
         "maxAgentIterations": 15,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -9839,10 +9839,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "logDescription": "Task: Using the gathered... started.",
       "logType": "TaskStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -10178,12 +10178,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "logDescription": "🏁 Agent Writer - ITERATION_START (1/15)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 15,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -10519,8 +10519,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "logDescription": "🤔 Agent Writer starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -10607,7 +10607,7 @@ Result: Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra ti
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -10943,8 +10943,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "logDescription": "🤔 Agent Writer finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "\`\`\`json
@@ -10978,7 +10978,7 @@ This victory marks Argentina's 16th Copa América title, further solidifying the
 ",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -11314,8 +11314,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "logDescription": "🥳 Agent Writer got the FINAL_ANSWER",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "finalAnswer": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
@@ -11329,7 +11329,7 @@ Extra time saw Argentina increase the pressure, their desire for victory palpabl
 This victory marks Argentina's 16th Copa América title, further solidifying their position as the most successful team in the tournament's history. It was a hard-fought and well-deserved win, showcasing the team's resilience and ability to perform under pressure. The absence of Messi, undoubtedly a huge blow, seemed to galvanize the team, with players stepping up and taking responsibility in his absence. Lautaro Martinez, in particular, rose to the occasion, proving himself a worthy successor to Messi as Argentina's attacking spearhead. This Copa América will be remembered as a testament to the collective strength and unwavering spirit of Argentine football. 
 ",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -11665,12 +11665,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "logDescription": "🔄 Agent Writer - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 15,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -12006,8 +12006,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "logDescription": "🏁 Agent Writer - TASK_COMPLETED",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 15,
@@ -12021,7 +12021,7 @@ Extra time saw Argentina increase the pressure, their desire for victory palpabl
 
 This victory marks Argentina's 16th Copa América title, further solidifying their position as the most successful team in the tournament's history. It was a hard-fought and well-deserved win, showcasing the team's resilience and ability to perform under pressure. The absence of Messi, undoubtedly a huge blow, seemed to galvanize the team, with players stepping up and taking responsibility in his absence. Lautaro Martinez, in particular, rose to the occasion, proving himself a worthy successor to Messi as Argentina's attacking spearhead. This Copa América will be remembered as a testament to the collective strength and unwavering spirit of Argentine football. 
 ",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -13347,12 +13347,12 @@ As the final whistle blew, it marked a historic achievement for Argentina, furth
       "logDescription": "Workflow initiated for team *Sports Content Creation Team*.",
       "logType": "WorkflowStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "inputs": null,
         "message": "Workflow has been initialized with input settings.",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": null,
       "timestamp": "[REDACTED]",
@@ -13526,10 +13526,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "Task: Search for detailed... started.",
       "logType": "TaskStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -13876,12 +13876,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🏁 Agent Scout - ITERATION_START (1/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -14228,8 +14228,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🤔 Agent Scout starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -14314,7 +14314,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -14661,8 +14661,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🤔 Agent Scout finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "{
@@ -14682,7 +14682,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "thought": "To find out who won the Copa America in 2024 and gather detailed information about the event, I need to conduct a search for the most recent results.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -15029,13 +15029,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🛠️⏳ Agent Scout is USING_TOOL tavily_search_results_json...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "input": {
           "input": "Copa America 2024 winner and details",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
         "tool": {
           "id": [
             "langchain",
@@ -15391,11 +15391,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🛠️✅ USING_TOOL_END: Agent Scout - got  results from tool:tavily_search_results_json",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": "[{"title":"Argentina wins the 2024 Copa América title over Colombia ... - NBC News","url":"https://www.nbcnews.com/news/sports/argentina-wins-2024-copa-america-title-colombia-late-goal-rcna161821","content":"July 14, 2024, 9:09 PM PDT. By Greg Rosenstein. Argentina won the 2024 Copa América championship 1-0 over Colombia, snatching victory with an extra-time goal in the 112th minute of a scoreless ...","score":0.99854493,"raw_content":null},{"title":"2024 Copa América final - Wikipedia","url":"https://en.wikipedia.org/wiki/2024_Copa_América_final","content":"The 2024 Copa América final was an international soccer match to determine the winners of the CONMEBOL 2024 Copa América.The match was played at Hard Rock Stadium in Miami Gardens, Florida, on July 14, 2024. [5] Kickoff was delayed by over an hour and twenty minutes, due to overcrowding and other incidents which occurred near the stadium.","score":0.99773055,"raw_content":null},{"title":"Argentina beats Colombia to win record-breaking Copa America title","url":"https://www.nytimes.com/athletic/5637691/2024/07/15/argentina-colombia-result-copa-america-final/","content":"Jul 15, 2024. A Lionel Messi -less Argentina beat Colombia to win a record-breaking 16th Copa America title after a dramatic final in Miami. Argentina captain Messi was forced off with injury in ...","score":0.9944666,"raw_content":null}]",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -15742,12 +15742,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🔄 Agent Scout - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -16094,12 +16094,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🏁 Agent Scout - ITERATION_START (2/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -16446,8 +16446,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🤔 Agent Scout starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -16544,7 +16544,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -16891,8 +16891,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🤔 Agent Scout finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "{
@@ -16908,7 +16908,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "observation": "I have gathered information that Argentina won the 2024 Copa América against Colombia with a score of 1-0, thanks to a goal in extra time. The final took place at Hard Rock Stadium in Miami Gardens, Florida, and key moments include an injury to captain Lionel Messi during the match.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -17255,14 +17255,14 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🔍 Agent Scout - OBSERVATION",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "isFinalAnswerReady": false,
           "observation": "I have gathered information that Argentina won the 2024 Copa América against Colombia with a score of 1-0, thanks to a goal in extra time. The final took place at Hard Rock Stadium in Miami Gardens, Florida, and key moments include an injury to captain Lionel Messi during the match.",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -17609,12 +17609,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🔄 Agent Scout - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -17961,12 +17961,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🏁 Agent Scout - ITERATION_START (3/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 2,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -18313,8 +18313,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🤔 Agent Scout starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -18422,7 +18422,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -18769,8 +18769,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🤔 Agent Scout finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "{
@@ -18784,7 +18784,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -19131,13 +19131,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🥳 Agent Scout got the FINAL_ANSWER",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -19484,12 +19484,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🔄 Agent Scout - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 2,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -19836,13 +19836,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
       "logDescription": "🏁 Agent Scout - TASK_COMPLETED",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 3,
         "maxAgentIterations": 10,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -20553,10 +20553,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "logDescription": "Task: Using the gathered... started.",
       "logType": "TaskStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -20891,12 +20891,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "logDescription": "🏁 Agent Writer - ITERATION_START (1/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -21231,8 +21231,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "logDescription": "🤔 Agent Writer starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -21319,7 +21319,7 @@ Result: Argentina won the 2024 Copa América title by defeating Colombia 1-0 in 
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -21654,8 +21654,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "logDescription": "🤔 Agent Writer finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "{
@@ -21677,7 +21677,7 @@ The decisive moment came in the 112th minute when a superb build-up play led to 
 As the final whistle blew, it marked a historic achievement for Argentina, further embedding their legacy in Copa América history. Winning this championship for the 16th time signifies their unmatched pedigree in the tournament and adds to their success story. Fans celebrated in unison, embracing their nation’s ability to triumph against the odds, making this Copa América final a memorable chapter in the annals of Argentine football. The victory reflects Argentina's rich football heritage, reminding the world of the skill, passion, and grit that have defined their national team for generations.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -22012,8 +22012,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "logDescription": "🥳 Agent Writer got the FINAL_ANSWER",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "finalAnswer": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
@@ -22026,7 +22026,7 @@ The decisive moment came in the 112th minute when a superb build-up play led to 
 
 As the final whistle blew, it marked a historic achievement for Argentina, further embedding their legacy in Copa América history. Winning this championship for the 16th time signifies their unmatched pedigree in the tournament and adds to their success story. Fans celebrated in unison, embracing their nation’s ability to triumph against the odds, making this Copa América final a memorable chapter in the annals of Argentine football. The victory reflects Argentina's rich football heritage, reminding the world of the skill, passion, and grit that have defined their national team for generations.",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -22361,12 +22361,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "logDescription": "🔄 Agent Writer - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -22701,8 +22701,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "logDescription": "🏁 Agent Writer - TASK_COMPLETED",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 10,
@@ -22715,7 +22715,7 @@ Argentina, aiming to solidify their position as a dominant force in South Americ
 The decisive moment came in the 112th minute when a superb build-up play led to a phenomenal goal, leaving fans erupting in joy. This goal not only sealed the win but also emphasized the sheer determination and skill that has characterized Argentina's journey throughout this tournament. Despite the absence of their star player, Messi, for a significant portion of the match due to injury, Argentina maintained their poise and executed their game plan effectively.
 
 As the final whistle blew, it marked a historic achievement for Argentina, further embedding their legacy in Copa América history. Winning this championship for the 16th time signifies their unmatched pedigree in the tournament and adds to their success story. Fans celebrated in unison, embracing their nation’s ability to triumph against the odds, making this Copa América final a memorable chapter in the annals of Argentine football. The victory reflects Argentina's rich football heritage, reminding the world of the skill, passion, and grit that have defined their national team for generations.",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {

@@ -547,9 +547,9 @@ const createTeamStore = (initialState = {}) => {
         // Function to clean log metadata
         const cleanMetadata = (metadata) => ({
             ...metadata,
-            duration: metadata.duration ? '[REDACTED]' : metadata.duration,
-            endTime: metadata.endTime ? '[REDACTED]' : metadata.endTime,
-            startTime: metadata.startTime ? '[REDACTED]' : metadata.startTime,
+            duration: '[REDACTED]',
+            endTime: '[REDACTED]',
+            startTime: '[REDACTED]',
             feedback: metadata.feedback ? {
                 ...metadata.feedback,
                 timestamp: '[REDACTED]' // Redact the timestamp
