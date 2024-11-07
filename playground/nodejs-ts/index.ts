@@ -1,7 +1,7 @@
 // Assuming kaibanjs is a local module or a placeholder for demonstration purposes
 // This file is now a typescript file and all the types are included in the module
 import { Agent, Task, Team } from "kaibanjs";
-import type { IAgentParams, ITaskParams } from "kaibanjs";
+import type { IAgentParams, ITaskParams, ITeamParams } from "kaibanjs";
 import * as dotenv from "dotenv";
 
 dotenv.config({ path: "./.env.local" });
@@ -98,11 +98,15 @@ const main = async () => {
     agents: [profileAnalyst, formatter, reviewer],
     tasks: [processingTask, formattingTask, reviewTask],
     inputs: {
-      aboutMe:
-        "My name is Will, I have been a Javascript Developer for 3 years. I know React, NextJS, and REDUX. My latest job was as a Junior Developer at Disney creating UIs for the main landing page.",
-    }, // Initial input for the first task
-    env: { OPENAI_API_KEY: process.env.OPENAI_API_KEY },
-  });
+      aboutMe: "My name is Will...",
+      someArray: ["this", "will", "error"],  // TypeScript should show error here
+      someNumber: 42,  // This should also error
+    },
+    env: { OPENAI_API_KEY: process.env.OPENAI_API_KEY }
+  } as ITeamParams);
+
+
+
 
   // ──── Listening to Changes────────────────────────────────────────────
   //

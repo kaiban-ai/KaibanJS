@@ -214,7 +214,7 @@ export interface ITeamParams {
   agents?: Agent[];
   tasks?: Task[];
   logLevel?: string;
-  inputs?: Record<string, string>;
+  inputs?: Record<string, any>;
   env?: Record<string, any> | null;
 }
 
