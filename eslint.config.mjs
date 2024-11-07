@@ -7,7 +7,7 @@ import pluginJest from "eslint-plugin-jest";
 
 export default [
   {
-    ignores: ["node_modules/*", "dist/*"],
+    ignores: ["node_modules/*", "dist/*", "packages/tools/dist/*"],
   },
   pluginJs.configs.recommended,
   ...pluginTs.configs.recommended,
