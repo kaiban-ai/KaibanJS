@@ -125,7 +125,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {string} params.llmOutput - The invalid output that was received.
      * @returns {string} The formatted feedback message.
      */
-    INVALID_JSON_FEEDBACK: ({ agent, task, llmOutput }) => {
+    INVALID_JSON_FEEDBACK: ({ _agent, _task, _llmOutput }) => {
+        // eslint-disable-next-line no-useless-escape
         const prompt = `You returned an invalid JSON object. Please format your answer as a valid JSON object. Just the JSON object not comments or anything else. E.g: {\"finalAnswer\": \"The final answer\"}`;
         return prompt;
     },
@@ -140,7 +141,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {string} params.parsedLLMOutput - The parsed LLM output.
      * @returns {string} The formatted feedback message.
      */
-    THOUGHT_WITH_SELF_QUESTION_FEEDBACK: ({ agent, task, thought, question, parsedLLMOutput }) => {
+    // Added _ to all params to avoid unused params warning
+    THOUGHT_WITH_SELF_QUESTION_FEEDBACK: ({ _agent, _task, _thought, question, _parsedLLMOutput }) => {
         const prompt = `Awesome, please answer yourself the question: ${question}.`;
         return prompt;
     },
@@ -155,7 +157,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {string} params.parsedLLMOutput - The parsed LLM output.
      * @returns {string} The formatted feedback message.
      */    
-    THOUGHT_FEEDBACK: ({ agent, task, thought, parsedLLMOutput }) => {
+    // Added _ to all params to avoid unused params warning
+    THOUGHT_FEEDBACK: ({ _agent, _task, _thought, _parsedLLMOutput }) => {
         const prompt = `Your thoughts are great, let's keep going.`;
         return prompt;
     },
@@ -169,7 +172,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {string} params.parsedLLMOutput - The parsed LLM output.
      * @returns {string} The formatted feedback message.
      */
-    SELF_QUESTION_FEEDBACK: ({ agent, task, question, parsedLLMOutput }) => {
+    // Added _ to all params to avoid unused params warning
+    SELF_QUESTION_FEEDBACK: ({ _agent, _task, _question, _parsedLLMOutput }) => {
         const prompt = `Awesome, please answer yourself the question.`;
         return prompt;
     },
@@ -182,7 +186,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {string} params.parsedLLMOutput - The parsed LLM output.
      * @returns {string} The formatted feedback message.
      */
-    TOOL_RESULT_FEEDBACK: ({ agent, task, toolResult, parsedLLMOutput }) => {
+    // Added _ to all params to avoid unused params warning
+    TOOL_RESULT_FEEDBACK: ({ _agent, _task, toolResult, _parsedLLMOutput }) => {
         const prompt = `You got this result from the tool: ${JSON.stringify(toolResult)}`;
         return prompt;
     },
@@ -197,7 +202,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {string} params.parsedLLMOutput - The parsed LLM output.
      * @returns {string} The formatted feedback message.
      */
-    TOOL_ERROR_FEEDBACK: ({ agent, task, toolName, error, parsedLLMOutput}) => {
+    // Added _ to all params to avoid unused params warning
+    TOOL_ERROR_FEEDBACK: ({ _agent, _task, toolName, _error, _parsedLLMOutput}) => {
         const prompt = `An error occurred while using the tool ${toolName}. Please try again or use a different method.`;
         return prompt;
     },
@@ -212,7 +218,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {string} params.parsedLLMOutput - The parsed LLM output.
      * @returns {string} The formatted feedback message.
      */
-    TOOL_NOT_EXIST_FEEDBACK: ({ agent, task, toolName, parsedLLMOutput }) => {
+    // Added _ to all params to avoid unused params warning
+    TOOL_NOT_EXIST_FEEDBACK: ({ _agent, _task, toolName, _parsedLLMOutput }) => {
         const prompt = `Hey, the tool ${toolName} does not exist. Please find another way.`;
         return prompt;
     },
@@ -225,7 +232,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {string} params.parsedLLMOutput - The parsed LLM output.
      * @returns {string} The formatted feedback message.
      */
-    OBSERVATION_FEEDBACK: ({agent, task, parsedLLMOutput}) => {
+    // Added _ to all params to avoid unused params warning
+    OBSERVATION_FEEDBACK: ({ _agent, _task, _parsedLLMOutput }) => {
         const prompt = `Great observation. Please keep going. Let's get to the final answer.`;
         return prompt;
     },
@@ -240,7 +248,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {string} params.output - The unexpected output from the agent.
      * @returns {string} The formatted feedback message.
      */    
-    WEIRD_OUTPUT_FEEDBACK: ({agent, task, parsedLLMOutput}) => {
+
+    WEIRD_OUTPUT_FEEDBACK: ({ _agent, _task, _parsedLLMOutput }) => {
         const prompt = `Your latest response does not match the way you are expected to output information. Please correct it.`;
         return prompt;
     },
@@ -255,8 +264,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {number} params.iterations - The number of iterations the agent has gone through.
      * @param {number} params.maxAgentIterations - The maximum number of iterations the agent is allowed to go through.
      * @returns {string} The formatted feedback message.
-     */     
-    FORCE_FINAL_ANSWER_FEEDBACK: ({ agent, task, iterations, maxAgentIterations }) => {
+     */
+    // Added _ to all params to avoid unused params warning
+    FORCE_FINAL_ANSWER_FEEDBACK: ({ _agent, _task, _iterations, _maxAgentIterations }) => {
         const prompt = `We don't have more time to keep looking for the answer. Please use all the information you have gathered until now and give the finalAnswer right away.`;
         return prompt;
     },
@@ -270,8 +280,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
      * @param {Object} params.task - The task object describing the current task.
      * @param {string} params.feedback - The feedback received from the previous agent.
      * @returns {string} The formatted feedback message. 
-     */       
-    WORK_ON_FEEDBACK_FEEDBACK: ({ agent, task, feedback }) => {
+     */   
+
+    WORK_ON_FEEDBACK_FEEDBACK: ({ _agent, _task, feedback }) => {
         const prompt = `Here is some feedback for you to address: ${feedback}`;
         return prompt;
     },

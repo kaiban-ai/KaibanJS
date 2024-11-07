@@ -169,16 +169,18 @@ class ReactChampionAgent extends BaseAgent {
                         break;
                     case AGENT_STATUS_enum.EXECUTING_ACTION:
                         logger.debug(`⏩ Agent ${agent.name} will be ${AGENT_STATUS_enum.EXECUTING_ACTION}...`);
-                        const toolName = parsedLLMOutput.action;
-                        const tool = this.tools.find(tool => tool.name === toolName);
-                        if (tool) {
-                            try {
-                                feedbackMessage = await this.executeUsingTool({agent: agent, task, parsedLLMOutput, tool});
-                            } catch (error) {
-                                feedbackMessage = this.handleUsingToolError({agent: agent, task, parsedLLMOutput, tool, error});
+                        {
+                            const toolName = parsedLLMOutput.action;
+                            const tool = this.tools.find(tool => tool.name === toolName);
+                            if (tool) {
+                                try {
+                                    feedbackMessage = await this.executeUsingTool({agent: agent, task, parsedLLMOutput, tool});
+                                } catch (error) {
+                                    feedbackMessage = this.handleUsingToolError({agent: agent, task, parsedLLMOutput, tool, error});
+                                }
+                            } else {
+                                feedbackMessage = this.handleToolDoesNotExist({agent: agent, task, parsedLLMOutput, toolName });
                             }
-                        } else {
-                            feedbackMessage = this.handleToolDoesNotExist({agent: agent, task, parsedLLMOutput, toolName });
                         }
                         break;
                     case AGENT_STATUS_enum.OBSERVATION:

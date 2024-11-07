@@ -184,8 +184,8 @@ function calculateTotalWorkflowCost(modelUsageStats) {
     let totalInputCost = 0;
     let totalOutputCost = 0;
     let totalCost = 0;
-    let totalInputTokens = 0;
-    let totalOutputTokens = 0;
+    // let totalInputTokens = 0;
+    // let totalOutputTokens = 0;
     let allPricesAvailable = true;
 
     Object.keys(modelUsageStats).forEach(modelCode => {
@@ -201,8 +201,8 @@ function calculateTotalWorkflowCost(modelUsageStats) {
         totalInputCost += inputCost;
         totalOutputCost += outputCost;
         totalCost += inputCost + outputCost;
-        totalInputTokens += stats.inputTokens;
-        totalOutputTokens += stats.outputTokens;
+        // totalInputTokens += stats.inputTokens;
+        // totalOutputTokens += stats.outputTokens;
     });
 
     if (!allPricesAvailable) {

@@ -93,7 +93,7 @@ class BaseAgent {
         this.env = env;
     }
 
-    workOnTask(task) {
+    workOnTask(_task) {
         throw new Error("workOnTask must be implemented by subclasses.");
     }
 }

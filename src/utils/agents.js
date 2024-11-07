@@ -50,7 +50,7 @@ const getParsedJSON = (str) => {
     try {
         // Directly attempt to parse the JSON first
         return JSON.parse(str);
-    } catch (error) {
+    } catch {
         // Attempt to fix common JSON issues
         let sanitizedStr = str
             .trim()

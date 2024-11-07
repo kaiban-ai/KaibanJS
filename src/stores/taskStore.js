@@ -8,7 +8,7 @@
  * Use this store to manage tasks within your application, providing a robust system for updating and tracking task progress and state.
  */
 
-import { TASK_STATUS_enum, AGENT_STATUS_enum, FEEDBACK_STATUS_enum, WORKFLOW_STATUS_enum} from "../utils/enums";
+import { TASK_STATUS_enum, AGENT_STATUS_enum, FEEDBACK_STATUS_enum} from "../utils/enums";
 import { getTaskTitleForLogs} from '../utils/tasks';
 import { logger } from "../utils/logger";
 import { PrettyError } from "../utils/errors";

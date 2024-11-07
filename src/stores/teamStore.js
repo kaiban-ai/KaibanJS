@@ -252,31 +252,25 @@ const createTeamStore = (initialState = {}) => {
                 });
                 return { ...state, workflowLogs: [...state.workflowLogs, newLog] };
             });
-    
-            try {
-                // Execute the task and let the agent report completion
-                task.inputs = get().inputs; // Pass the inputs to the task
-                const interpolatedTaskDescription = interpolateTaskDescription(task.description, get().inputs);
-                task.interpolatedTaskDescription = interpolatedTaskDescription;
 
-                // Get pending feedbacks directly from the task
-                const pendingFeedbacks = task.feedbackHistory.filter(f => f.status === FEEDBACK_STATUS_enum.PENDING);
+            // Execute the task and let the agent report completion
+            task.inputs = get().inputs; // Pass the inputs to the task
+            const interpolatedTaskDescription = interpolateTaskDescription(task.description, get().inputs);
+            task.interpolatedTaskDescription = interpolatedTaskDescription;
+
+            // Get pending feedbacks directly from the task
+            const pendingFeedbacks = task.feedbackHistory.filter(f => f.status === FEEDBACK_STATUS_enum.PENDING);
 
             // Derive the current context from workflowLogs, passing the current task ID
-                const currentContext = get().deriveContextFromLogs(get().workflowLogs, task.id);
-            
-                // Check if the task has pending feedbacks
-                if (pendingFeedbacks.length > 0) {
-                    // If there are pending feedbacks, work on feedback
-                    await agent.workOnFeedback(task, task.feedbackHistory, currentContext);
-                } else {
-                    // If no pending feedbacks, work on task as usual
-                    await agent.workOnTask(task, get().inputs, currentContext);
-                }
-                // Once the task is completed, the handleAgentTaskCompleted will be triggered automatically
-            } catch (error) {
-                // We are let it propagate to the task execution and captured later on
-                throw error; // Re-throw the error to be caught by the task execution
+            const currentContext = get().deriveContextFromLogs(get().workflowLogs, task.id);
+        
+            // Check if the task has pending feedbacks
+            if (pendingFeedbacks.length > 0) {
+                // If there are pending feedbacks, work on feedback
+                await agent.workOnFeedback(task, task.feedbackHistory, currentContext);
+            } else {
+                // If no pending feedbacks, work on task as usual
+                await agent.workOnTask(task, get().inputs, currentContext);
             }
         }
     },
@@ -375,12 +369,12 @@ const createTeamStore = (initialState = {}) => {
         const task = get().tasks.find(t => t.id === taskId);
         if (!task) {
             logger.error("Task not found");
-            return state;
+            return null;
         }
-
+        // TODO: See what is the best value to return on this case
         if (task.status !== TASK_STATUS_enum.AWAITING_VALIDATION) {
             logger.error("Task is not awaiting validation");
-            return state;
+            return null;
         }
 
         const updatedTask = {
