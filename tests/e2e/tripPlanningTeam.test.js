@@ -1,6 +1,7 @@
 require('dotenv').config({ path: './.env.local' });
 // Setup mock
-const { mock, record, restoreAll, getRecords, saveRecords } = require('../utils/moscaFetch')();
+const { mock, restoreAll } = require('../utils/moscaFetch')();
+// const { record, getRecords, saveRecords } = require('../utils/moscaFetch')();
 
 const openAITeam = require('./examples/teams/trip_planning/openai');
 const openAITeamRecordedRequests = require('./examples/teams/trip_planning/openai.requests.json');
@@ -20,13 +21,17 @@ describe('Trip Planning Team Workflows', () => {
     describe('Using OpenAI Agents', () => {
         beforeEach(() => {         
             // Mocking all POST requests with a callback
-            withMockedApis && mock(openAITeamRecordedRequests);
+            if (withMockedApis) {
+                mock(openAITeamRecordedRequests);
+            }
         });
         afterEach(() => {
-            withMockedApis && restoreAll();
+            if (withMockedApis) {
+                restoreAll();
+            }
         });      
         it('completes the entire workflow successfully', async () => {
-            const result = await openAITeam.start();
+            await openAITeam.start();
             const storeFinalState = openAITeam.useStore().getState().getCleanedState();
             expect(storeFinalState).toMatchSnapshot();
 
@@ -39,13 +44,17 @@ describe('Trip Planning Team Workflows', () => {
     describe('Using OpenAI Agents with Custom Prompts', () => {
         beforeEach(() => {         
             // Mocking all POST requests with a callback
-            withMockedApis && mock(openAITeamWithCustomPromptsRecordedRequests);
+            if (withMockedApis) {
+                mock(openAITeamWithCustomPromptsRecordedRequests);
+            }
         });
         afterEach(() => {
-            withMockedApis && restoreAll();
+            if (withMockedApis) {
+                restoreAll();
+            }
         });
         it('completes the entire workflow successfully', async () => {
-            const result = await openAITeamWithCustomPrompts.start();
+            await openAITeamWithCustomPrompts.start();
             const store = openAITeamWithCustomPrompts.useStore()
             expect(store.getState().getCleanedState()).toMatchSnapshot();
             // const recordedData = getRecords();

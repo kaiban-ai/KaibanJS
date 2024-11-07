@@ -1,17 +1,11 @@
 const { Agent, Task, Team } = require('kaibanjs');
 const { TavilySearchResults } = require('@langchain/community/tools/tavily_search');
-const { WikipediaQueryRun } = require("@langchain/community/tools/wikipedia_query_run");
 
 // Define tools
 const searchTool = new TavilySearchResults({
     maxResults: 3,
     // apiKey: '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',
     apiKey: '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',
-});
-
-const wikiTool = new WikipediaQueryRun({
-    topKResults: 3,
-    maxDocContentLength: 4000,
 });
 
 // Define agents

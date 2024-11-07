@@ -101,47 +101,48 @@ const citySelectorAgent = new Agent({
             ${context ? `Incorporate the following findings and insights from previous tasks: "${context}"` : ''}`;
             return prompt;
         },
-        INVALID_JSON_FEEDBACK: ({ agent, task, llmOutput }) => {
+        INVALID_JSON_FEEDBACK: ({ _agent, _task, _llmOutput }) => {
+            // eslint-disable-next-line no-useless-escape
             const prompt = `@@INVALID_JSON_FEEDBACK@@ You returned an invalid JSON object. Please format your answer as a valid JSON object. Just the JSON object not comments or anything else. E.g: {\"finalAnswer\": \"The final answer\"}`;
             return prompt;
         },
-        THOUGHT_WITH_SELF_QUESTION_FEEDBACK: ({ agent, task, thought, question, parsedLLMOutput }) => {
+        THOUGHT_WITH_SELF_QUESTION_FEEDBACK: ({ _agent, _task, _thought, question, _parsedLLMOutput }) => {
             const prompt = `@@THOUGHT_WITH_SELF_QUESTION_FEEDBACK@@ Awesome, please answer yourself the question: ${question}.`;
             return prompt;
         },  
-        THOUGHT_FEEDBACK: ({ agent, task, thought, parsedLLMOutput }) => {
+        THOUGHT_FEEDBACK: ({ _agent, _task, _thought, _parsedLLMOutput }) => {
             const prompt = `@@THOUGHT_FEEDBACK@@ Your thoughts are great, let's keep going.`;
             return prompt;
         },
-        SELF_QUESTION_FEEDBACK: ({ agent, task, question, parsedLLMOutput }) => {
+        SELF_QUESTION_FEEDBACK: ({ _agent, _task, _question, _parsedLLMOutput }) => {
             const prompt = `@@SELF_QUESTION_FEEDBACK@@ Awesome, please answer yourself the question.`;
             return prompt;
         },
-        TOOL_RESULT_FEEDBACK: ({ agent, task, toolResult, parsedLLMOutput }) => {
+        TOOL_RESULT_FEEDBACK: ({ _agent, _task, toolResult, _parsedLLMOutput }) => {
             const prompt = `@@TOOL_RESULT_FEEDBACK@@ You got this result from the tool: ${JSON.stringify(toolResult)}`;
             return prompt;
         },
-        TOOL_ERROR_FEEDBACK: ({ agent, task, toolName, error, parsedLLMOutput}) => {
+        TOOL_ERROR_FEEDBACK: ({ _agent, _task, toolName, _error, _parsedLLMOutput }) => {
             const prompt = `@@TOOL_ERROR_FEEDBACK@@ An error occurred while using the tool ${toolName}. Please try again or use a different method.`;
             return prompt;
         },
-        TOOL_NOT_EXIST_FEEDBACK: ({ agent, task, toolName, parsedLLMOutput }) => {
+        TOOL_NOT_EXIST_FEEDBACK: ({ _agent, _task, toolName, _parsedLLMOutput }) => {
             const prompt = `@@TOOL_NOT_EXIST_FEEDBACK@@ Hey, the tool ${toolName} does not exist. Please find another way.`;
             return prompt;
         },
-        OBSERVATION_FEEDBACK: ({agent, task, parsedLLMOutput}) => {
+        OBSERVATION_FEEDBACK: ({ _agent, _task, _parsedLLMOutput }) => {
             const prompt = `@@OBSERVATION_FEEDBACK@@ Great observation. Please keep going. Let's get to the final answer.`;
             return prompt;
         },  
-        WEIRD_OUTPUT_FEEDBACK: ({agent, task, parsedLLMOutput}) => {
+        WEIRD_OUTPUT_FEEDBACK: ({ _agent, _task, _parsedLLMOutput }) => {
             const prompt = `@@WEIRD_OUTPUT_FEEDBACK@@ Your latest response does not match the way you are expected to output information. Please correct it.`;
             return prompt;
         }, 
-        FORCE_FINAL_ANSWER_FEEDBACK: ({ agent, task, iterations, maxAgentIterations }) => {
+        FORCE_FINAL_ANSWER_FEEDBACK: ({ _agent, _task, _iterations, _maxAgentIterations }) => {
             const prompt = `@@FORCE_FINAL_ANSWER_FEEDBACK@@ We don't have more time to keep looking for the answer. Please use all the information you have gathered until now and give the finalAnswer right away.`;
             return prompt;
         },   
-        WORK_ON_FEEDBACK_FEEDBACK: ({ agent, task, feedback }) => {
+        WORK_ON_FEEDBACK_FEEDBACK: ({ _agent, _task, feedback }) => {
             const prompt = `@@WORK_ON_FEEDBACK_FEEDBACK@@ Here is some feedback for you to address: ${feedback}`;
             return prompt;
         },

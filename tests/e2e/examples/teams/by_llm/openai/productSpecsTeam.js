@@ -1,11 +1,7 @@
 const { Agent, Task, Team } = require('kaibanjs');
-const { TavilySearchResults } = require('@langchain/community/tools/tavily_search');
 
 // Define tools
-const searchTool = new TavilySearchResults({
-    maxResults: 1,
-    apiKey: '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',
-});
+
 
 // Define agents
 const requirementsAnalyst = new Agent({

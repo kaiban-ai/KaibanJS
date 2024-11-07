@@ -11,7 +11,7 @@ function moscaFetch() {
             requestMethod = requestMethod.toUpperCase();
             try {
                 requestBody = requestBody ? JSON.parse(requestBody) : undefined;
-            } catch (error) {
+            } catch {
                 // requestBody remains unchanged if it's not JSON
             }
 

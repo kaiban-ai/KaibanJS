@@ -35,7 +35,7 @@ describe('Agents Utility Functions', () => {
             });
         });
 
-        test('should handle JSON strings with line breaks and missing commas', () => {
+        test('should handle JSON strings with line breaks and missing commas (Case 2)', () => {
             const input = `{\\n   "thought": "To find detailed information about the Copa America 2024 winner, I need to search for the most recent and relevant information. Since this is a future event, I should be cautious about the results and verify if the tournament has actually taken place."\\n   "action": "tavily_search_results_json",\\n   "actionInput": {"query":"Copa America 2024 winner results details"}\\n}`;
             const expectedOutput = {
                 thought: "To find detailed information about the Copa America 2024 winner, I need to search for the most recent and relevant information. Since this is a future event, I should be cautious about the results and verify if the tournament has actually taken place.",
