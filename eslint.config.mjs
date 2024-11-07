@@ -15,6 +15,11 @@ export default [
   pluginJest.configs["flat/recommended"],
   {
     files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
+    settings: {
+      react: {
+        version: "detect"
+      }
+    },
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },
       parserOptions: {
