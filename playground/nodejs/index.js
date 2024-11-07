@@ -93,7 +93,7 @@ const team = new Team({
 // You can subscribe to specific fields or any field on the store.
 //──────────────────────────────────────────────────────────────────────
 
-const unsubscribe = team.subscribeToChanges((updatedFields) => {
+team.subscribeToChanges((updatedFields) => {
     console.log("Workflow Status Updated:", updatedFields);
 }, ['teamWorkflowStatus']);
 
