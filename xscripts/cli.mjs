@@ -9,6 +9,9 @@ import ora from 'ora';
 import figlet from 'figlet';
 import readline from 'readline';
 import TelemetryDeck from '@telemetrydeck/sdk';
+// NOTE: it will break on Windows if you don't use this import
+// eslint-disable-next-line no-redeclare
+import crypto from 'crypto';
 
 // Mock telemetry instance for when users opt out
 const mockTelemetry = {
