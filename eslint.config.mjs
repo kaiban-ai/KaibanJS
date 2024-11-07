@@ -23,6 +23,7 @@ export default [
       parser: parserTs,
     },
     rules: {
+      "@typescript-eslint/no-explicit-any": "off",
       "react/jsx-filename-extension": [
         "warn",
         { extensions: [".js", ".jsx", ".ts", ".tsx"] },
