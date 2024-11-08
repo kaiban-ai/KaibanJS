@@ -40,7 +40,8 @@
   padding: 20px;
 }
 
-.tool-executor h2, .tool-executor h3 {
+.tool-executor h2,
+.tool-executor h3 {
   margin-top: 20px;
   margin-bottom: 10px;
 }

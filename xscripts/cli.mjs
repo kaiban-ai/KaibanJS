@@ -24,18 +24,20 @@ function generateProjectId() {
   const userHome = process.env.HOME || process.env.USERPROFILE || '';
   const machineId = crypto.createHash('md5').update(userHome).digest('hex');
   const uniqueString = `${projectName}-${machineId}`;
-  
+
   return crypto.createHash('md5').update(uniqueString).digest('hex');
 }
 
 function initializeTelemetry(appID = '95BF7A3E-9D86-432D-9633-3526DD3A8977') {
   if (process.env.KAIBAN_TELEMETRY_OPT_OUT) {
-    console.log('Telemetry is disabled due to KAIBAN_TELEMETRY_OPT_OUT environment variable.');
+    console.log(
+      'Telemetry is disabled due to KAIBAN_TELEMETRY_OPT_OUT environment variable.'
+    );
     return mockTelemetry;
   }
 
   const projectId = generateProjectId();
-  
+
   return new TelemetryDeck({
     appID,
     clientUser: projectId,
@@ -48,54 +50,79 @@ const td = initializeTelemetry();
 
 // Function to display a banner
 function displayBanner() {
-  console.log(chalk.cyan(figlet.textSync('Kaiban CLI', {
-    font: 'Standard',
-    horizontalLayout: 'default',
-    verticalLayout: 'default',
-  })));
+  console.log(
+    chalk.cyan(
+      figlet.textSync('Kaiban CLI', {
+        font: 'Standard',
+        horizontalLayout: 'default',
+        verticalLayout: 'default',
+      })
+    )
+  );
 }
 
 // Function to recursively find all *.kban.js files, excluding .kaiban and node_modules directories
 function findTeamFiles(dir) {
   let results = [];
   const list = fs.readdirSync(dir);
-  
-  list.forEach(file => {
+
+  list.forEach((file) => {
     const filePath = path.resolve(dir, file);
     const stat = fs.statSync(filePath);
-    
+
     if (stat && stat.isDirectory()) {
-      if (!filePath.includes('.kaiban') && !filePath.includes('node_modules')) {  // Exclude .kaiban and node_modules directories
+      if (!filePath.includes('.kaiban') && !filePath.includes('node_modules')) {
+        // Exclude .kaiban and node_modules directories
         results = results.concat(findTeamFiles(filePath));
       }
-    } else if (file.endsWith('.kban.js') && !filePath.includes('.kaiban') && !filePath.includes('node_modules')) {
+    } else if (
+      file.endsWith('.kban.js') &&
+      !filePath.includes('.kaiban') &&
+      !filePath.includes('node_modules')
+    ) {
       results.push(filePath);
     }
   });
-  
+
   return results;
 }
 
 // Function to copy a sample team.kban.js file to the user's project root if no team files are found
 function copySampleTeamFile() {
-  const sampleFilePath = path.resolve('.kaiban', 'src', 'samples', 'team.kban.js');
+  const sampleFilePath = path.resolve(
+    '.kaiban',
+    'src',
+    'samples',
+    'team.kban.js'
+  );
   const destinationFilePath = path.resolve(process.cwd(), 'team.kban.js');
-  
+
   if (fs.existsSync(sampleFilePath)) {
     fs.copyFileSync(sampleFilePath, destinationFilePath);
-    console.log(chalk.green('Sample team.kban.js file has been copied to the root of your project.'));
+    console.log(
+      chalk.green(
+        'Sample team.kban.js file has been copied to the root of your project.'
+      )
+    );
   } else {
-    console.error(chalk.red('Sample team.kban.js file not found inside .kaiban/samples.'));
+    console.error(
+      chalk.red('Sample team.kban.js file not found inside .kaiban/samples.')
+    );
   }
 }
 
 // Function to write the teams.js file inside `.kaiban`
 function writeTeamsFile(teamFiles) {
   const teamsFilePath = path.resolve('.kaiban', 'src', 'teams.js');
-  
+
   const fileContent = `
     // Auto-generated file
-    ${teamFiles.map((file, index) => `import team${index + 1} from '${file.replace(/\\/g, '/')}';`).join('\n')}
+    ${teamFiles
+      .map(
+        (file, index) =>
+          `import team${index + 1} from '${file.replace(/\\/g, '/')}';`
+      )
+      .join('\n')}
 
     const teams = [
       ${teamFiles.map((_, index) => `team${index + 1}`).join(',\n      ')}
@@ -103,7 +130,7 @@ function writeTeamsFile(teamFiles) {
 
     export default teams;
   `;
-  
+
   fs.writeFileSync(teamsFilePath, fileContent, 'utf8');
   // console.log(chalk.blue(`teams.js file has been written successfully.`));
 }
@@ -111,11 +138,13 @@ function writeTeamsFile(teamFiles) {
 // Function to clone the kaibanjs-devtools repo if .kaiban folder doesn't exist
 function cloneDevtoolsRepo() {
   const kaibanPath = path.resolve('.kaiban');
-  
+
   if (!fs.existsSync(kaibanPath)) {
     const spinner = ora('Downloading kaibanjs-devtools...').start();
     try {
-      execSync('npx degit kaiban-ai/kaibanjs-devtools#main .kaiban', { stdio: 'inherit' });
+      execSync('npx degit kaiban-ai/kaibanjs-devtools#main .kaiban', {
+        stdio: 'inherit',
+      });
       spinner.succeed('kaibanjs-devtools downloaded successfully.');
     } catch (error) {
       spinner.fail('Failed to download kaibanjs-devtools.');
@@ -132,23 +161,31 @@ function cloneDevtoolsRepo() {
       const gitignoreContent = fs.readFileSync(gitignorePath, 'utf8');
       if (!gitignoreContent.includes('.kaiban')) {
         fs.appendFileSync(gitignorePath, '\n.kaiban\n');
-        console.log(chalk.green('\n.kaiban has been added to your .gitignore.'));
+        console.log(
+          chalk.green('\n.kaiban has been added to your .gitignore.')
+        );
       }
     } else {
       fs.writeFileSync(gitignorePath, '.kaiban\n');
-      console.log(chalk.green('\n.gitignore file created and .kaiban has been added.'));
+      console.log(
+        chalk.green('\n.gitignore file created and .kaiban has been added.')
+      );
     }
   } else {
-    console.log(chalk.magenta('.kaiban folder already exists, skipping download.'));
+    console.log(
+      chalk.magenta('.kaiban folder already exists, skipping download.')
+    );
   }
 }
 
 // Function to load .env.* files in the root project
 function loadEnvVariables() {
-  const envDir = process.cwd();  // Root directory of the project
-  const envFiles = fs.readdirSync(envDir).filter(file => file.startsWith('.env'));
+  const envDir = process.cwd(); // Root directory of the project
+  const envFiles = fs
+    .readdirSync(envDir)
+    .filter((file) => file.startsWith('.env'));
 
-  envFiles.forEach(file => {
+  envFiles.forEach((file) => {
     console.log(chalk.blue(`Loading environment variables from ${file}`));
     dotenv.config({ path: path.join(envDir, file) });
   });
@@ -157,7 +194,11 @@ function loadEnvVariables() {
 // Function to run Vite server using spawn
 function runViteServer() {
   // const spinner = ora('Starting Vite server...').start();
-  const viteProcess = spawn('npm', ['run', 'dev'], { cwd: '.kaiban', stdio: 'inherit', shell: true });
+  const viteProcess = spawn('npm', ['run', 'dev'], {
+    cwd: '.kaiban',
+    stdio: 'inherit',
+    shell: true,
+  });
 
   viteProcess.on('close', (code) => {
     if (code === 0) {
@@ -177,14 +218,16 @@ function runViteServer() {
 
 // Function to copy VITE environment variables to .kaiban/.env
 function copyViteEnvVariables() {
-  const envDir = process.cwd();  // Root directory of the project
-  const envFiles = fs.readdirSync(envDir).filter(file => file.startsWith('.env'));
+  const envDir = process.cwd(); // Root directory of the project
+  const envFiles = fs
+    .readdirSync(envDir)
+    .filter((file) => file.startsWith('.env'));
   const viteEnvFilePath = path.resolve('.kaiban', '.env');
   let viteEnvContent = '';
 
-  envFiles.forEach(file => {
+  envFiles.forEach((file) => {
     const envConfig = dotenv.parse(fs.readFileSync(path.join(envDir, file)));
-    Object.keys(envConfig).forEach(key => {
+    Object.keys(envConfig).forEach((key) => {
       if (key.startsWith('VITE')) {
         viteEnvContent += `${key}=${envConfig[key]}\n`;
       }
@@ -194,16 +237,34 @@ function copyViteEnvVariables() {
   fs.writeFileSync(viteEnvFilePath, viteEnvContent, 'utf8');
 
   if (viteEnvContent) {
-    console.log(chalk.green('All VITE environment variables have been copied to .kaiban/.env.'));
+    console.log(
+      chalk.green(
+        'All VITE environment variables have been copied to .kaiban/.env.'
+      )
+    );
   } else {
-    console.log(chalk.yellow('\n----------------------------------------------------------'));
+    console.log(
+      chalk.yellow(
+        '\n----------------------------------------------------------'
+      )
+    );
     console.log(chalk.yellow.bold('| Warning:\n'));
     console.log(chalk.yellow('| No VITE environment variables were found.\n'));
-    console.log(chalk.yellow('| Most likely, your agents and tools will need these variables.\n'));
-    console.log(chalk.yellow('| Please check your .kban.js file to find what is needed.\n'));
+    console.log(
+      chalk.yellow(
+        '| Most likely, your agents and tools will need these variables.\n'
+      )
+    );
+    console.log(
+      chalk.yellow(
+        '| Please check your .kban.js file to find what is needed.\n'
+      )
+    );
     console.log(chalk.yellow('| You can add the variables to the .env file'));
     console.log(chalk.yellow('| in your root directory.\n'));
-    console.log(chalk.yellow('----------------------------------------------------------'));
+    console.log(
+      chalk.yellow('----------------------------------------------------------')
+    );
   }
 }
 
@@ -223,67 +284,90 @@ function buildKaibanProject() {
 function deployToVercel() {
   // Warm message about API key security
   console.log(chalk.yellow.bold('Important Notice:'));
-  console.log(chalk.yellow('\nThe API keys used by your Agents and Tools in this project **VITE_MY_API_KEY** can be accessed by anyone with programming knowledge who has the deploy URL. This is perfectly acceptable for hustlers, people testing ideas quickly, or in scenarios like:\n'));
+  console.log(
+    chalk.yellow(
+      '\nThe API keys used by your Agents and Tools in this project **VITE_MY_API_KEY** can be accessed by anyone with programming knowledge who has the deploy URL. This is perfectly acceptable for hustlers, people testing ideas quickly, or in scenarios like:\n'
+    )
+  );
   // console.log(chalk.yellow(''));
   console.log(chalk.yellow('  - Rapid prototyping'));
   console.log(chalk.yellow('  - MVPs (Minimum Viable Products)'));
   console.log(chalk.yellow('  - Hackathons'));
   console.log(chalk.yellow('  - Personal projects'));
-  console.log(chalk.yellow('  - Controlled environments (e.g., internal tools, sandbox testing)'));
-  
-  console.log(chalk.yellow('\nHowever, for production, we highly recommend securing your keys.'));
-  console.log(chalk.yellow('For a more secure production setup, consider using a proxy. Learn more at:'));
-  console.log(chalk.blue.underline('\nhttps://docs.kaibanjs.com/how-to/API%20Key%20Management\n'));
+  console.log(
+    chalk.yellow(
+      '  - Controlled environments (e.g., internal tools, sandbox testing)'
+    )
+  );
+
+  console.log(
+    chalk.yellow(
+      '\nHowever, for production, we highly recommend securing your keys.'
+    )
+  );
+  console.log(
+    chalk.yellow(
+      'For a more secure production setup, consider using a proxy. Learn more at:'
+    )
+  );
+  console.log(
+    chalk.blue.underline(
+      '\nhttps://docs.kaibanjs.com/how-to/API%20Key%20Management\n'
+    )
+  );
 
   // Prompt user for confirmation
   const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout
+    output: process.stdout,
   });
 
-  rl.question(chalk.cyan('Do you want to continue with the deployment? (yes/no): '), (answer) => {
-    if (answer.toLowerCase() === 'yes' || answer.toLowerCase() === 'y') {
-      const spinner = ora('Checking Vercel installation...').start();
-      try {
-        // Check if Vercel is installed globally
-        execSync('vercel --version', { stdio: 'ignore' });
-        spinner.succeed('Vercel is installed globally.');
-      } catch {
-        spinner.warn('Vercel is not installed globally. Installing now...');
+  rl.question(
+    chalk.cyan('Do you want to continue with the deployment? (yes/no): '),
+    (answer) => {
+      if (answer.toLowerCase() === 'yes' || answer.toLowerCase() === 'y') {
+        const spinner = ora('Checking Vercel installation...').start();
         try {
-          execSync('npm install -g vercel', { stdio: 'inherit' });
-          spinner.succeed('Vercel has been installed globally.');
-        } catch (installError) {
-          spinner.fail('Failed to install Vercel globally.');
-          console.error(chalk.red('Error installing Vercel:'), installError);
-          rl.close();
-          return;
+          // Check if Vercel is installed globally
+          execSync('vercel --version', { stdio: 'ignore' });
+          spinner.succeed('Vercel is installed globally.');
+        } catch {
+          spinner.warn('Vercel is not installed globally. Installing now...');
+          try {
+            execSync('npm install -g vercel', { stdio: 'inherit' });
+            spinner.succeed('Vercel has been installed globally.');
+          } catch (installError) {
+            spinner.fail('Failed to install Vercel globally.');
+            console.error(chalk.red('Error installing Vercel:'), installError);
+            rl.close();
+            return;
+          }
         }
-      }
 
-      // Build the project before deploying
-      buildKaibanProject();
+        // Build the project before deploying
+        buildKaibanProject();
 
-      // Run npm run deploy inside the .kaiban folder
-      spinner.start('Deploying with Vercel...');
-      try {
-        execSync('npm run deploy', { cwd: '.kaiban', stdio: 'inherit' });
-        spinner.succeed('Deployment completed successfully.');
-      } catch (deployError) {
-        spinner.fail('Deployment failed.');
-        console.error(chalk.red('Error during deployment:'), deployError);
+        // Run npm run deploy inside the .kaiban folder
+        spinner.start('Deploying with Vercel...');
+        try {
+          execSync('npm run deploy', { cwd: '.kaiban', stdio: 'inherit' });
+          spinner.succeed('Deployment completed successfully.');
+        } catch (deployError) {
+          spinner.fail('Deployment failed.');
+          console.error(chalk.red('Error during deployment:'), deployError);
+        }
+      } else {
+        console.log(chalk.red('Deployment aborted by the user.'));
       }
-    } else {
-      console.log(chalk.red('Deployment aborted by the user.'));
+      rl.close();
     }
-    rl.close();
-  });
+  );
 }
 
 // Function to update package.json with Kaiban scripts
 function updatePackageJson() {
   const packageJsonPath = path.resolve(process.cwd(), 'package.json');
-  
+
   let packageJson;
   let spinner = ora('Updating package.json with Kaiban scripts...').start();
 
@@ -296,7 +380,7 @@ function updatePackageJson() {
       scripts: {},
       keywords: ['kaiban'],
       author: '',
-      license: 'ISC'
+      license: 'ISC',
     };
     spinner.succeed('Created a basic package.json');
     spinner = ora('Adding Kaiban scripts...').start();
@@ -313,12 +397,16 @@ function updatePackageJson() {
   if (!packageJson.scripts) {
     packageJson.scripts = {};
   }
-  
+
   packageJson.scripts.kaiban = 'kaiban run';
   packageJson.scripts['kaiban:deploy'] = 'kaiban deploy';
-  
+
   try {
-    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8');
+    fs.writeFileSync(
+      packageJsonPath,
+      JSON.stringify(packageJson, null, 2),
+      'utf8'
+    );
     spinner.succeed('package.json updated successfully.');
   } catch (error) {
     spinner.fail('Failed to update package.json.');
@@ -344,12 +432,16 @@ async function initKaibanProject() {
 
   // Step 4: If no team files are found, copy the sample file
   if (teamFiles.length === 0) {
-    console.log(chalk.red('No .kban.js files found. Copying a sample file to the project root...'));
+    console.log(
+      chalk.red(
+        'No .kban.js files found. Copying a sample file to the project root...'
+      )
+    );
     copySampleTeamFile();
     teamFiles.push(path.resolve(process.cwd(), 'team.kban.js')); // Add the copied sample file to the list
   } else {
     console.log(chalk.green('Found the following team files:'));
-    console.log(teamFiles.map(file => `- ${chalk.cyan(file)}`).join('\n'));
+    console.log(teamFiles.map((file) => `- ${chalk.cyan(file)}`).join('\n'));
   }
   console.log('\n');
 
@@ -372,7 +464,11 @@ async function initKaibanProject() {
 function runKaibanServer() {
   // Check if .kaiban folder exists
   if (!fs.existsSync(path.resolve('.kaiban'))) {
-    console.log(chalk.red('Error: .kaiban folder not found. Please run "npx kaibanjs@latest init" first.'));
+    console.log(
+      chalk.red(
+        'Error: .kaiban folder not found. Please run "npx kaibanjs@latest init" first.'
+      )
+    );
     process.exit(1);
   }
 
@@ -395,7 +491,9 @@ function isKaibanJSInstalled() {
 function installKaibanJS() {
   const spinner = ora('Installing KaibanJS and tools...').start();
   try {
-    execSync('npm install kaibanjs @kaibanjs/tools --legacy-peer-deps', { stdio: 'inherit' });
+    execSync('npm install kaibanjs @kaibanjs/tools --legacy-peer-deps', {
+      stdio: 'inherit',
+    });
     spinner.succeed('KaibanJS and tools installed successfully.');
   } catch (error) {
     spinner.fail('Failed to install KaibanJS and tools.');
@@ -432,11 +530,15 @@ async function main() {
     ensurePackageJson();
 
     if (!isKaibanJSInstalled()) {
-      console.log(chalk.yellow('KaibanJS is not installed in this project. Installing now...'));
+      console.log(
+        chalk.yellow(
+          'KaibanJS is not installed in this project. Installing now...'
+        )
+      );
       td.signal('install_kaibanjs');
       installKaibanJS();
     }
-    
+
     if (command === 'init') {
       await initKaibanProject();
       td.signal('init_board');
@@ -450,7 +552,11 @@ async function main() {
     td.signal('deploy_board');
     deployToVercel();
   } else {
-    console.log(chalk.red('Invalid command. Use "init" to initialize, "run" to start the server, or "deploy" to deploy.'));
+    console.log(
+      chalk.red(
+        'Invalid command. Use "init" to initialize, "run" to start the server, or "deploy" to deploy.'
+      )
+    );
   }
 }
 

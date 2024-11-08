@@ -10,9 +10,9 @@ export const ToolPreviewer = ({ toolInstance, callParams }) => {
   const [params, setParams] = useState(callParams);
 
   const handleParamChange = (key, value) => {
-    setParams(prev => ({
+    setParams((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
@@ -67,7 +67,10 @@ export const ToolPreviewer = ({ toolInstance, callParams }) => {
             options={editorOptions}
           />
         ) : (
-          <p className="no-content-message">No content yet. Enter a URL and click &apos;Execute Tool&apos; to fetch content.</p>
+          <p className="no-content-message">
+            No content yet. Enter a URL and click &apos;Execute Tool&apos; to
+            fetch content.
+          </p>
         )}
       </div>
     </div>

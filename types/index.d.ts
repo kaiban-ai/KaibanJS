@@ -3,8 +3,8 @@
 // Author: @darielnoel <github.com/darielnoel>
 // Definitions by: @alienkarma <github.com/alienkarma>
 
-import { Tool } from "langchain/tools";
-import type { AGENT_STATUS_enum, TASK_STATUS_enum } from "./enums.d.ts";
+import { Tool } from 'langchain/tools';
+import type { AGENT_STATUS_enum, TASK_STATUS_enum } from './enums.d.ts';
 import type {
   BaseAgent,
   IBaseAgentParams,
@@ -12,7 +12,7 @@ import type {
   ITaskStats,
   TAgentTypes,
   TStore,
-} from "./types.d.ts";
+} from './types.d.ts';
 
 /**
  * ### Agent parameters
