@@ -9,6 +9,8 @@ import ora from 'ora';
 import figlet from 'figlet';
 import readline from 'readline';
 import TelemetryDeck from '@telemetrydeck/sdk';
+// NOTE: it will break on Windows if you don't use this import
+// eslint-disable-next-line no-redeclare
 import crypto from 'crypto';
 
 // Mock telemetry instance for when users opt out
@@ -246,7 +248,7 @@ function deployToVercel() {
         // Check if Vercel is installed globally
         execSync('vercel --version', { stdio: 'ignore' });
         spinner.succeed('Vercel is installed globally.');
-      } catch (error) {
+      } catch {
         spinner.warn('Vercel is not installed globally. Installing now...');
         try {
           execSync('npm install -g vercel', { stdio: 'inherit' });
@@ -384,7 +386,7 @@ function isKaibanJSInstalled() {
   try {
     execSync('npm list kaibanjs', { stdio: 'ignore' });
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }

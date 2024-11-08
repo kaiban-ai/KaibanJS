@@ -780,12 +780,12 @@ Florida International University (FIU)
       "logDescription": "Workflow initiated for team *Resume Creation Team*.",
       "logType": "WorkflowStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "inputs": null,
         "message": "Workflow has been initialized with input settings.",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": null,
       "timestamp": "[REDACTED]",
@@ -949,10 +949,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "Task: Extract relevant details... started.",
       "logType": "TaskStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -1299,12 +1299,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - ITERATION_START (1/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -1651,8 +1651,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -1747,7 +1747,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -2094,8 +2094,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "{
@@ -2138,7 +2138,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "finalAnswer": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -2485,13 +2485,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🥳 Agent Mary got the FINAL_ANSWER",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "finalAnswer": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -2838,12 +2838,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔄 Agent Mary - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -3190,13 +3190,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - TASK_COMPLETED",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 10,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -3924,10 +3924,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "Task: Utilize the structured... started.",
       "logType": "TaskStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -4321,12 +4321,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🏁 Agent Alex Mercer - ITERATION_START (1/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -4720,8 +4720,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🤔 Agent Alex Mercer starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -4818,7 +4818,7 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -5212,8 +5212,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🤔 Agent Alex Mercer finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "{
@@ -5265,7 +5265,7 @@ Florida International University (FIU)
 *Note: [Location] to be filled based on the job site or city preference.*",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -5659,8 +5659,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🥳 Agent Alex Mercer got the FINAL_ANSWER",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "finalAnswer": "# David Llaca
@@ -5703,7 +5703,7 @@ Florida International University (FIU)
 ---  
 *Note: [Location] to be filled based on the job site or city preference.*",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -6097,12 +6097,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🔄 Agent Alex Mercer - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -6496,8 +6496,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🏁 Agent Alex Mercer - TASK_COMPLETED",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 10,
@@ -6540,7 +6540,7 @@ Florida International University (FIU)
 
 ---  
 *Note: [Location] to be filled based on the job site or city preference.*",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {

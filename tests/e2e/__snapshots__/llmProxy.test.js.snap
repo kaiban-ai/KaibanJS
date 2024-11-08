@@ -881,12 +881,12 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
       "logDescription": "Workflow initiated for team *Resume Creation Team*.",
       "logType": "WorkflowStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "inputs": null,
         "message": "Workflow has been initialized with input settings.",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": null,
       "timestamp": "[REDACTED]",
@@ -1069,10 +1069,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "Task: Extract relevant details... started.",
       "logType": "TaskStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -1453,12 +1453,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - ITERATION_START (1/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -1839,8 +1839,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -1935,7 +1935,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -2316,8 +2316,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "{
@@ -2337,7 +2337,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "thought": "I need to extract and structure the relevant details from the given 'aboutMe' input to create a resume-ready format.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -2718,8 +2718,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "💭 Agent Mary THOUGHT.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "action": "self_question",
@@ -2728,7 +2728,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           },
           "thought": "I need to extract and structure the relevant details from the given 'aboutMe' input to create a resume-ready format.",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -3109,12 +3109,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔄 Agent Mary - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -3495,12 +3495,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - ITERATION_START (2/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -3881,8 +3881,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -3989,7 +3989,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -4370,8 +4370,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "{
@@ -4403,7 +4403,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
    Now that I have identified these components, I can proceed to extract and structure the information from the given input.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -4784,8 +4784,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔍 Agent Mary - OBSERVATION",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "isFinalAnswerReady": false,
@@ -4799,7 +4799,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
    
    Now that I have identified these components, I can proceed to extract and structure the information from the given input.",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -5180,12 +5180,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔄 Agent Mary - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -5566,12 +5566,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - ITERATION_START (3/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 2,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -5952,8 +5952,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -6079,7 +6079,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -6460,8 +6460,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "{
@@ -6514,7 +6514,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "finalAnswer": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -6895,13 +6895,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🥳 Agent Mary got the FINAL_ANSWER",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "finalAnswer": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -7282,12 +7282,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔄 Agent Mary - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 2,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -7668,13 +7668,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - TASK_COMPLETED",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 3,
         "maxAgentIterations": 10,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -8474,10 +8474,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "Task: Utilize the structured... started.",
       "logType": "TaskStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -8930,12 +8930,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🏁 Agent Alex Mercer - ITERATION_START (1/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -9388,8 +9388,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🤔 Agent Alex Mercer starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -9486,7 +9486,7 @@ Result: {"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experience
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -9939,8 +9939,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🤔 Agent Alex Mercer finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "{
@@ -9960,7 +9960,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
             "thought": "I have all the necessary information to create a detailed and attractive resume for David Llaca. I'll structure the resume in markdown format, enriching it with inferred details based on the provided information.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -10413,8 +10413,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "💭 Agent Alex Mercer THOUGHT.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "action": "self_question",
@@ -10423,7 +10423,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           },
           "thought": "I have all the necessary information to create a detailed and attractive resume for David Llaca. I'll structure the resume in markdown format, enriching it with inferred details based on the provided information.",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -10876,12 +10876,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🔄 Agent Alex Mercer - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -11334,12 +11334,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🏁 Agent Alex Mercer - ITERATION_START (2/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -11792,8 +11792,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🤔 Agent Alex Mercer starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -11902,7 +11902,7 @@ Result: {"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experience
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -12355,8 +12355,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🤔 Agent Alex Mercer finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "{
@@ -12406,7 +12406,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
    With this structure and enrichment strategy, I can now proceed to create the resume.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -12859,8 +12859,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🔍 Agent Alex Mercer - OBSERVATION",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "isFinalAnswerReady": true,
@@ -12883,7 +12883,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
 
    With this structure and enrichment strategy, I can now proceed to create the resume.",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -13336,12 +13336,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🔄 Agent Alex Mercer - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -13794,12 +13794,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🏁 Agent Alex Mercer - ITERATION_START (3/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 2,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -14252,8 +14252,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🤔 Agent Alex Mercer starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -14390,7 +14390,7 @@ Result: {"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experience
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -14843,8 +14843,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🤔 Agent Alex Mercer finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "{
@@ -14984,7 +14984,7 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
 - Exploring new web technologies and frameworks",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -15437,8 +15437,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🥳 Agent Alex Mercer got the FINAL_ANSWER",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "finalAnswer": "# David Llaca
@@ -15506,7 +15506,7 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
 - Attending tech meetups and conferences
 - Exploring new web technologies and frameworks",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -15959,12 +15959,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🔄 Agent Alex Mercer - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 2,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -16417,8 +16417,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🏁 Agent Alex Mercer - TASK_COMPLETED",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 3,
         "maxAgentIterations": 10,
@@ -16486,7 +16486,7 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
 - Contributing to open-source JavaScript projects
 - Attending tech meetups and conferences
 - Exploring new web technologies and frameworks",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -18121,12 +18121,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "Workflow initiated for team *Resume Creation Team*.",
       "logType": "WorkflowStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "inputs": null,
         "message": "Workflow has been initialized with input settings.",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": null,
       "timestamp": "[REDACTED]",
@@ -18296,10 +18296,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "Task: Extract relevant details... started.",
       "logType": "TaskStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -18656,12 +18656,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - ITERATION_START (1/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -19018,8 +19018,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -19114,7 +19114,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -19471,8 +19471,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "\`\`\`json
@@ -19498,7 +19498,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "thought": "I need to identify and structure the information provided in the 'aboutMe' input.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -19855,15 +19855,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "💭 Agent Mary THOUGHT.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "action": "self_question",
           "actionInput": null,
           "thought": "I need to identify and structure the information provided in the 'aboutMe' input.",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -20220,12 +20220,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔄 Agent Mary - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -20582,12 +20582,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - ITERATION_START (2/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -20944,8 +20944,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -21060,7 +21060,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -21417,8 +21417,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "\`\`\`json
@@ -21455,7 +21455,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "thought": "I can answer the questions from my previous thought by analyzing the provided 'aboutMe' text.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -21812,15 +21812,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "💭 Agent Mary THOUGHT.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "action": "self_question",
           "actionInput": null,
           "thought": "I can answer the questions from my previous thought by analyzing the provided 'aboutMe' text.",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -22177,12 +22177,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔄 Agent Mary - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -22539,12 +22539,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - ITERATION_START (3/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 2,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -22901,8 +22901,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -23048,7 +23048,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -23405,8 +23405,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "\`\`\`json
@@ -23464,7 +23464,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "thought": "I have extracted all the relevant details from the 'aboutMe' input. Now I can structure it into a JSON format suitable for a resume.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -23821,15 +23821,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "💭 Agent Mary THOUGHT.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "action": "self_question",
           "actionInput": null,
           "thought": "I have extracted all the relevant details from the 'aboutMe' input. Now I can structure it into a JSON format suitable for a resume.",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -24186,12 +24186,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔄 Agent Mary - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 2,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -24548,12 +24548,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - ITERATION_START (4/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 3,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -24910,8 +24910,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -25109,7 +25109,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -25466,8 +25466,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "\`\`\`json
@@ -25526,7 +25526,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "thought": "I now have the structured data ready to be used for resume creation.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -25883,10 +25883,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🛠️🚫 Agent Mary - Oops... it seems that the tool:finalAnswer TOOL_DOES_NOT_EXIST.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
         "toolName": "finalAnswer",
       },
       "task": {
@@ -26244,12 +26244,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔄 Agent Mary - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 3,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -26606,12 +26606,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - ITERATION_START (5/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 4,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -26968,8 +26968,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -27220,7 +27220,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -27577,8 +27577,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "\`\`\`json
@@ -27601,7 +27601,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "thought": "I need to return the structured data, but I cannot use 'finalAnswer'.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -27958,8 +27958,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "💭 Agent Mary THOUGHT.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "action": "self_question",
@@ -27968,7 +27968,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           },
           "thought": "I need to return the structured data, but I cannot use 'finalAnswer'.",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -28325,12 +28325,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔄 Agent Mary - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 4,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -28687,12 +28687,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - ITERATION_START (6/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 5,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -29049,8 +29049,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -29316,7 +29316,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -29673,8 +29673,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "\`\`\`json
@@ -29734,7 +29734,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "thought": "I can return the structured JSON data directly as the 'finalAnswer' within a JSON response, fulfilling the output requirements.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -30091,10 +30091,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🛠️🚫 Agent Mary - Oops... it seems that the tool:finalAnswer TOOL_DOES_NOT_EXIST.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
         "toolName": "finalAnswer",
       },
       "task": {
@@ -30452,12 +30452,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔄 Agent Mary - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 5,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -30814,12 +30814,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - ITERATION_START (7/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 6,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -31176,8 +31176,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -31497,7 +31497,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -31854,8 +31854,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "\`\`\`json
@@ -31912,7 +31912,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "thought": "I need to ensure the output is a valid JSON object containing the structured resume data. I should remove any invalid tool references.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -32269,10 +32269,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🛠️🚫 Agent Mary - Oops... it seems that the tool:finalAnswer TOOL_DOES_NOT_EXIST.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
         "toolName": "finalAnswer",
       },
       "task": {
@@ -32630,12 +32630,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔄 Agent Mary - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 6,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -32992,12 +32992,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - ITERATION_START (8/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 7,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -33354,8 +33354,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -33726,7 +33726,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -34083,8 +34083,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "\`\`\`json
@@ -34134,7 +34134,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           },
           "parsedLLMOutput": {},
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -34491,11 +34491,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary - WEIRD_LLM_OUTPUT",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -34852,12 +34852,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔄 Agent Mary - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 7,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -35214,12 +35214,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - ITERATION_START (9/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 8,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -35576,8 +35576,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -35996,7 +35996,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -36353,8 +36353,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "\`\`\`json
@@ -36403,7 +36403,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           },
           "parsedLLMOutput": {},
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -36760,11 +36760,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary - WEIRD_LLM_OUTPUT",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -37121,12 +37121,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔄 Agent Mary - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 8,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -37483,12 +37483,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - ITERATION_START (10/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 9,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -37845,8 +37845,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -38312,7 +38312,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -38669,8 +38669,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "\`\`\`json
@@ -38690,7 +38690,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "thought": "I understand I need to present the final answer in the correct format, a JSON object with the structured resume data, without using any tools or extra layers.",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -39047,10 +39047,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🛠️🚫 Agent Mary - Oops... it seems that the tool:None TOOL_DOES_NOT_EXIST.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
         "toolName": "None",
       },
       "task": {
@@ -39408,12 +39408,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔄 Agent Mary - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 9,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -39770,13 +39770,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🛑 Agent Mary - MAX_ITERATIONS_ERROR | Iterations: 10",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "error": [Error: Agent Mary reached the maximum number of iterations: [10] without finding a final answer.],
         "feedback": {},
         "iterations": 10,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -41583,12 +41583,12 @@ Dynamic and detail-oriented JavaScript Developer with 5 years of experience in b
       "logDescription": "Workflow initiated for team *Resume Creation Team*.",
       "logType": "WorkflowStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "inputs": null,
         "message": "Workflow has been initialized with input settings.",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": null,
       "timestamp": "[REDACTED]",
@@ -41764,10 +41764,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "Task: Extract relevant details... started.",
       "logType": "TaskStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -42134,12 +42134,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - ITERATION_START (1/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -42506,8 +42506,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -42602,7 +42602,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -42969,8 +42969,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🤔 Agent Mary finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "{
@@ -43021,7 +43021,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "finalAnswer": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"title":"JavaScript Developer","company":"Disney","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages"},{"title":"Junior Front-End Developer","company":"American Airlines","duration":"Duration not specified","responsibilities":"Worked with Vue and Tailwind"}],"education":[{"degree":"Bachelor of Science","field":"Computer Science","institution":"FIU","year":2018},{"program":"JavaScript Bootcamp","year":2018}]}",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -43388,13 +43388,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🥳 Agent Mary got the FINAL_ANSWER",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "finalAnswer": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"title":"JavaScript Developer","company":"Disney","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages"},{"title":"Junior Front-End Developer","company":"American Airlines","duration":"Duration not specified","responsibilities":"Worked with Vue and Tailwind"}],"education":[{"degree":"Bachelor of Science","field":"Computer Science","institution":"FIU","year":2018},{"program":"JavaScript Bootcamp","year":2018}]}",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -43761,12 +43761,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🔄 Agent Mary - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -44133,13 +44133,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "logDescription": "🏁 Agent Mary - TASK_COMPLETED",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 10,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"title":"JavaScript Developer","company":"Disney","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages"},{"title":"Junior Front-End Developer","company":"American Airlines","duration":"Duration not specified","responsibilities":"Worked with Vue and Tailwind"}],"education":[{"degree":"Bachelor of Science","field":"Computer Science","institution":"FIU","year":2018},{"program":"JavaScript Bootcamp","year":2018}]}",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -44911,10 +44911,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "Task: Utilize the structured... started.",
       "logType": "TaskStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -45325,12 +45325,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🏁 Agent Alex Mercer - ITERATION_START (1/10)",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -45741,8 +45741,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🤔 Agent Alex Mercer starts thinking...",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "messages": [
           {
@@ -45839,7 +45839,7 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
             "type": "HumanMessage",
           },
         ],
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -46250,8 +46250,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🤔 Agent Alex Mercer finished thinking.",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "llmOutput": "{
@@ -46300,7 +46300,7 @@ Dynamic and detail-oriented JavaScript Developer with 5 years of experience in b
 ---",
           },
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -46711,8 +46711,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🥳 Agent Alex Mercer got the FINAL_ANSWER",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "output": {
           "finalAnswer": "# David Llaca
@@ -46752,7 +46752,7 @@ Dynamic and detail-oriented JavaScript Developer with 5 years of experience in b
 
 ---",
         },
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -47163,12 +47163,12 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🔄 Agent Alex Mercer - ITERATION_END",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 0,
         "maxAgentIterations": 10,
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {
@@ -47579,8 +47579,8 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "logDescription": "🏁 Agent Alex Mercer - TASK_COMPLETED",
       "logType": "AgentStatusUpdate",
       "metadata": {
-        "duration": undefined,
-        "endTime": undefined,
+        "duration": "[REDACTED]",
+        "endTime": "[REDACTED]",
         "feedback": {},
         "iterations": 1,
         "maxAgentIterations": 10,
@@ -47620,7 +47620,7 @@ Dynamic and detail-oriented JavaScript Developer with 5 years of experience in b
 *Year: 2018*  
 
 ---",
-        "startTime": undefined,
+        "startTime": "[REDACTED]",
       },
       "task": {
         "agent": {

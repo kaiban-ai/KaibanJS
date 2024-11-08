@@ -67,7 +67,7 @@ export const ToolPreviewer = ({ toolInstance, callParams }) => {
             options={editorOptions}
           />
         ) : (
-          <p className="no-content-message">No content yet. Enter a URL and click 'Execute Tool' to fetch content.</p>
+          <p className="no-content-message">No content yet. Enter a URL and click &apos;Execute Tool&apos; to fetch content.</p>
         )}
       </div>
     </div>

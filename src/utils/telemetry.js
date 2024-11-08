@@ -42,7 +42,7 @@ function getSubtleCrypto() {
       if (crypto.webcrypto && crypto.webcrypto.subtle) {
         return crypto.webcrypto.subtle;
       }
-    } catch (error) {
+    } catch {
       // crypto module not available
     }
     console.warn('SubtleCrypto is not available. TelemetryDeck might not function correctly.');

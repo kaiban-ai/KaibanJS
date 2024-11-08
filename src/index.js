@@ -188,8 +188,6 @@ class Team {
                 // Trigger the workflow
                 this.store.getState().startWorkflow(inputs);
             } catch (error) {
-                // If an error occurs during the workflow execution, reject the promise
-                td.signal('workflow_start_error', { errorMessage: error.message });
                 reject(error);
                 // Unsubscribe to prevent memory leaks in case of an error
                 unsubscribe();
