@@ -16,21 +16,15 @@ import {
     Output,
     LLMUsageStats
 } from '@/utils/types';
-
 import { ThinkingResult } from '@/utils/types/agent/handlers';
-
 import { AgentState } from '../state';
 
-/**
- * Action creators for agent thinking process management
- */
+// Action creators for agent thinking process management
 export const createThinkingActions = (
     get: () => AgentState,
     set: (partial: Partial<AgentState> | ((state: AgentState) => Partial<AgentState>)) => void
 ) => ({
-    /**
-     * Handle the start of agent thinking process
-     */
+    // Handle the start of agent thinking process
     handleThinkingStart: async (params: {
         agent: AgentType;
         task: TaskType;
@@ -64,9 +58,7 @@ export const createThinkingActions = (
         }));
     },
 
-    /**
-     * Handle the completion of agent thinking process
-     */
+    // Handle the completion of agent thinking process
     handleThinkingEnd: async (params: {
         agent: AgentType;
         task: TaskType;
@@ -75,7 +67,6 @@ export const createThinkingActions = (
         const { agent, task, output } = params;
         const endTime = Date.now();
 
-        // Calculate cost details
         const modelName = agent.llmConfig.model;
         const costDetails = calculateTaskCost(modelName, output.llmUsageStats);
 
@@ -104,7 +95,6 @@ export const createThinkingActions = (
             });
         }
 
-        // Update state with new stats
         set(state => ({
             status: 'THINKING_END',
             workflowLogs: [...state.workflowLogs, log],
@@ -129,9 +119,7 @@ export const createThinkingActions = (
         return output.parsedLLMOutput;
     },
 
-    /**
-     * Handle agent thought processing
-     */
+    // Handle agent thought processing
     handleThought: (params: {
         agent: AgentType;
         task: TaskType;
@@ -166,9 +154,7 @@ export const createThinkingActions = (
         }));
     },
 
-    /**
-     * Handle self-questioning process
-     */
+    // Handle self-questioning process
     handleSelfQuestion: (params: {
         agent: AgentType;
         task: TaskType;
@@ -203,9 +189,7 @@ export const createThinkingActions = (
         }));
     },
 
-    /**
-     * Handle final answer from agent
-     */
+    // Handle final answer from agent
     handleFinalAnswer: (params: {
         agent: AgentType;
         task: TaskType;
@@ -239,9 +223,7 @@ export const createThinkingActions = (
     }
 });
 
-/**
- * Merge two LLM usage stats objects
- */
+// Merge two LLM usage stats objects
 function mergeLLMStats(
     current: LLMUsageStats,
     new_stats: LLMUsageStats
@@ -276,9 +258,7 @@ function mergeLLMStats(
     };
 }
 
-/**
- * Calculate new average latency
- */
+// Calculate new average latency
 function calculateNewAverageLatency(
     currentAverage: number,
     currentCount: number,

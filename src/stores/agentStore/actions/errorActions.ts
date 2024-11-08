@@ -1,6 +1,7 @@
 /**
  * @file errorActions.ts
  * @path src/stores/agentStore/actions/errorActions.ts
+ * @description Error handling action creators for agent store
  */
 
 import { logger } from '@/utils/core/logger';
@@ -21,16 +22,12 @@ import {
 import { AGENT_STATUS_enum } from '@/utils/types/common/enums';
 import { AgentState } from '../state';
 
-/**
- * Error handling action creators for agent store
- */
+// Core actions for error handling in agent store
 export const createErrorActions = (
     get: () => AgentState,
     set: (partial: Partial<AgentState> | ((state: AgentState) => Partial<AgentState>)) => void
 ) => ({
-    /**
-     * Handle general agent error
-     */
+    // Handle general agent error
     handleAgentError: async (params: ErrorHandlerParams): Promise<void> => {
         const { agent, task, error, context } = params;
 
@@ -86,9 +83,7 @@ export const createErrorActions = (
         });
     },
 
-    /**
-     * Handle agent thinking error
-     */
+    // Handle agent thinking error
     handleThinkingError: (params: { 
         task: TaskType; 
         error: ErrorType 
@@ -126,9 +121,7 @@ export const createErrorActions = (
         }));
     },
 
-    /**
-     * Handle tool execution error
-     */
+    // Handle tool execution error
     handleToolError: (params: {
         agent: AgentType;
         task: TaskType;
@@ -168,9 +161,7 @@ export const createErrorActions = (
         }));
     },
 
-    /**
-     * Handle LLM output parsing errors
-     */
+    // Handle LLM output parsing errors
     handleParsingError: (params: ParsingHandlerParams): void => {
         const { agent, task, output, llmOutput } = params;
 
@@ -231,9 +222,7 @@ export const createErrorActions = (
         }));
     },
 
-    /**
-     * Handle maximum iterations error
-     */
+    // Handle maximum iterations error
     handleMaxIterationsError: (params: {
         task: TaskType;
         iterations: number;

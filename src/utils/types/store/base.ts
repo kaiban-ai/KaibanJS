@@ -1,30 +1,41 @@
 /**
  * @file base.ts
  * @path src/utils/types/store/base.ts
- * @description Core store types and interfaces used across all stores
+ * @description Core store interfaces and types used across all stores.
+ * This file serves as the canonical source for base store types.
  */
 
 import { StateCreator, StoreApi, UseBoundStore } from 'zustand';
 import type { AgentType } from '../agent/base';
 import type { TaskType } from '../task/base';
 import type { Log } from '../team/logs';
+import type { WorkflowResult } from '../workflow/base';
+import type { LLMUsageStats } from '../llm/responses';
+import type { CostDetails } from '../workflow/costs';
+
+// ─── Base Store State ─────────────────────────────────────────────────────────────
 
 /**
- * Base store state interface
+ * Base store state interface that all stores extend
  */
 export interface BaseStoreState {
-    /** Store/Team name */
+    /** Store identifier/name */
     name: string;
-    
-    /** Active agents */
+    /** List of agents in the store */
     agents: AgentType[];
-    
-    /** Active tasks */
+    /** List of tasks in the store */
     tasks: TaskType[];
-    
-    /** Workflow logs */
+    /** List of workflow logs */
     workflowLogs: Log[];
+    /** Cost details for the workflow */
+    costDetails?: CostDetails;
+    /** LLM usage statistics */
+    llmUsageStats?: LLMUsageStats;
+    /** Current workflow result */
+    workflowResult?: WorkflowResult;
 }
+
+// ─── Store Methods ───────────────────────────────────────────────────────────────
 
 /**
  * Base store methods interface
@@ -32,16 +43,10 @@ export interface BaseStoreState {
 export interface BaseStoreMethods<T extends BaseStoreState> {
     /** Get current state */
     getState: () => T;
-
     /** Update state */
-    setState: (
-        partial: Partial<T> | ((state: T) => Partial<T>),
-        replace?: boolean
-    ) => void;
-
+    setState: (partial: Partial<T> | ((state: T) => Partial<T>), replace?: boolean) => void;
     /** Subscribe to state changes */
     subscribe: StoreSubscribe<T>;
-
     /** Clean up store resources */
     destroy: () => void;
 }
@@ -51,7 +56,6 @@ export interface BaseStoreMethods<T extends BaseStoreState> {
  */
 export interface StoreSubscribe<T> {
     (listener: (state: T, previousState: T) => void): () => void;
-    
     <U>(
         selector: (state: T) => U,
         listener: (selectedState: U, previousSelectedState: U) => void,
@@ -62,28 +66,22 @@ export interface StoreSubscribe<T> {
     ): () => void;
 }
 
-/**
- * Type safe store setter
- */
+// ─── Store Type Utilities ────────────────────────────────────────────────────────
+
+/** Type safe store setter */
 export type SetStoreState<T extends BaseStoreState> = (
     partial: Partial<T> | ((state: T) => Partial<T>),
     replace?: boolean
 ) => void;
 
-/**
- * Type safe store getter
- */
+/** Type safe store getter */
 export type GetStoreState<T extends BaseStoreState> = () => T;
 
-/**
- * Store API types
- */
+/** Store API types */
 export type IStoreApi<T extends BaseStoreState> = StoreApi<T>;
 export type BoundStore<T extends BaseStoreState> = UseBoundStore<IStoreApi<T>>;
 
-/**
- * Store creator type
- */
+/** Store creator type */
 export type StoreCreator<T extends BaseStoreState> = StateCreator<
     T,
     [['zustand/devtools', never], ['zustand/subscribeWithSelector', never]],
@@ -91,28 +89,25 @@ export type StoreCreator<T extends BaseStoreState> = StateCreator<
     T
 >;
 
+// ─── Store Configuration ────────────────────────────────────────────────────────
+
 /**
  * Store configuration options
  */
 export interface StoreConfig {
-    /** Store name for devtools */
+    /** Store identifier */
     name: string;
-
-    /** Log level */
+    /** Logging level */
     logLevel?: 'debug' | 'info' | 'warn' | 'error';
-
     /** Development mode flag */
     devMode?: boolean;
-
     /** Serialization options */
     serialize?: {
-        /** Properties to exclude from serialization */
+        /** Fields to exclude from serialization */
         exclude?: string[];
-        
-        /** Custom serializer functions */
+        /** Custom serializers for specific types */
         serializers?: Record<string, (value: unknown) => unknown>;
-        
-        /** Enable parsing of undefined */
+        /** Whether to parse undefined values */
         parseUndefined?: boolean;
     };
 }
@@ -121,12 +116,10 @@ export interface StoreConfig {
  * Store validation result
  */
 export interface StoreValidationResult {
-    /** Is the store valid */
+    /** Whether the store state is valid */
     isValid: boolean;
-    
-    /** Validation errors */
+    /** List of validation errors */
     errors: string[];
-    
     /** Optional warnings */
     warnings?: string[];
 }
@@ -135,15 +128,12 @@ export interface StoreValidationResult {
  * Store middleware configuration
  */
 export interface StoreMiddlewareConfig {
-    /** Enable devtools */
+    /** Enable Redux DevTools */
     devtools?: boolean;
-
-    /** Enable subscriptions */
+    /** Enable selector subscriptions */
     subscribeWithSelector?: boolean;
-
-    /** Enable persistence */
+    /** Enable state persistence */
     persistence?: boolean;
-
     /** Custom middleware */
     custom?: Array<
         (config: StoreConfig) => 
@@ -154,19 +144,18 @@ export interface StoreMiddlewareConfig {
 }
 
 /**
- * Store selection config
+ * Store selector configuration
  */
 export interface StoreSelector<T extends BaseStoreState, U> {
-    /** Selector function */
+    /** State selector function */
     selector: (state: T) => U;
-    
-    /** Equality comparison function */
+    /** Optional equality comparison function */
     equals?: (a: U, b: U) => boolean;
 }
 
-/**
- * Store event types
- */
+// ─── Store Events ───────────────────────────────────────────────────────────────
+
+/** Store event types */
 export type StoreEventType = 
     | 'init'
     | 'destroy'
@@ -180,19 +169,18 @@ export type StoreEventType =
 export interface StoreEvent {
     /** Event type */
     type: StoreEventType;
-    
     /** Event data */
     data: unknown;
-    
     /** Event timestamp */
     timestamp: number;
-    
-    /** Event metadata */
+    /** Optional event metadata */
     metadata?: Record<string, unknown>;
 }
 
+// ─── Type Guards ────────────────────────────────────────────────────────────────
+
 /**
- * Type guard utilities for base store types
+ * Type guards for base store types
  */
 export const StoreTypeGuards = {
     /**
@@ -229,7 +217,7 @@ export const StoreTypeGuards = {
     },
 
     /**
-     * Check if value is a store selector
+     * Check if value is store selector
      */
     isStoreSelector: <T extends BaseStoreState, U>(
         value: unknown

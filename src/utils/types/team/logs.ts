@@ -4,26 +4,18 @@
  * @description Type definitions for team logs and logging functionality
  */
 
-import { 
-    TASK_STATUS_enum, 
-    AGENT_STATUS_enum, 
-    WORKFLOW_STATUS_enum 
-} from "@/utils/types/common/enums";
-import { AgentType } from "../agent/base";
-import { TaskType } from "../task/base";
-import { LLMUsageStats } from "../llm/responses";
-import { CostDetails } from "../workflow/stats";
+import { TASK_STATUS_enum, AGENT_STATUS_enum, WORKFLOW_STATUS_enum } from "../common";
+import { AgentType } from "../agent";
+import { TaskType } from "../task";
+import { LLMUsageStats } from "../llm";
+import { CostDetails } from "../workflow";
 
-/**
- * Log type enums
- */
+// Log type enums
 export type StatusLogType = 'AgentStatusUpdate' | 'TaskStatusUpdate' | 'WorkflowStatusUpdate';
 export type MessageLogType = 'SystemMessage' | 'UserMessage' | 'AIMessage' | 'FunctionMessage';
 export type LogType = StatusLogType | MessageLogType;
 
-/**
- * Base log metadata interface
- */
+// Base log metadata interface
 export interface LogMetadata {
     llmUsageStats?: LLMUsageStats;
     iterationCount?: number;
@@ -40,9 +32,7 @@ export interface LogMetadata {
     [key: string]: unknown;
 }
 
-/**
- * Agent log metadata interface
- */
+// Agent log metadata interface
 export interface AgentLogMetadata extends LogMetadata {
     output?: {
         llmUsageStats: LLMUsageStats;
@@ -65,9 +55,7 @@ export interface AgentLogMetadata extends LogMetadata {
     stats?: Record<string, unknown>;
 }
 
-/**
- * Task log metadata interface
- */
+// Task log metadata interface
 export interface TaskLogMetadata extends LogMetadata {
     llmUsageStats?: LLMUsageStats;
     iterationCount?: number;
@@ -76,9 +64,7 @@ export interface TaskLogMetadata extends LogMetadata {
     result?: unknown;
 }
 
-/**
- * Workflow log metadata interface
- */
+// Workflow log metadata interface
 export interface WorkflowLogMetadata extends LogMetadata {
     result: string;
     duration: number;
@@ -90,9 +76,7 @@ export interface WorkflowLogMetadata extends LogMetadata {
     agentCount: number;
 }
 
-/**
- * Message log metadata interface
- */
+// Message log metadata interface
 export interface MessageLogMetadata extends LogMetadata {
     role: string;
     content: string;
@@ -102,9 +86,7 @@ export interface MessageLogMetadata extends LogMetadata {
     costDetails: CostDetails;
 }
 
-/**
- * Log preparation parameters interface
- */
+// Log preparation parameters interface
 export interface PrepareNewLogParams {
     agent: AgentType;
     task: TaskType | null;
@@ -116,9 +98,7 @@ export interface PrepareNewLogParams {
     workflowStatus?: keyof typeof WORKFLOW_STATUS_enum;
 }
 
-/**
- * Core log interface
- */
+// Core log interface
 export interface Log {
     timestamp: number;
     task: TaskType | null;
@@ -133,27 +113,14 @@ export interface Log {
     logType: LogType;
 }
 
-/**
- * Type guards for log types
- */
+// Type guards for log types
 export const LogTypeGuards = {
-    /**
-     * Check if value is a status log
-     */
     isStatusLog: (logType: LogType): logType is StatusLogType => {
         return ['AgentStatusUpdate', 'TaskStatusUpdate', 'WorkflowStatusUpdate'].includes(logType);
     },
-
-    /**
-     * Check if value is a message log
-     */
     isMessageLog: (logType: LogType): logType is MessageLogType => {
         return ['SystemMessage', 'UserMessage', 'AIMessage', 'FunctionMessage'].includes(logType);
     },
-
-    /**
-     * Check if value is agent log metadata
-     */
     isAgentLogMetadata: (metadata: LogMetadata): metadata is AgentLogMetadata => {
         return (
             'output' in metadata &&
@@ -162,20 +129,12 @@ export const LogTypeGuards = {
             'llmUsageStats' in metadata.output
         );
     },
-
-    /**
-     * Check if value is task log metadata
-     */
     isTaskLogMetadata: (metadata: LogMetadata): metadata is TaskLogMetadata => {
         return (
             'llmUsageStats' in metadata &&
             'costDetails' in metadata
         );
     },
-
-    /**
-     * Check if value is workflow log metadata
-     */
     isWorkflowLogMetadata: (metadata: LogMetadata): metadata is WorkflowLogMetadata => {
         return (
             'result' in metadata &&
@@ -185,10 +144,6 @@ export const LogTypeGuards = {
             'agentCount' in metadata
         );
     },
-
-    /**
-     * Check if value is message log metadata
-     */
     isMessageLogMetadata: (metadata: LogMetadata): metadata is MessageLogMetadata => {
         return (
             'role' in metadata &&

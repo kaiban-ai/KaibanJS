@@ -25,9 +25,6 @@ export const createErrorActions = (
 ) => {
     const statusManager = StatusManager.getInstance();
 
-    /**
-     * Create workflow error metadata
-     */
     const createErrorMetadata = (
         task: TaskType,
         error: ErrorType,
@@ -75,9 +72,6 @@ export const createErrorActions = (
     };
 
     return {
-        /**
-         * Handle workflow-level errors
-         */
         handleWorkflowError: async (params: { 
             task: TaskType; 
             error: ErrorType;
@@ -88,7 +82,6 @@ export const createErrorActions = (
 
             const metadata = createErrorMetadata(task, error, context);
 
-            // Transition workflow status
             await statusManager.transition({
                 currentStatus: get().teamWorkflowStatus,
                 targetStatus: 'ERRORED',
@@ -100,7 +93,7 @@ export const createErrorActions = (
             const errorLog = LogCreator.createWorkflowLog(
                 `Workflow error encountered: ${error.message}`,
                 'ERRORED',
-                metadata as any // Type assertion needed due to metadata structure
+                metadata as any
             );
 
             set(state => ({
@@ -121,9 +114,6 @@ export const createErrorActions = (
             }));
         },
 
-        /**
-         * Handle agent-level errors
-         */
         handleAgentError: async (params: {
             agent: AgentType;
             task: TaskType;
@@ -133,7 +123,6 @@ export const createErrorActions = (
             const { agent, task, error, context } = params;
             logger.error(`Agent ${agent.name} error:`, error);
 
-            // Transition agent status
             await statusManager.transition({
                 currentStatus: agent.status,
                 targetStatus: 'THINKING_ERROR',
@@ -166,9 +155,6 @@ export const createErrorActions = (
             }));
         },
 
-        /**
-         * Handle task-level errors
-         */
         handleTaskError: async (params: {
             task: TaskType;
             error: ErrorType;
@@ -177,7 +163,6 @@ export const createErrorActions = (
             const { task, error, context } = params;
             logger.error(`Task ${task.title} error:`, error.message);
 
-            // Transition task status
             await statusManager.transition({
                 currentStatus: task.status,
                 targetStatus: 'ERROR',

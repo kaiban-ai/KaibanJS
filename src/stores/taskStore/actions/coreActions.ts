@@ -32,9 +32,7 @@ import { TaskStoreState } from '../state';
 
 export type CoreActions = ReturnType<typeof createCoreActions>;
 
-/**
- * Create core action creators for task store
- */
+// Create core action creators for task store
 export const createCoreActions = (
     get: () => TaskStoreState,
     set: (partial: TaskStoreState | ((state: TaskStoreState) => TaskStoreState)) => void
@@ -42,9 +40,7 @@ export const createCoreActions = (
     const statusManager = StatusManager.getInstance();
 
     return {
-        /**
-         * Handle task completion
-         */
+        // Handle task completion
         handleTaskCompletion: async ({ 
             agent, 
             task, 
@@ -56,25 +52,18 @@ export const createCoreActions = (
             result: TaskResult;
             metadata?: Record<string, unknown>;
         }): Promise<void> => {
-            // Get task stats
             const stats = calculateTaskStats(task, get().workflowLogs);
             const modelCode = agent.llmConfig.model;
             const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
-            
-            // Update feedback history
             const updatedFeedbackHistory = task.feedbackHistory.map((feedback: FeedbackObject) =>
                 feedback.status === FEEDBACK_STATUS_enum.PENDING
                     ? { ...feedback, status: FEEDBACK_STATUS_enum.PROCESSED }
                     : feedback
             );
-
-            // Determine new status
-            const newStatus = task.externalValidationRequired && 
-                              task.status !== TASK_STATUS_enum.VALIDATED 
+            const newStatus = task.externalValidationRequired && task.status !== TASK_STATUS_enum.VALIDATED 
                               ? TASK_STATUS_enum.AWAITING_VALIDATION 
                               : TASK_STATUS_enum.DONE;
 
-            // Use StatusManager for transition
             await statusManager.transition({
                 currentStatus: task.status,
                 targetStatus: newStatus,
@@ -101,7 +90,6 @@ export const createCoreActions = (
                 }
             });
 
-            // Update state
             set(state => ({
                 tasks: state.tasks.map(t => t.id === task.id ? {
                     ...t,
@@ -120,9 +108,7 @@ export const createCoreActions = (
             }
         },
 
-        /**
-         * Handle task error
-         */
+        // Handle task error
         handleTaskError: ({ 
             task, 
             error, 
@@ -166,9 +152,7 @@ export const createCoreActions = (
             logger.error(`Task error: ${error.message}`, { taskId: task.id, context });
         },
 
-        /**
-         * Handle task blocking
-         */
+        // Handle task blocking
         handleTaskBlocked: ({ 
             task, 
             error,
@@ -212,9 +196,7 @@ export const createCoreActions = (
             logger.warn(`Task blocked: ${blockingReason || error.message}`, { taskId: task.id });
         },
 
-        /**
-         * Handle task status update
-         */
+        // Handle task status update
         handleTaskStatusChange: async (
             taskId: string,
             status: keyof typeof TASK_STATUS_enum,
@@ -226,7 +208,6 @@ export const createCoreActions = (
                 return;
             }
 
-            // Use StatusManager for transition
             await statusManager.transition({
                 currentStatus: task.status,
                 targetStatus: status,
@@ -261,9 +242,7 @@ export const createCoreActions = (
             );
         },
 
-        /**
-         * Add feedback to task
-         */
+        // Add feedback to task
         addTaskFeedback: (
             taskId: string, 
             content: string,

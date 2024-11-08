@@ -5,16 +5,49 @@
  */
 
 import { logger } from "../core/logger";
-import { 
-    TaskCompletionParams,
-    ErrorHandlerParams,
+import { calculateTaskCost } from "../helpers/costs/llmCostCalculator";
+import { PrettyError } from "../core/errors";
+import DefaultFactory from "../factories/defaultFactory"; // Use DefaultFactory for creating default objects
+import LogCreator from "../factories/logCreator"; // Import LogCreator
+
+import type { 
     HandlerResult,
-    ValidationResult,
-    ITaskHandler,
-    TaskType
+    TaskType,
+    AgentType,
+    TeamState,
+    TeamStore,
+    TaskValidationResult,
+    ErrorType,
+    LLMUsageStats,
+    CostDetails
 } from '@/utils/types';
-import { calculateTaskCost } from '../helpers/costs/llmCostCalculator';
-import { PrettyError } from '../core/errors';
+
+// Interface for task handler methods
+export interface ITaskHandler {
+    handleCompletion(params: TaskCompletionParams): Promise<HandlerResult<TaskType>>;
+    handleError(params: TaskErrorParams): Promise<HandlerResult<void>>;
+    handleValidation(task: TaskType): Promise<TaskValidationResult>;
+}
+
+// Task completion parameters
+interface TaskCompletionParams {
+    store: TeamStore;
+    agent: AgentType;
+    task: TaskType;
+    result: unknown;
+    metadata?: {
+        llmUsageStats?: LLMUsageStats;
+        costDetails?: CostDetails;
+    };
+}
+
+// Task error parameters
+interface TaskErrorParams {
+    store: TeamStore;
+    task: TaskType;
+    error: ErrorType;
+    context?: Record<string, unknown>;
+}
 
 /**
  * Task handler implementation
@@ -23,50 +56,54 @@ export class TaskHandler implements ITaskHandler {
     /**
      * Handle task completion
      */
-    async handleCompletion(params: TaskCompletionParams): Promise<HandlerResult> {
-        const { agent, task, result, metadata = {}, store } = params;
+    async handleCompletion(params: TaskCompletionParams): Promise<HandlerResult<TaskType>> {
+        const { store, agent, task, result, metadata = {} } = params;
 
         try {
-            // Get task stats if not provided
-            const stats = store.getTaskStats(task);
+            if (!store) {
+                throw new Error('Store is required for task completion');
+            }
+
+            // Use DefaultFactory to create default task statistics
+            const stats = DefaultFactory.createTaskStats();
             const modelCode = agent.llmConfig.model;
-            const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
+            const llmUsageStats = metadata.llmUsageStats || DefaultFactory.createLLMUsageStats();
+            const costDetails = calculateTaskCost(modelCode, llmUsageStats);
 
             // Update task status and result
-            store.setState(state => ({
-                tasks: state.tasks.map(t => 
-                    t.id === task.id ? {
+            store.setState((state: TeamState) => ({
+                tasks: state.tasks.map((t: TaskType) => 
+                    t.id === task.id ? ({
                         ...t,
                         status: 'DONE',
                         result,
-                        ...stats,
-                    } : t
+                        ...stats
+                    } as TaskType) : t
                 )
             }));
 
-            // Create completion log
-            const completionLog = store.prepareNewLog({
-                agent,
+            // Create completion log using LogCreator
+            const completionLog = LogCreator.createTaskLog({
                 task,
-                logDescription: `Task completed: ${task.title}`,
+                description: `Task completed: ${task.title}`,
+                status: 'DONE',
                 metadata: {
                     result,
                     ...metadata,
                     ...stats,
                     costDetails
-                },
-                logType: 'TaskStatusUpdate'
+                }
             });
 
             // Add log to store
-            store.setState(state => ({
+            store.setState((state: TeamState) => ({
                 workflowLogs: [...state.workflowLogs, completionLog]
             }));
 
             logger.info(`Task ${task.id} completed successfully`);
             return {
                 success: true,
-                data: result,
+                data: task,
                 metadata: {
                     stats,
                     costDetails
@@ -85,10 +122,14 @@ export class TaskHandler implements ITaskHandler {
     /**
      * Handle task error
      */
-    async handleError(params: ErrorHandlerParams): Promise<HandlerResult> {
+    async handleError(params: TaskErrorParams): Promise<HandlerResult<void>> {
         const { error, context, task, store } = params;
 
         try {
+            if (!store) {
+                throw new Error('Store is required for error handling');
+            }
+
             if (!task) {
                 throw new Error('Task is required for error handling');
             }
@@ -101,34 +142,33 @@ export class TaskHandler implements ITaskHandler {
                     taskTitle: task.title,
                     ...context
                 },
-                recommendedAction: error.recommendedAction || 'Check task configuration and inputs'
+                rootError: error
             });
 
             // Update task status
-            store.setState(state => ({
-                tasks: state.tasks.map(t => 
-                    t.id === task.id ? {
+            store.setState((state: TeamState) => ({
+                tasks: state.tasks.map((t: TaskType) => 
+                    t.id === task.id ? ({
                         ...t,
                         status: 'ERROR',
                         error: prettyError.message
-                    } : t
+                    } as TaskType) : t
                 )
             }));
 
-            // Create error log
-            const errorLog = store.prepareNewLog({
+            // Create error log using LogCreator
+            const errorLog = LogCreator.createTaskLog({
                 task,
-                agent: task.agent,
-                logDescription: `Task error: ${prettyError.message}`,
+                description: `Task error: ${prettyError.message}`,
+                status: 'ERROR',
                 metadata: {
                     error: prettyError,
                     context
-                },
-                logType: 'TaskStatusUpdate'
+                }
             });
 
             // Add log to store
-            store.setState(state => ({
+            store.setState((state: TeamState) => ({
                 workflowLogs: [...state.workflowLogs, errorLog]
             }));
 
@@ -150,7 +190,7 @@ export class TaskHandler implements ITaskHandler {
     /**
      * Handle task validation
      */
-    async handleValidation(task: TaskType): Promise<ValidationResult> {
+    async handleValidation(task: TaskType): Promise<TaskValidationResult> {
         const errors: string[] = [];
         const warnings: string[] = [];
 
@@ -162,8 +202,12 @@ export class TaskHandler implements ITaskHandler {
 
         // Validate agent configuration
         if (task.agent) {
-            if (!task.agent.tools) warnings.push('Agent has no tools configured');
-            if (!task.agent.llmConfig) warnings.push('Agent has no LLM configuration');
+            if (!task.agent.tools || task.agent.tools.length === 0) {
+                warnings.push('Agent has no tools configured');
+            }
+            if (!task.agent.llmConfig) {
+                warnings.push('Agent has no LLM configuration');
+            }
         }
 
         // Check task inputs

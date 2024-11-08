@@ -20,35 +20,23 @@ import { subscribeWorkflowStatusUpdates } from '@/subscribers/teamSubscriber';
 import { logger } from '@/utils/core/logger';
 import { TypeGuards } from './typeGuards';
 
-/**
- * Store utilities for managing store state and operations
- */
+/* Store utilities for managing store state and operations */
 export const StoreUtils = {
-    /**
-     * Creates a type-safe state update object
-     */
     createSafeStateUpdate<T extends Partial<TeamState>>(
         updates: T
     ): Partial<TeamStore> {
         return updates as unknown as Partial<TeamStore>;
     },
 
-    /**
-     * Creates a store proxy with proper typing
-     */
     createStoreProxy(
         store: TeamStoreApi
     ): UseBoundTeamStore {
         return store as unknown as UseBoundTeamStore;
     },
 
-    /**
-     * Sets up store subscribers and returns cleanup function
-     */
     setupSubscribers(
         store: TeamStoreApi
     ): (() => void) {
-        // Now the type conversion is safe because UseBoundTeamStore has the correct shape
         const taskUnsubscribe = subscribeTaskStatusUpdates(store as unknown as UseBoundTeamStore);
         const workflowUnsubscribe = subscribeWorkflowStatusUpdates(store as unknown as UseBoundTeamStore);
         
@@ -58,18 +46,12 @@ export const StoreUtils = {
         };
     },
 
-    /**
-     * Creates a type-safe selector
-     */
     createSelector<T>(
         selector: (state: TeamState) => T
     ): (state: TeamState) => T {
         return selector;
     },
 
-    /**
-     * Creates a safe state getter
-     */
     createStateGetter(
         get: () => TeamState
     ): () => TeamState {
@@ -83,9 +65,6 @@ export const StoreUtils = {
         };
     },
 
-    /**
-     * Creates a safe state setter
-     */
     createStateSetter(
         set: (fn: (state: TeamState) => Partial<TeamState>) => void
     ): (fn: (state: TeamState) => Partial<TeamState>) => void {
@@ -99,9 +78,6 @@ export const StoreUtils = {
         };
     },
 
-    /**
-     * Creates a cleaned state object for external consumption
-     */
     createCleanedState(state: TeamState): unknown {
         return {
             teamWorkflowStatus: state.teamWorkflowStatus,
@@ -143,9 +119,6 @@ export const StoreUtils = {
         };
     },
 
-    /**
-     * Creates store middleware configuration
-     */
     createMiddlewareConfig(name: string) {
         return {
             name: `${name}Store`,

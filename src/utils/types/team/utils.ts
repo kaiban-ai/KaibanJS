@@ -5,191 +5,99 @@
  */
 
 import { AgentType, TaskType } from '@/utils/types';
-import { WORKFLOW_STATUS_enum, TASK_STATUS_enum } from '../common/enums';
-import { LLMUsageStats } from '../llm/responses';
-import { CostDetails } from '../workflow/stats';
+import { WORKFLOW_STATUS_enum, TASK_STATUS_enum } from '../common';
+import { LLMUsageStats } from '../llm';
+import { CostDetails } from '../workflow';
 
-/**
- * Team initialization parameters
- */
+// Team initialization parameters
 export interface TeamInitParams {
-    /** Team name */
     name: string;
-    
-    /** Initial agents */
     agents?: AgentType[];
-    
-    /** Initial tasks */
     tasks?: TaskType[];
-    
-    /** Initial inputs */
     inputs?: Record<string, unknown>;
-    
-    /** Environment variables */
     env?: Record<string, unknown>;
-    
-    /** Log level */
     logLevel?: string;
 }
 
-/**
- * Team operation configuration
- */
+// Team operation configuration
 export interface TeamOperationConfig {
-    /** Execution timeout */
     timeout?: number;
-    
-    /** Maximum retries */
     maxRetries?: number;
-    
-    /** Retry delay in milliseconds */
     retryDelay?: number;
-    
-    /** Abort signal */
     signal?: AbortSignal;
-    
-    /** Operation metadata */
     metadata?: Record<string, unknown>;
 }
 
-/**
- * Team execution context
- */
+// Team execution context
 export interface TeamExecutionContext {
-    /** Start timestamp */
     startTime: number;
-    
-    /** Workflow status */
     status: keyof typeof WORKFLOW_STATUS_enum;
-    
-    /** Active agent IDs */
     activeAgents: string[];
-    
-    /** Completed task IDs */
     completedTasks: string[];
-    
-    /** Statistics */
     stats: {
-        /** Total tasks */
         taskCount: number;
-        /** Completed tasks */
         completedTaskCount: number;
-        /** Task completion percentage */
         completionPercentage: number;
-        /** Task status counts */
         taskStatusCounts: Record<keyof typeof TASK_STATUS_enum, number>;
-        /** LLM usage stats */
         llmUsageStats: LLMUsageStats;
-        /** Cost details */
         costDetails: CostDetails;
     };
-    
-    /** Last error */
     lastError?: Error;
 }
 
-/**
- * Team performance metrics
- */
+// Team performance metrics
 export interface TeamPerformanceMetrics {
-    /** Task metrics */
     tasks: {
-        /** Total tasks */
         total: number;
-        /** Completed tasks */
         completed: number;
-        /** Failed tasks */
         failed: number;
-        /** Average task duration */
         averageDuration: number;
-        /** Task success rate */
         successRate: number;
     };
-    
-    /** Resource metrics */
     resources: {
-        /** Memory usage */
         memory: number;
-        /** CPU usage */
         cpu: number;
-        /** Average latency */
         averageLatency: number;
-        /** Maximum latency */
         maxLatency: number;
     };
-    
-    /** Cost metrics */
     costs: {
-        /** Total cost */
         total: number;
-        /** Cost breakdown */
         breakdown: CostDetails;
-        /** Cost per task */
         costPerTask: number;
-        /** Cost per token */
         costPerToken: number;
     };
-    
-    /** LLM metrics */
     llm: {
-        /** Total tokens */
         totalTokens: number;
-        /** Input tokens */
         inputTokens: number;
-        /** Output tokens */
         outputTokens: number;
-        /** Average tokens per task */
         tokensPerTask: number;
-        /** Token rate */
         tokensPerSecond: number;
     };
 }
 
-/**
- * Team validation result
- */
+// Team validation result
 export interface TeamValidationResult {
-    /** Validation success */
     isValid: boolean;
-    
-    /** Validation errors */
     errors: string[];
-    
-    /** Optional warnings */
     warnings?: string[];
-    
-    /** Validation context */
     context?: Record<string, unknown>;
 }
 
-/**
- * Team state snapshot
- */
+// Team state snapshot
 export interface TeamStateSnapshot {
-    /** Snapshot timestamp */
     timestamp: number;
-    
-    /** Workflow status */
     status: keyof typeof WORKFLOW_STATUS_enum;
-    
-    /** Active agents */
     agents: {
         id: string;
         name: string;
         status: string;
     }[];
-    
-    /** Active tasks */
     tasks: {
         id: string;
         title: string;
         status: string;
     }[];
-    
-    /** Performance metrics */
     metrics: TeamPerformanceMetrics;
-    
-    /** Resource usage */
     resources: {
         memory: number;
         cpu: number;
@@ -197,22 +105,14 @@ export interface TeamStateSnapshot {
     };
 }
 
-/**
- * Team utility type guards
- */
+// Team utility type guards
 export const TeamUtilityGuards = {
-    /**
-     * Check if value is team init params
-     */
     isTeamInitParams: (value: unknown): value is TeamInitParams => {
         if (typeof value !== 'object' || value === null) return false;
         const params = value as Partial<TeamInitParams>;
         return typeof params.name === 'string';
     },
 
-    /**
-     * Check if value is team execution context
-     */
     isTeamExecutionContext: (value: unknown): value is TeamExecutionContext => {
         if (typeof value !== 'object' || value === null) return false;
         const context = value as Partial<TeamExecutionContext>;
@@ -224,9 +124,6 @@ export const TeamUtilityGuards = {
         );
     },
 
-    /**
-     * Check if value is team performance metrics
-     */
     isTeamPerformanceMetrics: (value: unknown): value is TeamPerformanceMetrics => {
         if (typeof value !== 'object' || value === null) return false;
         const metrics = value as Partial<TeamPerformanceMetrics>;
@@ -243,13 +140,8 @@ export const TeamUtilityGuards = {
     }
 };
 
-/**
- * Team utility functions
- */
+// Team utility functions
 export const TeamUtils = {
-    /**
-     * Create empty execution context
-     */
     createEmptyContext: (): TeamExecutionContext => ({
         startTime: Date.now(),
         status: 'INITIAL',
@@ -304,9 +196,6 @@ export const TeamUtils = {
         }
     }),
 
-    /**
-     * Create empty performance metrics
-     */
     createEmptyMetrics: (): TeamPerformanceMetrics => ({
         tasks: {
             total: 0,

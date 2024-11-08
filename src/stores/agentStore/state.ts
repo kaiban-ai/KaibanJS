@@ -8,17 +8,13 @@ import { DefaultFactory } from '@/utils/factories/defaultFactory';
 import { AgentStoreState } from '@/utils/types/agent/store';
 import { AGENT_STATUS_enum } from '@/utils/types/common/enums';
 
-/**
- * Initial agent store state
- */
+// Initial agent store state
 export const initialAgentState: AgentStoreState = {
-    // Base store properties
     name: '',
     agents: [],
     tasks: [],
     workflowLogs: [],
 
-    // Runtime state
     runtime: {
         currentAgent: null,
         currentTask: null,
@@ -26,7 +22,6 @@ export const initialAgentState: AgentStoreState = {
         status: 'INITIAL'
     },
 
-    // Stats and metrics
     stats: {
         llmUsageStats: DefaultFactory.createLLMUsageStats(),
         iterationCount: 0,
@@ -37,9 +32,7 @@ export const initialAgentState: AgentStoreState = {
     }
 };
 
-/**
- * State validator for agent store
- */
+// State validator for agent store
 export function validateAgentState(state: Partial<AgentStoreState>): state is AgentStoreState {
     return (
         typeof state === 'object' &&
@@ -58,9 +51,7 @@ export function validateAgentState(state: Partial<AgentStoreState>): state is Ag
     );
 }
 
-/**
- * Helper function to create a sanitized version of the state for logging
- */
+// Helper function to create a sanitized version of the state for logging
 export function getSanitizedState(state: AgentStoreState): Record<string, unknown> {
     return {
         name: state.name,
@@ -71,7 +62,6 @@ export function getSanitizedState(state: AgentStoreState): Record<string, unknow
             ...state.stats,
             llmUsageStats: {
                 ...state.stats.llmUsageStats,
-                // Remove sensitive data
                 apiKeys: '[REDACTED]',
                 credentials: '[REDACTED]'
             }

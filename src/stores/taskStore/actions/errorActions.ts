@@ -29,9 +29,7 @@ import {
 
 import { TaskStoreState } from '../state';
 
-/**
- * Create error handling actions for task store
- */
+// Create error handling actions for task store
 export const createErrorActions = (
     get: () => TaskStoreState,
     set: (partial: TaskStoreState | ((state: TaskStoreState) => TaskStoreState)) => void
@@ -39,9 +37,7 @@ export const createErrorActions = (
     const statusManager = StatusManager.getInstance();
 
     return {
-        /**
-         * Handle critical task error
-         */
+        // Handle critical task error
         handleCriticalError: async ({ 
             task, 
             error, 
@@ -66,7 +62,6 @@ export const createErrorActions = (
             const modelCode = task.agent.llmConfig.model;
             const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
 
-            // Transition task status
             await statusManager.transition({
                 currentStatus: task.status,
                 targetStatus: TASK_STATUS_enum.ERROR,
@@ -114,9 +109,7 @@ export const createErrorActions = (
             logger.error(`Critical task error:`, prettyError);
         },
 
-        /**
-         * Handle task blocking
-         */
+        // Handle task blocking
         handleTaskBlocked: async ({ 
             task, 
             error,
@@ -128,7 +121,6 @@ export const createErrorActions = (
         }): Promise<void> => {
             const stats = calculateTaskStats(task, get().workflowLogs);
 
-            // Transition task status
             await statusManager.transition({
                 currentStatus: task.status,
                 targetStatus: TASK_STATUS_enum.BLOCKED,
@@ -179,9 +171,7 @@ export const createErrorActions = (
             });
         },
 
-        /**
-         * Handle validation error
-         */
+        // Handle validation error
         handleValidationError: async ({
             task,
             error,
@@ -197,7 +187,6 @@ export const createErrorActions = (
         }): Promise<void> => {
             const stats = calculateTaskStats(task, get().workflowLogs);
 
-            // Transition task status
             await statusManager.transition({
                 currentStatus: task.status,
                 targetStatus: TASK_STATUS_enum.ERROR,
@@ -246,9 +235,7 @@ export const createErrorActions = (
             });
         },
 
-        /**
-         * Handle recovery attempt
-         */
+        // Handle recovery attempt
         handleRecoveryAttempt: async ({
             task,
             agent,
@@ -267,7 +254,6 @@ export const createErrorActions = (
         }): Promise<void> => {
             const stats = calculateTaskStats(task, get().workflowLogs);
 
-            // Transition task status if necessary
             await statusManager.transition({
                 currentStatus: task.status,
                 targetStatus: TASK_STATUS_enum.DOING,
@@ -310,9 +296,7 @@ export const createErrorActions = (
             });
         },
 
-        /**
-         * Handle resource exhaustion
-         */
+        // Handle resource exhaustion
         handleResourceExhaustion: async ({
             task,
             resourceStats,
@@ -332,7 +316,6 @@ export const createErrorActions = (
         }): Promise<void> => {
             const stats = calculateTaskStats(task, get().workflowLogs);
 
-            // Transition task status
             await statusManager.transition({
                 currentStatus: task.status,
                 targetStatus: TASK_STATUS_enum.BLOCKED,
@@ -386,9 +369,7 @@ export const createErrorActions = (
             });
         },
 
-        /**
-         * Handle timeout error
-         */
+        // Handle timeout error
         handleTimeoutError: async ({
             task,
             timeoutConfig,
@@ -403,7 +384,6 @@ export const createErrorActions = (
         }): Promise<void> => {
             const stats = calculateTaskStats(task, get().workflowLogs);
 
-            // Transition task status
             await statusManager.transition({
                 currentStatus: task.status,
                 targetStatus: TASK_STATUS_enum.ERROR,
@@ -457,9 +437,7 @@ export const createErrorActions = (
             });
         },
 
-        /**
-         * Handle dependency error
-         */
+        // Handle dependency error
         handleDependencyError: async ({
             task,
             dependencies,
@@ -475,7 +453,6 @@ export const createErrorActions = (
         }): Promise<void> => {
             const stats = calculateTaskStats(task, get().workflowLogs);
 
-            // Transition task status
             await statusManager.transition({
                 currentStatus: task.status,
                 targetStatus: TASK_STATUS_enum.BLOCKED,

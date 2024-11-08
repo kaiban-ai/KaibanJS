@@ -4,7 +4,17 @@
  * @description Provides validation functions for checking the validity of status transitions for messages, agents, tasks, and workflows.
  */
 
-import { MESSAGE_STATUS_enum, AGENT_STATUS_enum, TASK_STATUS_enum, WORKFLOW_STATUS_enum, StatusTypeGuards } from '@/utils/types/common/enums';
+import { 
+    MESSAGE_STATUS_enum, 
+    AGENT_STATUS_enum, 
+    TASK_STATUS_enum, 
+    WORKFLOW_STATUS_enum, 
+    StatusTypeGuards 
+} from '@/utils/types/common/enums';
+
+// Updated workflow type imports
+import { WorkflowState } from '@/utils/types/workflow/store';
+import { WorkflowResult } from '@/utils/types/workflow/base';
 import type { StatusTransitionContext } from '@/utils/types/common/status';
 
 /**

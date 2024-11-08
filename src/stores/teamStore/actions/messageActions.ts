@@ -11,17 +11,12 @@ import { MessageUtils } from '../utils/messageUtils';
 import { MessageMetadataFields } from '@/utils/types/messaging/base';
 import type { TeamState } from '@/utils/types';
 
-/**
- * Creates message handling actions
- */
+// Creates message handling actions
 export const createMessageActions = (
     get: () => TeamState,
     set: (fn: (state: TeamState) => Partial<TeamState>) => void,
     messageHistoryManager: MessageHistoryManager
 ) => ({
-    /**
-     * Handles system messages
-     */
     handleSystemMessage: (message: string): void => {
         logger.info(`System message: ${message}`);
         messageHistoryManager.addSystemMessage(message).catch(error => {
@@ -30,9 +25,6 @@ export const createMessageActions = (
         });
     },
 
-    /**
-     * Adds a system message
-     */
     addSystemMessage: async (message: string): Promise<void> => {
         try {
             if (!MessageUtils.validateMessageContent(message)) {
@@ -46,9 +38,6 @@ export const createMessageActions = (
         }
     },
 
-    /**
-     * Adds a user message
-     */
     addUserMessage: async (message: string): Promise<void> => {
         try {
             if (!MessageUtils.validateMessageContent(message)) {
@@ -62,9 +51,6 @@ export const createMessageActions = (
         }
     },
 
-    /**
-     * Adds an AI message
-     */
     addAIMessage: async (message: MessageContent): Promise<void> => {
         try {
             if (!MessageUtils.validateMessageContent(message)) {
@@ -78,9 +64,6 @@ export const createMessageActions = (
         }
     },
 
-    /**
-     * Adds a function message
-     */
     addFunctionMessage: async (name: string, content: string): Promise<void> => {
         try {
             if (!name || !MessageUtils.validateMessageContent(content)) {
@@ -94,9 +77,6 @@ export const createMessageActions = (
         }
     },
 
-    /**
-     * Adds a generic message
-     */
     addMessage: async (message: BaseMessage): Promise<void> => {
         try {
             await messageHistoryManager.addMessage(message);
@@ -106,9 +86,6 @@ export const createMessageActions = (
         }
     },
 
-    /**
-     * Retrieves message history
-     */
     getMessageHistory: async (): Promise<BaseMessage[]> => {
         try {
             return await messageHistoryManager.getMessages();
@@ -118,9 +95,6 @@ export const createMessageActions = (
         }
     },
 
-    /**
-     * Clears message history
-     */
     clearMessageHistory: async (): Promise<void> => {
         try {
             await messageHistoryManager.clear();
@@ -131,9 +105,6 @@ export const createMessageActions = (
         }
     },
 
-    /**
-     * Handles function call messages
-     */
     handleFunctionCallMessage: async (
         name: string,
         args: Record<string, unknown>
@@ -150,18 +121,12 @@ export const createMessageActions = (
         }
     },
 
-    /**
-     * Processes message metadata
-     */
     processMessageMetadata: (
         metadata?: MessageMetadataFields
     ): MessageMetadataFields => {
         return MessageUtils.createMessageMetadata(metadata);
     },
 
-    /**
-     * Validates message content
-     */
     validateMessage: (
         content: MessageContent,
         metadata?: MessageMetadataFields

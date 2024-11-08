@@ -19,9 +19,7 @@ import {
 
 import { AgentState } from '../state';
 
-/**
- * Core action creators for agent status management and logging
- */
+// Core action creators for agent status management and logging
 export const createCoreActions = (
     get: () => AgentState,
     set: (partial: Partial<AgentState> | ((state: AgentState) => Partial<AgentState>)) => void
@@ -29,9 +27,7 @@ export const createCoreActions = (
     const statusManager = StatusManager.getInstance();
 
     return {
-        /**
-         * Update agent status and create status log
-         */
+        // Update agent status and create status log
         handleAgentStatusChange: async (
             agent: AgentType, 
             status: keyof typeof AGENT_STATUS_enum
@@ -45,7 +41,6 @@ export const createCoreActions = (
             }
 
             try {
-                // Use StatusManager for transition
                 await statusManager.transition({
                     currentStatus: agent.status,
                     targetStatus: status,
@@ -58,7 +53,6 @@ export const createCoreActions = (
                     }
                 });
 
-                // Create status log
                 const log = LogCreator.createAgentLog({
                     agent,
                     task: currentTask,
@@ -72,7 +66,6 @@ export const createCoreActions = (
                     logType: 'AgentStatusUpdate'
                 });
 
-                // Update state
                 set(state => ({
                     status,
                     currentAgent: {
@@ -86,18 +79,14 @@ export const createCoreActions = (
             }
         },
 
-        /**
-         * Add a new workflow log
-         */
+        // Add a new workflow log
         addWorkflowLog: (log: Log): void => {
             set(state => ({
                 workflowLogs: [...state.workflowLogs, log]
             }));
         },
 
-        /**
-         * Set current agent and task
-         */
+        // Set current agent and task
         setCurrentAgentAndTask: (
             agent: AgentType | null,
             task: TaskType | null
@@ -108,9 +97,7 @@ export const createCoreActions = (
             });
         },
 
-        /**
-         * Handle agent iteration start
-         */
+        // Handle agent iteration start
         handleIterationStart: async (params: { 
             agent: AgentType;
             task: TaskType; 
@@ -120,7 +107,6 @@ export const createCoreActions = (
             const { agent, task, iterations, maxAgentIterations } = params;
 
             try {
-                // Use StatusManager for transition
                 await statusManager.transition({
                     currentStatus: agent.status,
                     targetStatus: 'ITERATION_START',
@@ -156,9 +142,7 @@ export const createCoreActions = (
             }
         },
 
-        /**
-         * Handle agent iteration end
-         */
+        // Handle agent iteration end
         handleIterationEnd: async (params: { 
             agent: AgentType; 
             task: TaskType;
@@ -168,7 +152,6 @@ export const createCoreActions = (
             const { agent, task, iterations, maxAgentIterations } = params;
 
             try {
-                // Use StatusManager for transition
                 await statusManager.transition({
                     currentStatus: agent.status,
                     targetStatus: 'ITERATION_END',
@@ -200,9 +183,7 @@ export const createCoreActions = (
             }
         },
 
-        /**
-         * Handle agent output with proper logging
-         */
+        // Handle agent output with proper logging
         handleAgentOutput: async (params: {
             agent: AgentType;
             task: TaskType;
@@ -211,7 +192,6 @@ export const createCoreActions = (
         }): Promise<void> => {
             const { agent, task, output, type } = params;
             
-            // Create metadata for logging
             const metadata: AgentLogMetadata = {
                 output: {
                     llmUsageStats: output.llmUsageStats || get().stats.llmUsageStats,
@@ -223,7 +203,6 @@ export const createCoreActions = (
                 timestamp: Date.now()
             };
 
-            // Determine status and description based on output type
             let agentStatus: keyof typeof AGENT_STATUS_enum;
             let description: string;
 
@@ -254,7 +233,6 @@ export const createCoreActions = (
             }
 
             try {
-                // Use StatusManager for transition
                 await statusManager.transition({
                     currentStatus: agent.status,
                     targetStatus: agentStatus,
@@ -275,7 +253,6 @@ export const createCoreActions = (
                     logType: 'AgentStatusUpdate'
                 });
 
-                // Update state with new log and update stats
                 set(state => ({
                     status: agentStatus,
                     workflowLogs: [...state.workflowLogs, log],

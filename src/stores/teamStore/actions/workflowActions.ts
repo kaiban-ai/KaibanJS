@@ -24,11 +24,6 @@ import type {
     WorkflowResult
 } from '@/utils/types';
 
-/**
- * Converts task statistics with model usage into a record of model statistics.
- * @param stats Task statistics with model usage.
- * @returns Record mapping model names to their statistics.
- */
 function convertToModelStats(stats: TaskStatsWithModelUsage): Record<string, ModelStats> {
     const modelUsage: Record<string, ModelStats> = {};
     
@@ -44,7 +39,7 @@ function convertToModelStats(stats: TaskStatsWithModelUsage): Record<string, Mod
             },
             latency: {
                 average: llmStats.averageLatency,
-                p95: llmStats.totalLatency * 1.5, // Approximation for p95
+                p95: llmStats.totalLatency * 1.5,
                 max: llmStats.totalLatency
             },
             cost: llmStats.costBreakdown?.total || 0
@@ -54,12 +49,6 @@ function convertToModelStats(stats: TaskStatsWithModelUsage): Record<string, Mod
     return modelUsage;
 }
 
-/**
- * Creates workflow management actions.
- * @param get Function to get the current team state.
- * @param set Function to set the new team state.
- * @returns An object containing workflow action methods.
- */
 export const createWorkflowActions = (
     get: () => TeamState,
     set: (fn: (state: TeamState) => Partial<TeamState>) => void
@@ -67,23 +56,16 @@ export const createWorkflowActions = (
     const statusManager = StatusManager.getInstance();
 
     return {
-        /**
-         * Starts the workflow.
-         * @param inputs Optional team inputs to initialize the workflow.
-         */
         startWorkflow: async (inputs?: TeamInputs): Promise<void> => {
             const state = get();
             logger.info(`🚀 Team *${state.name}* starting workflow`);
             
-            // Reset workflow state
             await get().resetWorkflowState();
 
-            // Set inputs if provided
             if (inputs) {
                 get().setInputs(inputs);
             }
 
-            // Use StatusManager for transition
             await statusManager.transition({
                 currentStatus: state.teamWorkflowStatus,
                 targetStatus: 'RUNNING',
@@ -95,7 +77,6 @@ export const createWorkflowActions = (
                 }
             });
 
-            // Get initial stats
             const stats = get().getWorkflowStats();
             const workflowMetadata = MetadataFactory.forWorkflow(state, stats, {
                 message: 'Workflow initialized with input settings',
@@ -103,35 +84,27 @@ export const createWorkflowActions = (
                 timestamp: Date.now()
             });
 
-            // Create initial log
             const initialLog = LogCreator.createWorkflowLog(
                 `Workflow initiated for team *${state.name}*`,
                 'RUNNING',
                 workflowMetadata
             );
 
-            // Update state
             set(state => ({
                 workflowLogs: [...state.workflowLogs, initialLog],
                 teamWorkflowStatus: 'RUNNING',
             }));
 
-            // Start first task if available
             const tasks = state.tasks;
             if (tasks.length > 0 && tasks[0].status === 'TODO') {
                 get().handleTaskStatusChange(tasks[0].id, 'DOING');
             }
         },
 
-        /**
-         * Handles workflow status changes.
-         * @param status The new status to transition to.
-         */
         handleWorkflowStatusChange: async (status: keyof typeof WORKFLOW_STATUS_enum): Promise<void> => {
             const state = get();
             logger.info(`Changing workflow status to: ${status}`);
 
-            // Use StatusManager for transition
             await statusManager.transition({
                 currentStatus: state.teamWorkflowStatus,
                 targetStatus: status,
@@ -165,7 +138,6 @@ export const createWorkflowActions = (
                 message: `Workflow status changed to ${status}` 
             });
 
-            // Handle specific status changes
             switch (status) {
                 case 'FINISHED':
                     get().finishWorkflowAction();
@@ -182,10 +154,6 @@ export const createWorkflowActions = (
             }
         },
 
-        /**
-         * Handles workflow errors.
-         * @param params Object containing the task and error information.
-         */
         handleWorkflowError: (params: { 
             task: TaskType; 
             error: ErrorType 
@@ -237,7 +205,6 @@ export const createWorkflowActions = (
                 workflowLogs: [...state.workflowLogs, errorLog]
             }));
 
-            // Optionally, transition status using StatusManager
             statusManager.transition({
                 currentStatus: state.teamWorkflowStatus,
                 targetStatus: 'ERRORED',
@@ -250,10 +217,6 @@ export const createWorkflowActions = (
             });
         },
 
-        /**
-         * Handles workflow blockages.
-         * @param params Object containing the task and error information.
-         */
         handleWorkflowBlocked: (params: { 
             task: TaskType; 
             error: ErrorType 
@@ -290,7 +253,6 @@ export const createWorkflowActions = (
                 }
             }));
 
-            // Optionally, transition status using StatusManager
             statusManager.transition({
                 currentStatus: state.teamWorkflowStatus,
                 targetStatus: 'BLOCKED',
@@ -304,9 +266,6 @@ export const createWorkflowActions = (
             });
         },
 
-        /**
-         * Finishes the workflow successfully.
-         */
         finishWorkflowAction: (): void => {
             const state = get();
             const stats = get().getWorkflowStats();
@@ -335,7 +294,6 @@ export const createWorkflowActions = (
                 }
             });
 
-            // Optionally, transition status using StatusManager
             statusManager.transition({
                 currentStatus: state.teamWorkflowStatus,
                 targetStatus: 'FINISHED',
@@ -348,15 +306,10 @@ export const createWorkflowActions = (
             });
         },
 
-        /**
-         * Sets the workflow status without additional logic.
-         * @param status The new status to set.
-         */
         setTeamWorkflowStatus: (status: keyof typeof WORKFLOW_STATUS_enum): void => {
             const state = get();
             logger.info(`Changing workflow status to: ${status}`);
 
-            // Use StatusManager for transition
             statusManager.transition({
                 currentStatus: state.teamWorkflowStatus,
                 targetStatus: status,

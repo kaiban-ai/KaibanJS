@@ -15,105 +15,42 @@ import type {
     Log 
 } from '@/utils/types';
 
-/**
- * Core state selectors
- */
+/* Core state selectors */
 export const selectors = {
-    /**
-     * Selects the current workflow status
-     */
     getWorkflowStatus: (state: TeamState) => state.teamWorkflowStatus,
-
-    /**
-     * Selects the workflow result
-     */
     getWorkflowResult: (state: TeamState) => state.workflowResult,
-
-    /**
-     * Selects all agents
-     */
     getAgents: (state: TeamState) => state.agents,
-
-    /**
-     * Selects all tasks
-     */
     getTasks: (state: TeamState) => state.tasks,
-
-    /**
-     * Selects all workflow logs
-     */
     getWorkflowLogs: (state: TeamState) => state.workflowLogs,
-
-    /**
-     * Selects team inputs
-     */
     getInputs: (state: TeamState) => state.inputs,
-
-    /**
-     * Selects workflow context
-     */
     getWorkflowContext: (state: TeamState) => state.workflowContext,
-
-    /**
-     * Selects environment variables
-     */
     getEnv: (state: TeamState) => state.env,
-
-    /**
-     * Selects log level
-     */
     getLogLevel: (state: TeamState) => state.logLevel
 };
 
-/**
- * Computed selectors
- */
+/* Computed selectors */
 export const computedSelectors = {
-    /**
-     * Selects an agent by ID
-     */
     getAgentById: (state: TeamState, agentId: string) => 
         state.agents.find(agent => agent.id === agentId),
 
-    /**
-     * Selects a task by ID
-     */
     getTaskById: (state: TeamState, taskId: string) =>
         state.tasks.find(task => task.id === taskId),
 
-    /**
-     * Selects tasks for a specific agent
-     */
     getTasksByAgentId: (state: TeamState, agentId: string) =>
         state.tasks.filter(task => task.agent?.id === agentId),
 
-    /**
-     * Selects tasks by status
-     */
     getTasksByStatus: (state: TeamState, status: string) =>
         state.tasks.filter(task => task.status === status),
 
-    /**
-     * Selects logs for a specific task
-     */
     getLogsByTaskId: (state: TeamState, taskId: string) =>
         state.workflowLogs.filter(log => log.task?.id === taskId),
 
-    /**
-     * Selects logs for a specific agent
-     */
     getLogsByAgentId: (state: TeamState, agentId: string) =>
         state.workflowLogs.filter(log => log.agent?.id === agentId),
 
-    /**
-     * Computes task statistics
-     */
     getTaskStats: (state: TeamState, task: TaskType): TaskStats =>
         calculateTaskStats(task, state.workflowLogs),
 
-    /**
-     * Computes workflow statistics
-     */
     getWorkflowStats: (state: TeamState): WorkflowStats => {
         const endTime = Date.now();
         const workflowLogs = state.workflowLogs;
@@ -145,9 +82,6 @@ export const computedSelectors = {
         };
     },
 
-    /**
-     * Derives context for a specific task
-     */
     deriveTaskContext: (state: TeamState, taskId: string): string => {
         const relevantLogs = state.workflowLogs
             .filter(log => log.task?.id === taskId)
@@ -168,21 +102,12 @@ export const computedSelectors = {
         return `Current context for task ${taskId}:\n${relevantLogs}`;
     },
 
-    /**
-     * Selects the current active task
-     */
     getActiveTask: (state: TeamState): TaskType | undefined =>
         state.tasks.find(task => task.status === 'DOING'),
 
-    /**
-     * Selects the next available task
-     */
     getNextTask: (state: TeamState): TaskType | undefined =>
         state.tasks.find(task => task.status === 'TODO'),
 
-    /**
-     * Computes the overall workflow progress
-     */
     getWorkflowProgress: (state: TeamState): number => {
         const totalTasks = state.tasks.length;
         if (totalTasks === 0) return 0;

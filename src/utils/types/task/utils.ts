@@ -7,9 +7,7 @@
 import { TaskType } from './base';
 import { TaskProgress, TaskMetrics, TaskHistoryEntry, TaskDependencyTracking, TaskAuditRecord, TaskTrackingUtils } from './tracking';
 
-/**
- * Composite type combining common task interfaces
- */
+// Composite type combining common task interfaces
 export type ComprehensiveTaskType = TaskType & {
     progress?: TaskProgress;
     metrics?: TaskMetrics;
@@ -18,9 +16,7 @@ export type ComprehensiveTaskType = TaskType & {
     audit?: TaskAuditRecord[];
 };
 
-/**
- * Helper function to check if a task has tracking data
- */
+// Helper function to check if a task has tracking data
 export function hasTrackingData(task: TaskType): task is ComprehensiveTaskType {
     return (
         'progress' in task ||
@@ -31,9 +27,7 @@ export function hasTrackingData(task: TaskType): task is ComprehensiveTaskType {
     );
 }
 
-/**
- * Helper function to convert a basic task to a comprehensive task
- */
+// Helper function to convert a basic task to a comprehensive task
 export function enrichTaskWithTracking(task: TaskType): ComprehensiveTaskType {
     return {
         ...task,
@@ -45,7 +39,7 @@ export function enrichTaskWithTracking(task: TaskType): ComprehensiveTaskType {
             currentIteration: task.iterationCount,
             resourceUsage: {
                 memory: task.llmUsageStats?.memoryUtilization?.peakMemoryUsage || 0,
-                cpu: 0, // CPU usage would need to be tracked separately if needed
+                cpu: 0,
                 tokens: (task.llmUsageStats?.inputTokens || 0) + (task.llmUsageStats?.outputTokens || 0)
             }
         },

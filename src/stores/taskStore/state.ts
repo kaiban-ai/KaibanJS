@@ -3,28 +3,24 @@
  * @path src/stores/taskStore/state.ts
  * @description Task store state interface and initial state definition
  */
-import { PrepareNewLogParams } from '@/utils/types/team';
 
+import { PrepareNewLogParams } from '@/utils/types/team';
 import { 
     TaskType, 
     TaskStats,
     AgentType,
     Log,
-    WorkflowStats
+    WorkflowStats,
+    CostDetails
 } from '@/utils/types';
 
-/**
- * Task store state interface
- */
+// Task store state interface
 export interface TaskStoreState {
-    // Base store properties
     name: string;
     agents: AgentType[];
     tasks: TaskType[];
     workflowLogs: Log[];
     tasksInitialized: boolean;
-
-    // Stats and metrics
     stats: {
         llmUsageStats: {
             inputTokens: number;
@@ -51,50 +47,22 @@ export interface TaskStoreState {
         totalCalls: number;
         errorCount: number;
         averageLatency: number;
-        costDetails: {
-            inputCost: number;
-            outputCost: number;
-            totalCost: number;
-            currency: string;
-            breakdown: {
-                promptTokens: { count: number; cost: number };
-                completionTokens: { count: number; cost: number }
-            }
-        };
+        costDetails: CostDetails;
     };
-
-    // Runtime state
     currentTask: TaskType | null;
     lastError: Error | null;
-    
-    /**
-     * Get statistics for a specific task
-     */
     getTaskStats: (task: TaskType) => TaskStats;
-
-    /**
-     * Get overall workflow statistics
-     */
     getWorkflowStats: () => WorkflowStats;
-
-    /**
-     * Create a new log entry
-     */
     prepareNewLog: (params: PrepareNewLogParams) => Log;
 }
 
-/**
- * Initial task store state
- */
+// Initial task store state
 export const initialTaskState: TaskStoreState = {
-    // Base store properties
     name: '',
     agents: [],
     tasks: [],
     workflowLogs: [],
     tasksInitialized: false,
-
-    // Stats and metrics
     stats: {
         llmUsageStats: {
             inputTokens: 0,
@@ -132,12 +100,8 @@ export const initialTaskState: TaskStoreState = {
             }
         }
     },
-
-    // Runtime state
     currentTask: null,
     lastError: null,
-
-    // Methods (implemented in actions)
     getTaskStats: () => ({
         startTime: 0,
         endTime: 0,
@@ -166,7 +130,6 @@ export const initialTaskState: TaskStoreState = {
         iterationCount: 0,
         modelUsage: {}
     }),
-
     getWorkflowStats: () => ({
         startTime: 0,
         endTime: 0,
@@ -209,7 +172,6 @@ export const initialTaskState: TaskStoreState = {
         messageCount: 0,
         modelUsage: {}
     }),
-
     prepareNewLog: () => ({
         timestamp: Date.now(),
         task: null,
@@ -225,9 +187,7 @@ export const initialTaskState: TaskStoreState = {
     })
 };
 
-/**
- * Type guard for task store state
- */
+// Type guard for task store state
 export function isTaskStoreState(value: unknown): value is TaskStoreState {
     return (
         typeof value === 'object' &&

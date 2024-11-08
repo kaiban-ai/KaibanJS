@@ -10,25 +10,13 @@ import { logger } from "@/utils/core/logger";
 import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from '@/utils/helpers/prompts/prompts';
 import { getApiKey } from '@/utils/helpers/agent/agentUtils';
 import { errorHandler } from '@/utils/handlers';
-import { 
-    IBaseAgent,
-    BaseAgentConfig,
-    HandlerBaseParams,
-    AgentType
-} from '@/utils/types/agent';
-import { 
-    LLMConfig,
-    TaskType, 
-    TeamStore,
-    FeedbackObject
-} from '@/utils/types';
+import { IBaseAgent, BaseAgentConfig, HandlerBaseParams, AgentType } from '@/utils/types/agent';
+import { LLMConfig, TaskType, TeamStore, FeedbackObject } from '@/utils/types';
 import { AgenticLoopResult } from '@/utils/types/llm';
 import { AGENT_STATUS_enum } from "@/utils/types/common/enums";
 import CustomMessageHistory from '@/utils/managers/messageHistoryManager';
 
-/**
- * Base agent implementation
- */
+// Base agent implementation
 export class BaseAgent implements IBaseAgent {
     public id: string;
     public name: string;
@@ -37,7 +25,7 @@ export class BaseAgent implements IBaseAgent {
     public background: string;
     public tools: Tool[];
     public maxIterations: number;
-    public store!: TeamStore; // Using definite assignment assertion
+    public store!: TeamStore;
     public status: keyof typeof AGENT_STATUS_enum;
     public env: Record<string, any> | null;
     public llmInstance: any | null;
@@ -82,6 +70,7 @@ export class BaseAgent implements IBaseAgent {
         }
     }
 
+    // Initialize agent with store and environment
     initialize(store: TeamStore, env: Record<string, any>): void {
         if (!store) {
             throw new Error('Store must be provided');
@@ -101,6 +90,7 @@ export class BaseAgent implements IBaseAgent {
         logger.info(`Initialized agent: ${this.name}`);
     }
 
+    // Set store reference
     setStore(store: TeamStore): void {
         if (!store) {
             throw new Error('Store must be provided');
@@ -108,51 +98,39 @@ export class BaseAgent implements IBaseAgent {
         this.store = store;
     }
 
+    // Set agent status
     setStatus(status: keyof typeof AGENT_STATUS_enum): void {
         this.status = status;
         logger.debug(`Updated agent ${this.name} status to: ${status}`);
     }
 
+    // Set environment variables
     setEnv(env: Record<string, any>): void {
         this.env = env;
     }
 
-    /**
-     * Abstract method to be implemented by subclasses
-     */
+    // Abstract method to be implemented by subclasses
     createLLMInstance(): void {
         throw new Error("createLLMInstance must be implemented by subclasses");
     }
 
-    /**
-     * Abstract method to be implemented by subclasses
-     */
+    // Abstract method to be implemented by subclasses
     async workOnTask(task: TaskType): Promise<AgenticLoopResult> {
         throw new Error("workOnTask must be implemented by subclasses");
     }
 
-    /**
-     * Abstract method to be implemented by subclasses
-     */
+    // Abstract method to be implemented by subclasses
     async workOnFeedback(task: TaskType, feedbackList: FeedbackObject[], context: string): Promise<void> {
         throw new Error("workOnFeedback must be implemented by subclasses");
     }
 
-    /**
-     * Normalize LLM configuration
-     */
+    // Normalize LLM configuration
     normalizeLlmConfig(llmConfig: LLMConfig): LLMConfig {
         return llmConfig;
     }
 
-    /**
-     * Handle agent iteration start
-     */
-    public handleIterationStart(params: { 
-        task: TaskType; 
-        iterations: number; 
-        maxAgentIterations: number 
-    }): void {
+    // Handle agent iteration start
+    public handleIterationStart(params: { task: TaskType; iterations: number; maxAgentIterations: number }): void {
         const { task, iterations, maxAgentIterations } = params;
 
         this.setStatus(AGENT_STATUS_enum.ITERATION_START);
@@ -176,14 +154,8 @@ export class BaseAgent implements IBaseAgent {
         }));
     }
 
-    /**
-     * Handle iteration end
-     */
-    public handleIterationEnd(params: { 
-        task: TaskType; 
-        iterations: number; 
-        maxAgentIterations: number 
-    }): void {
+    // Handle iteration end
+    public handleIterationEnd(params: { task: TaskType; iterations: number; maxAgentIterations: number }): void {
         const { task, iterations, maxAgentIterations } = params;
 
         this.setStatus(AGENT_STATUS_enum.ITERATION_END);

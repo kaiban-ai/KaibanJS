@@ -5,10 +5,13 @@
  */
 
 import { logger } from "../../core/logger";
+
+import { ModelPricing } from "@/utils/types/workflow";
+import { RequiredPricingFields } from "@/utils/types/workflow";
+import { CostCalculationConfig } from "@/utils/types/workflow";
 import { 
-    ModelPricing,
-    RequiredPricingFields,
-    CostCalculationConfig,
+    
+    ModelUsageStats,
     CostDetails,
     LLMUsageStats 
 } from '@/utils/types';
@@ -156,7 +159,7 @@ export function calculateTaskCost(
  * Calculate total workflow cost
  */
 export function calculateTotalWorkflowCost(
-    modelUsageStats: Record<string, LLMUsageStats>,
+    modelUsageStats: ModelUsageStats,
     config: CostCalculationConfig = {}
 ): CostDetails {
     const finalConfig = { ...DEFAULT_CONFIG, ...config };
@@ -172,10 +175,11 @@ export function calculateTotalWorkflowCost(
             return createDefaultCostDetails(finalConfig.currency);
         }
 
-        totalInputCost += (stats.inputTokens / 1000000) * pricing.inputPricePerMillionTokens;
-        totalOutputCost += (stats.outputTokens / 1000000) * pricing.outputPricePerMillionTokens;
-        totalPromptTokens += stats.inputTokens;
-        totalCompletionTokens += stats.outputTokens;
+        // Adjusted to use tokens.input and tokens.output
+        totalInputCost += (stats.tokens.input / 1000000) * pricing.inputPricePerMillionTokens;
+        totalOutputCost += (stats.tokens.output / 1000000) * pricing.outputPricePerMillionTokens;
+        totalPromptTokens += stats.tokens.input;
+        totalCompletionTokens += stats.tokens.output;
     }
 
     return {
@@ -195,6 +199,7 @@ export function calculateTotalWorkflowCost(
         }
     };
 }
+
 
 /**
  * Create default cost details

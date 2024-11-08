@@ -1,121 +1,116 @@
 /**
  * @file store.ts
  * @path src/utils/types/task/store.ts
- * @description Task store types and interfaces consolidated from store/task.ts
+ * @description Task store types and interfaces
  */
 
-import { BaseStoreState } from '../store/base';
-import { TaskType, TaskStats } from './base';
-import { AgentType } from '../agent/base';
-import { ErrorType } from '../common/errors';
-import { Output } from '../llm/responses';
-import { CostDetails } from '../workflow/stats';
-import { TASK_STATUS_enum } from '../common/enums';
-import { Log } from '../team/logs';
+import type { TaskType, TaskStats } from './base';
+import type { AgentType } from '../agent/base';
+import type { ErrorType } from '../common/errors';
+import type { Output } from '../llm/responses';
+import type { CostDetails } from '../workflow/costs';
+import type { TASK_STATUS_enum } from '../common/enums';
+import type { BaseStoreState } from '../store/base';
+
+// ─── Task Runtime State ────────────────────────────────────────────────────────
 
 /**
- * Task runtime state
+ * Current runtime state of task execution
  */
 export interface TaskRuntimeState {
-    /** Current task being processed */
+    /** Currently executing task */
     currentTask: TaskType | null;
-    
-    /** Last error encountered */
+    /** Last encountered error */
     lastError: Error | null;
-    
-    /** Task execution context */
-    context: Record<string, unknown>;
+    /** Task initialization status */
+    tasksInitialized: boolean;
 }
 
+// ─── Task Execution Stats ───────────────────────────────────────────────────────
+
 /**
- * Task execution metrics
+ * Task execution statistics
  */
-export interface TaskExecutionMetrics {
-    /** LLM usage statistics */
-    llmUsageStats: {
-        inputTokens: number;
-        outputTokens: number;
-        callsCount: number;
-        callsErrorCount: number;
-        parsingErrors: number;
-        totalLatency: number;
-        averageLatency: number;
-        lastUsed: number;
-        memoryUtilization: {
-            peakMemoryUsage: number;
-            averageMemoryUsage: number;
-            cleanupEvents: number;
-        };
-        costBreakdown: {
-            input: number;
-            output: number;
-            total: number;
-            currency: string;
-        };
+export interface TaskExecutionStats {
+    /** Resource utilization */
+    resources: {
+        /** Memory usage in MB */
+        memory: number;
+        /** CPU usage percentage */
+        cpu: number;
+        /** Token count */
+        tokens: number;
     };
-    
-    /** Number of iterations */
-    iterationCount: number;
-    
-    /** Total API calls */
-    totalCalls: number;
-    
-    /** Error count */
-    errorCount: number;
-    
-    /** Average latency */
-    averageLatency: number;
-    
-    /** Cost details */
-    costDetails: CostDetails;
+    /** Performance metrics */
+    performance: {
+        /** Average execution time */
+        averageExecutionTime: number;
+        /** Peak memory usage */
+        peakMemoryUsage: number;
+        /** Token processing rate */
+        tokensPerSecond: number;
+    };
+    /** Error tracking */
+    errors: {
+        /** Total error count */
+        count: number;
+        /** Error types and frequencies */
+        types: Record<string, number>;
+        /** Retry attempts */
+        retries: number;
+    };
 }
 
+// ─── Task Update Parameters ─────────────────────────────────────────────────────
+
 /**
- * Task status update parameters
+ * Parameters for task status updates
  */
 export interface TaskStatusUpdateParams {
-    /** Task ID */
+    /** Task identifier */
     taskId: string;
-    
-    /** New status */
+    /** New task status */
     status: keyof typeof TASK_STATUS_enum;
-    
-    /** Update metadata */
+    /** Optional metadata */
     metadata?: {
+        /** Reason for status change */
         reason?: string;
+        /** Actor who changed status */
         changedBy?: string;
+        /** Update timestamp */
         timestamp?: number;
+        /** Previous task status */
         previousStatus?: keyof typeof TASK_STATUS_enum;
+        /** Duration in current status */
         statusDuration?: number;
     };
 }
 
-/**
- * Task store state
- */
-export interface TaskStoreState extends BaseStoreState {
-    /** Runtime state */
-    runtime: TaskRuntimeState;
-    
-    /** Execution metrics */
-    stats: TaskExecutionMetrics;
-}
+// ─── Task Store Actions ────────────────────────────────────────────────────────
 
 /**
- * Task store actions interface
+ * Available task store actions
  */
 export interface TaskStoreActions {
     /**
      * Handle task completion
      */
     handleTaskCompletion: (params: {
+        /** Executing agent */
         agent: AgentType;
+        /** Target task */
         task: TaskType;
+        /** Task result */
         result: unknown;
+        /** Additional metadata */
         metadata?: {
+            /** Execution duration */
             duration?: number;
+            /** Iteration count */
             iterationCount?: number;
-            llmUsageStats?: TaskExecutionMetrics['llmUsageStats'];
+            /** LLM usage statistics */
+            llmUsageStats?: TaskStoreState['stats']['llmUsageStats'];
+            /** Cost details */
             costDetails?: CostDetails;
         };
     }) => void;
@@ -124,40 +119,56 @@ export interface TaskStoreActions {
      * Handle task error
      */
     handleTaskError: (params: {
+        /** Target task */
         task: TaskType;
+        /** Error that occurred */
         error: ErrorType;
+        /** Error context */
         context?: {
+            /** Execution phase */
             phase?: string;
+            /** Attempt number */
             attemptNumber?: number;
+            /** Last successful operation */
             lastSuccessfulOperation?: string;
+            /** Whether recovery is possible */
             recoveryPossible?: boolean;
         };
     }) => void;
 
     /**
-     * Handle task status change
+     * Update task status
      */
     handleTaskStatusChange: (
+        /** Task identifier */
         taskId: string,
+        /** New status */
         status: keyof typeof TASK_STATUS_enum,
+        /** Optional metadata */
         metadata?: Record<string, unknown>
     ) => void;
 
     /**
-     * Add task feedback
+     * Add feedback to task
      */
     addTaskFeedback: (
+        /** Task identifier */
         taskId: string,
+        /** Feedback content */
         content: string,
+        /** Optional metadata */
         metadata?: Record<string, unknown>
     ) => void;
 
     /**
-     * Update task stats
+     * Update task statistics
      */
     updateTaskStats: (params: {
+        /** Task identifier */
         taskId: string;
+        /** Updated statistics */
         stats: Partial<TaskStats>;
+        /** Task output */
         output?: Output;
     }) => void;
 
@@ -165,17 +176,36 @@ export interface TaskStoreActions {
      * Track resource usage
      */
     trackResourceUsage: (params: {
+        /** Task identifier */
         taskId: string;
+        /** Resource statistics */
         resourceStats: {
+            /** Memory usage in MB */
             memory: number;
+            /** Token count */
             tokens: number;
+            /** CPU time in ms */
             cpuTime?: number;
         };
     }) => void;
 }
 
+// ─── Task Store State ─────────────────────────────────────────────────────────
+
 /**
- * Task store type guards
+ * Complete task store state extending base store state
+ */
+export interface TaskStoreState extends BaseStoreState {
+    /** Runtime state */
+    runtime: TaskRuntimeState;
+    /** Execution stats */
+    stats: TaskExecutionStats;
+}
+
+// ─── Type Guards ────────────────────────────────────────────────────────────────
+
+/**
+ * Type guards for task store types
  */
 export const TaskStoreTypeGuards = {
     /**
@@ -200,6 +230,18 @@ export const TaskStoreTypeGuards = {
             'handleTaskCompletion' in value &&
             'handleTaskError' in value &&
             'handleTaskStatusChange' in value
+        );
+    },
+
+    /**
+     * Check if value is task status update params
+     */
+    isTaskStatusUpdateParams: (value: unknown): value is TaskStatusUpdateParams => {
+        return (
+            typeof value === 'object' &&
+            value !== null &&
+            'taskId' in value &&
+            'status' in value
         );
     }
 };

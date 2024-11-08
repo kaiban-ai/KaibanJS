@@ -113,10 +113,10 @@ export class MessageHandler {
         metadata?: MessageMetadataFields
     ): Promise<HandlerResult<FunctionMessage>> {
         try {
-            const message = new FunctionMessage(
+            const message = new FunctionMessage({
                 content,
                 name,
-                this.prepareMetadata({
+                additional_kwargs: this.prepareMetadata({
                     ...metadata,
                     function_call: functionCall ? {
                         name: functionCall.name,
@@ -125,7 +125,7 @@ export class MessageHandler {
                             : JSON.stringify(functionCall.arguments)
                     } : undefined
                 })
-            );
+            });
 
             logger.debug('Created function message:', { name, content });
             return {

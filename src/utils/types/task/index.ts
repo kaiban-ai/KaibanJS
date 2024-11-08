@@ -1,56 +1,43 @@
 /**
  * @file index.ts
  * @path src/utils/types/task/index.ts
- * @description Central export point for task-related types and interfaces
+ * @description Centralized export file for task-related types, interfaces, and utilities.
  */
 
-export {
+import { TaskType, TaskStats } from './base';
+import { ComprehensiveTaskType } from './utils';
+import { TaskProgress, TaskMetrics, TaskHistoryEntry, TaskDependencyTracking, TaskAuditRecord } from './tracking';
+import { TaskStoreActions } from './store'; // Ensure TaskStoreActions is correctly exported
+import { TaskStatusUpdateParams } from './store'; // Ensure correct path to responses
+import { TaskStoreState } from '@/stores/taskStore/state'; // Use TaskStoreState directly from @/stores/taskStore/state
+
+// Exporting key task types
+export * from './base';
+export * from './handlers';
+export * from './tracking';
+export * from './utils';
+
+// Task-related types for comprehensive usage
+export type {
     TaskType,
-    TaskResult,
     TaskStats,
-    TaskMetadata,
-    FeedbackObject,
-    ITaskParams,
-    TaskValidationResult,
-    TaskTypeGuards
-} from './base';
-
-export {
-    TaskRuntimeState,
-    TaskExecutionMetrics,
-    TaskStatusUpdateParams,
-    TaskStoreState,
+    ComprehensiveTaskType,
+    TaskStoreState, // Use TaskStoreState directly from @/stores/taskStore/state
     TaskStoreActions,
-    TaskStoreTypeGuards
-} from './store';
+    TaskStatusUpdateParams
+};
 
-export {
-    TaskExecutionParams,
-    TaskCompletionParams,
-    TaskErrorParams,
-    TaskBlockingParams,
-    TaskValidationParams,
-    TaskFeedbackParams,
-    TaskToolExecutionParams,
-    TaskObservationParams,
-    TaskIterationParams,
-    HandlerResult,
-    ITaskHandler,
-    HandlerTypeGuards
-} from './handlers';
-
-export {
+// Task progress and metrics types
+export type {
     TaskProgress,
     TaskMetrics,
     TaskHistoryEntry,
     TaskDependencyTracking,
-    TaskAuditRecord,
-    TaskTrackingUtils,
-    TaskTrackingTypeGuards
-} from './tracking';
+    TaskAuditRecord
+};
 
-export {
-    ComprehensiveTaskType,
-    hasTrackingData,
-    enrichTaskWithTracking
-} from './utils';
+// Exporting tracking utilities
+export { TaskTrackingUtils } from './tracking';
+
+// Utility functions
+export { hasTrackingData, enrichTaskWithTracking } from './utils';

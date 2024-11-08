@@ -5,16 +5,19 @@
  */
 
 import { logger } from "../core/logger";
-import { 
+import { DefaultFactory } from "../factories";
+import { calculateTaskCost } from "../helpers/costs/llmCostCalculator";
+import type { 
     HandlerResult,
     TeamStore,
+    TeamState,
     TaskType,
     AgentType,
     Output,
     CostDetails,
-    LLMUsageStats
+    LLMUsageStats,
+    Log
 } from '@/utils/types';
-import { calculateTaskCost } from "../helpers/costs/llmCostCalculator";
 
 /**
  * Store handler implementation
@@ -25,10 +28,13 @@ export class StoreHandler {
      */
     async handleStateUpdate(
         store: TeamStore,
-        update: Partial<TeamStore>
-    ): Promise<HandlerResult> {
+        update: Partial<TeamState>
+    ): Promise<HandlerResult<TeamState>> {
         try {
-            store.setState(update);
+            store.setState(state => ({
+                ...state,
+                ...update
+            }));
             logger.debug('Updated store state:', update);
             
             return {
@@ -50,7 +56,7 @@ export class StoreHandler {
     async handleTaskAddition(
         store: TeamStore,
         task: TaskType
-    ): Promise<HandlerResult> {
+    ): Promise<HandlerResult<TaskType>> {
         try {
             store.setState(state => ({
                 tasks: [...state.tasks, task]
@@ -91,7 +97,7 @@ export class StoreHandler {
     async handleAgentAddition(
         store: TeamStore,
         agent: AgentType
-    ): Promise<HandlerResult> {
+    ): Promise<HandlerResult<AgentType>> {
         try {
             store.setState(state => ({
                 agents: [...state.agents, agent]
@@ -133,8 +139,13 @@ export class StoreHandler {
         store: TeamStore,
         taskId: string,
         update: Partial<TaskType>
-    ): Promise<HandlerResult> {
+    ): Promise<HandlerResult<TaskType>> {
         try {
+            const previousTask = store.getState().tasks.find(t => t.id === taskId);
+            if (!previousTask) {
+                throw new Error(`Task ${taskId} not found`);
+            }
+
             store.setState(state => ({
                 tasks: state.tasks.map(task =>
                     task.id === taskId ? { ...task, ...update } : task
@@ -143,7 +154,7 @@ export class StoreHandler {
 
             const updatedTask = store.getState().tasks.find(t => t.id === taskId);
             if (!updatedTask) {
-                throw new Error(`Task ${taskId} not found`);
+                throw new Error(`Task ${taskId} not found after update`);
             }
 
             const updateLog = store.prepareNewLog({
@@ -153,7 +164,7 @@ export class StoreHandler {
                 logType: 'TaskStatusUpdate',
                 metadata: {
                     update,
-                    previousState: store.getState().tasks.find(t => t.id === taskId)
+                    previousState: previousTask
                 }
             });
 
@@ -183,30 +194,11 @@ export class StoreHandler {
         agent: AgentType,
         task: TaskType,
         output: Output
-    ): Promise<HandlerResult> {
+    ): Promise<HandlerResult<Output>> {
         try {
             const modelCode = agent.llmConfig.model;
-            const costDetails = calculateTaskCost(modelCode, output.llmUsageStats || {
-                inputTokens: 0,
-                outputTokens: 0,
-                callsCount: 0,
-                callsErrorCount: 0,
-                parsingErrors: 0,
-                totalLatency: 0,
-                averageLatency: 0,
-                lastUsed: Date.now(),
-                memoryUtilization: {
-                    peakMemoryUsage: 0,
-                    averageMemoryUsage: 0,
-                    cleanupEvents: 0
-                },
-                costBreakdown: {
-                    input: 0,
-                    output: 0,
-                    total: 0,
-                    currency: 'USD'
-                }
-            });
+            const llmUsageStats: LLMUsageStats = output.llmUsageStats || DefaultFactory.createLLMUsageStats();
+            const costDetails: CostDetails = calculateTaskCost(modelCode, llmUsageStats);
 
             const outputLog = store.prepareNewLog({
                 agent,

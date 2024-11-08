@@ -24,9 +24,7 @@ interface ToolParameter {
     required?: boolean;
 }
 
-/**
- * Gets parameters from a tool in a type-safe way
- */
+// Gets parameters from a tool in a type-safe way
 const getToolParameters = (tool: Tool): ToolParameter[] => {
     try {
         const schema = tool.schema;
@@ -43,16 +41,11 @@ const getToolParameters = (tool: Tool): ToolParameter[] => {
     }
 };
 
-/**
- * Creates tool handling actions
- */
+// Creates tool handling actions
 export const createToolActions = (
     get: () => TeamState,
     set: (fn: (state: TeamState) => Partial<TeamState>) => void
 ) => ({
-    /**
-     * Handles tool execution
-     */
     handleToolExecution: (params: {
         agent: AgentType;
         task: TaskType;
@@ -88,9 +81,6 @@ export const createToolActions = (
         }));
     },
 
-    /**
-     * Handles tool errors
-     */
     handleToolError: (params: {
         agent: AgentType;
         task: TaskType;
@@ -130,9 +120,6 @@ export const createToolActions = (
         }));
     },
 
-    /**
-     * Handles non-existent tool requests
-     */
     handleToolDoesNotExist: (params: {
         agent: AgentType;
         task: TaskType;
@@ -161,9 +148,6 @@ export const createToolActions = (
         }));
     },
 
-    /**
-     * Handles tool execution start
-     */
     handleToolStart: (params: {
         agent: AgentType;
         task: TaskType;
@@ -197,9 +181,6 @@ export const createToolActions = (
         }));
     },
 
-    /**
-     * Handles tool execution completion
-     */
     handleToolEnd: (params: {
         agent: AgentType;
         task: TaskType;
@@ -233,9 +214,6 @@ export const createToolActions = (
         }));
     },
 
-    /**
-     * Validates tool parameters
-     */
     validateToolParameters: (
         tool: Tool,
         parameters: Record<string, unknown>
@@ -253,9 +231,6 @@ export const createToolActions = (
         }
     },
 
-    /**
-     * Handles tool timeout
-     */
     handleToolTimeout: (params: {
         agent: AgentType;
         task: TaskType;

@@ -7,21 +7,14 @@
 import type { TeamState, TeamStore } from './base';
 import type { WorkflowStartResult } from './handlers';
 
-/**
- * Convenience type for store subscription
- */
+// Convenience type for store subscription
 export type TeamStoreSubscriber<U = TeamState> = (
     state: TeamState,
     previousState: TeamState
 ) => void | ((selectedState: U, previousSelectedState: U) => void);
 
-/**
- * Type guard utilities for team functionality
- */
+// Type guard utilities for team functionality
 export const TeamTypeUtils = {
-    /**
-     * Type guard to check if a value is a complete team state
-     */
     isCompleteTeamState(value: unknown): value is TeamState {
         return (
             typeof value === 'object' &&
@@ -40,9 +33,6 @@ export const TeamTypeUtils = {
         );
     },
 
-    /**
-     * Type guard to check if a value is a valid team store
-     */
     isTeamStore(value: unknown): value is TeamStore {
         return (
             typeof value === 'object' &&
@@ -62,7 +52,5 @@ export const {
     isTeamStore
 } = TeamTypeUtils;
 
-/**
- * @deprecated Use TeamStore type instead
- */
+// Deprecated: Use TeamStore type instead
 export type LegacyTeamStore = TeamStore;

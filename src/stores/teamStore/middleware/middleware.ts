@@ -26,15 +26,13 @@ type LogMiddleware = <
     name: string
 ) => StateCreator<T, Mps, Mcs>;
 
-/**
- * Logging middleware for store operations
- */
+// Logging middleware for store operations
 export const logMiddleware: LogMiddleware = (f, name) => (set, get, store) => {
     const loggedSet: StoreSetState<TeamState> = (partial, replace) => {
         const nextState = typeof partial === 'function' 
             ? (partial as (state: TeamState) => Partial<TeamState>)(get())
             : partial;
-            
+                
         logger.debug(`${name} store updating`, nextState);
         set(nextState as Partial<TeamState>, replace);
         logger.debug(`${name} store updated`, get());
@@ -43,9 +41,7 @@ export const logMiddleware: LogMiddleware = (f, name) => (set, get, store) => {
     return f(loggedSet as typeof set, get, store);
 };
 
-/**
- * Creates middleware chain for the store
- */
+// Middleware chain creation
 export const createMiddlewareChain = (name: string) => {
     return (config: StateCreator<TeamStore>) => 
         devtools(
@@ -59,9 +55,7 @@ export const createMiddlewareChain = (name: string) => {
         ) as StateCreator<TeamStore>;
 };
 
-/**
- * Applies middleware to store
- */
+// Apply middleware to store
 export const applyMiddleware = <T extends TeamStore>(
     store: StoreApi<T>,
     middlewares: ((store: StoreApi<T>) => void)[]
@@ -69,26 +63,19 @@ export const applyMiddleware = <T extends TeamStore>(
     middlewares.forEach(middleware => middleware(store));
 };
 
-/**
- * Creates subscriber middleware
- */
+// Subscriber middleware creation
 export const createSubscriberMiddleware = (store: StoreApi<TeamStore>) => {
     return (next: Function) => (action: unknown, state: TeamState) => {
         const result = next(action, state);
-        
-        // Log state changes in debug mode
         logger.debug('State updated:', {
             action,
             newState: StoreUtils.createCleanedState(state)
         });
-        
         return result;
     };
 };
 
-/**
- * Creates persistence middleware
- */
+// Persistence middleware creation
 export const createPersistenceMiddleware = (
     store: StoreApi<TeamStore>,
     options: {
@@ -106,9 +93,7 @@ export const createPersistenceMiddleware = (
     } = options;
 
     return {
-        /**
-         * Persists current state
-         */
+        // Persists current state
         persist: () => {
             try {
                 const state = store.getState();
@@ -119,9 +104,7 @@ export const createPersistenceMiddleware = (
             }
         },
 
-        /**
-         * Hydrates state from storage
-         */
+        // Hydrates state from storage
         hydrate: () => {
             try {
                 const stored = storage.getItem(key);
@@ -134,9 +117,7 @@ export const createPersistenceMiddleware = (
             }
         },
 
-        /**
-         * Clears persisted state
-         */
+        // Clears persisted state
         clear: () => {
             try {
                 storage.removeItem(key);
@@ -147,15 +128,12 @@ export const createPersistenceMiddleware = (
     };
 };
 
-/**
- * Creates validation middleware
- */
+// Validation middleware creation
 export const createValidationMiddleware = (
     store: StoreApi<TeamStore>,
     validators: Record<string, (value: unknown) => boolean>
 ) => {
     return (next: Function) => (action: unknown, state: TeamState) => {
-        // Validate state changes before applying
         const validationErrors: string[] = [];
         
         Object.entries(validators).forEach(([key, validator]) => {

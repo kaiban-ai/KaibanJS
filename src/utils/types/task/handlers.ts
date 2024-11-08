@@ -5,25 +5,20 @@
  */
 
 import { Tool } from "langchain/tools";
-import { AgentType } from "@/utils/types/agent/base";
-import { TaskType } from "./base";
+import { AgentType } from "../agent/base";
+import { TaskType } from "../task/base";
+import { FeedbackObject } from "../task/base"; // For TaskFeedbackParams
 import { ErrorType } from "../common/errors";
 import { Output } from "../llm/responses";
 import { TASK_STATUS_enum } from "../common/enums";
 import { LLMUsageStats } from "../llm/responses";
-import { CostDetails } from "../workflow/stats";
+import { CostDetails } from "../workflow/costs";
+import { HandlerResult } from "../agent/handlers"; // Used but not re-exported
 
-/**
- * Task execution handler parameters
- */
+// Task execution handler parameters
 export interface TaskExecutionParams {
-    /** Task instance */
     task: TaskType;
-    
-    /** Input data */
     input?: unknown;
-    
-    /** Execution options */
     options?: {
         timeout?: number;
         retries?: number;
@@ -31,72 +26,73 @@ export interface TaskExecutionParams {
     };
 }
 
-/**
- * Task completion handler parameters
- */
+// Task completion handler parameters
 export interface TaskCompletionParams {
-    /** Agent that completed the task */
     agent: AgentType;
-    
-    /** Completed task */
     task: TaskType;
-    
-    /** Task result */
     result: unknown;
-    
-    /** Completion metadata */
     metadata?: {
         duration?: number;
         iterationCount?: number;
         llmUsageStats?: LLMUsageStats;
         costDetails?: CostDetails;
     };
-
-    /** Store reference */
     store?: {
-        getTaskStats: (task: TaskType) => any;
+        getTaskStats: (task: TaskType) => TaskType;
         setState: (fn: (state: any) => any) => void;
         prepareNewLog: (params: any) => any;
         getState: () => any;
     };
 }
 
-/**
- * Task error handler parameters
- */
+// Task error handler parameters
 export interface TaskErrorParams {
-    /** Task that errored */
     task: TaskType;
-    
-    /** Error that occurred */
     error: ErrorType;
-    
-    /** Error context */
     context?: {
         phase?: string;
         attemptNumber?: number;
         lastSuccessfulOperation?: string;
         recoveryPossible?: boolean;
     };
-
-    /** Store reference */
     store?: {
         setState: (fn: (state: any) => any) => void;
         prepareNewLog: (params: any) => any;
     };
 }
 
-/**
- * Task blocking handler parameters
- */
+// Task feedback parameters using FeedbackObject
+export interface TaskFeedbackParams {
+    feedback: FeedbackObject;
+    timestamp: Date;
+}
+
+// Task tool execution parameters aligned with LangChain's Tool interface
+export interface TaskToolExecutionParams {
+    tool: Tool;
+    input: Record<string, unknown>;
+    output?: unknown;
+    error?: Error;
+}
+
+// Task observation parameters
+export interface TaskObservationParams {
+    observationType: string;
+    details: string;
+    observationTime: Date;
+}
+
+// Task iteration parameters
+export interface TaskIterationParams {
+    iterationCount: number;
+    iterationResult: unknown;
+    iterationDuration: number;
+}
+
+// Task blocking handler parameters
 export interface TaskBlockingParams {
-    /** Blocked task */
     task: TaskType;
-    
-    /** Blocking reason */
     error: ErrorType;
-    
-    /** Dependencies causing block */
     dependencies?: {
         taskId: string;
         status: keyof typeof TASK_STATUS_enum;
@@ -104,17 +100,10 @@ export interface TaskBlockingParams {
     }[];
 }
 
-/**
- * Task validation handler parameters
- */
+// Task validation handler parameters
 export interface TaskValidationParams {
-    /** Task to validate */
     task: TaskType;
-    
-    /** Validation context */
     context?: Record<string, unknown>;
-    
-    /** Validation options */
     options?: {
         strict?: boolean;
         validateDependencies?: boolean;
@@ -122,120 +111,44 @@ export interface TaskValidationParams {
     };
 }
 
-/**
- * Task feedback handler parameters
- */
-export interface TaskFeedbackParams {
-    /** Task receiving feedback */
+// Task resource usage parameters
+export interface TaskResourceParams {
     task: TaskType;
-    
-    /** Feedback content */
-    feedback: string;
-    
-    /** Feedback metadata */
-    metadata?: {
-        source?: string;
-        priority?: 'low' | 'medium' | 'high';
-        category?: string;
+    resourceStats: {
+        memory: number;
+        tokens: number;
+        cpuTime?: number;
+        networkRequests?: number;
+    };
+    thresholds?: {
+        maxMemory?: number;
+        maxTokens?: number;
+        maxCpuTime?: number;
+        maxNetworkRequests?: number;
     };
 }
 
-/**
- * Task tool execution parameters
- */
-export interface TaskToolExecutionParams {
-    /** Task context */
+// Task execution timeout parameters
+export interface TaskTimeoutParams {
     task: TaskType;
-    
-    /** Tool being used */
-    tool: Tool;
-    
-    /** Tool input */
-    input: unknown;
-    
-    /** Execution options */
-    options?: {
-        timeout?: number;
-        retries?: number;
+    timeoutConfig: {
+        limit: number;
+        type: 'execution' | 'response' | 'total';
     };
+    elapsedTime: number;
 }
 
-/**
- * Task observation handler parameters
- */
-export interface TaskObservationParams {
-    /** Task context */
-    task: TaskType;
-    
-    /** Agent making observation */
-    agent: AgentType;
-    
-    /** Observation content */
-    observation: string | Record<string, unknown>;
-    
-    /** Observation metadata */
-    metadata?: Record<string, unknown>;
-}
-
-/**
- * Task iteration handler parameters
- */
-export interface TaskIterationParams {
-    /** Task being iterated */
-    task: TaskType;
-    
-    /** Current iteration */
-    iteration: number;
-    
-    /** Maximum iterations */
-    maxIterations: number;
-    
-    /** Iteration result */
-    result?: Output;
-}
-
-/**
- * Task handler result interface
- */
-export interface HandlerResult {
-    /** Success indicator */
-    success: boolean;
-    
-    /** Error if handler failed */
-    error?: Error;
-    
-    /** Result data if successful */
-    data?: unknown;
-    
-    /** Handler metadata */
-    metadata?: Record<string, unknown>;
-}
-
-/**
- * Task handler interface
- */
+// Task handler interface
 export interface ITaskHandler {
-    /**
-     * Handle task completion
-     */
     handleCompletion(params: TaskCompletionParams): Promise<HandlerResult>;
-
-    /**
-     * Handle task error
-     */
     handleError(params: TaskErrorParams): Promise<HandlerResult>;
-
-    /**
-     * Handle task validation
-     */
     handleValidation(task: TaskType): Promise<HandlerResult>;
+    handleTimeout?(params: TaskTimeoutParams): Promise<HandlerResult>;
+    handleResourceLimits?(params: TaskResourceParams): Promise<HandlerResult>;
 }
 
-/**
- * Type guards for handler parameters
- */
+// Type guards for handler parameters
 export const HandlerTypeGuards = {
-    /** Check if value is task completion parameters */
     isTaskCompletionParams: (value: unknown): value is TaskCompletionParams => {
         return (
             typeof value === 'object' &&
@@ -245,14 +158,21 @@ export const HandlerTypeGuards = {
             'result' in value
         );
     },
-
-    /** Check if value is task error parameters */
     isTaskErrorParams: (value: unknown): value is TaskErrorParams => {
         return (
             typeof value === 'object' &&
             value !== null &&
             'task' in value &&
             'error' in value
+        );
+    },
+    isTaskResourceParams: (value: unknown): value is TaskResourceParams => {
+        return (
+            typeof value === 'object' &&
+            value !== null &&
+            'task' in value &&
+            'resourceStats' in value &&
+            typeof value.resourceStats === 'object'
         );
     }
 };

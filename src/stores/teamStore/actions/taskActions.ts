@@ -45,16 +45,11 @@ const defaultLLMUsageStats: LLMUsageStats = {
     }
 };
 
-/**
- * Creates task management actions
- */
+// Creates task management actions
 export const createTaskActions = (
     get: () => TeamState,
     set: (fn: (state: TeamState) => Partial<TeamState>) => void
 ) => ({
-    /**
-     * Handles task status changes
-     */
     handleTaskStatusChange: (
         taskId: string,
         status: keyof typeof TASK_STATUS_enum,
@@ -104,9 +99,6 @@ export const createTaskActions = (
         }));
     },
 
-    /**
-     * Handles task completion
-     */
     handleTaskCompletion: (params: { 
         agent: AgentType; 
         task: TaskType; 
@@ -162,9 +154,6 @@ export const createTaskActions = (
         });
     },
 
-    /**
-     * Handles task incompletion
-     */
     handleTaskIncomplete: (params: { 
         agent: AgentType; 
         task: TaskType; 
@@ -217,9 +206,6 @@ export const createTaskActions = (
         }));
     },
 
-    /**
-     * Handles task errors
-     */
     handleTaskError: (params: { 
         task: TaskType; 
         error: ErrorType;
@@ -253,9 +239,6 @@ export const createTaskActions = (
         }));
     },
 
-    /**
-     * Handles task blocking
-     */
     handleTaskBlocked: (params: { 
         task: TaskType; 
         error: ErrorType;
@@ -288,9 +271,6 @@ export const createTaskActions = (
         }));
     },
 
-    /**
-     * Works on a specific task
-     */
     workOnTask: async (agent: AgentType, task: TaskType): Promise<void> => {
         logger.debug(`Agent ${agent.name} working on task ${task.title}`);
         

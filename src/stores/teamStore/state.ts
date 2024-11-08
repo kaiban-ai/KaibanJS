@@ -19,9 +19,7 @@ import type {
     WorkflowResult
 } from "@/utils/types";
 
-/**
- * Initial state factory for the team store
- */
+/* Initial state factory */
 export const createInitialState = (): TeamState => ({
     teamWorkflowStatus: 'INITIAL',
     workflowResult: null,
@@ -36,9 +34,7 @@ export const createInitialState = (): TeamState => ({
     tasksInitialized: false
 });
 
-/**
- * Default values for team store components
- */
+/* Default values for team store components */
 export const defaultValues = {
     llmUsageStats: {
         inputTokens: 0,

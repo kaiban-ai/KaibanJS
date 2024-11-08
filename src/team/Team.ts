@@ -1,70 +1,67 @@
 /**
  * @file Team.ts
- * @path src/team/Team.ts
- * @description Team implementation for managing agents and tasks
+ * @description Core Team implementation with updated type system
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { createTeamStore } from '@/stores/teamStore';
-import { PrettyError } from '../utils/core/errors';
-import { logger } from '../utils/core/logger';
-import { MessageHistoryManager } from '../utils/managers/messageHistoryManager';
-import { teamHandler } from '../utils/handlers/teamHandler';
-import { calculateTaskStats } from '../utils/helpers/stats';
-import { logPrettyWorkflowResult } from '../utils/helpers/formatting/prettyLogs';
-import { 
-    TeamStore,
-    TeamState,
+import { createTeamStore, UseBoundTeamStore } from '@/stores/teamStore';
+import { PrettyError } from '@/utils/core/errors';
+import { logger } from '@/utils/core/logger';
+import { DefaultFactory } from '@/utils/factories';
+import { LogCreator } from '@/utils/factories/logCreator';
+import { MetadataFactory } from '@/utils/factories/metadataFactory';
+import { MessageHistoryManager } from '@/utils/managers/messageHistoryManager';
+import { teamHandler } from '@/utils/handlers/teamHandler';
+import { calculateTaskStats } from '@/utils/helpers/stats';
+import { logPrettyWorkflowResult } from '@/utils/helpers/formatting/prettyLogs';
+import { calculateTotalWorkflowCost } from '@/utils/helpers/costs/llmCostCalculator';
+import { subscribeTaskStatusUpdates } from '@/subscribers/taskSubscriber';
+import { subscribeWorkflowStatusUpdates } from '@/subscribers/teamSubscriber';
+
+import type {
     ITeam,
     ITeamParams,
+    TeamState,
+    UseBoundTeamStore,
+    TeamEnvironment,
+    TeamInputs,
+    TeamStoreConfig
+} from '@/utils/types/team';
+
+import type {
+    WorkflowStartResult,
+    WorkflowResult,
+    WorkflowStats,
+    WorkflowError
+} from '@/utils/types/workflow';
+
+import type {
     AgentType,
     TaskType,
-    WorkflowStats,
-    TeamInputs,
-    LLMUsageStats
 } from '@/utils/types';
 
-import { WorkflowMetadata } from '@/utils/types/workflow/metadata';
-import { WorkflowStartResult } from '@/utils/types/team';
-import { ModelStats } from '@/utils/types/workflow/stats';
+import type { 
+    LLMUsageStats,
+} from '@/utils/types/llm/responses';
+ 
+import type { 
+    ModelStats 
+} from '@/utils/types/workflow';
 
-import {
+import { 
     TASK_STATUS_enum, 
-    WORKFLOW_STATUS_enum 
-} from "@/utils/types/common/enums";
+    WORKFLOW_STATUS_enum,
+    AGENT_STATUS_enum,
+} from '@/utils/types/common';
 
-/**
- * Convert LLM usage stats to model stats
- */
-function convertToModelStats(stats: LLMUsageStats): ModelStats {
-    return {
-        tokens: {
-            input: stats.inputTokens,
-            output: stats.outputTokens
-        },
-        requests: {
-            successful: stats.callsCount - stats.callsErrorCount,
-            failed: stats.callsErrorCount
-        },
-        latency: {
-            average: stats.averageLatency,
-            p95: stats.averageLatency * 1.5, // Approximation
-            max: stats.totalLatency
-        },
-        cost: stats.costBreakdown.total
-    };
-}
-
-/**
- * Team implementation
- */
 export class Team implements ITeam {
-    public store: TeamStore;
+    public store: UseBoundTeamStore<TeamStore>;
     private messageHistory: MessageHistoryManager;
+    private unsubscribers: Array<() => void>;
 
     constructor(params: ITeamParams) {
-        // Initialize store
-        const store = createTeamStore({
+        this.validateParams(params);
+        this.store = createTeamStore({
             name: params.name,
             agents: params.agents || [],
             tasks: params.tasks || [],
@@ -72,56 +69,74 @@ export class Team implements ITeam {
             inputs: params.inputs || {},
             env: params.env || {}
         });
-
-        this.store = store;
         this.messageHistory = new MessageHistoryManager();
-
-        // Initialize agents and tasks with proper type annotations
-        params.agents?.forEach((agent: AgentType) => agent.initialize(this.store, params.env || {}));
-        params.tasks?.forEach((task: TaskType) => task.setStore(this.store));
-
-        // Set initial state
-        this.store.setState({
-            agents: params.agents || [],
-            tasks: params.tasks || []
-        } as Partial<TeamState>);
-
+        this.unsubscribers = [];
+        this.initializeAgentsAndTasks(params);
+        this.setupSubscribers();
         logger.info(`Team "${params.name}" initialized with ${params.agents?.length || 0} agents and ${params.tasks?.length || 0} tasks`);
     }
 
-    getStore(): TeamStore {
+    private validateParams(params: ITeamParams): void {
+        if (!params.name) {
+            throw new PrettyError({
+                message: 'Team name is required',
+                context: { params },
+                type: 'TeamValidationError'
+            });
+        }
+    }
+
+    private initializeAgentsAndTasks(params: ITeamParams): void {
+        params.agents?.forEach((agent: AgentType) => {
+            agent.initialize(this.store, params.env || {});
+        });
+        params.tasks?.forEach((task: TaskType) => {
+            task.setStore(this.store);
+        });
+        this.store.setState({
+            agents: params.agents || [],
+            tasks: params.tasks || []
+        });
+    }
+
+    private setupSubscribers(): void {
+        const taskUnsubscribe = subscribeTaskStatusUpdates(this.store);
+        const workflowUnsubscribe = subscribeWorkflowStatusUpdates(this.store);
+        this.unsubscribers.push(taskUnsubscribe);
+        this.unsubscribers.push(workflowUnsubscribe);
+    }
+
+    public getStore(): TeamStore {
         return this.store;
     }
 
-    useStore() {
+    public useStore(): UseBoundTeamStore<TeamStore> {
         return this.store;
     }
 
-    subscribeToChanges(
+    public subscribeToChanges(
         listener: (newValues: Partial<TeamState>) => void,
         properties?: Array<keyof TeamState>
     ): () => void {
         if (!properties) {
             return this.store.subscribe(listener);
         }
-
         return this.store.subscribe((state: TeamState) => {
             const relevantChanges = properties.reduce((acc, prop) => {
-                // Use type assertion to tell TypeScript this is safe
-                acc[prop] = (state as any)[prop];
+                acc[prop] = state[prop];
                 return acc;
             }, {} as Partial<TeamState>);
             listener(relevantChanges);
         });
     }
 
-    async start(inputs: TeamInputs = {}): Promise<WorkflowStartResult> {
+    public async start(inputs: TeamInputs = {}): Promise<WorkflowStartResult> {
         try {
+            logger.info(`Starting workflow for team "${this.store.getState().name}"`);
             const result = await teamHandler.handleWorkflowStart(this.store, inputs);
-            if (!result.success) {
-                throw result.error || new Error('Failed to start workflow');
+            if (!result) {
+                throw new Error('Failed to start workflow');
             }
-
             return {
                 status: this.store.getState().teamWorkflowStatus,
                 result: this.store.getState().workflowResult,
@@ -130,128 +145,171 @@ export class Team implements ITeam {
         } catch (error) {
             const prettyError = new PrettyError({
                 message: 'Failed to start workflow',
-                rootError: error instanceof Error ? error : new Error(String(error)),
                 context: { inputs },
-                recommendedAction: 'Check input parameters and team configuration'
+                rootError: error instanceof Error ? error : undefined,
+                type: 'WorkflowStartError'
             });
+            logger.error('Workflow start error:', prettyError);
             throw prettyError;
         }
     }
 
-    provideFeedback(taskId: string, feedbackContent: string): void {
-        this.store.getState().provideFeedback(taskId, feedbackContent);
+    public provideFeedback(taskId: string, feedbackContent: string): void {
+        const task = this.store.getState().tasks.find(t => t.id === taskId);
+        if (!task) {
+            throw new PrettyError({
+                message: `Task not found: ${taskId}`,
+                type: 'TaskNotFoundError'
+            });
+        }
+        const feedback = DefaultFactory.createFeedbackObject({
+            content: feedbackContent,
+            taskId: taskId
+        });
+        const feedbackLog = LogCreator.createTaskLog({
+            task,
+            description: `Feedback provided: ${feedbackContent}`,
+            status: TASK_STATUS_enum.REVISE,
+            metadata: {
+                feedback,
+                timestamp: Date.now()
+            }
+        });
+        this.store.setState(state => ({
+            tasks: state.tasks.map(t => t.id === taskId ? {
+                ...t,
+                status: TASK_STATUS_enum.REVISE,
+                feedbackHistory: [...t.feedbackHistory, feedback]
+            } : t),
+            workflowLogs: [...state.workflowLogs, feedbackLog]
+        }));
+        logger.info(`Feedback added to task ${taskId}:`, feedbackContent);
     }
 
-    validateTask(taskId: string): void {
-        this.store.getState().validateTask(taskId);
+    public validateTask(taskId: string): void {
+        const task = this.store.getState().tasks.find(t => t.id === taskId);
+        if (!task) {
+            throw new PrettyError({
+                message: `Task not found: ${taskId}`,
+                type: 'TaskNotFoundError'
+            });
+        }
+        if (task.status !== TASK_STATUS_enum.AWAITING_VALIDATION) {
+            throw new PrettyError({
+                message: `Task ${taskId} is not awaiting validation`,
+                context: { currentStatus: task.status },
+                type: 'TaskValidationError'
+            });
+        }
+        const validationLog = LogCreator.createTaskLog({
+            task,
+            description: 'Task validated',
+            status: TASK_STATUS_enum.VALIDATED,
+            metadata: {
+                timestamp: Date.now()
+            }
+        });
+        this.store.setState(state => ({
+            tasks: state.tasks.map(t => t.id === taskId ? {
+                ...t,
+                status: TASK_STATUS_enum.VALIDATED
+            } : t),
+            workflowLogs: [...state.workflowLogs, validationLog]
+        }));
+        logger.info(`Task ${taskId} validated`);
     }
 
-    getTasksByStatus(status: keyof typeof TASK_STATUS_enum): TaskType[] {
-        return this.store.getState().tasks.filter(task => task.status === status);
-    }
-
-    getWorkflowStatus(): keyof typeof WORKFLOW_STATUS_enum {
+    public getWorkflowStatus(): keyof typeof WORKFLOW_STATUS_enum {
         return this.store.getState().teamWorkflowStatus;
     }
 
-    getWorkflowResult(): unknown {
+    public getWorkflowResult(): WorkflowResult {
         return this.store.getState().workflowResult;
     }
 
-    getWorkflowStats(): WorkflowStats {
+    public getWorkflowStats(): WorkflowStats {
         const state = this.store.getState();
-        const tasks = state.tasks;
-        const combinedStats = tasks.reduce((acc, task) => {
-            const taskStats = calculateTaskStats(task, state.workflowLogs);
-            acc.llmUsageStats.inputTokens += taskStats.llmUsageStats.inputTokens;
-            acc.llmUsageStats.outputTokens += taskStats.llmUsageStats.outputTokens;
-            acc.llmUsageStats.callsCount += taskStats.llmUsageStats.callsCount;
-            acc.iterationCount += taskStats.iterationCount;
-            return acc;
-        }, {
-            llmUsageStats: {
-                inputTokens: 0,
-                outputTokens: 0,
-                callsCount: 0,
-                callsErrorCount: 0,
-                parsingErrors: 0,
-                totalLatency: 0,
-                averageLatency: 0,
-                lastUsed: Date.now(),
-                memoryUtilization: {
-                    peakMemoryUsage: 0,
-                    averageMemoryUsage: 0,
-                    cleanupEvents: 0
-                },
-                costBreakdown: {
-                    input: 0,
-                    output: 0,
-                    total: 0,
-                    currency: 'USD'
+        const lastRunningLog = state.workflowLogs
+            .slice()
+            .reverse()
+            .find(log => 
+                log.logType === "WorkflowStatusUpdate" && 
+                log.workflowStatus === WORKFLOW_STATUS_enum.RUNNING
+            );
+        const startTime = lastRunningLog?.timestamp || Date.now();
+        const endTime = Date.now();
+        const duration = (endTime - startTime) / 1000;
+        const llmUsageStats = DefaultFactory.createLLMUsageStats();
+        const modelUsage: Record<string, ModelStats> = {};
+        state.workflowLogs.forEach(log => {
+            if (log.metadata?.output?.llmUsageStats) {
+                const stats = log.metadata.output.llmUsageStats;
+                llmUsageStats.inputTokens += stats.inputTokens;
+                llmUsageStats.outputTokens += stats.outputTokens;
+                llmUsageStats.callsCount += stats.callsCount;
+                llmUsageStats.callsErrorCount += stats.callsErrorCount;
+                const modelName = log.agent?.llmConfig?.model;
+                if (modelName) {
+                    if (!modelUsage[modelName]) {
+                        modelUsage[modelName] = {
+                            tokens: { input: 0, output: 0 },
+                            requests: { successful: 0, failed: 0 },
+                            latency: { average: 0, p95: 0, max: 0 },
+                            cost: 0
+                        };
+                    }
+                    const modelStats = modelUsage[modelName];
+                    modelStats.tokens.input += stats.inputTokens;
+                    modelStats.tokens.output += stats.outputTokens;
+                    modelStats.requests.successful += stats.callsCount - stats.callsErrorCount;
+                    modelStats.requests.failed += stats.callsErrorCount;
+                    modelStats.latency.average = (modelStats.latency.average + stats.averageLatency) / 2;
+                    modelStats.latency.max = Math.max(modelStats.latency.max, stats.totalLatency);
+                    modelStats.latency.p95 = modelStats.latency.average * 1.5;
+                    modelStats.cost += stats.costBreakdown.total;
                 }
-            },
-            iterationCount: 0
+            }
         });
-
-        const workflowStats: WorkflowStats = {
-            startTime: state.workflowLogs[0]?.timestamp || Date.now(),
-            endTime: Date.now(),
-            duration: (Date.now() - (state.workflowLogs[0]?.timestamp || Date.now())) / 1000,
-            llmUsageStats: combinedStats.llmUsageStats,
-            iterationCount: combinedStats.iterationCount,
-            costDetails: {
-                inputCost: 0,
-                outputCost: 0,
-                totalCost: 0,
-                currency: 'USD',
-                breakdown: {
-                    promptTokens: { count: combinedStats.llmUsageStats.inputTokens, cost: 0 },
-                    completionTokens: { count: combinedStats.llmUsageStats.outputTokens, cost: 0 }
-                }
-            },
-            taskCount: tasks.length,
+        const stats: WorkflowStats = {
+            startTime,
+            endTime,
+            duration,
+            llmUsageStats,
+            iterationCount: state.workflowLogs.filter(log => 
+                log.agentStatus === AGENT_STATUS_enum.ITERATION_END
+            ).length,
+            costDetails: calculateTotalWorkflowCost(modelUsage),
+            taskCount: state.tasks.length,
             agentCount: state.agents.length,
             teamName: state.name,
             messageCount: state.workflowLogs.length,
-            modelUsage: tasks.reduce((usage, task) => {
-                const stats = calculateTaskStats(task, state.workflowLogs);
-                if (task.agent?.llmConfig?.model) {
-                    const modelName = task.agent.llmConfig.model;
-                    if (!usage[modelName]) {
-                        usage[modelName] = convertToModelStats(stats.llmUsageStats);
-                    } else {
-                        const existing = usage[modelName];
-                        existing.tokens.input += stats.llmUsageStats.inputTokens;
-                        existing.tokens.output += stats.llmUsageStats.outputTokens;
-                        existing.requests.successful += stats.llmUsageStats.callsCount - stats.llmUsageStats.callsErrorCount;
-                        existing.requests.failed += stats.llmUsageStats.callsErrorCount;
-                        // Update latency metrics
-                        existing.latency.average = (existing.latency.average + stats.llmUsageStats.averageLatency) / 2;
-                        existing.latency.max = Math.max(existing.latency.max, stats.llmUsageStats.totalLatency);
-                        existing.latency.p95 = existing.latency.average * 1.5; // Approximation
-                        existing.cost += stats.llmUsageStats.costBreakdown.total;
-                    }
-                }
-                return usage;
-            }, {} as Record<string, ModelStats>)
+            modelUsage
         };
-
         if (state.teamWorkflowStatus === WORKFLOW_STATUS_enum.FINISHED) {
-            const workflowResultMetadata = {
-                result: String(state.workflowResult),
-                duration: workflowStats.duration,
-                llmUsageStats: workflowStats.llmUsageStats,
-                iterationCount: workflowStats.iterationCount,
-                costDetails: workflowStats.costDetails,
-                teamName: state.name,
-                taskCount: workflowStats.taskCount,
-                agentCount: workflowStats.agentCount
-            };
-
-            logPrettyWorkflowResult({ metadata: workflowResultMetadata });
+            logPrettyWorkflowResult({
+                metadata: {
+                    result: String(state.workflowResult),
+                    duration: stats.duration,
+                    llmUsageStats: stats.llmUsageStats,
+                    iterationCount: stats.iterationCount,
+                    costDetails: stats.costDetails,
+                    teamName: stats.teamName,
+                    taskCount: stats.taskCount,
+                    agentCount: stats.agentCount
+                }
+            });
         }
+        return stats;
+    }
 
-        return workflowStats;
+    public async cleanup(): Promise<void> {
+        this.unsubscribers.forEach(unsubscribe => unsubscribe());
+        this.unsubscribers = [];
+        await this.messageHistory.clear();
+        if (this.store.destroy) {
+            this.store.destroy();
+        }
+        logger.debug('Team resources cleaned up');
     }
 }
 

@@ -24,7 +24,7 @@ import {
     TASK_STATUS_enum, 
     AGENT_STATUS_enum, 
     WORKFLOW_STATUS_enum 
-} from "@/utils/types/common/enums";
+} from "@/utils/types/common";
 
 /**
  * Factory for creating default objects used throughout the application
@@ -182,24 +182,27 @@ export class DefaultFactory {
     }
 
     /**
-     * Creates default model usage statistics
+     * Creates default model usage stats
      */
     static createModelUsageStats(): ModelUsageStats {
         return {
-            tokens: {
-                input: 0,
-                output: 0
+            modelA: {
+                tokens: {
+                    input: 0,
+                    output: 0,
+                },
+                requests: {
+                    successful: 0,
+                    failed: 0,
+                },
+                latency: {
+                    average: 0,
+                    p95: 0,
+                    max: 0,
+                },
+                cost: 0,
             },
-            requests: {
-                successful: 0,
-                failed: 0
-            },
-            latency: {
-                average: 0,
-                p95: 0,
-                max: 0
-            },
-            cost: 0
+            // Add other models as needed
         };
     }
 

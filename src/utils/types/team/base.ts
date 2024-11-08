@@ -4,189 +4,123 @@
  * @description Core team interfaces and types
  */
 
-import { BaseStoreState, StoreSubscribe } from '../store/base';
-import { WORKFLOW_STATUS_enum } from '../common/enums';
-import { WorkflowResult } from '../workflow/base';
-import { AgentType } from '../agent/base';
-import { TaskType } from '../task/base';
+import { WORKFLOW_STATUS_enum, TASK_STATUS_enum } from '../common';
+import { ErrorType } from '../common';
+import { WorkflowResult, WorkflowStats } from '../workflow';
+import { AgentType } from '../agent';
+import { TaskType } from '../task';
 import { Log } from './logs';
-import { WorkflowStats } from '../workflow/stats';
 
-/**
- * Team environment configuration
- */
+// Team environment configuration
 export interface TeamEnvironment {
     [key: string]: unknown;
 }
 
-/**
- * Team inputs interface
- */
+// Team inputs interface
 export interface TeamInputs {
     [key: string]: unknown;
 }
 
-/**
- * Team runtime state
- */
+// Parameters for preparing new log entries
+export interface PrepareNewLogParams {
+    task: TaskType | null;
+    agent: AgentType | null;
+    logDescription: string;
+    logType: 'TaskStatusUpdate' | 'AgentStatusUpdate' | 'WorkflowStatusUpdate' | 'SystemMessage' | 'UserMessage' | 'AIMessage' | 'FunctionMessage';
+    metadata: Record<string, unknown>;
+    taskStatus?: keyof typeof TASK_STATUS_enum;
+    agentStatus?: string;
+    workflowStatus?: keyof typeof WORKFLOW_STATUS_enum;
+}
+
+// Team runtime state
 export interface TeamRuntimeState {
-    /** Workflow status */
     teamWorkflowStatus: keyof typeof WORKFLOW_STATUS_enum;
-    
-    /** Workflow result */
     workflowResult: WorkflowResult;
-    
-    /** Team inputs */
     inputs: TeamInputs;
-    
-    /** Workflow context */
     workflowContext: string;
-    
-    /** Environment variables */
     env: TeamEnvironment;
-    
-    /** Log level */
     logLevel?: 'debug' | 'info' | 'warn' | 'error';
-    
-    /** Task initialization flag */
     tasksInitialized: boolean;
 }
 
-/**
- * Core team state interface
- */
-export interface TeamState extends BaseStoreState {
-    /** Workflow status */
-    teamWorkflowStatus: keyof typeof WORKFLOW_STATUS_enum;
-    
-    /** Workflow result */
-    workflowResult: WorkflowResult | null;
-    
-    /** Team name */
+// Core team state interface
+export interface TeamState extends TeamRuntimeState {
     name: string;
-    
-    /** Active agents */
     agents: AgentType[];
-    
-    /** Active tasks */
     tasks: TaskType[];
-    
-    /** Workflow logs */
     workflowLogs: Log[];
-    
-    /** Team inputs */
-    inputs: TeamInputs;
-    
-    /** Workflow context */
-    workflowContext: string;
-    
-    /** Environment variables */
-    env: TeamEnvironment;
-    
-    /** Log level */
-    logLevel: 'debug' | 'info' | 'warn' | 'error';
-    
-    /** Task initialization flag */
-    tasksInitialized: boolean;
 }
 
-/**
- * Core team store interface
- */
+// Core team store interface with all methods
 export interface TeamStore extends TeamState {
-    /** Get workflow status */
-    getWorkflowStatus: () => keyof typeof WORKFLOW_STATUS_enum;
+    // State Management
+    resetWorkflowState(): Promise<void>;
+    setInputs(inputs: TeamInputs): void;
+    updateInputs(inputs: Partial<TeamInputs>): void;
+    setState(fn: (state: TeamState) => Partial<TeamState>): void;
+    getState(): TeamState;
     
-    /** Get workflow result */
-    getWorkflowResult: () => WorkflowResult | null;
-    
-    /** Get workflow statistics */
-    getWorkflowStats: () => WorkflowStats;
+    // Task Management
+    handleTaskStatusChange(taskId: string, status: keyof typeof TASK_STATUS_enum, metadata?: Record<string, unknown>): void;
+    handleTaskError(params: { task: TaskType; error: ErrorType; context?: Record<string, unknown> }): void;
+    handleTaskBlocked(params: { task: TaskType; error: ErrorType }): void;
+    validateTask(taskId: string): void;
+    provideFeedback(taskId: string, feedbackContent: string): void;
 
-    /** Store management methods */
-    getState: () => TeamState;
-    setState: (fn: (state: TeamState) => Partial<TeamState>) => void;
-    subscribe: StoreSubscribe<TeamState>;
-    destroy: () => void;
+    // Workflow Management
+    handleWorkflowStatusChange(status: keyof typeof WORKFLOW_STATUS_enum): Promise<void>;
+    handleWorkflowError(params: { task: TaskType; error: ErrorType; context?: Record<string, unknown> }): void;
+    finishWorkflowAction(): void;
+    getWorkflowStats(): WorkflowStats;
+
+    // Log Management
+    prepareNewLog(params: PrepareNewLogParams): Log;
+
+    // Subscription/Cleanup
+    subscribe(listener: (state: TeamState) => void): () => void;
+    destroy(): void;
 }
 
-/**
- * Team initialization parameters
- */
+// Team initialization parameters
 export interface ITeamParams {
-    /** Team name */
     name: string;
-    /** Initial agents */
     agents?: AgentType[];
-    /** Initial tasks */
     tasks?: TaskType[];
-    /** Log level */
     logLevel?: 'debug' | 'info' | 'warn' | 'error';
-    /** Initial inputs */
     inputs?: TeamInputs;
-    /** Environment variables */
     env?: TeamEnvironment;
 }
 
-/**
- * Team interface
- */
+// Core team interface
 export interface ITeam {
-    /** Team store */
     store: TeamStore;
-
-    /** Start workflow */
     start(inputs?: TeamInputs): Promise<WorkflowStartResult>;
-
-    /** Get team store */
     getStore(): TeamStore;
-
-    /** Get bound team store */
     useStore(): TeamStore;
-
-    /** Subscribe to state changes */
-    subscribeToChanges(
-        listener: (newValues: Partial<TeamState>) => void,
-        properties?: Array<keyof TeamState>
-    ): () => void;
-
-    /** Provide feedback for task */
+    subscribeToChanges(listener: (newValues: Partial<TeamState>) => void, properties?: Array<keyof TeamState>): () => void;
     provideFeedback(taskId: string, feedbackContent: string): void;
-
-    /** Validate task */
     validateTask(taskId: string): void;
-
-    /** Get workflow status */
     getWorkflowStatus(): keyof typeof WORKFLOW_STATUS_enum;
-
-    /** Get workflow result */
     getWorkflowResult(): WorkflowResult;
-
-    /** Get workflow statistics */
     getWorkflowStats(): WorkflowStats;
 }
 
-/**
- * Type utilities for team types
- */
+// Workflow start result
+export interface WorkflowStartResult {
+    status: keyof typeof WORKFLOW_STATUS_enum;
+    result: WorkflowResult;
+    stats: WorkflowStats;
+}
+
+// Type guards for team types
 export const TeamTypeGuards = {
-    /**
-     * Check if value is TeamEnvironment
-     */
     isTeamEnvironment: (value: unknown): value is TeamEnvironment => {
         return typeof value === 'object' && value !== null;
     },
-
-    /**
-     * Check if value is TeamInputs
-     */
     isTeamInputs: (value: unknown): value is TeamInputs => {
         return typeof value === 'object' && value !== null;
     },
-
-    /**
-     * Check if value is TeamState
-     */
     isTeamState: (value: unknown): value is TeamState => {
         if (typeof value !== 'object' || value === null) return false;
         const state = value as Partial<TeamState>;
@@ -205,14 +139,3 @@ export const TeamTypeGuards = {
 };
 
 export type TeamStateKey = keyof TeamState;
-
-export interface WorkflowStartResult {
-    /** Workflow status */
-    status: keyof typeof WORKFLOW_STATUS_enum;
-    
-    /** Workflow result */
-    result: WorkflowResult;
-    
-    /** Workflow statistics */
-    stats: WorkflowStats;
-}

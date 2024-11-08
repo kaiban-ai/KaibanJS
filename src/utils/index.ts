@@ -85,13 +85,13 @@ export {
  * Type Guard Exports
  */
 // Common type guards
-export { EnumTypeGuards } from './types/common/enums';
+export { EnumTypeGuards } from './types';
 export { LogTypeGuards } from './types/team/logs';
 export { MessageTypeUtils } from './types/messaging/base';
 export { AgentTypeGuards } from './types/agent/base';
 export { TaskTypeGuards } from './types/task/base';
 export { TeamTypeGuards } from './types/team/base';
-export { WorkflowTypeGuards } from './types/workflow/base';
+export { WorkflowStoreTypeGuards } from './types';
 
 /**
  * Type Exports

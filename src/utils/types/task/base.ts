@@ -6,207 +6,121 @@
 
 import { IBaseAgent } from "../agent/base";
 import { TeamStore } from "@/utils/types/team/base";
+import { ModelUsageStats } from "../workflow";
 import { LLMUsageStats } from "../llm/responses";
 import { TASK_STATUS_enum, FEEDBACK_STATUS_enum } from "@/utils/types/common/enums";
 
-/**
- * Task result type
- */
+// ─── Task Result Type ──────────────────────────────────────────────────────
+
 export type TaskResult = string | Record<string, unknown> | null;
 
-/**
- * Task statistics interface
- */
+// ─── Task Stats Interface ──────────────────────────────────────────────────
+
 export interface TaskStats {
-    /** Start time of task execution */
     startTime: number;
-    
-    /** End time of task execution */
     endTime: number;
-    
-    /** Duration of task execution */
     duration: number;
-    
-    /** LLM usage statistics */
     llmUsageStats: LLMUsageStats;
-    
-    /** Number of iterations performed */
     iterationCount: number;
-    
-    /** Usage statistics per model */
-    modelUsage: Record<string, LLMUsageStats>;
+    modelUsage: ModelUsageStats;
 }
 
-/**
- * Task metadata interface
- */
+// ─── Task Metadata Interface ───────────────────────────────────────────────
+
 export interface TaskMetadata {
-    /** LLM usage statistics */
     llmUsageStats: LLMUsageStats;
-    
-    /** Number of iterations */
     iterationCount: number;
-    
-    /** Task duration */
     duration: number;
-    
-    /** Cost details */
     costDetails: {
         inputCost: number;
         outputCost: number;
         totalCost: number;
         currency: string;
     };
-    
-    /** Task result */
     result?: unknown;
-    
-    /** Error message if failed */
     error?: string;
 }
 
-/**
- * Feedback object interface
- */
+// ─── Feedback Object Interface ─────────────────────────────────────────────
+
 export interface FeedbackObject {
-    /** Unique identifier */
     id: string;
-    
-    /** Feedback content */
     content: string;
-    
-    /** Feedback status */
     status: keyof typeof FEEDBACK_STATUS_enum;
-    
-    /** Timestamp */
     timestamp: Date;
-    
-    /** User ID who provided feedback */
     userId: string;
-    
-    /** Feedback category */
     category?: string;
-    
-    /** Priority level */
     priority?: 'low' | 'medium' | 'high';
-    
-    /** Assigned agent/user */
     assignedTo?: string;
 }
 
-/**
- * Core task interface
- */
+// ─── Core Task Interface ───────────────────────────────────────────────────
+
 export interface TaskType {
-    /** Unique identifier */
     id: string;
-    
-    /** Task title */
     title: string;
-    
-    /** Task description */
     description: string;
-    
-    /** Expected output format/content */
     expectedOutput: string;
-    
-    /** Assigned agent */
     agent: IBaseAgent;
-    
-    /** Deliverable flag */
     isDeliverable: boolean;
-    
-    /** External validation requirement */
     externalValidationRequired: boolean;
-    
-    /** Task inputs */
     inputs: Record<string, unknown>;
-    
-    /** Feedback history */
     feedbackHistory: FeedbackObject[];
-    
-    /** Task status */
     status: keyof typeof TASK_STATUS_enum;
-    
-    /** Task result */
     result?: TaskResult;
-    
-    /** Interpolated task description */
     interpolatedTaskDescription?: string;
-    
-    /** Task duration */
     duration?: number;
-    
-    /** Start time */
     startTime?: number;
-    
-    /** End time */
     endTime?: number;
-    
-    /** LLM usage stats */
     llmUsageStats?: LLMUsageStats;
-    
-    /** Iteration count */
     iterationCount?: number;
-    
-    /** Error message */
     error?: string;
-
-    /**
-     * Set team store
-     */
     setStore: (store: TeamStore) => void;
-
-    /**
-     * Execute task
-     */
     execute: (data: unknown) => Promise<unknown>;
 }
 
-/**
- * Task initialization parameters
- */
+// ─── Task Initialization Parameters Interface ──────────────────────────────
+
 export interface ITaskParams {
-    /** Task title */
     title?: string;
-    
-    /** Task description */
     description: string;
-    
-    /** Expected output */
     expectedOutput: string;
-    
-    /** Assigned agent */
     agent: IBaseAgent;
-    
-    /** Deliverable flag */
     isDeliverable?: boolean;
-    
-    /** External validation requirement */
     externalValidationRequired?: boolean;
 }
 
-/**
- * Task validation result
- */
+// ─── Task Interface ────────────────────────────────────────────────────────
+
+export interface ITask {
+    id: string;
+    title: string;
+    description: string;
+    expectedOutput: string;
+    agent: IBaseAgent;
+    isDeliverable: boolean;
+    externalValidationRequired: boolean;
+    inputs: Record<string, unknown>;
+    feedbackHistory: FeedbackObject[];
+    status: keyof typeof TASK_STATUS_enum;
+    result: TaskResult;
+    interpolatedTaskDescription: string | null;
+    store: TeamStore | null;
+    setStore(store: TeamStore): void;
+    execute(data: unknown): Promise<unknown>;
+}
+
+// ─── Task Validation Result Interface ──────────────────────────────────────
+
 export interface TaskValidationResult {
-    /** Valid flag */
     isValid: boolean;
-    
-    /** Validation errors */
     errors: string[];
-    
-    /** Optional warnings */
     warnings?: string[];
 }
 
-/**
- * Type guards for task-related types
- */
+// ─── Task Type Guards ──────────────────────────────────────────────────────
+
 export const TaskTypeGuards = {
-    /**
-     * Check if value is TaskType
-     */
     isTaskType: (value: unknown): value is TaskType => {
         return (
             typeof value === 'object' &&
@@ -218,10 +132,6 @@ export const TaskTypeGuards = {
             'status' in value
         );
     },
-
-    /**
-     * Check if value is FeedbackObject
-     */
     isFeedbackObject: (value: unknown): value is FeedbackObject => {
         return (
             typeof value === 'object' &&

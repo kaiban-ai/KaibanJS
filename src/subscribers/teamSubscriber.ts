@@ -2,18 +2,18 @@
  * Path: src/subscribers/teamSubscriber.ts
  */
 
+// Imports
 import { UseBoundStore } from 'zustand';
 import { logPrettyWorkflowStatus, logPrettyWorkflowResult } from "@/utils/helpers/formatting/prettyLogs";
 import { WORKFLOW_STATUS_enum } from "@/utils/types/common/enums";
 import { logger } from "@/utils/core/logger";
 
-// Import types from their specific locations
 import type { TeamStore, TeamState } from '@/utils/types/team/base';
 import type { WorkflowLogMetadata, Log } from '@/utils/types/team/logs';
 import type { CostDetails } from '@/utils/types/workflow/stats';
 import type { LLMUsageStats } from '@/utils/types/llm/responses';
 
-// Define the expected metadata structure
+// Define interface
 interface WorkflowResultMetadata {
     result: string;
     duration: number;
@@ -25,7 +25,7 @@ interface WorkflowResultMetadata {
     agentCount: number;
 }
 
-// Default values for required stats
+// Default values
 const DEFAULT_LLM_STATS: LLMUsageStats = {
     inputTokens: 0,
     outputTokens: 0,
@@ -70,9 +70,7 @@ const DEFAULT_WORKFLOW_RESULT: WorkflowResultMetadata = {
     agentCount: 0
 };
 
-/**
- * Type guard for LLMUsageStats
- */
+// Type guard for LLMUsageStats
 const isLLMUsageStats = (stats: unknown): stats is LLMUsageStats => {
     if (!stats || typeof stats !== 'object') return false;
     
@@ -86,9 +84,7 @@ const isLLMUsageStats = (stats: unknown): stats is LLMUsageStats => {
     );
 };
 
-/**
- * Type guard for CostDetails
- */
+// Type guard for CostDetails
 const isCostDetails = (details: unknown): details is CostDetails => {
     if (!details || typeof details !== 'object') return false;
     
@@ -103,9 +99,7 @@ const isCostDetails = (details: unknown): details is CostDetails => {
     );
 };
 
-/**
- * Extract metadata with defaults
- */
+// Extract metadata with defaults
 const extractMetadata = (log: Log): WorkflowResultMetadata => {
     if (!log.metadata || typeof log.metadata !== 'object') {
         return DEFAULT_WORKFLOW_RESULT;
@@ -124,9 +118,7 @@ const extractMetadata = (log: Log): WorkflowResultMetadata => {
     };
 };
 
-/**
- * Subscribes to workflow status updates and handles them appropriately.
- */
+// Subscribe to workflow status updates
 export const subscribeWorkflowStatusUpdates = (
     store: UseBoundStore<TeamStore>
 ): (() => void) => {
@@ -151,9 +143,7 @@ export const subscribeWorkflowStatusUpdates = (
     }
 };
 
-/**
- * Handles individual workflow status updates
- */
+// Handle workflow status update
 const handleWorkflowStatusUpdate = (log: Log): void => {
     if (!log.workflowStatus) return;
 
@@ -171,9 +161,7 @@ const handleWorkflowStatusUpdate = (log: Log): void => {
     }
 };
 
-/**
- * Gets a descriptive message for each workflow status
- */
+// Get status message
 const getStatusMessage = (status: keyof typeof WORKFLOW_STATUS_enum): string => {
     switch (status) {
         case WORKFLOW_STATUS_enum.INITIAL:
@@ -195,9 +183,7 @@ const getStatusMessage = (status: keyof typeof WORKFLOW_STATUS_enum): string => 
     }
 };
 
-/**
- * Processes and logs the workflow result
- */
+// Log workflow result
 const logWorkflowResult = (log: Log): void => {
     const metadata = extractMetadata(log);
     logPrettyWorkflowResult({ metadata });

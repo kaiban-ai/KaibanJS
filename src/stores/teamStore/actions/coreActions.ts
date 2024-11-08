@@ -28,25 +28,17 @@ export const createCoreActions = (
     get: () => TeamState,
     set: (fn: (state: TeamState) => Partial<TeamState>) => void
 ) => ({
-    /**
-     * Sets the team name
-     */
+    // Sets the team name
     setName: (name: string): void => {
-        logger.debug('Setting team name:', name);
         set(state => ({ ...state, name }));
     },
 
-    /**
-     * Sets team inputs
-     */
+    // Sets team inputs
     setInputs: (inputs: TeamInputs): void => {
-        logger.debug('Setting inputs:', inputs);
         set(state => ({ ...state, inputs }));
     },
 
-    /**
-     * Updates team inputs
-     */
+    // Updates team inputs
     updateInputs: (inputs: Partial<TeamInputs>): void => {
         set(state => ({
             ...state,
@@ -57,17 +49,12 @@ export const createCoreActions = (
         }));
     },
 
-    /**
-     * Sets environment variables
-     */
+    // Sets environment variables
     setEnv: (env: TeamEnvironment): void => {
-        logger.debug('Setting environment variables');
         set(state => ({ ...state, env }));
     },
 
-    /**
-     * Updates environment variables
-     */
+    // Updates environment variables
     updateEnvironment: (env: Partial<TeamEnvironment>): void => {
         set(state => ({
             ...state,
@@ -78,15 +65,11 @@ export const createCoreActions = (
         }));
     },
 
-    /**
-     * Adds agents to the team
-     */
+    // Adds agents to the team
     addAgents: (agents: AgentType[]): void => {
         const { env } = get();
-        logger.info(`Adding ${agents.length} agents to team`);
         
         agents.forEach((agent: AgentType) => {
-            logger.debug(`Initializing agent: ${agent.name}`);
             agent.initialize(get() as unknown as TeamStore, env);
         });
         
@@ -96,12 +79,8 @@ export const createCoreActions = (
         }));
     },
 
-    /**
-     * Adds tasks to the workflow
-     */
+    // Adds tasks to the workflow
     addTasks: (tasks: TaskType[]): void => {
-        logger.info(`Adding ${tasks.length} tasks to workflow`);
-        
         tasks.forEach((task: TaskType) => {
             if (!validateTask(task)) {
                 throw new PrettyError({
@@ -109,7 +88,6 @@ export const createCoreActions = (
                     context: { taskId: task.id, taskTitle: task.title }
                 });
             }
-            logger.debug(`Setting store for task: ${task.title}`);
             task.setStore(get() as unknown as TeamStore);
         });
         
@@ -123,9 +101,7 @@ export const createCoreActions = (
         }));
     },
 
-    /**
-     * Initializes the team store
-     */
+    // Initializes the team store
     initialize: (config: {
         name: string;
         agents?: AgentType[];
@@ -143,12 +119,10 @@ export const createCoreActions = (
             logLevel = 'info' as LogLevel
         } = config;
         
-        // Set log level if provided
         if (logLevel) {
             setLogLevel(logLevel);
         }
 
-        // Initialize core state
         set(state => ({
             ...state,
             name,
@@ -159,7 +133,6 @@ export const createCoreActions = (
             teamWorkflowStatus: 'INITIAL'
         }));
 
-        // Add agents and tasks
         if (agents.length > 0) {
             get().addAgents(agents);
         }
@@ -167,16 +140,10 @@ export const createCoreActions = (
         if (tasks.length > 0) {
             get().addTasks(tasks);
         }
-        
-        logger.info(`Team "${name}" initialized with ${agents.length} agents and ${tasks.length} tasks`);
     },
 
-    /**
-     * Resets the workflow state
-     */
+    // Resets the workflow state
     resetWorkflowState: async (): Promise<void> => {
-        logger.debug('Resetting workflow state');
-        
         set(state => ({
             ...state,
             tasks: state.tasks.map((task: TaskType) => ({
@@ -194,9 +161,7 @@ export const createCoreActions = (
         }));
     },
 
-    /**
-     * Clears workflow logs
-     */
+    // Clears workflow logs
     clearWorkflowLogs: (): void => {
         set(state => ({
             ...state,
@@ -204,9 +169,7 @@ export const createCoreActions = (
         }));
     },
 
-    /**
-     * Adds a workflow log
-     */
+    // Adds a workflow log
     addWorkflowLog: (log: Log): void => {
         set(state => ({
             ...state,
@@ -214,17 +177,12 @@ export const createCoreActions = (
         }));
     },
 
-    /**
-     * Cleans up resources
-     */
+    // Cleans up resources
     cleanup: async (): Promise<void> => {
         get().clearWorkflowLogs();
-        logger.debug('Team store cleaned up');
     },
 
-    /**
-     * Gets a cleaned state object
-     */
+    // Gets a cleaned state object
     getCleanedState: (): unknown => {
         const state = get();
         return {

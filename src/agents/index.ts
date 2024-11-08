@@ -7,9 +7,7 @@
 export { BaseAgent } from './baseAgent';
 export { ReactChampionAgent } from './reactChampionAgent';
 
-/**
- * Re-export agent types
- */
+// Re-export agent types
 export type {
     IBaseAgent,
     IReactChampionAgent,

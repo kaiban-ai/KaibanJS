@@ -9,9 +9,7 @@ import { createErrorActions } from './errorActions';
 import { createStatsActions } from './statsActions';
 import type { TaskStoreState } from '../state';
 
-/**
- * Creates all task store actions
- */
+// Creates all task store actions
 export const createActions = (
     get: () => TaskStoreState,
     set: (partial: TaskStoreState | ((state: TaskStoreState) => TaskStoreState)) => void

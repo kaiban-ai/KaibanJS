@@ -9,31 +9,21 @@ import { AGENT_STATUS_enum, TASK_STATUS_enum } from '@/utils/types/common/enums'
 import { calculateTaskCost } from '@/utils/helpers/costs/llmCostCalculator';
 import { AgentState } from '../state';
 
-/**
- * Agent selectors
- */
+// Agent selectors
 export const agentSelectors = {
-    /**
-     * Get agent by ID
-     */
+    // Get agent by ID
     getAgentById: (state: AgentState) => (agentId: string): AgentType | undefined => 
         state.agents.find(agent => agent.id === agentId),
 
-    /**
-     * Get agents by status
-     */
+    // Get agents by status
     getAgentsByStatus: (state: AgentState) => (status: keyof typeof AGENT_STATUS_enum): AgentType[] => 
         state.agents.filter(agent => agent.status === status),
 
-    /**
-     * Get current active agent
-     */
+    // Get current active agent
     getCurrentAgent: (state: AgentState): AgentType | null => 
         state.currentAgent,
 
-    /**
-     * Get all available agent tools
-     */
+    // Get all available agent tools
     getAllAgentTools: (state: AgentState): string[] => 
         Array.from(new Set(
             state.agents.flatMap(agent => 
@@ -42,85 +32,57 @@ export const agentSelectors = {
         ))
 };
 
-/**
- * Task selectors
- */
+// Task selectors
 export const taskSelectors = {
-    /**
-     * Get task by ID
-     */
+    // Get task by ID
     getTaskById: (state: AgentState) => (taskId: string): TaskType | undefined => 
         state.tasks.find(task => task.id === taskId),
 
-    /**
-     * Get tasks by status
-     */
+    // Get tasks by status
     getTasksByStatus: (state: AgentState) => (status: keyof typeof TASK_STATUS_enum): TaskType[] => 
         state.tasks.filter(task => task.status === status),
 
-    /**
-     * Get current active task
-     */
+    // Get current active task
     getCurrentTask: (state: AgentState): TaskType | null => 
         state.currentTask,
 
-    /**
-     * Get tasks for specific agent
-     */
+    // Get tasks for specific agent
     getTasksForAgent: (state: AgentState) => (agentId: string): TaskType[] => 
         state.tasks.filter(task => task.agent.id === agentId)
 };
 
-/**
- * Log selectors
- */
+// Log selectors
 export const logSelectors = {
-    /**
-     * Get logs for specific task
-     */
+    // Get logs for specific task
     getLogsForTask: (state: AgentState) => (taskId: string): Log[] => 
         state.workflowLogs.filter(log => log.task?.id === taskId),
 
-    /**
-     * Get logs for specific agent
-     */
+    // Get logs for specific agent
     getLogsForAgent: (state: AgentState) => (agentId: string): Log[] => 
         state.workflowLogs.filter(log => log.agent?.id === agentId),
 
-    /**
-     * Get logs by status
-     */
+    // Get logs by status
     getLogsByStatus: (state: AgentState) => (status: keyof typeof AGENT_STATUS_enum): Log[] => 
         state.workflowLogs.filter(log => log.agentStatus === status),
 
-    /**
-     * Get recent logs with limit
-     */
+    // Get recent logs with limit
     getRecentLogs: (state: AgentState) => (limit: number): Log[] => 
         [...state.workflowLogs]
             .sort((a, b) => b.timestamp - a.timestamp)
             .slice(0, limit)
 };
 
-/**
- * Stats selectors
- */
+// Stats selectors
 export const statsSelectors = {
-    /**
-     * Get total LLM usage stats
-     */
+    // Get total LLM usage stats
     getTotalLLMStats: (state: AgentState): LLMUsageStats => 
         state.stats.llmUsageStats,
 
-    /**
-     * Get cost details
-     */
+    // Get cost details
     getCostDetails: (state: AgentState): CostDetails => 
         state.stats.costDetails,
 
-    /**
-     * Get agent performance metrics
-     */
+    // Get agent performance metrics
     getAgentMetrics: (state: AgentState) => (agentId: string) => {
         const agent = agentSelectors.getAgentById(state)(agentId);
         if (!agent) return null;
@@ -143,9 +105,7 @@ export const statsSelectors = {
         };
     },
 
-    /**
-     * Get current workflow progress
-     */
+    // Get current workflow progress
     getWorkflowProgress: (state: AgentState) => {
         const totalTasks = state.tasks.length;
         const completedTasks = state.tasks.filter(task => 
@@ -162,9 +122,7 @@ export const statsSelectors = {
     }
 };
 
-/**
- * Calculate task success rate
- */
+// Calculate task success rate
 function calculateSuccessRate(tasks: TaskType[]): number {
     if (tasks.length === 0) return 0;
 
@@ -175,9 +133,7 @@ function calculateSuccessRate(tasks: TaskType[]): number {
     return (successfulTasks / tasks.length) * 100;
 }
 
-/**
- * Export combined selectors
- */
+// Export combined selectors
 export const selectors = {
     ...agentSelectors,
     ...taskSelectors,
@@ -185,7 +141,5 @@ export const selectors = {
     ...statsSelectors,
 };
 
-/**
- * Type for combined selectors
- */
+// Type for combined selectors
 export type Selectors = typeof selectors;

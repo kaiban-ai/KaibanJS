@@ -1,67 +1,38 @@
 /**
  * @file stats.ts
- * @path src/types/workflow/stats.ts
+ * @path src/utils/types/workflow/stats.ts
  * @description Statistical type definitions for workflow metrics and costs
  */
 
 import { LLMUsageStats } from "../llm/responses";
+import { CostDetails, CostBreakdown } from "./costs";
 
-/**
- * Token usage breakdown interface
- */
+// Token usage breakdown interface
 export interface TokenUsageBreakdown {
     count: number;
     cost: number;
 }
 
-/**
- * Cost breakdown interface
- */
-export interface CostBreakdown {
-    promptTokens: TokenUsageBreakdown;
-    completionTokens: TokenUsageBreakdown;
-    functionCalls?: TokenUsageBreakdown;
+// Model token metrics
+export interface ModelTokenMetrics {
+    input: number;
+    output: number;
 }
 
-/**
- * Cost details interface
- */
-export interface CostDetails {
-    inputCost: number;
-    outputCost: number;
-    totalCost: number;
-    currency: string;
-    breakdown: CostBreakdown;
+// Model request metrics
+export interface ModelRequestMetrics {
+    successful: number;
+    failed: number;
 }
 
-/**
- * Model latency metrics
- */
+// Model latency metrics
 export interface ModelLatencyMetrics {
     average: number;
     p95: number;
     max: number;
 }
 
-/**
- * Model request metrics
- */
-export interface ModelRequestMetrics {
-    successful: number;
-    failed: number;
-}
-
-/**
- * Model token metrics
- */
-export interface ModelTokenMetrics {
-    input: number;
-    output: number;
-}
-
-/**
- * Individual model statistics
- */
+// Individual model statistics
 export interface ModelStats {
     tokens: ModelTokenMetrics;
     requests: ModelRequestMetrics;
@@ -69,22 +40,16 @@ export interface ModelStats {
     cost: number;
 }
 
-/**
- * Complete model usage statistics
- */
+// Complete model usage statistics
 export interface ModelUsageStats {
     [model: string]: ModelStats;
 }
 
-/**
- * Task stats with LLM model usage data
- */
+// Task stats with model usage data
 export interface TaskStatsWithModelUsage {
-    modelUsage: {
-        [key: string]: LLMUsageStats & {
-            costBreakdown: {
-                total: number;
-            };
+    modelUsage: LLMUsageStats & {
+        costBreakdown: {
+            total: number;
         };
     };
     startTime: number;
@@ -94,9 +59,7 @@ export interface TaskStatsWithModelUsage {
     iterationCount: number;
 }
 
-/**
- * Workflow-level task metrics
- */
+// Workflow-level task metrics
 export interface WorkflowTaskMetrics {
     completed: number;
     failed: number;
@@ -104,9 +67,7 @@ export interface WorkflowTaskMetrics {
     average_duration: number;
 }
 
-/**
- * Resource utilization metrics
- */
+// Resource utilization metrics
 export interface ResourceMetrics {
     peak_memory: number;
     average_memory: number;
@@ -114,9 +75,7 @@ export interface ResourceMetrics {
     average_tokens_per_second: number;
 }
 
-/**
- * Error tracking metrics
- */
+// Error tracking metrics
 export interface ErrorMetrics {
     total: number;
     by_type: Record<string, number>;
@@ -124,9 +83,7 @@ export interface ErrorMetrics {
     recovery_success_rate: number;
 }
 
-/**
- * Timing metrics
- */
+// Timing metrics
 export interface TimingMetrics {
     total_runtime: number;
     average_task_time: number;
@@ -134,9 +91,7 @@ export interface TimingMetrics {
     idle_time: number;
 }
 
-/**
- * Complete performance metrics interface
- */
+// Complete performance metrics interface
 export interface PerformanceMetrics {
     tasks: WorkflowTaskMetrics;
     resources: ResourceMetrics;
@@ -144,52 +99,7 @@ export interface PerformanceMetrics {
     timing: TimingMetrics;
 }
 
-/**
- * Budget state interface
- */
-export interface CurrentBudget {
-    tokens: number;
-    cost: number;
-}
-
-/**
- * Budget limits interface
- */
-export interface BudgetLimits {
-    max_tokens: number;
-    max_cost: number;
-}
-
-/**
- * Budget projections interface
- */
-export interface BudgetProjections {
-    tokens_at_completion: number;
-    final_cost: number;
-}
-
-/**
- * Budget alerts interface
- */
-export interface BudgetAlerts {
-    budget_warnings: number;
-    budget_exceeded: boolean;
-    last_warning_at?: number;
-}
-
-/**
- * Complete budget tracking interface
- */
-export interface BudgetStats {
-    current: CurrentBudget;
-    limits: BudgetLimits;
-    projected: BudgetProjections;
-    alerts: BudgetAlerts;
-}
-
-/**
- * Workflow statistics interface
- */
+// Workflow statistics interface
 export interface WorkflowStats {
     startTime: number;
     endTime: number;
@@ -201,5 +111,5 @@ export interface WorkflowStats {
     agentCount: number;
     teamName: string;
     messageCount: number;
-    modelUsage: Record<string, ModelStats>;
+    modelUsage: ModelUsageStats;
 }

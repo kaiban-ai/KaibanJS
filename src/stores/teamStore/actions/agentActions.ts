@@ -27,9 +27,7 @@ export const createAgentActions = (
     get: () => TeamState,
     set: (fn: (state: TeamState) => Partial<TeamState>) => void
 ) => ({
-    /**
-     * Handles agent status changes
-     */
+    // Handles agent status changes
     handleAgentStatusChange: (
         agent: AgentType,
         status: keyof typeof AGENT_STATUS_enum,
@@ -57,54 +55,49 @@ export const createAgentActions = (
         }));
     },
 
-/**
- * Handles agent errors
- */
-handleAgentError: (params: {
-    agent: AgentType;
-    task: TaskType;
-    error: ErrorType;
-    context?: Record<string, unknown>;
-}): void => {
-    const { agent, task, error, context } = params;
-    logger.error(`Agent ${agent.name} error:`, error);
-
-    // Create a properly typed error object for the log metadata
-    const errorForLog: Error & {
-        name: string;
-        message: string;
-        stack?: string;
+    // Handles agent errors
+    handleAgentError: (params: {
+        agent: AgentType;
+        task: TaskType;
+        error: ErrorType;
         context?: Record<string, unknown>;
-    } = {
-        name: error.name || 'AgentError',
-        message: error.message,
-        stack: error.stack,
-        context: error.context || context
-    };
+    }): void => {
+        const { agent, task, error, context } = params;
+        logger.error(`Agent ${agent.name} error:`, error);
 
-    const errorLog = LogCreator.createAgentLog({
-        agent,
-        task,
-        description: `Agent error: ${error.message}`,
-        metadata: {
-            error: errorForLog,
-            output: {
-                llmUsageStats: defaultValues.llmUsageStats
+        const errorForLog: Error & {
+            name: string;
+            message: string;
+            stack?: string;
+            context?: Record<string, unknown>;
+        } = {
+            name: error.name || 'AgentError',
+            message: error.message,
+            stack: error.stack,
+            context: error.context || context
+        };
+
+        const errorLog = LogCreator.createAgentLog({
+            agent,
+            task,
+            description: `Agent error: ${error.message}`,
+            metadata: {
+                error: errorForLog,
+                output: {
+                    llmUsageStats: defaultValues.llmUsageStats
+                },
+                timestamp: Date.now()
             },
-            timestamp: Date.now()
-        },
-        agentStatus: 'THINKING_ERROR'
-    });
+            agentStatus: 'THINKING_ERROR'
+        });
 
-    set(state => ({
-        ...state,
-        workflowLogs: [...state.workflowLogs, errorLog]
-    }));
-},
+        set(state => ({
+            ...state,
+            workflowLogs: [...state.workflowLogs, errorLog]
+        }));
+    },
 
-    /**
-     * Handles agent iteration tracking
-     */
+    // Handles agent iteration tracking
     handleIterationStart: (params: {
         agent: AgentType;
         task: TaskType;
@@ -133,6 +126,7 @@ handleAgentError: (params: {
         }));
     },
 
+    // Handles agent iteration completion
     handleIterationEnd: (params: {
         agent: AgentType;
         task: TaskType;
@@ -161,9 +155,7 @@ handleAgentError: (params: {
         }));
     },
 
-    /**
-     * Handles maximum iterations exceeded
-     */
+    // Handles maximum iterations exceeded
     handleMaxIterationsExceeded: (params: {
         agent: AgentType;
         task: TaskType;
@@ -194,9 +186,7 @@ handleAgentError: (params: {
         }));
     },
 
-    /**
-     * Handles agent thinking states
-     */
+    // Handles agent thinking states
     handleAgentThinking: (params: {
         agent: AgentType;
         task: TaskType;
@@ -228,9 +218,7 @@ handleAgentError: (params: {
         }));
     },
 
-    /**
-     * Handles agent output processing
-     */
+    // Handles agent output processing
     handleAgentOutput: (params: {
         agent: AgentType;
         task: TaskType;
@@ -293,9 +281,7 @@ handleAgentError: (params: {
         }));
     },
 
-    /**
-     * Handles streaming output from the agent
-     */
+    // Handles streaming output from the agent
     handleStreamingOutput: (params: {
         agent: AgentType;
         task: TaskType;

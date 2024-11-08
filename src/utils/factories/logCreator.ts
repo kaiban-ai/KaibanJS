@@ -23,7 +23,7 @@ import {
     WORKFLOW_STATUS_enum
 } from "@/utils/types/common/enums";
 
-import { getTaskTitleForLogs } from '@/utils/tasks';
+import { getTaskTitleForLogs } from '../helpers';
 import DefaultFactory from './defaultFactory';
 
 export class LogCreator {

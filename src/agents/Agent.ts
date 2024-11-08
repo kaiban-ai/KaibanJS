@@ -1,69 +1,87 @@
 /**
- * Path: src/agents/Agent.ts
+ * @file Agent.ts
+ * @description Core Agent implementation with updated type system
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { ReactChampionAgent } from './reactChampionAgent';
-import { logger } from '@/utils/core/logger';
-import CustomMessageHistory from '@/utils/CustomMessageHistory';
-import { AGENT_STATUS_enum, TASK_STATUS_enum } from "@/utils/types/common/enums";
-import { create } from 'zustand';
+import { Tool } from "langchain/tools";
 import { BaseMessage } from "@langchain/core/messages";
-import { useAgentStore } from '@/stores/agentStore';
-import { useTaskStore } from '@/stores/taskStore';
-import type {
-    IReactChampionAgent, 
-    BaseAgentConfig, 
-    LLMConfig,
-    GroqConfig,
-    OpenAIConfig,
-    AnthropicConfig,
-    GoogleConfig,
-    MistralConfig,
-    TaskType,
-    TeamStore, 
-    FeedbackObject, 
-    AgenticLoopResult,
-    PrepareNewLogParams,
-    Log,
-    ErrorType,
+import { logger } from '@/utils/core/logger';
+import { PrettyError } from '@/utils/core/errors';
+import { DefaultFactory } from '@/utils/factories';
+import { LogCreator } from '@/utils/factories/logCreator';
+import { MetadataFactory } from '@/utils/factories/metadataFactory';
+import { MessageHistoryManager } from '@/utils/managers/messageHistoryManager';
+
+// Import types from canonical locations
+import type { 
+    IBaseAgent, 
+    IReactChampionAgent,
+    BaseAgentConfig,
     AgentType,
-    ParsedOutput,
+    SystemAgent 
+} from '@/utils/types/agent';
+
+import type {
+    AgentStoreState,
+    AgentRuntimeState,
+    AgentExecutionMetrics,
+    AgentExecutionContext,
+    AgentExecutionResult
+} from '@/utils/types/agent';
+
+import type {
+    HandlerResult,
+    ThinkingResult,
+    ToolHandlerParams,
+    ThinkingHandlerParams
+} from '@/utils/types/agent';
+
+import type {
+    TeamStore,
+    TeamState,
+    LogType,
+    Log
+} from '@/utils/types/team';
+
+import type {
+    TaskType,
+    FeedbackObject
+} from '@/utils/types/task';
+
+import type {
+    LLMConfig,
     Output,
-    StoreSubscribe,
-} from '@/utils/types';
-import { createTeamStore } from '@/stores/teamStore';
+    LLMUsageStats,
+    AgenticLoopResult
+} from '@/utils/types/llm';
 
-const defaultGroqConfig: GroqConfig = {
-    provider: 'groq',
-    model: 'llama3-groq-70b-8192-tool-use-preview',
-    temperature: 0.1,
-    streaming: true,
-    max_tokens: 8192,
-    stop: null,
-    apiKey: process.env.GROQ_API_KEY || ''
-};
+import { AGENT_STATUS_enum } from '@/utils/types/common/enums';
 
-export class Agent implements IReactChampionAgent {
-    id: string;
-    name: string;
-    role: string;
-    goal: string;
-    background: string;
-    tools: any[];
-    maxIterations: number;
-    store: TeamStore;
-    status: keyof typeof AGENT_STATUS_enum = 'INITIAL';
-    env: Record<string, any> | null = null;
-    llmInstance: any | null;
-    llmConfig: LLMConfig;
-    llmSystemMessage: string | null;
-    forceFinalAnswer: boolean;
-    promptTemplates: Record<string, any>;
-    executableAgent: ReactChampionAgent;
-    messageHistory: CustomMessageHistory;
+/**
+ * Base Agent Implementation
+ */
+export class Agent implements IBaseAgent {
+    public readonly id: string;
+    public name: string;
+    public role: string;
+    public goal: string;
+    public background: string;
+    public tools: Tool[];
+    public maxIterations: number;
+    public store!: TeamStore;
+    public status: keyof typeof AGENT_STATUS_enum;
+    public env: Record<string, unknown> | null;
+    public llmInstance: any | null;
+    public llmConfig: LLMConfig;
+    public llmSystemMessage: string | null;
+    public forceFinalAnswer: boolean;
+    public promptTemplates: Record<string, unknown>;
+    public messageHistory: MessageHistoryManager;
 
-    constructor(config: BaseAgentConfig & { messageHistory?: CustomMessageHistory }) {
+    constructor(config: BaseAgentConfig) {
+        this.validateConfig(config);
+
         this.id = uuidv4();
         this.name = config.name;
         this.role = config.role;
@@ -71,266 +89,254 @@ export class Agent implements IReactChampionAgent {
         this.background = config.background;
         this.tools = config.tools;
         this.maxIterations = config.maxIterations || 10;
-
-        // Create a store using agentStore instead of implementing TeamStore directly
-        this.store = createTeamStore({
-            name: config.name,
-            agents: [],
-            tasks: [],
-            workflowLogs: [],
-            teamWorkflowStatus: 'INITIAL',
-            workflowResult: null,
-            inputs: {},
-            workflowContext: '',
-            env: {},
-            logLevel: 'info',
-        })();  // <-- Add () here to invoke the store creator
-
-        // LLM configuration
-        this.llmConfig = this.normalizeLlmConfig(config.llmConfig || defaultGroqConfig);
+        this.status = AGENT_STATUS_enum.INITIAL;
+        this.env = null;
+        this.llmInstance = config.llmInstance || null;
+        this.llmConfig = this.normalizeLlmConfig(config.llmConfig || DefaultFactory.createLLMConfig());
         this.llmSystemMessage = null;
         this.forceFinalAnswer = config.forceFinalAnswer ?? true;
         this.promptTemplates = config.promptTemplates || {};
+        this.messageHistory = config.messageHistory || new MessageHistoryManager();
+
+        logger.debug(`Created new agent: ${this.name} (${this.id})`);
+    }
+
+    /**
+     * Validate agent configuration
+     */
+    private validateConfig(config: BaseAgentConfig): void {
+        const errors: string[] = [];
         
-        // Message history and executable agent initialization
-        this.messageHistory = config.messageHistory || new CustomMessageHistory();
-        this.executableAgent = new ReactChampionAgent({
-            ...config,
-            llmConfig: this.llmConfig,
-            messageHistory: this.messageHistory
-        });
+        if (!config.name) errors.push('Agent name is required');
+        if (!config.role) errors.push('Agent role is required');
+        if (!config.goal) errors.push('Agent goal is required');
+        if (!config.background) errors.push('Agent background is required');
 
-        // LLM configuration
-        this.llmConfig = this.normalizeLlmConfig(config.llmConfig || defaultGroqConfig);
-        this.llmSystemMessage = null;
-        this.forceFinalAnswer = config.forceFinalAnswer ?? true;
-        this.promptTemplates = config.promptTemplates || {};
-        
-        // Message history and executable agent initialization
-        this.messageHistory = config.messageHistory || new CustomMessageHistory();
-        this.executableAgent = new ReactChampionAgent({
-            ...config,
-            llmConfig: this.llmConfig,
-            messageHistory: this.messageHistory
-        });
-    }
-
-    public handleIterationStart(params: { 
-        task: TaskType; 
-        iterations: number; 
-        maxAgentIterations: number 
-    }): void {
-        this.executableAgent?.handleIterationStart(params);
-    }
-
-    public handleIterationEnd(params: { 
-        task: TaskType; 
-        iterations: number; 
-        maxAgentIterations: number 
-    }): void {
-        this.executableAgent?.handleIterationEnd(params);
-    }
-
-    public handleThinkingError(params: { 
-        task: TaskType; 
-        error: Error 
-    }): void {
-        this.executableAgent?.handleThinkingError(params);
-    }
-
-    public handleTaskCompleted(params: {
-        task: TaskType;
-        parsedResultWithFinalAnswer: ParsedOutput;
-        iterations: number;
-        maxAgentIterations: number;
-    }): void {
-        this.executableAgent?.handleTaskCompleted(params);
-    }
-
-    public handleMaxIterationsError(params: {
-        task: TaskType;
-        iterations: number;
-        maxAgentIterations: number;
-    }): void {
-        this.executableAgent?.handleMaxIterationsError(params);
-    }
-
-    public handleAgenticLoopError(params: {
-        task: TaskType;
-        error: Error;
-        iterations: number;
-        maxAgentIterations: number;
-    }): void {
-        this.executableAgent?.handleAgenticLoopError(params);
-    }
-
-    public handleFinalAnswer(params: {
-        agent: IReactChampionAgent;
-        task: TaskType;
-        parsedLLMOutput: ParsedOutput;
-    }): ParsedOutput {
-        return this.executableAgent?.handleFinalAnswer(params) || params.parsedLLMOutput;
-    }
-
-    public handleIssuesParsingLLMOutput(params: {
-        agent: IReactChampionAgent;
-        task: TaskType;
-        output: Output;
-        llmOutput: string;
-    }): string {
-        return this.executableAgent?.handleIssuesParsingLLMOutput(params) || 'Error parsing LLM output';
-    }
-
-    async workOnTask(task: TaskType): Promise<AgenticLoopResult> {
-        if (!this.executableAgent) {
-            throw new Error("Agent not properly initialized");
-        }
-
-        logger.debug(`Agent ${this.name} starting work on task: ${task.title}`);
-        
-        try {
-            const result = await this.executableAgent.workOnTask(task);
-            logger.debug(`Agent ${this.name} completed task with result:`, result);
-            return result;
-        } catch (error) {
-            logger.error(`Error in agent ${this.name} while working on task:`, error);
-            throw error;
+        if (errors.length > 0) {
+            throw new PrettyError({
+                message: 'Invalid agent configuration',
+                context: { config, errors },
+                type: 'AgentValidationError'
+            });
         }
     }
 
-    async workOnFeedback(task: TaskType, feedbackList: FeedbackObject[], context: string): Promise<void> {
-        if (!this.executableAgent) {
-            throw new Error("Agent not properly initialized");
+    /**
+     * Initialize agent with store and environment
+     */
+    public initialize(store: TeamStore, env: Record<string, unknown>): void {
+        if (!store) {
+            throw new PrettyError({
+                message: 'Store must be provided for initialization',
+                context: { agentId: this.id },
+                type: 'AgentInitializationError'
+            });
         }
 
-        logger.debug(`Agent ${this.name} processing feedback for task: ${task.title}`);
-        
-        try {
-            await this.executableAgent.workOnFeedback(task, feedbackList, context);
-            logger.debug(`Agent ${this.name} completed feedback processing`);
-        } catch (error) {
-            logger.error(`Error in agent ${this.name} while processing feedback:`, error);
-            throw error;
-        }
-    }
-
-    initialize(store: TeamStore, env: Record<string, any>): void {
         this.store = store;
         this.env = env;
-        
-        if (this.executableAgent) {
-            this.executableAgent.initialize(store, env);
+
+        if (!this.llmInstance) {
+            const apiKey = this.llmConfig.apiKey || env[`${this.llmConfig.provider.toUpperCase()}_API_KEY`];
+            if (!apiKey && !this.llmConfig.apiBaseUrl) {
+                throw new PrettyError({
+                    message: 'API key is required via config or environment',
+                    context: { provider: this.llmConfig.provider },
+                    type: 'AgentConfigurationError'
+                });
+            }
+            this.llmConfig.apiKey = apiKey;
+            this.createLLMInstance();
         }
-        
-        logger.debug(`Agent ${this.name} initialized with store and environment`);
+
+        // Log initialization using LogCreator
+        const initLog = LogCreator.createAgentLog({
+            agent: this as AgentType,
+            task: null,
+            description: `Agent initialized: ${this.name}`,
+            metadata: {
+                output: {
+                    llmUsageStats: DefaultFactory.createLLMUsageStats(),
+                },
+                timestamp: Date.now()
+            },
+            agentStatus: AGENT_STATUS_enum.INITIAL
+        });
+
+        store.setState(state => ({
+            workflowLogs: [...state.workflowLogs, initLog]
+        }));
+
+        logger.info(`Initialized agent: ${this.name}`);
     }
 
-    setStore(store: TeamStore): void {
+    /**
+     * Set store reference
+     */
+    public setStore(store: TeamStore): void {
+        if (!store) {
+            throw new PrettyError({
+                message: 'Store must be provided',
+                context: { agentId: this.id },
+                type: 'AgentConfigurationError'
+            });
+        }
         this.store = store;
-        if (this.executableAgent) {
-            this.executableAgent.setStore(store);
-        }
     }
 
-    setStatus(status: keyof typeof AGENT_STATUS_enum): void {
+    /**
+     * Set agent status
+     */
+    public setStatus(status: keyof typeof AGENT_STATUS_enum): void {
+        const previousStatus = this.status;
         this.status = status;
-        if (this.executableAgent) {
-            this.executableAgent.setStatus(status);
+
+        if (this.store) {
+            const statusLog = LogCreator.createAgentLog({
+                agent: this as AgentType,
+                task: null,
+                description: `Agent status changed: ${status}`,
+                metadata: {
+                    previousStatus,
+                    timestamp: Date.now(),
+                    output: {
+                        llmUsageStats: DefaultFactory.createLLMUsageStats()
+                    }
+                },
+                agentStatus: status
+            });
+
+            this.store.setState(state => ({
+                workflowLogs: [...state.workflowLogs, statusLog]
+            }));
         }
+
+        logger.debug(`Updated agent ${this.name} status to: ${status}`);
     }
 
-    setEnv(env: Record<string, any>): void {
+    /**
+     * Set environment variables
+     */
+    public setEnv(env: Record<string, unknown>): void {
         this.env = env;
-        if (this.executableAgent) {
-            this.executableAgent.setEnv(env);
-        }
     }
 
-    createLLMInstance(): void {
-        if (!this.executableAgent) {
-            throw new Error("Executable agent not initialized");
-        }
-        this.executableAgent.createLLMInstance();
+    /**
+     * Create LLM instance - to be implemented by subclasses
+     */
+    public createLLMInstance(): void {
+        throw new Error("createLLMInstance must be implemented by subclasses");
     }
 
-    normalizeLlmConfig(config: LLMConfig): LLMConfig {
-        switch (config.provider) {
-            case 'groq': {
-                const groqConfig: GroqConfig = {
-                    provider: 'groq',
-                    model: config.model || defaultGroqConfig.model,
-                    temperature: config.temperature ?? defaultGroqConfig.temperature,
-                    streaming: config.streaming ?? defaultGroqConfig.streaming,
-                    max_tokens: (config as GroqConfig).max_tokens ?? defaultGroqConfig.max_tokens,
-                    stop: (config as GroqConfig).stop ?? null,
-                    apiKey: config.apiKey || process.env.GROQ_API_KEY || ''
-                };
-                return groqConfig;
-            }
-            case 'openai': {
-                const openaiConfig: OpenAIConfig = {
-                    provider: 'openai',
-                    model: config.model,
-                    temperature: config.temperature,
-                    streaming: config.streaming,
-                    max_tokens: (config as OpenAIConfig).max_tokens,
-                    stop: Array.isArray((config as OpenAIConfig).stop) ? (config as OpenAIConfig).stop : undefined,
-                    apiKey: config.apiKey || process.env.OPENAI_API_KEY || '',
-                    frequency_penalty: (config as OpenAIConfig).frequency_penalty,
-                    presence_penalty: (config as OpenAIConfig).presence_penalty,
-                    top_p: (config as OpenAIConfig).top_p,
-                    n: (config as OpenAIConfig).n
-                };
-                return openaiConfig;
-            }
-            case 'anthropic': {
-                const anthropicConfig: AnthropicConfig = {
-                    provider: 'anthropic',
-                    model: config.model,
-                    temperature: config.temperature,
-                    streaming: config.streaming,
-                    max_tokens_to_sample: (config as AnthropicConfig).max_tokens_to_sample,
-                    stop_sequences: (config as AnthropicConfig).stop_sequences,
-                    apiKey: config.apiKey || process.env.ANTHROPIC_API_KEY || ''
-                };
-                return anthropicConfig;
-            }
-            case 'google': {
-                const googleConfig: GoogleConfig = {
-                    provider: 'google',
-                    model: config.model,
-                    temperature: config.temperature,
-                    streaming: config.streaming,
-                    maxOutputTokens: (config as GoogleConfig).maxOutputTokens,
-                    apiKey: config.apiKey || process.env.GOOGLE_API_KEY || '',
-                    topK: (config as GoogleConfig).topK,
-                    topP: (config as GoogleConfig).topP,
-                    stopSequences: (config as GoogleConfig).stopSequences,
-                    safetySettings: (config as GoogleConfig).safetySettings,
-                    apiVersion: (config as GoogleConfig).apiVersion,
-                    apiBaseUrl: (config as GoogleConfig).apiBaseUrl
-                };
-                return googleConfig;
-            }
-            case 'mistral': {
-                const mistralConfig: MistralConfig = {
-                    provider: 'mistral',
-                    model: config.model,
-                    temperature: config.temperature,
-                    streaming: config.streaming,
-                    max_tokens: (config as MistralConfig).max_tokens,
-                    top_p: (config as MistralConfig).top_p,
-                    safe_mode: (config as MistralConfig).safe_mode,
-                    random_seed: (config as MistralConfig).random_seed,
-                    apiKey: config.apiKey || process.env.MISTRAL_API_KEY || '',
-                    endpoint: (config as MistralConfig).endpoint
-                };
-                return mistralConfig;
-            }
-            default:
-                return defaultGroqConfig;
+    /**
+     * Work on task - to be implemented by subclasses
+     */
+    public async workOnTask(task: TaskType): Promise<AgenticLoopResult> {
+        throw new Error("workOnTask must be implemented by subclasses");
+    }
+
+    /**
+     * Process feedback - to be implemented by subclasses
+     */
+    public async workOnFeedback(
+        task: TaskType,
+        feedbackList: FeedbackObject[],
+        context: string
+    ): Promise<void> {
+        throw new Error("workOnFeedback must be implemented by subclasses");
+    }
+
+    /**
+     * Normalize LLM configuration
+     */
+    public normalizeLlmConfig(llmConfig: LLMConfig): LLMConfig {
+        const defaultConfig = DefaultFactory.createLLMConfig();
+        return {
+            ...defaultConfig,
+            ...llmConfig,
+            streaming: llmConfig.streaming ?? defaultConfig.streaming,
+            temperature: llmConfig.temperature ?? defaultConfig.temperature,
+            maxTokens: llmConfig.maxTokens ?? defaultConfig.maxTokens
+        };
+    }
+
+    /**
+     * Get agent metrics
+     */
+    public getMetrics(): AgentExecutionMetrics {
+        if (!this.store) {
+            return DefaultFactory.createAgentMetrics();
         }
+
+        const logs = this.store.getState().workflowLogs;
+        const agentLogs = logs.filter(log => log.agent?.id === this.id);
+
+        return {
+            llmUsageStats: this.calculateLLMStats(agentLogs),
+            iterationCount: this.calculateIterationCount(agentLogs),
+            totalCalls: agentLogs.length,
+            errorCount: this.calculateErrorCount(agentLogs),
+            averageLatency: this.calculateAverageLatency(agentLogs),
+            costDetails: DefaultFactory.createCostDetails()
+        };
+    }
+
+    /**
+     * Calculate LLM usage statistics
+     */
+    private calculateLLMStats(logs: Log[]): LLMUsageStats {
+        const stats = DefaultFactory.createLLMUsageStats();
+        
+        logs.forEach(log => {
+            const logStats = log.metadata?.output?.llmUsageStats;
+            if (logStats) {
+                stats.inputTokens += logStats.inputTokens || 0;
+                stats.outputTokens += logStats.outputTokens || 0;
+                stats.callsCount += logStats.callsCount || 0;
+                stats.callsErrorCount += logStats.callsErrorCount || 0;
+                stats.parsingErrors += logStats.parsingErrors || 0;
+                stats.totalLatency += logStats.totalLatency || 0;
+            }
+        });
+
+        stats.averageLatency = stats.callsCount ? stats.totalLatency / stats.callsCount : 0;
+        return stats;
+    }
+
+    /**
+     * Calculate total iterations
+     */
+    private calculateIterationCount(logs: Log[]): number {
+        return logs.filter(log => log.agentStatus === AGENT_STATUS_enum.ITERATION_END).length;
+    }
+
+    /**
+     * Calculate total errors
+     */
+    private calculateErrorCount(logs: Log[]): number {
+        return logs.filter(log => 
+            log.agentStatus === AGENT_STATUS_enum.THINKING_ERROR ||
+            log.agentStatus === AGENT_STATUS_enum.USING_TOOL_ERROR ||
+            log.agentStatus === AGENT_STATUS_enum.MAX_ITERATIONS_ERROR
+        ).length;
+    }
+
+    /**
+     * Calculate average latency
+     */
+    private calculateAverageLatency(logs: Log[]): number {
+        const latencies = logs.map(log => log.metadata?.output?.llmUsageStats?.totalLatency || 0);
+        return latencies.length ? latencies.reduce((a, b) => a + b, 0) / latencies.length : 0;
+    }
+
+    /**
+     * Clean up agent resources
+     */
+    public async cleanup(): Promise<void> {
+        await this.messageHistory.clear();
+        this.llmInstance = null;
+        logger.debug(`Cleaned up agent: ${this.name}`);
     }
 }
 
-
+export default Agent;

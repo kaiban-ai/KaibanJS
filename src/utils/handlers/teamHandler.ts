@@ -1,7 +1,7 @@
 /**
  * @file teamHandler.ts
  * @path src/utils/handlers/teamHandler.ts
- * @description Team operations handler implementation
+ * @description Team handler implementation
  */
 
 import { logger } from "@/utils/core/logger";
@@ -9,25 +9,23 @@ import { PrettyError } from "@/utils/core/errors";
 import { calculateTotalWorkflowCost } from "@/utils/helpers/costs/llmCostCalculator";
 import { MessageHistoryManager } from "@/utils/managers/messageHistoryManager";
 import { MessageHandler } from "./messageHandler";
+import DefaultFactory from "../factories/defaultFactory";
+import MetadataFactory from "../factories/metadataFactory";
+import LogCreator from "../factories/logCreator";
 
-import {
+import type {
     TeamStore,
     TeamState,
-    TeamEnvironment,
     TeamInputs,
-    WorkflowStartResult,
-    AgentType,
     TaskType,
-    Log,
-    ErrorType,
     WorkflowStats,
     LLMUsageStats,
-    AgentLogMetadata,
-    WorkflowMetadata,
     SystemAgent
 } from '@/utils/types';
 
-import { WORKFLOW_STATUS_enum } from "@/utils/types/common/enums";
+import { WorkflowStartResult } from "@/utils/types/workflow/base";
+import { WORKFLOW_STATUS_enum, AGENT_STATUS_enum } from "@/utils/types/common/enums";
+import { ModelUsageStats } from "@/utils/types/workflow/stats"; 
 
 // Create a system agent for logs that need an agent reference
 const SYSTEM_AGENT: SystemAgent = {
@@ -53,7 +51,8 @@ const SYSTEM_AGENT: SystemAgent = {
     llmSystemMessage: null,
     forceFinalAnswer: false,
     promptTemplates: {},
-    env: null
+    env: null,
+    messageHistory: new MessageHistoryManager()
 };
 
 /**
@@ -68,9 +67,6 @@ export class TeamHandler {
         this.messageHandler = new MessageHandler();
     }
 
-    /**
-     * Handle workflow start
-     */
     async handleWorkflowStart(
         store: TeamStore,
         inputs: Record<string, string | number | boolean | null | undefined> = {}
@@ -82,25 +78,21 @@ export class TeamHandler {
             );
 
             const stats = this.calculateWorkflowStats(store);
-            const workflowMetadata = this.createWorkflowMetadata(store.getState(), stats, {
+            const workflowMetadata = MetadataFactory.forWorkflow(store.getState(), stats, {
                 message: 'Workflow initialized with input settings',
                 inputs,
                 timestamp: Date.now()
             });
 
-            const initialLog = store.prepareNewLog({
-                agent: SYSTEM_AGENT,
-                task: null,
-                logDescription: `Workflow initiated for team ${store.getState().name}`,
-                metadata: workflowMetadata,
-                logType: 'WorkflowStatusUpdate',
-                workflowStatus: 'RUNNING'
-            });
+            const initialLog = LogCreator.createWorkflowLog(
+                `Workflow initiated for team ${store.getState().name}`,
+                'RUNNING',
+                workflowMetadata
+            );
 
             const currentInputs = store.getState().inputs;
             const typedInputs: TeamInputs = {};
-            
-            // Ensure inputs are properly typed
+
             Object.entries(inputs).forEach(([key, value]) => {
                 if (value === null || value === undefined || 
                     typeof value === 'string' || 
@@ -110,11 +102,11 @@ export class TeamHandler {
                 }
             });
 
-            store.setState({
-                workflowLogs: [...store.getState().workflowLogs, initialLog],
+            store.setState((state: TeamState) => ({
+                workflowLogs: [...state.workflowLogs, initialLog],
                 teamWorkflowStatus: 'RUNNING',
                 inputs: { ...currentInputs, ...typedInputs }
-            });
+            }));
 
             logger.info(`Started workflow for team ${store.getState().name}`);
             
@@ -142,38 +134,29 @@ export class TeamHandler {
         }
     }
 
-    /**
-     * Handle workflow completion
-     */
     async handleWorkflowCompletion(
         store: TeamStore,
-        result: unknown
+        result: string
     ): Promise<WorkflowStartResult> {
         try {
             const stats = this.calculateWorkflowStats(store);
             
-            const completionLog = store.prepareNewLog({
-                agent: SYSTEM_AGENT,
-                task: null,
-                logDescription: 'Workflow completed successfully',
-                metadata: {
-                    result,
-                    ...stats
-                },
-                logType: 'WorkflowStatusUpdate',
-                workflowStatus: 'FINISHED'
-            });
+            const completionLog = LogCreator.createWorkflowLog(
+                'Workflow completed successfully',
+                'FINISHED',
+                { result, ...stats }
+            );
 
-            store.setState({
-                teamWorkflowStatus: 'FINISHED' as const,
+            store.setState((state: TeamState) => ({
+                teamWorkflowStatus: 'FINISHED',
                 workflowResult: {
                     status: 'FINISHED',
                     result,
                     metadata: stats,
                     completionTime: Date.now()
                 },
-                workflowLogs: [...store.getState().workflowLogs, completionLog]
-            });
+                workflowLogs: [...state.workflowLogs, completionLog]
+            }));
 
             logger.info('Workflow completed successfully');
             return {
@@ -205,9 +188,6 @@ export class TeamHandler {
         }
     }
 
-    /**
-     * Handle workflow error
-     */
     async handleWorkflowError(
         store: TeamStore,
         error: Error,
@@ -226,20 +206,14 @@ export class TeamHandler {
 
             const stats = this.calculateWorkflowStats(store);
             
-            const errorLog = store.prepareNewLog({
-                agent: task?.agent || SYSTEM_AGENT,
-                task: task || null,
-                logDescription: `Workflow error: ${prettyError.message}`,
-                metadata: {
-                    error: prettyError,
-                    ...stats
-                },
-                logType: 'WorkflowStatusUpdate',
-                workflowStatus: 'ERRORED'
-            });
+            const errorLog = LogCreator.createWorkflowLog(
+                `Workflow error: ${prettyError.message}`,
+                'ERRORED',
+                { result: '', error: prettyError, ...stats }
+            );
 
-            store.setState({
-                teamWorkflowStatus: 'ERRORED' as const,
+            store.setState((state: TeamState) => ({
+                teamWorkflowStatus: 'ERRORED',
                 workflowResult: {
                     status: 'ERRORED',
                     error: {
@@ -252,8 +226,8 @@ export class TeamHandler {
                     metadata: stats,
                     erroredAt: Date.now()
                 },
-                workflowLogs: [...store.getState().workflowLogs, errorLog]
-            });
+                workflowLogs: [...state.workflowLogs, errorLog]
+            }));
 
             logger.error('Workflow error:', prettyError.prettyMessage);
         } catch (handlingError) {
@@ -261,41 +235,6 @@ export class TeamHandler {
         }
     }
 
-    /**
-     * Handle agent initialization
-     */
-    async handleAgentInitialization(
-        store: TeamStore,
-        agent: AgentType,
-        env: Record<string, unknown>
-    ): Promise<void> {
-        try {
-            agent.initialize(store, env);
-            
-            const initLog = store.prepareNewLog({
-                agent,
-                task: null,
-                logDescription: `Agent initialized: ${agent.name}`,
-                metadata: {
-                    env: Object.keys(env)
-                },
-                logType: 'AgentStatusUpdate'
-            });
-
-            store.setState({
-                workflowLogs: [...store.getState().workflowLogs, initLog]
-            });
-
-            logger.info(`Initialized agent: ${agent.name}`);
-        } catch (error) {
-            logger.error('Error initializing agent:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * Calculate workflow statistics
-     */
     private calculateWorkflowStats(store: TeamStore): WorkflowStats {
         const state = store.getState();
         const endTime = Date.now();
@@ -307,63 +246,41 @@ export class TeamHandler {
                 log.logType === 'WorkflowStatusUpdate' && 
                 log.workflowStatus === WORKFLOW_STATUS_enum.RUNNING
             );
-
+    
         const startTime = lastRunningLog?.timestamp || endTime;
         const duration = (endTime - startTime) / 1000;
-
-        let llmUsageStats: LLMUsageStats = {
-            inputTokens: 0,
-            outputTokens: 0,
-            callsCount: 0,
-            callsErrorCount: 0,
-            parsingErrors: 0,
-            totalLatency: 0,
-            averageLatency: 0,
-            lastUsed: Date.now(),
-            memoryUtilization: {
-                peakMemoryUsage: 0,
-                averageMemoryUsage: 0,
-                cleanupEvents: 0
-            },
-            costBreakdown: {
-                input: 0,
-                output: 0,
-                total: 0,
-                currency: 'USD'
-            }
-        };
-
-        const modelUsage: Record<string, typeof llmUsageStats> = {};
+    
+        const llmUsageStats = DefaultFactory.createLLMUsageStats();
+    
+        const modelUsage: ModelUsageStats = {};
         let iterationCount = 0;
-
+    
         state.workflowLogs.forEach(log => {
-            if (log.timestamp >= startTime && log.logType === 'AgentStatusUpdate') {
-                const agentLog = log.metadata as AgentLogMetadata;
-                if (agentLog.output?.llmUsageStats) {
-                    const stats = agentLog.output.llmUsageStats;
-                    llmUsageStats.inputTokens += stats.inputTokens;
-                    llmUsageStats.outputTokens += stats.outputTokens;
-                    llmUsageStats.callsCount += 1;
-
-                    const modelName = log.agent?.llmConfig?.model;
-                    if (modelName) {
-                        if (!modelUsage[modelName]) {
-                            modelUsage[modelName] = { ...llmUsageStats };
-                        }
-                        const modelStats = modelUsage[modelName];
-                        modelStats.inputTokens += stats.inputTokens;
-                        modelStats.outputTokens += stats.outputTokens;
-                        modelStats.callsCount += 1;
-                    }
+            const modelName = log.agent?.llmConfig?.model;
+            if (modelName && log.metadata.llmUsageStats) {
+                if (!modelUsage[modelName]) {
+                    modelUsage[modelName] = {
+                        tokens: { input: 0, output: 0 },
+                        requests: { successful: 0, failed: 0 },
+                        latency: { average: 0, p95: 0, max: 0 },
+                        cost: 0
+                    };
                 }
-                if (log.agentStatus === 'ITERATION_END') {
-                    iterationCount += 1;
-                }
+                const modelStats = modelUsage[modelName];
+                const llmStats = log.metadata.llmUsageStats;
+    
+                modelStats.tokens.input += llmStats.inputTokens;
+                modelStats.tokens.output += llmStats.outputTokens;
+                modelStats.requests.successful += 1;
+                modelStats.cost += llmStats.costBreakdown.total || 0;
+            }
+            if (log.agentStatus === AGENT_STATUS_enum.ITERATION_END) {
+                iterationCount += 1;
             }
         });
-
+    
         const costDetails = calculateTotalWorkflowCost(modelUsage);
-
+    
         return {
             startTime,
             endTime,
@@ -378,31 +295,8 @@ export class TeamHandler {
             modelUsage
         };
     }
+    
 
-    /**
-     * Create workflow metadata
-     */
-    private createWorkflowMetadata(
-        state: TeamState,
-        stats: WorkflowStats,
-        additionalData?: Record<string, unknown>
-    ): WorkflowMetadata {
-        return {
-            result: state.workflowResult?.status || '',
-            duration: stats.duration,
-            llmUsageStats: stats.llmUsageStats,
-            iterationCount: stats.iterationCount,
-            costDetails: stats.costDetails,
-            teamName: stats.teamName,
-            taskCount: stats.taskCount,
-            agentCount: stats.agentCount,
-            ...additionalData
-        };
-    }
-
-    /**
-     * Clean up resources
-     */
     async cleanup(): Promise<void> {
         await this.messageHistory.clear();
     }

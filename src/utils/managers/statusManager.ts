@@ -5,13 +5,41 @@
  */
 
 import { logger } from '../core/logger';
-import { AGENT_STATUS_enum, TASK_STATUS_enum, WORKFLOW_STATUS_enum } from '@/utils/types/common/enums';
+import { 
+    AGENT_STATUS_enum, 
+    TASK_STATUS_enum, 
+    WORKFLOW_STATUS_enum 
+} from '@/utils/types/common/enums';
 import { PrettyError } from '../core/errors';
+
+// Updated imports for workflow types
+import { 
+    WorkflowResult,
+    WorkflowError,
+    WorkflowStats
+} from '@/utils/types/workflow/base';
+
+import {
+    WorkflowState,
+    WorkflowEventType,
+    WorkflowEvent
+} from '@/utils/types/workflow/store';
+
+import {
+    StatusTransitionContext,
+    StatusChangeEvent,
+    StatusHistoryEntry,
+    StatusTransitionRule,
+    StatusChangeCallback,
+    StatusManagerConfig,
+    StatusErrorType,
+    StatusError
+} from '@/utils/types/common/status';
 
 /**
  * Status entity types
  */
-type StatusEntity = 'agent' | 'task' | 'workflow';
+type StatusEntity = 'agent' | 'message' | 'task' | 'workflow';
 
 /**
  * Combined status types

@@ -1,117 +1,105 @@
 /**
  * @file store.ts
  * @path src/utils/types/team/store.ts
- * @description Team store types and interfaces for managing store operations
+ * @description Team store types and interfaces for managing team state and operations
  */
 
-import { StoreApi, UseBoundStore } from 'zustand';
-import { StoreSubscribe } from '../store/base';
+import type { StoreApi, UseBoundStore } from 'zustand';
+import type { StoreSubscribe, BaseStoreState, StoreConfig } from '../store/base';
 import type { TeamState } from './base';
 import type { Log } from './logs';
 import type { TaskType } from '../task/base';
 import type { AgentType } from '../agent/base';
-import type { ErrorType } from '../common/errors';
-import type { WORKFLOW_STATUS_enum, TASK_STATUS_enum } from '../common/enums';
-import type { LLMUsageStats } from '../llm/responses';
-import type { WorkflowStats } from '../workflow/stats';
-import type { CostDetails } from '../workflow/costs';
-import type { Output } from '../llm/responses';
-import type { BaseMessage } from "@langchain/core/messages";
-import type { Tool } from "langchain/tools";
+import type { LLMConfig } from '../llm/providers';
+import type { WorkflowResult, WorkflowStats } from '../workflow/base';
+
+// ─── Team Store API ───────────────────────────────────────────────────────────
 
 /**
- * Team store API interface representing the core store API methods
+ * Team store API interface
  */
 export interface TeamStoreApi extends StoreApi<TeamState> {
-    /** Store subscription method */
+    /** Subscribe to state changes */
     subscribe: StoreSubscribe<TeamState>;
 }
 
 /**
  * Bound team store type
- * This is equivalent to UseBoundStore<TeamStoreApi> but includes all required methods
  */
 export type UseBoundTeamStore = {
+    /** Get current state */
     (): TeamState;
+    /** Select state with selector */
     <U>(selector: (state: TeamState) => U): U;
+    /** Select state with equality function */
     <U>(selector: (state: TeamState) => U, equalityFn: (a: U, b: U) => boolean): U;
+    /** Set state */
     setState: StoreApi<TeamState>["setState"];
+    /** Get state */
     getState: StoreApi<TeamState>["getState"];
+    /** Subscribe to state changes */
     subscribe: TeamStoreApi["subscribe"];
+    /** Clean up store */
     destroy: () => void;
 };
+
+// ─── Team Store Methods ────────────────────────────────────────────────────────
 
 /**
  * Team store with subscribe functionality
  */
 export interface TeamStoreWithSubscribe extends TeamStoreApi {
-    /** Enhanced subscribe method with selector support */
+    /** Subscribe to state changes */
     subscribe: StoreSubscribe<TeamState>;
 }
 
 /**
- * Base store methods interface
+ * Team store methods interface
  */
 export interface TeamStoreMethods {
     /** Get current state */
     getState: () => TeamState;
-    
-    /** Set state */
+    /** Update state */
     setState: (fn: (state: TeamState) => Partial<TeamState>) => void;
-    
-    /** State subscription */
+    /** Subscribe to state changes */
     subscribe: StoreSubscribe<TeamState>;
-    
-    /** Clean up resources */
+    /** Clean up store */
     destroy: () => void;
 }
+
+// ─── Store Configuration ────────────────────────────────────────────────────────
 
 /**
  * Team store configuration options
  */
-export interface TeamStoreConfig {
-    /** Store name for debugging */
-    name: string;
-    
-    /** Log level configuration */
-    logLevel?: 'debug' | 'info' | 'warn' | 'error';
-    
-    /** Development mode flag */
-    devMode?: boolean;
-    
-    /** Store middleware options */
+export interface TeamStoreConfig extends StoreConfig {
+    /** Maximum concurrent tasks */
+    maxConcurrentTasks?: number;
+    /** Task execution timeout */
+    taskTimeout?: number;
+    /** Progress check interval */
+    progressCheckInterval?: number;
+    /** Middleware configuration */
     middleware?: {
-        /** Enable devtools integration */
+        /** Enable devtools */
         devtools?: boolean;
-        
-        /** Enable subscription support */
+        /** Enable selector subscriptions */
         subscribeWithSelector?: boolean;
-        
         /** Enable persistence */
         persist?: boolean;
     };
-    
-    /** Maximum concurrent tasks */
-    maxConcurrentTasks?: number;
-    
-    /** Task timeout in milliseconds */
-    taskTimeout?: number;
-    
-    /** Progress check interval */
-    progressCheckInterval?: number;
-    
-    /** Task retry settings */
+    /** Retry configuration */
     retry?: {
-        /** Maximum retries per task */
+        /** Maximum retry attempts */
         maxRetries?: number;
-        
-        /** Delay between retries (ms) */
+        /** Retry delay in ms */
         retryDelay?: number;
-        
-        /** Whether to use exponential backoff */
+        /** Use exponential backoff */
         useExponentialBackoff?: boolean;
     };
 }
+
+// ─── Store Creation Options ─────────────────────────────────────────────────────
 
 /**
  * Team store creator options
@@ -119,7 +107,6 @@ export interface TeamStoreConfig {
 export interface TeamStoreOptions {
     /** Store configuration */
     config?: TeamStoreConfig;
-    
     /** Initial state */
     initialState?: Partial<TeamState>;
 }
@@ -129,47 +116,71 @@ export interface TeamStoreOptions {
  */
 export type CreateTeamStore = (options?: TeamStoreOptions) => UseBoundTeamStore;
 
+// ─── Type Guards ────────────────────────────────────────────────────────────────
+
 /**
  * Type guards for team store
  */
 export const TeamStoreTypeGuards = {
     /**
-     * Check if a value is TeamStoreApi
+     * Check if value is team store API
      */
-    isTeamStoreApi: (value: unknown): value is TeamStoreApi => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'subscribe' in value &&
-            'setState' in value &&
-            'getState' in value
-        );
-    },
+    isTeamStoreApi: (value: unknown): value is TeamStoreApi =>
+        typeof value === 'object' && value !== null &&
+        'subscribe' in value && 'setState' in value && 'getState' in value,
 
     /**
-     * Check if a value is UseBoundTeamStore
+     * Check if value is bound team store
      */
-    isUseBoundTeamStore: (value: unknown): value is UseBoundTeamStore => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'subscribe' in value &&
-            'setState' in value &&
-            'getState' in value &&
-            'destroy' in value
-        );
-    },
+    isUseBoundTeamStore: (value: unknown): value is UseBoundTeamStore =>
+        typeof value === 'object' && value !== null &&
+        'subscribe' in value && 'setState' in value && 'getState' in value && 'destroy' in value,
 
     /**
-     * Check if a value is TeamStoreConfig
+     * Check if value is team store config
      */
     isTeamStoreConfig: (value: unknown): value is TeamStoreConfig => {
         if (typeof value !== 'object' || value === null) return false;
         const config = value as TeamStoreConfig;
+        return typeof config.name === 'string' &&
+            (!config.logLevel || ['debug', 'info', 'warn', 'error'].includes(config.logLevel));
+    }
+};
+
+// ─── Utility Types ───────────────────────────────────────────────────────────
+
+/**
+ * Team store subscription utility type
+ */
+export type TeamStoreSubscriber<U = TeamState> = (
+    state: TeamState,
+    previousState: TeamState
+) => void | ((selectedState: U, previousSelectedState: U) => void);
+
+// ─── Validation Types ─────────────────────────────────────────────────────────
+
+/**
+ * Store validation utilities
+ */
+export const TeamValidationUtils = {
+    /**
+     * Check if state is complete and valid
+     */
+    isCompleteTeamState: (value: unknown): value is TeamState => {
         return (
-            typeof config.name === 'string' &&
-            (config.logLevel === undefined || 
-             ['debug', 'info', 'warn', 'error'].includes(config.logLevel))
+            typeof value === 'object' &&
+            value !== null &&
+            'name' in value &&
+            'agents' in value &&
+            'tasks' in value &&
+            'workflowLogs' in value &&
+            'teamWorkflowStatus' in value &&
+            'workflowResult' in value &&
+            'inputs' in value &&
+            'workflowContext' in value &&
+            'env' in value &&
+            'logLevel' in value &&
+            'tasksInitialized' in value
         );
     }
 };

@@ -15,13 +15,8 @@ import type {
     MessageHistoryConfig 
 } from '@/utils/types';
 
-/**
- * Utilities for handling messages in the team store
- */
+/* Utilities for handling messages */
 export const MessageUtils = {
-    /**
-     * Converts function arguments to string format
-     */
     stringifyFunctionArgs(args: Record<string, unknown>): string {
         try {
             return JSON.stringify(args);
@@ -31,9 +26,6 @@ export const MessageUtils = {
         }
     },
 
-    /**
-     * Parses function arguments from string format
-     */
     parseFunctionArgs(argsString: string): Record<string, unknown> {
         try {
             return JSON.parse(argsString);
@@ -43,9 +35,6 @@ export const MessageUtils = {
         }
     },
 
-    /**
-     * Converts metadata to LangChain kwargs format
-     */
     convertToLangChainKwargs(metadata: MessageMetadataFields): Record<string, unknown> {
         const kwargs: Record<string, unknown> = { ...metadata };
         if (metadata.function_call) {
@@ -59,9 +48,6 @@ export const MessageUtils = {
         return kwargs;
     },
 
-    /**
-     * Converts message content to string format
-     */
     convertToString(content: MessageContent | null): string {
         if (content === null) return "";
         if (typeof content === 'string') return content;
@@ -73,9 +59,6 @@ export const MessageUtils = {
         return JSON.stringify(content);
     },
 
-    /**
-     * Creates additional kwargs for messages
-     */
     createAdditionalKwargs(metadata?: MessageMetadataFields): Record<string, unknown> {
         return {
             timestamp: Date.now(),
@@ -83,9 +66,6 @@ export const MessageUtils = {
         };
     },
 
-    /**
-     * Handles function call formatting
-     */
     handleFunctionCall(functionCall?: FunctionCall): FunctionCall | undefined {
         if (!functionCall) return undefined;
 
@@ -97,9 +77,6 @@ export const MessageUtils = {
         };
     },
 
-    /**
-     * Validates message content
-     */
     validateMessageContent(content: MessageContent): boolean {
         if (content === null) return false;
         if (typeof content === 'string') return content.length > 0;
@@ -107,9 +84,6 @@ export const MessageUtils = {
         return Object.keys(content).length > 0;
     },
 
-    /**
-     * Creates message configuration
-     */
     createMessageConfig(
         content: string | MessageContent,
         metadata?: MessageMetadataFields
@@ -120,9 +94,6 @@ export const MessageUtils = {
         };
     },
 
-    /**
-     * Extracts function call details from a message
-     */
     extractFunctionCall(message: BaseMessage): FunctionCall | null {
         if (message instanceof FunctionMessage) {
             const functionCall = message.additional_kwargs?.function_call;
@@ -136,9 +107,6 @@ export const MessageUtils = {
         return null;
     },
 
-    /**
-     * Creates a metadata object for messages
-     */
     createMessageMetadata(
         metadata?: Partial<MessageMetadataFields>
     ): MessageMetadataFields {
@@ -151,9 +119,6 @@ export const MessageUtils = {
         };
     },
 
-    /**
-     * Validates message metadata
-     */
     validateMessageMetadata(metadata: MessageMetadataFields): boolean {
         if (!metadata) return false;
         if (metadata.function_call) {
@@ -167,9 +132,6 @@ export const MessageUtils = {
         return true;
     },
 
-    /**
-     * Handles message error cases
-     */
     handleMessageError(error: unknown, context: string): void {
         logger.error(`Message error in ${context}:`, error);
         throw error;

@@ -9,7 +9,7 @@ import { calculateTaskStats } from '@/utils/helpers/stats';
 import { calculateTaskCost, calculateTotalWorkflowCost } from '@/utils/helpers/costs/llmCostCalculator';
 import { LogCreator } from '@/utils/factories/logCreator';
 
-import { ModelStats } from '@/utils/types/workflow';
+import { ModelStats, ModelUsageStats } from '@/utils/types/workflow';
 import { TaskStats } from '@/utils/types';
 
 import { 
@@ -23,9 +23,7 @@ import {
 import { AGENT_STATUS_enum, TASK_STATUS_enum } from '@/utils/types/common/enums';
 import { TaskStoreState } from '../state';
 
-/**
- * Convert LLM usage stats to model stats
- */
+// Convert LLM usage stats to model stats
 function convertToModelStats(stats: LLMUsageStats): ModelStats {
     return {
         tokens: {
@@ -45,16 +43,51 @@ function convertToModelStats(stats: LLMUsageStats): ModelStats {
     };
 }
 
-/**
- * Create statistics tracking actions for task store
- */
+// Update `modelUsage` safely with a switch case for each `ModelStats` property
+function updateModelStats(modelUsage: ModelUsageStats, modelName: string, stats: LLMUsageStats): void {
+    if (!modelUsage[modelName]) {
+        modelUsage[modelName] = convertToModelStats(stats);
+    } else {
+        const modelStats = modelUsage[modelName];
+
+        // Use switch case to safely update each property
+        Object.keys(stats).forEach((key) => {
+            switch (key) {
+                case 'inputTokens':
+                    modelStats.tokens.input += stats.inputTokens;
+                    break;
+                case 'outputTokens':
+                    modelStats.tokens.output += stats.outputTokens;
+                    break;
+                case 'callsCount':
+                    modelStats.requests.successful += stats.callsCount - stats.callsErrorCount;
+                    break;
+                case 'callsErrorCount':
+                    modelStats.requests.failed += stats.callsErrorCount;
+                    break;
+                case 'totalLatency':
+                    modelStats.latency.max = Math.max(modelStats.latency.max, stats.totalLatency);
+                    modelStats.latency.average = (modelStats.latency.average + stats.averageLatency) / 2; // Averaging latency
+                    modelStats.latency.p95 = modelStats.latency.average * 1.5;
+                    break;
+                case 'costBreakdown':
+                    modelStats.cost += stats.costBreakdown.total;
+                    break;
+                default:
+                    // Log an unexpected property if necessary
+                    console.warn(`Unexpected property: ${key}`);
+                    break;
+            }
+        });
+    }
+}
+
+// Create statistics tracking actions for task store
 export const createStatsActions = (
     get: () => TaskStoreState,
     set: (partial: TaskStoreState | ((state: TaskStoreState) => TaskStoreState)) => void
 ) => ({
-    /**
-     * Update task statistics
-     */
+    // Update task statistics
     updateTaskStats: ({
         taskId,
         stats,
@@ -108,15 +141,12 @@ export const createStatsActions = (
         logger.debug(`Updated stats for task ${taskId}`, stats);
     },
 
-    /**
-     * Calculate cumulative workflow statistics
-     */
+    // Calculate cumulative workflow statistics
     calculateWorkflowStats: (): WorkflowStats => {
         const state = get();
         const logs = state.workflowLogs;
         const endTime = Date.now();
 
-        // Find the last running log
         const lastRunningLog = logs
             .slice()
             .reverse()
@@ -150,7 +180,7 @@ export const createStatsActions = (
             }
         };
 
-        const modelUsage: Record<string, LLMUsageStats> = {};
+        const modelUsage: ModelUsageStats = {};
         let iterationCount = 0;
 
         logs.forEach(log => {
@@ -164,23 +194,14 @@ export const createStatsActions = (
 
                     const modelName = log.agent?.llmConfig?.model;
                     if (modelName) {
-                        if (!modelUsage[modelName]) {
-                            modelUsage[modelName] = { ...llmUsageStats };
-                        }
-                        modelUsage[modelName].inputTokens += stats.inputTokens;
-                        modelUsage[modelName].outputTokens += stats.outputTokens;
-                        modelUsage[modelName].callsCount += 1;
-                        modelUsage[modelName].costBreakdown = {
-                            ...modelUsage[modelName].costBreakdown,
-                            total: modelUsage[modelName].costBreakdown.total + stats.costBreakdown.total
-                        };
+                        updateModelStats(modelUsage, modelName, stats);
                     }
                 }
                 if (log.agentStatus === AGENT_STATUS_enum.THINKING_ERROR) {
                     llmUsageStats.callsErrorCount += 1;
                     const modelName = log.agent?.llmConfig?.model;
                     if (modelName && modelUsage[modelName]) {
-                        modelUsage[modelName].callsErrorCount += 1;
+                        modelUsage[modelName].requests.failed += 1;
                     }
                 }
                 if (log.agentStatus === AGENT_STATUS_enum.ITERATION_END) {
@@ -188,14 +209,6 @@ export const createStatsActions = (
                 }
             }
         });
-
-        const modelStats = Object.entries(modelUsage).reduce(
-            (acc, [model, stats]) => ({
-                ...acc,
-                [model]: convertToModelStats(stats)
-            }), 
-            {} as Record<string, ModelStats>
-        );
 
         const costDetails = calculateTotalWorkflowCost(modelUsage);
 
@@ -210,13 +223,11 @@ export const createStatsActions = (
             agentCount: state.agents.length,
             teamName: state.name,
             messageCount: state.workflowLogs.length,
-            modelUsage: modelStats
+            modelUsage
         };
     },
 
-    /**
-     * Log statistics update
-     */
+    // Log statistics update
     logStatsUpdate: ({
         taskId,
         stats,
@@ -252,9 +263,7 @@ export const createStatsActions = (
         }));
     },
 
-    /**
-     * Track resource usage
-     */
+    // Track resource usage
     trackResourceUsage: ({
         taskId,
         resourceStats

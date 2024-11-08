@@ -17,16 +17,12 @@ import { AGENT_STATUS_enum } from '@/utils/types/common/enums';
 import { AgentState } from '../state';
 import { DefaultFactory } from '@/utils/factories/defaultFactory';
 
-/**
- * Tool execution action creators for agent store
- */
+// Tool execution action creators for agent store
 export const createToolActions = (
     get: () => AgentState,
     set: (partial: Partial<AgentState> | ((state: AgentState) => Partial<AgentState>)) => void
 ) => ({
-    /**
-     * Start tool execution
-     */
+    // Start tool execution
     handleToolStart: (params: {
         agent: AgentType;
         task: TaskType;
@@ -64,45 +60,41 @@ export const createToolActions = (
         }));
     },
 
-/**
- * Handle successful tool execution completion
- */
-handleToolEnd: (params: {
-    agent: AgentType;
-    task: TaskType;
-    output: string | Record<string, unknown>;  // Updated type to match AgentLogMetadata
-    tool: Tool;
-}): void => {
-    const { agent, task, output, tool } = params;
+    // Handle successful tool execution completion
+    handleToolEnd: (params: {
+        agent: AgentType;
+        task: TaskType;
+        output: string | Record<string, unknown>;
+        tool: Tool;
+    }): void => {
+        const { agent, task, output, tool } = params;
 
-    const log = LogCreator.createAgentLog({
-        agent,
-        task,
-        description: `Tool execution completed: ${tool.name}`,
-        metadata: {
-            tool,
-            output: {
-                llmUsageStats: DefaultFactory.createLLMUsageStats(),
-                toolResult: output  // Now matches the expected type
+        const log = LogCreator.createAgentLog({
+            agent,
+            task,
+            description: `Tool execution completed: ${tool.name}`,
+            metadata: {
+                tool,
+                output: {
+                    llmUsageStats: DefaultFactory.createLLMUsageStats(),
+                    toolResult: output
+                },
+                timestamp: Date.now()
             },
-            timestamp: Date.now()
-        },
-        agentStatus: 'USING_TOOL_END',
-        logType: 'AgentStatusUpdate'
-    });
+            agentStatus: 'USING_TOOL_END',
+            logType: 'AgentStatusUpdate'
+        });
 
-    logger.info(`✅ Agent ${agent.name} completed tool execution: ${tool.name}`);
-    logger.debug('Tool output:', output);
+        logger.info(`✅ Agent ${agent.name} completed tool execution: ${tool.name}`);
+        logger.debug('Tool output:', output);
 
-    set(state => ({
-        status: 'USING_TOOL_END',
-        workflowLogs: [...state.workflowLogs, log]
-    }));
-},
+        set(state => ({
+            status: 'USING_TOOL_END',
+            workflowLogs: [...state.workflowLogs, log]
+        }));
+    },
 
-    /**
-     * Handle non-existent tool
-     */
+    // Handle non-existent tool
     handleToolDoesNotExist: (params: {
         agent: AgentType;
         task: TaskType;
@@ -138,9 +130,7 @@ handleToolEnd: (params: {
         }));
     },
 
-    /**
-     * Process tool execution result
-     */
+    // Process tool execution result
     processToolResult: (params: {
         agent: AgentType;
         task: TaskType;
@@ -172,9 +162,7 @@ handleToolEnd: (params: {
         return `Tool ${tool.name} returned: ${result}. Please analyze this result and decide on next steps.`;
     },
 
-    /**
-     * Generate error feedback for tool errors
-     */
+    // Generate error feedback for tool errors
     generateToolErrorFeedback: (params: {
         agent: AgentType;
         task: TaskType;
@@ -187,9 +175,7 @@ handleToolEnd: (params: {
         return `Error occurred while using tool ${toolName}: ${error.message}. Please try a different approach or tool. Remember to use JSON format for your response.`;
     },
 
-    /**
-     * Generate feedback for non-existent tools
-     */
+    // Generate feedback for non-existent tools
     generateToolNotExistFeedback: (params: {
         agent: AgentType;
         task: TaskType;

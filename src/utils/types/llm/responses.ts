@@ -9,18 +9,14 @@
 
 import { LLMProvider } from "./common";
 
-/**
- * Token usage statistics
- */
+// Token usage statistics
 export interface TokenUsage {
     promptTokens: number;
     completionTokens: number;
     totalTokens: number;
 }
 
-/**
- * Response metadata
- */
+// Response metadata
 export interface ResponseMetadata {
     model: string;
     provider: LLMProvider;
@@ -30,69 +26,32 @@ export interface ResponseMetadata {
     requestId?: string;
 }
 
-/**
- * Enhanced parsed output from LLM responses
- * @breaking-change v2.0.0 Added metadata field with additional context
- */
+// Enhanced parsed output from LLM responses
 export interface ParsedOutput {
-    /** Reasoning or thought process */
     thought?: string;
-    
-    /** Action to take */
     action?: string;
-    
-    /** Input for the action */
     actionInput?: Record<string, unknown>;
-    
-    /** Observation from action */
     observation?: string;
-    
-    /** Final answer readiness flag */
     isFinalAnswerReady?: boolean;
-    
-    /** Final answer content */
     finalAnswer?: string | Record<string, unknown>;
-    
-    /** Enhanced metadata */
     metadata?: {
-        /** Reasoning behind decisions */
         reasoning?: string;
-        
-        /** Confidence level (0-1) */
         confidence?: number;
-        
-        /** Alternative actions considered */
         alternativeActions?: string[];
-        
-        /** Processing metrics */
         metrics?: {
-            /** Time taken to process */
             processingTime?: number;
-            
-            /** Number of tokens processed */
             tokenCount?: number;
-            
-            /** Memory usage */
             memoryUsage?: number;
         };
-        
-        /** Context information */
         context?: {
-            /** Input context length */
             inputContextLength?: number;
-            
-            /** Key information used */
             keyFactors?: string[];
-            
-            /** Relevant constraints */
             constraints?: string[];
         };
     };
 }
 
-/**
- * Enhanced output with additional metadata
- */
+// Enhanced output with additional metadata
 export interface Output extends ParsedOutput {
     llmOutput?: string;
     llmUsageStats?: LLMUsageStats;
@@ -115,9 +74,7 @@ export interface Output extends ParsedOutput {
     };
 }
 
-/**
- * Core LLM response interface
- */
+// Core LLM response interface
 export interface LLMResponse<T = unknown> {
     content: string;
     rawOutput: T;
@@ -125,9 +82,7 @@ export interface LLMResponse<T = unknown> {
     metadata: ResponseMetadata;
 }
 
-/**
- * Detailed completion response structure
- */
+// Detailed completion response structure
 export interface CompletionResponse {
     content?: string;
     usage?: {
@@ -157,9 +112,7 @@ export interface CompletionResponse {
     finishReason?: 'stop' | 'length' | 'content_filter' | 'function_call' | null;
 }
 
-/**
- * Streaming chunk interface
- */
+// Streaming chunk interface
 export interface StreamingChunk {
     content: string;
     metadata?: Record<string, unknown>;
@@ -167,9 +120,7 @@ export interface StreamingChunk {
     done: boolean;
 }
 
-/**
- * LLM usage statistics
- */
+// LLM usage statistics
 export interface LLMUsageStats {
     inputTokens: number;
     outputTokens: number;

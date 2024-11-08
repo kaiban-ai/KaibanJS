@@ -1,22 +1,24 @@
 /**
  * @file store.ts
  * @path src/utils/types/agent/store.ts
- * @description Agent store types, interfaces and type guards
+ * @description Agent store types and interfaces for managing agent state and operations
  */
 
-import { BaseStoreState } from '../store/base';
-import { AGENT_STATUS_enum } from '../common/enums';
-import { AgentType } from './base';
-import { TaskType } from '@/utils/types';
-import { Output, ParsedOutput, LLMUsageStats } from '../llm/responses';
-import { ThinkingResult } from './handlers';
-import { AgenticLoopResult } from '../llm/instance';
+import type { BaseStoreState } from '../store/base';
+import type { AGENT_STATUS_enum } from '../common/enums';
+import type { AgentType } from './base';
+import type { TaskType } from '../task/base';
+import type { Output, ParsedOutput, LLMUsageStats } from '../llm/responses';
+import type { ThinkingResult } from './handlers';
+import type { AgenticLoopResult } from '../llm/instance';
+
+// ─── Agent Runtime State ────────────────────────────────────────────────────────
 
 /**
- * Agent runtime state
+ * Runtime state for agent operations
  */
 export interface AgentRuntimeState {
-    /** Current active agent */
+    /** Currently active agent */
     currentAgent: AgentType | null;
     
     /** Current task being processed */
@@ -29,11 +31,13 @@ export interface AgentRuntimeState {
     status: keyof typeof AGENT_STATUS_enum;
 }
 
+// ─── Agent Execution Metrics ──────────────────────────────────────────────────
+
 /**
- * Agent execution metrics
+ * Metrics for agent execution
  */
 export interface AgentExecutionMetrics {
-    /** LLM usage stats */
+    /** LLM usage statistics */
     llmUsageStats: LLMUsageStats;
     
     /** Total iterations */
@@ -61,8 +65,10 @@ export interface AgentExecutionMetrics {
     };
 }
 
+// ─── Agent Execution Context ──────────────────────────────────────────────────
+
 /**
- * Agent execution context
+ * Context for agent execution
  */
 export interface AgentExecutionContext {
     /** Execution start time */
@@ -90,8 +96,10 @@ export interface AgentExecutionContext {
     metadata?: Record<string, unknown>;
 }
 
+// ─── Agent Store State ─────────────────────────────────────────────────────────
+
 /**
- * Agent store state interface
+ * Complete agent store state
  */
 export interface AgentStoreState extends BaseStoreState {
     /** Runtime state */
@@ -101,8 +109,10 @@ export interface AgentStoreState extends BaseStoreState {
     stats: AgentExecutionMetrics;
 }
 
+// ─── Agent Store Actions ────────────────────────────────────────────────────────
+
 /**
- * Agent store actions interface
+ * Available agent store actions
  */
 export interface AgentStoreActions {
     /**
@@ -114,40 +124,34 @@ export interface AgentStoreActions {
     ) => void;
 
     /**
-     * Handle agent thinking
+     * Handle agent thinking process
      */
-    handleAgentThinking: (
-        params: {
-            agent: AgentType;
-            task: TaskType;
-            messages?: any[];
-            output?: Output;
-        }
-    ) => Promise<ThinkingResult>;
+    handleAgentThinking: (params: {
+        agent: AgentType;
+        task: TaskType;
+        messages?: any[];
+        output?: Output;
+    }) => Promise<ThinkingResult>;
 
     /**
      * Handle iteration start
      */
-    handleIterationStart: (
-        params: {
-            agent: AgentType;
-            task: TaskType;
-            iterations: number;
-            maxAgentIterations: number;
-        }
-    ) => void;
+    handleIterationStart: (params: {
+        agent: AgentType;
+        task: TaskType;
+        iterations: number;
+        maxAgentIterations: number;
+    }) => void;
 
     /**
      * Handle iteration end
      */
-    handleIterationEnd: (
-        params: {
-            agent: AgentType;
-            task: TaskType;
-            iterations: number;
-            maxAgentIterations: number;
-        }
-    ) => void;
+    handleIterationEnd: (params: {
+        agent: AgentType;
+        task: TaskType;
+        iterations: number;
+        maxAgentIterations: number;
+    }) => void;
 
     /**
      * Handle final answer
@@ -169,8 +173,10 @@ export interface AgentStoreActions {
     }) => void;
 }
 
+// ─── Agent Execution Result ──────────────────────────────────────────────────
+
 /**
- * Agent execution result
+ * Result of agent execution
  */
 export interface AgentExecutionResult {
     /** Success flag */
@@ -193,8 +199,10 @@ export interface AgentExecutionResult {
     context?: AgentExecutionContext;
 }
 
+// ─── Agent Selection Criteria ────────────────────────────────────────────────
+
 /**
- * Agent selection criteria
+ * Criteria for agent selection
  */
 export interface AgentSelectionCriteria {
     /** Required role */
@@ -216,8 +224,10 @@ export interface AgentSelectionCriteria {
     };
 }
 
+// ─── Type Guards ────────────────────────────────────────────────────────────────
+
 /**
- * Type guard utilities for agent store
+ * Type guards for agent store
  */
 export const AgentStoreTypeGuards = {
     /**

@@ -4,8 +4,18 @@
  * @description Contains transition rules for managing status transitions of messages, agents, tasks, and workflows.
  */
 
-import { MESSAGE_STATUS_enum, AGENT_STATUS_enum, TASK_STATUS_enum, WORKFLOW_STATUS_enum } from '@/utils/types/common/enums';
+import { 
+    MESSAGE_STATUS_enum, 
+    AGENT_STATUS_enum, 
+    TASK_STATUS_enum, 
+    WORKFLOW_STATUS_enum 
+} from '@/utils/types/common/enums';
+
 import type { StatusTransitionRule } from '@/utils/types/common/status';
+
+// Updated workflow type imports
+import { WorkflowState } from '@/utils/types/workflow/store';
+import { WorkflowResult } from '@/utils/types/workflow/base';
 
 /**
  * Transition rules for different status entities.

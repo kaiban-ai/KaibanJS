@@ -84,7 +84,7 @@ export function calculateTaskStats(
     
     let iterationCount = 0;
     let totalLatency = 0;
-    const modelUsage: Record<string, LLMUsageStats> = {};
+    const modelUsage: ModelUsageStats = {};
 
     logs.forEach(log => {
         if (log.task?.id === task.id && 
@@ -179,7 +179,7 @@ export function calculateTaskStats(
  * @param modelUsage - Usage statistics per model
  * @returns Average cost per token
  */
-export function calculateAverageCostPerToken(modelUsage: Record<string, LLMUsageStats>): number {
+export function calculateAverageCostPerToken(modelUsage: ModelUsageStats): number {
     let totalCost = 0;
     let totalTokens = 0;
 

@@ -1,68 +1,21 @@
-/**
- * @file index.ts
- * @path src/utils/types/team/index.ts
- * @description Central export point for team-related types and interfaces
- */
+// src/utils/types/team/index.ts
 
-// Export base store types
-export type { 
-    BaseStoreState, 
-    StoreSubscribe 
-} from '../store/base';
-
-// Export team core types
-export type {
-    TeamState,
+// Importing from base.ts
+import {
     TeamEnvironment,
     TeamInputs,
+    TeamRuntimeState,
+    TeamState,
     TeamStore,
-    TeamStateKey,
+    ITeamParams,
     ITeam,
-    ITeamParams
-} from './base';
-
-// Export store-specific types and methods
-export type {
-    TeamStoreApi,
-    UseBoundTeamStore,
-    TeamStoreWithSubscribe,
-    TeamStoreConfig,
-    TeamStoreOptions,
-    CreateTeamStore,
-    TeamStoreMethods,
-    TeamStoreTypeGuards
-} from './store';
-
-// Export handler types and methods
-export type {
-    // Base handler params
-    HandlerBaseParams,
-    TeamMessageParams,
-    TeamTaskParams,
-    TeamAgentParams,
-    TeamToolParams,
-    TeamWorkflowParams,
-    TeamFeedbackParams,
-    HandlerResult,
     WorkflowStartResult,
-    
-    // Method interfaces
-    TeamMessageMethods,
-    TeamTaskMethods,
-    TeamToolMethods,
-    TeamAgentMethods,
-    TeamWorkflowMethods,
-    TeamFeedbackMethods,
-    TeamStreamingMethods,
-    TeamValidationMethods,
-    TeamStateActions,
-    
-    // Type guards
-    HandlerTypeGuards
-} from './handlers';
+    TeamTypeGuards,
+    TeamStateKey
+} from "./base";
 
-// Export log types
-export type {
+// Importing from logs.ts
+import {
     StatusLogType,
     MessageLogType,
     LogType,
@@ -74,10 +27,31 @@ export type {
     PrepareNewLogParams,
     Log,
     LogTypeGuards
-} from './logs';
+} from "./logs";
 
-// Export utility types
-export type {
+// Importing from store.ts
+import {
+    TeamStoreApi,
+    UseBoundTeamStore,
+    TeamStoreWithSubscribe,
+    TeamStoreMethods,
+    TeamStoreConfig,
+    TeamStoreOptions,
+    CreateTeamStore,
+    TeamStoreTypeGuards
+} from "./store";
+
+// Importing from typeUtils.ts
+import {
+    TeamStoreSubscriber,
+    TeamTypeUtils,
+    isCompleteTeamState,
+    isTeamStore,
+    LegacyTeamStore
+} from "./typeUtils";
+
+// Importing from utils.ts
+import {
     TeamInitParams,
     TeamOperationConfig,
     TeamExecutionContext,
@@ -85,21 +59,108 @@ export type {
     TeamValidationResult,
     TeamStateSnapshot,
     TeamUtilityGuards,
-    TeamUtils as TeamUtilities
-} from './utils';
+    TeamUtils,
+    createEmptyContext,
+    createEmptyMetrics
+} from "./utils";
 
-// Export type guards and utilities
+// Importing from handlers.ts
+import {
+    HandlerBaseParams,
+    TeamMessageParams,
+    TeamTaskParams,
+    TeamAgentParams,
+    TeamToolParams,
+    TeamWorkflowParams,
+    WorkflowStartResult as HandlerWorkflowStartResult,
+    TeamFeedbackParams,
+    HandlerResult,
+    TeamMessageMethods,
+    TeamTaskMethods,
+    TeamToolMethods,
+    TeamAgentMethods,
+    TeamWorkflowMethods,
+    TeamFeedbackMethods,
+    TeamStreamingMethods,
+    TeamValidationMethods,
+    TeamStateActions,
+    HandlerTypeGuards
+} from "./handlers";
+
+// Exporting all modules, types, interfaces, and utility functions
 export {
-    TeamTypeUtils,
+    // Base Types and Interfaces
+    TeamEnvironment,
+    TeamInputs,
+    TeamRuntimeState,
+    TeamState,
+    TeamStore,
+    ITeamParams,
+    ITeam,
+    WorkflowStartResult,
+    TeamTypeGuards,
+    TeamStateKey,
+
+    // Logs Types and Guards
+    StatusLogType,
+    MessageLogType,
+    LogType,
+    LogMetadata,
+    AgentLogMetadata,
+    TaskLogMetadata,
+    WorkflowLogMetadata,
+    MessageLogMetadata,
+    PrepareNewLogParams,
+    Log,
+    LogTypeGuards,
+
+    // Store Types and Guards
+    TeamStoreApi,
+    UseBoundTeamStore,
+    TeamStoreWithSubscribe,
+    TeamStoreMethods,
+    TeamStoreConfig,
+    TeamStoreOptions,
+    CreateTeamStore,
+    TeamStoreTypeGuards,
+
+    // Type Utils
     TeamStoreSubscriber,
+    TeamTypeUtils,
     isCompleteTeamState,
     isTeamStore,
-    LegacyTeamStore
-} from './typeUtils';
+    LegacyTeamStore,
 
-// Export enums
-export {
-    WORKFLOW_STATUS_enum,
-    TASK_STATUS_enum,
-    AGENT_STATUS_enum
-} from '../common/enums';
+    // Utility Types and Guards
+    TeamInitParams,
+    TeamOperationConfig,
+    TeamExecutionContext,
+    TeamPerformanceMetrics,
+    TeamValidationResult,
+    TeamStateSnapshot,
+    TeamUtilityGuards,
+    TeamUtils,
+    createEmptyContext,
+    createEmptyMetrics,
+
+    // Handler Types and Guards
+    HandlerBaseParams,
+    TeamMessageParams,
+    TeamTaskParams,
+    TeamAgentParams,
+    TeamToolParams,
+    TeamWorkflowParams,
+    HandlerWorkflowStartResult,
+    TeamFeedbackParams,
+    HandlerResult,
+    TeamMessageMethods,
+    TeamTaskMethods,
+    TeamToolMethods,
+    TeamAgentMethods,
+    TeamWorkflowMethods,
+    TeamFeedbackMethods,
+    TeamStreamingMethods,
+    TeamValidationMethods,
+    TeamStateActions,
+    HandlerTypeGuards
+};

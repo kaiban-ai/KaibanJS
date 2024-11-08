@@ -4,19 +4,39 @@
  * @description Central export point for workflow-related types and interfaces
  */
 
-// Base types and utilities (only export what's unique to workflow/base.ts)
+// Base types and utilities
 export type {
     WorkflowError,
     WorkflowSuccess,
     WorkflowBlocked,
     WorkflowStopped,
     WorkflowErrored,
-    WorkflowResult
+    WorkflowResult,
+    WorkflowStartResult, // Added from base.ts for centralized export
 } from './base';
 
 export {
-    WorkflowTypeGuards
+    WorkflowTypeGuards // Ensure all type guards from base are available
 } from './base';
+
+// Store types and utilities
+export type {
+    WorkflowRuntimeState,
+    WorkflowExecutionStats,
+    WorkflowProgress,
+    WorkflowState,
+    WorkflowEventType,
+    WorkflowEvent,
+    WorkflowActionParams,
+    WorkflowActionResult,
+    WorkflowActions,
+    WorkflowStoreConfig,
+    WorkflowValidationRules
+} from './store';
+
+export {
+    WorkflowStoreTypeGuards // Ensure all type guards from store are available
+} from './store';
 
 // Cost types
 export type {
@@ -24,6 +44,8 @@ export type {
     RequiredPricingFields,
     CostCalculationConfig,
     TokenCostBreakdown,
+    CostBreakdown,
+    CostDetails,
     CostAlertConfig
 } from './costs';
 
@@ -36,23 +58,22 @@ export type {
 
 export {
     isCompleteMetadata,
-    createDefaultMetadata as createDefaultWorkflowMetadata
+    createDefaultMetadata // Utility functions for metadata
 } from './metadata';
 
-// Stats types (only export what's unique to workflow/stats.ts)
+// Stats types
 export type {
     TokenUsageBreakdown,
     ModelLatencyMetrics,
     ModelRequestMetrics,
     ModelTokenMetrics,
-    WorkflowTaskMetrics,  // Our renamed type
+    ModelStats,
+    ModelUsageStats,
+    WorkflowTaskMetrics,
     ResourceMetrics,
     ErrorMetrics,
     TimingMetrics,
     PerformanceMetrics,
-    CurrentBudget,
-    BudgetLimits,
-    BudgetProjections,
-    BudgetAlerts,
-    BudgetStats
+    TaskStatsWithModelUsage,
+    WorkflowStats
 } from './stats';

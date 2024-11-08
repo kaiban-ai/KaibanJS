@@ -5,22 +5,19 @@
  */
 
 import { LLMUsageStats } from '../llm/responses';
-import { CostDetails } from './stats';
+import { CostDetails } from './costs';
 
-/**
- * Required workflow metadata interface
- */
+// Required workflow metadata interface
 export interface RequiredWorkflowMetadata {
     duration: number;
     taskCount: number;
     agentCount: number;
     costDetails: CostDetails;
     llmUsageStats: LLMUsageStats;
+    teamName: string; // Added teamName as a required field
 }
 
-/**
- * Optional workflow metadata interface
- */
+// Optional workflow metadata interface
 export interface OptionalWorkflowMetadata {
     result?: string;
     startTime?: number;
@@ -29,30 +26,23 @@ export interface OptionalWorkflowMetadata {
     iterationCount?: number;
 }
 
-/**
- * Complete workflow metadata interface
- */
-export interface WorkflowMetadata extends RequiredWorkflowMetadata, OptionalWorkflowMetadata {
-    // Add any additional fields here
-}
+// Complete workflow metadata interface
+export interface WorkflowMetadata extends RequiredWorkflowMetadata, OptionalWorkflowMetadata {}
 
-/**
- * Type guard to check if metadata is complete
- */
+// Type guard to check if metadata is complete
 export function isCompleteMetadata(metadata: Partial<WorkflowMetadata>): metadata is WorkflowMetadata {
     return (
         typeof metadata.duration === 'number' &&
         typeof metadata.taskCount === 'number' &&
         typeof metadata.agentCount === 'number' &&
+        typeof metadata.teamName === 'string' && // Ensure teamName is a string
         metadata.costDetails !== undefined &&
         metadata.llmUsageStats !== undefined
     );
 }
 
-/**
- * Create default metadata with required fields
- */
-export function createDefaultMetadata(): WorkflowMetadata {
+// Create default metadata with required fields
+export function createDefaultMetadata(teamName: string): WorkflowMetadata { // Accept teamName as a parameter
     return {
         duration: 0,
         taskCount: 0,
@@ -87,6 +77,8 @@ export function createDefaultMetadata(): WorkflowMetadata {
                 total: 0,
                 currency: 'USD'
             }
-        }
+        },
+        teamName, // Set the provided teamName
+        // Optional fields can be omitted or set to default values if needed
     };
 }

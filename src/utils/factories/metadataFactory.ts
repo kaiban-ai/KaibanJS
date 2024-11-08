@@ -19,6 +19,7 @@ import {
     FunctionCall
 } from '@/utils/types';
 import DefaultFactory from './defaultFactory';
+import { MessageRole } from '@/utils/types/messaging/base'; // Import MessageRole
 
 export class MetadataFactory {
     static forTask(
@@ -58,7 +59,7 @@ export class MetadataFactory {
     }
 
     static forMessage(params: {
-        role: string;
+        role: MessageRole; // Changed from string to MessageRole
         content: string;
         functionCall?: FunctionCall;
         additionalFields?: Record<string, unknown>;

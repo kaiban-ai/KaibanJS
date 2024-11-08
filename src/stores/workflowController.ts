@@ -10,35 +10,45 @@ import { PrettyError } from '@/utils/core/errors';
 import { LogCreator } from '@/utils/factories/logCreator';
 import { calculateTaskStats } from '@/utils/helpers/stats';
 import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from "@/utils/types/common/enums";
-
 import { ErrorType } from '@/utils/types/common/errors';
 
+import type { 
+    WorkflowState,
+    WorkflowRuntimeState,
+    WorkflowProgress,
+    WorkflowExecutionStats,
+    WorkflowActionParams,
+    WorkflowActionResult,
+    WorkflowStoreConfig
+} from '@/utils/types/workflow/store';
 
 import type {
-    TaskType, 
-    TeamStore, 
-    WorkflowControllerConfig,
+    TaskType,
+    TeamStore,
     QueueOptions,
     TaskExecutionParams,
     WorkflowMonitorConfig,
     ExecutionContext
 } from '@/utils/types';
 
-/**
- * Default configuration values
- */
-const DEFAULT_CONFIG: Required<WorkflowControllerConfig> = {
+/* Default configuration values */
+const DEFAULT_CONFIG: Required<WorkflowStoreConfig> = {
+    name: 'WorkflowController',
+    logLevel: 'info',
+    devMode: false,
     concurrency: 1,
     taskTimeout: 300000, // 5 minutes
     progressCheckInterval: 60000, // 1 minute
     maxRetries: 3,
     retryDelay: 5000, // 5 seconds
-    maxQueueSize: 100
+    maxQueueSize: 100,
+    serialize: {
+        exclude: [],
+        parseUndefined: true
+    }
 };
 
-/**
- * Default queue options
- */
+/* Default queue options */
 const DEFAULT_QUEUE_OPTIONS: Required<QueueOptions> = {
     concurrency: 1,
     autoStart: true,
@@ -47,12 +57,10 @@ const DEFAULT_QUEUE_OPTIONS: Required<QueueOptions> = {
     carryoverConcurrencyCount: true
 };
 
-/**
- * Workflow Controller Implementation
- */
+/* Workflow Controller Implementation */
 export class WorkflowController {
     private store: TeamStore;
-    private config: Required<WorkflowControllerConfig>;
+    private config: Required<WorkflowStoreConfig>;
     private taskQueue: PQueue;
     private isActive: boolean = true;
     private lastTaskUpdateTime: number;
@@ -62,27 +70,22 @@ export class WorkflowController {
 
     constructor(
         store: TeamStore,
-        userConfig: Partial<WorkflowControllerConfig> = {}
+        userConfig: Partial<WorkflowStoreConfig> = {}
     ) {
         this.store = store;
         this.config = { ...DEFAULT_CONFIG, ...userConfig };
         this.lastTaskUpdateTime = Date.now();
 
-        // Initialize task queue
         this.taskQueue = new PQueue({
             ...DEFAULT_QUEUE_OPTIONS,
             concurrency: this.config.concurrency
         });
 
-        // Setup event handlers
         this.setupEventHandlers();
     }
 
-    /**
-     * Setup workflow event handlers
-     */
+    /* Setup workflow event handlers */
     private setupEventHandlers(): void {
-        // Handle task status changes
         this.store.subscribe(
             state => state.tasks,
             (tasks) => {
@@ -102,7 +105,6 @@ export class WorkflowController {
             }
         );
 
-        // Handle workflow status changes
         this.store.subscribe(
             state => state.teamWorkflowStatus,
             (status) => {
@@ -113,7 +115,6 @@ export class WorkflowController {
             }
         );
 
-        // Monitor queue events
         this.taskQueue.on('active', () => {
             logger.debug('Task queue active:', {
                 pending: this.taskQueue.pending,
@@ -131,9 +132,7 @@ export class WorkflowController {
         });
     }
 
-    /**
-     * Process a single task
-     */
+    /* Process a single task */
     private async processTask(task: TaskType): Promise<void> {
         if (!this.isActive) return;
 
@@ -150,7 +149,6 @@ export class WorkflowController {
                 });
             }
 
-            // Execute task with timeout
             const timeoutPromise = new Promise((_, reject) => {
                 setTimeout(() => {
                     reject(new Error(`Task timeout after ${this.config.taskTimeout}ms`));
@@ -160,7 +158,6 @@ export class WorkflowController {
             const executionPromise = this.store.workOnTask(task.agent, task);
             await Promise.race([executionPromise, timeoutPromise]);
 
-            // Update context and timing
             this.lastTaskUpdateTime = Date.now();
             context.lastSuccessTime = Date.now();
             context.consecutiveFailures = 0;
@@ -177,15 +174,12 @@ export class WorkflowController {
                 this.handleTaskError(task, context.lastError);
             }
         } finally {
-            // Update stats
             context.totalExecutions = (context.totalExecutions || 0) + 1;
             context.totalDuration = (context.totalDuration || 0) + (Date.now() - startTime);
         }
     }
 
-    /**
-     * Handle task retry logic
-     */
+    /* Handle task retry logic */
     private async handleRetry(
         task: TaskType, 
         context: ExecutionContext
@@ -212,9 +206,7 @@ export class WorkflowController {
         await this.processTask(task);
     }
 
-    /**
-     * Handle task execution error
-     */
+    /* Handle task execution error */
     private handleTaskError(task: TaskType, error: Error | unknown): void {
         const prettyError = error instanceof PrettyError ? error : new PrettyError({
             message: error instanceof Error ? error.message : String(error),
@@ -231,9 +223,7 @@ export class WorkflowController {
         });
     }
 
-    /**
-     * Check if workflow is complete
-     */
+    /* Check if workflow is complete */
     private checkWorkflowCompletion(): void {
         if (this.taskQueue.size === 0 && this.taskQueue.pending === 0) {
             const allTasks = this.store.getState().tasks;
@@ -248,9 +238,7 @@ export class WorkflowController {
         }
     }
 
-    /**
-     * Get execution context for a task
-     */
+    /* Get execution context for a task */
     private getExecutionContext(task: TaskType): ExecutionContext {
         if (!this.executionContext.has(task.id)) {
             this.executionContext.set(task.id, {
@@ -263,9 +251,7 @@ export class WorkflowController {
         return this.executionContext.get(task.id)!;
     }
 
-    /**
-     * Start monitoring task timeouts
-     */
+    /* Start monitoring task timeouts */
     private startTimeoutMonitor(): void {
         this.timeoutTimer = setInterval(() => {
             const currentTime = Date.now();
@@ -291,9 +277,7 @@ export class WorkflowController {
         }, this.config.progressCheckInterval);
     }
 
-    /**
-     * Start the workflow controller
-     */
+    /* Start the workflow controller */
     public start(): void {
         this.isActive = true;
         this.lastTaskUpdateTime = Date.now();
@@ -302,27 +286,21 @@ export class WorkflowController {
         logger.info('Workflow controller started');
     }
 
-    /**
-     * Pause the workflow controller
-     */
+    /* Pause the workflow controller */
     public pause(): void {
         this.isActive = false;
         this.taskQueue.pause();
         logger.info('Workflow controller paused');
     }
 
-    /**
-     * Resume the workflow controller
-     */
+    /* Resume the workflow controller */
     public resume(): void {
         this.isActive = true;
         this.taskQueue.start();
         logger.info('Workflow controller resumed');
     }
 
-    /**
-     * Clean up resources
-     */
+    /* Clean up resources */
     public cleanup(): void {
         if (!this.isActive) return;
 
@@ -346,17 +324,14 @@ export class WorkflowController {
     }
 }
 
-/**
- * Create and setup the workflow controller
- */
+/* Create and setup the workflow controller */
 export const setupWorkflowController = (
     store: TeamStore,
-    config?: WorkflowControllerConfig
+    config?: WorkflowStoreConfig
 ): (() => void) => {
     const controller = new WorkflowController(store, config);
     controller.start();
 
-    // Handle process termination
     process.on('SIGTERM', () => controller.cleanup());
     process.on('SIGINT', () => controller.cleanup());
 
