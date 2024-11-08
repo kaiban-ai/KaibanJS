@@ -55,7 +55,7 @@
     "prompt engineering",
     "react",
     "nodejs",
-    "nextjs"    
+    "nextjs"
   ],
   "author": "Kaiban Team",
   "license": "MIT",
@@ -98,5 +98,5 @@
   },
   "publishConfig": {
     "access": "public"
-  }  
+  }
 }

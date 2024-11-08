@@ -21,12 +21,12 @@ export default {
     // format: { control: 'select', options: ['markdown', 'json']},
     // initializationCode: { table: { disable: true } },
     // executionCode: { table: { disable: true } }
-  }
+  },
 };
 
 const firecrawlTool = new Firecrawl({
   apiKey: import.meta.env.VITE_FIRECRAWL_API_KEY,
-  format: 'markdown'
+  format: 'markdown',
 });
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
@@ -36,7 +36,7 @@ export const Default = {
     toolInstance: firecrawlTool,
     callParams: {
       url: 'https://www.google.com',
-    }
+    },
   },
 };
 
@@ -45,14 +45,15 @@ const webResearcher = new Agent({
   name: 'Web Researcher',
   role: 'Web Content Analyzer',
   goal: 'Extract and analyze content from specified websites',
-  tools: [firecrawlTool]
+  tools: [firecrawlTool],
 });
 
 // Create a research task
 const webAnalysisTask = new Task({
-  description: 'Fetches web content from the followin URL: {url} and provides a structured summary',
+  description:
+    'Fetches web content from the followin URL: {url} and provides a structured summary',
   agent: webResearcher,
-  expectedOutput: 'A well-formatted analysis of the website content'
+  expectedOutput: 'A well-formatted analysis of the website content',
 });
 
 // Create the team
@@ -62,22 +63,17 @@ const team = new Team({
   agents: [webResearcher],
   tasks: [webAnalysisTask],
   inputs: {
-    url: 'https://www.kaibanjs.com'
+    url: 'https://www.kaibanjs.com',
   },
   env: {
-    OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY
-  }
+    OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY,
+  },
 });
-
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const withAgent = {
   render: (args) => <AgentWithToolPreviewer {...args} />,
   args: {
-    team: team
+    team: team,
   },
 };
-
-
-
-

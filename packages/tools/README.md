@@ -22,11 +22,13 @@ npm install @kaibanjs/tools
 ## Available Tools
 
 ### 1. Firecrawl
+
 Firecrawl is a tool that allows agents to interact with the Firecrawl web scraping service, enabling them to extract clean, structured data from websites.
 
 Learn more: https://www.firecrawl.dev/
 
 ### 2. Tavily Search
+
 Tavily Search is a tool that provides AI-optimized search capabilities, delivering comprehensive and accurate results. It's particularly useful for retrieving current information and answering questions about recent events.
 
 Learn more: https://tavily.com/
@@ -42,16 +44,18 @@ git clone https://github.com/kaiban-ai/KaibanJS.git
 ```
 
 2. Navigate to the tools package:
+
 ```bash
 cd packages/tools
 ```
 
 3. Install dependencies:
+
 ```bash
 npm install
 ```
 
-4. Environment Variables: 
+4. Environment Variables:
 
 Create a `.env` file in the root directory with your API keys:
 
@@ -60,7 +64,6 @@ VITE_FIRECRAWL_API_KEY=your_firecrawl_api_key
 VITE_TAVILY_API_KEY=your_tavily_api_key
 ```
 
-
 5. Run Storybook to view and test components:
 
 ```bash
@@ -68,11 +71,13 @@ npm run storybook
 ```
 
 5. Build the package:
+
 ```bash
 npm run build
 ```
 
 6. Run tests:
+
 ```bash
 npm run test
 ```

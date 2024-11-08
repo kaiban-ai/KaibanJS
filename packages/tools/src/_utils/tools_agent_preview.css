@@ -121,7 +121,7 @@ pre {
   box-sizing: border-box;
 }
 
-.tool-input pre, 
+.tool-input pre,
 .tool-output pre {
   margin: 8px 0 0;
   padding: 8px;
@@ -224,11 +224,27 @@ pre {
 }
 
 /* Status colors */
-.status-idle { color: #666; }
-.status-running { color: #2196f3; }
-.status-thinking { color: #2e7d32; }
-.status-waiting { color: #f57c00; }
-.status-completed { color: #2e7d32; }
-.status-error { color: #c62828; }
-.status-using_tool { color: #1976d2; }
-.status-using_tool_end { color: #2e7d32; }
+.status-idle {
+  color: #666;
+}
+.status-running {
+  color: #2196f3;
+}
+.status-thinking {
+  color: #2e7d32;
+}
+.status-waiting {
+  color: #f57c00;
+}
+.status-completed {
+  color: #2e7d32;
+}
+.status-error {
+  color: #c62828;
+}
+.status-using_tool {
+  color: #1976d2;
+}
+.status-using_tool_end {
+  color: #2e7d32;
+}
