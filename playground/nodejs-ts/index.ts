@@ -1,10 +1,10 @@
 // Assuming kaibanjs is a local module or a placeholder for demonstration purposes
 // This file is now a typescript file and all the types are included in the module
-import { Agent, Task, Team } from "kaibanjs";
-import type { IAgentParams, ITaskParams, ITeamParams } from "kaibanjs";
-import * as dotenv from "dotenv";
+import { Agent, Task, Team } from 'kaibanjs';
+import type { IAgentParams, ITaskParams } from 'kaibanjs';
+import * as dotenv from 'dotenv';
 
-dotenv.config({ path: "./.env.local" });
+dotenv.config({ path: './.env.local' });
 
 const main = async () => {
   // ╔══════════════════════════════════════════════════════╗
@@ -24,24 +24,24 @@ const main = async () => {
   // We create an list of different agents based on our needs.
   const AgentParams: Record<string, IAgentParams> = {
     profileAnalyst: {
-      name: "Ivy",
-      role: "Profile Analyst",
-      goal: "Extract structured information from conversational user input.",
-      background: "Data Processor",
+      name: 'Ivy',
+      role: 'Profile Analyst',
+      goal: 'Extract structured information from conversational user input.',
+      background: 'Data Processor',
       tools: [], // Tools are omitted for now
     },
     formatter: {
-      name: "Formy",
-      role: "Formatter",
-      goal: "Format structured information into a professional resume.",
-      background: "Document Formatter",
+      name: 'Formy',
+      role: 'Formatter',
+      goal: 'Format structured information into a professional resume.',
+      background: 'Document Formatter',
       tools: [],
     },
     reviewer: {
-      name: "Revy",
-      role: "Reviewer",
-      goal: "Review and polish the final resume.",
-      background: "Quality Assurance Specialist",
+      name: 'Revy',
+      role: 'Reviewer',
+      goal: 'Review and polish the final resume.',
+      background: 'Quality Assurance Specialist',
       tools: [],
     },
   };
@@ -61,23 +61,23 @@ const main = async () => {
   // We create a list of different tasks that we would like to perform
   const taskParams: Record<string, ITaskParams> = {
     processing: {
-      title: "Process User Input",
+      title: 'Process User Input',
       description: `Extract relevant details such as name, experience, skills, and job history from the user's 'aboutMe' input. 
       aboutMe: {aboutMe}`,
-      expectedOutput: "Structured data ready for formatting.",
+      expectedOutput: 'Structured data ready for formatting.',
       agent: profileAnalyst,
     },
     formatting: {
-      title: "Format Resume",
+      title: 'Format Resume',
       description: `Use the extracted information to create a clean, professional resume layout tailored for a JavaScript Developer.`,
-      expectedOutput: "A well-formatted resume in PDF format.",
+      expectedOutput: 'A well-formatted resume in PDF format.',
       agent: formatter,
     },
     review: {
-      title: "Review Resume",
+      title: 'Review Resume',
       description: `Ensure the resume is error-free, engaging, and meets professional standards.`,
       expectedOutput:
-        "A polished, final resume ready for job applications. Please do not give any feedback on the resume. Just the final resume.",
+        'A polished, final resume ready for job applications. Please do not give any feedback on the resume. Just the final resume.',
       agent: reviewer,
     },
   };
@@ -94,19 +94,15 @@ const main = async () => {
   // ──────────────────────────────────────────────────────
 
   const team: Team = new Team({
-    name: "Resume Creation Team",
+    name: 'Resume Creation Team',
     agents: [profileAnalyst, formatter, reviewer],
     tasks: [processingTask, formattingTask, reviewTask],
     inputs: {
-      aboutMe: "My name is Will...",
-      someArray: ["this", "will", "error"],  // TypeScript should show error here
-      someNumber: 42,  // This should also error
-    },
-    env: { OPENAI_API_KEY: process.env.OPENAI_API_KEY }
-  } as ITeamParams);
-
-
-
+      aboutMe:
+        'My name is Will, I have been a Javascript Developer for 3 years. I know React, NextJS, and REDUX. My latest job was as a Junior Developer at Disney creating UIs for the main landing page.',
+    }, // Initial input for the first task
+    env: { OPENAI_API_KEY: process.env.OPENAI_API_KEY },
+  });
 
   // ──── Listening to Changes────────────────────────────────────────────
   //
@@ -118,9 +114,9 @@ const main = async () => {
 
   const unsubscribe = team.subscribeToChanges(
     (updatedFields) => {
-      console.log("Workflow Status Updated:", updatedFields);
+      console.log('Workflow Status Updated:', updatedFields);
     },
-    ["teamWorkflowStatus"]
+    ['teamWorkflowStatus']
   );
 
   // ──── Start Team Workflow ───────────────────────────────────────
@@ -129,12 +125,12 @@ const main = async () => {
   // We unsubscribe from the store after we have completed the process.
   //─────────────────────────────────────────────────────────────────
   const result = await team.start();
-  console.log("Final Output:", result);
+  console.log('Final Output:', result);
   unsubscribe();
 };
 
-console.log("Starting KaibanJS Workflow...");
+console.log('Starting KaibanJS Workflow...');
 
 main();
 
-console.log("KaibanJS Workflow Completed.");
+console.log('KaibanJS Workflow Completed.');

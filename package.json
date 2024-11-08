@@ -42,10 +42,10 @@
     "play:sb": "cd playground/react && npm run storybook",
     "play:node": "cd playground/nodejs && node index.js",
     "code-snapshot": "node xscripts/codeSnapshot.js",
-    "lint:check": "eslint",
-    "lint:fix": "eslint --fix",
+    "lint:check": "eslint . --format stylish",
+    "lint:fix": "eslint . --fix --format stylish",
     "format:check": "prettier --check .",
-    "format:fix": "prettier --write .",
+    "format:fix": "prettier --write . --list-different",
     "prepare": "husky",
     "cli": "node ./xscripts/cli.mjs"
   },
@@ -144,9 +144,11 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "prettier --write",
-      "eslint --cache --fix"
+      "prettier --write --list-different",
+      "eslint --cache --fix --format stylish"
     ],
-    "*.{html,css,scss,sass,less,ejs,mjs,cjs}": "prettier --write"
+    "*.{html,css,scss,sass,less,ejs,mjs,cjs}": [
+      "prettier --write --list-different"
+    ]
   }
 }

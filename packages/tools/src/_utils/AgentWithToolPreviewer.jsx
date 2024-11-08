@@ -5,7 +5,7 @@ export const AgentWithToolPreviewer = ({ team }) => {
   const [agentLogs, setAgentLogs] = useState([]);
   const logsEndRef = useRef(null);
   const useTeamStore = team.useStore();
-  
+
   const {
     agents,
     tasks,
@@ -14,7 +14,7 @@ export const AgentWithToolPreviewer = ({ team }) => {
     setInputs,
     inputs,
     workflowResult,
-  } = useTeamStore(state => ({
+  } = useTeamStore((state) => ({
     agents: state.agents,
     tasks: state.tasks,
     teamWorkflowStatus: state.teamWorkflowStatus,
@@ -27,12 +27,12 @@ export const AgentWithToolPreviewer = ({ team }) => {
   // Subscribe to workflow logs
   useEffect(() => {
     const unsubscribe = team.useStore().subscribe(
-      state => state.workflowLogs,
+      (state) => state.workflowLogs,
       (newLogs, previousLogs) => {
         if (newLogs.length > previousLogs.length) {
           const newLog = newLogs[newLogs.length - 1];
           if (newLog.logType === 'AgentStatusUpdate') {
-            setAgentLogs(current => [...current, newLog]);
+            setAgentLogs((current) => [...current, newLog]);
           }
         }
       }
@@ -89,7 +89,7 @@ export const AgentWithToolPreviewer = ({ team }) => {
         </span>
         <div className="log-content">
           <span className="log-description">{log.logDescription}</span>
-          
+
           {/* Show tool input when using tool */}
           {log.agentStatus === 'USING_TOOL' && log.metadata?.input && (
             <div className="tool-details">
@@ -130,7 +130,7 @@ export const AgentWithToolPreviewer = ({ team }) => {
               rows={5}
               spellCheck="false"
             />
-            <button 
+            <button
               className={`start-button ${teamWorkflowStatus.toLowerCase()}`}
               onClick={handleStartTeam}
               disabled={teamWorkflowStatus === 'RUNNING'}
@@ -138,9 +138,10 @@ export const AgentWithToolPreviewer = ({ team }) => {
               {teamWorkflowStatus === 'RUNNING' ? 'Running...' : 'Start Team'}
             </button>
           </div>
-          
+
           <div className="workflow-status">
-            Status: <span className={`status-${teamWorkflowStatus.toLowerCase()}`}>
+            Status:{' '}
+            <span className={`status-${teamWorkflowStatus.toLowerCase()}`}>
               {teamWorkflowStatus}
             </span>
           </div>
@@ -153,11 +154,13 @@ export const AgentWithToolPreviewer = ({ team }) => {
                   <h3>{agent.name}</h3>
                   <span className="agent-role">{agent.role}</span>
                 </div>
-                <span className={`agent-status status-${agent.status?.toLowerCase()}`}>
+                <span
+                  className={`agent-status status-${agent.status?.toLowerCase()}`}
+                >
                   {agent.status || 'IDLE'}
                 </span>
               </div>
-              
+
               <div className="agent-goal">
                 <strong>Goal:</strong> {agent.goal}
               </div>
@@ -169,7 +172,9 @@ export const AgentWithToolPreviewer = ({ team }) => {
                     {agent.tools.map((tool, toolIndex) => (
                       <li key={toolIndex} className="tool-item">
                         <span className="tool-name">{tool.name}</span>
-                        <span className="tool-description">{tool.description}</span>
+                        <span className="tool-description">
+                          {tool.description}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -182,11 +187,15 @@ export const AgentWithToolPreviewer = ({ team }) => {
                 <strong>Assigned Tasks:</strong>
                 <ul>
                   {tasks
-                    .filter(task => task.agent === agent)
+                    .filter((task) => task.agent === agent)
                     .map((task, taskIndex) => (
                       <li key={taskIndex} className="task-item">
-                        <span className="task-description">{task.description}</span>
-                        <span className={`task-status status-${task.status?.toLowerCase()}`}>
+                        <span className="task-description">
+                          {task.description}
+                        </span>
+                        <span
+                          className={`task-status status-${task.status?.toLowerCase()}`}
+                        >
                           {task.status}
                         </span>
                       </li>
@@ -213,13 +222,14 @@ export const AgentWithToolPreviewer = ({ team }) => {
           <div className="workflow-result">
             <h3>Workflow Result</h3>
             <div className="result-content">
-              <pre>{typeof workflowResult === 'object' 
-                ? JSON.stringify(workflowResult, null, 2) 
-                : workflowResult}
+              <pre>
+                {typeof workflowResult === 'object'
+                  ? JSON.stringify(workflowResult, null, 2)
+                  : workflowResult}
               </pre>
             </div>
           </div>
-        )}        
+        )}
       </div>
     </div>
   );
