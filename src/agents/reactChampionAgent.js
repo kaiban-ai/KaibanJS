@@ -384,14 +384,12 @@ class ReactChampionAgent extends BaseAgent {
   }
 
   handleIterationStart({ agent, task, iterations, maxAgentIterations }) {
-    agent.store
-      .getState()
-      .handleAgentIterationStart({
-        agent,
-        task,
-        iterations,
-        maxAgentIterations,
-      });
+    agent.store.getState().handleAgentIterationStart({
+      agent,
+      task,
+      iterations,
+      maxAgentIterations,
+    });
   }
 
   handleIterationEnd({ agent, task, iterations, maxAgentIterations }) {
@@ -407,13 +405,11 @@ class ReactChampionAgent extends BaseAgent {
           content: message.content,
         }))
       );
-      agent.store
-        .getState()
-        .handleAgentThinkingStart({
-          agent,
-          task,
-          messages: transformedMessages,
-        });
+      agent.store.getState().handleAgentThinkingStart({
+        agent,
+        task,
+        messages: transformedMessages,
+      });
       return transformedMessages;
     } catch (error) {
       // TODO: Checkout the Errors waterfall handling
@@ -509,14 +505,12 @@ class ReactChampionAgent extends BaseAgent {
       'Received an invalid JSON object from the LLM. Requesting a correctly formatted JSON response.',
       output.llmOutput
     );
-    agent.store
-      .getState()
-      .handleAgentIssuesParsingLLMOutput({
-        agent,
-        task,
-        output,
-        error: jSONPArsingError,
-      });
+    agent.store.getState().handleAgentIssuesParsingLLMOutput({
+      agent,
+      task,
+      output,
+      error: jSONPArsingError,
+    });
     const feedbackMessage = this.promptTemplates.INVALID_JSON_FEEDBACK({
       agent,
       task,
@@ -666,30 +660,26 @@ class ReactChampionAgent extends BaseAgent {
     iterations,
     maxAgentIterations,
   }) {
-    agent.store
-      .getState()
-      .handleAgentLoopError({
-        agent,
-        task,
-        error,
-        iterations,
-        maxAgentIterations,
-      });
+    agent.store.getState().handleAgentLoopError({
+      agent,
+      task,
+      error,
+      iterations,
+      maxAgentIterations,
+    });
   }
 
   handleMaxIterationsError({ agent, task, iterations, maxAgentIterations }) {
     const error = new Error(
       `Agent ${agent.name} reached the maximum number of iterations: [${maxAgentIterations}] without finding a final answer.`
     );
-    agent.store
-      .getState()
-      .handleAgentMaxIterationsError({
-        agent,
-        task,
-        error,
-        iterations,
-        maxAgentIterations,
-      });
+    agent.store.getState().handleAgentMaxIterationsError({
+      agent,
+      task,
+      error,
+      iterations,
+      maxAgentIterations,
+    });
   }
 
   handleTaskCompleted({
@@ -699,15 +689,13 @@ class ReactChampionAgent extends BaseAgent {
     iterations,
     maxAgentIterations,
   }) {
-    agent.store
-      .getState()
-      .handleAgentTaskCompleted({
-        agent,
-        task,
-        result: parsedResultWithFinalAnswer.finalAnswer,
-        iterations,
-        maxAgentIterations,
-      });
+    agent.store.getState().handleAgentTaskCompleted({
+      agent,
+      task,
+      result: parsedResultWithFinalAnswer.finalAnswer,
+      iterations,
+      maxAgentIterations,
+    });
   }
 }
 
