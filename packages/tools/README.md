@@ -33,6 +33,12 @@ Tavily Search is a tool that provides AI-optimized search capabilities, deliveri
 
 Learn more: https://tavily.com/
 
+### 3. Serper
+
+Serper is a tool that integrates with Google Search API service, providing access to various types of search results including web search, news, images, and more. It's particularly useful for retrieving real-time information from Google's search engine.
+
+Learn more: https://serper.dev/
+
 ## Development
 
 ### Local Setup
@@ -62,6 +68,7 @@ Create a `.env` file in the root directory with your API keys:
 ```env
 VITE_FIRECRAWL_API_KEY=your_firecrawl_api_key
 VITE_TAVILY_API_KEY=your_tavily_api_key
+VITE_SERPER_API_KEY=your_serper_api_key
 ```
 
 5. Run Storybook to view and test components:

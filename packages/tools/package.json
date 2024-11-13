@@ -17,6 +17,10 @@
     "./tavily": {
       "import": "./dist/tavily/index.esm.js",
       "require": "./dist/tavily/index.cjs.js"
+    },
+    "./serper": {
+      "import": "./dist/serper/index.esm.js",
+      "require": "./dist/serper/index.cjs.js"
     }
   },
   "files": [
