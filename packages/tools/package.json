@@ -18,9 +18,9 @@
       "import": "./dist/tavily/index.esm.js",
       "require": "./dist/tavily/index.cjs.js"
     },
-    "./youtube": {
-      "import": "./dist/youtube/index.esm.js",
-      "require": "./dist/youtube/index.cjs.js"
+    "./youtube-captions-scraper": {
+      "import": "./dist/youtube-captions-scraper/index.esm.js",
+      "require": "./dist/youtube-captions-scraper/index.cjs.js"
     }
   },
   "files": [

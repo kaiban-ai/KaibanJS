@@ -33,6 +33,23 @@ Tavily Search is a tool that provides AI-optimized search capabilities, deliveri
 
 Learn more: https://tavily.com/
 
+### 3. YouTube Captions Scraper
+
+The YouTube Captions Scraper tool allows agents to extract captions from YouTube videos. It requires a valid YouTube API access token to function.
+
+Learn more: https://developers.google.com/youtube/v3
+
+Getting YouTube API Access Token
+To use the YouTube Captions Scraper tool, you need to obtain a YouTube API access token. Follow these steps:
+
+- Go to the Google Cloud Console.
+- Create a new project or select an existing project.
+- Enable the YouTube Data API v3 for your project.
+- Go to the "Credentials" section and create an OAuth 2.0 Client ID.
+- Download the OAuth 2.0 Client ID JSON file.
+- Use the OAuth 2.0 Client ID to obtain an access token. You can use the OAuth 2.0 Playground to generate the token.
+- Copy the access token and add it to your .env file as VITE_YOUTUBE_LONG_LIVE_TOKEN.
+
 ## Development
 
 ### Local Setup
@@ -62,6 +79,7 @@ Create a `.env` file in the root directory with your API keys:
 ```env
 VITE_FIRECRAWL_API_KEY=your_firecrawl_api_key
 VITE_TAVILY_API_KEY=your_tavily_api_key
+VITE_YOUTUBE_LONG_LIVE_TOKEN=your_youtube_long_livetoken
 ```
 
 5. Run Storybook to view and test components:

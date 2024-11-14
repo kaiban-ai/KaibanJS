@@ -1,5 +1,5 @@
 import { ToolPreviewer } from '../_utils/ToolPreviewer.jsx';
-import { YouTubeVideoCaption } from './index.js';
+import { YouTubeCaptionsScraper } from './index.js';
 import { Agent, Task, Team } from '../../../../src/index';
 import React from 'react';
 import { AgentWithToolPreviewer } from '../_utils/AgentWithToolPreviewer.jsx';
@@ -14,7 +14,7 @@ export default {
   tags: ['autodocs'],
 };
 
-const youtubeTool = new YouTubeVideoCaption({
+const youtubeTool = new YouTubeCaptionsScraper({
   token: import.meta.env.VITE_YOUTUBE_LONG_LIVE_TOKEN,
 });
 
@@ -30,7 +30,7 @@ const captionExtractor = new Agent({
 // Create a caption extraction task
 const captionExtractionTask = new Task({
   description:
-    'Extract captions for video ID: {videoId} and provide a structured summary',
+    'Extract captions for video URL: {videoUrl} and provide a structured summary',
   agent: captionExtractor,
   expectedOutput: 'A well-formatted analysis of the video captions',
 });
@@ -43,7 +43,7 @@ const team = new Team({
   agents: [captionExtractor],
   tasks: [captionExtractionTask],
   inputs: {
-    videoId: 'NFpqFEl-URY', // Example video ID
+    videoUrl: 'https://www.youtube.com/watch?v=NFpqFEl-URY', // Example video URL
   },
   env: {
     OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY,
@@ -54,7 +54,7 @@ export const Default = {
   args: {
     toolInstance: youtubeTool,
     callParams: {
-      videoId: 'NFpqFEl-URY',
+      videoUrl: 'https://www.youtube.com/watch?v=NFpqFEl-URY',
     },
   },
 };
