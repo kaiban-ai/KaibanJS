@@ -44,6 +44,7 @@ Learn more: https://serper.dev/
 Exa Search is a tool that integrates with Exa (https://exa.ai/), a search engine for AI that organizes the web using embeddings. It provides high-quality web data specifically optimized for AI applications.
 
 Key features:
+
 - Neural Search: Meaning-based search using embeddings
 - Keyword Search: Traditional search capabilities
 - Auto Search: Dynamically chooses between neural and keyword
@@ -58,6 +59,7 @@ Learn more: https://exa.ai/
 WolframAlpha is a tool that integrates with WolframAlpha's computational intelligence engine, providing detailed answers to complex queries across various domains. It's particularly powerful for mathematical, scientific, and technical computations.
 
 Key features:
+
 - Advanced computations and data analysis
 - Scientific and mathematical calculations
 - Real-time data processing
