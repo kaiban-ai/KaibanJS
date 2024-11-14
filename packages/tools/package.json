@@ -21,6 +21,10 @@
     "./serper": {
       "import": "./dist/serper/index.esm.js",
       "require": "./dist/serper/index.cjs.js"
+    },
+    "./exa": {
+      "import": "./dist/exa/index.esm.js",
+      "require": "./dist/exa/index.cjs.js"
     }
   },
   "files": [
