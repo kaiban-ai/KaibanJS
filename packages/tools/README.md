@@ -39,6 +39,20 @@ Serper is a tool that integrates with Google Search API service, providing acces
 
 Learn more: https://serper.dev/
 
+### 4. Exa Search
+
+Exa Search is a tool that integrates with Exa (https://exa.ai/), a search engine for AI that organizes the web using embeddings. It provides high-quality web data specifically optimized for AI applications.
+
+Key features:
+- Neural Search: Meaning-based search using embeddings
+- Keyword Search: Traditional search capabilities
+- Auto Search: Dynamically chooses between neural and keyword
+- Category-focused search (company, research paper, news, github, tweet, etc.)
+- Domain and text filtering
+- Date-based filtering
+
+Learn more: https://exa.ai/
+
 ## Development
 
 ### Local Setup
@@ -69,6 +83,7 @@ Create a `.env` file in the root directory with your API keys:
 VITE_FIRECRAWL_API_KEY=your_firecrawl_api_key
 VITE_TAVILY_API_KEY=your_tavily_api_key
 VITE_SERPER_API_KEY=your_serper_api_key
+VITE_EXA_API_KEY=your_exa_api_key
 ```
 
 5. Run Storybook to view and test components:
