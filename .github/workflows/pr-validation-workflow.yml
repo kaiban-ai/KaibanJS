@@ -2,7 +2,7 @@ name: PR Validation CI
 
 on:
   pull_request:
-    branches: [main] # Triggered on PRs targeting these branches
+    branches: [main]
 
 jobs:
   build-and-test:
@@ -23,6 +23,12 @@ jobs:
 
       - name: Install dependencies
         run: npm install --also=dev
+
+      - name: Run ESLint Check
+        run: npm run lint:check
+
+      - name: Check Prettier Formatting
+        run: npm run format:check
 
       - name: Build for integration tests
         run: npm run build:test

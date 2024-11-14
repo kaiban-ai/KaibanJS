@@ -21,6 +21,18 @@
     "./youtube-captions-scraper": {
       "import": "./dist/youtube-captions-scraper/index.esm.js",
       "require": "./dist/youtube-captions-scraper/index.cjs.js"
+    },
+    "./serper": {
+      "import": "./dist/serper/index.esm.js",
+      "require": "./dist/serper/index.cjs.js"
+    },
+    "./exa": {
+      "import": "./dist/exa/index.esm.js",
+      "require": "./dist/exa/index.cjs.js"
+    },
+    "./wolframalpha": {
+      "import": "./dist/wolframalpha/index.esm.js",
+      "require": "./dist/wolframalpha/index.cjs.js"
     }
   },
   "files": [

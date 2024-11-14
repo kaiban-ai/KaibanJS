@@ -20,13 +20,26 @@ export const ToolPreviewer = ({ toolInstance, callParams }) => {
     setIsLoading(true);
     try {
       // Use the params state instead of callParams
+      console.log('params', params);
       const result = await toolInstance._call(params);
-      setOutput(result);
+      // setOutput(result);
+      setOutput(
+        typeof result === 'string' ? result : JSON.stringify(result, null, 2)
+      );
     } catch (error) {
       console.error('Error calling tool:', error);
       setOutput('Error: Failed to execute tool');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const detectLanguage = (content) => {
+    try {
+      JSON.parse(content);
+      return 'json';
+    } catch {
+      return 'markdown';
     }
   };
 
@@ -61,15 +74,16 @@ export const ToolPreviewer = ({ toolInstance, callParams }) => {
           <MonacoEditor
             width="100%"
             height="calc(100vh - 100px)" // Adjust this value as needed
-            language="markdown"
+            // language="markdown"
+            language={detectLanguage(output)}
             theme="vs-dark"
             value={output}
             options={editorOptions}
           />
         ) : (
           <p className="no-content-message">
-            No content yet. Enter a URL and click &apos;Execute Tool&apos; to
-            fetch content.
+            No content yet. Enter parameters and click &apos;Execute Tool&apos;
+            to fetch content.
           </p>
         )}
       </div>
