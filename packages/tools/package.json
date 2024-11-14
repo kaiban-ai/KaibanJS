@@ -25,6 +25,10 @@
     "./exa": {
       "import": "./dist/exa/index.esm.js",
       "require": "./dist/exa/index.cjs.js"
+    },
+    "./wolframalpha": {
+      "import": "./dist/wolframalpha/index.esm.js",
+      "require": "./dist/wolframalpha/index.cjs.js"
     }
   },
   "files": [

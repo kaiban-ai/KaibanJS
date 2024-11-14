@@ -53,6 +53,27 @@ Key features:
 
 Learn more: https://exa.ai/
 
+### 5. WolframAlpha
+
+WolframAlpha is a tool that integrates with WolframAlpha's computational intelligence engine, providing detailed answers to complex queries across various domains. It's particularly powerful for mathematical, scientific, and technical computations.
+
+Key features:
+- Advanced computations and data analysis
+- Scientific and mathematical calculations
+- Real-time data processing
+- Domain-specific knowledge in:
+  - Mathematics
+  - Physics
+  - Chemistry
+  - Engineering
+  - Earth Sciences
+  - Life Sciences
+  - Units & Measures
+  - Financial calculations
+  - And more
+
+Learn more: https://www.wolframalpha.com/
+
 ## Development
 
 ### Local Setup
@@ -84,6 +105,7 @@ VITE_FIRECRAWL_API_KEY=your_firecrawl_api_key
 VITE_TAVILY_API_KEY=your_tavily_api_key
 VITE_SERPER_API_KEY=your_serper_api_key
 VITE_EXA_API_KEY=your_exa_api_key
+VITE_WOLFRAM_APP_ID=your_wolfram_app_id
 ```
 
 5. Run Storybook to view and test components:
