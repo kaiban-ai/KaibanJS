@@ -1,6 +1,6 @@
 /**
  * @file agentActions.ts
- * @path src/stores/teamStore/actions/agentActions.ts
+ * @path KaibanJS/src/stores/teamStore/actions/agentActions.ts
  * @description Agent management actions for the team store
  */
 

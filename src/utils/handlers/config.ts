@@ -1,6 +1,6 @@
 /**
  * @file config.ts
- * @path src/utils/helpers/config.ts
+ * @path KaibanJS/src/utils/helpers/config.ts
  * @description Default configurations for LLM providers
  */
 

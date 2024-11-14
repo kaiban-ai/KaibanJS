@@ -1,6 +1,6 @@
 /**
  * @file index.ts
- * @path src/utils/index.ts
+ * @path KaibanJS/src/utils/index.ts
  * @description Central export point for KaibanJS utilities
  */
 

@@ -1,6 +1,6 @@
 /**
  * @file typeUtils.ts
- * @path src/utils/types/team/typeUtils.ts
+ * @path KaibanJS/src/utils/types/team/typeUtils.ts
  * @description Type guards and utility types for team functionality
  */
 

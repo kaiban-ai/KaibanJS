@@ -1,18 +1,43 @@
 /**
  * @file index.ts
- * @path src/utils/factories/index.ts
- * @description Centralized export of all factory modules for streamlined imports throughout the application.
- * 
- * @packageDocumentation
- * @module @factories
+ * @path KaibanJS/src/utils/core/index.ts
+ * @description Core utilities exports
  */
 
-import DefaultFactory from './defaultFactory';
-import LogCreator from './logCreator';
-import MetadataFactory from './metadataFactory';
-
+// Logger exports
 export {
-    DefaultFactory,
-    LogCreator,
-    MetadataFactory
-};
+    logger,
+    setLogLevel,
+    configureLogger,
+    createLogger
+} from '../core/logger';
+
+// Error class exports
+export {
+    PrettyError,
+    LLMInvocationError,
+    LLMConfigurationError
+} from '../core/errors';
+
+// Error utility functions
+export {
+    wrapError,
+    createUserError
+} from '../core/errors';
+
+// Export types from canonical locations
+export type {
+    ErrorType,
+    PrettyErrorType,
+    ErrorConfig,
+    LLMError,
+    ConfigurationError
+} from '@/utils/types/common/errors';
+
+export type {
+    LogLevel,
+    LoggerConfig,
+    LogFormattingOptions,
+    LogDestinationConfig,
+    LogFilterOptions
+} from '@/utils/types/common/logging';

@@ -1,6 +1,6 @@
 /**
  * @file typeGuards.ts
- * @path src/stores/teamStore/utils/typeGuards.ts
+ * @path KaibanJS/src/stores/teamStore/utils/typeGuards.ts
  * @description Type guard utilities for the team store implementation
  */
 

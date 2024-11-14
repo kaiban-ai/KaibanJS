@@ -1,6 +1,6 @@
 /**
  * @file toolActions.ts
- * @path src/stores/teamStore/actions/toolActions.ts
+ * @path KaibanJS/src/stores/teamStore/actions/toolActions.ts
  * @description Tool handling actions for the team store
  */
 

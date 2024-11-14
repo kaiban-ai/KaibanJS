@@ -1,6 +1,6 @@
 /**
  * @file index.ts
- * @path src/stores/teamStore/actions/index.ts
+ * @path KaibanJS/src/stores/teamStore/actions/index.ts
  * @description Exports all team store actions
  */
 

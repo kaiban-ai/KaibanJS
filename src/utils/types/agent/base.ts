@@ -1,6 +1,6 @@
 /**
  * @file base.ts
- * @path src/utils/types/agent/base.ts
+ * @path KaibanJS/src/utils/types/agent/base.ts
  * @description Core agent interfaces and types
  *
  * @packageDocumentation
@@ -11,13 +11,13 @@ import { Tool } from "langchain/tools";
 import { AGENT_STATUS_enum } from "@/utils/types/common/enums";
 import { ErrorType } from "../common";
 import { BaseMessage } from "@langchain/core/messages";
-import { LLMConfig } from "../llm/providers";
+import { LLMConfig } from "../llm";
 import { Output, ParsedOutput } from "../llm/responses";
 import { LLMInstance, AgenticLoopResult } from "../llm/instance";
 import { TeamStore } from "../team/base";
 import { TaskType, FeedbackObject } from "../task/base";
 import { IMessageHistory } from "../messaging/history";
-import { MessageHistoryManager } from "@/utils/managers/messageHistoryManager";
+import { MessageHistoryManager } from "@/utils";
 
 /**
  * Base agent interface

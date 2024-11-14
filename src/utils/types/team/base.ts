@@ -1,6 +1,6 @@
 /**
  * @file base.ts
- * @path src/utils/types/team/base.ts
+ * @path KaibanJS/src/utils/types/team/base.ts
  * @description Core team interfaces and types
  */
 

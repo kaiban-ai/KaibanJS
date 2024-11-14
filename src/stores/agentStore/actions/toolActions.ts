@@ -1,6 +1,6 @@
 /**
  * @file toolActions.ts
- * @path src/stores/agentStore/actions/toolActions.ts
+ * @path KaibanJS/src/stores/agentStore/actions/toolActions.ts
  * @description Tool execution and management actions for agent store
  */
 

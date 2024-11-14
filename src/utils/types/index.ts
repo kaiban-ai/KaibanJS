@@ -1,6 +1,6 @@
 /**
  * @file index.ts
- * @path src/utils/types/index.ts
+ * @path KaibanJS/src/utils/types/index.ts
  * @description Central export point for all type definitions
  */
 
@@ -174,8 +174,6 @@ export type {
     WorkflowExecutionStats,
     WorkflowProgress,
     WorkflowState,
-    WorkflowEventType,
-    WorkflowEvent,
     WorkflowActionParams,
     WorkflowActionResult,
     WorkflowActions,

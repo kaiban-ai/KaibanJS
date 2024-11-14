@@ -1,6 +1,6 @@
 /**
  * @file base.ts
- * @path src/utils/types/workflow/base.ts
+ * @path KaibanJS/src/utils/types/workflow/base.ts
  * @description Workflow base types and interfaces
  */
 

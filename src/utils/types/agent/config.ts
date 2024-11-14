@@ -1,14 +1,23 @@
 /**
  * @file config.ts
- * @path src/utils/types/agent/config.ts
+ * @path KaibanJS/src/utils/types/agent/config.ts
  * @description Agent configuration interfaces and types
  */
 
 import { Tool } from "langchain/tools";
-import { LLMConfig } from "../llm/providers";
+import { LLMConfig } from "../llm";
 import { TeamStore } from "../team";
 import { IMessageHistory } from "../messaging/history";
 import { IBaseAgent } from "./base";
+import { RunnableWithMessageHistory } from "@langchain/core/runnables";
+import { LLMInstance } from "../llm";
+import { TaskType } from "../task";
+import { AgentType } from "./base";
+import { Output } from "../llm";
+import { ErrorType } from "../common";
+import { REACTChampionAgentPrompts } from './prompts';
+import type { BaseMessage } from "@langchain/core/messages";
+
 
 // Base agent configuration interface
 export interface BaseAgentConfig {
@@ -28,6 +37,28 @@ export interface BaseAgentConfig {
 // Extended agent configuration with message history
 export interface ExtendedBaseAgentConfig extends BaseAgentConfig {
     messageHistory?: IMessageHistory;
+}
+
+// React-specific agent configuration
+export interface ReactAgentConfig {
+    messageHistory: IMessageHistory;
+    executableAgent: RunnableWithMessageHistory<
+        Array<BaseMessage> | Record<string, any>,  // RunInput type
+        string | BaseMessage | Array<BaseMessage> | Record<string, BaseMessage | Array<BaseMessage>>  // RunOutput type
+    >;
+    promptTemplates: REACTChampionAgentPrompts;
+    llmInstance: LLMInstance;
+}
+
+// Execution context for an agent's task
+export interface ExecutionContext {
+    task: TaskType;
+    agent: AgentType;
+    iterations: number;
+    maxAgentIterations: number;
+    startTime: number;
+    lastOutput?: Output;
+    lastError?: ErrorType;
 }
 
 // Agent initialization parameters

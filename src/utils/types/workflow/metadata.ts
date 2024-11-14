@@ -1,6 +1,6 @@
 /**
  * @file metadata.ts
- * @path src/types/workflow/metadata.ts
+ * @path KaibanJS/src/types/workflow/metadata.ts
  * @description Workflow metadata type definitions
  */
 

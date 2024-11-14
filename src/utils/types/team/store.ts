@@ -1,6 +1,6 @@
 /**
  * @file store.ts
- * @path src/utils/types/team/store.ts
+ * @path KaibanJS/src/utils/types/team/store.ts
  * @description Team store types and interfaces for managing team state and operations
  */
 

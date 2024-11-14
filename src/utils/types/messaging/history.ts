@@ -1,6 +1,6 @@
 /**
  * @file history.ts
- * @path src/utils/types/messaging/history.ts
+ * @path KaibanJS/src/utils/types/messaging/history.ts
  */
 
 import { BaseMessage, SystemMessage, HumanMessage, AIMessage, FunctionMessage } from "@langchain/core/messages";

@@ -1,6 +1,6 @@
 /**
  * @file state.ts
- * @path src/stores/teamStore/state.ts
+ * @path KaibanJS/src/stores/teamStore/state.ts
  * @description State definitions and initial state for the team store
  */
 

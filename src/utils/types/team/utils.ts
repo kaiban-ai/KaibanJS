@@ -1,6 +1,6 @@
 /**
  * @file utils.ts
- * @path src/utils/types/team/utils.ts
+ * @path KaibanJS/src/utils/types/team/utils.ts
  * @description Team utility types and interfaces
  */
 

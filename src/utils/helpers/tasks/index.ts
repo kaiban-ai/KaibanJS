@@ -1,6 +1,10 @@
 /**
  * @file index.ts
- * @path src/utils/helpers/tasks/index.ts
+ * @path KaibanJS/src/utils/helpers/tasks/index.ts
  */
 
-export { getTaskTitleForLogs, validateTask, interpolateTaskDescription } from './taskUtils';
+export { 
+    getTaskTitleForLogs, 
+    validateTask, 
+    interpolateTaskDescription 
+} from './taskUtils';

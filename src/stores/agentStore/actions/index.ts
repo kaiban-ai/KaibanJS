@@ -1,6 +1,6 @@
 /**
  * @file index.ts
- * @path src/stores/agentStore/actions/index.ts
+ * @path KaibanJS/src/stores/agentStore/actions/index.ts
  * @description Central export point for agent store actions and their types
  */
 

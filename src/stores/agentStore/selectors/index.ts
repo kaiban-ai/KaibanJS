@@ -1,6 +1,6 @@
 /**
  * @file index.ts
- * @path src/stores/agentStore/selectors/index.ts
+ * @path KaibanJS/src/stores/agentStore/selectors/index.ts
  * @description State selectors for agent store
  */
 

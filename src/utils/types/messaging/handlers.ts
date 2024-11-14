@@ -1,6 +1,6 @@
 /**
  * @file handlers.ts
- * @path src/utils/types/messaging/handlers.ts
+ * @path KaibanJS/src/utils/types/messaging/handlers.ts
  */
 
 import { BaseMessage } from "@langchain/core/messages"; 

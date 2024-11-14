@@ -1,6 +1,6 @@
 /**
  * @file index.ts
- * @path src/stores/teamStore/selectors/index.ts
+ * @path KaibanJS/src/stores/teamStore/selectors/index.ts
  * @description Selectors for accessing and computing team store state
  */
 

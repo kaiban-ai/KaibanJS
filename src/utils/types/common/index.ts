@@ -44,21 +44,6 @@ export {
     ParserResult 
 } from './parser';
 
-// status.ts
-export { 
-    StatusType, 
-    StatusEntity, 
-    StatusTransitionContext, 
-    StatusChangeEvent, 
-    StatusChangeCallback, 
-    StatusHistoryEntry, 
-    StatusTransitionRule, 
-    StatusManagerConfig, 
-    StatusValidationResult, 
-    StatusErrorType, 
-    StatusError 
-} from './status';
-
 export { 
     MemoryMetrics
 } from './memory'

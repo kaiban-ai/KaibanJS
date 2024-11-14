@@ -1,204 +1,124 @@
 /**
- * @file messageHandler.ts
- * @path src/utils/handlers/messageHandler.ts
- * @description Message processing and management implementation
+ * @file MessageHandler.ts
+ * @path KaibanJS/src/utils/handlers/messageHandler.ts
+ * @description High-level message handling and orchestration using MessageManager
  */
 
-import { 
-    BaseMessage,
-    SystemMessage,
-    HumanMessage,
-    AIMessage,
+// Core utilities
+import { logger } from "@/utils/core/logger";
+import { MessageManager } from "@/utils/managers/domain/llm/MessageManager";
+
+// Import from canonical locations
+import type { 
+    MessageRole,
+    MessageContext,
+    MessageProcessResult,
+    MessageBuildParams 
+} from '@/utils/types/messaging/base';
+
+import type { 
+    BaseMessage, 
+    SystemMessage, 
+    HumanMessage, 
+    AIMessage, 
     FunctionMessage 
 } from "@langchain/core/messages";
-import { logger } from "../core/logger";
-import { 
-    HandlerResult,
-    MessageMetadataFields,
-    FunctionCall
-} from '@/utils/types';
 
 /**
- * Message handler implementation
+ * High-level message handling orchestration
  */
 export class MessageHandler {
-    /**
-     * Handle system message creation
-     */
-    async handleSystemMessage(
+    private readonly messageManager: MessageManager;
+
+    constructor() {
+        this.messageManager = MessageManager.getInstance();
+    }
+
+    // ─── Message Building ─────────────────────────────────────────────────────────
+
+    public async buildMessage(params: MessageBuildParams): Promise<BaseMessage> {
+        try {
+            return await this.messageManager.buildMessage(params);
+        } catch (error) {
+            logger.error('Error building message:', error);
+            throw error;
+        }
+    }
+
+    // ─── Message Processing ────────────────────────────────────────────────────────
+
+    public async processMessage(
         content: string,
-        metadata?: MessageMetadataFields
-    ): Promise<HandlerResult<SystemMessage>> {
+        role: MessageRole = 'ai',
+        context?: MessageContext
+    ): Promise<MessageProcessResult> {
         try {
-            const message = new SystemMessage({
-                content,
-                additional_kwargs: this.prepareMetadata(metadata)
-            });
-
-            logger.debug('Created system message:', content);
-            return {
-                success: true,
-                data: message
-            };
+            return await this.messageManager.processMessage(content, role, context);
         } catch (error) {
-            logger.error('Error creating system message:', error);
-            return {
-                success: false,
-                error: error instanceof Error ? error : new Error(String(error))
-            };
+            logger.error('Error processing message:', error);
+            throw error;
         }
     }
 
-    /**
-     * Handle user message creation
-     */
-    async handleUserMessage(
-        content: string,
-        metadata?: MessageMetadataFields
-    ): Promise<HandlerResult<HumanMessage>> {
-        try {
-            const message = new HumanMessage({
-                content,
-                additional_kwargs: this.prepareMetadata(metadata)
-            });
+    // ─── Content Adding ────────────────────────────────────────────────────────
 
-            logger.debug('Created user message:', content);
-            return {
-                success: true,
-                data: message
-            };
+    public async addSystemMessage(content: string): Promise<void> {
+        try {
+            await this.messageManager.addSystemMessage(content);
         } catch (error) {
-            logger.error('Error creating user message:', error);
-            return {
-                success: false,
-                error: error instanceof Error ? error : new Error(String(error))
-            };
+            logger.error('Error adding system message:', error);
+            throw error;
         }
     }
 
-    /**
-     * Handle AI message creation
-     */
-    async handleAIMessage(
-        content: string,
-        metadata?: MessageMetadataFields
-    ): Promise<HandlerResult<AIMessage>> {
+    public async addUserMessage(content: string): Promise<void> {
         try {
-            const message = new AIMessage({
-                content,
-                additional_kwargs: this.prepareMetadata(metadata)
-            });
-
-            logger.debug('Created AI message:', content);
-            return {
-                success: true,
-                data: message
-            };
+            await this.messageManager.addUserMessage(content);
         } catch (error) {
-            logger.error('Error creating AI message:', error);
-            return {
-                success: false,
-                error: error instanceof Error ? error : new Error(String(error))
-            };
+            logger.error('Error adding user message:', error);
+            throw error;
         }
     }
 
-    /**
-     * Handle function message creation
-     */
-    async handleFunctionMessage(
-        name: string,
-        content: string,
-        functionCall?: FunctionCall,
-        metadata?: MessageMetadataFields
-    ): Promise<HandlerResult<FunctionMessage>> {
+    public async addAIMessage(content: string): Promise<void> {
         try {
-            const message = new FunctionMessage({
-                content,
-                name,
-                additional_kwargs: this.prepareMetadata({
-                    ...metadata,
-                    function_call: functionCall ? {
-                        name: functionCall.name,
-                        arguments: typeof functionCall.arguments === 'string'
-                            ? functionCall.arguments
-                            : JSON.stringify(functionCall.arguments)
-                    } : undefined
-                })
-            });
-
-            logger.debug('Created function message:', { name, content });
-            return {
-                success: true,
-                data: message
-            };
+            await this.messageManager.addAIMessage(content);
         } catch (error) {
-            logger.error('Error creating function message:', error);
-            return {
-                success: false,
-                error: error instanceof Error ? error : new Error(String(error))
-            };
+            logger.error('Error adding AI message:', error);
+            throw error;
         }
     }
 
-    /**
-     * Handle message history addition
-     */
-    async handleMessageAddition(
-        message: BaseMessage,
-        metadata?: MessageMetadataFields
-    ): Promise<HandlerResult<BaseMessage>> {
+    public async addFunctionMessage(name: string, content: string): Promise<void> {
         try {
-            const newMessage = new (message.constructor as any)({
-                content: message.content,
-                ...(message instanceof FunctionMessage && { name: message.name }),
-                additional_kwargs: this.prepareMetadata({
-                    ...message.additional_kwargs,
-                    ...metadata
-                })
-            });
-
-            logger.debug('Added message to history:', {
-                type: message.constructor.name,
-                content: message.content
-            });
-
-            return {
-                success: true,
-                data: newMessage
-            };
+            await this.messageManager.addFunctionMessage(name, content);
         } catch (error) {
-            logger.error('Error adding message to history:', error);
-            return {
-                success: false,
-                error: error instanceof Error ? error : new Error(String(error))
-            };
+            logger.error('Error adding function message:', error);
+            throw error;
         }
     }
 
-    /**
-     * Prepare metadata for messages
-     */
-    private prepareMetadata(metadata?: MessageMetadataFields): Record<string, unknown> {
-        const baseMetadata = {
-            timestamp: Date.now(),
-            ...metadata
-        };
+    // ─── Message History ───────────────────────────────────────────────────────
 
-        // Handle function calls
-        if (baseMetadata.function_call) {
-            const functionCall = baseMetadata.function_call as FunctionCall;
-            baseMetadata.function_call = {
-                name: functionCall.name,
-                arguments: typeof functionCall.arguments === 'string'
-                    ? functionCall.arguments
-                    : JSON.stringify(functionCall.arguments)
-            };
+    public async getMessageHistory(): Promise<BaseMessage[]> {
+        try {
+            return await this.messageManager.getMessageHistory();
+        } catch (error) {
+            logger.error('Error getting message history:', error);
+            throw error;
         }
+    }
 
-        return baseMetadata;
+    public async clearHistory(): Promise<void> {
+        try {
+            await this.messageManager.clearHistory();
+        } catch (error) {
+            logger.error('Error clearing message history:', error);
+            throw error;
+        }
     }
 }
 
 // Export singleton instance
 export const messageHandler = new MessageHandler();
+export default messageHandler;

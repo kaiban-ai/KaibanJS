@@ -1,6 +1,6 @@
 /**
  * @file handlers.ts
- * @path src/utils/types/team/handlers.ts
+ * @path KaibanJS/src/utils/types/team/handlers.ts
  * @description Team handler interfaces and types for managing store operations
  */
 

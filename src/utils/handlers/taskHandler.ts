@@ -1,20 +1,19 @@
 /**
- * @file taskHandler.ts
- * @path src/utils/handlers/taskHandler.ts
- * @description Task event handler implementation
+ * @file TaskHandler.ts
+ * @path KaibanJS/src/utils/handlers/taskHandler.ts
+ * @description High-level task operations handling and orchestration
  */
 
-import { logger } from "../core/logger";
-import { calculateTaskCost } from "../helpers/costs/llmCostCalculator";
-import { PrettyError } from "../core/errors";
-import DefaultFactory from "../factories/defaultFactory"; // Use DefaultFactory for creating default objects
-import LogCreator from "../factories/logCreator"; // Import LogCreator
+// Core utilities
+import { logger } from "@/utils/core/logger";
+import { PrettyError } from "@/utils/core/errors";
+import { TaskManager } from "@/utils/managers/domain/task/TaskManager";
 
+// Import from canonical locations
 import type { 
     HandlerResult,
-    TaskType,
+    TaskType, 
     AgentType,
-    TeamState,
     TeamStore,
     TaskValidationResult,
     ErrorType,
@@ -22,211 +21,126 @@ import type {
     CostDetails
 } from '@/utils/types';
 
-// Interface for task handler methods
-export interface ITaskHandler {
-    handleCompletion(params: TaskCompletionParams): Promise<HandlerResult<TaskType>>;
-    handleError(params: TaskErrorParams): Promise<HandlerResult<void>>;
-    handleValidation(task: TaskType): Promise<TaskValidationResult>;
-}
-
-// Task completion parameters
-interface TaskCompletionParams {
-    store: TeamStore;
-    agent: AgentType;
-    task: TaskType;
-    result: unknown;
-    metadata?: {
-        llmUsageStats?: LLMUsageStats;
-        costDetails?: CostDetails;
-    };
-}
-
-// Task error parameters
-interface TaskErrorParams {
-    store: TeamStore;
-    task: TaskType;
-    error: ErrorType;
-    context?: Record<string, unknown>;
-}
-
 /**
- * Task handler implementation
+ * High-level task operation handling
  */
-export class TaskHandler implements ITaskHandler {
-    /**
-     * Handle task completion
-     */
-    async handleCompletion(params: TaskCompletionParams): Promise<HandlerResult<TaskType>> {
-        const { store, agent, task, result, metadata = {} } = params;
+export class TaskHandler {
+    private readonly taskManager: TaskManager;
 
-        try {
-            if (!store) {
-                throw new Error('Store is required for task completion');
-            }
-
-            // Use DefaultFactory to create default task statistics
-            const stats = DefaultFactory.createTaskStats();
-            const modelCode = agent.llmConfig.model;
-            const llmUsageStats = metadata.llmUsageStats || DefaultFactory.createLLMUsageStats();
-            const costDetails = calculateTaskCost(modelCode, llmUsageStats);
-
-            // Update task status and result
-            store.setState((state: TeamState) => ({
-                tasks: state.tasks.map((t: TaskType) => 
-                    t.id === task.id ? ({
-                        ...t,
-                        status: 'DONE',
-                        result,
-                        ...stats
-                    } as TaskType) : t
-                )
-            }));
-
-            // Create completion log using LogCreator
-            const completionLog = LogCreator.createTaskLog({
-                task,
-                description: `Task completed: ${task.title}`,
-                status: 'DONE',
-                metadata: {
-                    result,
-                    ...metadata,
-                    ...stats,
-                    costDetails
-                }
-            });
-
-            // Add log to store
-            store.setState((state: TeamState) => ({
-                workflowLogs: [...state.workflowLogs, completionLog]
-            }));
-
-            logger.info(`Task ${task.id} completed successfully`);
-            return {
-                success: true,
-                data: task,
-                metadata: {
-                    stats,
-                    costDetails
-                }
-            };
-
-        } catch (error) {
-            logger.error(`Error handling task completion:`, error);
-            return {
-                success: false,
-                error: error instanceof Error ? error : new Error(String(error))
-            };
-        }
+    constructor() {
+        this.taskManager = TaskManager.getInstance();
     }
 
-    /**
-     * Handle task error
-     */
-    async handleError(params: TaskErrorParams): Promise<HandlerResult<void>> {
-        const { error, context, task, store } = params;
+    // ─── Task Completion ────────────────────────────────────────────────────────
 
-        try {
-            if (!store) {
-                throw new Error('Store is required for error handling');
-            }
-
-            if (!task) {
-                throw new Error('Task is required for error handling');
-            }
-
-            // Create pretty error
-            const prettyError = new PrettyError({
-                message: error.message,
-                context: {
-                    taskId: task.id,
-                    taskTitle: task.title,
-                    ...context
-                },
-                rootError: error
-            });
-
-            // Update task status
-            store.setState((state: TeamState) => ({
-                tasks: state.tasks.map((t: TaskType) => 
-                    t.id === task.id ? ({
-                        ...t,
-                        status: 'ERROR',
-                        error: prettyError.message
-                    } as TaskType) : t
-                )
-            }));
-
-            // Create error log using LogCreator
-            const errorLog = LogCreator.createTaskLog({
-                task,
-                description: `Task error: ${prettyError.message}`,
-                status: 'ERROR',
-                metadata: {
-                    error: prettyError,
-                    context
-                }
-            });
-
-            // Add log to store
-            store.setState((state: TeamState) => ({
-                workflowLogs: [...state.workflowLogs, errorLog]
-            }));
-
-            logger.error(`Task ${task.id} error:`, prettyError.prettyMessage);
-            return {
-                success: false,
-                error: prettyError
-            };
-
-        } catch (handlingError) {
-            logger.error(`Error handling task error:`, handlingError);
-            return {
-                success: false,
-                error: handlingError instanceof Error ? handlingError : new Error(String(handlingError))
-            };
-        }
-    }
-
-    /**
-     * Handle task validation
-     */
-    async handleValidation(task: TaskType): Promise<TaskValidationResult> {
-        const errors: string[] = [];
-        const warnings: string[] = [];
-
-        // Validate required fields
-        if (!task.id) errors.push('Task ID is required');
-        if (!task.title) errors.push('Task title is required');
-        if (!task.description) errors.push('Task description is required');
-        if (!task.agent) errors.push('Task must have an assigned agent');
-
-        // Validate agent configuration
-        if (task.agent) {
-            if (!task.agent.tools || task.agent.tools.length === 0) {
-                warnings.push('Agent has no tools configured');
-            }
-            if (!task.agent.llmConfig) {
-                warnings.push('Agent has no LLM configuration');
-            }
-        }
-
-        // Check task inputs
-        if (!task.inputs || Object.keys(task.inputs).length === 0) {
-            warnings.push('Task has no inputs defined');
-        }
-
-        // Validate feedback history
-        if (!Array.isArray(task.feedbackHistory)) {
-            errors.push('Task feedback history must be an array');
-        }
-
-        return {
-            isValid: errors.length === 0,
-            errors,
-            warnings: warnings.length > 0 ? warnings : undefined
+    public async handleCompletion(params: {
+        store: TeamStore;
+        agent: AgentType;
+        task: TaskType;
+        result: unknown;
+        metadata?: {
+            llmUsageStats?: LLMUsageStats;
+            costDetails?: CostDetails;
         };
+    }): Promise<HandlerResult<TaskType>> {
+        try {
+            return await this.taskManager.completeTask(params);
+        } catch (error) {
+            logger.error('Error handling task completion:', error);
+            throw error;
+        }
+    }
+
+    // ─── Error Handling ─────────────────────────────────────────────────────────
+
+    public async handleError(params: {
+        store: TeamStore;
+        task: TaskType;
+        error: ErrorType;
+        context?: Record<string, unknown>;
+    }): Promise<HandlerResult<void>> {
+        try {
+            return await this.taskManager.handleTaskError(params);
+        } catch (error) {
+            logger.error('Error handling task error:', error);
+            throw error;
+        }
+    }
+
+    // ─── Task Validation ────────────────────────────────────────────────────────
+
+    public async handleValidation(
+        task: TaskType,
+        context?: Record<string, unknown>
+    ): Promise<TaskValidationResult> {
+        try {
+            return await this.taskManager.validateTask(task, context);
+        } catch (error) {
+            logger.error('Error validating task:', error);
+            throw error;
+        }
+    }
+
+    // ─── Task Blocking ─────────────────────────────────────────────────────────
+
+    public async handleBlocking(params: {
+        store: TeamStore;
+        task: TaskType;
+        error: ErrorType;
+        blockingReason?: string;
+    }): Promise<HandlerResult<void>> {
+        try {
+            return await this.taskManager.handleTaskBlocking(params);
+        } catch (error) {
+            logger.error('Error handling task blocking:', error);
+            throw error;
+        }
+    }
+
+    // ─── Task Timeout ──────────────────────────────────────────────────────────
+
+    public async handleTimeout(params: {
+        store: TeamStore;
+        task: TaskType;
+        timeoutConfig: {
+            limit: number;
+            type: 'execution' | 'response' | 'total';
+        };
+        elapsedTime: number;
+    }): Promise<HandlerResult<void>> {
+        try {
+            return await this.taskManager.handleTaskTimeout(params);
+        } catch (error) {
+            logger.error('Error handling task timeout:', error);
+            throw error;
+        }
+    }
+
+    // ─── Resource Exhaustion ───────────────────────────────────────────────────
+
+    public async handleResourceExhaustion(params: {
+        store: TeamStore;
+        task: TaskType;
+        resourceStats: {
+            memory: number;
+            tokens: number;
+            cpuTime?: number;
+        };
+        threshold: {
+            memory?: number;
+            tokens?: number;
+            cpuTime?: number;
+        };
+    }): Promise<HandlerResult<void>> {
+        try {
+            return await this.taskManager.handleResourceExhaustion(params);
+        } catch (error) {
+            logger.error('Error handling resource exhaustion:', error);
+            throw error;
+        }
     }
 }
 
 // Export singleton instance
 export const taskHandler = new TaskHandler();
+export default taskHandler;

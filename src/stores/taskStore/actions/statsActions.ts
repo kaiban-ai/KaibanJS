@@ -1,6 +1,6 @@
 /**
  * @file statsActions.ts
- * @path src/stores/taskStore/actions/statsActions.ts
+ * @path KaibanJS/src/stores/taskStore/actions/statsActions.ts
  * @description Statistics and metrics tracking actions for task store
  */
 

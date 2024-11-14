@@ -1,12 +1,18 @@
 /**
  * @file index.ts
- * @path src/stores/teamStore/index.ts
+ * @path KaibanJS/src/stores/teamStore/index.ts
  * @description Main team store implementation and exports
  */
 
 import { create } from 'zustand';
-import { MessageHistoryManager } from '@/utils/managers/messageHistoryManager';
+import { logger } from '@/utils/core/logger';
+import { errorHandler } from '@/utils/handlers/errorHandler';
+import { teamHandler } from '@/utils/handlers/teamHandler';
+import { StatusManager } from '@/utils/managers/statusManager';
 import { setupWorkflowController } from '../workflowController';
+import { MessageHistoryManager } from '@/utils/managers/messageHistoryManager';
+
+// Store configuration and utils
 import { createInitialState } from './state';
 import { createMiddlewareChain } from './middleware/middleware';
 import { StoreUtils } from './utils/storeUtils';
@@ -33,7 +39,8 @@ import type {
  */
 export const createTeamStore = (initialState: Partial<TeamState> = {}) => {
     // Create message history manager
-    const messageHistoryManager = new MessageHistoryManager();
+    const messageHistory = new MessageHistoryManager();
+    const statusManager = StatusManager.getInstance();
 
     /**
      * Store creator function
@@ -43,13 +50,13 @@ export const createTeamStore = (initialState: Partial<TeamState> = {}) => {
         const typeSafeGet = StoreUtils.createStateGetter(get);
         const typeSafeSet = StoreUtils.createStateSetter(set);
 
-        // Create all actions
+        // Create all actions with dependencies injected
         const coreActions = createCoreActions(typeSafeGet, typeSafeSet);
         const workflowActions = createWorkflowActions(typeSafeGet, typeSafeSet);
         const taskActions = createTaskActions(typeSafeGet, typeSafeSet);
         const agentActions = createAgentActions(typeSafeGet, typeSafeSet);
         const errorActions = createErrorActions(typeSafeGet, typeSafeSet);
-        const messageActions = createMessageActions(typeSafeGet, typeSafeSet, messageHistoryManager);
+        const messageActions = createMessageActions(typeSafeGet, typeSafeSet, messageHistory);
         const toolActions = createToolActions(typeSafeGet, typeSafeSet);
 
         // Combine all actions with initial state
@@ -58,14 +65,56 @@ export const createTeamStore = (initialState: Partial<TeamState> = {}) => {
             ...createInitialState(),
             ...initialState,
 
-            // Actions
+            // Core team functionality
             ...coreActions,
             ...workflowActions,
             ...taskActions,
             ...agentActions,
             ...errorActions,
             ...messageActions,
-            ...toolActions
+            ...toolActions,
+
+            // Error handling integration
+            handleError: async (error: Error, context?: Record<string, unknown>) => {
+                logger.error('Team store error:', error);
+                await errorHandler.handleError({
+                    error,
+                    context,
+                    store: {
+                        getState: typeSafeGet,
+                        setState: typeSafeSet,
+                        prepareNewLog: coreActions.prepareNewLog
+                    }
+                });
+            },
+
+            // Team handler integration
+            handleTeamOperation: async (operationType: string, params: Record<string, unknown>) => {
+                try {
+                    const state = typeSafeGet();
+                    const result = await teamHandler.handleWorkflowStart(state as any, params);
+                    logger.info(`Team operation ${operationType} completed:`, result);
+                    return result;
+                } catch (error) {
+                    await errorActions.handleWorkflowError({ 
+                        task: null,
+                        error: error instanceof Error ? error : new Error(String(error))
+                    });
+                    throw error;
+                }
+            },
+
+            // Resource cleanup
+            cleanup: async () => {
+                logger.info('Cleaning up team store resources');
+                await messageHistory.clear();
+                const state = typeSafeGet();
+                for (const agent of state.agents) {
+                    await agent.cleanup().catch(error => {
+                        logger.error(`Error cleaning up agent ${agent.id}:`, error);
+                    });
+                }
+            }
         };
     };
 
@@ -84,10 +133,11 @@ export const createTeamStore = (initialState: Partial<TeamState> = {}) => {
         
         // Extend destroy method to cleanup resources
         const originalDestroy = proxiedStore.destroy;
-        proxiedStore.destroy = () => {
+        proxiedStore.destroy = async () => {
             controllerCleanup();
             unsubscribe();
-            messageHistoryManager.clear();
+            await messageHistory.clear();
+            await proxiedStore.cleanup();
             originalDestroy();
         };
     }

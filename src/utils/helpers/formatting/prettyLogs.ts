@@ -1,21 +1,28 @@
 /**
  * @file prettyLogs.ts
- * @path src/utils/helpers/formatting/prettyLogs.ts
- * @description Pretty formatting for log output
+ * @path KaibanJS/src/utils/helpers/formatting/prettyLogs.ts
+ * @description Pretty formatting and logging utilities for consistent output format
  */
 
+// Core utilities
 import ansis from "ansis";
-import { logger } from "../../core/logger";
-import { 
+import { logger } from "@/utils/core/logger";
+
+// Import types from canonical locations
+import type { 
     TaskCompletionProps, 
     TaskStatusProps,
     WorkflowStatusProps, 
     WorkflowResultProps 
-} from '../../types/common/logging';
+} from '@/utils/types/common/logging';
 
-/**
- * Format task completion log
- */
+// ─── Format Constants ────────────────────────────────────────────────────────────
+
+const SEPARATOR = '+-----------------------------------------+';
+const LINE_SEP = '|-----------------------------------------|';
+
+// ─── Task Completion Logging ────────────────────────────────────────────────────
+
 export function logPrettyTaskCompletion({
     iterationCount,
     duration,
@@ -28,9 +35,9 @@ export function logPrettyTaskCompletion({
     costDetails,
 }: TaskCompletionProps): void {
     const message = [
-        ansis.black("\n+-----------------------------------------+"),
+        ansis.black("\n" + SEPARATOR),
         ansis.bold(`| Task (${currentTaskNumber}/${totalTasks}) - status changed to ${ansis.green('DONE')}     |`),
-        "|-----------------------------------------|",
+        LINE_SEP,
         ansis.bold("| Summary:"),
         "|",
         ansis.black("| Task: ") + ansis.cyan(taskTitle),
@@ -49,15 +56,14 @@ export function logPrettyTaskCompletion({
         ansis.black("| Calls Count: ") + ansis.green(llmUsageStats.callsCount.toString()),
         ansis.black("| Calls Error Count: ") + ansis.green(llmUsageStats.callsErrorCount.toString()),
         ansis.black("| Parsing Errors: ") + ansis.green(llmUsageStats.parsingErrors.toString()),
-        ansis.black("+-----------------------------------------+\n\n"),
+        ansis.black(SEPARATOR + "\n\n"),
     ].join("\n");
     
     logger.info(message);
 }
 
-/**
- * Format task status log
- */
+// ─── Task Status Logging ──────────────────────────────────────────────────────
+
 export function logPrettyTaskStatus({
     currentTaskNumber,
     totalTasks,
@@ -65,33 +71,42 @@ export function logPrettyTaskStatus({
     taskStatus,
     agentName,
 }: TaskStatusProps): void {
-    logger.info(ansis.bold.black("||===========================================||"));
-    logger.info(
-        ansis.bold.black(
-            `|| Task (${currentTaskNumber}/${totalTasks}) - status changed to ${
-                taskStatus === "DONE" ? ansis.green(taskStatus) : ansis.yellow(taskStatus)
-            }`
-        )
+    const header = ansis.bold.black("||===========================================||");
+    const taskInfo = ansis.bold.black(
+        `|| Task (${currentTaskNumber}/${totalTasks}) - status changed to ${
+            taskStatus === "DONE" ? ansis.green(taskStatus) : ansis.yellow(taskStatus)
+        }`
     );
-    logger.info(ansis.bold.black(`|| Title: ${taskTitle}`));
-    logger.info(ansis.bold.black(`|| Agent: ${agentName}`));
-    logger.info(ansis.bold.black("||===========================================||\n\n"));
+    const title = ansis.bold.black(`|| Title: ${taskTitle}`);
+    const agent = ansis.bold.black(`|| Agent: ${agentName}`);
+    const footer = ansis.bold.black("||===========================================||\n\n");
+
+    const message = [
+        header,
+        taskInfo,
+        title,
+        agent,
+        footer
+    ].join("\n");
+
+    logger.info(message);
 }
 
-/**
- * Format workflow status log
- */
+// ─── Workflow Status Logging ───────────────────────────────────────────────────
+
 export function logPrettyWorkflowStatus({ 
     status, 
     message 
 }: WorkflowStatusProps): void {
-    logger.info(`[Workflow Status: ${status}] ${message}`);
+    const formattedStatus = formatWorkflowStatus(status);
+    logger.info(`[Workflow Status: ${formattedStatus}] ${message}`);
 }
 
-/**
- * Format workflow result log
- */
-export function logPrettyWorkflowResult({ metadata }: WorkflowResultProps): void {
+// ─── Workflow Result Logging ───────────────────────────────────────────────────
+
+export function logPrettyWorkflowResult({ 
+    metadata 
+}: WorkflowResultProps): void {
     const { 
         result, 
         duration, 
@@ -104,9 +119,9 @@ export function logPrettyWorkflowResult({ metadata }: WorkflowResultProps): void
     } = metadata;
 
     const message = [
-        ansis.black("\n+-----------------------------------------+"),
+        ansis.black("\n" + SEPARATOR),
         ansis.bold(`| WORKFLOW - ${ansis.green("FINISH")}                       |`),
-        "|-----------------------------------------|",
+        LINE_SEP,
         ansis.bold("| Summary:"),
         "|",
         ansis.black("| Team: ") + ansis.cyan(teamName),
@@ -125,8 +140,35 @@ export function logPrettyWorkflowResult({ metadata }: WorkflowResultProps): void
         ansis.black("| Calls Count: ") + ansis.red(llmUsageStats.callsCount.toString()),
         ansis.black("| Calls Error Count: ") + ansis.red(llmUsageStats.callsErrorCount.toString()),
         ansis.black("| Parsing Errors: ") + ansis.red(llmUsageStats.parsingErrors.toString()),
-        ansis.black("+-----------------------------------------+\n"),
+        ansis.black(SEPARATOR + "\n"),
     ].join("\n");
 
     logger.info(message);
+}
+
+// ─── Private Helper Functions ────────────────────────────────────────────────────
+
+/**
+ * Format workflow status with appropriate colors
+ */
+function formatWorkflowStatus(status: string): string {
+    switch (status.toLowerCase()) {
+        case 'running':
+            return ansis.cyan(status);
+        case 'finished':
+            return ansis.green(status);
+        case 'errored':
+            return ansis.red(status);
+        case 'blocked':
+            return ansis.yellow(status);
+        default:
+            return status;
+    }
+}
+
+/**
+ * Format costs with consistent decimal places
+ */
+function formatCost(value: number): string {
+    return value.toFixed(4);
 }

@@ -1,6 +1,6 @@
 /**
  * @file tracking.ts
- * @path src/utils/types/task/tracking.ts
+ * @path KaibanJS/src/utils/types/task/tracking.ts
  * @description Task tracking and monitoring interfaces
  */
 

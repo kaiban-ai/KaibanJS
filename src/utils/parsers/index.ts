@@ -1,6 +1,6 @@
 /**
  * @file index.ts
- * @path src/utils/parsers/index.ts
+ * @path KaibanJS/src/utils/parsers/index.ts
  * @description Parser implementations exports
  */
 

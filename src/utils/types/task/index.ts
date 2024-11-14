@@ -1,6 +1,6 @@
 /**
  * @file index.ts
- * @path src/utils/types/task/index.ts
+ * @path KaibanJS/src/utils/types/task/index.ts
  * @description Centralized export file for task-related types, interfaces, and utilities.
  */
 

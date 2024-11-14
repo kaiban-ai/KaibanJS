@@ -1,6 +1,6 @@
 /**
  * @file index.ts
- * @path src/utils/helpers/formatting/index.ts
+ * @path KaibanJS/src/utils/helpers/formatting/index.ts
  * @description Formatting helper functions exports
  */
 

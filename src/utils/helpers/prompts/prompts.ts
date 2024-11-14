@@ -1,6 +1,6 @@
 /**
  * @file prompts.ts
- * @path src/utils/helpers/prompts/prompts.ts
+ * @path KaibanJS/src/utils/helpers/prompts/prompts.ts
  * @description Implementation of agent prompt templates
  */
 

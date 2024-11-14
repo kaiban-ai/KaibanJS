@@ -1,12 +1,10 @@
-
 /**
  * @file index.ts
- * @path src/types/store/index.ts
- * @description Central export point for store-base-related types and interfaces
+ * @path KaibanJS/src/types/store/index.ts
+ * @description Central export point for store-base-related types, interfaces, and utilities
  */
 
-
-// Importing and re-exporting all types, interfaces, and utilities from base.ts
+// Re-exporting all base store types and utilities from base.ts
 export {
     BaseStoreState,
     BaseStoreMethods,
@@ -24,3 +22,21 @@ export {
     StoreEvent,
     StoreTypeGuards
 } from './base';
+
+// Re-exporting status-related types and utilities from status.ts
+export {
+    StatusEntity,
+    StatusType,
+    StatusHistoryEntry,
+    StatusChangeEvent,
+    StatusTransitionContext,
+    StatusTransitionRule,
+    StatusChangeCallback,
+    StatusManagerConfig,
+    StatusValidationResult,
+    StatusErrorType,
+    StatusError
+} from './status';
+
+// Re-exporting status type guards from statusGuards.ts
+export { StatusTypeGuards } from './statusGuards';

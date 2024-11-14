@@ -1,6 +1,6 @@
 /**
  * @file prompts.ts
- * @path src/utils/types/agent/prompts.ts
+ * @path KaibanJS/src/utils/types/agent/prompts.ts
  * @description Type definitions for agent prompts and templates
  */
 
@@ -8,191 +8,100 @@ import type { IBaseAgent } from '@/utils/types/agent';
 import type { TaskType } from '@/utils/types/task';
 import type { Output } from '@/utils/types/llm';
 
-/**
- * Base prompt parameters interface
- */
+// Base prompt parameters interface
 export interface BasePromptParams {
-    /** Agent instance */
-    agent: IBaseAgent;
-    
-    /** Task being processed */
-    task: TaskType;
+    agent: IBaseAgent; // Agent instance
+    task: TaskType; // Task being processed
 }
 
-/**
- * System message parameters
- */
+// System message parameters
 export interface SystemMessageParams extends BasePromptParams {
-    /** Additional system context */
-    systemContext?: string;
+    systemContext?: string; // Additional system context
 }
 
-/**
- * Initial message parameters
- */
+// Initial message parameters
 export interface InitialMessageParams extends BasePromptParams {
-    /** Additional context */
-    context?: string;
+    context?: string; // Additional context
 }
 
-/**
- * Invalid JSON feedback parameters
- */
+// Invalid JSON feedback parameters
 export interface InvalidJSONFeedbackParams extends BasePromptParams {
-    /** Raw LLM output */
-    llmOutput: string;
+    llmOutput: string; // Raw LLM output
 }
 
-/**
- * Thought with self-question parameters
- */
+// Thought with self-question parameters
 export interface ThoughtWithSelfQuestionParams extends BasePromptParams {
-    /** Thought content */
-    thought: string;
-    
-    /** Question asked */
-    question: string;
-    
-    /** Parsed LLM output */
-    parsedLLMOutput: Output;
+    thought: string; // Thought content
+    question: string; // Question asked
+    parsedLLMOutput: Output; // Parsed LLM output
 }
 
-/**
- * Thought feedback parameters
- */
+// Thought feedback parameters
 export interface ThoughtFeedbackParams extends BasePromptParams {
-    /** Thought content */
-    thought: string;
-    
-    /** Parsed LLM output */
-    parsedLLMOutput: Output;
+    thought: string; // Thought content
+    parsedLLMOutput: Output; // Parsed LLM output
 }
 
-/**
- * Self question parameters
- */
+// Self question parameters
 export interface SelfQuestionParams extends BasePromptParams {
-    /** Question content */
-    question: string;
-    
-    /** Parsed LLM output */
-    parsedLLMOutput: Output;
+    question: string; // Question content
+    parsedLLMOutput: Output; // Parsed LLM output
 }
 
-/**
- * Tool result parameters
- */
+// Tool result parameters
 export interface ToolResultParams extends BasePromptParams {
-    /** Tool execution result */
-    toolResult: string;
-    
-    /** Parsed LLM output */
-    parsedLLMOutput: Output;
+    toolResult: string; // Tool execution result
+    parsedLLMOutput: Output; // Parsed LLM output
 }
 
-/**
- * Tool error parameters
- */
+// Tool error parameters
 export interface ToolErrorParams extends BasePromptParams {
-    /** Tool name */
-    toolName: string;
-    
-    /** Error that occurred */
-    error: Error;
-    
-    /** Parsed LLM output */
-    parsedLLMOutput: Output;
+    toolName: string; // Tool name
+    error: Error; // Error that occurred
+    parsedLLMOutput: Output; // Parsed LLM output
 }
 
-/**
- * Tool not exist parameters
- */
+// Tool not exist parameters
 export interface ToolNotExistParams extends BasePromptParams {
-    /** Requested tool name */
-    toolName: string;
-    
-    /** Parsed LLM output */
-    parsedLLMOutput: Output;
+    toolName: string; // Requested tool name
+    parsedLLMOutput: Output; // Parsed LLM output
 }
 
-/**
- * Force final answer parameters
- */
+// Force final answer parameters
 export interface ForceFinalAnswerParams extends BasePromptParams {
-    /** Current iteration */
-    iterations: number;
-    
-    /** Maximum iterations */
-    maxAgentIterations: number;
+    iterations: number; // Current iteration
+    maxAgentIterations: number; // Maximum iterations
 }
 
-/**
- * Feedback message parameters
- */
+// Feedback message parameters
 export interface FeedbackMessageParams extends BasePromptParams {
-    /** Feedback content */
-    feedback: string;
+    feedback: string; // Feedback content
 }
 
-/**
- * Observation feedback parameters
- */
+// Observation feedback parameters
 export interface ObservationFeedbackParams extends BasePromptParams {
-    /** Parsed LLM output */
-    parsedLLMOutput: Output;
+    parsedLLMOutput: Output; // Parsed LLM output
 }
 
-/**
- * Weird output feedback parameters
- */
+// Weird output feedback parameters
 export interface WeirdOutputFeedbackParams extends BasePromptParams {
-    /** Parsed LLM output */
-    parsedLLMOutput: Output;
+    parsedLLMOutput: Output; // Parsed LLM output
 }
 
-/**
- * REACT Champion agent prompts interface
- */
+// REACT Champion agent prompts interface
 export interface REACTChampionAgentPrompts {
-    /** Generate system message */
-    SYSTEM_MESSAGE: (params: SystemMessageParams) => string;
-    
-    /** Generate initial message */
-    INITIAL_MESSAGE: (params: InitialMessageParams) => string;
-    
-    /** Generate invalid JSON feedback */
-    INVALID_JSON_FEEDBACK: (params: InvalidJSONFeedbackParams) => string;
-    
-    /** Generate thought with self-question feedback */
-    THOUGHT_WITH_SELF_QUESTION_FEEDBACK: (params: ThoughtWithSelfQuestionParams) => string;
-    
-    /** Generate thought feedback */
-    THOUGHT_FEEDBACK: (params: ThoughtFeedbackParams) => string;
-    
-    /** Generate self question feedback */
-    SELF_QUESTION_FEEDBACK: (params: SelfQuestionParams) => string;
-    
-    /** Generate tool result feedback */
-    TOOL_RESULT_FEEDBACK: (params: ToolResultParams) => string;
-    
-    /** Generate tool error feedback */
-    TOOL_ERROR_FEEDBACK: (params: ToolErrorParams) => string;
-    
-    /** Generate tool not exist feedback */
-    TOOL_NOT_EXIST_FEEDBACK: (params: ToolNotExistParams) => string;
-    
-    /** Generate observation feedback */
-    OBSERVATION_FEEDBACK: (params: ObservationFeedbackParams) => string;
-    
-    /** Generate weird output feedback */
-    WEIRD_OUTPUT_FEEDBACK: (params: WeirdOutputFeedbackParams) => string;
-    
-    /** Generate force final answer feedback */
-    FORCE_FINAL_ANSWER_FEEDBACK: (params: ForceFinalAnswerParams) => string;
-    
-    /** Generate work on feedback message */
-    WORK_ON_FEEDBACK_FEEDBACK: (params: FeedbackMessageParams) => string;
-
-    /** Additional templates */
-    [key: string]: unknown;
+    SYSTEM_MESSAGE: (params: SystemMessageParams) => string; // Generate system message
+    INITIAL_MESSAGE: (params: InitialMessageParams) => string; // Generate initial message
+    INVALID_JSON_FEEDBACK: (params: InvalidJSONFeedbackParams) => string; // Generate invalid JSON feedback
+    THOUGHT_WITH_SELF_QUESTION_FEEDBACK: (params: ThoughtWithSelfQuestionParams) => string; // Generate thought with self-question feedback
+    THOUGHT_FEEDBACK: (params: ThoughtFeedbackParams) => string; // Generate thought feedback
+    SELF_QUESTION_FEEDBACK: (params: SelfQuestionParams) => string; // Generate self question feedback
+    TOOL_RESULT_FEEDBACK: (params: ToolResultParams) => string; // Generate tool result feedback
+    TOOL_ERROR_FEEDBACK: (params: ToolErrorParams) => string; // Generate tool error feedback
+    TOOL_NOT_EXIST_FEEDBACK: (params: ToolNotExistParams) => string; // Generate tool not exist feedback
+    OBSERVATION_FEEDBACK: (params: ObservationFeedbackParams) => string; // Generate observation feedback
+    WEIRD_OUTPUT_FEEDBACK: (params: WeirdOutputFeedbackParams) => string; // Generate weird output feedback
+    FORCE_FINAL_ANSWER_FEEDBACK: (params: ForceFinalAnswerParams) => string; // Generate force final answer feedback
+    WORK_ON_FEEDBACK_FEEDBACK: (params: FeedbackMessageParams) => string; // Generate work on feedback message
+    [key: string]: unknown; // Additional templates
 }

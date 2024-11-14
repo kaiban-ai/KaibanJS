@@ -1,6 +1,6 @@
 /**
  * @file metadataFactory.ts
- * @path src/utils/factories/metadataFactory.ts
+ * @path KaibanJS/src/utils/factories/metadataFactory.ts
  * @description Factory for creating metadata objects for various system entities
  * 
  * @packageDocumentation
@@ -19,7 +19,8 @@ import {
     FunctionCall
 } from '@/utils/types';
 import DefaultFactory from './defaultFactory';
-import { MessageRole } from '@/utils/types/messaging/base'; // Import MessageRole
+import { MessageRole } from '@/utils/types/messaging/base';
+import { PrettyError, LLMInvocationError, LLMConfigurationError } from '@/utils/core/errors';
 
 export class MetadataFactory {
     static forTask(
@@ -59,7 +60,7 @@ export class MetadataFactory {
     }
 
     static forMessage(params: {
-        role: MessageRole; // Changed from string to MessageRole
+        role: MessageRole;
         content: string;
         functionCall?: FunctionCall;
         additionalFields?: Record<string, unknown>;
@@ -121,14 +122,22 @@ export class MetadataFactory {
         };
     }
 
-    static forError(error: Error, context?: Record<string, unknown>): Record<string, unknown> {
-        return {
-            error: {
+    static forError(
+        error: Error | Record<string, unknown>,
+        additionalMetadata: Record<string, unknown> = {}
+    ): Record<string, unknown> {
+        // Create base error data depending on the type of input
+        const errorData = error instanceof Error 
+            ? {
                 message: error.message,
                 name: error.name,
                 stack: error.stack
-            },
-            context,
+            }
+            : error;
+
+        return {
+            error: errorData,
+            ...additionalMetadata,
             timestamp: Date.now(),
             llmUsageStats: DefaultFactory.createLLMUsageStats()
         };

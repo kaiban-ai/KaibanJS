@@ -1,6 +1,6 @@
 /**
  * @file coreActions.ts
- * @path src/stores/taskStore/actions/coreActions.ts
+ * @path KaibanJS/src/stores/taskStore/actions/coreActions.ts
  * @description Core task store actions for CRUD operations and status management
  */
 
@@ -9,7 +9,7 @@ import { LogCreator } from '@/utils/factories/logCreator';
 import { calculateTaskCost } from '@/utils/helpers/costs/llmCostCalculator';
 import { getTaskTitleForLogs } from '@/utils/helpers/tasks';
 import { calculateTaskStats } from '@/utils/helpers/stats';
-import { StatusManager } from '@/utils/managers/statusManager';
+import { StatusManager } from '@/utils/managers/core/StatusManager';
 
 import { 
     TASK_STATUS_enum, 

@@ -1,47 +1,55 @@
 /**
  * @file index.ts
- * @path src/stores/taskStore/index.ts
- * @description Main task store implementation integrating all task store modules
+ * @path KaibanJS/src/stores/taskStore/index.ts
+ * @description Main task store implementation and exports
  */
 
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { logger } from '@/utils/core/logger';
+import { errorHandler } from '@/utils/handlers/errorHandler';
+import { taskHandler } from '@/utils/handlers/taskHandler';
+import { getTaskTitleForLogs } from '@/utils/helpers/tasks/taskUtils';
+import { StatusManager } from '@/utils/managers/statusManager';
 
-import { TaskStoreState, initialTaskState, isTaskStoreState } from './state';
-import { createActions, TaskStoreActions } from './actions/index';
+import { initialTaskState, isTaskStoreState } from './state';
+import { createActions } from './actions';
 import { selectors } from './selectors';
 
-// Combined store type with all actions and selectors
-export interface TaskStore extends TaskStoreState, TaskStoreActions {
-    selectors: typeof selectors;
-    reset: () => void;
-    destroy: () => void;
-}
+import type { TaskStore } from '@/utils/types/task/store';
 
-// Create the task store with middleware
+/**
+ * Creates the task store with all actions and middleware
+ */
 export const createTaskStore = () => create<TaskStore>()(
     devtools(
         subscribeWithSelector((set, get) => ({
+            // Include initial state
             ...initialTaskState,
+
+            // Include actions
             ...createActions(get, set),
+
+            // Include selectors
             selectors,
 
-            reset: () => {
-                logger.info('Resetting task store to initial state');
-                set(initialTaskState);
-            },
-
+            // Clean up resources
             destroy: () => {
-                logger.info('Destroying task store');
-                set(state => ({
-                    ...state,
-                    tasks: [],
-                    agents: [],
-                    workflowLogs: [],
-                    currentTask: null,
-                    lastError: null
-                }));
+                const state = get();
+                logger.info(`Cleaning up task store with ${state.tasks.length} tasks`);
+                state.tasks.forEach(task => {
+                    if (task.status === 'DOING') {
+                        errorHandler.handleTaskError({
+                            task,
+                            error: new Error('Task cleanup: Force stopping task'),
+                            context: {
+                                phase: 'cleanup',
+                                taskId: task.id,
+                                taskTitle: getTaskTitleForLogs(task)
+                            }
+                        });
+                    }
+                });
             }
         })),
         {
@@ -58,12 +66,6 @@ export const createTaskStore = () => create<TaskStore>()(
                     nan: true,
                     set: true,
                     map: true,
-                },
-                replacer: (key: string, value: unknown) => {
-                    if (key === 'apiKey' || key.includes('secret')) {
-                        return '[REDACTED]';
-                    }
-                    return value;
                 }
             }
         }
@@ -81,6 +83,7 @@ export const subscribeToTaskStore = useTaskStore.subscribe;
 
 // Setup store monitoring and validation
 if (process.env.NODE_ENV !== 'production') {
+    // Monitor state changes in development
     subscribeToTaskStore(
         state => state,
         (state) => {
@@ -91,8 +94,13 @@ if (process.env.NODE_ENV !== 'production') {
     );
 }
 
-// Re-export types
-export type { TaskStoreState } from './state';
-export type { TaskStoreActions, CoreActions, ErrorActions, StatsActions } from './actions/index';
+// Re-export types and actions
+export type { TaskStore } from '@/utils/types/task/store';
+export type {
+    TaskType,
+    TaskResult,
+    TaskValidationResult
+} from '@/utils/types/task/base';
 export { selectors };
+
 export default useTaskStore;

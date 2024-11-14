@@ -1,6 +1,6 @@
 /** 
  * @file parser.ts
- * @path src/types/common/parser.ts
+ * @path KaibanJS/src/types/common/parser.ts
  * @description Type definitions for parsing operations
  */
 

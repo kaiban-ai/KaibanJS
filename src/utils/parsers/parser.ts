@@ -1,6 +1,6 @@
 /**
  * @file parser.ts
- * @path src/utils/parsers/parser.ts
+ * @path KaibanJS/src/utils/parsers/parser.ts
  * @description JSON parsing and recovery utilities
  */
 

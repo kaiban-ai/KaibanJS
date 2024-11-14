@@ -1,6 +1,6 @@
 /**
  * @file stats.ts
- * @path src/utils/types/workflow/stats.ts
+ * @path KaibanJS/src/utils/types/workflow/stats.ts
  * @description Statistical type definitions for workflow metrics and costs
  */
 

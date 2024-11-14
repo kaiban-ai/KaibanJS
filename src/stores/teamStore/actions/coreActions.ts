@@ -1,6 +1,6 @@
 /**
  * @file coreActions.ts
- * @path src/stores/teamStore/actions/coreActions.ts
+ * @path KaibanJS/src/stores/teamStore/actions/coreActions.ts
  * @description Core actions for team store state management
  */
 

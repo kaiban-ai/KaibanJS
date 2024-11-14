@@ -1,12 +1,12 @@
 /**
  * @file logging.ts
- * @path src/utils/types/common/logging.ts
- * @description Type definitions for logging and log formatting
+ * @path KaibanJS/src/utils/types/common/logging.ts
+ * @description Core logging types and interfaces
  */
-import { CostDetails } from "@/utils";
-import type { LLMUsageStats } from "@/utils/types/llm";
 
-export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent';
+// ─── Core Logging Types ────────────────────────────────────────────────────────
+
+export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error';
 
 export interface LoggerConfig {
     level?: LogLevel;
@@ -16,95 +16,43 @@ export interface LoggerConfig {
     serializer?: (obj: unknown) => string;
 }
 
-export interface TaskCompletionProps {
-    llmUsageStats: LLMUsageStats;
-    iterationCount: number;
-    duration: number;
-    agentName: string;
-    agentModel: string;
-    taskTitle: string;
-    currentTaskNumber: number;
-    totalTasks: number;
-    costDetails: CostDetails;
-}
-
-export interface TaskStatusProps {
-    currentTaskNumber: number;
-    totalTasks: number;
-    taskTitle: string;
-    taskStatus: string;
-    agentName: string;
-}
-
-export interface WorkflowStatusProps {
-    status: string;
-    message: string;
-}
-
-export interface WorkflowResultProps {
-    metadata: {
-        result: string;
-        duration: number;
-        llmUsageStats: LLMUsageStats;
-        iterationCount: number;
-        costDetails: CostDetails;
-        teamName: string;
-        taskCount: number;
-        agentCount: number;
-    };
-}
+// ─── Formatting Types ─────────────────────────────────────────────────────────
 
 export interface LogFormattingOptions {
-    colors?: { [key in LogLevel]?: string };
-    timestampFormat?: string;
-    useEmoji?: boolean;
-    formatters?: { [key: string]: (value: unknown) => string };
+    timestamp?: boolean;
+    colorize?: boolean;
+    padLevels?: boolean;
+    levelFormatter?: (level: string) => string;
+    messageFormatter?: (message: unknown) => string;
 }
+
+// ─── Destination Types ────────────────────────────────────────────────────────
 
 export interface LogDestinationConfig {
-    console?: { enabled: boolean; format?: string; level?: LogLevel };
-    file?: { enabled: boolean; path?: string; rotationSize?: number; maxFiles?: number };
-    custom?: Array<{ handler: (message: string, level: LogLevel) => void; level?: LogLevel }>;
+    type: 'console' | 'file' | 'remote';
+    level?: LogLevel;
+    format?: LogFormattingOptions;
+    options?: Record<string, unknown>;
 }
+
+// ─── Filter Types ───────────────────────────────────────────────────────────
 
 export interface LogFilterOptions {
-    minLevel?: LogLevel;
-    contextOverrides?: Record<string, LogLevel>;
-    patterns?: { include?: RegExp[]; exclude?: RegExp[] };
-    contextFilters?: { [key: string]: (value: unknown) => boolean };
+    levels?: LogLevel[];
+    excludePatterns?: RegExp[];
+    includePatterns?: RegExp[];
+    contextFilter?: (context: Record<string, unknown>) => boolean;
 }
 
-export const LogTypeGuards = {
-    isLogLevel: (value: unknown): value is LogLevel => {
-        return typeof value === 'string' && 
-               ['trace', 'debug', 'info', 'warn', 'error', 'silent'].includes(value);
-    },
-    isTaskCompletionProps: (value: unknown): value is TaskCompletionProps => {
-        if (!value || typeof value !== 'object') return false;
-        const props = value as Partial<TaskCompletionProps>;
-        return (
-            'llmUsageStats' in props &&
-            'iterationCount' in props &&
-            'duration' in props &&
-            'agentName' in props &&
-            'agentModel' in props &&
-            'taskTitle' in props &&
-            'currentTaskNumber' in props &&
-            'totalTasks' in props &&
-            'costDetails' in props
-        );
-    },
-    isWorkflowResultProps: (value: unknown): value is WorkflowResultProps => {
-        if (!value || typeof value !== 'object') return false;
-        const props = value as Partial<WorkflowResultProps>;
-        return (
-            'metadata' in props &&
-            props.metadata !== undefined &&
-            typeof props.metadata === 'object' &&
-            'result' in props.metadata &&
-            'duration' in props.metadata &&
-            'llmUsageStats' in props.metadata &&
-            'costDetails' in props.metadata
-        );
-    }
-};
+// ─── Type Guard Functions ────────────────────────────────────────────────────
+
+export function isLogLevel(level: unknown): level is LogLevel {
+    return typeof level === 'string' && 
+           ['trace', 'debug', 'info', 'warn', 'error'].includes(level);
+}
+
+export function isLoggerConfig(config: unknown): config is LoggerConfig {
+    return typeof config === 'object' && 
+           config !== null &&
+           (!('level' in config) || typeof config.level === 'string');
+}

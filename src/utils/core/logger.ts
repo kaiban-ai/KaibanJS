@@ -1,21 +1,16 @@
 /**
  * @file logger.ts
- * @path src/utils/core/logger.ts
- * @description Core logging implementation
+ * @path KaibanJS/src/utils/core/logger.ts
+ * @description Core logging implementation using LogManager
  */
 
 import log from 'loglevel';
-import type { 
-    LogLevel, 
-    LoggerConfig,
-    LogFormattingOptions,
-    LogDestinationConfig,
-    LogFilterOptions
-} from '@/utils/types/common/logging';
+import { LogManager } from '../managers/core/LogManager';
+import type { LogLevel, LoggerConfig } from '@/utils/types/common/logging';
+import { isLogLevel, isLoggerConfig } from '@/utils/types/common/logging';
 
-/**
- * Default logger configuration
- */
+// ─── Configuration ───────────────────────────────────────────────────────────
+
 const DEFAULT_CONFIG: Required<LoggerConfig> = {
     level: 'info',
     timestamp: true,
@@ -26,53 +21,52 @@ const DEFAULT_CONFIG: Required<LoggerConfig> = {
         typeof obj === 'object' ? JSON.stringify(obj, null, 2) : String(obj)
 };
 
-/**
- * Configure the logger
- */
+// ─── Logger Implementation ────────────────────────────────────────────────────
+
 export function configureLogger(config: LoggerConfig = {}): void {
     const finalConfig = { ...DEFAULT_CONFIG, ...config };
-    
-    // Set log level
+    if (!isLoggerConfig(finalConfig)) {
+        throw new Error('Invalid logger configuration');
+    }
     log.setLevel(finalConfig.level);
-
-    // Override logging methods to add formatting
-    const originalFactory = log.methodFactory;
-    log.methodFactory = function (methodName, logLevel, loggerName) {
-        const rawMethod = originalFactory(methodName, logLevel, loggerName);
-        
-        return function (message: unknown) {
-            let formattedMessage = typeof message === 'string' 
-                ? message 
-                : finalConfig.serializer(message);
-
-            if (finalConfig.showLevel) {
-                formattedMessage = finalConfig.formatter(methodName, formattedMessage);
-            }
-
-            rawMethod(formattedMessage);
-        };
-    };
-
-    log.setLevel(log.getLevel()); // Apply factory changes
 }
 
-/**
- * Set the log level
- */
 export function setLogLevel(level: LogLevel): void {
-    const logLevel = level.toUpperCase() as keyof typeof log.levels;
-    log.setLevel(log.levels[logLevel]);
+    if (!isLogLevel(level)) {
+        throw new Error('Invalid log level');
+    }
+    log.setLevel(level);
 }
 
-/**
- * Create a named logger instance
- */
 export function createLogger(name: string) {
-    return log.getLogger(name);
+    return {
+        ...log.getLogger(name),
+        error: (message: unknown, metadata?: Record<string, unknown>) => {
+            const logEntry = LogManager.createMessageLog({
+                role: 'system',
+                content: String(message),
+                metadata
+            });
+            log.error(logEntry.logDescription);
+        },
+        warn: (message: unknown, metadata?: Record<string, unknown>) => {
+            const logEntry = LogManager.createMessageLog({
+                role: 'system',
+                content: String(message),
+                metadata
+            });
+            log.warn(logEntry.logDescription);
+        },
+        info: (message: unknown, metadata?: Record<string, unknown>) => {
+            const logEntry = LogManager.createMessageLog({
+                role: 'system',
+                content: String(message),
+                metadata
+            });
+            log.info(logEntry.logDescription);
+        }
+    };
 }
 
 // Export configured logger
-export const logger = log;
-
-// Initial configuration
-configureLogger();
+export const logger = createLogger('core');

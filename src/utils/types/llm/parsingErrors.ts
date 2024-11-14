@@ -1,6 +1,6 @@
 /**
  * @file parsingErrors.ts
- * @path src/utils/types/llm/parsingErrors.ts
+ * @path KaibanJS/src/utils/types/llm/parsingErrors.ts
  * @description Types for LLM output parsing errors and handlers
  */
 

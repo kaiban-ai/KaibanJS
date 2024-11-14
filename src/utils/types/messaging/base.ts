@@ -1,6 +1,6 @@
 /**
  * @file base.ts
- * @path src/utils/types/messaging/base.ts
+ * @path KaibanJS/src/utils/types/messaging/base.ts
  */
 
 import type { LLMUsageStats } from "../llm";

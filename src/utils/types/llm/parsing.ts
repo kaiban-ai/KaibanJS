@@ -1,6 +1,6 @@
 /**
  * @file parsing.ts
- * @path src/utils/types/llm/parsing.ts
+ * @path KaibanJS/src/utils/types/llm/parsing.ts
  * @description Centralized LLM parsing types and interfaces
  */
 

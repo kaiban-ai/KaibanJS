@@ -1,8 +1,10 @@
 /**
  * @file enums.ts
- * @path src/types/common/enums.ts
+ * @path KaibanJS/src/utils/types/common/enums.ts
  * @description Core enumeration types used throughout the application
  */
+
+// ─── Status Enums ────────────────────────────────────────────────────────────
 
 export enum AGENT_STATUS_enum {
     IDLE = "IDLE",
@@ -83,16 +85,30 @@ export enum MESSAGE_LOG_TYPE_enum {
     FUNCTION = 'FunctionMessage'
 }
 
+// ─── Log Level Enum ──────────────────────────────────────────────────────────
+
+export enum LogLevel {
+  DEBUG = 'debug',
+  INFO = 'info',
+  WARN = 'warn',
+  ERROR = 'error'
+}
+
+// ─── Enum Utility Functions ──────────────────────────────────────────────────
+
 export const EnumUtils = {
     getValues: <T>(enumObj: { [key: string]: T }): T[] => {
         return Object.values(enumObj).filter(value => typeof value === 'string') as T[];
     },
+    
     isValidEnumValue: <T>(enumObj: { [key: string]: T }, value: unknown): value is T => {
         return Object.values(enumObj).includes(value as T);
     },
+    
     getKeyFromValue: <T>(enumObj: { [key: string]: T }, value: T): string | undefined => {
         return Object.keys(enumObj).find(key => enumObj[key] === value);
     },
+    
     toRecord: <T extends string | number>(enumObj: { [key: string]: T }): Record<string, T> => {
         return Object.entries(enumObj).reduce((acc, [key, value]) => {
             if (typeof value === 'string' || typeof value === 'number') {
@@ -103,17 +119,43 @@ export const EnumUtils = {
     }
 };
 
+// ─── Type Guards ────────────────────────────────────────────────────────────
+
 export const EnumTypeGuards = {
     isAgentStatus: (status: unknown): status is keyof typeof AGENT_STATUS_enum => {
         return typeof status === 'string' && status in AGENT_STATUS_enum;
     },
+
+    isMessageStatus: (status: unknown): status is keyof typeof MESSAGE_STATUS_enum => {
+        return typeof status === 'string' && status in MESSAGE_STATUS_enum;
+    },
+
     isTaskStatus: (status: unknown): status is keyof typeof TASK_STATUS_enum => {
         return typeof status === 'string' && status in TASK_STATUS_enum;
     },
+
     isWorkflowStatus: (status: unknown): status is keyof typeof WORKFLOW_STATUS_enum => {
         return typeof status === 'string' && status in WORKFLOW_STATUS_enum;
     },
+
     isFeedbackStatus: (status: unknown): status is keyof typeof FEEDBACK_STATUS_enum => {
         return typeof status === 'string' && status in FEEDBACK_STATUS_enum;
+    },
+
+    isValidStatusForEntity: (status: unknown, entity: string): boolean => {
+        switch (entity) {
+            case 'agent':
+                return EnumTypeGuards.isAgentStatus(status);
+            case 'message':
+                return EnumTypeGuards.isMessageStatus(status);
+            case 'task':
+                return EnumTypeGuards.isTaskStatus(status);
+            case 'workflow':
+                return EnumTypeGuards.isWorkflowStatus(status);
+            case 'feedback':
+                return EnumTypeGuards.isFeedbackStatus(status);
+            default:
+                return false;
+        }
     }
 };

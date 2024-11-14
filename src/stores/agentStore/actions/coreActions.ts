@@ -1,25 +1,36 @@
 /**
  * @file coreActions.ts
- * @path src/stores/agentStore/actions/coreActions.ts
+ * @path KaibanJS/src/stores/agentStore/actions/coreActions.ts
  * @description Core agent store actions for status management and logging
+ * 
+ * @module @stores/agentStore/actions
  */
 
-import { logger } from '@/utils/core/logger';
-import { LogCreator } from '@/utils/factories/logCreator';
-import { AGENT_STATUS_enum } from '@/utils/types/common/enums';
-import { StatusManager } from '@/utils/managers/statusManager';
+// Core utilities
+import { logger } from '../../../utils/core/logger';
+import { LogCreator } from '../../../utils/factories/logCreator';
+import { DefaultFactory } from '../../../utils/factories/defaultFactory';
 
-import { 
-    AgentType, 
+// Managers
+import { StatusManager } from '../../../utils/managers/core/StatusManager';
+
+// Import types from canonical locations
+import type { 
+    AgentType,
     TaskType,
     Log,
-    AgentLogMetadata, 
-    Output 
-} from '@/utils/types';
+    AgentLogMetadata,
+    Output
+} from '../../../utils/types';
 
+import { AGENT_STATUS_enum } from '../../../utils/types/common/enums';
+
+// Local imports
 import { AgentState } from '../state';
 
-// Core action creators for agent status management and logging
+/**
+ * Creates core actions for agent status management and logging
+ */
 export const createCoreActions = (
     get: () => AgentState,
     set: (partial: Partial<AgentState> | ((state: AgentState) => Partial<AgentState>)) => void
@@ -27,77 +38,91 @@ export const createCoreActions = (
     const statusManager = StatusManager.getInstance();
 
     return {
-        // Update agent status and create status log
+        /**
+         * Updates agent status and creates status log
+         */
         handleAgentStatusChange: async (
-            agent: AgentType, 
-            status: keyof typeof AGENT_STATUS_enum
+            agent: AgentType,
+            status: keyof typeof AGENT_STATUS_enum,
+            task: TaskType
         ): Promise<void> => {
-            logger.debug(`Updating agent ${agent.name} status to: ${status}`);
-            
-            const currentTask = get().currentTask;
-            if (!currentTask) {
-                logger.warn('No current task found for status update');
-                return;
-            }
+            logger.debug('agent.status.update', {
+                agentName: agent.name,
+                newStatus: status,
+                component: 'AgentStore'
+            });
 
-            try {
-                await statusManager.transition({
-                    currentStatus: agent.status,
-                    targetStatus: status,
-                    entity: 'agent',
-                    entityId: agent.id,
-                    metadata: {
-                        agentName: agent.name,
-                        taskId: currentTask.id,
-                        taskTitle: currentTask.title
-                    }
-                });
+            await statusManager.transition({
+                currentStatus: agent.status,
+                targetStatus: status,
+                entity: 'agent',
+                entityId: agent.id,
+                metadata: {
+                    previousStatus: agent.status,
+                    timestamp: Date.now()
+                }
+            });
 
-                const log = LogCreator.createAgentLog({
-                    agent,
-                    task: currentTask,
-                    description: `Agent ${agent.name} status changed to ${status}`,
-                    metadata: {
+            const log = LogCreator.createAgentLog({
+                agent,
+                task,
+                description: `Agent ${agent.name} status changed to ${status}`,
+                metadata: {
+                    output: {
+                        llmUsageStats: DefaultFactory.createLLMUsageStats(),
                         previousStatus: agent.status,
-                        newStatus: status,
                         timestamp: Date.now()
-                    },
-                    agentStatus: status,
-                    logType: 'AgentStatusUpdate'
-                });
+                    }
+                },
+                agentStatus: status,
+                logType: 'AgentStatusUpdate'
+            });
 
-                set(state => ({
-                    status,
-                    currentAgent: {
-                        ...agent,
-                        status
-                    },
-                    workflowLogs: [...state.workflowLogs, log]
-                }));
-            } catch (error) {
-                logger.error(`Failed to update agent status: ${error}`);
-            }
+            set(state => ({
+                status,
+                currentAgent: {
+                    ...agent,
+                    status
+                },
+                workflowLogs: [...state.workflowLogs, log]
+            }));
         },
 
-        // Add a new workflow log
+        /**
+         * Adds a new workflow log with proper metadata
+         */
         addWorkflowLog: (log: Log): void => {
+            logger.debug('workflow.log.add', { 
+                logType: log.logType,
+                component: 'AgentStore'
+            });
             set(state => ({
                 workflowLogs: [...state.workflowLogs, log]
             }));
         },
 
-        // Set current agent and task
+        /**
+         * Sets current agent and task with validation
+         */
         setCurrentAgentAndTask: (
             agent: AgentType | null,
             task: TaskType | null
         ): void => {
+            logger.debug('agent.task.set', {
+                agentId: agent?.id,
+                taskId: task?.id,
+                component: 'AgentStore'
+            });
+
             set({
                 currentAgent: agent,
                 currentTask: task
             });
         },
 
-        // Handle agent iteration start
+        /**
+         * Handles agent iteration start with proper status transitions
+         */
         handleIterationStart: async (params: { 
             agent: AgentType;
             task: TaskType; 
@@ -106,43 +131,45 @@ export const createCoreActions = (
         }): Promise<void> => {
             const { agent, task, iterations, maxAgentIterations } = params;
 
-            try {
-                await statusManager.transition({
-                    currentStatus: agent.status,
-                    targetStatus: 'ITERATION_START',
-                    entity: 'agent',
-                    entityId: agent.id,
-                    metadata: { iterations, maxAgentIterations }
-                });
+            await statusManager.transition({
+                currentStatus: agent.status,
+                targetStatus: AGENT_STATUS_enum.ITERATION_START,
+                entity: 'agent',
+                entityId: agent.id,
+                metadata: { iterations, maxAgentIterations }
+            });
 
-                logger.debug(`Starting iteration ${iterations + 1}/${maxAgentIterations} for agent ${agent.name}`);
-                
-                const log = LogCreator.createAgentLog({
-                    agent,
-                    task,
-                    description: `Starting iteration ${iterations + 1}/${maxAgentIterations}`,
-                    metadata: {
-                        iterations,
-                        maxAgentIterations,
-                        timestamp: Date.now()
-                    },
-                    agentStatus: 'ITERATION_START',
-                    logType: 'AgentStatusUpdate'
-                });
+            logger.debug(`Starting iteration ${iterations + 1}/${maxAgentIterations}`);
 
-                set(state => ({
-                    stats: {
-                        ...state.stats,
-                        iterationCount: state.stats.iterationCount + 1
-                    },
-                    workflowLogs: [...state.workflowLogs, log]
-                }));
-            } catch (error) {
-                logger.error(`Failed to start iteration: ${error}`);
-            }
+            const log = LogCreator.createAgentLog({
+                agent,
+                task,
+                description: `Starting iteration ${iterations + 1}/${maxAgentIterations}`,
+                metadata: {
+                    iterations,
+                    maxAgentIterations,
+                    timestamp: Date.now(),
+                    output: {
+                        llmUsageStats: DefaultFactory.createLLMUsageStats()
+                    }
+                },
+                agentStatus: AGENT_STATUS_enum.ITERATION_START,
+                logType: 'AgentStatusUpdate'
+            });
+
+            set(state => ({
+                status: AGENT_STATUS_enum.ITERATION_START,
+                workflowLogs: [...state.workflowLogs, log],
+                stats: {
+                    ...state.stats,
+                    iterationCount: state.stats.iterationCount + 1
+                }
+            }));
         },
 
-        // Handle agent iteration end
+        /**
+         * Handles agent iteration end with proper status transitions
+         */
         handleIterationEnd: async (params: { 
             agent: AgentType; 
             task: TaskType;
@@ -151,39 +178,38 @@ export const createCoreActions = (
         }): Promise<void> => {
             const { agent, task, iterations, maxAgentIterations } = params;
 
-            try {
-                await statusManager.transition({
-                    currentStatus: agent.status,
-                    targetStatus: 'ITERATION_END',
-                    entity: 'agent',
-                    entityId: agent.id,
-                    metadata: { iterations, maxAgentIterations }
-                });
+            await statusManager.transition({
+                currentStatus: agent.status,
+                targetStatus: AGENT_STATUS_enum.ITERATION_END,
+                entity: 'agent',
+                entityId: agent.id,
+                metadata: { iterations, maxAgentIterations }
+            });
 
-                logger.debug(`Completed iteration ${iterations + 1}/${maxAgentIterations} for agent ${agent.name}`);
-                
-                const log = LogCreator.createAgentLog({
-                    agent,
-                    task,
-                    description: `Completed iteration ${iterations + 1}/${maxAgentIterations}`,
-                    metadata: {
-                        iterations,
-                        maxAgentIterations,
-                        timestamp: Date.now()
-                    },
-                    agentStatus: 'ITERATION_END',
-                    logType: 'AgentStatusUpdate'
-                });
+            logger.debug(`Completed iteration ${iterations + 1}/${maxAgentIterations}`);
 
-                set(state => ({
-                    workflowLogs: [...state.workflowLogs, log]
-                }));
-            } catch (error) {
-                logger.error(`Failed to end iteration: ${error}`);
-            }
+            const log = LogCreator.createAgentLog({
+                agent,
+                task,
+                description: `Completed iteration ${iterations + 1}/${maxAgentIterations}`,
+                metadata: {
+                    iterations,
+                    maxAgentIterations,
+                    timestamp: Date.now()
+                },
+                agentStatus: AGENT_STATUS_enum.ITERATION_END,
+                logType: 'AgentStatusUpdate'
+            });
+
+            set(state => ({
+                status: AGENT_STATUS_enum.ITERATION_END,
+                workflowLogs: [...state.workflowLogs, log]
+            }));
         },
 
-        // Handle agent output with proper logging
+        /**
+         * Handles agent output with proper logging and status transitions
+         */
         handleAgentOutput: async (params: {
             agent: AgentType;
             task: TaskType;
@@ -208,67 +234,63 @@ export const createCoreActions = (
 
             switch (type) {
                 case 'thought':
-                    agentStatus = 'THOUGHT';
+                    agentStatus = AGENT_STATUS_enum.THOUGHT;
                     description = `Agent thought: ${output.thought}`;
                     break;
                 case 'observation':
-                    agentStatus = 'OBSERVATION';
+                    agentStatus = AGENT_STATUS_enum.OBSERVATION;
                     description = `Agent observation: ${output.observation}`;
                     break;
                 case 'finalAnswer':
-                    agentStatus = 'FINAL_ANSWER';
+                    agentStatus = AGENT_STATUS_enum.FINAL_ANSWER;
                     description = `Agent final answer: ${output.finalAnswer}`;
                     break;
                 case 'selfQuestion':
-                    agentStatus = 'SELF_QUESTION';
+                    agentStatus = AGENT_STATUS_enum.SELF_QUESTION;
                     description = `Agent self question: ${output.thought}`;
                     break;
                 case 'weird':
-                    agentStatus = 'WEIRD_LLM_OUTPUT';
+                    agentStatus = AGENT_STATUS_enum.WEIRD_LLM_OUTPUT;
                     description = 'Agent produced unexpected output format';
                     break;
                 default:
-                    agentStatus = 'THINKING';
+                    agentStatus = AGENT_STATUS_enum.THINKING;
                     description = 'Agent processing';
             }
 
-            try {
-                await statusManager.transition({
-                    currentStatus: agent.status,
-                    targetStatus: agentStatus,
-                    entity: 'agent',
-                    entityId: agent.id,
-                    metadata: {
-                        type,
-                        ...metadata
-                    }
-                });
+            await statusManager.transition({
+                currentStatus: agent.status,
+                targetStatus: agentStatus,
+                entity: 'agent',
+                entityId: agent.id,
+                metadata: {
+                    type,
+                    ...metadata
+                }
+            });
 
-                const log = LogCreator.createAgentLog({
-                    agent,
-                    task,
-                    description,
-                    metadata,
-                    agentStatus,
-                    logType: 'AgentStatusUpdate'
-                });
+            const log = LogCreator.createAgentLog({
+                agent,
+                task,
+                description,
+                metadata,
+                agentStatus,
+                logType: 'AgentStatusUpdate'
+            });
 
-                set(state => ({
-                    status: agentStatus,
-                    workflowLogs: [...state.workflowLogs, log],
-                    stats: {
-                        ...state.stats,
-                        llmUsageStats: {
-                            ...state.stats.llmUsageStats,
-                            inputTokens: state.stats.llmUsageStats.inputTokens + (output.llmUsageStats?.inputTokens || 0),
-                            outputTokens: state.stats.llmUsageStats.outputTokens + (output.llmUsageStats?.outputTokens || 0),
-                            callsCount: state.stats.llmUsageStats.callsCount + 1
-                        }
+            set(state => ({
+                status: agentStatus,
+                workflowLogs: [...state.workflowLogs, log],
+                stats: {
+                    ...state.stats,
+                    llmUsageStats: {
+                        ...state.stats.llmUsageStats,
+                        inputTokens: state.stats.llmUsageStats.inputTokens + (output.llmUsageStats?.inputTokens || 0),
+                        outputTokens: state.stats.llmUsageStats.outputTokens + (output.llmUsageStats?.outputTokens || 0),
+                        callsCount: state.stats.llmUsageStats.callsCount + 1
                     }
-                }));
-            } catch (error) {
-                logger.error(`Failed to handle agent output: ${error}`);
-            }
+                }
+            }));
         }
     };
 };

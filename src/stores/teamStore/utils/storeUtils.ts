@@ -1,6 +1,6 @@
 /**
  * @file storeUtils.ts
- * @path src/stores/teamStore/utils/storeUtils.ts
+ * @path KaibanJS/src/stores/teamStore/utils/storeUtils.ts
  * @description Store utilities for managing store state and operations
  */
 

@@ -1,6 +1,6 @@
 /**
  * @file callbacks.ts
- * @path src/types/llm/callbacks.ts
+ * @path KaibanJS/src/types/llm/callbacks.ts
  * @description Type definitions for LLM callbacks and event handling
  *
  * @packageDocumentation

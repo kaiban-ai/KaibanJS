@@ -1,6 +1,6 @@
 /**
  * @file baseAgent.ts
- * @path src/agents/baseAgent.ts
+ * @path KaibanJS/src/agents/baseAgent.ts
  * @description Base agent implementation
  */
 

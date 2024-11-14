@@ -1,6 +1,6 @@
 /**
  * @file handlers.ts
- * @path src/utils/types/task/handlers.ts
+ * @path KaibanJS/src/utils/types/task/handlers.ts
  * @description Task handler interfaces and types for managing task operations
  */
 

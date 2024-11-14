@@ -1,156 +1,67 @@
 /**
  * @file logs.ts
- * @path src/utils/types/team/logs.ts
- * @description Type definitions for team logs and logging functionality
+ * @path KaibanJS/src/utils/types/team/logs.ts
+ * @description Defines types related to logging for teams
  */
 
-import { TASK_STATUS_enum, AGENT_STATUS_enum, WORKFLOW_STATUS_enum } from "../common";
-import { AgentType } from "../agent";
-import { TaskType } from "../task";
-import { LLMUsageStats } from "../llm";
-import { CostDetails } from "../workflow";
+import { LogLevel, MESSAGE_LOG_TYPE_enum, STATUS_LOG_TYPE_enum } from '../common/enums';
 
-// Log type enums
-export type StatusLogType = 'AgentStatusUpdate' | 'TaskStatusUpdate' | 'WorkflowStatusUpdate';
-export type MessageLogType = 'SystemMessage' | 'UserMessage' | 'AIMessage' | 'FunctionMessage';
-export type LogType = StatusLogType | MessageLogType;
+// ─── Log Interfaces ─────────────────────────────────────────────────────────
 
-// Base log metadata interface
-export interface LogMetadata {
-    llmUsageStats?: LLMUsageStats;
-    iterationCount?: number;
-    duration?: number;
-    costDetails?: CostDetails;
-    result?: unknown;
-    error?: Error | {
-        name: string;
-        message: string;
-        stack?: string;
-        context?: Record<string, unknown>;
-        timestamp?: number;
-    };
-    [key: string]: unknown;
-}
-
-// Agent log metadata interface
-export interface AgentLogMetadata extends LogMetadata {
-    output?: {
-        llmUsageStats: LLMUsageStats;
-        thought?: string;
-        action?: string;
-        observation?: string | Record<string, unknown>;
-        finalAnswer?: string | Record<string, unknown>;
-        toolResult?: string | Record<string, unknown>;
-        [key: string]: unknown;
-    };
-    iterations?: number;
-    maxAgentIterations?: number;
-    messages?: unknown[];
-    error?: Error;
-    action?: unknown;
-    runId?: string;
-    tool?: unknown;
-    input?: unknown;
-    toolName?: string;
-    stats?: Record<string, unknown>;
-}
-
-// Task log metadata interface
-export interface TaskLogMetadata extends LogMetadata {
-    llmUsageStats?: LLMUsageStats;
-    iterationCount?: number;
-    duration?: number;
-    costDetails?: CostDetails;
-    result?: unknown;
-}
-
-// Workflow log metadata interface
-export interface WorkflowLogMetadata extends LogMetadata {
-    result: string;
-    duration: number;
-    llmUsageStats: LLMUsageStats;
-    iterationCount: number;
-    costDetails: CostDetails;
-    teamName: string;
-    taskCount: number;
-    agentCount: number;
-}
-
-// Message log metadata interface
-export interface MessageLogMetadata extends LogMetadata {
-    role: string;
-    content: string;
-    name?: string;
-    timestamp: number;
-    llmUsageStats: LLMUsageStats;
-    costDetails: CostDetails;
-}
-
-// Log preparation parameters interface
-export interface PrepareNewLogParams {
-    agent: AgentType;
-    task: TaskType | null;
-    logDescription: string;
-    metadata: LogMetadata;
-    logType: LogType;
-    agentStatus?: keyof typeof AGENT_STATUS_enum;
-    taskStatus?: keyof typeof TASK_STATUS_enum;
-    workflowStatus?: keyof typeof WORKFLOW_STATUS_enum;
-}
-
-// Core log interface
 export interface Log {
-    timestamp: number;
-    task: TaskType | null;
-    agent: AgentType | null;
-    agentName: string;
-    taskTitle: string;
-    logDescription: string;
-    taskStatus: keyof typeof TASK_STATUS_enum;
-    agentStatus: keyof typeof AGENT_STATUS_enum;
-    workflowStatus?: keyof typeof WORKFLOW_STATUS_enum;
-    metadata: LogMetadata;
-    logType: LogType;
+  id: string;
+  level: LogLevel;
+  message: string;
+  timestamp: number;
+  agentName: string;
+  taskId: string;
+  meta?: Record<string, unknown>;
 }
 
-// Type guards for log types
+export interface StatusLog extends Log {
+  type: STATUS_LOG_TYPE_enum;
+  status: string;
+  entity: string;
+}
+
+export interface MessageLog extends Log {
+  type: MESSAGE_LOG_TYPE_enum;
+  role: string;
+  content: string;
+}
+
+// ─── Log Type Guards ────────────────────────────────────────────────────────
+
 export const LogTypeGuards = {
-    isStatusLog: (logType: LogType): logType is StatusLogType => {
-        return ['AgentStatusUpdate', 'TaskStatusUpdate', 'WorkflowStatusUpdate'].includes(logType);
-    },
-    isMessageLog: (logType: LogType): logType is MessageLogType => {
-        return ['SystemMessage', 'UserMessage', 'AIMessage', 'FunctionMessage'].includes(logType);
-    },
-    isAgentLogMetadata: (metadata: LogMetadata): metadata is AgentLogMetadata => {
-        return (
-            'output' in metadata &&
-            typeof metadata.output === 'object' &&
-            metadata.output !== null &&
-            'llmUsageStats' in metadata.output
-        );
-    },
-    isTaskLogMetadata: (metadata: LogMetadata): metadata is TaskLogMetadata => {
-        return (
-            'llmUsageStats' in metadata &&
-            'costDetails' in metadata
-        );
-    },
-    isWorkflowLogMetadata: (metadata: LogMetadata): metadata is WorkflowLogMetadata => {
-        return (
-            'result' in metadata &&
-            'duration' in metadata &&
-            'teamName' in metadata &&
-            'taskCount' in metadata &&
-            'agentCount' in metadata
-        );
-    },
-    isMessageLogMetadata: (metadata: LogMetadata): metadata is MessageLogMetadata => {
-        return (
-            'role' in metadata &&
-            'content' in metadata &&
-            'timestamp' in metadata &&
-            'llmUsageStats' in metadata &&
-            'costDetails' in metadata
-        );
-    }
+  isLog: (value: unknown): value is Log => {
+    return (
+      typeof value === 'object' &&
+      value !== null &&
+      'id' in value &&
+      'level' in value &&
+      'message' in value &&
+      'timestamp' in value &&
+      'taskId' in value
+    );
+  },
+
+  isStatusLog: (value: unknown): value is StatusLog => {
+    return (
+      LogTypeGuards.isLog(value) &&
+      'type' in value &&
+      Object.values(STATUS_LOG_TYPE_enum).includes(value.type) &&
+      'status' in value &&
+      'entity' in value
+    );
+  },
+
+  isMessageLog: (value: unknown): value is MessageLog => {
+    return (
+      LogTypeGuards.isLog(value) &&
+      'type' in value &&
+      Object.values(MESSAGE_LOG_TYPE_enum).includes(value.type) &&
+      'role' in value &&
+      'content' in value
+    );
+  },
 };

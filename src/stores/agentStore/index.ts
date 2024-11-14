@@ -1,12 +1,18 @@
 /**
  * @file index.ts
- * @path src/stores/agentStore/index.ts
- * @description Main entry point for agent store, combining all modules
+ * @path KaibanJS/src/stores/agentStore/index.ts
+ * @description Main agent store implementation combining all modules
  */
 
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { logger } from '@/utils/core/logger';
+import { errorHandler } from '@/utils/handlers/errorHandler';
+import { messageHandler } from '@/utils/handlers/messageHandler';
+import { calculateTaskCost } from '@/utils/helpers/costs/llmCostCalculator';
+import { getApiKey } from '@/utils/helpers/agent/agentUtils';
+import { StatusManager } from '@/utils/managers/statusManager';
+import { MessageHistoryManager } from '@/utils/managers/messageHistoryManager';
 import { AgentState, initialAgentState, validateAgentState } from './state';
 import { createCoreActions } from './actions/coreActions';
 import { createErrorActions } from './actions/errorActions';
@@ -55,53 +61,149 @@ export interface AgentStore extends AgentState {
 /**
  * Create the agent store with middleware
  */
-export const createAgentStore = () => create<AgentStore>()(
-    devtools(
-        subscribeWithSelector((set, get) => ({
-            // Include initial state
-            ...initialAgentState,
+export const createAgentStore = () => {
+    // Create managers
+    const messageHistoryManager = new MessageHistoryManager();
+    const statusManager = StatusManager.getInstance();
 
-            // Include core actions
-            ...createCoreActions(get, set),
+    return create<AgentStore>()(
+        devtools(
+            subscribeWithSelector((set, get) => {
+                // Create actions with dependencies
+                const coreActions = createCoreActions(get, set);
+                const errorActions = createErrorActions(get, set);
+                const toolActions = createToolActions(get, set);
+                const thinkingActions = createThinkingActions(get, set);
 
-            // Include error actions
-            ...createErrorActions(get, set),
+                return {
+                    // Include initial state
+                    ...initialAgentState,
 
-            // Include tool actions
-            ...createToolActions(get, set),
+                    // Include core actions
+                    ...coreActions,
 
-            // Include thinking actions
-            ...createThinkingActions(get, set),
+                    // Include error actions
+                    ...errorActions,
 
-            // Include selectors
-            selectors
-        })),
-        {
-            name: 'AgentStore',
-            serialize: {
-                options: {
-                    undefined: true,
-                    function: false,
-                    symbol: false,
-                    error: true,
-                    date: true,
-                    regexp: true,
-                    infinity: true,
-                    nan: true,
-                    set: true,
-                    map: true,
-                },
-                // Sanitize sensitive data in dev tools
-                replacer: (key: string, value: unknown) => {
-                    if (key === 'apiKey' || key.includes('secret')) {
-                        return '[REDACTED]';
+                    // Include tool actions
+                    ...toolActions,
+
+                    // Include thinking actions
+                    ...thinkingActions,
+
+                    // Include selectors
+                    selectors,
+
+                    // Message handling integration
+                    handleMessage: async (content: string, metadata?: Record<string, unknown>) => {
+                        const state = get();
+                        const currentAgent = state.currentAgent;
+                        
+                        if (!currentAgent) {
+                            logger.error('No current agent set for message handling');
+                            return;
+                        }
+
+                        try {
+                            const result = await messageHandler.handleSystemMessage(content, {
+                                agentId: currentAgent.id,
+                                agentName: currentAgent.name,
+                                ...metadata
+                            });
+
+                            logger.debug('Message handled successfully:', result);
+                            return result;
+                        } catch (error) {
+                            await errorHandler.handleError({
+                                error: error instanceof Error ? error : new Error(String(error)),
+                                context: {
+                                    agentId: currentAgent.id,
+                                    messageContent: content,
+                                    metadata
+                                },
+                                store: {
+                                    getState: get,
+                                    setState: set,
+                                    prepareNewLog: coreActions.addWorkflowLog
+                                }
+                            });
+                            throw error;
+                        }
+                    },
+
+                    // Cost calculation integration
+                    calculateAgentCosts: (agentId: string) => {
+                        const state = get();
+                        const agent = state.agents.find(a => a.id === agentId);
+                        
+                        if (!agent || !agent.llmConfig) {
+                            logger.error(`Unable to calculate costs for agent ${agentId}`);
+                            return null;
+                        }
+
+                        const apiKey = getApiKey(agent.llmConfig, state.env || {});
+                        if (!apiKey) {
+                            logger.warn(`No API key found for agent ${agent.id}`);
+                        }
+
+                        const stats = state.stats.llmUsageStats;
+                        return calculateTaskCost(agent.llmConfig.model, stats);
+                    },
+
+                    // Resource cleanup
+                    cleanup: async () => {
+                        logger.info('Cleaning up agent store resources');
+                        await messageHistoryManager.clear();
+                        const state = get();
+                        
+                        if (state.currentAgent) {
+                            await state.currentAgent.cleanup().catch(error => {
+                                logger.error('Error cleaning up current agent:', error);
+                            });
+                        }
+
+                        state.agents.forEach(agent => {
+                            agent.cleanup().catch(error => {
+                                logger.error(`Error cleaning up agent ${agent.id}:`, error);
+                            });
+                        });
+                    },
+
+                    // Extended destroy method
+                    destroy: async () => {
+                        logger.info('Destroying agent store');
+                        await get().cleanup();
+                        messageHistoryManager.clear();
                     }
-                    return value;
+                };
+            }),
+            {
+                name: 'AgentStore',
+                serialize: {
+                    options: {
+                        undefined: true,
+                        function: false,
+                        symbol: false,
+                        error: true,
+                        date: true,
+                        regexp: true,
+                        infinity: true,
+                        nan: true,
+                        set: true,
+                        map: true,
+                    },
+                    // Sanitize sensitive data
+                    replacer: (key: string, value: unknown) => {
+                        if (key === 'apiKey' || key.includes('secret')) {
+                            return '[REDACTED]';
+                        }
+                        return value;
+                    }
                 }
             }
-        }
-    )
-);
+        )
+    );
+};
 
 // Create singleton instance
 export const useAgentStore = createAgentStore();
@@ -112,9 +214,7 @@ export const getAgentState = () => useAgentStore.getState();
 // Export state subscriber with selector support
 export const subscribeToAgentStore = useAgentStore.subscribe;
 
-/**
- * Setup store monitoring and validation
- */
+// Setup store monitoring and validation
 if (process.env.NODE_ENV !== 'production') {
     // Monitor state changes in development
     subscribeToAgentStore(
@@ -127,9 +227,7 @@ if (process.env.NODE_ENV !== 'production') {
     );
 }
 
-/**
- * Re-export types
- */
+// Re-export types
 export type {
     AgentState,
     CoreActions,

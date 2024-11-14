@@ -1,6 +1,6 @@
 /**
  * @file taskActions.ts
- * @path src/stores/teamStore/actions/taskActions.ts
+ * @path KaibanJS/src/stores/teamStore/actions/taskActions.ts
  * @description Task management actions for the team store
  */
 
@@ -13,7 +13,7 @@ import { logPrettyTaskCompletion, logPrettyTaskStatus } from '@/utils/helpers/fo
 import { getTaskTitleForLogs } from '@/utils/helpers/tasks/taskUtils';
 import { ErrorType } from '@/utils/types/common/errors';
 import { LLMUsageStats } from '@/utils/types/llm/responses';
-import { CostDetails } from '@/utils/types/workflow/stats';
+import { CostDetails } from '@/utils/types/workflow';
 
 import type { 
     TeamState,

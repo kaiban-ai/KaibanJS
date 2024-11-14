@@ -1,6 +1,6 @@
 /**
  * @file stats.ts
- * @path src/utils/helpers/stats.ts
+ * @path KaibanJS/src/utils/helpers/stats.ts
  * @description Statistical calculation and analysis utilities
  */
 
@@ -10,6 +10,7 @@ import { TaskType, TaskStats } from "@/utils/types/task/base";
 import { Log, AgentLogMetadata } from "@/utils/types/team/logs";
 import { LLMUsageStats, Output } from "@/utils/types/llm/responses";
 import { formatCost } from "./costs/llmCostCalculator";
+import { ModelStats, ModelUsageStats } from "../types/workflow";
 
 /**
  * Type guard to check if metadata is AgentLogMetadata

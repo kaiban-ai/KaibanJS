@@ -1,6 +1,6 @@
 /**
  * @file agentUtils.ts
- * @path src/utils/helpers/agent/agentUtils.ts
+ * @path KaibanJS/src/utils/helpers/agent/agentUtils.ts
  * @description Utility functions for agent operations
  */
 

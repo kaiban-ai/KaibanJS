@@ -1,12 +1,12 @@
 /**
  * @file index.ts
- * @path src/index.ts
+ * @path KaibanJS/src/index.ts
  * @description Main entry point for the KaibanJS library
  */
 
 // Import core classes
 import { Agent } from './agents/Agent';
-import { Task } from './tasks/Task';
+import { Task } from '../tasks/Task';
 import { Team } from './team/Team';
 import { defaultGroqConfig, defaultModelConfig } from './utils/helpers/config';
 import { MessageHistoryManager } from './utils/managers/messageHistoryManager';

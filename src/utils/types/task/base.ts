@@ -1,6 +1,6 @@
 /**
  * @file base.ts
- * @path src/utils/types/task/base.ts
+ * @path KaibanJS/src/utils/types/task/base.ts
  * @description Core task interfaces and types
  */
 

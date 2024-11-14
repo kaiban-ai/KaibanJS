@@ -1,6 +1,6 @@
 /**
  * @file index.ts
- * @path src/stores/taskStore/actions/index.ts
+ * @path KaibanJS/src/stores/taskStore/actions/index.ts
  * @description Exports all task store actions
  */
 

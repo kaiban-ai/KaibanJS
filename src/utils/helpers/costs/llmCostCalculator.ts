@@ -1,6 +1,6 @@
 /**
  * @file llmCostCalculator.ts
- * @path src/utils/helpers/costs/llmCostCalculator.ts
+ * @path KaibanJS/src/utils/helpers/costs/llmCostCalculator.ts
  * @description Implementation of LLM cost calculations
  */
 

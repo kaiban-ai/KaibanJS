@@ -1,6 +1,6 @@
 /**
  * @file responses.ts
- * @path src/types/llm/responses.ts
+ * @path KaibanJS/src/types/llm/responses.ts
  * @description Type definitions for LLM responses and related interfaces
  *
  * @packageDocumentation

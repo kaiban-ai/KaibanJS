@@ -1,38 +1,119 @@
 /**
  * @file defaultFactory.ts
- * @path src/utils/factories/defaultFactory.ts
+ * @path KaibanJS/src/utils/factories/defaultFactory.ts
  * @description Factory implementation for creating default objects used throughout the application
  */
 
-import { 
+import { v4 as uuidv4 } from 'uuid';
+import { Tool } from "langchain/tools";
+import { logger } from "../core/logger";
+import { PrettyError } from "../core/errors";
+import { AGENT_STATUS_enum, TASK_STATUS_enum, WORKFLOW_STATUS_enum } from "@/utils/types/common/enums";
+import { MessageHistoryManager } from '@/utils/managers/domain/llm/MessageHistoryManager';
+import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from '@/utils/helpers/prompts/prompts';
+import { getApiKey } from '@/utils/helpers/agent/agentUtils';
+
+import type { 
+    IBaseAgent, 
+    AgentType,
+    BaseAgentConfig,
+    AgentCreationResult,
+    AgentValidationSchema 
+} from '@/utils/types/agent';
+
+import type { 
     LLMUsageStats, 
-    CostDetails, 
+    LLMConfig, 
+    TokenUsage 
+} from '@/utils/types/llm';
+
+import type {
     TeamState,
-    MemoryMetrics,
-    TokenUsage,
-    ResponseMetadata,
-    LLMProvider,
-    MessageMetadataFields,
-    WorkflowMetadata,
-    TaskStats,
-    ModelUsageStats,
+    TeamInputs,
     TeamEnvironment,
-    TeamInputs
+    CostDetails,
+    WorkflowMetadata,
+    ModelUsageStats,
+    TaskStats,
 } from '@/utils/types';
 
-import { 
-    TASK_STATUS_enum, 
-    AGENT_STATUS_enum, 
-    WORKFLOW_STATUS_enum 
-} from "@/utils/types/common";
+// ─── Factory Class ──────────────────────────────────────────────────────────────
 
-/**
- * Factory for creating default objects used throughout the application
- */
 export class DefaultFactory {
-    /**
-     * Creates default LLM usage statistics
-     */
+    // ─── Agent Factory Methods ────────────────────────────────────────────────────
+
+    static createAgent(config: BaseAgentConfig): AgentCreationResult {
+        try {
+            const validationResult = this.validateAgentConfig(config);
+            if (!validationResult.isValid) {
+                throw new PrettyError({
+                    message: 'Invalid agent configuration',
+                    context: { errors: validationResult.errors }
+                });
+            }
+
+            const agent: IBaseAgent = {
+                id: uuidv4(),
+                name: config.name,
+                role: config.role,
+                goal: config.goal,
+                background: config.background,
+                tools: config.tools || [],
+                maxIterations: config.maxIterations || 10,
+                status: AGENT_STATUS_enum.INITIAL,
+                env: null,
+                llmInstance: config.llmInstance || null,
+                llmConfig: this.normalizeLlmConfig(config.llmConfig || this.createLLMConfig()),
+                llmSystemMessage: null,
+                forceFinalAnswer: config.forceFinalAnswer ?? true,
+                promptTemplates: { ...REACT_CHAMPION_AGENT_DEFAULT_PROMPTS, ...config.promptTemplates },
+                messageHistory: config.messageHistory || new MessageHistoryManager(),
+                store: null as any,
+                initialize: () => {},
+                setStore: () => {},
+                setStatus: () => {},
+                setEnv: () => {},
+                workOnTask: async () => ({ error: '', metadata: { iterations: 0, maxAgentIterations: 0 }}),
+                workOnFeedback: async () => {},
+                normalizeLlmConfig: (config) => config,
+                createLLMInstance: () => {}
+            };
+
+            return {
+                success: true,
+                agent,
+                validation: validationResult,
+                metadata: {
+                    createdAt: Date.now(),
+                    configHash: Buffer.from(JSON.stringify(config)).toString('base64'),
+                    version: '1.0.0'
+                }
+            };
+
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error : new Error(String(error)),
+                validation: {
+                    isValid: false,
+                    errors: [error instanceof Error ? error.message : String(error)]
+                }
+            };
+        }
+    }
+
+    // ─── LLM Configuration Methods ─────────────────────────────────────────────────
+
+    static createLLMConfig(): LLMConfig {
+        return {
+            provider: 'anthropic',
+            model: 'claude-3-sonnet-20240229',
+            temperature: 0.7,
+            maxTokens: 4096,
+            streaming: true
+        };
+    }
+
     static createLLMUsageStats(): LLMUsageStats {
         return {
             inputTokens: 0,
@@ -57,9 +138,21 @@ export class DefaultFactory {
         };
     }
 
-    /**
-     * Creates default cost details
-     */
+    // ─── Task Stats Methods ───────────────────────────────────────────────────────
+
+    static createTaskStats(): TaskStats {
+        return {
+            startTime: Date.now(),
+            endTime: Date.now(),
+            duration: 0,
+            llmUsageStats: this.createLLMUsageStats(),
+            iterationCount: 0,
+            modelUsage: {}
+        };
+    }
+
+    // ─── Cost Methods ──────────────────────────────────────────────────────────────
+
     static createCostDetails(): CostDetails {
         return {
             inputCost: 0,
@@ -73,9 +166,8 @@ export class DefaultFactory {
         };
     }
 
-    /**
-     * Creates default initial state for the team store
-     */
+    // ─── State Methods ─────────────────────────────────────────────────────────────
+
     static createInitialState(): Partial<TeamState> {
         return {
             teamWorkflowStatus: 'INITIAL',
@@ -92,179 +184,30 @@ export class DefaultFactory {
         };
     }
 
-    /**
-     * Creates default memory metrics
-     */
-    static createMemoryMetrics(): MemoryMetrics {
+    // ─── Private Validation Methods ────────────────────────────────────────────────
+
+    private static validateAgentConfig(config: BaseAgentConfig): { isValid: boolean; errors: string[] } {
+        const errors: string[] = [];
+        
+        if (!config.name) errors.push('Agent name is required');
+        if (!config.role) errors.push('Agent role is required');
+        if (!config.goal) errors.push('Agent goal is required');
+        if (!config.background) errors.push('Agent background is required');
+
         return {
-            totalMessages: 0,
-            totalTokens: 0,
-            memoryUsage: 0,
-            lastCleanup: {
-                timestamp: Date.now(),
-                messagesRemoved: 0,
-                tokensFreed: 0
-            },
-            modelSpecificStats: {}
+            isValid: errors.length === 0,
+            errors
         };
     }
 
-    /**
-     * Creates default token usage statistics
-     */
-    static createTokenUsage(): TokenUsage {
+    private static normalizeLlmConfig(llmConfig: LLMConfig): LLMConfig {
+        const defaultConfig = this.createLLMConfig();
         return {
-            promptTokens: 0,
-            completionTokens: 0,
-            totalTokens: 0
-        };
-    }
-
-    /**
-     * Creates default response metadata
-     */
-    static createResponseMetadata(provider: LLMProvider, model: string): ResponseMetadata {
-        return {
-            model,
-            provider,
-            timestamp: Date.now(),
-            latency: 0,
-            finishReason: undefined,
-            requestId: undefined
-        };
-    }
-
-    /**
-     * Creates default message metadata
-     */
-    static createMessageMetadata(): MessageMetadataFields {
-        return {
-            messageId: undefined,
-            parentMessageId: undefined,
-            conversationId: undefined,
-            timestamp: Date.now(),
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-            llmUsageStats: this.createLLMUsageStats(),
-            costDetails: this.createCostDetails(),
-            tokenCount: 0
-        };
-    }
-
-    /**
-     * Creates default workflow metadata
-     */
-    static createWorkflowMetadata(teamName: string): WorkflowMetadata {
-        return {
-            result: '',
-            duration: 0,
-            llmUsageStats: this.createLLMUsageStats(),
-            iterationCount: 0,
-            costDetails: this.createCostDetails(),
-            teamName,
-            taskCount: 0,
-            agentCount: 0
-        };
-    }
-
-    /**
-     * Creates default task statistics
-     */
-    static createTaskStats(): TaskStats {
-        return {
-            startTime: Date.now(),
-            endTime: Date.now(),
-            duration: 0,
-            llmUsageStats: this.createLLMUsageStats(),
-            iterationCount: 0,
-            modelUsage: {}
-        };
-    }
-
-    /**
-     * Creates default model usage stats
-     */
-    static createModelUsageStats(): ModelUsageStats {
-        return {
-            modelA: {
-                tokens: {
-                    input: 0,
-                    output: 0,
-                },
-                requests: {
-                    successful: 0,
-                    failed: 0,
-                },
-                latency: {
-                    average: 0,
-                    p95: 0,
-                    max: 0,
-                },
-                cost: 0,
-            },
-            // Add other models as needed
-        };
-    }
-
-    /**
-     * Creates default team environment
-     */
-    static createTeamEnvironment(): TeamEnvironment {
-        return {};
-    }
-
-    /**
-     * Creates default team inputs
-     */
-    static createTeamInputs(): TeamInputs {
-        return {};
-    }
-
-    /**
-     * Creates model-specific usage statistics
-     */
-    static createModelSpecificStats(model: string): {
-        messageCount: number;
-        tokenCount: number;
-        averageTokensPerMessage: number;
-    } {
-        return {
-            messageCount: 0,
-            tokenCount: 0,
-            averageTokensPerMessage: 0
-        };
-    }
-
-    /**
-     * Creates a safe partial state update
-     */
-    static createSafeStateUpdate<T>(updates: Partial<T>): Partial<T> {
-        return {
-            ...updates,
-            timestamp: Date.now()
-        };
-    }
-
-    /**
-     * Creates default status objects for tasks, agents, and workflows
-     */
-    static createStatusObjects() {
-        return {
-            createTaskStatus: (status: keyof typeof TASK_STATUS_enum = 'TODO') => ({
-                status,
-                timestamp: Date.now(),
-                metadata: {}
-            }),
-            createAgentStatus: (status: keyof typeof AGENT_STATUS_enum = 'INITIAL') => ({
-                status,
-                timestamp: Date.now(),
-                metadata: {}
-            }),
-            createWorkflowStatus: (status: keyof typeof WORKFLOW_STATUS_enum = 'INITIAL') => ({
-                status,
-                timestamp: Date.now(),
-                metadata: {}
-            })
+            ...defaultConfig,
+            ...llmConfig,
+            streaming: llmConfig.streaming ?? defaultConfig.streaming,
+            temperature: llmConfig.temperature ?? defaultConfig.temperature,
+            maxTokens: llmConfig.maxTokens ?? defaultConfig.maxTokens
         };
     }
 }

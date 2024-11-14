@@ -1,6 +1,6 @@
 /**
  * @file costs.ts
- * @path src/utils/types/workflow/costs.ts
+ * @path KaibanJS/src/utils/types/workflow/costs.ts
  * @description Type definitions for LLM cost calculations and pricing
  */
 

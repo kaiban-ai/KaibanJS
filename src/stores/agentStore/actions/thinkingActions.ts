@@ -1,6 +1,6 @@
 /**
  * @file thinkingActions.ts
- * @path src/stores/agentStore/actions/thinkingActions.ts
+ * @path KaibanJS/src/stores/agentStore/actions/thinkingActions.ts
  * @description Agent thinking process and LLM interaction actions
  */
 

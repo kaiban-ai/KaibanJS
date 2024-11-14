@@ -1,6 +1,6 @@
 /**
  * @file utils.ts
- * @path src/utils/types/agent/utils.ts
+ * @path KaibanJS/src/utils/types/agent/utils.ts
  * @description Type definitions for agent utilities
  */
 

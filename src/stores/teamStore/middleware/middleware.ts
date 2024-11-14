@@ -1,6 +1,6 @@
 /**
  * @file middleware.ts
- * @path src/stores/teamStore/middleware/middleware.ts
+ * @path KaibanJS/src/stores/teamStore/middleware/middleware.ts
  * @description Middleware configuration and setup for the team store
  */
 

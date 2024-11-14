@@ -1,6 +1,6 @@
 /**
  * @file utils.ts
- * @path src/utils/types/task/utils.ts
+ * @path KaibanJS/src/utils/types/task/utils.ts
  * @description Task utility types and helper functions
  */
 

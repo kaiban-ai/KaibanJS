@@ -1,6 +1,6 @@
 /**
  * @file index.ts
- * @path src/stores/taskStore/selectors/index.ts
+ * @path KaibanJS/src/stores/taskStore/selectors/index.ts
  * @description Task store selectors for retrieving and computing state
  */
 

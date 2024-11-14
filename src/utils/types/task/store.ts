@@ -1,6 +1,6 @@
 /**
  * @file store.ts
- * @path src/utils/types/task/store.ts
+ * @path KaibanJS/src/utils/types/task/store.ts
  * @description Task store types and interfaces
  */
 

@@ -1,6 +1,6 @@
 /**
  * @file messageUtils.ts
- * @path src/stores/teamStore/utils/messageUtils.ts
+ * @path KaibanJS/src/stores/teamStore/utils/messageUtils.ts
  * @description Message handling utilities for the team store
  */
 

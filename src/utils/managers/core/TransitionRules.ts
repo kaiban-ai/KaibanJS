@@ -1,6 +1,6 @@
 /**
- * @file transitionRules.ts
- * @path src/utils/managers/transitionRules.ts
+ * @file TransitionRules.ts
+ * @path KaibanJS/src/utils/managers/core/TransitionRules.ts
  * @description Contains transition rules for managing status transitions of messages, agents, tasks, and workflows.
  */
 
@@ -11,7 +11,7 @@ import {
     WORKFLOW_STATUS_enum 
 } from '@/utils/types/common/enums';
 
-import type { StatusTransitionRule } from '@/utils/types/common/status';
+import type { StatusTransitionRule } from '@/utils/types/store';
 
 // Updated workflow type imports
 import { WorkflowState } from '@/utils/types/workflow/store';
@@ -57,3 +57,5 @@ export const transitionRules: Map<string, StatusTransitionRule[]> = new Map([
         { from: WORKFLOW_STATUS_enum.STOPPED, to: WORKFLOW_STATUS_enum.INITIAL },
     ]]
 ]);
+
+export default transitionRules;

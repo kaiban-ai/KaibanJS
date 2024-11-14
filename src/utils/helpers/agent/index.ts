@@ -1,6 +1,6 @@
 /**
  * @file index.ts
- * @path src/utils/helpers/agent/index.ts
+ * @path KaibanJS/src/utils/helpers/agent/index.ts
  */
 
 export {

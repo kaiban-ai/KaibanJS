@@ -1,6 +1,6 @@
 /**
  * @file memory.ts
- * @path src/utils/types/common/memory.ts
+ * @path KaibanJS/src/utils/types/common/memory.ts
  * @description Type definitions for memory metrics
  */
 

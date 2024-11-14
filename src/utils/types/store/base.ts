@@ -1,6 +1,6 @@
 /**
  * @file base.ts
- * @path src/utils/types/store/base.ts
+ * @path KaibanJS/src/utils/types/store/base.ts
  * @description Core store interfaces and types used across all stores.
  * This file serves as the canonical source for base store types.
  */

@@ -1,6 +1,6 @@
 /**
  * @file messageActions.ts
- * @path src/stores/teamStore/actions/messageActions.ts
+ * @path KaibanJS/src/stores/teamStore/actions/messageActions.ts
  * @description Message handling actions for the team store
  */
 

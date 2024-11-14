@@ -1,6 +1,6 @@
 /**
  * @file workflowActions.ts
- * @path src/stores/teamStore/actions/workflowActions.ts
+ * @path KaibanJS/src/stores/teamStore/actions/workflowActions.ts
  * @description Workflow management actions for the team store
  */
 

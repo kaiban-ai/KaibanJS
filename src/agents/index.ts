@@ -1,6 +1,6 @@
 /**
  * @file index.ts
- * @path src/agents/index.ts
+ * @path KaibanJS/src/agents/index.ts
  * @description Central export point for agent implementations
  */
 

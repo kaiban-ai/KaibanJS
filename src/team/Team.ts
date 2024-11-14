@@ -4,7 +4,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { createTeamStore, UseBoundTeamStore } from '@/stores/teamStore';
+import { createTeamStore, useTeamStore } from '@/stores/teamStore';
 import { PrettyError } from '@/utils/core/errors';
 import { logger } from '@/utils/core/logger';
 import { DefaultFactory } from '@/utils/factories';
@@ -22,7 +22,6 @@ import type {
     ITeam,
     ITeamParams,
     TeamState,
-    UseBoundTeamStore,
     TeamEnvironment,
     TeamInputs,
     TeamStoreConfig
@@ -55,7 +54,7 @@ import {
 } from '@/utils/types/common';
 
 export class Team implements ITeam {
-    public store: UseBoundTeamStore<TeamStore>;
+    public store: ReturnType<typeof createTeamStore>;
     private messageHistory: MessageHistoryManager;
     private unsubscribers: Array<() => void>;
 
@@ -93,10 +92,11 @@ export class Team implements ITeam {
         params.tasks?.forEach((task: TaskType) => {
             task.setStore(this.store);
         });
-        this.store.setState({
+        this.store.setState((state) => ({
+            ...state,
             agents: params.agents || [],
             tasks: params.tasks || []
-        });
+        }));
     }
 
     private setupSubscribers(): void {
@@ -106,11 +106,11 @@ export class Team implements ITeam {
         this.unsubscribers.push(workflowUnsubscribe);
     }
 
-    public getStore(): TeamStore {
+    public getStore() {
         return this.store;
     }
 
-    public useStore(): UseBoundTeamStore<TeamStore> {
+    public useStore() {
         return this.store;
     }
 
@@ -155,7 +155,7 @@ export class Team implements ITeam {
     }
 
     public provideFeedback(taskId: string, feedbackContent: string): void {
-        const task = this.store.getState().tasks.find(t => t.id === taskId);
+        const task = this.store.getState().tasks.find((t: TaskType) => t.id === taskId);
         if (!task) {
             throw new PrettyError({
                 message: `Task not found: ${taskId}`,
@@ -175,8 +175,8 @@ export class Team implements ITeam {
                 timestamp: Date.now()
             }
         });
-        this.store.setState(state => ({
-            tasks: state.tasks.map(t => t.id === taskId ? {
+        this.store.setState((state) => ({
+            tasks: state.tasks.map((t: TaskType) => t.id === taskId ? {
                 ...t,
                 status: TASK_STATUS_enum.REVISE,
                 feedbackHistory: [...t.feedbackHistory, feedback]
@@ -187,7 +187,7 @@ export class Team implements ITeam {
     }
 
     public validateTask(taskId: string): void {
-        const task = this.store.getState().tasks.find(t => t.id === taskId);
+        const task = this.store.getState().tasks.find((t: TaskType) => t.id === taskId);
         if (!task) {
             throw new PrettyError({
                 message: `Task not found: ${taskId}`,
@@ -209,8 +209,8 @@ export class Team implements ITeam {
                 timestamp: Date.now()
             }
         });
-        this.store.setState(state => ({
-            tasks: state.tasks.map(t => t.id === taskId ? {
+        this.store.setState((state) => ({
+            tasks: state.tasks.map((t: TaskType) => t.id === taskId ? {
                 ...t,
                 status: TASK_STATUS_enum.VALIDATED
             } : t),
@@ -232,7 +232,7 @@ export class Team implements ITeam {
         const lastRunningLog = state.workflowLogs
             .slice()
             .reverse()
-            .find(log => 
+            .find((log) => 
                 log.logType === "WorkflowStatusUpdate" && 
                 log.workflowStatus === WORKFLOW_STATUS_enum.RUNNING
             );
@@ -241,7 +241,7 @@ export class Team implements ITeam {
         const duration = (endTime - startTime) / 1000;
         const llmUsageStats = DefaultFactory.createLLMUsageStats();
         const modelUsage: Record<string, ModelStats> = {};
-        state.workflowLogs.forEach(log => {
+        state.workflowLogs.forEach((log) => {
             if (log.metadata?.output?.llmUsageStats) {
                 const stats = log.metadata.output.llmUsageStats;
                 llmUsageStats.inputTokens += stats.inputTokens;
@@ -275,7 +275,7 @@ export class Team implements ITeam {
             endTime,
             duration,
             llmUsageStats,
-            iterationCount: state.workflowLogs.filter(log => 
+            iterationCount: state.workflowLogs.filter((log) => 
                 log.agentStatus === AGENT_STATUS_enum.ITERATION_END
             ).length,
             costDetails: calculateTotalWorkflowCost(modelUsage),
@@ -303,7 +303,7 @@ export class Team implements ITeam {
     }
 
     public async cleanup(): Promise<void> {
-        this.unsubscribers.forEach(unsubscribe => unsubscribe());
+        this.unsubscribers.forEach((unsubscribe) => unsubscribe());
         this.unsubscribers = [];
         await this.messageHistory.clear();
         if (this.store.destroy) {
