@@ -1,4 +1,4 @@
-const { WolframAlphaTool } = require('../../dist/wolframalpha/index.cjs.js');
+const { WolframAlphaTool } = require('../../dist/wolfram-alpha/index.cjs.js');
 
 describe('WolframAlphaTool', () => {
   test('WolframAlphaTool sends correct parameters and receives results', async () => {
