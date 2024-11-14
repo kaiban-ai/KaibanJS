@@ -6,7 +6,7 @@ import json from '@rollup/plugin-json';
 import nodePolyfills from 'rollup-plugin-node-polyfills'; // Correct plugin name
 
 // Array of tool folder names
-const toolFolders = ['firecrawl', 'tavily']; // Add more folder names as needed
+const toolFolders = ['firecrawl', 'tavily', 'serper', 'exa', 'wolfram-alpha']; // Add more folder names as needed
 
 const toolConfigs = toolFolders.map((tool) => {
   const inputPath = `src/${tool}/index.js`; // Adjusted for plain JavaScript

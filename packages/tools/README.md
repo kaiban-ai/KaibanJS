@@ -33,6 +33,49 @@ Tavily Search is a tool that provides AI-optimized search capabilities, deliveri
 
 Learn more: https://tavily.com/
 
+### 3. Serper
+
+Serper is a tool that integrates with Google Search API service, providing access to various types of search results including web search, news, images, and more. It's particularly useful for retrieving real-time information from Google's search engine.
+
+Learn more: https://serper.dev/
+
+### 4. Exa Search
+
+Exa Search is a tool that integrates with Exa (https://exa.ai/), a search engine for AI that organizes the web using embeddings. It provides high-quality web data specifically optimized for AI applications.
+
+Key features:
+
+- Neural Search: Meaning-based search using embeddings
+- Keyword Search: Traditional search capabilities
+- Auto Search: Dynamically chooses between neural and keyword
+- Category-focused search (company, research paper, news, github, tweet, etc.)
+- Domain and text filtering
+- Date-based filtering
+
+Learn more: https://exa.ai/
+
+### 5. WolframAlpha
+
+WolframAlpha is a tool that integrates with WolframAlpha's computational intelligence engine, providing detailed answers to complex queries across various domains. It's particularly powerful for mathematical, scientific, and technical computations.
+
+Key features:
+
+- Advanced computations and data analysis
+- Scientific and mathematical calculations
+- Real-time data processing
+- Domain-specific knowledge in:
+  - Mathematics
+  - Physics
+  - Chemistry
+  - Engineering
+  - Earth Sciences
+  - Life Sciences
+  - Units & Measures
+  - Financial calculations
+  - And more
+
+Learn more: https://www.wolframalpha.com/
+
 ## Development
 
 ### Local Setup
@@ -62,6 +105,9 @@ Create a `.env` file in the root directory with your API keys:
 ```env
 VITE_FIRECRAWL_API_KEY=your_firecrawl_api_key
 VITE_TAVILY_API_KEY=your_tavily_api_key
+VITE_SERPER_API_KEY=your_serper_api_key
+VITE_EXA_API_KEY=your_exa_api_key
+VITE_WOLFRAM_APP_ID=your_wolfram_app_id
 ```
 
 5. Run Storybook to view and test components:
