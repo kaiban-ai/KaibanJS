@@ -17,6 +17,10 @@
     "./tavily": {
       "import": "./dist/tavily/index.esm.js",
       "require": "./dist/tavily/index.cjs.js"
+    },
+    "./youtube": {
+      "import": "./dist/youtube/index.esm.js",
+      "require": "./dist/youtube/index.cjs.js"
     }
   },
   "files": [
@@ -62,6 +66,7 @@
   "dependencies": {
     "@langchain/core": "0.2.16",
     "ky": "^1.7.2",
+    "youtube-captions-scraper": "^2.0.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {
