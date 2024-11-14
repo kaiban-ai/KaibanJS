@@ -8,10 +8,8 @@ import CoreManager from '../../core/CoreManager';
 import { StatusManager } from '../../core/StatusManager';
 import { ThinkingManager } from './ThinkingManager';
 import { ToolManager } from './ToolManager';
-
-// Core utilities
-import { logger } from '@/utils/core/logger';
-import { PrettyError } from '@/utils/core/errors';
+import { LogManager } from '../../core/LogManager';
+import { ErrorManager } from '../../core/ErrorManager';
 
 // Import types from canonical locations
 import type { 
@@ -39,6 +37,8 @@ export class AgentManager extends CoreManager {
     private readonly thinkingManager: ThinkingManager;
     private readonly toolManager: ToolManager;
     private readonly activeAgents: Map<string, AgentType>;
+    private readonly logManager = LogManager.getInstance();
+    private readonly errorManager = ErrorManager.getInstance();
 
     private constructor() {
         super();
@@ -64,15 +64,14 @@ export class AgentManager extends CoreManager {
             // Validate configuration
             const validationResult = await this.validateAgent(config);
             if (!validationResult.isValid) {
-                throw new PrettyError({
-                    message: 'Invalid agent configuration',
-                    context: { errors: validationResult.errors }
-                });
+                throw new Error('Invalid agent configuration');
             }
 
             // Create agent instance
             const agent: AgentType = await this.initializeAgent(config);
             this.activeAgents.set(agent.id, agent);
+
+            this.logManager.info(`Agent created: ${agent.id}`);
 
             return {
                 success: true,
@@ -108,8 +107,8 @@ export class AgentManager extends CoreManager {
     ): Promise<AgentExecutionResult> {
         const agent = await this.getAgent(agentId);
         if (!agent) {
-            throw new PrettyError({
-                message: `Agent not found: ${agentId}`,
+            return this.errorManager.handleAgentError({
+                error: new Error(`Agent not found: ${agentId}`),
                 context: { taskId: task.id }
             });
         }
@@ -199,24 +198,13 @@ export class AgentManager extends CoreManager {
             agent.status = status;
             this.activeAgents.set(agentId, agent);
             
+            this.logManager.info(`Agent status updated: ${agentId} -> ${status}`);
+
             return true;
         } catch (error) {
-            logger.error(`Failed to update agent status: ${error}`);
+            this.logManager.error(`Failed to update agent status: ${error}`);
             return false;
         }
-    }
-
-    // ─── Resource Management ────────────────────────────────────────────────
-
-    public async cleanup(): Promise<void> {
-        for (const agent of this.activeAgents.values()) {
-            try {
-                await agent.cleanup();
-            } catch (error) {
-                logger.error(`Error cleaning up agent ${agent.id}:`, error);
-            }
-        }
-        this.activeAgents.clear();
     }
 
     // ─── Private Helper Methods ───────────────────────────────────────────────
@@ -237,7 +225,6 @@ export class AgentManager extends CoreManager {
 
     private async initializeAgent(config: BaseAgentConfig): Promise<AgentType> {
         // Initialize agent based on config
-        // Actual implementation would use AgentFactory or similar
         throw new Error('initializeAgent must be implemented');
     }
 
@@ -249,13 +236,12 @@ export class AgentManager extends CoreManager {
         error: unknown,
         config: BaseAgentConfig
     ): Promise<AgentCreationResult> {
-        const prettyError = new PrettyError({
-            message: 'Agent creation failed',
-            context: { config },
-            rootError: error instanceof Error ? error : undefined
+        const prettyError = this.errorManager.handleAgentError({
+            error,
+            context: { config }
         });
 
-        logger.error(`Failed to create agent:`, prettyError);
+        this.logManager.error(`Failed to create agent:`, prettyError);
 
         return {
             success: false,
@@ -267,27 +253,17 @@ export class AgentManager extends CoreManager {
         };
     }
 
-    private findBestMatchingAgent(
-        agents: AgentType[],
-        criteria: AgentSelectionCriteria
-    ): AgentType | null {
-        // Implement agent selection logic based on criteria
-        // This would match based on role, tools, capabilities etc.
-        return agents[0] || null; // Placeholder implementation
-    }
-
     private handleExecutionError(
         error: unknown,
         agent: AgentType,
         task: TaskType
     ): AgentExecutionResult {
-        const execError = new PrettyError({
-            message: 'Task execution failed',
-            context: { agentId: agent.id, taskId: task.id },
-            rootError: error instanceof Error ? error : undefined
+        const execError = this.errorManager.handleAgentError({
+            error,
+            context: { agentId: agent.id, taskId: task.id }
         });
 
-        logger.error(`Task execution error:`, execError);
+        this.logManager.error(`Task execution error:`, execError);
 
         return {
             success: false,
