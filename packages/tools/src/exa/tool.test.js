@@ -294,4 +294,19 @@ describe('ExaSearch', () => {
     const result = await tool._call({ query: 'test query' });
     expect(result).toBe('An unexpected error occurred: Network Error');
   });
+
+  test('ExaSearch is exported correctly in both paths', () => {
+    const { ExaSearch } = require('../../dist/exa/index.cjs.js');
+    const { ExaSearch: ExaSearchMain } = require('../../dist/index.cjs.js');
+
+    // Check that both imports are constructor functions
+    expect(typeof ExaSearch).toBe('function');
+    expect(typeof ExaSearchMain).toBe('function');
+
+    // Check they have the same name and properties
+    expect(ExaSearch.name).toBe(ExaSearchMain.name);
+    expect(Object.keys(ExaSearch.prototype)).toEqual(
+      Object.keys(ExaSearchMain.prototype)
+    );
+  });
 });

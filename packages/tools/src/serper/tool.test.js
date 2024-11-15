@@ -212,4 +212,19 @@ describe('Serper', () => {
 
     expect(result).toBe('An unexpected error occurred: Network Error');
   });
+
+  test('Serper is exported correctly in both paths', () => {
+    const { Serper } = require('../../dist/serper/index.cjs.js');
+    const { Serper: SerperMain } = require('../../dist/index.cjs.js');
+
+    // Check that both imports are constructor functions
+    expect(typeof Serper).toBe('function');
+    expect(typeof SerperMain).toBe('function');
+
+    // Check they have the same name and properties
+    expect(Serper.name).toBe(SerperMain.name);
+    expect(Object.keys(Serper.prototype)).toEqual(
+      Object.keys(SerperMain.prototype)
+    );
+  });
 });
