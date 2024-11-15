@@ -19,8 +19,6 @@ export const ToolPreviewer = ({ toolInstance, callParams }) => {
   const handleToolCall = async () => {
     setIsLoading(true);
     try {
-      // Use the params state instead of callParams
-      console.log('params', params);
       const result = await toolInstance._call(params);
       // setOutput(result);
       setOutput(
