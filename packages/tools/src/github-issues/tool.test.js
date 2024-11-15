@@ -172,4 +172,21 @@ describe('GithubIssues', () => {
       });
     }
   });
+
+  test('GithubIssues is exported correctly in both paths', () => {
+    const { GithubIssues } = require('../../dist/github-issues/index.cjs.js');
+    const {
+      GithubIssues: GithubIssuesMain,
+    } = require('../../dist/index.cjs.js');
+
+    // Check that both imports are constructor functions
+    expect(typeof GithubIssues).toBe('function');
+    expect(typeof GithubIssuesMain).toBe('function');
+
+    // Check they have the same name and properties
+    expect(GithubIssues.name).toBe(GithubIssuesMain.name);
+    expect(Object.keys(GithubIssues.prototype)).toEqual(
+      Object.keys(GithubIssuesMain.prototype)
+    );
+  });
 });

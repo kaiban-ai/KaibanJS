@@ -167,4 +167,23 @@ describe('WolframAlphaTool', () => {
       new WolframAlphaTool();
     }).toThrow();
   });
+
+  test('WolframAlphaTool is exported correctly in both paths', () => {
+    const {
+      WolframAlphaTool,
+    } = require('../../dist/wolfram-alpha/index.cjs.js');
+    const {
+      WolframAlphaTool: WolframAlphaToolMain,
+    } = require('../../dist/index.cjs.js');
+
+    // Check that both imports are constructor functions
+    expect(typeof WolframAlphaTool).toBe('function');
+    expect(typeof WolframAlphaToolMain).toBe('function');
+
+    // Check they have the same name and properties
+    expect(WolframAlphaTool.name).toBe(WolframAlphaToolMain.name);
+    expect(Object.keys(WolframAlphaTool.prototype)).toEqual(
+      Object.keys(WolframAlphaToolMain.prototype)
+    );
+  });
 });

@@ -181,4 +181,21 @@ describe('TavilySearchResults', () => {
 
     expect(result).toBe('An unexpected error occurred: Network Error');
   });
+
+  test('TavilySearchResults is exported correctly in both paths', () => {
+    const { TavilySearchResults } = require('../../dist/tavily/index.cjs.js');
+    const {
+      TavilySearchResults: TavilySearchResultsMain,
+    } = require('../../dist/index.cjs.js');
+
+    // Check that both imports are constructor functions
+    expect(typeof TavilySearchResults).toBe('function');
+    expect(typeof TavilySearchResultsMain).toBe('function');
+
+    // Check they have the same name and properties
+    expect(TavilySearchResults.name).toBe(TavilySearchResultsMain.name);
+    expect(Object.keys(TavilySearchResults.prototype)).toEqual(
+      Object.keys(TavilySearchResultsMain.prototype)
+    );
+  });
 });
