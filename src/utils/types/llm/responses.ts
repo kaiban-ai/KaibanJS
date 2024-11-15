@@ -112,13 +112,7 @@ export interface CompletionResponse {
     finishReason?: 'stop' | 'length' | 'content_filter' | 'function_call' | null;
 }
 
-// Streaming chunk interface
-export interface StreamingChunk {
-    content: string;
-    metadata?: Record<string, unknown>;
-    finishReason?: string;
-    done: boolean;
-}
+
 
 // LLM usage statistics
 export interface LLMUsageStats {

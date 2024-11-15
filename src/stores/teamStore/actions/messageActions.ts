@@ -6,7 +6,7 @@
 
 import { logger } from '@/utils/core/logger';
 import { BaseMessage, MessageContent } from "@langchain/core/messages";
-import { MessageHistoryManager } from '@/utils/managers/messageHistoryManager';
+import { MessageManager } from '@/managers/domain/llm/MessageManager';
 import { MessageUtils } from '../utils/messageUtils';
 import { MessageMetadataFields } from '@/utils/types/messaging/base';
 import type { TeamState } from '@/utils/types';

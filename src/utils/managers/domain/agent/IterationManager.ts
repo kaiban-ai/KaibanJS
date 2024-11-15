@@ -1,17 +1,61 @@
 /**
  * @file IterationManager.ts
- * @path KaibanJS/src/utils/managers/agent/IterationManager.ts
- * @description Management of agent iterations, state transitions, and stats tracking.
+ * @path src/managers/domain/agent/IterationManager.ts
+ * @description Centralized iteration control and management implementation
+ *
+ * @module @managers/domain/agent
  */
 
 import CoreManager from '../../core/CoreManager';
-import type { AgentType, TaskType, ParsedOutput, Output } from '@/utils/types';
-import type { IterationContext, IterationControl } from '@/utils/types/task/base';
-import { AGENT_STATUS_enum } from '@/utils/types/common/enums';
-import type { Log } from '@/utils/types/team/logs';
+import { ErrorManager } from '../../core/ErrorManager';
+import { LogManager } from '../../core/LogManager';
+import { StatusManager } from '../../core/StatusManager';
+import { DefaultFactory } from '../../../factories/defaultFactory';
 
+// Import types from canonical locations
+import type { AgentType } from '../../../types/agent/base';
+import type { TaskType } from '../../../types/task/base';
+import type {
+    IterationContext,
+    IterationControl,
+    IterationHandlerParams,
+    HandlerResult,
+    IterationStats
+} from '../../../types/agent/iteration';
+import type { ParsedOutput } from '../../../types/llm/responses';
+import { AGENT_STATUS_enum } from '../../../types/common/enums';
+import { toErrorType, type ErrorType } from '../../../types/common/errors';
+
+/**
+ * Manages iteration control and tracking for agent operations
+ */
 export class IterationManager extends CoreManager {
-    // Checks control conditions to decide if an iteration should continue
+    private static instance: IterationManager;
+    protected readonly errorManager: ErrorManager;
+    protected readonly logManager: LogManager;
+    protected readonly statusManager: StatusManager;
+    private readonly activeIterations: Map<string, IterationContext>;
+
+    private constructor() {
+        super();
+        this.errorManager = ErrorManager.getInstance();
+        this.logManager = LogManager.getInstance();
+        this.statusManager = StatusManager.getInstance();
+        this.activeIterations = new Map();
+    }
+
+    public static getInstance(): IterationManager {
+        if (!IterationManager.instance) {
+            IterationManager.instance = new IterationManager();
+        }
+        return IterationManager.instance;
+    }
+
+    // ─── Iteration Control ────────────────────────────────────────────────────────
+
+    /**
+     * Check iteration control conditions
+     */
     public async checkIterationControl(params: {
         agent: AgentType;
         task: TaskType;
@@ -20,119 +64,296 @@ export class IterationManager extends CoreManager {
         parsedOutput: ParsedOutput | null;
     }): Promise<IterationControl> {
         const { agent, task, iterations, maxIterations, parsedOutput } = params;
+        const iterationKey = this.generateIterationKey(agent?.id, task?.id);
 
         try {
+            const context = this.getIterationContext(iterationKey);
+
+            // Check for final answer
             if (parsedOutput?.finalAnswer) {
-                await this.handleIterationEnd({ agent, task, iterations, maxIterations });
+                await this.handleIterationEnd({ agent, task, iterations, maxAgentIterations: maxIterations });
                 return { shouldContinue: false };
             }
 
+            // Check max iterations
             if (iterations >= maxIterations) {
-                const error = new Error(`Maximum iterations [${maxIterations}] reached without final answer`);
-                await this.handleMaxIterationsError({ agent, task, iterations, maxIterations, error });
-                return { shouldContinue: false, error };
+                await this.handleMaxIterationsError({
+                    agent,
+                    task,
+                    iterations,
+                    maxIterations,
+                    error: new Error(`Maximum iterations [${maxIterations}] reached without final answer`)
+                });
+                return { shouldContinue: false };
             }
 
+            // Force final answer when approaching max iterations
             if (iterations === maxIterations - 2) {
                 return {
                     shouldContinue: true,
-                    feedbackMessage: agent.promptTemplates.FORCE_FINAL_ANSWER_FEEDBACK({ agent, task, iterations, maxIterations })
+                    feedbackMessage: agent?.promptTemplates.FORCE_FINAL_ANSWER_FEEDBACK({
+                        agent,
+                        task,
+                        iterations,
+                        maxAgentIterations: maxIterations
+                    })
                 };
             }
 
+            // Update context and continue
+            context.iterations = iterations;
+            context.lastUpdateTime = Date.now();
+            this.activeIterations.set(iterationKey, context);
+
             return { shouldContinue: true };
+
         } catch (error) {
-            this.handleError(error as Error, 'Error in checkIterationControl');
+            await this.handleIterationError(iterationKey, error);
             throw error;
         }
     }
 
-    // Initiates a new iteration and logs the start
-    public async handleIterationStart(params: {
-        agent: AgentType;
-        task: TaskType;
-        iterations: number;
-        maxIterations: number;
-    }): Promise<void> {
-        const { agent, task, iterations, maxIterations } = params;
+    /**
+     * Handle iteration start
+     */
+    public async handleIterationStart(params: IterationHandlerParams): Promise<HandlerResult> {
+        const { agent, task, iterations, maxAgentIterations } = params;
+        const iterationKey = this.generateIterationKey(agent?.id, task?.id);
 
         try {
-            const log = this.createAgentLog(agent, task, `📍 Starting iteration ${iterations + 1}/${maxIterations}`, iterations, maxIterations, AGENT_STATUS_enum.ITERATION_START);
-            this.updateAgentState(agent, log);
-            this.log(`📍 Starting iteration ${iterations + 1}/${maxIterations}`, 'info');
+            await this.statusManager.transition({
+                currentStatus: agent?.status,
+                targetStatus: AGENT_STATUS_enum.ITERATION_START,
+                entity: 'agent',
+                entityId: agent?.id,
+                metadata: {
+                    iterations,
+                    maxAgentIterations,
+                    timestamp: Date.now()
+                }
+            });
+
+            const context: IterationContext = {
+                startTime: Date.now(),
+                iterations,
+                maxIterations: maxAgentIterations,
+                lastUpdateTime: Date.now(),
+                status: 'running'
+            };
+
+            this.activeIterations.set(iterationKey, context);
+
+            this.logManager.info(`Starting iteration ${iterations + 1}/${maxAgentIterations} for agent ${agent?.name}`);
+
+            return {
+                success: true,
+                data: context
+            };
+
         } catch (error) {
-            this.handleError(error as Error, 'Error in handleIterationStart');
-            throw error;
+            return this.handleIterationError(iterationKey, error);
         }
     }
 
-    // Finalizes an iteration and logs the end
-    public async handleIterationEnd(params: {
-        agent: AgentType;
-        task: TaskType;
-        iterations: number;
-        maxIterations: number;
-    }): Promise<void> {
-        const { agent, task, iterations, maxIterations } = params;
+    /**
+     * Handle iteration end
+     */
+    public async handleIterationEnd(params: IterationHandlerParams): Promise<HandlerResult> {
+        const { agent, task, iterations, maxAgentIterations } = params;
+        const iterationKey = this.generateIterationKey(agent?.id, task?.id);
 
         try {
-            const log = this.createAgentLog(agent, task, `✓ Completed iteration ${iterations + 1}/${maxIterations}`, iterations, maxIterations, AGENT_STATUS_enum.ITERATION_END);
-            this.updateAgentState(agent, log);
-            this.log(`✓ Completed iteration ${iterations + 1}/${maxIterations}`, 'info');
+            await this.statusManager.transition({
+                currentStatus: agent?.status,
+                targetStatus: AGENT_STATUS_enum.ITERATION_END,
+                entity: 'agent',
+                entityId: agent?.id,
+                metadata: {
+                    iterations,
+                    maxAgentIterations,
+                    timestamp: Date.now()
+                }
+            });
+
+            const context = this.getIterationContext(iterationKey);
+            context.endTime = Date.now();
+            context.status = 'completed';
+
+            this.logManager.info(`Completed iteration ${iterations + 1}/${maxAgentIterations} for agent ${agent?.name}`);
+
+            const stats = this.calculateIterationStats(context);
+            this.cleanupIteration(iterationKey);
+
+            return {
+                success: true,
+                data: stats
+            };
+
         } catch (error) {
-            this.handleError(error as Error, 'Error in handleIterationEnd');
-            throw error;
+            return this.handleIterationError(iterationKey, error);
         }
     }
 
-    // Handles an error when maximum iterations are exceeded
-    private async handleMaxIterationsError(params: {
+    /**
+     * Handle maximum iterations error
+     */
+    public async handleMaxIterationsError(params: {
         agent: AgentType;
         task: TaskType;
         iterations: number;
         maxIterations: number;
         error: Error;
-    }): Promise<void> {
+    }): Promise<HandlerResult> {
         const { agent, task, iterations, maxIterations, error } = params;
+        const iterationKey = this.generateIterationKey(agent?.id, task?.id);
 
         try {
-            const log = this.createAgentLog(agent, task, `⚠️ Maximum iterations exceeded: ${maxIterations}`, iterations, maxIterations, AGENT_STATUS_enum.MAX_ITERATIONS_ERROR, error);
-            this.updateAgentState(agent, log);
-            this.log(`⚠️ Maximum iterations [${maxIterations}] reached for task ${task.id}`, 'warn');
+            await this.statusManager.transition({
+                currentStatus: agent?.status,
+                targetStatus: AGENT_STATUS_enum.MAX_ITERATIONS_ERROR,
+                entity: 'agent',
+                entityId: agent?.id,
+                metadata: {
+                    iterations,
+                    maxIterations,
+                    error: error.message,
+                    timestamp: Date.now()
+                }
+            });
+
+            const context = this.getIterationContext(iterationKey);
+            context.status = 'error';
+            context.error = toErrorType(error);
+
+            this.logManager.error(`Maximum iterations [${maxIterations}] reached for agent ${agent?.name}`);
+
+            const stats = this.calculateIterationStats(context);
+            this.cleanupIteration(iterationKey);
+
+            return {
+                success: false,
+                error: toErrorType(error),
+                data: stats
+            };
+
         } catch (innerError) {
-            this.handleError(innerError as Error, 'Error in handleMaxIterationsError');
-            throw innerError;
+            return this.handleIterationError(iterationKey, innerError);
         }
     }
 
-    // Updates the agent state with the provided log
-    private updateAgentState(agent: AgentType, log: Log): void {
-        if (agent.store) {
-            agent.store.setState(state => ({
-                workflowLogs: [...state.workflowLogs, log]
-            }));
+    // ─── Resource Management ───────────────────────────────────────────────────────
+
+    /**
+     * Get iteration statistics
+     */
+    public getIterationStats(iterationKey: string): IterationStats {
+        const context = this.activeIterations.get(iterationKey);
+        if (!context) {
+            return DefaultFactory.createIterationStats();
+        }
+        return this.calculateIterationStats(context);
+    }
+
+    /**
+     * Validate manager configuration
+     */
+    public async validateConfig(): Promise<void> {
+        if (!this.errorManager || !this.logManager || !this.statusManager) {
+            throw new Error('Required managers not initialized');
         }
     }
 
-    // Creates a log entry for an iteration event
-    private createAgentLog(agent: AgentType, task: TaskType, description: string, iterations: number, maxIterations: number, status: AGENT_STATUS_enum, error?: Error): Log {
+    /**
+     * Initialize manager resources
+     */
+    public async initialize(): Promise<void> {
+        await this.validateConfig();
+        await this.cleanup();
+        this.logManager.info('IterationManager initialized successfully');
+    }
+
+    /**
+     * Clean up manager resources
+     */
+    public async cleanup(): Promise<void> {
+        for (const [key, context] of this.activeIterations.entries()) {
+            this.cleanupIteration(key);
+        }
+        this.activeIterations.clear();
+        this.logManager.info('IterationManager cleanup completed');
+    }
+
+    // ─── Private Helper Methods ───────────────────────────────────────────────────
+
+    /**
+     * Generate unique iteration key
+     */
+    private generateIterationKey(agentId?: string, taskId?: string): string {
+        return `${agentId}:${taskId}`;
+    }
+
+    /**
+     * Get iteration context with validation
+     */
+    private getIterationContext(iterationKey: string): IterationContext {
+        const context = this.activeIterations.get(iterationKey);
+        if (!context) {
+            throw new Error(`No active iteration found for key: ${iterationKey}`);
+        }
+        return context;
+    }
+
+    /**
+     * Calculate iteration statistics
+     */
+    private calculateIterationStats(context: IterationContext): IterationStats {
         return {
-            agent,
-            task,
-            description,
-            metadata: {
-                iterations,
-                maxIterations,
-                timestamp: Date.now(),
-                output: {
-                    llmUsageStats: { /* Mocked LLM usage stats */ }
-                },
-                error
-            },
-            agentStatus: status,
-            logType: 'AgentStatusUpdate'
+            startTime: context.startTime,
+            endTime: context.endTime || Date.now(),
+            duration: (context.endTime || Date.now()) - context.startTime,
+            iterations: context.iterations,
+            maxIterations: context.maxIterations,
+            status: context.status,
+            error: context.error
+        };
+    }
+
+    /**
+     * Clean up iteration resources
+     */
+    private cleanupIteration(iterationKey: string): void {
+        const context = this.activeIterations.get(iterationKey);
+        if (context) {
+            context.endTime = context.endTime || Date.now();
+            this.activeIterations.delete(iterationKey);
+        }
+    }
+
+    /**
+     * Handle iteration error
+     */
+    protected async handleIterationError(
+        iterationKey: string,
+        error: unknown
+    ): Promise<HandlerResult> {
+        const context = this.activeIterations.get(iterationKey);
+        if (context) {
+            context.status = 'error';
+            context.error = toErrorType(error instanceof Error ? error : new Error(String(error)));
+        }
+
+        const errorResult = await super.handleError(
+            error instanceof Error ? error : new Error(String(error)),
+            `Iteration error for key: ${iterationKey}`
+        );
+
+        this.cleanupIteration(iterationKey);
+
+        return {
+            success: false,
+            error: toErrorType(error instanceof Error ? error : new Error(String(error)))
         };
     }
 }
 
-export default IterationManager;
+export default IterationManager.getInstance();

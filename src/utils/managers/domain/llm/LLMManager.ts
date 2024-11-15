@@ -1,11 +1,15 @@
 /**
  * @file LLMManager.ts
- * @path KaibanJS/src/managers/domain/llm/LLMManager.ts
- * @description LLM instance creation and management implementation
+ * @path src/managers/domain/llm/LLMManager.ts
+ * @description Core LLM operations management and provider orchestration
+ *
+ * @module @managers/domain/llm
  */
 
-// Core utilities
-import { CoreManager } from '@/managers/core/CoreManager';
+import CoreManager from '../../core/CoreManager';
+import { ErrorManager } from '../../core/ErrorManager';
+import { LogManager } from '../../core/LogManager';
+import { StreamingManager } from './StreamingManager';
 
 // Import LangChain chat models
 import { ChatGroq } from '@langchain/groq';
@@ -15,9 +19,24 @@ import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { ChatMistralAI } from '@langchain/mistralai';
 
 // Import types from canonical locations
-import type { LLMInstance, LLMInstanceFactory } from '@/utils/types/llm/common';
-import type { LLMConfig } from '@/utils/types/llm/common';
-import type { ModelParams } from '@/utils/types/llm/common';
+import type { 
+    LLMInstance, 
+    LLMInstanceFactory 
+} from '@/utils/types/llm/instance';
+
+import type { 
+    LLMConfig,
+    LLMProvider,
+    LLMRuntimeOptions,
+    BaseLLMConfig,
+    ActiveLLMConfig
+} from '@/utils/types/llm/common';
+
+import type {
+    StreamingChunk,
+    StreamingHandlerConfig
+} from '@/utils/types/llm';
+
 import type {
     GroqConfig,
     OpenAIConfig,
@@ -26,15 +45,31 @@ import type {
     MistralConfig
 } from '@/utils/types/llm/providers';
 
-// ─── LLM Manager Implementation ─────────────────────────────────────────────────
+import type { LLMResponse } from '@/utils/types/llm/responses';
 
+/**
+ * Core LLM operations manager
+ */
 export class LLMManager extends CoreManager implements LLMInstanceFactory {
     private static instance: LLMManager;
+    protected readonly errorManager: ErrorManager;
+    protected readonly logManager: LogManager;
+    private readonly streamingManager: StreamingManager;
+    private readonly instances: Map<string, LLMInstance>;
+    private readonly configs: Map<string, LLMConfig>;
 
     private constructor() {
         super();
+        this.errorManager = ErrorManager.getInstance();
+        this.logManager = LogManager.getInstance();
+        this.streamingManager = StreamingManager.getInstance();
+        this.instances = new Map();
+        this.configs = new Map();
     }
 
+    /**
+     * Get singleton instance
+     */
     public static getInstance(): LLMManager {
         if (!LLMManager.instance) {
             LLMManager.instance = new LLMManager();
@@ -42,24 +77,55 @@ export class LLMManager extends CoreManager implements LLMInstanceFactory {
         return LLMManager.instance;
     }
 
-    // ─── Instance Creation ──────────────────────────────────────────────────────
-
-    public createInstance(config: LLMConfig): LLMInstance {
+    /**
+     * Create LLM instance
+     */
+    public async createInstance(config: LLMConfig): Promise<LLMInstance> {
         try {
-            const instance = this.createInstanceByProvider(config);
-            return this.wrapInstance(instance, config);
-        } catch (error) {
-            this.handleError(
-                error instanceof Error ? error : new Error(String(error)),
-                JSON.stringify({ provider: config.provider })
+            const instanceId = this.generateInstanceId(config);
+
+            // Check if the instance already exists to avoid redundant creation
+            if (this.instances.has(instanceId)) {
+                return this.instances.get(instanceId)!;
+            }
+
+            // Create the instance based on the specified provider
+            const instance = await this.createInstanceByProvider(config);
+            
+            // Wrap the provider-specific instance with common LLM interface
+            const wrappedInstance = this.wrapInstance(instance, config);
+            
+            // Cache the instance and its configuration for future use
+            this.instances.set(instanceId, wrappedInstance);
+            this.configs.set(instanceId, config);
+
+            // Log the instance creation with the new format
+            this.logManager.info(
+                `LLM instance created - Provider: ${config.provider}, Model: ${config.model}, InstanceId: ${instanceId}`,
+                'LLMManager',
+                instanceId
             );
-            throw error;
+
+            // Return the fully configured LLM instance
+            return wrappedInstance;
+
+        } catch (error) {
+            // Handle any errors with consistent error management and logging
+            throw await this.errorManager.handleError({
+                error: error instanceof Error ? error : new Error(String(error)),
+                context: {
+                    provider: config.provider,
+                    model: config.model,
+                    component: 'LLMManager'
+                }
+            });
         }
     }
 
-    // ─── Provider-Specific Instance Creation ─────────────────────────────────────
-
-    private createInstanceByProvider(config: LLMConfig): any {
+    /**
+     * Create provider-specific instance
+     */
+    private async createInstanceByProvider(config: LLMConfig): Promise<any> {
         switch (config.provider) {
             case 'groq':
                 return this.createGroqInstance(config as GroqConfig);
@@ -72,17 +138,14 @@ export class LLMManager extends CoreManager implements LLMInstanceFactory {
             case 'mistral':
                 return this.createMistralInstance(config as MistralConfig);
             default:
-                this.handleError(
-                    new Error(`Unsupported LLM provider: ${config.provider}`),
-                    JSON.stringify({ provider: config.provider })
-                );
                 throw new Error(`Unsupported LLM provider: ${config.provider}`);
         }
     }
 
-    // ─── Provider-Specific Implementations ───────────────────────────────────────
-
-    private createGroqInstance(config: GroqConfig) {
+    /**
+     * Create provider-specific instances
+     */
+    private createGroqInstance(config: GroqConfig): ChatGroq {
         return new ChatGroq({
             apiKey: config.apiKey,
             modelName: config.model,
@@ -93,7 +156,7 @@ export class LLMManager extends CoreManager implements LLMInstanceFactory {
         });
     }
 
-    private createOpenAIInstance(config: OpenAIConfig) {
+    private createOpenAIInstance(config: OpenAIConfig): ChatOpenAI {
         return new ChatOpenAI({
             openAIApiKey: config.apiKey,
             modelName: config.model,
@@ -108,7 +171,7 @@ export class LLMManager extends CoreManager implements LLMInstanceFactory {
         });
     }
 
-    private createAnthropicInstance(config: AnthropicConfig) {
+    private createAnthropicInstance(config: AnthropicConfig): ChatAnthropic {
         return new ChatAnthropic({
             anthropicApiKey: config.apiKey,
             modelName: config.model,
@@ -121,7 +184,7 @@ export class LLMManager extends CoreManager implements LLMInstanceFactory {
         });
     }
 
-    private createGoogleInstance(config: GoogleConfig) {
+    private createGoogleInstance(config: GoogleConfig): ChatGoogleGenerativeAI {
         return new ChatGoogleGenerativeAI({
             apiKey: config.apiKey,
             modelName: config.model,
@@ -134,7 +197,7 @@ export class LLMManager extends CoreManager implements LLMInstanceFactory {
         });
     }
 
-    private createMistralInstance(config: MistralConfig) {
+    private createMistralInstance(config: MistralConfig): ChatMistralAI {
         return new ChatMistralAI({
             apiKey: config.apiKey,
             modelName: config.model,
@@ -146,69 +209,139 @@ export class LLMManager extends CoreManager implements LLMInstanceFactory {
         });
     }
 
-    // ─── Instance Wrapper ──────────────────────────────────────────────────────
-
+    /**
+     * Wrap provider instance with common interface
+     */
     private wrapInstance(instance: any, config: LLMConfig): LLMInstance {
+        const instanceId = this.generateInstanceId(config);
+
         return {
-            generate: async (input: string, options?: any) => {
+            generate: async (input: string, options?: LLMRuntimeOptions): Promise<LLMResponse> => {
                 try {
-                    return await instance.generate([input], options);
+                    if (config.streaming) {
+                        await this.streamingManager.initializeStream(instanceId, {
+                            content: input,
+                            metadata: options?.metadata
+                        });
+                    }
+
+                    const response = await instance.generate([input], options);
+
+                    if (config.streaming) {
+                        await this.streamingManager.completeStream(instanceId);
+                    }
+
+                    return response;
+
                 } catch (error) {
-                    this.handleError(
-                        error instanceof Error ? error : new Error(String(error)),
-                        JSON.stringify({ input, provider: config.provider })
-                    );
+                    if (config.streaming) {
+                        await this.streamingManager.abortStream(instanceId);
+                    }
                     throw error;
                 }
             },
 
-            generateStream: async function* (input: string, options?: any) {
+            generateStream: async function* (input: string, options?: LLMRuntimeOptions): AsyncIterator<StreamingChunk> {
+                if (!config.streaming) {
+                    throw new Error('Streaming not enabled for this instance');
+                }
+
                 try {
+                    await this.streamingManager.initializeStream(instanceId, {
+                        content: input,
+                        metadata: options?.metadata
+                    });
+
                     for await (const chunk of instance.stream(input, options)) {
+                        await this.streamingManager.processChunk(instanceId, chunk);
                         yield chunk;
                     }
+
+                    await this.streamingManager.completeStream(instanceId);
+
                 } catch (error) {
-                    this.handleError(
-                        error instanceof Error ? error : new Error(String(error)),
-                        JSON.stringify({ input, provider: config.provider })
-                    );
+                    await this.streamingManager.abortStream(instanceId);
                     throw error;
                 }
             },
 
-            validateConfig: async () => {
-                try {
-                    await instance.validateEnvironment();
-                } catch (error) {
-                    this.handleError(
-                        error instanceof Error ? error : new Error(String(error)),
-                        JSON.stringify({ provider: config.provider })
-                    );
-                    throw error;
-                }
+            validateConfig: async (): Promise<void> => {
+                await instance.validateEnvironment?.();
             },
 
-            cleanup: async () => {
-                try {
-                    if (instance.cleanup) {
-                        await instance.cleanup();
-                    }
-                } catch (error) {
-                    this.log('Error during LLM instance cleanup: ' + error, 'warn');
+            cleanup: async (): Promise<void> => {
+                if (instance.cleanup) {
+                    await instance.cleanup();
                 }
+                this.instances.delete(instanceId);
+                this.configs.delete(instanceId);
             },
 
-            getConfig: () => config,
+            getConfig: (): LLMConfig => config,
 
-            updateConfig: (updates: Partial<LLMConfig>) => {
+            updateConfig: (updates: Partial<LLMConfig>): void => {
                 Object.assign(config, updates);
                 if (instance.updateConfiguration) {
                     instance.updateConfiguration(updates);
                 }
             },
 
-            getProvider: () => config.provider
+            getProvider: (): LLMProvider => config.provider
         };
+    }
+
+    /**
+     * Validate manager configuration
+     */
+    public async validateConfig(): Promise<void> {
+        // Validate provider configurations
+        for (const [instanceId, config] of this.configs.entries()) {
+            try {
+                const instance = this.instances.get(instanceId);
+                if (instance) {
+                    await instance.validateConfig();
+                }
+            } catch (error) {
+                this.logManager.error(`Configuration validation failed for instance ${instanceId}`, {
+                    error,
+                    component: 'LLMManager'
+                });
+            }
+        }
+    }
+
+    /**
+     * Initialize manager
+     */
+    public async initialize(): Promise<void> {
+        await this.streamingManager.initialize();
+        this.logManager.info('LLMManager initialized', 'LLMManager', 'N/A');
+    }
+
+    /**
+     * Cleanup resources
+     */
+    public async cleanup(): Promise<void> {
+        // Cleanup all instances
+        for (const instance of this.instances.values()) {
+            await instance.cleanup();
+        }
+
+        this.instances.clear();
+        this.configs.clear();
+
+        await this.streamingManager.cleanup();
+
+        this.logManager.info('LLMManager cleaned up', 'LLMManager', 'N/A');
+    }
+
+    // ─── Private Helper Methods ───────────────────────────────────────────────
+
+    /**
+     * Generate unique instance ID
+     */
+    private generateInstanceId(config: LLMConfig): string {
+        return `${config.provider}-${config.model}-${Date.now()}`;
     }
 }
 

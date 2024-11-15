@@ -1,14 +1,18 @@
 /**
  * @file tracking.ts
  * @path KaibanJS/src/utils/types/task/tracking.ts
- * @description Task tracking and monitoring interfaces
+ * @description Task tracking and monitoring type definitions
+ *
+ * @module @types/task
  */
 
-import { TASK_STATUS_enum } from "../common";
-import { LLMUsageStats } from "../llm";
-import { TaskType } from "./base";
+import { TASK_STATUS_enum } from '../common';
+import type { LLMUsageStats } from '../llm';
+import type { TaskType } from './base';
 
-// Task progress interface
+// ─── Task Progress Types ───────────────────────────────────────────────────────
+
+/** Task progress interface */
 export interface TaskProgress {
     taskId: string;
     status: keyof typeof TASK_STATUS_enum;
@@ -23,7 +27,7 @@ export interface TaskProgress {
     };
 }
 
-// Task metrics interface
+/** Task metrics interface */
 export interface TaskMetrics {
     executionTime: number;
     tokenUsage: {
@@ -49,7 +53,7 @@ export interface TaskMetrics {
     };
 }
 
-// Task history entry
+/** Task history entry */
 export interface TaskHistoryEntry {
     timestamp: number;
     eventType: string;
@@ -66,7 +70,7 @@ export interface TaskHistoryEntry {
     };
 }
 
-// Task dependency tracking
+/** Task dependency tracking */
 export interface TaskDependencyTracking {
     taskId: string;
     dependencies: {
@@ -82,7 +86,7 @@ export interface TaskDependencyTracking {
     status: 'pending' | 'satisfied' | 'blocked';
 }
 
-// Task audit record
+/** Task audit record */
 export interface TaskAuditRecord {
     taskId: string;
     timestamp: number;
@@ -96,17 +100,19 @@ export interface TaskAuditRecord {
     context?: Record<string, unknown>;
 }
 
-// Task tracking utilities
+// ─── Task Tracking Utils ───────────────────────────────────────────────────────
+
 export const TaskTrackingUtils = {
     calculateProgress: (task: TaskType): number => {
         if (task.status === TASK_STATUS_enum.DONE) return 100;
         if (task.status === TASK_STATUS_enum.PENDING) return 0;
         
         if (task.iterationCount !== undefined) {
-            const maxIterations = 10;
+            const maxIterations = 10; // Default max iterations
             return Math.min((task.iterationCount / maxIterations) * 100, 99);
         }
 
+        // Status-based progress estimation
         const statusProgress: Record<keyof typeof TASK_STATUS_enum, number> = {
             PENDING: 0,
             TODO: 10,
@@ -142,36 +148,37 @@ export const TaskTrackingUtils = {
     }
 };
 
-// Task tracking type guards
+// ─── Type Guards ────────────────────────────────────────────────────────────────
+
 export const TaskTrackingTypeGuards = {
     isTaskProgress: (value: unknown): value is TaskProgress => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'taskId' in value &&
-            'status' in value &&
-            'progress' in value &&
-            'timeElapsed' in value
+        if (typeof value !== 'object' || value === null) return false;
+        const progress = value as Partial<TaskProgress>;
+        return !!(
+            typeof progress.taskId === 'string' &&
+            'status' in progress &&
+            typeof progress.progress === 'number' &&
+            typeof progress.timeElapsed === 'number'
         );
     },
 
     isTaskHistoryEntry: (value: unknown): value is TaskHistoryEntry => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'timestamp' in value &&
-            'eventType' in value
+        if (typeof value !== 'object' || value === null) return false;
+        const entry = value as Partial<TaskHistoryEntry>;
+        return !!(
+            typeof entry.timestamp === 'number' &&
+            typeof entry.eventType === 'string'
         );
     },
 
     isTaskDependencyTracking: (value: unknown): value is TaskDependencyTracking => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'taskId' in value &&
-            'dependencies' in value &&
-            'dependents' in value &&
-            'status' in value
+        if (typeof value !== 'object' || value === null) return false;
+        const tracking = value as Partial<TaskDependencyTracking>;
+        return !!(
+            typeof tracking.taskId === 'string' &&
+            Array.isArray(tracking.dependencies) &&
+            Array.isArray(tracking.dependents) &&
+            'status' in tracking
         );
     }
 };

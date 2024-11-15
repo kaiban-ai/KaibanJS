@@ -1,101 +1,328 @@
 /**
  * @file ToolManager.ts
- * @path KaibanJS/src/utils/managers/tool/ToolManager.ts
- * @description Manages the execution of tools, tracking results, handling errors, and logging outcomes.
+ * @path src/managers/domain/agent/ToolManager.ts
+ * @description Tool execution management and orchestration
+ *
+ * @module @managers/domain/agent
  */
 
+import { Tool } from 'langchain/tools';
 import CoreManager from '../../core/CoreManager';
-import { ErrorHandler } from '@/utils/handlers';
-import { AGENT_STATUS_enum } from '@/utils/types/common/enums';
-import type { AgentType, TaskType, ToolExecutionParams, ToolExecutionResult, ThinkingResult } from '@/utils/types';
-import type { Tool } from "langchain/tools";
+import { ErrorManager } from '../../core/ErrorManager';
+import { LogManager } from '../../core/LogManager';
+import { StatusManager } from '../../core/StatusManager';
+import { DefaultFactory } from '../../../factories/defaultFactory';
 
+// Import types from canonical locations
+import type { 
+    ToolExecutionParams,
+    ToolExecutionResult,
+    ToolHandlerParams,
+    CostDetails
+} from '../../../types/tool/execution';
+import type { AgentType } from '../../../types/agent/base';
+import type { TaskType } from '../../../types/task/base';
+import type { ParsedOutput } from '../../../types/llm/responses';
+
+import { AGENT_STATUS_enum } from '../../../types/common/enums';
+
+/**
+ * Core tool execution and management implementation
+ */
 export class ToolManager extends CoreManager {
-    // Executes a tool for an agent, manages transitions, and returns execution result
-    public async executeTool(params: ToolExecutionParams): Promise<ToolExecutionResult> {
-        const { agent, task, tool, toolInput, parsedLLMOutput } = params;
+    private static instance: ToolManager;
 
+    private constructor() {
+        super();
+    }
+
+    /**
+     * Get singleton instance
+     */
+    public static getInstance(): ToolManager {
+        if (!ToolManager.instance) {
+            ToolManager.instance = new ToolManager();
+        }
+        return ToolManager.instance;
+    }
+
+    // ─── Tool Execution ──────────────────────────────────────────────────────────
+
+    /**
+     * Execute a tool with proper lifecycle management
+     */
+    public async executeTool(params: ToolExecutionParams): Promise<ToolExecutionResult> {
+        const { agent, task, tool, input, context, parsedOutput } = params;
+
+        const toolKey = this.generateToolKey(agent.id, tool.name);
+        
         try {
-            await this.handleToolStart(agent, task, tool, toolInput);
-            const result = await this.executeToolOperation(tool, toolInput);
+            await this.startToolExecution(agent, task, tool);
+            this.setupToolTimeout(toolKey);
+
+            const result = await this.executeOperation(tool, input);
+            
             await this.handleToolSuccess(agent, task, tool, result);
+            this.cleanupTool(toolKey);
+
+            const costDetails: CostDetails = DefaultFactory.createCostDetails();
 
             return {
                 success: true,
-                feedbackMessage: this.generateSuccessFeedback(agent, task, result, parsedLLMOutput),
-                result
+                result,
+                feedbackMessage: this.generateSuccessFeedback(agent, task, result, parsedOutput),
+                costDetails,
+                usageStats: DefaultFactory.createLLMUsageStats()
             };
 
         } catch (error) {
-            return await errorHandler.handleToolError({
+            return await this.handleToolError({
                 agent,
                 task,
                 tool,
-                error,
-                store: task.store
+                error: error instanceof Error ? error : new Error(String(error)),
+                toolName: tool.name
             });
         }
     }
 
-    // Logs and initiates the tool start
-    private async handleToolStart(agent: AgentType, task: TaskType, tool: Tool, input: unknown): Promise<void> {
-        await this.logTransition(agent, AGENT_STATUS_enum.USING_TOOL, { toolName: tool.name });
-        this.log(`🛠️ Using tool: ${tool.name} for task ${task.title}`, 'info');
-    }
+    /**
+     * Handle non-existent tool error
+     */
+    public async handleToolDoesNotExist(params: {
+        agent: AgentType;
+        task: TaskType;
+        toolName: string;
+        parsedOutput?: ParsedOutput;
+    }): Promise<ToolExecutionResult> {
+        const { agent, task, toolName, parsedOutput } = params;
 
-    // Executes the tool operation and returns the result
-    private async executeToolOperation(tool: Tool, input: unknown): Promise<string> {
         try {
-            return await tool.call(input);
+            await this.updateAgentStatus(agent, AGENT_STATUS_enum.TOOL_DOES_NOT_EXIST, {
+                toolName,
+                timestamp: Date.now()
+            });
+
+            const feedbackMessage = agent.promptTemplates.TOOL_NOT_EXIST_FEEDBACK({
+                agent,
+                task,
+                toolName,
+                parsedLLMOutput: parsedOutput
+            });
+
+            return {
+                success: false,
+                error: new Error(`Tool '${toolName}' does not exist`),
+                feedbackMessage
+            };
+
         } catch (error) {
-            throw new Error(`Tool execution failed: ${tool.name}`);
+            return await this.handleToolError({
+                agent,
+                task,
+                tool: undefined,
+                error: error instanceof Error ? error : new Error(String(error)),
+                toolName
+            });
         }
     }
 
-    // Manages success transition and logs successful tool execution
-    private async handleToolSuccess(agent: AgentType, task: TaskType, tool: Tool, result: string): Promise<void> {
-        await this.logTransition(agent, AGENT_STATUS_enum.USING_TOOL_END, { toolName: tool.name, result });
-        this.log(`🛠️✅ Tool execution complete: ${tool.name}`, 'info');
+    // ─── Tool Lifecycle Management ───────────────────────────────────────────────
+
+    /**
+     * Start tool execution phase
+     */
+    private async startToolExecution(
+        agent: AgentType,
+        task: TaskType,
+        tool: Tool
+    ): Promise<void> {
+        await this.updateAgentStatus(agent, AGENT_STATUS_enum.USING_TOOL, {
+            toolName: tool.name,
+            startTime: Date.now()
+        });
+
+        this.log(`Agent ${agent.name} using tool: ${tool.name}`);
     }
 
-    // Manages error transition and handles tool errors
-    private async handleToolError(agent: AgentType, task: TaskType, tool: Tool, error: Error, parsedLLMOutput: ThinkingResult): Promise<ToolExecutionResult> {
-        await this.logTransition(agent, AGENT_STATUS_enum.USING_TOOL_ERROR, { toolName: tool.name, error });
-        this.log(`🛠️🛑 Tool error in ${tool.name}: ${error.message}`, 'error');
+    /**
+     * Handle successful tool completion
+     */
+    private async handleToolSuccess(
+        agent: AgentType,
+        task: TaskType,
+        tool: Tool,
+        result: string
+    ): Promise<void> {
+        await this.updateAgentStatus(agent, AGENT_STATUS_enum.USING_TOOL_END, {
+            toolName: tool.name,
+            result,
+            endTime: Date.now()
+        });
+
+        this.log(`Tool ${tool.name} executed successfully`);
+    }
+
+    /**
+     * Handle tool execution error
+     */
+    private async handleToolError(params: ToolHandlerParams): Promise<ToolExecutionResult> {
+        const { agent, task, tool, error, toolName } = params;
+
+        await this.updateAgentStatus(agent, AGENT_STATUS_enum.USING_TOOL_ERROR, {
+            toolName,
+            error,
+            timestamp: Date.now()
+        });
+
+        // Use the protected handleError method from CoreManager
+        this.handleError(error, `Tool execution error in ${toolName}`);
+
+        const feedbackMessage = agent.promptTemplates.TOOL_ERROR_FEEDBACK({
+            agent,
+            task,
+            toolName,
+            error,
+            parsedLLMOutput: undefined
+        });
+
+        this.log(`Tool error in ${toolName}`, agent.name, task.id, 'error', error);
 
         return {
             success: false,
             error,
-            feedbackMessage: this.generateErrorFeedback(agent, task, tool, error, parsedLLMOutput)
+            feedbackMessage
         };
     }
 
-    // Generates feedback for successful tool execution
-    private generateSuccessFeedback(agent: AgentType, task: TaskType, toolResult: string, parsedLLMOutput: ThinkingResult): string {
+    // ─── Tool Operations ─────────────────────────────────────────────────────────
+
+    /**
+     * Execute the tool operation
+     */
+    private async executeOperation(tool: Tool, input: unknown): Promise<string> {
+        try {
+            // Use a more flexible approach to calling the tool
+            const result = await tool.call(typeof input === 'string' ? input : JSON.stringify(input));
+            if (typeof result !== 'string') {
+                throw new Error('Tool must return a string result');
+            }
+            return result;
+        } catch (error) {
+            throw new Error(`Tool execution failed: ${error instanceof Error ? error.message : String(error)}`);
+        }
+    }
+
+    /**
+     * Setup tool execution timeout
+     */
+    private setupToolTimeout(toolKey: string, timeout: number = 300000): void {
+        const timeoutTimer = setTimeout(() => {
+            this.handleToolTimeout(toolKey);
+        }, timeout);
+
+        this.activeTools.set(toolKey, {
+            startTime: Date.now(),
+            timeout: timeoutTimer
+        });
+    }
+
+    /**
+     * Handle tool timeout
+     */
+    private handleToolTimeout(toolKey: string): void {
+        const toolInfo = this.activeTools.get(toolKey);
+        if (toolInfo) {
+            const duration = Date.now() - toolInfo.startTime;
+            this.log(`Tool execution timed out after ${duration}ms`, undefined, undefined, 'warn');
+            this.cleanupTool(toolKey);
+        }
+    }
+
+    /**
+     * Clean up tool resources
+     */
+    private cleanupTool(toolKey: string): void {
+        const toolInfo = this.activeTools.get(toolKey);
+        if (toolInfo) {
+            clearTimeout(toolInfo.timeout);
+            this.activeTools.delete(toolKey);
+        }
+    }
+
+    // ─── Status Management ────────────────────────────────────────────────────────
+
+    /**
+     * Update agent status with metadata
+     */
+    private async updateAgentStatus(
+        agent: AgentType,
+        status: keyof typeof AGENT_STATUS_enum,
+        metadata?: Record<string, unknown>
+    ): Promise<void> {
+        await this.handleStatusTransition({
+            currentStatus: agent.status,
+            targetStatus: status,
+            entity: 'agent',
+            entityId: agent.id,
+            agent,
+            metadata: {
+                ...metadata,
+                timestamp: Date.now()
+            }
+        });
+
+        agent.status = status;
+    }
+
+    // ─── Utility Methods ──────────────────────────────────────────────────────────
+
+    /**
+     * Generate unique tool execution key
+     */
+    private generateToolKey(agentId: string, toolName: string): string {
+        return `${agentId}:${toolName}:${Date.now()}`;
+    }
+
+    /**
+     * Generate success feedback message
+     */
+    private generateSuccessFeedback(
+        agent: AgentType,
+        task: TaskType,
+        result: string,
+        parsedOutput?: ParsedOutput
+    ): string {
         return agent.promptTemplates.TOOL_RESULT_FEEDBACK({
             agent,
             task,
-            toolResult,
-            parsedLLMOutput
+            toolResult: result,
+            parsedLLMOutput: parsedOutput
         });
     }
 
-    // Generates feedback for tool execution errors
-    private generateErrorFeedback(agent: AgentType, task: TaskType, tool: Tool, error: Error, parsedLLMOutput: ThinkingResult): string {
-        return agent.promptTemplates.TOOL_ERROR_FEEDBACK({
-            agent,
-            task,
-            toolName: tool.name,
-            error,
-            parsedLLMOutput
-        });
+    // ─── Resource Management ───────────────────────────────────────────────────────
+
+    /**
+     * Clean up all tool resources
+     */
+    public async cleanup(): Promise<void> {
+        for (const [toolKey, toolInfo] of this.activeTools.entries()) {
+            clearTimeout(toolInfo.timeout);
+            this.activeTools.delete(toolKey);
+        }
+        this.log('Tool resources cleaned up');
     }
 
-    // Updates agent status and logs status transition
-    private async logTransition(agent: AgentType, status: AGENT_STATUS_enum, metadata: Record<string, any>): Promise<void> {
-        await agent.setStatus(status);
-        this.log(`Transitioning agent ${agent.id} to status: ${status}`, 'info');
+    /**
+     * Get active tool count
+     */
+    public getActiveToolCount(): number {
+        return this.activeTools.size;
     }
+
+    // Private map to track active tools
+    private activeTools: Map<string, { startTime: number; timeout: NodeJS.Timeout }> = new Map();
 }
 
-export default ToolManager;
+export default ToolManager.getInstance();

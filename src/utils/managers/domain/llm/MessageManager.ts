@@ -1,103 +1,156 @@
 /**
  * @file MessageManager.ts
- * @path KaibanJS/src/managers/domain/llm/MessageManager.ts
- * @description Domain-level message management and processing
+ * @path src/managers/domain/llm/MessageManager.ts
+ * @description Centralized message handling and history management
+ *
+ * @module @managers/domain/llm
  */
 
 import CoreManager from '../../core/CoreManager';
-import { StatusManager } from '../../core/StatusManager';
-
-// Core utilities
-import { logger } from '@/utils/core/logger';
-import { PrettyError } from '@/utils/core/errors';
+import errorHandler from '../handlers/errorHandler';
+import { MessageTypeGuards } from '@/utils/types/messaging/history';
+import { BaseMessage, HumanMessage, AIMessage, SystemMessage, FunctionMessage } from "@langchain/core/messages";
 
 // Import types from canonical locations
 import type { 
     MessageRole,
     MessageContext,
-    MessageProcessResult,
-    MessageBuildParams,
-    MessageValidationConfig,
-    MessageStreamConfig,
-    MessageTransformOptions,
-    MessageMetadataFields
-} from '@/utils/types/messaging/base';
-
-import type {
+    MessageContent,
+    MessageMetadataFields,
     FunctionCall,
-    ToolCall,
     BaseMessageMetadataFields,
-    ChatMessageMetadataFields,
-    LogMessageMetadataFields
+    ChatMessageMetadataFields
 } from '@/utils/types/messaging/base';
 
 import type {
-    BaseMessage,
-    SystemMessage,
-    HumanMessage,
-    AIMessage,
-    FunctionMessage
-} from "@langchain/core/messages";
+    MessageHistoryConfig,
+    MessageHistoryState,
+    MessageHistoryMetrics,
+    IMessageHistory
+} from '@/utils/types/messaging/history';
 
-import { MESSAGE_STATUS_enum } from '@/utils/types/common/enums';
+import type {
+    MessageHandlerConfig,
+    MessageStreamConfig,
+    MessageValidationConfig,
+    MessageBuildParams,
+    MessageProcessResult
+} from '@/utils/types/messaging/handlers';
 
-// ─── Message Manager Implementation ──────────────────────────────────────────────
-
-export class MessageManager extends CoreManager {
+/**
+ * Centralized message management implementation
+ */
+export class MessageManager extends CoreManager implements IMessageHistory {
     private static instance: MessageManager;
-    private readonly statusManager: StatusManager;
-    private readonly messageQueue: BaseMessage[];
-    private readonly messageValidation: MessageValidationConfig;
+    private messages: BaseMessage[] = [];
+    private config: Required<MessageHistoryConfig>;
 
-    private constructor(config?: MessageValidationConfig) {
+    private constructor(config: MessageHistoryConfig = {}) {
         super();
-        this.statusManager = StatusManager.getInstance();
-        this.messageQueue = [];
-        this.messageValidation = {
-            maxLength: config?.maxLength ?? 32768,
-            allowedRoles: config?.allowedRoles ?? ['system', 'user', 'assistant', 'function'],
-            requiredMetadata: config?.requiredMetadata ?? ['messageId', 'timestamp'],
-            customValidators: config?.customValidators ?? []
+        this.config = {
+            maxMessages: config.maxMessages ?? 1000,
+            maxTokens: config.maxTokens ?? 8192,
+            pruningStrategy: config.pruningStrategy ?? 'fifo',
+            retentionPeriod: config.retentionPeriod ?? 24 * 60 * 60 * 1000,
+            persistenceEnabled: config.persistenceEnabled ?? false,
+            compressionEnabled: config.compressionEnabled ?? false
         };
     }
 
-    // ─── Singleton Access ───────────────────────────────────────────────────────
-
-    public static getInstance(config?: MessageValidationConfig): MessageManager {
+    public static getInstance(config?: MessageHistoryConfig): MessageManager {
         if (!MessageManager.instance) {
             MessageManager.instance = new MessageManager(config);
         }
         return MessageManager.instance;
     }
 
-    // ─── Message Processing ────────────────────────────────────────────────────
+    // ─── Message History Operations ─────────────────────────────────────────────
 
+    /**
+     * Add message to history
+     */
+    public async addMessage(message: BaseMessage): Promise<void> {
+        if (!this.validateMessage(message)) {
+            throw new Error("Invalid message type");
+        }
+
+        this.messages.push(message);
+        await this.enforceLimits();
+        this.log(`Added ${message.constructor.name} to history`, 'debug');
+    }
+
+    /**
+     * Get all messages in history
+     */
+    public async getMessages(): Promise<BaseMessage[]> {
+        return this.messages;
+    }
+
+    /**
+     * Clear message history
+     */
+    public async clear(): Promise<void> {
+        this.messages = [];
+        this.log('Message history cleared', 'info');
+    }
+
+    /**
+     * Get current message count
+     */
+    public get length(): number {
+        return this.messages.length;
+    }
+
+    // ─── Message Type Operations ──────────────────────────────────────────────
+
+    /**
+     * Add user message
+     */
+    public async addUserMessage(content: string): Promise<void> {
+        await this.addMessage(new HumanMessage(content));
+    }
+
+    /**
+     * Add AI message
+     */
+    public async addAIMessage(content: string): Promise<void> {
+        await this.addMessage(new AIMessage(content));
+    }
+
+    /**
+     * Add system message
+     */
+    public async addSystemMessage(content: string): Promise<void> {
+        await this.addMessage(new SystemMessage(content));
+    }
+
+    /**
+     * Add function message
+     */
+    public async addFunctionMessage(name: string, content: string): Promise<void> {
+        await this.addMessage(new FunctionMessage(content, name));
+    }
+
+    // ─── Message Processing ─────────────────────────────────────────────────────
+
+    /**
+     * Process a message with validation and metadata
+     */
     public async processMessage(
         content: string,
         role: MessageRole = 'assistant',
         context?: MessageContext
     ): Promise<MessageProcessResult> {
         try {
-            // Validate message
-            const validationResult = await this.validateMessage({
-                role,
-                content,
-                metadata: context
-            });
+            this.validateMessageContent(content, role);
 
-            if (!validationResult.success) {
-                throw new Error(validationResult.error?.message);
-            }
-
-            // Build message
             const message = await this.buildMessage({
                 role,
                 content,
-                metadata: context
+                metadata: this.createMetadata(context)
             });
 
-            // Add to queue
-            this.messageQueue.push(message);
+            await this.addMessage(message);
 
             return {
                 success: true,
@@ -113,217 +166,162 @@ export class MessageManager extends CoreManager {
         }
     }
 
-    // ─── Message Building ─────────────────────────────────────────────────────
-
-    public async buildMessage(params: MessageBuildParams): Promise<BaseMessage> {
-        const { role, content, metadata, name } = params;
-
-        try {
-            switch (role) {
-                case 'system':
-                    return new SystemMessage({
-                        content,
-                        additional_kwargs: this.prepareMetadata(metadata)
-                    });
-
-                case 'user':
-                    return new HumanMessage({
-                        content,
-                        additional_kwargs: this.prepareMetadata(metadata)
-                    });
-
-                case 'assistant':
-                    return new AIMessage({
-                        content,
-                        additional_kwargs: this.prepareMetadata(metadata)
-                    });
-
-                case 'function':
-                    if (!name) {
-                        throw new Error('Function name is required for function messages');
-                    }
-                    return new FunctionMessage({
-                        content,
-                        name,
-                        additional_kwargs: this.prepareMetadata(metadata)
-                    });
-
-                default:
-                    throw new Error(`Unsupported message role: ${role}`);
-            }
-
-        } catch (error) {
-            throw new PrettyError({
-                message: 'Failed to build message',
-                context: { role, content, name },
-                rootError: error instanceof Error ? error : undefined
-            });
-        }
-    }
-
-    // ─── Stream Processing ─────────────────────────────────────────────────────
-
+    /**
+     * Process streaming messages
+     */
     public async processStream(
         content: string,
         config: MessageStreamConfig
     ): Promise<void> {
-        const chunks = content.split('');
+        const { bufferSize = 100, onToken, onComplete } = config;
         let buffer = '';
 
-        for (const chunk of chunks) {
-            buffer += chunk;
+        try {
+            for (const chunk of content) {
+                buffer += chunk;
 
-            if (buffer.length >= (config.bufferSize || 100)) {
-                if (config.onToken) {
-                    config.onToken(buffer);
+                if (buffer.length >= bufferSize && onToken) {
+                    await onToken(buffer);
+                    buffer = '';
                 }
-                buffer = '';
             }
-        }
 
-        if (buffer && config.onToken) {
-            config.onToken(buffer);
-        }
+            if (buffer && onToken) {
+                await onToken(buffer);
+            }
 
-        if (config.onComplete) {
-            config.onComplete(content);
-        }
-    }
+            if (onComplete) {
+                await onComplete(content);
+            }
 
-    // ─── Message Queue Management ──────────────────────────────────────────────
-
-    public async flushQueue(): Promise<BaseMessage[]> {
-        const messages = [...this.messageQueue];
-        this.messageQueue.length = 0;
-        return messages;
-    }
-
-    public async getQueueSize(): Promise<number> {
-        return this.messageQueue.length;
-    }
-
-    // ─── Message Transformation ──────────────────────────────────────────────────
-
-    public async transformMessage(
-        message: BaseMessage,
-        options: MessageTransformOptions
-    ): Promise<BaseMessage> {
-        let transformed = message;
-
-        if (options.removeMetadata) {
-            transformed = await this.buildMessage({
-                role: this.getRoleFromMessage(transformed),
-                content: transformed.content as string
+        } catch (error) {
+            await errorHandler.handleError({
+                error: error as Error,
+                context: { content: buffer }
             });
         }
+    }
 
-        if (options.sanitizeContent && typeof transformed.content === 'string') {
-            transformed = await this.buildMessage({
-                role: this.getRoleFromMessage(transformed),
-                content: this.sanitizeContent(transformed.content),
-                metadata: transformed.additional_kwargs
-            });
-        }
+    // ─── State & Metrics ───────────────────────────────────────────────────────
 
-        if (options.customTransforms) {
-            for (const transform of options.customTransforms) {
-                transformed = transform(transformed);
+    /**
+     * Get current history state
+     */
+    public getState(): MessageHistoryState {
+        return {
+            messages: this.messages,
+            metadata: {
+                totalMessages: this.messages.length,
+                totalTokens: this.calculateTotalTokens(),
+                lastPruneTime: Date.now()
             }
-        }
+        };
+    }
 
-        return transformed;
+    /**
+     * Get history metrics
+     */
+    public getMetrics(): MessageHistoryMetrics {
+        const messageCount = this.messages.length;
+        const tokenCount = this.calculateTotalTokens();
+        
+        return {
+            messageCount,
+            tokenCount,
+            averageMessageSize: messageCount > 0 ? tokenCount / messageCount : 0,
+            pruneCount: 0,
+            compressionRatio: this.config.compressionEnabled ? this.calculateCompressionRatio() : undefined,
+            loadTimes: { average: 0, max: 0, min: 0 }
+        };
     }
 
     // ─── Private Helper Methods ───────────────────────────────────────────────
 
-    private prepareMetadata(metadata?: MessageMetadataFields): Record<string, unknown> {
+    /**
+     * Enforce message limits
+     */
+    private async enforceLimits(): Promise<void> {
+        if (this.messages.length > this.config.maxMessages) {
+            await this.prune();
+        }
+    }
+
+    /**
+     * Prune message history
+     */
+    private async prune(): Promise<void> {
+        switch (this.config.pruningStrategy) {
+            case 'fifo':
+                this.messages = this.messages.slice(-this.config.maxMessages);
+                break;
+            case 'lru':
+                // TODO: Implement LRU pruning
+                this.messages = this.messages.slice(-this.config.maxMessages);
+                break;
+            case 'relevance':
+                // TODO: Implement relevance-based pruning
+                this.messages = this.messages.slice(-this.config.maxMessages);
+                break;
+            default:
+                this.messages = this.messages.slice(-this.config.maxMessages);
+        }
+        this.log('Message history pruned', 'warn');
+    }
+
+    /**
+     * Calculate total tokens
+     */
+    private calculateTotalTokens(): number {
+        return this.messages.reduce((total, message) => {
+            const content = typeof message.content === 'string' ? message.content : JSON.stringify(message.content);
+            return total + Math.ceil(content.length / 4);
+        }, 0);
+    }
+
+    /**
+     * Calculate compression ratio
+     */
+    private calculateCompressionRatio(): number {
+        if (!this.config.compressionEnabled) return 0;
+        const rawSize = this.messages.reduce((total, message) => total + JSON.stringify(message).length, 0);
+        return rawSize > 0 ? 0.5 : 0; // Placeholder for actual compression
+    }
+
+    /**
+     * Create metadata for message
+     */
+    private createMetadata(metadata?: MessageMetadataFields): MessageMetadataFields {
         return {
+            messageId: metadata?.messageId || crypto.randomUUID(),
             timestamp: Date.now(),
-            ...metadata,
-            function_call: metadata?.function_call ? {
-                name: metadata.function_call.name,
-                arguments: typeof metadata.function_call.arguments === 'string'
-                    ? metadata.function_call.arguments
-                    : JSON.stringify(metadata.function_call.arguments)
-            } : undefined
+            ...metadata
         };
     }
 
-    private getRoleFromMessage(message: BaseMessage): MessageRole {
-        if (message instanceof SystemMessage) return 'system';
-        if (message instanceof HumanMessage) return 'user';
-        if (message instanceof AIMessage) return 'assistant';
-        if (message instanceof FunctionMessage) return 'function';
-        throw new Error('Unknown message type');
+    /**
+     * Validate message content
+     */
+    private validateMessageContent(content: string | MessageContent, role: MessageRole): boolean {
+        return content !== null && content !== undefined && content !== '';
     }
 
-    private sanitizeContent(content: string): string {
-        return content
-            .replace(/[^\x20-\x7E]/g, '') // Remove non-printable characters
-            .trim();
+    /**
+     * Validate message
+     */
+    private validateMessage(message: BaseMessage): boolean {
+        return MessageTypeGuards.isBaseMessage(message);
     }
 
-    private async validateMessage(params: MessageBuildParams): Promise<MessageProcessResult> {
-        const { role, content, metadata } = params;
-
-        // Check content length
-        if (content.length > this.messageValidation.maxLength) {
-            return {
-                success: false,
-                error: new Error(`Message exceeds maximum length of ${this.messageValidation.maxLength}`)
-            };
-        }
-
-        // Check role
-        if (!this.messageValidation.allowedRoles.includes(role)) {
-            return {
-                success: false,
-                error: new Error(`Invalid message role: ${role}`)
-            };
-        }
-
-        // Check required metadata
-        if (this.messageValidation.requiredMetadata) {
-            for (const field of this.messageValidation.requiredMetadata) {
-                if (!metadata || !(field in metadata)) {
-                    return {
-                        success: false,
-                        error: new Error(`Missing required metadata field: ${field}`)
-                    };
-                }
-            }
-        }
-
-        // Run custom validators
-        if (this.messageValidation.customValidators) {
-            for (const validator of this.messageValidation.customValidators) {
-                const message = await this.buildMessage(params);
-                if (!validator(message)) {
-                    return {
-                        success: false,
-                        error: new Error('Message failed custom validation')
-                    };
-                }
-            }
-        }
-
-        return { success: true };
-    }
-
+    /**
+     * Handle processing error
+     */
     private handleProcessingError(error: unknown): MessageProcessResult {
-        const processingError = new PrettyError({
-            message: 'Message processing failed',
-            context: { error },
-            rootError: error instanceof Error ? error : undefined
-        });
-
-        logger.error('Message processing error:', processingError);
-
+        this.log('Message processing error:', 'error', error as Error);
         return {
             success: false,
-            error: processingError
+            error: error instanceof Error ? error : new Error(String(error))
         };
     }
 }
 
-export default MessageManager;
+export default MessageManager.getInstance();

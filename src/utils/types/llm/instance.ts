@@ -3,12 +3,11 @@
  * @path KaibanJS/src/utils/types/llm/instance.ts
  * @description LLM instance interfaces and runtime behavior types
  */
-
 import { 
     LLMResponse, 
-    StreamingChunk, 
     Output 
 } from './responses';
+
 import type { 
     GroqConfig,
     OpenAIConfig, 
@@ -16,7 +15,12 @@ import type {
     GoogleConfig,
     MistralConfig 
 } from './providers';
-import { LLMConfig, LLMProvider, LLMRuntimeOptions } from './common';
+import { 
+    LLMConfig, 
+    LLMProvider, 
+    LLMRuntimeOptions,
+    StreamingChunk
+} from './common';
 
 // ─── Core Instance Interface ─────────────────────────────────────────────────
 
@@ -27,7 +31,7 @@ export interface LLMInstance {
     validateConfig(): Promise<void>;
     cleanup(): Promise<void>;
     getConfig(): LLMConfig;
-    updateConfig(config: Partial<LLMConfig>): void;
+    updateConfig(updates: Partial<LLMConfig>): void;
     getProvider(): LLMProvider;
 }
 
@@ -96,7 +100,7 @@ export const LLMInstanceGuards = {
 // ─── Instance Factory Types ──────────────────────────────────────────────────
 
 export interface LLMInstanceFactory {
-    createInstance(config: LLMConfig): LLMInstance;
+    createInstance(config: LLMConfig): Promise<LLMInstance>;
 }
 
 export interface LLMInstanceOptions {

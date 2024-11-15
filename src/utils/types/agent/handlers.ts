@@ -116,15 +116,18 @@ export interface LoopControlResult {
     error?: Error;
 }
 
+// Flexible ErrorStore type with optional methods
+export type ErrorStore = {
+    getState: () => unknown;
+    setState: (fn: (state: unknown) => unknown) => void;
+    prepareNewLog?: (params?: Record<string, unknown>) => unknown;
+};
+
 // Parameters for error handling
 export interface ErrorHandlerParams extends HandlerBaseParams {
     error: ErrorType;
     context?: Record<string, unknown>;
-    store?: {
-        getState: () => unknown;
-        setState: (fn: (state: unknown) => unknown) => void;
-        prepareNewLog: (params: unknown) => unknown;
-    };
+    store?: ErrorStore;
 }
 
 // Base result interface for handlers
@@ -146,10 +149,10 @@ export interface StatusUpdateParams {
 
 // Base error handler interface
 export interface IErrorHandler {
-    handleError(params: ErrorHandlerParams & { store: Required<ErrorHandlerParams>['store'] }): Promise<HandlerResult>;
-    handleLLMError(params: ErrorHandlerParams & { store: Required<ErrorHandlerParams>['store'] }): Promise<HandlerResult>;
+    handleError(params: ErrorHandlerParams & { store?: ErrorStore }): Promise<HandlerResult>;
+    handleLLMError(params: ErrorHandlerParams & { store?: ErrorStore }): Promise<HandlerResult>;
     handleToolError(params: ToolHandlerParams & { 
-        store: Required<ErrorHandlerParams>['store'];
+        store?: ErrorStore;
         tool: Required<ToolHandlerParams>['tool'];
     }): Promise<HandlerResult>;
 }

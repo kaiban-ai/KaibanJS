@@ -1,13 +1,26 @@
 /**
  * @file utils.ts
  * @path KaibanJS/src/utils/types/task/utils.ts
- * @description Task utility types and helper functions
+ * @description Task utility types and helper interfaces
+ *
+ * @module @types/task
  */
 
 import { TaskType } from './base';
-import { TaskProgress, TaskMetrics, TaskHistoryEntry, TaskDependencyTracking, TaskAuditRecord, TaskTrackingUtils } from './tracking';
+import { 
+    TaskProgress, 
+    TaskMetrics, 
+    TaskHistoryEntry, 
+    TaskDependencyTracking, 
+    TaskAuditRecord,
+    TaskTrackingUtils 
+} from './tracking';
 
-// Composite type combining common task interfaces
+// ─── Composite Task Types ───────────────────────────────────────────────────────
+
+/** 
+ * Enhanced task type combining all tracking interfaces 
+ */
 export type ComprehensiveTaskType = TaskType & {
     progress?: TaskProgress;
     metrics?: TaskMetrics;
@@ -16,18 +29,67 @@ export type ComprehensiveTaskType = TaskType & {
     audit?: TaskAuditRecord[];
 };
 
-// Helper function to check if a task has tracking data
-export function hasTrackingData(task: TaskType): task is ComprehensiveTaskType {
-    return (
-        'progress' in task ||
-        'metrics' in task ||
-        'history' in task ||
-        'dependencies' in task ||
-        'audit' in task
-    );
+// ─── Task Operation Types ───────────────────────────────────────────────────────
+
+/**
+ * Task interpolation options
+ */
+export interface TaskInterpolationOptions {
+    /** Custom template pattern */
+    pattern?: string | RegExp;
+    /** Whether to throw on missing variables */
+    strict?: boolean;
+    /** Custom transformer function */
+    transform?: (value: unknown) => string;
 }
 
-// Helper function to convert a basic task to a comprehensive task
+/**
+ * Task description template
+ */
+export interface TaskDescriptionTemplate {
+    /** Template string */
+    template: string;
+    /** Variable mappings */
+    variables: Record<string, unknown>;
+    /** Interpolation options */
+    options?: TaskInterpolationOptions;
+}
+
+// ─── Type Guards ────────────────────────────────────────────────────────────────
+
+export const TaskUtilTypeGuards = {
+    /**
+     * Check if task has tracking data
+     */
+    hasTrackingData: (task: TaskType): task is ComprehensiveTaskType => {
+        return (
+            'progress' in task ||
+            'metrics' in task ||
+            'history' in task ||
+            'dependencies' in task ||
+            'audit' in task
+        );
+    },
+
+    /**
+     * Check if value is task description template
+     */
+    isTaskDescriptionTemplate: (value: unknown): value is TaskDescriptionTemplate => {
+        if (typeof value !== 'object' || value === null) return false;
+        const template = value as Partial<TaskDescriptionTemplate>;
+        return (
+            typeof template.template === 'string' &&
+            template.variables !== undefined &&
+            typeof template.variables === 'object'
+        );
+    }
+};
+
+// ─── Task Operation Functions ─────────────────────────────────────────────────
+
+/**
+ * Convert basic task to comprehensive task
+ */
 export function enrichTaskWithTracking(task: TaskType): ComprehensiveTaskType {
     return {
         ...task,
@@ -88,3 +150,5 @@ export function enrichTaskWithTracking(task: TaskType): ComprehensiveTaskType {
         }]
     };
 }
+
+export { TaskTrackingUtils };

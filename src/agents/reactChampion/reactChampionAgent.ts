@@ -1,79 +1,56 @@
 /**
  * @file ReactChampionAgent.ts
- * @path KaibanJS/src/agents/reactChampion/ReactChampionAgent.ts
+ * @path src/agents/reactChampion/ReactChampionAgent.ts
  * @description React Champion agent implementation using manager-based architecture
  */
 
-// Core utilities
-import { logger } from '@/utils/core/logger';
-import { PrettyError } from '@/utils/core/errors';
+//import { BaseAgent } from '../baseAgent';
+import AgentManagerSingleton from '../../utils/managers/domain/agent/AgentManager';
+import { ErrorManager } from '../../utils/managers/core/ErrorManager';
+import IterationManagerSingleton from '../../utils/managers/domain/agent/IterationManager';
+import ToolManagerSingleton from '../../utils/managers/domain/agent/ToolManager';
+import AgenticLoopManager from '../../utils/managers/domain/agent/AgenticLoopManager';
 
-// Managers
-import { AgentManager } from '@/utils/managers/domain/agent/AgentManager';
-import { StatusManager } from '@/utils/managers/core/StatusManager';
-import { MessageHistoryManager } from '@/utils/managers/domain/llm/MessageHistoryManager';
-
-// Handlers
-import { messageHandler } from '@/utils/handlers/messageHandler';
-import { errorHandler } from '@/utils/handlers/errorHandler';
-import { taskHandler } from '@/utils/handlers/taskHandler';
-
-// Base Agent
-import { BaseAgent } from '../baseAgent';
-
-// Types from canonical locations
 import type { 
-    AgenticLoopResult,
+    IReactChampionAgent, 
+    IBaseAgent 
+} from '../../utils/types/agent/base';
+import type { 
     TaskType, 
-    FeedbackObject,
-    IReactChampionAgent,
-    ThinkingResult,
-    Output,
-    ParsedOutput,
-    ErrorType,
-    REACTChampionAgentPrompts
-} from '@/utils/types';
+    FeedbackObject 
+} from '../../utils/types/task/base';
+import type { 
+    Output, 
+    ParsedOutput 
+} from '../../utils/types/llm/responses';
+import type { AgenticLoopResult } from '../../utils/types/llm/instance';
+import type { ErrorType } from '../../utils/types/common';
+import { AGENT_STATUS_enum } from '../../utils/types/common/enums';
 
-import { AGENT_STATUS_enum } from '@/utils/types/common/enums';
-
-/**
- * React Champion Agent Implementation
- */
 export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent {
     public executableAgent: any;
-    private readonly agentManager: AgentManager;
-    private readonly statusManager: StatusManager;
-    private readonly messageHistory: MessageHistoryManager;
+    private readonly agentManager: typeof AgentManagerSingleton;
+    private readonly iterationManager: typeof IterationManagerSingleton;
+    private readonly toolManager: typeof ToolManagerSingleton;
+    private readonly agenticLoopManager: AgenticLoopManager;
+    private readonly errorManager: ErrorManager;
 
-    constructor(config: any) {  // TODO: Type this properly based on your config needs
+    constructor(config: any) {
         super(config);
-        this.agentManager = AgentManager.getInstance();
-        this.statusManager = StatusManager.getInstance();
-        this.messageHistory = MessageHistoryManager.getInstance();
+        this.agentManager = AgentManagerSingleton;
+        this.iterationManager = IterationManagerSingleton;
+        this.toolManager = ToolManagerSingleton;
+        this.agenticLoopManager = AgenticLoopManager.getInstance();
+        this.errorManager = ErrorManager.getInstance();
     }
-
-    // ─── Task Processing ────────────────────────────────────────────────────────
 
     public async workOnTask(task: TaskType): Promise<AgenticLoopResult> {
         try {
-            logger.info(`Agent ${this.name} working on task ${task.title}`);
-
-            // Let AgentManager handle the execution
-            const result = await this.agentManager.executeTask(
-                this.id, 
+            return await this.agenticLoopManager.executeLoop({
+                agent: this,
                 task,
-                { startTime: Date.now() }
-            );
-
-            return {
-                result: result.result as Output | null,
-                error: result.error?.message,
-                metadata: {
-                    iterations: result.context?.iterations || 0,
-                    maxAgentIterations: this.maxIterations
-                }
-            };
-
+                feedbackMessage: undefined
+            });
         } catch (error) {
             return this.handleAgenticLoopError({ 
                 task, 
@@ -84,8 +61,6 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
         }
     }
 
-    // ─── Feedback Processing ─────────────────────────────────────────────────────
-
     public async workOnFeedback(
         task: TaskType,
         feedbackList: FeedbackObject[],
@@ -93,25 +68,30 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
     ): Promise<void> {
         try {
             await Promise.all(
-                feedbackList.map(feedback => 
-                    taskHandler.handleTaskFeedback(this.store, task.id, feedback.content)
-                )
+                feedbackList.map(async (feedback) => {
+                    return await this.agenticLoopManager.executeLoop({
+                        agent: this,
+                        task,
+                        feedbackMessage: feedback.content
+                    });
+                })
             );
         } catch (error) {
-            await errorHandler.handleError({
-                error: error as ErrorType,
-                context: { feedbackList, task },
-                task,
-                agent: this,
-                store: this.store
-            });
+            this.errorManager.handleError(
+                new Error('Error processing task feedback'),
+                { 
+                    component: 'ReactChampionAgent',
+                    method: 'workOnFeedback',
+                    feedbackList, 
+                    task,
+                    error
+                }
+            );
             throw error;
         }
     }
 
-    // ─── Error Handlers ─────────────────────────────────────────────────────────
-
-    private handleAgenticLoopError(params: {
+    public handleAgenticLoopError(params: {
         task: TaskType;
         error: ErrorType;
         iterations: number;
@@ -119,21 +99,21 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
     }): AgenticLoopResult {
         const { task, error, iterations, maxAgentIterations } = params;
 
-        const prettyError = new PrettyError({
-            message: error.message,
-            context: {
+        this.errorManager.handleError(
+            new Error('Agentic loop error'),
+            {
+                component: 'ReactChampionAgent',
+                method: 'workOnTask',
                 taskId: task.id,
                 agentId: this.id,
                 iterations,
-                maxAgentIterations
-            },
-            rootError: error
-        });
-
-        logger.error(`Agentic loop error:`, prettyError);
+                maxAgentIterations,
+                error
+            }
+        );
 
         return {
-            error: prettyError.message,
+            error: error.message,
             metadata: {
                 iterations,
                 maxAgentIterations
@@ -141,131 +121,91 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
         };
     }
 
-    public handleThinkingError(params: {
-        task: TaskType;
-        error: ErrorType;
-    }): void {
-        const { task, error } = params;
-        errorHandler.handleError({
-            error,
-            context: { phase: 'thinking' },
-            task,
-            agent: this,
-            store: this.store
-        });
-    }
-
-    public handleMaxIterationsError(params: {
-        task: TaskType;
-        iterations: number;
-        maxAgentIterations: number;
-    }): void {
-        const { task, iterations, maxAgentIterations } = params;
-
-        const error = new PrettyError({
-            message: `Maximum iterations (${maxAgentIterations}) exceeded`,
-            context: { taskId: task.id, iterations, maxIterations: maxAgentIterations }
-        });
-
-        errorHandler.handleError({
-            error,
-            context: { phase: 'iterations' },
-            task,
-            agent: this,
-            store: this.store
-        });
-    }
-
-    // ─── LLM Instance Creation ────────────────────────────────────────────────────
-
     public createLLMInstance(): void {
         try {
-            this.executableAgent = this.agentManager.createExecutableAgent(this);
+            const agentManagerInstance = this.agentManager.getInstance();
+            const toolManagerInstance = this.toolManager.getInstance();
+            
+            agentManagerInstance.initializeAgent(this, this.store, {
+                ...this.env || {},
+                tools: toolManagerInstance.getAgentTools(this)
+            });
         } catch (error) {
-            logger.error('Error creating LLM instance:', error);
-            throw error;
+            this.errorManager.handleError(
+                new Error('Error creating LLM instance'),
+                {
+                    component: 'ReactChampionAgent',
+                    method: 'createLLMInstance',
+                    error
+                }
+            );
         }
     }
 
-    // ─── Status Transition Handlers ───────────────────────────────────────────────
-
-    public async handleIterationStart(params: {
-        task: TaskType;
-        iterations: number;
-        maxAgentIterations: number;
-    }): Promise<void> {
-        const { task, iterations, maxAgentIterations } = params;
-
-        await this.statusManager.transition({
-            currentStatus: this.status,
-            targetStatus: AGENT_STATUS_enum.ITERATION_START,
-            entity: 'agent',
-            entityId: this.id,
-            metadata: { iterations, maxAgentIterations }
-        });
-
-        logger.debug(`Starting iteration ${iterations + 1}/${maxAgentIterations}`);
-    }
-
-    public async handleIterationEnd(params: {
-        task: TaskType;
-        iterations: number;
-        maxAgentIterations: number;
-    }): Promise<void> {
-        const { task, iterations, maxAgentIterations } = params;
-
-        await this.statusManager.transition({
-            currentStatus: this.status,
-            targetStatus: AGENT_STATUS_enum.ITERATION_END,
-            entity: 'agent',
-            entityId: this.id,
-            metadata: { iterations, maxAgentIterations }
-        });
-
-        logger.debug(`Completed iteration ${iterations + 1}/${maxAgentIterations}`);
-    }
-
-    public handleTaskCompleted(params: {
-        task: TaskType;
-        parsedResultWithFinalAnswer: ParsedOutput;
-        iterations: number;
-        maxAgentIterations: number;
+    // Implementation of required IReactChampionAgent methods...
+    public handleIterationStart(params: { 
+        task: TaskType; 
+        iterations: number; 
+        maxAgentIterations: number; 
     }): void {
-        const { task, parsedResultWithFinalAnswer, iterations, maxAgentIterations } = params;
+        const iterationManagerInstance = this.iterationManager.getInstance();
+        iterationManagerInstance.handleIterationStart({ agent: this, ...params });
+    }
 
-        taskHandler.handleCompletion({
-            store: this.store,
-            agent: this,
-            task,
-            result: parsedResultWithFinalAnswer,
-            metadata: {
-                iterations,
-                maxAgentIterations
-            }
-        });
+    public handleIterationEnd(params: { 
+        task: TaskType; 
+        iterations: number; 
+        maxAgentIterations: number; 
+    }): void {
+        const iterationManagerInstance = this.iterationManager.getInstance();
+        iterationManagerInstance.handleIterationEnd({ agent: this, ...params });
     }
 
     public handleFinalAnswer(params: {
-        agent: IReactChampionAgent;
+        agent: IBaseAgent;
         task: TaskType;
         parsedLLMOutput: ParsedOutput;
     }): ParsedOutput {
         return params.parsedLLMOutput;
     }
 
+    public handleMaxIterationsError(params: { 
+        task: TaskType; 
+        iterations: number; 
+        maxAgentIterations: number; 
+    }): void {
+        const iterationManagerInstance = this.iterationManager.getInstance();
+        iterationManagerInstance.handleMaxIterationsError({ 
+            agent: this, 
+            ...params,
+            error: new Error(`Maximum iterations (${params.maxAgentIterations}) reached`)
+        });
+    }
+
+    public handleThinkingError(params: {
+        task: TaskType;
+        error: ErrorType;
+    }): void {
+        this.errorManager.handleError(params.error, {
+            component: 'ReactChampionAgent',
+            method: 'handleThinkingError',
+            taskId: params.task.id,
+            agentId: this.id
+        });
+    }
+
     public handleIssuesParsingLLMOutput(params: {
-        agent: IReactChampionAgent;
+        agent: IBaseAgent;
         task: TaskType;
         output: Output;
         llmOutput: string;
     }): string {
-        return this.promptTemplates.INVALID_JSON_FEEDBACK({
+        return this.promptTemplates.INVALID_JSON_FEEDBACK?.({
             agent: params.agent,
             task: params.task,
             llmOutput: params.llmOutput
-        });
+        }) || 'Unable to parse LLM output';
     }
 }
 
-// Export the class
 export default ReactChampionAgent;

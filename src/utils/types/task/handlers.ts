@@ -1,24 +1,27 @@
 /**
  * @file handlers.ts
  * @path KaibanJS/src/utils/types/task/handlers.ts
- * @description Task handler interfaces and types for managing task operations
+ * @description Task handler type definitions for execution and lifecycle management
+ *
+ * @module @types/task
  */
 
 import { Tool } from "langchain/tools";
-import { AgentType } from "../agent/base";
-import { TaskType } from "../task/base";
-import { FeedbackObject } from "../task/base"; // For TaskFeedbackParams
-import { ErrorType } from "../common/errors";
-import { Output } from "../llm/responses";
-import { TASK_STATUS_enum } from "../common/enums";
-import { LLMUsageStats } from "../llm/responses";
-import { CostDetails } from "../workflow/costs";
-import { HandlerResult } from "../agent/handlers"; // Used but not re-exported
+import type { AgentType } from '../agent/base';
+import type { TaskType } from './base';
+import type { ErrorType } from '../common';
+import type { Output, ParsedOutput } from '../llm/responses';
+import type { TASK_STATUS_enum } from '../common/enums';
+import type { HandlerResult } from '../agent/handlers';
 
-// Task execution handler parameters
+// ─── Task Execution Types ─────────────────────────────────────────────────────
+
+/** Task execution parameters */
 export interface TaskExecutionParams {
     task: TaskType;
+    agent: AgentType;
     input?: unknown;
+    metadata?: Record<string, unknown>;
     options?: {
         timeout?: number;
         retries?: number;
@@ -26,73 +29,47 @@ export interface TaskExecutionParams {
     };
 }
 
-// Task completion handler parameters
+/** Task completion parameters */
 export interface TaskCompletionParams {
-    agent: AgentType;
     task: TaskType;
-    result: unknown;
-    metadata?: {
-        duration?: number;
-        iterationCount?: number;
-        llmUsageStats?: LLMUsageStats;
-        costDetails?: CostDetails;
-    };
-    store?: {
-        getTaskStats: (task: TaskType) => TaskType;
-        setState: (fn: (state: any) => any) => void;
-        prepareNewLog: (params: any) => any;
-        getState: () => any;
-    };
+    agent: AgentType;
+    result: ParsedOutput | null;
+    store: TeamStore;
 }
 
-// Task error handler parameters
+/** Task error handling parameters */
 export interface TaskErrorParams {
     task: TaskType;
-    error: ErrorType;
+    error: Error;
     context?: {
         phase?: string;
         attemptNumber?: number;
         lastSuccessfulOperation?: string;
         recoveryPossible?: boolean;
     };
-    store?: {
-        setState: (fn: (state: any) => any) => void;
-        prepareNewLog: (params: any) => any;
-    };
 }
 
-// Task feedback parameters using FeedbackObject
-export interface TaskFeedbackParams {
-    feedback: FeedbackObject;
-    timestamp: Date;
-}
-
-// Task tool execution parameters aligned with LangChain's Tool interface
+/** Task tool execution parameters */
 export interface TaskToolExecutionParams {
+    task: TaskType;
     tool: Tool;
     input: Record<string, unknown>;
     output?: unknown;
     error?: Error;
 }
 
-// Task observation parameters
+/** Task observation parameters */
 export interface TaskObservationParams {
     observationType: string;
     details: string;
     observationTime: Date;
 }
 
-// Task iteration parameters
-export interface TaskIterationParams {
-    iterationCount: number;
-    iterationResult: unknown;
-    iterationDuration: number;
-}
-
-// Task blocking handler parameters
+/** Task blocking parameters */
 export interface TaskBlockingParams {
     task: TaskType;
     error: ErrorType;
+    blockingReason?: string;
     dependencies?: {
         taskId: string;
         status: keyof typeof TASK_STATUS_enum;
@@ -100,7 +77,7 @@ export interface TaskBlockingParams {
     }[];
 }
 
-// Task validation handler parameters
+/** Task validation parameters */
 export interface TaskValidationParams {
     task: TaskType;
     context?: Record<string, unknown>;
@@ -111,7 +88,7 @@ export interface TaskValidationParams {
     };
 }
 
-// Task resource usage parameters
+/** Task resource tracking parameters */
 export interface TaskResourceParams {
     task: TaskType;
     resourceStats: {
@@ -128,7 +105,7 @@ export interface TaskResourceParams {
     };
 }
 
-// Task execution timeout parameters
+/** Task timeout parameters */
 export interface TaskTimeoutParams {
     task: TaskType;
     timeoutConfig: {
@@ -138,7 +115,9 @@ export interface TaskTimeoutParams {
     elapsedTime: number;
 }
 
-// Task handler interface
+// ─── Task Handler Interface ───────────────────────────────────────────────────
+
+/** Task handler interface */
 export interface ITaskHandler {
     handleCompletion(params: TaskCompletionParams): Promise<HandlerResult>;
     handleError(params: TaskErrorParams): Promise<HandlerResult>;
@@ -147,32 +126,36 @@ export interface ITaskHandler {
     handleResourceLimits?(params: TaskResourceParams): Promise<HandlerResult>;
 }
 
-// Type guards for handler parameters
+// ─── Type Guards ────────────────────────────────────────────────────────────────
+
 export const HandlerTypeGuards = {
     isTaskCompletionParams: (value: unknown): value is TaskCompletionParams => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'agent' in value &&
-            'task' in value &&
-            'result' in value
+        if (typeof value !== 'object' || value === null) return false;
+        const params = value as Partial<TaskCompletionParams>;
+        return !!(
+            params.task &&
+            params.agent &&
+            params.store
         );
     },
+
     isTaskErrorParams: (value: unknown): value is TaskErrorParams => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'task' in value &&
-            'error' in value
+        if (typeof value !== 'object' || value === null) return false;
+        const params = value as Partial<TaskErrorParams>;
+        return !!(
+            params.task &&
+            params.error instanceof Error
         );
     },
+
     isTaskResourceParams: (value: unknown): value is TaskResourceParams => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'task' in value &&
-            'resourceStats' in value &&
-            typeof value.resourceStats === 'object'
+        if (typeof value !== 'object' || value === null) return false;
+        const params = value as Partial<TaskResourceParams>;
+        return !!(
+            params.task &&
+            params.resourceStats &&
+            typeof params.resourceStats.memory === 'number' &&
+            typeof params.resourceStats.tokens === 'number'
         );
     }
 };

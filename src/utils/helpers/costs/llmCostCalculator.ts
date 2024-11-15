@@ -1,6 +1,6 @@
 /**
  * @file llmCostCalculator.ts
- * @path KaibanJS/src/utils/helpers/costs/llmCostCalculator.ts
+ * @path src/utils/helpers/costs/llmCostCalculator.ts
  * @description Implementation of LLM cost calculations
  */
 
@@ -204,7 +204,7 @@ export function calculateTotalWorkflowCost(
 /**
  * Create default cost details
  */
-function createDefaultCostDetails(currency: string): CostDetails {
+export function createDefaultCostDetails(currency: string): CostDetails {
     return {
         inputCost: -1,
         outputCost: -1,

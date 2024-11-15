@@ -1,54 +1,48 @@
 /**
  * @file ErrorManager.ts
- * @path KaibanJS/src/managers/core/ErrorManager.ts
- * @description Core error management implementation with centralized error handling
+ * @path src/managers/core/ErrorManager.ts
+ * @description Core error management and handling implementation
+ * 
+ * @module @core
  */
 
-import { Tool } from 'langchain/tools';
 import CoreManager from './CoreManager';
-import LogManager from './LogManager';
-import { logger } from '@/utils/core/logger';
-//import { LogCreator } from '@/utils/factories/logCreator';
-import { DefaultFactory } from '@/utils/factories/defaultFactory';
+import { LogManager } from './LogManager';
+import { 
+    createPrettyError, 
+    toErrorType, 
+    isPrettyError, 
+    ErrorKind, 
+    ErrorConfig, 
+    PrettyErrorType,
+    ErrorType
+} from '../../types/common/errors';
+import { logger } from '../../core/logger';
+import { MetadataFactory } from '../../factories/metadataFactory';
 
 // Import types from canonical locations
 import type { 
-    ErrorType,
-    ErrorConfig,
-    ConfigurationError,
-    LLMError
-} from '@/utils/types/common/errors';
-
-import type {
-    HandlerResult,
-    ErrorHandlerParams,
-    ToolHandlerParams
-} from '@/utils/types/agent/handlers';
-
-import type {
     AgentType,
     TaskType,
-    Output,
-    ParsedOutput,
-    ThinkingResult,
-    FeedbackObject
-} from '@/utils/types';
-
-import { AGENT_STATUS_enum } from '@/utils/types/common/enums';
+    TeamStore,
+    HandlerResult,
+    ErrorHandlerParams,
+    ParsingHandlerParams,
+    ToolHandlerParams
+} from '../../types';
 
 /**
- * Core error management class
+ * Centralized error management implementation
  */
 export class ErrorManager extends CoreManager {
     private static instance: ErrorManager;
+    protected readonly logManager: LogManager;
 
     private constructor() {
         super();
+        this.logManager = LogManager.getInstance();
     }
 
-    /**
-     * Get singleton instance
-     */
     public static getInstance(): ErrorManager {
         if (!ErrorManager.instance) {
             ErrorManager.instance = new ErrorManager();
@@ -56,8 +50,10 @@ export class ErrorManager extends CoreManager {
         return ErrorManager.instance;
     }
 
+    // ─── Agent Error Handling ────────────────────────────────────────────────────
+
     /**
-     * Handle general error with agent context
+     * Handle agent-related errors
      */
     public async handleAgentError(params: ErrorHandlerParams & { 
         store: Required<ErrorHandlerParams>['store'] 
@@ -65,264 +61,249 @@ export class ErrorManager extends CoreManager {
         const { error, context, task, agent, store } = params;
 
         try {
-            // Create error log with agent info
-            const errorLog = store.prepareNewLog({
+            const processedError: ErrorType = toErrorType(error);
+            const prettyError = this.createPrettyError({
+                message: processedError.message,
+                type: 'SystemError',
+                context: {
+                    agentId: agent?.id,
+                    taskId: task?.id,
+                    ...context,
+                    originalError: processedError
+                },
+                rootError: error instanceof Error ? error : undefined,
+                recommendedAction: 'Review agent configuration and retry',
+                prettyMessage: `[SystemError] Agent Error: ${processedError.message}`
+            });
+
+            const errorMetadata = MetadataFactory.forError(
+                { 
+                    ...prettyError, 
+                    message: prettyError.prettyMessage 
+                } as Record<string, unknown>, 
+                {
+                    agent: agent?.id,
+                    task: task?.id
+                }
+            );
+
+            const errorLog = store.prepareNewLog?.({
                 task,
                 agent,
-                logDescription: `Error: ${error.message}`,
+                logDescription: `Error: ${processedError.message}`,
                 metadata: {
-                    error,
+                    error: errorMetadata,
                     context,
                     output: {
-                        llmUsageStats: DefaultFactory.createLLMUsageStats()
+                        llmUsageStats: this.createDefaultLLMStats()
                     }
                 },
                 logType: task ? 'TaskStatusUpdate' : 'WorkflowStatusUpdate',
-                agentStatus: agent ? AGENT_STATUS_enum.THINKING_ERROR : undefined
+                agentStatus: agent ? 'THINKING_ERROR' : undefined
             });
 
-            // Update store state
-            store.setState((state: any) => ({
-                workflowLogs: [...state.workflowLogs, errorLog]
-            }));
+            store.setState?.((state: unknown) => {
+                const currentState = state as Record<string, any> || {};
+                return {
+                    ...currentState,
+                    workflowLogs: [...(currentState.workflowLogs || []), errorLog].filter(Boolean)
+                };
+            });
 
-            logger.error(`Error occurred:`, error);
             return {
                 success: false,
-                error
+                error: prettyError,
+                data: errorLog
             };
 
         } catch (handlingError) {
-            logger.error(`Error handling error:`, handlingError);
+            const processedHandlingError = toErrorType(handlingError);
+            logger.error('Error handling agent error:', processedHandlingError);
+            
             return {
                 success: false,
-                error: handlingError instanceof Error ? handlingError : new Error(String(handlingError))
+                error: processedHandlingError,
+                data: null
             };
         }
     }
 
-    /**
-     * Handle LLM-specific error with agent context
-     */
-    public async handleLLMError(params: ErrorHandlerParams & {
-        store: Required<ErrorHandlerParams>['store']
-    }): Promise<HandlerResult> {
-        const { error, context, task, agent, store } = params;
-
-        try {
-            // Create LLM error log with agent context
-            const errorLog = store.prepareNewLog({
-                task,
-                agent,
-                logDescription: `LLM Error: ${error.message}`,
-                metadata: {
-                    error,
-                    context,
-                    output: {
-                        llmUsageStats: DefaultFactory.createLLMUsageStats()
-                    }
-                },
-                logType: 'AgentStatusUpdate',
-                agentStatus: AGENT_STATUS_enum.THINKING_ERROR
-            });
-
-            // Update store state
-            store.setState((state: any) => ({
-                workflowLogs: [...state.workflowLogs, errorLog]
-            }));
-
-            logger.error(`LLM error:`, error);
-            return {
-                success: false,
-                error
-            };
-
-        } catch (handlingError) {
-            logger.error(`Error handling LLM error:`, handlingError);
-            return {
-                success: false,
-                error: handlingError instanceof Error ? handlingError : new Error(String(handlingError))
-            };
-        }
-    }
+    // ─── LLM Error Handling ─────────────────────────────────────────────────────
 
     /**
-     * Handle tool error with agent context
+     * Handle LLM-specific errors
      */
-    public async handleToolError(params: ToolHandlerParams & {
-        store: Required<ErrorHandlerParams>['store'];
-        tool: Required<ToolHandlerParams>['tool'];
-    }): Promise<HandlerResult> {
-        const { agent, task, tool, error, store } = params;
+    public handleLLMError(params: ErrorHandlerParams): HandlerResult {
+        const { error, context, task, agent } = params;
 
-        try {
-            if (!error) {
-                throw new Error('Error is required for tool error handling');
+        const processedError: ErrorType = toErrorType(error);
+        const prettyError = this.createPrettyError({
+            message: 'LLM Processing Error',
+            type: 'LLMError',
+            context: {
+                agentId: agent?.id,
+                taskId: task?.id,
+                ...context,
+                originalError: processedError
+            },
+            rootError: error instanceof Error ? error : undefined,
+            recommendedAction: 'Check LLM configuration and retry',
+            prettyMessage: `[LLMError] Processing Error: ${processedError.message}`
+        });
+
+        const errorMetadata = MetadataFactory.forError(
+            { 
+                ...prettyError, 
+                message: prettyError.prettyMessage 
+            } as Record<string, unknown>, 
+            {
+                agent: agent?.id,
+                task: task?.id
             }
-
-            // Create tool error log with agent context
-            const errorLog = store.prepareNewLog({
-                task,
-                agent,
-                logDescription: `Tool error: ${error.message}`,
-                metadata: {
-                    error,
-                    tool: tool.name,
-                    output: {
-                        llmUsageStats: DefaultFactory.createLLMUsageStats()
-                    }
-                },
-                logType: 'AgentStatusUpdate',
-                agentStatus: AGENT_STATUS_enum.USING_TOOL_ERROR
-            });
-
-            // Update store state
-            store.setState((state: any) => ({
-                workflowLogs: [...state.workflowLogs, errorLog]
-            }));
-
-            logger.error(`Tool error:`, error);
-            return {
-                success: false,
-                error
-            };
-
-        } catch (handlingError) {
-            logger.error(`Error handling tool error:`, handlingError);
-            return {
-                success: false,
-                error: handlingError instanceof Error ? handlingError : new Error(String(handlingError))
-            };
-        }
-    }
-
-    /**
-     * Handle thinking error with agent context
-     */
-    public handleThinkingError(params: {
-        agent: AgentType;
-        task: TaskType;
-        error: Error;
-    }): HandlerResult {
-        const { agent, task, error } = params;
-
-        logger.error(`Thinking error for agent ${agent.name}:`, error);
-
-        const log = LogCreator.createAgentLog({
-            agent,
-            task,
-            description: `Thinking error: ${error.message}`,
-            metadata: {
-                error: {
-                    message: error.message,
-                    name: error.name,
-                    stack: error.stack
-                },
-                timestamp: Date.now()
-            },
-            agentStatus: AGENT_STATUS_enum.THINKING_ERROR
-        });
-
-        return {
-            success: false,
-            error,
-            data: log
-        };
-    }
-
-    /**
-     * Handle parsing error with agent context
-     */
-    public handleParsingError(params: {
-        agent: AgentType;
-        task: TaskType;
-        output: Output;
-        llmOutput: string;
-    }): HandlerResult {
-        const { agent, task, output, llmOutput } = params;
-
-        logger.error(`Parsing error for agent ${agent.name}`);
-
-        const log = LogCreator.createAgentLog({
-            agent,
-            task,
-            description: 'Failed to parse LLM output',
-            metadata: {
-                output: {
-                    llmUsageStats: output.llmUsageStats || DefaultFactory.createLLMUsageStats(),
-                    llmOutput
-                },
-                timestamp: Date.now()
-            },
-            agentStatus: AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT
-        });
-
-        return {
-            success: false,
-            error: new Error('Failed to parse LLM output'),
-            data: log
-        };
-    }
-
-    /**
-     * Handle maximum iterations error
-     */
-    public handleMaxIterationsError(params: {
-        agent: AgentType;
-        task: TaskType;
-        iterations: number;
-        maxAgentIterations: number;
-    }): HandlerResult {
-        const { agent, task, iterations, maxAgentIterations } = params;
-
-        const error = new Error(
-            `Maximum iterations (${maxAgentIterations}) reached without final answer`
         );
 
-        logger.error(`Max iterations error for agent ${agent.name}:`, error);
-
-        const log = LogCreator.createAgentLog({
-            agent,
-            task,
-            description: error.message,
-            metadata: {
-                error,
-                iterations,
-                maxAgentIterations,
-                timestamp: Date.now()
-            },
-            agentStatus: AGENT_STATUS_enum.MAX_ITERATIONS_ERROR
-        });
+        logger.error('LLM error:', prettyError);
 
         return {
             success: false,
-            error,
-            data: log
+            error: prettyError,
+            data: {
+                agent,
+                task,
+                error: errorMetadata
+            }
         };
     }
 
+    // ─── Tool Error Handling ────────────────────────────────────────────────────
+
     /**
-     * Handle tool feedback error
+     * Handle tool execution errors
      */
-    public handleToolFeedbackError(params: {
-        agent: AgentType;
-        task: TaskType;
-        tool: Tool;
-        error: Error;
-        output?: Output;
-        parsedOutput?: ParsedOutput;
-    }): string {
-        const { agent, task, tool, error, parsedOutput } = params;
+    public handleToolError(params: ToolHandlerParams): HandlerResult {
+        const { agent, task, tool, error, toolName } = params;
 
-        logger.error(`Tool feedback error for ${tool.name}:`, error);
-
-        return agent.promptTemplates.TOOL_ERROR_FEEDBACK({
-            agent,
-            task,
-            toolName: tool.name,
-            error,
-            parsedLLMOutput: parsedOutput || null
+        const processedError: ErrorType = toErrorType(error);
+        const prettyError = this.createPrettyError({
+            message: `Tool execution error: ${toolName || 'Unknown Tool'}`,
+            type: 'SystemError',
+            context: {
+                toolName,
+                agentId: agent?.id,
+                taskId: task?.id,
+                originalError: processedError
+            },
+            rootError: error instanceof Error ? error : undefined,
+            recommendedAction: `Investigate tool ${toolName || 'Unknown'} configuration`,
+            prettyMessage: `[SystemError] Tool Error: ${toolName || 'Unknown Tool'}`
         });
+
+        const errorMetadata = MetadataFactory.forToolExecution({
+            toolName: toolName || 'Unknown',
+            input: tool,
+            error: error instanceof Error ? error : undefined
+        });
+
+        logger.error('Tool error:', prettyError);
+
+        return {
+            success: false,
+            error: prettyError,
+            data: {
+                agent,
+                task,
+                tool,
+                error: errorMetadata
+            }
+        };
+    }
+
+    // ─── Parsing Error Handling ──────────────────────────────────────────────────
+
+    /**
+     * Handle parsing errors
+     */
+    public handleParsingError(params: ParsingHandlerParams): HandlerResult {
+        const { agent, task, output, llmOutput } = params;
+
+        const prettyError = this.createPrettyError({
+            message: 'Failed to parse LLM output',
+            type: 'ValidationError',
+            context: {
+                agentId: agent?.id,
+                taskId: task?.id,
+                llmOutput,
+                originalOutput: output
+            },
+            recommendedAction: 'Review LLM output parsing logic',
+            prettyMessage: `[ValidationError] Parsing Failed: Unable to parse LLM output`
+        });
+
+        const errorMetadata = MetadataFactory.forError(
+            { 
+                ...prettyError, 
+                message: prettyError.prettyMessage 
+            } as Record<string, unknown>, 
+            {
+                agent: agent?.id,
+                task: task?.id,
+                llmOutput,
+                originalOutput: output
+            }
+        );
+
+        logger.error('Parsing error:', prettyError);
+
+        return {
+            success: false,
+            error: prettyError,
+            data: {
+                agent,
+                task,
+                output,
+                error: errorMetadata
+            }
+        };
+    }
+
+    // ─── Private Helper Methods ───────────────────────────────────────────────
+
+    /**
+     * Create pretty error with consistent formatting
+     */
+    private createPrettyError(config: ErrorConfig): PrettyErrorType {
+        return createPrettyError({
+            ...config,
+            name: config.type || 'Error',
+            location: 'ErrorManager'
+        });
+    }
+
+    /**
+     * Create default LLM stats for error contexts
+     */
+    private createDefaultLLMStats() {
+        return {
+            inputTokens: 0,
+            outputTokens: 0,
+            callsCount: 0,
+            callsErrorCount: 1,
+            parsingErrors: 0,
+            totalLatency: 0,
+            averageLatency: 0,
+            lastUsed: Date.now(),
+            memoryUtilization: {
+                peakMemoryUsage: 0,
+                averageMemoryUsage: 0,
+                cleanupEvents: 0
+            },
+            costBreakdown: {
+                input: 0,
+                output: 0,
+                total: 0,
+                currency: 'USD'
+            }
+        };
     }
 }
 

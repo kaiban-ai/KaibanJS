@@ -1,103 +1,132 @@
 /**
  * @file CoreManager.ts
- * @path src/utils/managers/core/CoreManager.ts
+ * @path src/managers/core/CoreManager.ts
  * @description Core manager implementation providing base functionality for domain managers
+ *
+ * @module @core
  */
 
-// Core utilities
-import { LogManager } from '@/utils/managers/core/LogManager';
-import { ErrorManager } from '@/utils/managers/core/ErrorManager';
+// Core managers & types
+import { LogManager } from './LogManager';
+import { ErrorManager } from './ErrorManager';
+import { StatusManager } from './StatusManager';
 
-// Types from canonical locations
-import type {
-    StatusTransition,
+// Import types from canonical locations
+import type { 
     StatusTransitionContext,
+    StatusValidationResult,
     StatusEntity,
-    StatusType,
-    StatusValidationResult
-} from '@/utils/types/common/status';
+    StatusType 
+} from '../../types/common/status';
 
-import {
-    isStatusEntity,
-    isStatusTransition,
-    isStatusTransitionContext
-} from '@/utils/types/common/status';
+import { toErrorType } from '../../types/common/errors';
+import type { ErrorType } from '../../types/common/errors';
+import type { AgentType } from '../../types/agent/base';
+import type { TaskType } from '../../types/task/base';
+import type { LogLevel } from '../../types/common/logging';
 
-import { EnumTypeGuards } from '@/utils/types/common/enums';
-
-// ─── Core Manager Implementation ──────────────────────────────────────────────
-
+/**
+ * Abstract base manager class providing core functionality for all managers
+ */
 export abstract class CoreManager {
-    private logManager = LogManager.getInstance();
-    private errorManager = ErrorManager.getInstance();
+    protected readonly logManager: LogManager;
+    protected readonly errorManager: ErrorManager;
+    protected readonly statusManager: StatusManager;
+
+    constructor() {
+        this.logManager = LogManager.getInstance();
+        this.errorManager = ErrorManager.getInstance();
+        this.statusManager = StatusManager.getInstance();
+    }
 
     // ─── Protected Methods ─────────────────────────────────────────────────────
 
     /**
-     * Protected logging wrapper with consistent formatting
+     * Protected logging wrapper with flexible signature
      */
-    protected log(message: string, level: 'info' | 'warn' | 'error' = 'info'): void {
-        this.logManager[level](`[${this.constructor.name}] ${message}`);
+    protected log(
+        message: string, 
+        agentName?: string | null, 
+        taskId?: string, 
+        level: LogLevel = 'info',
+        error?: Error
+    ): void {
+        // Use the full logging signature of LogManager
+        this.logManager.log(
+            message, 
+            agentName, 
+            taskId, 
+            level,
+            error
+        );
     }
 
     /**
-     * Protected error handling with centralized ErrorManager
+     * Protected error handling with consistent formatting
      */
     protected handleError(error: Error, context: string): void {
+        const errorType = toErrorType(error);
+        
         this.errorManager.handleAgentError({
-            error,
-            context,
-            task: null, // Use a specific task if available
-            agent: null, // Use a specific agent if available
+            error: errorType,
+            context: { 
+                component: this.constructor.name, 
+                details: context 
+            },
+            task: undefined,
+            agent: undefined,
             store: {
-                prepareNewLog: (logParams) =>
-                    this.logManager.createAgentLog({
-                        ...logParams,
-                        agentName: logParams.agent?.name || 'Unknown Agent'
-                    }),
-                setState: (stateUpdate) =>
-                    this.logManager.debug('Updating state in ErrorManager', stateUpdate),
+                prepareNewLog: () => ({}),
+                setState: () => {},
+                getState: () => ({
+                    workflowLogs: []
+                })
             }
         });
     }
 
     /**
-     * Protected method to validate status transitions
+     * Protected status transition handler
      */
-    protected validateStatus(
-        context: StatusTransitionContext
-    ): StatusValidationResult {
+    protected async handleStatusTransition(params: {
+        currentStatus: StatusType;
+        targetStatus: StatusType;
+        entity: StatusEntity;
+        entityId: string;
+        agent?: AgentType;
+        task?: TaskType;
+        metadata?: Record<string, unknown>;
+    }): Promise<boolean> {
         try {
-            const { currentStatus, targetStatus, entity } = context;
-            
-            // Validate current status based on entity type
-            if (!this.isValidStatusForEntity(currentStatus, entity)) {
-                return {
-                    isValid: false,
-                    errors: [`Invalid current status: ${currentStatus} for entity type: ${entity}`]
-                };
-            }
+            return await this.statusManager.transition({
+                currentStatus: params.currentStatus,
+                targetStatus: params.targetStatus,
+                entity: params.entity,
+                entityId: params.entityId,
+                agent: params.agent,
+                task: params.task,
+                metadata: params.metadata
+            });
+        } catch (error) {
+            this.handleError(
+                error instanceof Error ? error : new Error(String(error)), 
+                `Status transition failed: ${params.currentStatus} -> ${params.targetStatus}`
+            );
+            return false;
+        }
+    }
 
-            // Validate target status based on entity type
-            if (!this.isValidStatusForEntity(targetStatus, entity)) {
-                return {
-                    isValid: false,
-                    errors: [`Invalid target status: ${targetStatus} for entity type: ${entity}`]
-                };
-            }
-
-            return { 
-                isValid: true,
-                context: {
-                    transition: `${currentStatus} -> ${targetStatus}`,
-                    entity
-                }
-            };
-
+    /**
+     * Protected status validation
+     */
+    protected async validateStatus(context: StatusTransitionContext): Promise<StatusValidationResult> {
+        try {
+            // Use the public method from StatusManager
+            return await this.statusManager.publicValidateTransition(context);
         } catch (error) {
             this.handleError(
                 error instanceof Error ? error : new Error(String(error)),
-                JSON.stringify({ context })
+                `Status validation failed: ${context.currentStatus} -> ${context.targetStatus}`
             );
             return {
                 isValid: false,
@@ -108,44 +137,48 @@ export abstract class CoreManager {
     }
 
     /**
-     * Protected method to apply transition rules
+     * Protected metadata preparation
      */
-    protected applyTransitionRule(
-        context: StatusTransitionContext
-    ): boolean {
-        const validationResult = this.validateStatus(context);
-        
-        if (!validationResult.isValid) {
-            this.log(
-                `Transition validation failed: ${validationResult.errors?.join(', ')}`, 
-                'warn'
-            );
-            return false;
-        }
-
-        return true;
+    protected prepareMetadata(
+        baseMetadata: Record<string, unknown> = {},
+        additionalMetadata: Record<string, unknown> = {}
+    ): Record<string, unknown> {
+        return {
+            timestamp: Date.now(),
+            component: this.constructor.name,
+            ...baseMetadata,
+            ...additionalMetadata
+        };
     }
 
-    // ─── Private Helper Methods ───────────────────────────────────────────────
+    /**
+     * Protected method to safely execute async operations
+     */
+    protected async safeExecute<T>(
+        operation: () => Promise<T>,
+        errorContext: string
+    ): Promise<T | null> {
+        try {
+            return await operation();
+        } catch (error) {
+            this.handleError(
+                error instanceof Error ? error : new Error(String(error)),
+                errorContext
+            );
+            return null;
+        }
+    }
 
     /**
-     * Validate status based on entity type
+     * Protected method to validate required parameters
      */
-    private isValidStatusForEntity(
-        status: StatusType,
-        entity: StatusEntity
-    ): boolean {
-        switch (entity) {
-            case 'agent':
-                return EnumTypeGuards.isAgentStatus(status);
-            case 'message':
-                return EnumTypeGuards.isMessageStatus(status);
-            case 'task':
-                return EnumTypeGuards.isTaskStatus(status);
-            case 'workflow':
-                return EnumTypeGuards.isWorkflowStatus(status);
-            default:
-                return false;
+    protected validateRequiredParams(
+        params: Record<string, unknown>,
+        required: string[]
+    ): void {
+        const missing = required.filter(param => !params[param]);
+        if (missing.length > 0) {
+            throw new Error(`Missing required parameters: ${missing.join(', ')}`);
         }
     }
 }

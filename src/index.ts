@@ -9,7 +9,7 @@ import { Agent } from './agents/Agent';
 import { Task } from '../tasks/Task';
 import { Team } from './team/Team';
 import { defaultGroqConfig, defaultModelConfig } from './utils/helpers/config';
-import { MessageHistoryManager } from './utils/managers/messageHistoryManager';
+import { MessageManager } from '@/managers/domain/llm/MessageManager';
 import { TASK_STATUS_enum, WORKFLOW_STATUS_enum, AGENT_STATUS_enum } from './utils/types/common/enums';
 
 // Core class exports

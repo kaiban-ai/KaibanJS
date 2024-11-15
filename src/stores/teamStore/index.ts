@@ -10,7 +10,7 @@ import { errorHandler } from '@/utils/handlers/errorHandler';
 import { teamHandler } from '@/utils/handlers/teamHandler';
 import { StatusManager } from '@/utils/managers/statusManager';
 import { setupWorkflowController } from '../workflowController';
-import { MessageHistoryManager } from '@/utils/managers/messageHistoryManager';
+import { MessageManager } from '@/managers/domain/llm/MessageManager';
 
 // Store configuration and utils
 import { createInitialState } from './state';

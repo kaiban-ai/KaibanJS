@@ -12,7 +12,7 @@ import { messageHandler } from '@/utils/handlers/messageHandler';
 import { calculateTaskCost } from '@/utils/helpers/costs/llmCostCalculator';
 import { getApiKey } from '@/utils/helpers/agent/agentUtils';
 import { StatusManager } from '@/utils/managers/statusManager';
-import { MessageHistoryManager } from '@/utils/managers/messageHistoryManager';
+import { MessageManager } from '@/managers/domain/llm/MessageManager';
 import { AgentState, initialAgentState, validateAgentState } from './state';
 import { createCoreActions } from './actions/coreActions';
 import { createErrorActions } from './actions/errorActions';

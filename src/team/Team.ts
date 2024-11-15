@@ -10,7 +10,7 @@ import { logger } from '@/utils/core/logger';
 import { DefaultFactory } from '@/utils/factories';
 import { LogCreator } from '@/utils/factories/logCreator';
 import { MetadataFactory } from '@/utils/factories/metadataFactory';
-import { MessageHistoryManager } from '@/utils/managers/messageHistoryManager';
+import { MessageManager } from '@/managers/domain/llm/MessageManager';
 import { teamHandler } from '@/utils/handlers/teamHandler';
 import { calculateTaskStats } from '@/utils/helpers/stats';
 import { logPrettyWorkflowResult } from '@/utils/helpers/formatting/prettyLogs';

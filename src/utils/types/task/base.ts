@@ -1,21 +1,20 @@
 /**
  * @file base.ts
  * @path KaibanJS/src/utils/types/task/base.ts
- * @description Core task interfaces and types
+ * @description Core task type definitions and interfaces
+ *
+ * @module @types/task
  */
 
-import { IBaseAgent } from "../agent/base";
-import { TeamStore } from "@/utils/types/team/base";
-import { ModelUsageStats } from "../workflow";
-import { LLMUsageStats } from "../llm/responses";
-import { TASK_STATUS_enum, FEEDBACK_STATUS_enum } from "@/utils/types/common/enums";
+import type { AgentType } from '../agent/base';
+import type { TeamStore } from '../team/base';
+import type { LLMUsageStats } from '../llm/responses';
+import type { ModelUsageStats } from '../workflow';
+import type { TASK_STATUS_enum, FEEDBACK_STATUS_enum } from '../common/enums';
 
-// ─── Task Result Type ──────────────────────────────────────────────────────
+// ─── Core Task Types ────────────────────────────────────────────────────────────
 
-export type TaskResult = string | Record<string, unknown> | null;
-
-// ─── Task Stats Interface ──────────────────────────────────────────────────
-
+/** Task statistics interface */
 export interface TaskStats {
     startTime: number;
     endTime: number;
@@ -25,24 +24,10 @@ export interface TaskStats {
     modelUsage: ModelUsageStats;
 }
 
-// ─── Task Metadata Interface ───────────────────────────────────────────────
+/** Task result type */
+export type TaskResult = string | Record<string, unknown> | null;
 
-export interface TaskMetadata {
-    llmUsageStats: LLMUsageStats;
-    iterationCount: number;
-    duration: number;
-    costDetails: {
-        inputCost: number;
-        outputCost: number;
-        totalCost: number;
-        currency: string;
-    };
-    result?: unknown;
-    error?: string;
-}
-
-// ─── Feedback Object Interface ─────────────────────────────────────────────
-
+/** Feedback object interface */
 export interface FeedbackObject {
     id: string;
     content: string;
@@ -54,14 +39,13 @@ export interface FeedbackObject {
     assignedTo?: string;
 }
 
-// ─── Core Task Interface ───────────────────────────────────────────────────
-
+/** Core task interface */
 export interface TaskType {
     id: string;
     title: string;
     description: string;
     expectedOutput: string;
-    agent: IBaseAgent;
+    agent: AgentType;
     isDeliverable: boolean;
     externalValidationRequired: boolean;
     inputs: Record<string, unknown>;
@@ -79,68 +63,77 @@ export interface TaskType {
     execute: (data: unknown) => Promise<unknown>;
 }
 
-// ─── Task Initialization Parameters Interface ──────────────────────────────
-
+/** Task initialization parameters */
 export interface ITaskParams {
     title?: string;
     description: string;
     expectedOutput: string;
-    agent: IBaseAgent;
+    agent: AgentType;
     isDeliverable?: boolean;
     externalValidationRequired?: boolean;
 }
 
-// ─── Task Interface ────────────────────────────────────────────────────────
-
-export interface ITask {
-    id: string;
-    title: string;
-    description: string;
-    expectedOutput: string;
-    agent: IBaseAgent;
-    isDeliverable: boolean;
-    externalValidationRequired: boolean;
-    inputs: Record<string, unknown>;
-    feedbackHistory: FeedbackObject[];
-    status: keyof typeof TASK_STATUS_enum;
-    result: TaskResult;
-    interpolatedTaskDescription: string | null;
-    store: TeamStore | null;
-    setStore(store: TeamStore): void;
-    execute(data: unknown): Promise<unknown>;
-}
-
-// ─── Task Validation Result Interface ──────────────────────────────────────
-
+/** Task validation result */
 export interface TaskValidationResult {
     isValid: boolean;
     errors: string[];
-    warnings?: string[];
+    context?: Record<string, unknown>;
 }
 
-// ─── Task Type Guards ──────────────────────────────────────────────────────
+/** Task metadata */
+export interface TaskMetadata {
+    llmUsageStats: LLMUsageStats;
+    iterationCount: number;
+    duration: number;
+    costDetails: {
+        inputCost: number;
+        outputCost: number;
+        totalCost: number;
+        currency: string;
+    };
+    result?: unknown;
+    error?: string;
+}
+
+// ─── Type Guards ────────────────────────────────────────────────────────────────
 
 export const TaskTypeGuards = {
     isTaskType: (value: unknown): value is TaskType => {
+        if (typeof value !== 'object' || value === null) return false;
+        const task = value as Partial<TaskType>;
         return (
-            typeof value === 'object' &&
-            value !== null &&
-            'id' in value &&
-            'title' in value &&
-            'description' in value &&
-            'agent' in value &&
-            'status' in value
+            typeof task.id === 'string' &&
+            typeof task.title === 'string' &&
+            typeof task.description === 'string' &&
+            typeof task.expectedOutput === 'string' &&
+            Array.isArray(task.feedbackHistory) &&
+            task.agent !== undefined &&
+            'status' in task
         );
     },
+
     isFeedbackObject: (value: unknown): value is FeedbackObject => {
+        if (typeof value !== 'object' || value === null) return false;
+        const feedback = value as Partial<FeedbackObject>;
         return (
-            typeof value === 'object' &&
-            value !== null &&
-            'id' in value &&
-            'content' in value &&
-            'status' in value &&
-            'timestamp' in value &&
-            'userId' in value
+            typeof feedback.id === 'string' &&
+            typeof feedback.content === 'string' &&
+            'status' in feedback &&
+            feedback.timestamp instanceof Date &&
+            typeof feedback.userId === 'string'
+        );
+    },
+
+    isTaskStats: (value: unknown): value is TaskStats => {
+        if (typeof value !== 'object' || value === null) return false;
+        const stats = value as Partial<TaskStats>;
+        return (
+            typeof stats.startTime === 'number' &&
+            typeof stats.endTime === 'number' &&
+            typeof stats.duration === 'number' &&
+            typeof stats.iterationCount === 'number' &&
+            'llmUsageStats' in stats &&
+            'modelUsage' in stats
         );
     }
 };
