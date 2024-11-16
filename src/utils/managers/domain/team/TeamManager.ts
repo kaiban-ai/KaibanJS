@@ -1,58 +1,76 @@
 /**
  * @file TeamManager.ts
- * @path KaibanJS/src/managers/domain/team/TeamManager.ts
- * @description Domain-level team management and organization 
+ * @path src/managers/domain/team/TeamManager.ts
+ * @description Core team management and orchestration implementation 
+ *
+ * @module @managers/domain/team
  */
 
 import CoreManager from '../../core/CoreManager';
+import { ErrorManager } from '../../core/ErrorManager';
+import { LogManager } from '../../core/LogManager';
 import { StatusManager } from '../../core/StatusManager';
-import { TaskManager } from '../task/TaskManager';
-import { AgentManager } from '../agent/AgentManager';
-
-// Core utilities
-import { logger } from '@/utils/core/logger';
-import { PrettyError } from '@/utils/core/errors';
 import { DefaultFactory } from '@/utils/factories/defaultFactory';
+import { LogCreator } from '@/utils/factories/logCreator';
+import { calculateTaskStats } from '@/utils/helpers/stats';
+
+// Import managers from canonical locations
+import { AgentManager } from '../agent/AgentManager';
+import { TaskManager } from '../task/TaskManager';
+import { IterationManager } from '../task/IterationManager';
+import { WorkflowManager } from '../workflow/WorkflowManager';
 
 // Import types from canonical locations
 import type { 
     TeamState, 
-    TeamEnvironment,
-    TeamInputs,
     TeamStore,
-    TeamValidationResult,
-    TeamPerformanceMetrics,
-    TeamExecutionContext,
-    TeamRuntimeState 
+    TeamStoreApi,
+    TeamStoreConfig,
+    HandlerResult,
+    TeamValidationResult
 } from '@/utils/types/team';
 
-import type { 
-    TaskType, 
+import type {
     AgentType,
+    TaskType,
     WorkflowResult,
     WorkflowStats,
-    ErrorType 
+    WorkflowStartResult,
+    CostDetails,
+    ModelUsageStats,
+    ErrorType,
+    LLMUsageStats,
+    BaseStoreState
 } from '@/utils/types';
 
 import { WORKFLOW_STATUS_enum, TASK_STATUS_enum } from '@/utils/types/common/enums';
 
-// ─── Team Manager Implementation ──────────────────────────────────────────────
-
+/**
+ * Core team management implementation
+ */
 export class TeamManager extends CoreManager {
     private static instance: TeamManager;
+    private readonly errorManager: ErrorManager;
+    private readonly logManager: LogManager;
     private readonly statusManager: StatusManager;
-    private readonly taskManager: TaskManager;
     private readonly agentManager: AgentManager;
+    private readonly taskManager: TaskManager;
+    private readonly iterationManager: IterationManager;
+    private readonly workflowManager: WorkflowManager;
     private readonly activeTeams: Map<string, TeamStore>;
-    private readonly executionContexts: Map<string, TeamExecutionContext>;
+    private readonly workflowStats: Map<string, WorkflowStats>;
 
     private constructor() {
         super();
+        this.errorManager = ErrorManager.getInstance();
+        this.logManager = LogManager.getInstance();
         this.statusManager = StatusManager.getInstance();
-        this.taskManager = TaskManager.getInstance();
         this.agentManager = AgentManager.getInstance();
+        this.taskManager = TaskManager.getInstance();
+        this.iterationManager = IterationManager.getInstance();
+        this.workflowManager = WorkflowManager.getInstance();
         this.activeTeams = new Map();
-        this.executionContexts = new Map();
+        this.workflowStats = new Map();
     }
 
     // ─── Singleton Access ───────────────────────────────────────────────────
@@ -64,323 +82,401 @@ export class TeamManager extends CoreManager {
         return TeamManager.instance;
     }
 
-    // ─── Team Lifecycle Management ──────────────────────────────────────────
+    // ─── Team Management ────────────────────────────────────────────────────
 
+    /**
+     * Initialize a new team with agents and tasks
+     */
     public async initializeTeam(
+        store: TeamStore,
         name: string,
-        agents: AgentType[],
-        tasks: TaskType[],
-        env: TeamEnvironment = {}
-    ): Promise<TeamStore | null> {
+        agents: AgentType[] = [],
+        tasks: TaskType[] = [],
+        config: TeamStoreConfig = {}
+    ): Promise<HandlerResult> {
         try {
-            const validationResult = await this.validateTeamConfig({
-                name,
-                agents,
-                tasks,
-                env
-            });
-
-            if (!validationResult.isValid) {
-                throw new PrettyError({
-                    message: 'Invalid team configuration',
-                    context: { errors: validationResult.errors }
-                });
+            const validation = await this.validateTeamSetup({ name, agents, tasks });
+            if (!validation.isValid) {
+                throw new Error(validation.errors.join(', '));
             }
 
-            const store = this.createTeamStore({
-                name,
-                agents,
-                tasks,
-                env,
-                teamWorkflowStatus: 'INITIAL',
-                workflowResult: null,
-                workflowLogs: [],
-                inputs: {},
-                workflowContext: '',
-                logLevel: 'info',
-                tasksInitialized: false
+            agents.forEach(agent => {
+                agent.initialize(store, store.getState().env);
+                this.logManager.debug(`Initialized agent: ${agent.name}`);
+            });
+
+            tasks.forEach(task => {
+                task.setStore(store);
+                this.logManager.debug(`Set store for task: ${task.id}`);
             });
 
             this.activeTeams.set(name, store);
-            this.executionContexts.set(name, this.createExecutionContext(store));
+            this.workflowStats.set(name, DefaultFactory.createWorkflowStats());
 
-            return store;
+            const log = LogCreator.createWorkflowLog(
+                `Team ${name} initialized with ${agents.length} agents and ${tasks.length} tasks`,
+                WORKFLOW_STATUS_enum.INITIAL,
+                {
+                    teamName: name,
+                    agentCount: agents.length,
+                    taskCount: tasks.length,
+                    timestamp: Date.now()
+                }
+            );
+
+            store.setState(state => ({
+                ...state,
+                name,
+                agents,
+                tasks,
+                workflowLogs: [log]
+            }));
+
+            return {
+                success: true,
+                data: store
+            };
 
         } catch (error) {
-            logger.error('Team initialization error:', error);
-            return null;
+            return this.handleTeamError(error, name);
         }
     }
 
-    // ─── Team Workflow Management ─────────────────────────────────────────────
-
+    /**
+     * Start workflow execution
+     */
     public async startWorkflow(
         teamName: string,
-        inputs: TeamInputs = {}
-    ): Promise<WorkflowResult | null> {
-        const team = this.activeTeams.get(teamName);
-        if (!team) {
-            logger.error(`Team not found: ${teamName}`);
-            return null;
+        inputs: Record<string, unknown> = {}
+    ): Promise<WorkflowStartResult> {
+        const store = this.activeTeams.get(teamName);
+        if (!store) {
+            return this.handleTeamNotFound(teamName);
         }
 
         try {
             await this.statusManager.transition({
-                currentStatus: team.getState().teamWorkflowStatus,
+                currentStatus: store.getState().teamWorkflowStatus,
                 targetStatus: WORKFLOW_STATUS_enum.RUNNING,
                 entity: 'workflow',
                 entityId: teamName,
                 metadata: { inputs }
             });
 
-            const context = this.executionContexts.get(teamName);
-            if (!context) {
-                throw new Error('Execution context not found');
-            }
-
-            context.startTime = Date.now();
-            context.status = WORKFLOW_STATUS_enum.RUNNING;
-
-            team.setState(state => ({
+            store.setState(state => ({
                 ...state,
                 inputs,
                 teamWorkflowStatus: WORKFLOW_STATUS_enum.RUNNING
             }));
 
             const stats = await this.getWorkflowStats(teamName);
-            return {
-                status: 'RUNNING',
+            if (!stats) {
+                throw new Error('Failed to get workflow stats');
+            }
+
+            const result: WorkflowResult = {
+                status: 'FINISHED',
+                result: 'Workflow completed successfully',
                 metadata: stats,
                 completionTime: Date.now()
             };
 
+            return {
+                status: WORKFLOW_STATUS_enum.RUNNING,
+                result,
+                stats
+            };
+
         } catch (error) {
-            return this.handleWorkflowError(error, teamName);
+            const errorResult = await this.handleWorkflowError(error, teamName, store);
+            return {
+                status: WORKFLOW_STATUS_enum.ERRORED,
+                result: {
+                    status: 'ERRORED',
+                    error: errorResult.error?.message || 'Unknown error',
+                    metadata: this.workflowStats.get(teamName) || DefaultFactory.createWorkflowStats(),
+                    erroredAt: Date.now()
+                },
+                stats: this.workflowStats.get(teamName) || DefaultFactory.createWorkflowStats()
+            };
         }
     }
 
-    public async getWorkflowStats(teamName: string): Promise<WorkflowStats | null> {
-        const team = this.activeTeams.get(teamName);
-        if (!team) return null;
+    /**
+     * Stop workflow execution
+     */
+    public async stopWorkflow(
+        teamName: string,
+        reason: string = 'Manual stop'
+    ): Promise<HandlerResult> {
+        const store = this.activeTeams.get(teamName);
+        if (!store) {
+            return this.handleTeamNotFound(teamName);
+        }
 
-        const context = this.executionContexts.get(teamName);
-        if (!context) return null;
+        try {
+            await this.statusManager.transition({
+                currentStatus: store.getState().teamWorkflowStatus,
+                targetStatus: WORKFLOW_STATUS_enum.STOPPING,
+                entity: 'workflow',
+                entityId: teamName,
+                metadata: { reason }
+            });
 
-        return {
-            startTime: context.startTime,
-            endTime: Date.now(),
-            duration: (Date.now() - context.startTime) / 1000,
-            llmUsageStats: DefaultFactory.createLLMUsageStats(),
-            iterationCount: context.stats.taskCount,
-            costDetails: DefaultFactory.createCostDetails(),
-            taskCount: team.getState().tasks.length,
-            agentCount: team.getState().agents.length,
-            teamName: team.getState().name,
-            messageCount: team.getState().workflowLogs.length,
-            modelUsage: {}
-        };
+            const log = LogCreator.createWorkflowLog(
+                `Workflow stopped: ${reason}`,
+                WORKFLOW_STATUS_enum.STOPPED,
+                { 
+                    teamName,
+                    reason,
+                    timestamp: Date.now()
+                }
+            );
+
+            store.setState(state => ({
+                ...state,
+                teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED,
+                workflowLogs: [...state.workflowLogs, log]
+            }));
+
+            return {
+                success: true
+            };
+
+        } catch (error) {
+            return this.handleTeamError(error, teamName);
+        }
     }
 
-    // ─── Team State Management ───────────────────────────────────────────────
-
-    public getTeam(teamName: string): TeamStore | null {
-        return this.activeTeams.get(teamName) || null;
-    }
-
-    public getTeamStats(teamName: string): TeamPerformanceMetrics | null {
-        const context = this.executionContexts.get(teamName);
-        if (!context) return null;
-
-        const team = this.activeTeams.get(teamName);
-        if (!team) return null;
-
-        return {
-            tasks: {
-                total: context.stats.taskCount,
-                completed: context.stats.completedTaskCount,
-                failed: context.stats.taskStatusCounts[TASK_STATUS_enum.ERROR] || 0,
-                averageDuration: context.stats.taskCount > 0 
-                    ? (Date.now() - context.startTime) / context.stats.taskCount 
-                    : 0,
-                successRate: context.stats.taskCount > 0
-                    ? context.stats.completedTaskCount / context.stats.taskCount * 100
-                    : 0
-            },
-            resources: {
-                memory: context.stats.llmUsageStats.memoryUtilization.peakMemoryUsage,
-                cpu: 0,
-                averageLatency: context.stats.llmUsageStats.averageLatency,
-                maxLatency: context.stats.llmUsageStats.totalLatency
-            },
-            costs: {
-                total: context.stats.llmUsageStats.costBreakdown.total,
-                breakdown: DefaultFactory.createCostDetails(),
-                costPerTask: context.stats.taskCount > 0
-                    ? context.stats.llmUsageStats.costBreakdown.total / context.stats.taskCount
-                    : 0,
-                costPerToken: context.stats.llmUsageStats.totalLatency > 0
-                    ? context.stats.llmUsageStats.costBreakdown.total / context.stats.llmUsageStats.totalLatency
-                    : 0
-            },
-            llm: {
-                totalTokens: context.stats.llmUsageStats.inputTokens + context.stats.llmUsageStats.outputTokens,
-                inputTokens: context.stats.llmUsageStats.inputTokens,
-                outputTokens: context.stats.llmUsageStats.outputTokens,
-                tokensPerTask: context.stats.taskCount > 0
-                    ? (context.stats.llmUsageStats.inputTokens + context.stats.llmUsageStats.outputTokens) / context.stats.taskCount
-                    : 0,
-                tokensPerSecond: context.startTime > 0
-                    ? (context.stats.llmUsageStats.inputTokens + context.stats.llmUsageStats.outputTokens) / ((Date.now() - context.startTime) / 1000)
-                    : 0
+    /**
+     * Process team feedback
+     */
+    public async processFeedback(
+        store: TeamStore,
+        taskId: string,
+        feedback: string,
+        metadata: Record<string, unknown> = {}
+    ): Promise<HandlerResult> {
+        try {
+            const task = store.getState().tasks.find(t => t.id === taskId);
+            if (!task) {
+                throw new Error(`Task not found: ${taskId}`);
             }
-        };
+
+            const feedbackObj = DefaultFactory.createFeedbackObject({
+                content: feedback,
+                taskId,
+                metadata
+            });
+
+            const log = LogCreator.createTaskLog({
+                task,
+                description: `Feedback received: ${feedback}`,
+                status: TASK_STATUS_enum.REVISE,
+                metadata: {
+                    feedback: feedbackObj,
+                    timestamp: Date.now()
+                }
+            });
+
+            store.setState(state => ({
+                tasks: state.tasks.map(t => 
+                    t.id === taskId ? {
+                        ...t,
+                        status: TASK_STATUS_enum.REVISE,
+                        feedbackHistory: [...t.feedbackHistory, feedbackObj]
+                    } : t
+                ),
+                workflowLogs: [...state.workflowLogs, log]
+            }));
+
+            return {
+                success: true,
+                data: feedbackObj
+            };
+
+        } catch (error) {
+            return this.handleTeamError(error);
+        }
     }
 
     // ─── Resource Management ────────────────────────────────────────────────
 
+    /**
+     * Update cost tracking
+     */
+    public async updateCostTracking(
+        store: TeamStore,
+        modelUsage: ModelUsageStats,
+        costDetails: CostDetails
+    ): Promise<HandlerResult> {
+        try {
+            const stats = this.workflowStats.get(store.getState().name);
+            if (!stats) {
+                throw new Error('Workflow stats not found');
+            }
+
+            this.workflowStats.set(store.getState().name, {
+                ...stats,
+                modelUsage,
+                costDetails,
+                timestamp: Date.now()
+            });
+
+            return {
+                success: true,
+                data: this.workflowStats.get(store.getState().name)
+            };
+
+        } catch (error) {
+            return this.handleTeamError(error);
+        }
+    }
+
+    /**
+     * Update resource tracking
+     */
+    public async updateResourceTracking(
+        store: TeamStore,
+        task: TaskType,
+        llmUsageStats: LLMUsageStats
+    ): Promise<HandlerResult> {
+        try {
+            const stats = calculateTaskStats(task, store.getState().workflowLogs);
+            const modelCode = task.agent?.llmConfig?.model;
+            
+            if (!modelCode) {
+                throw new Error('Model code not found');
+            }
+
+            await this.updateCostTracking(
+                store,
+                { [modelCode]: stats.llmUsageStats },
+                stats.costDetails
+            );
+
+            return {
+                success: true,
+                data: stats
+            };
+
+        } catch (error) {
+            return this.handleTeamError(error);
+        }
+    }
+
+    /**
+     * Get workflow statistics
+     */
+    public async getWorkflowStats(teamName: string): Promise<WorkflowStats | null> {
+        const store = this.activeTeams.get(teamName);
+        if (!store) return null;
+
+        const stats = this.workflowStats.get(teamName);
+        if (!stats) return null;
+
+        return stats;
+    }
+
+    /**
+     * Clean up resources
+     */
     public async cleanup(): Promise<void> {
         for (const [teamName, store] of this.activeTeams.entries()) {
             try {
-                await this.stopWorkflow(teamName);
+                await this.stopWorkflow(teamName, 'Cleanup');
                 this.activeTeams.delete(teamName);
-                this.executionContexts.delete(teamName);
+                this.workflowStats.delete(teamName);
             } catch (error) {
-                logger.error(`Error cleaning up team ${teamName}:`, error);
+                this.logManager.error(`Error cleaning up team ${teamName}:`, error);
             }
         }
     }
 
     // ─── Private Helper Methods ───────────────────────────────────────────────
 
-    private async validateTeamConfig(config: {
+    /**
+     * Validate team setup
+     */
+    private async validateTeamSetup(params: {
         name: string;
         agents: AgentType[];
         tasks: TaskType[];
-        env: TeamEnvironment;
     }): Promise<TeamValidationResult> {
         const errors: string[] = [];
 
-        if (!config.name) errors.push('Team name is required');
-        if (!config.agents?.length) errors.push('At least one agent is required');
-        if (!config.tasks?.length) errors.push('At least one task is required');
+        if (!params.name) {
+            errors.push('Team name is required');
+        }
 
-        // Validate each agent
-        for (const agent of config.agents) {
+        params.agents.forEach(agent => {
             if (!agent.tools?.length) {
-                errors.push(`Agent ${agent.name} has no tools configured`);
+                errors.push(`Agent ${agent.name} has no tools`);
             }
             if (!agent.llmConfig) {
                 errors.push(`Agent ${agent.name} has no LLM configuration`);
             }
-        }
+        });
 
-        // Validate tasks
-        for (const task of config.tasks) {
+        params.tasks.forEach(task => {
             if (!task.title) errors.push('Task title is required');
             if (!task.description) errors.push('Task description is required');
-            if (!task.agent) errors.push('Task must have an assigned agent');
-        }
+            if (!task.agent) errors.push('Task must have assigned agent');
+        });
 
         return {
             isValid: errors.length === 0,
             errors,
             context: {
-                teamName: config.name,
-                agentCount: config.agents.length,
-                taskCount: config.tasks.length
+                teamName: params.name,
+                agentCount: params.agents.length,
+                taskCount: params.tasks.length
             }
         };
     }
 
-    private createTeamStore(state: TeamState): TeamStore {
-        // Implementation would use actual store creation logic
-        return {
-            getState: () => state,
-            setState: (fn: (state: TeamState) => Partial<TeamState>) => {
-                Object.assign(state, fn(state));
-            },
-            subscribe: () => () => {},
-            destroy: () => {},
-            ...state
-        } as TeamStore;
-    }
-
-    private createExecutionContext(store: TeamStore): TeamExecutionContext {
-        return {
-            startTime: Date.now(),
-            status: WORKFLOW_STATUS_enum.INITIAL,
-            activeAgents: [],
-            completedTasks: [],
-            stats: {
-                taskCount: store.getState().tasks.length,
-                completedTaskCount: 0,
-                completionPercentage: 0,
-                taskStatusCounts: {
-                    PENDING: 0,
-                    TODO: store.getState().tasks.length,
-                    DOING: 0,
-                    BLOCKED: 0,
-                    REVISE: 0,
-                    DONE: 0,
-                    ERROR: 0,
-                    AWAITING_VALIDATION: 0,
-                    VALIDATED: 0
-                },
-                llmUsageStats: DefaultFactory.createLLMUsageStats(),
-                costDetails: DefaultFactory.createCostDetails()
-            }
-        };
-    }
-
-    private async stopWorkflow(teamName: string): Promise<void> {
-        const team = this.activeTeams.get(teamName);
-        if (!team) return;
-
-        try {
-            await this.statusManager.transition({
-                currentStatus: team.getState().teamWorkflowStatus,
-                targetStatus: WORKFLOW_STATUS_enum.STOPPING,
-                entity: 'workflow',
-                entityId: teamName
-            });
-
-            team.setState(state => ({
-                ...state,
-                teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED
-            }));
-
-        } catch (error) {
-            logger.error(`Error stopping workflow for team ${teamName}:`, error);
-        }
-    }
-
-    private handleWorkflowError(error: unknown, teamName: string): WorkflowResult {
-        const team = this.activeTeams.get(teamName);
-        const context = this.executionContexts.get(teamName);
-
-        const prettyError = new PrettyError({
-            message: error instanceof Error ? error.message : String(error),
-            context: {
-                teamName,
-                status: team?.getState().teamWorkflowStatus,
-                activeAgents: context?.activeAgents.length
-            }
+    /**
+     * Handle workflow error
+     */
+    private async handleWorkflowError(
+        error: unknown,
+        teamName: string,
+        store?: TeamStore
+    ): Promise<HandlerResult> {
+        const errorResult = await this.errorManager.handleError({
+            error: error as Error,
+            context: { teamName },
+            store: store ? {
+                getState: () => store.getState(),
+                setState: (fn) => store.setState(fn),
+                prepareNewLog: store.prepareNewLog
+            } : undefined
         });
 
-        logger.error(`Workflow error:`, prettyError);
-
         return {
-            status: 'ERRORED',
-            error: {
-                message: prettyError.message,
-                type: prettyError.type || 'WorkflowError',
-                context: prettyError.context,
-                timestamp: Date.now()
-            },
-            metadata: context?.stats || undefined,
-            erroredAt: Date.now()
+            success: false,
+            error: errorResult.error,
+            data: null
         };
+    }
+
+    /**
+     * Handle team not found error
+     */
+    private handleTeamNotFound(teamName: string): HandlerResult {
+        return {
+            success: false,
+            error: new Error(`Team not found: ${teamName}`),
+            data: null
+        };
+    }
+
+    /**
+     * Handle general team error
+     */
+    private async handleTeamError(error: unknown, teamName?: string): Promise<HandlerResult> {
+        return this.handleWorkflowError(error, teamName || 'unknown');
     }
 }
 
-export default TeamManager;
+export default TeamManager.getInstance();

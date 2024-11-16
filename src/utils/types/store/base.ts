@@ -13,41 +13,26 @@ import type { WorkflowResult } from '../workflow/base';
 import type { LLMUsageStats } from '../llm/responses';
 import type { CostDetails } from '../workflow/costs';
 
-// ─── Base Store State ─────────────────────────────────────────────────────────────
-
 /**
  * Base store state interface that all stores extend
  */
 export interface BaseStoreState {
-    /** Store identifier/name */
     name: string;
-    /** List of agents in the store */
     agents: AgentType[];
-    /** List of tasks in the store */
     tasks: TaskType[];
-    /** List of workflow logs */
     workflowLogs: Log[];
-    /** Cost details for the workflow */
     costDetails?: CostDetails;
-    /** LLM usage statistics */
     llmUsageStats?: LLMUsageStats;
-    /** Current workflow result */
     workflowResult?: WorkflowResult;
 }
-
-// ─── Store Methods ───────────────────────────────────────────────────────────────
 
 /**
  * Base store methods interface
  */
 export interface BaseStoreMethods<T extends BaseStoreState> {
-    /** Get current state */
     getState: () => T;
-    /** Update state */
     setState: (partial: Partial<T> | ((state: T) => Partial<T>), replace?: boolean) => void;
-    /** Subscribe to state changes */
     subscribe: StoreSubscribe<T>;
-    /** Clean up store resources */
     destroy: () => void;
 }
 
@@ -65,8 +50,6 @@ export interface StoreSubscribe<T> {
         }
     ): () => void;
 }
-
-// ─── Store Type Utilities ────────────────────────────────────────────────────────
 
 /** Type safe store setter */
 export type SetStoreState<T extends BaseStoreState> = (
@@ -89,25 +72,16 @@ export type StoreCreator<T extends BaseStoreState> = StateCreator<
     T
 >;
 
-// ─── Store Configuration ────────────────────────────────────────────────────────
-
 /**
  * Store configuration options
  */
 export interface StoreConfig {
-    /** Store identifier */
     name: string;
-    /** Logging level */
     logLevel?: 'debug' | 'info' | 'warn' | 'error';
-    /** Development mode flag */
     devMode?: boolean;
-    /** Serialization options */
     serialize?: {
-        /** Fields to exclude from serialization */
         exclude?: string[];
-        /** Custom serializers for specific types */
         serializers?: Record<string, (value: unknown) => unknown>;
-        /** Whether to parse undefined values */
         parseUndefined?: boolean;
     };
 }
@@ -116,11 +90,8 @@ export interface StoreConfig {
  * Store validation result
  */
 export interface StoreValidationResult {
-    /** Whether the store state is valid */
     isValid: boolean;
-    /** List of validation errors */
     errors: string[];
-    /** Optional warnings */
     warnings?: string[];
 }
 
@@ -128,13 +99,9 @@ export interface StoreValidationResult {
  * Store middleware configuration
  */
 export interface StoreMiddlewareConfig {
-    /** Enable Redux DevTools */
     devtools?: boolean;
-    /** Enable selector subscriptions */
     subscribeWithSelector?: boolean;
-    /** Enable state persistence */
     persistence?: boolean;
-    /** Custom middleware */
     custom?: Array<
         (config: StoreConfig) => 
             <T extends BaseStoreState>(
@@ -147,13 +114,9 @@ export interface StoreMiddlewareConfig {
  * Store selector configuration
  */
 export interface StoreSelector<T extends BaseStoreState, U> {
-    /** State selector function */
     selector: (state: T) => U;
-    /** Optional equality comparison function */
     equals?: (a: U, b: U) => boolean;
 }
-
-// ─── Store Events ───────────────────────────────────────────────────────────────
 
 /** Store event types */
 export type StoreEventType = 
@@ -167,25 +130,16 @@ export type StoreEventType =
  * Store event interface
  */
 export interface StoreEvent {
-    /** Event type */
     type: StoreEventType;
-    /** Event data */
     data: unknown;
-    /** Event timestamp */
     timestamp: number;
-    /** Optional event metadata */
     metadata?: Record<string, unknown>;
 }
-
-// ─── Type Guards ────────────────────────────────────────────────────────────────
 
 /**
  * Type guards for base store types
  */
 export const StoreTypeGuards = {
-    /**
-     * Check if value is BaseStoreState
-     */
     isBaseStoreState: (value: unknown): value is BaseStoreState => {
         return (
             typeof value === 'object' &&
@@ -200,9 +154,6 @@ export const StoreTypeGuards = {
         );
     },
 
-    /**
-     * Check if value has store methods
-     */
     hasStoreMethods: <T extends BaseStoreState>(
         value: unknown
     ): value is BaseStoreMethods<T> => {
@@ -216,9 +167,6 @@ export const StoreTypeGuards = {
         );
     },
 
-    /**
-     * Check if value is store selector
-     */
     isStoreSelector: <T extends BaseStoreState, U>(
         value: unknown
     ): value is StoreSelector<T, U> => {

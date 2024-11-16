@@ -4,7 +4,7 @@
  * @description React Champion agent implementation using manager-based architecture
  */
 
-//import { BaseAgent } from '../baseAgent';
+import { BaseAgent } from '../baseAgent';
 import AgentManagerSingleton from '../../utils/managers/domain/agent/AgentManager';
 import { ErrorManager } from '../../utils/managers/core/ErrorManager';
 import IterationManagerSingleton from '../../utils/managers/domain/agent/IterationManager';
@@ -26,6 +26,8 @@ import type {
 import type { AgenticLoopResult } from '../../utils/types/llm/instance';
 import type { ErrorType } from '../../utils/types/common';
 import { AGENT_STATUS_enum } from '../../utils/types/common/enums';
+import { REACTChampionAgentPrompts } from '../../utils/types/agent/prompts';
+import REACT_CHAMPION_AGENT_DEFAULT_PROMPTS from '../../utils/helpers/prompts/reactChampionPrompts';
 
 export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent {
     public executableAgent: any;
@@ -36,7 +38,14 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
     private readonly errorManager: ErrorManager;
 
     constructor(config: any) {
-        super(config);
+        const mergedConfig = {
+            ...config,
+            promptTemplates: {
+                ...REACT_CHAMPION_AGENT_DEFAULT_PROMPTS,
+                ...config.promptTemplates
+            }
+        };
+        super(mergedConfig);
         this.agentManager = AgentManagerSingleton;
         this.iterationManager = IterationManagerSingleton;
         this.toolManager = ToolManagerSingleton;
@@ -77,16 +86,14 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
                 })
             );
         } catch (error) {
-            this.errorManager.handleError(
-                new Error('Error processing task feedback'),
-                { 
-                    component: 'ReactChampionAgent',
-                    method: 'workOnFeedback',
-                    feedbackList, 
-                    task,
-                    error
-                }
-            );
+            const errorMessage = new Error('Error processing task feedback');
+            this.logError(errorMessage, { 
+                component: 'ReactChampionAgent',
+                method: 'workOnFeedback',
+                feedbackList, 
+                task,
+                error
+            });
             throw error;
         }
     }
@@ -99,18 +106,16 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
     }): AgenticLoopResult {
         const { task, error, iterations, maxAgentIterations } = params;
 
-        this.errorManager.handleError(
-            new Error('Agentic loop error'),
-            {
-                component: 'ReactChampionAgent',
-                method: 'workOnTask',
-                taskId: task.id,
-                agentId: this.id,
-                iterations,
-                maxAgentIterations,
-                error
-            }
-        );
+        const errorMessage = new Error('Agentic loop error');
+        this.logError(errorMessage, {
+            component: 'ReactChampionAgent',
+            method: 'workOnTask',
+            taskId: task.id,
+            agentId: this.id,
+            iterations,
+            maxAgentIterations,
+            error
+        });
 
         return {
             error: error.message,
@@ -131,18 +136,43 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
                 tools: toolManagerInstance.getAgentTools(this)
             });
         } catch (error) {
-            this.errorManager.handleError(
-                new Error('Error creating LLM instance'),
-                {
-                    component: 'ReactChampionAgent',
-                    method: 'createLLMInstance',
-                    error
-                }
-            );
+            const errorMessage = new Error('Error creating LLM instance');
+            this.logError(errorMessage, {
+                component: 'ReactChampionAgent',
+                method: 'createLLMInstance',
+                error
+            });
         }
     }
 
-    // Implementation of required IReactChampionAgent methods...
+    public handleTaskCompleted(params: {
+        task: TaskType;
+        parsedResultWithFinalAnswer: ParsedOutput;
+        iterations: number;
+        maxAgentIterations: number;
+    }): void {
+        const { task, parsedResultWithFinalAnswer, iterations, maxAgentIterations } = params;
+        this.setStatus(AGENT_STATUS_enum.TASK_COMPLETED);
+        
+        const log = this.store.prepareNewLog({
+            agent: this,
+            task,
+            logDescription: 'Task completed successfully',
+            metadata: {
+                iterations,
+                maxAgentIterations,
+                result: parsedResultWithFinalAnswer,
+                timestamp: Date.now()
+            },
+            logType: 'AgentStatusUpdate',
+            agentStatus: AGENT_STATUS_enum.TASK_COMPLETED
+        });
+
+        this.store.setState(state => ({
+            workflowLogs: [...state.workflowLogs, log]
+        }));
+    }
+
     public handleIterationStart(params: { 
         task: TaskType; 
         iterations: number; 
@@ -186,11 +216,13 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
         task: TaskType;
         error: ErrorType;
     }): void {
-        this.errorManager.handleError(params.error, {
+        const errorMessage = new Error('Error during thinking phase');
+        this.logError(errorMessage, {
             component: 'ReactChampionAgent',
             method: 'handleThinkingError',
             taskId: params.task.id,
-            agentId: this.id
+            agentId: this.id,
+            error: params.error
         });
     }
 
@@ -205,6 +237,10 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
             task: params.task,
             llmOutput: params.llmOutput
         }) || 'Unable to parse LLM output';
+    }
+
+    private logError(error: Error, context: Record<string, unknown>): void {
+        this.errorManager.log(error, context);
     }
 }
 

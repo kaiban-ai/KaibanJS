@@ -6,15 +6,21 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { Tool } from "langchain/tools";
-import { logger } from "@/utils/core/logger";
-import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from '@/utils/helpers/prompts/prompts';
-import { getApiKey } from '@/utils/helpers/agent/agentUtils';
-import { errorHandler } from '@/utils/handlers';
-import { IBaseAgent, BaseAgentConfig, HandlerBaseParams, AgentType } from '@/utils/types/agent';
-import { LLMConfig, TaskType, TeamStore, FeedbackObject } from '@/utils/types';
-import { AgenticLoopResult } from '@/utils/types/llm';
-import { AGENT_STATUS_enum } from "@/utils/types/common/enums";
-import CustomMessageHistory from '@/utils/managers/messageHistoryManager';
+import ErrorManager from '../utils/managers/core/ErrorManager';
+import { LogManager } from '../utils/managers/core/LogManager';
+import MessageManager from '../utils/managers/domain/llm/MessageManager';
+import REACT_CHAMPION_AGENT_DEFAULT_PROMPTS from '../utils/helpers/prompts/reactChampionPrompts';
+import { getApiKey } from '../utils/helpers/agent/agentUtils';
+import { IBaseAgent, BaseAgentConfig, AgentType } from '../utils/types/agent/base';
+import { LLMConfig, TaskType, TeamStore, FeedbackObject } from '../utils/types/task/base';
+import { AgenticLoopResult } from '../utils/types/llm/instance';
+import { AGENT_STATUS_enum } from '../utils/types/common/enums';
+import { REACTChampionAgentPrompts } from '../utils/types/agent/prompts';
+
+// Extend LLMConfig to ensure apiKey is always present
+interface ExtendedLLMConfig extends LLMConfig {
+    apiKey?: string;
+}
 
 // Base agent implementation
 export class BaseAgent implements IBaseAgent {
@@ -29,24 +35,35 @@ export class BaseAgent implements IBaseAgent {
     public status: keyof typeof AGENT_STATUS_enum;
     public env: Record<string, any> | null;
     public llmInstance: any | null;
-    public llmConfig: LLMConfig;
+    public llmConfig: ExtendedLLMConfig;
     public llmSystemMessage: string | null;
     public forceFinalAnswer: boolean;
-    public promptTemplates: Record<string, any>;
-    public messageHistory: CustomMessageHistory;
+    public promptTemplates: REACTChampionAgentPrompts;
+    public messageHistory: MessageManager;
+
+    private readonly errorManager: typeof ErrorManager;
+    private readonly logManager: LogManager;
 
     constructor({ 
         name, 
         role, 
         goal, 
-        background, 
-        tools, 
-        llmConfig = { provider: "openai", model: "gpt-4" },
+        background = '', 
+        tools = [], 
+        llmConfig = { provider: "openai", model: "gpt-4", apiKey: '' },
         maxIterations = 10, 
         forceFinalAnswer = true, 
         promptTemplates = {}, 
         llmInstance = null 
-    }: BaseAgentConfig) {
+    }: BaseAgentConfig & { 
+        promptTemplates?: Partial<REACTChampionAgentPrompts>; 
+        llmInstance?: any;
+    }) {
+        // Initialize managers
+        this.errorManager = ErrorManager;
+        this.logManager = LogManager.getInstance();
+        this.messageHistory = MessageManager;
+
         // Initialize required properties
         this.id = uuidv4();
         this.name = name;
@@ -61,47 +78,72 @@ export class BaseAgent implements IBaseAgent {
         this.llmConfig = this.normalizeLlmConfig(llmConfig);
         this.llmSystemMessage = null;
         this.forceFinalAnswer = forceFinalAnswer;
-        this.promptTemplates = { ...REACT_CHAMPION_AGENT_DEFAULT_PROMPTS, ...promptTemplates };
-        this.messageHistory = new CustomMessageHistory();
+        this.promptTemplates = { 
+            ...REACT_CHAMPION_AGENT_DEFAULT_PROMPTS, 
+            ...promptTemplates 
+        } as REACTChampionAgentPrompts;
 
         // Validate required fields
-        if (!name || !role || !goal || !background) {
-            throw new Error('Required agent configuration fields missing');
+        if (!name || !role || !goal) {
+            this.errorManager.handleAgentError({
+                error: new Error('Required agent configuration fields missing'),
+                context: { name, role, goal },
+                agent: this as AgentType,
+                store: {} as TeamStore
+            });
         }
     }
 
     // Initialize agent with store and environment
     initialize(store: TeamStore, env: Record<string, any>): void {
-        if (!store) {
-            throw new Error('Store must be provided');
-        }
-        this.store = store;
-        this.env = env;
-
-        if (!this.llmInstance) {
-            const apiKey = getApiKey(this.llmConfig, this.env);
-            if (!apiKey && !this.llmConfig.apiBaseUrl) {
-                throw new Error('API key is required via config or environment');
+        try {
+            if (!store) {
+                throw new Error('Store must be provided');
             }
-            this.llmConfig.apiKey = apiKey;
-            this.createLLMInstance();
-        }
+            this.store = store;
+            this.env = env;
 
-        logger.info(`Initialized agent: ${this.name}`);
+            if (!this.llmInstance) {
+                const apiKey = getApiKey(this.llmConfig, this.env);
+                if (!apiKey && !this.llmConfig.apiBaseUrl) {
+                    throw new Error('API key is required via config or environment');
+                }
+                this.llmConfig.apiKey = apiKey;
+                this.createLLMInstance();
+            }
+
+            this.logManager.info(`Initialized agent: ${this.name}`);
+        } catch (error) {
+            this.errorManager.handleAgentError({
+                error,
+                context: { store, env },
+                agent: this as AgentType,
+                store
+            });
+        }
     }
 
     // Set store reference
     setStore(store: TeamStore): void {
-        if (!store) {
-            throw new Error('Store must be provided');
+        try {
+            if (!store) {
+                throw new Error('Store must be provided');
+            }
+            this.store = store;
+        } catch (error) {
+            this.errorManager.handleAgentError({
+                error,
+                context: { store },
+                agent: this as AgentType,
+                store
+            });
         }
-        this.store = store;
     }
 
     // Set agent status
     setStatus(status: keyof typeof AGENT_STATUS_enum): void {
         this.status = status;
-        logger.debug(`Updated agent ${this.name} status to: ${status}`);
+        this.logManager.debug(`Updated agent ${this.name} status to: ${status}`);
     }
 
     // Set environment variables
@@ -125,8 +167,11 @@ export class BaseAgent implements IBaseAgent {
     }
 
     // Normalize LLM configuration
-    normalizeLlmConfig(llmConfig: LLMConfig): LLMConfig {
-        return llmConfig;
+    normalizeLlmConfig(llmConfig: ExtendedLLMConfig): ExtendedLLMConfig {
+        return {
+            ...llmConfig,
+            apiKey: llmConfig.apiKey || ''
+        };
     }
 
     // Handle agent iteration start
@@ -134,7 +179,7 @@ export class BaseAgent implements IBaseAgent {
         const { task, iterations, maxAgentIterations } = params;
 
         this.setStatus(AGENT_STATUS_enum.ITERATION_START);
-        logger.debug(`Starting iteration ${iterations + 1}/${maxAgentIterations} for agent ${this.name}`);
+        this.logManager.debug(`Starting iteration ${iterations + 1}/${maxAgentIterations} for agent ${this.name}`);
 
         const log = this.store.prepareNewLog({
             agent: this as AgentType,
@@ -159,7 +204,7 @@ export class BaseAgent implements IBaseAgent {
         const { task, iterations, maxAgentIterations } = params;
 
         this.setStatus(AGENT_STATUS_enum.ITERATION_END);
-        logger.debug(`Completed iteration ${iterations + 1}/${maxAgentIterations} for agent ${this.name}`);
+        this.logManager.debug(`Completed iteration ${iterations + 1}/${maxAgentIterations} for agent ${this.name}`);
 
         const log = this.store.prepareNewLog({
             agent: this as AgentType,

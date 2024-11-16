@@ -19,7 +19,9 @@ import {
     LLMConfig, 
     LLMProvider, 
     LLMRuntimeOptions,
-    StreamingChunk
+    StreamingChunk,
+    ActiveLLMConfig,
+    ensureApiKey
 } from './common';
 
 // ─── Core Instance Interface ─────────────────────────────────────────────────
@@ -30,8 +32,8 @@ export interface LLMInstance {
     generateStream(input: string, options?: LLMRuntimeOptions): AsyncIterator<StreamingChunk>;
     validateConfig(): Promise<void>;
     cleanup(): Promise<void>;
-    getConfig(): LLMConfig;
-    updateConfig(updates: Partial<LLMConfig>): void;
+    getConfig(): ActiveLLMConfig;
+    updateConfig(updates: Partial<ActiveLLMConfig>): void;
     getProvider(): LLMProvider;
 }
 
@@ -49,51 +51,55 @@ export interface AgenticLoopResult {
 
 // Groq LLM instance
 export interface GroqInstance extends LLMInstance {
-    getConfig(): GroqConfig;
+    getConfig(): ActiveLLMConfig & { provider: 'groq' };
 }
 
 // OpenAI LLM instance
 export interface OpenAIInstance extends LLMInstance {
-    getConfig(): OpenAIConfig;
+    getConfig(): ActiveLLMConfig & { provider: 'openai' };
 }
 
 // Anthropic LLM instance
 export interface AnthropicInstance extends LLMInstance {
-    getConfig(): AnthropicConfig;
+    getConfig(): ActiveLLMConfig & { provider: 'anthropic' };
 }
-
 
 // Google LLM instance
 export interface GoogleInstance extends LLMInstance {
-    getConfig(): GoogleConfig;
+    getConfig(): ActiveLLMConfig & { provider: 'google' };
 }
 
 // Mistral LLM instance
 export interface MistralInstance extends LLMInstance {
-    getConfig(): MistralConfig;
+    getConfig(): ActiveLLMConfig & { provider: 'mistral' };
 }
 
 // ─── Type Guards ──────────────────────────────────────────────────────────────
 
 export const LLMInstanceGuards = {
     isGroqInstance: (instance: LLMInstance): instance is GroqInstance => {
-        return instance.getProvider() === 'groq';
+        const config = instance.getConfig();
+        return config.provider === 'groq' && config.apiKey !== undefined;
     },
     
     isOpenAIInstance: (instance: LLMInstance): instance is OpenAIInstance => {
-        return instance.getProvider() === 'openai';
+        const config = instance.getConfig();
+        return config.provider === 'openai' && config.apiKey !== undefined;
     },
     
     isAnthropicInstance: (instance: LLMInstance): instance is AnthropicInstance => {
-        return instance.getProvider() === 'anthropic';
+        const config = instance.getConfig();
+        return config.provider === 'anthropic' && config.apiKey !== undefined;
     },
     
     isGoogleInstance: (instance: LLMInstance): instance is GoogleInstance => {
-        return instance.getProvider() === 'google';
+        const config = instance.getConfig();
+        return config.provider === 'google' && config.apiKey !== undefined;
     },
     
     isMistralInstance: (instance: LLMInstance): instance is MistralInstance => {
-        return instance.getProvider() === 'mistral';
+        const config = instance.getConfig();
+        return config.provider === 'mistral' && config.apiKey !== undefined;
     }
 };
 
@@ -115,4 +121,9 @@ export interface LLMInstanceOptions {
         maxSize?: number;
         ttl?: number;
     };
+}
+
+// Helper function to convert config to ActiveLLMConfig
+export function toActiveConfig(config: LLMConfig): ActiveLLMConfig {
+    return ensureApiKey(config);
 }

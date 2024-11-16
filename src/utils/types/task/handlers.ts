@@ -13,6 +13,7 @@ import type { ErrorType } from '../common';
 import type { Output, ParsedOutput } from '../llm/responses';
 import type { TASK_STATUS_enum } from '../common/enums';
 import type { HandlerResult } from '../agent/handlers';
+import type { BoundStore, BaseStoreState } from '../store/base';
 
 // ─── Task Execution Types ─────────────────────────────────────────────────────
 
@@ -34,7 +35,7 @@ export interface TaskCompletionParams {
     task: TaskType;
     agent: AgentType;
     result: ParsedOutput | null;
-    store: TeamStore;
+    store: BoundStore<BaseStoreState>;
 }
 
 /** Task error handling parameters */

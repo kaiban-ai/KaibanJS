@@ -27,7 +27,7 @@ export const TOKEN_LIMITS = {
 // Base configuration interface for all providers
 export interface BaseLLMConfig {
     provider: LLMProvider;
-    apiKey?: string;
+    apiKey?: string | null;
     temperature?: number;
     streaming?: boolean;
     apiBaseUrl?: string;
@@ -44,12 +44,14 @@ export interface BaseLLMConfig {
 export interface ActiveLLMConfig extends BaseLLMConfig {
     provider: Exclude<LLMProvider, 'none'>;
     model: string;
+    apiKey: string; // Made required for active configs
 }
 
 // Configuration for when no provider is selected
 export interface NoneLLMConfig {
     provider: 'none';
     model?: never;
+    apiKey?: never;
 }
 
 // Union type for all provider configurations
@@ -63,6 +65,26 @@ export function isActiveConfig(config: LLMConfig): config is ActiveLLMConfig {
     return config.provider !== 'none';
 }
 
+// Helper function to ensure apiKey is present for active configs
+export function ensureApiKey(config: LLMConfig, fallbackApiKey?: string): ActiveLLMConfig {
+    if (config.provider === 'none') {
+        throw new Error('Cannot ensure API key for non-active provider');
+    }
+
+    if (config.apiKey) {
+        return config as ActiveLLMConfig;
+    }
+
+    if (fallbackApiKey) {
+        return {
+            ...config,
+            apiKey: fallbackApiKey
+        } as ActiveLLMConfig;
+    }
+
+    throw new Error(`API key is required for provider ${config.provider}`);
+}
+
 // Streaming chunk interface
 export interface StreamingChunk {
     content: string;
@@ -70,7 +92,6 @@ export interface StreamingChunk {
     finishReason?: string;
     done: boolean;
 }
-
 
 // Base runtime options interface
 export interface LLMRuntimeOptions {
@@ -86,5 +107,3 @@ export interface LLMEventMetadata {
     model: string;
     requestId?: string;
 }
-
-

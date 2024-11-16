@@ -6,7 +6,7 @@
  * @module @types/common
  */
 
-import { logger } from "@/utils/core/logger";
+import { logger } from '../../../utils/core/logger';
 
 // ─── Error Types ────────────────────────────────────────────────────────────────
 
@@ -36,6 +36,9 @@ export interface BaseError {
     context?: Record<string, unknown>;
     metadata?: ErrorMetadata;
 }
+
+// Export ErrorType as an alias for BaseError since it's the canonical error type
+export type ErrorType = BaseError;
 
 export interface ErrorOptions {
     message: string;
@@ -200,6 +203,20 @@ export function toKaibanError(error: unknown): KaibanError {
         type: 'SystemError',
         context: typeof error === 'object' ? error as Record<string, unknown> : undefined
     });
+}
+
+/**
+ * Convert any error type to a BaseError (ErrorType)
+ */
+export function toErrorType(error: unknown): ErrorType {
+    const kaibanError = toKaibanError(error);
+    return {
+        name: kaibanError.name,
+        message: kaibanError.message,
+        type: kaibanError.type,
+        context: kaibanError.context,
+        metadata: kaibanError.metadata
+    };
 }
 
 export function createError(options: ErrorOptions): KaibanError {

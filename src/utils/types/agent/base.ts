@@ -21,6 +21,24 @@ import { REACTChampionAgentPrompts } from "./prompts";
 
 export type StatusType = keyof typeof AGENT_STATUS_enum;
 
+export interface BaseAgentConfig {
+    id?: string;
+    name: string;
+    role: string;
+    goal: string;
+    background?: string;
+    tools?: Tool[];
+    maxIterations?: number;
+    store?: TeamStore;
+    status?: StatusType;
+    env?: Record<string, unknown>;
+    llmConfig: LLMConfig;
+    llmSystemMessage?: string;
+    forceFinalAnswer?: boolean;
+    promptTemplates?: REACTChampionAgentPrompts;
+    messageHistoryConfig?: Partial<IMessageHistory>;
+}
+
 export interface IBaseAgent {
     id: string;
     name: string;

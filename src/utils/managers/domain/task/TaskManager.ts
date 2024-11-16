@@ -9,40 +9,37 @@
 import { CoreManager } from '../../core/CoreManager';
 import { ErrorManager } from '../../core/ErrorManager';
 import { LogManager } from '../../core/LogManager';
-import { StatusManager } from '../status/StatusManager';
-import { DefaultFactory } from '@/utils/factories/defaultFactory';
-import { calculateTaskStats } from '@/utils/helpers/stats';
-import { calculateTaskCost } from '@/utils/helpers/costs/llmCostCalculator';
+import { StatusManager } from '../../domain/status/StatusManager';
+import { DefaultFactory } from '../../../factories/defaultFactory';
+import { calculateTaskStats } from '../../../helpers/stats/taskStatsCalculator';
+import { calculateTaskCost, createDefaultCostDetails } from '../../../helpers/costs/llmCostCalculator';
 
 // Types from canonical locations
 import type {
     TaskType,
     TaskStats,
     TaskValidationResult,
-    TaskExecutionParams,
-    HandlerResult
-} from '@/utils/types/task/base';
+    TaskMetadata
+} from '../../../types/task/base';
 
 import type {
     AgentType,
     ParsedOutput,
     TeamStore,
-    ErrorType,
     CostDetails,
-    LLMUsageStats,
-    Log
-} from '@/utils/types';
+    LLMUsageStats
+} from '../../../types';
 
-import { TASK_STATUS_enum } from '@/utils/types/common/enums';
+import { TASK_STATUS_enum } from '../../../types/common/enums';
 
 /**
  * Task management implementation with error handling and validation
  */
 export class TaskManager extends CoreManager {
     private static instance: TaskManager;
-    private readonly errorManager: ErrorManager;
-    private readonly logManager: LogManager;
-    private readonly statusManager: StatusManager;
+    protected readonly errorManager: ErrorManager;
+    protected readonly logManager: LogManager;
+    protected readonly statusManager: StatusManager;
     private readonly activeTasks: Map<string, TaskType>;
     private readonly taskTimeouts: Map<string, NodeJS.Timeout>;
 
@@ -65,7 +62,11 @@ export class TaskManager extends CoreManager {
     /**
      * Execute a task with proper error handling and timeouts
      */
-    public async executeTask(params: TaskExecutionParams): Promise<HandlerResult> {
+    public async executeTask(params: {
+        task: TaskType;
+        agent: AgentType;
+        metadata?: Record<string, unknown>;
+    }): Promise<TaskMetadata> {
         const { task, agent, metadata = {} } = params;
 
         try {
@@ -88,22 +89,17 @@ export class TaskManager extends CoreManager {
                 }
             });
 
-            const result = await agent.workOnTask(task);
-            if (result.error) {
-                throw new Error(result.error);
-            }
-
+            const result = await task.execute(task.inputs);
             const stats = await this.calculateTaskStats(task);
             const costDetails = await this.calculateTaskCosts(task, agent);
 
             this.cleanup(task.id);
             return {
-                success: true,
-                data: result.result || null,
-                metadata: {
-                    ...stats,
-                    costDetails
-                }
+                llmUsageStats: stats.llmUsageStats || {},
+                iterationCount: stats.iterationCount || 0,
+                duration: stats.duration || 0,
+                costDetails: costDetails || createDefaultCostDetails('USD'),
+                result,
             };
 
         } catch (error) {
@@ -121,121 +117,49 @@ export class TaskManager extends CoreManager {
     /**
      * Validate task configuration and requirements
      */
-    public async validateConfig(): Promise<void> {
+    public async validateConfig(): Promise<TaskValidationResult> {
         try {
             // Validate manager state
             if (!this.errorManager || !this.logManager || !this.statusManager) {
-                throw new Error('Required managers not initialized');
+                return {
+                    isValid: false,
+                    errors: ['Required managers not initialized'],
+                    context: {}
+                };
             }
 
             // Validate active tasks state
             if (!this.activeTasks || !this.taskTimeouts) {
-                throw new Error('Task tracking maps not initialized');
+                return {
+                    isValid: false,
+                    errors: ['Task tracking maps not initialized'],
+                    context: {}
+                };
             }
 
             this.logManager.debug('TaskManager configuration validated');
 
-        } catch (error) {
-            this.errorManager.handleError({
-                error: error as Error,
-                context: {
-                    component: 'TaskManager',
-                    method: 'validateConfig'
-                }
-            });
-            throw error;
-        }
-    }
-
-    /**
-     * Initialize task manager resources
-     */
-    public async initialize(): Promise<void> {
-        try {
-            await this.validateConfig();
-            await this.cleanupAllTasks();
-            this.logManager.info('TaskManager initialized successfully');
-
-        } catch (error) {
-            this.errorManager.handleError({
-                error: error as Error,
-                context: {
-                    component: 'TaskManager',
-                    method: 'initialize'
-                }
-            });
-            throw error;
-        }
-    }
-
-    /**
-     * Clean up task manager resources
-     */
-    public async cleanup(): Promise<void> {
-        try {
-            await this.cleanupAllTasks();
-            this.activeTasks.clear();
-            this.taskTimeouts.clear();
-            this.logManager.info('TaskManager cleanup completed');
-
-        } catch (error) {
-            this.errorManager.handleError({
-                error: error as Error,
-                context: {
-                    component: 'TaskManager',
-                    method: 'cleanup'
-                }
-            });
-            throw error;
-        }
-    }
-
-    /**
-     * Handle task completion with result processing
-     */
-    public async handleTaskCompletion(params: {
-        task: TaskType;
-        agent: AgentType;
-        result: ParsedOutput | null;
-        store: TeamStore;
-    }): Promise<HandlerResult> {
-        const { task, agent, result, store } = params;
-
-        try {
-            const stats = await this.calculateTaskStats(task);
-            const costDetails = await this.calculateTaskCosts(task, agent);
-
-            await this.statusManager.transition({
-                currentStatus: task.status,
-                targetStatus: TASK_STATUS_enum.DONE,
-                entity: 'task',
-                entityId: task.id,
-                metadata: {
-                    result,
-                    stats,
-                    costDetails
-                }
-            });
-
-            this.cleanup(task.id);
             return {
-                success: true,
-                data: result,
-                metadata: {
-                    stats,
-                    costDetails
-                }
+                isValid: true,
+                errors: [],
+                context: {}
             };
 
         } catch (error) {
-            return this.handleTaskError({
-                task,
+            const errorResult = this.errorManager.handleError({
                 error: error as Error,
                 context: {
-                    phase: 'completion',
-                    result
+                    component: 'TaskManager',
+                    method: 'validateConfig',
+                    additionalContext: {}
                 }
             });
+
+            return {
+                isValid: false,
+                errors: [errorResult.error || 'Unknown error'],
+                context: errorResult.context || {}
+            };
         }
     }
 
@@ -244,10 +168,10 @@ export class TaskManager extends CoreManager {
      */
     private async calculateTaskStats(task: TaskType): Promise<TaskStats> {
         try {
-            return calculateTaskStats(task, task.store.getState().workflowLogs);
+            return calculateTaskStats(task) || DefaultFactory.createLLMUsageStats();
         } catch (error) {
             this.logManager.error('Error calculating task stats:', error);
-            return DefaultFactory.createTaskStats();
+            return DefaultFactory.createLLMUsageStats();
         }
     }
 
@@ -257,10 +181,10 @@ export class TaskManager extends CoreManager {
     private async calculateTaskCosts(task: TaskType, agent: AgentType): Promise<CostDetails> {
         try {
             const stats = await this.calculateTaskStats(task);
-            return calculateTaskCost(agent.llmConfig.model, stats.llmUsageStats);
+            return calculateTaskCost(agent.llmConfig.model || 'unknown', stats.llmUsageStats);
         } catch (error) {
             this.logManager.error('Error calculating task costs:', error);
-            return DefaultFactory.createCostDetails();
+            return createDefaultCostDetails('USD');
         }
     }
 
@@ -271,7 +195,7 @@ export class TaskManager extends CoreManager {
         task: TaskType;
         error: Error;
         context?: Record<string, unknown>;
-    }): Promise<HandlerResult> {
+    }): Promise<TaskMetadata> {
         const { task, error, context } = params;
 
         const errorResult = await this.errorManager.handleError({
@@ -285,9 +209,12 @@ export class TaskManager extends CoreManager {
 
         this.cleanup(task.id);
         return {
-            success: false,
-            error: errorResult.error,
-            metadata: errorResult.context
+            llmUsageStats: {} as LLMUsageStats,
+            iterationCount: 0,
+            duration: 0,
+            costDetails: createDefaultCostDetails('USD'),
+            result: null,
+            error: errorResult.error
         };
     }
 
@@ -330,16 +257,6 @@ export class TaskManager extends CoreManager {
             this.taskTimeouts.delete(taskId);
         }
         this.activeTasks.delete(taskId);
-    }
-
-    /**
-     * Clean up all tasks
-     */
-    private async cleanupAllTasks(): Promise<void> {
-        for (const [taskId, task] of this.activeTasks.entries()) {
-            this.cleanup(taskId);
-            this.logManager.debug(`Cleaned up task: ${task.title}`);
-        }
     }
 }
 

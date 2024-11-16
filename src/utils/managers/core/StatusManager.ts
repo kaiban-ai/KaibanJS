@@ -26,7 +26,8 @@ import type {
 
 import type { 
     ErrorType,
-    ErrorKind
+    ErrorKind,
+    ErrorMetadata
 } from '../../types/common/errors';
 
 import { 
@@ -80,6 +81,15 @@ export class StatusManager {
     }
 
     /**
+     * Validate StatusTransitionContext completeness
+     */
+    private validateTransitionContext(context: StatusTransitionContext): void {
+        if (!context.entityId) {
+            throw new Error(`EntityId is required for ${context.entity} status transition`);
+        }
+    }
+
+    /**
      * Get singleton instance
      */
     public static getInstance(config?: StatusManagerConfig): StatusManager {
@@ -110,6 +120,9 @@ export class StatusManager {
      */
     public async transition(context: StatusTransitionContext): Promise<boolean> {
         try {
+            // Validate context completeness
+            this.validateTransitionContext(context);
+
             const validationResult = await this.validateTransition(context);
             if (!validationResult.isValid) {
                 // Create a status error with precise typing
@@ -133,18 +146,24 @@ export class StatusManager {
                         entityId: context.entityId,
                         transition: `${context.currentStatus} -> ${context.targetStatus}`
                     },
-                    metadata: statusError.metadata
+                    metadata: {
+                        timestamp: Date.now(),
+                        from: context.currentStatus,
+                        to: context.targetStatus
+                    }
                 };
 
-                await this.errorManager.handleError({
-                    error: errorType,
-                    context: errorType.context || {}
-                });
+                // Use a more comprehensive error handling approach
+                this.handleStatusError(
+                    new Error(statusError.message), 
+                    `Status transition failed: ${context.currentStatus} -> ${context.targetStatus}`,
+                    context
+                );
 
                 this.logManager.error(
                     `Status transition failed: ${context.currentStatus} -> ${context.targetStatus}`, 
                     null, 
-                    context.entityId || 'unknown'
+                    context.entityId
                 );
 
                 return false;
@@ -169,7 +188,7 @@ export class StatusManager {
             this.logManager.debug(
                 `Status transition successful: ${context.currentStatus} -> ${context.targetStatus}`,
                 null,
-                context.entityId || 'unknown'
+                context.entityId
             );
             return true;
 
@@ -180,11 +199,44 @@ export class StatusManager {
     }
 
     /**
+     * Comprehensive error handling for status-related errors
+     */
+    private handleStatusError(
+        error: Error, 
+        context: string, 
+        transitionContext?: StatusTransitionContext
+    ): void {
+        const errorType = toErrorType(error);
+        
+        this.errorManager.handleAgentError({
+            error: errorType,
+            context: { 
+                component: 'StatusManager', 
+                details: context,
+                transition: transitionContext 
+                    ? `${transitionContext.currentStatus} -> ${transitionContext.targetStatus}` 
+                    : undefined
+            },
+            task: transitionContext?.task,
+            agent: transitionContext?.agent,
+            store: {
+                prepareNewLog: () => ({}),
+                setState: () => {},
+                getState: () => ({
+                    workflowLogs: []
+                })
+            }
+        });
+    }
+
+    /**
      * Public method to validate status transition
      * Wraps the private validateTransition method to provide a public interface
      */
     public async publicValidateTransition(context: StatusTransitionContext): Promise<StatusValidationResult> {
         try {
+            // Validate context completeness
+            this.validateTransitionContext(context);
             return await this.validateTransition(context);
         } catch (error) {
             return {
@@ -258,11 +310,17 @@ export class StatusManager {
             try {
                 await callback(event);
             } catch (error) {
-                // Handle callback errors using ErrorManager
-                await this.errorManager.handleError({
-                    error: toErrorType(error),
-                    context: { message: 'Error in status change callback' }
-                });
+                // Handle callback errors using new comprehensive error handling
+                this.handleStatusError(
+                    error instanceof Error ? error : new Error(String(error)), 
+                    'Error in status change callback',
+                    { 
+                        entity: entity, 
+                        currentStatus: event.from, 
+                        targetStatus: event.to,
+                        entityId: event.entityId // Ensure entityId is always passed
+                    }
+                );
             }
         });
 
@@ -293,23 +351,12 @@ export class StatusManager {
             }
         };
 
-        // Convert StatusError to ErrorType
-        const errorType: ErrorType = {
-            name: 'StatusTransitionError',
-            message: statusError.message,
-            type: STATUS_ERROR_KIND_MAP[statusError.type],
-            context: {
-                entity: context.entity,
-                entityId: context.entityId,
-                transition: `${context.currentStatus} -> ${context.targetStatus}`
-            },
-            metadata: statusError.metadata
-        };
-
-        await this.errorManager.handleError({
-            error: errorType,
-            context: errorType.context || {}
-        });
+        // Use the new comprehensive error handling method
+        this.handleStatusError(
+            error instanceof Error ? error : new Error(statusError.message), 
+            `Status transition error: ${context.currentStatus} -> ${context.targetStatus}`,
+            context
+        );
     }
 
     /**

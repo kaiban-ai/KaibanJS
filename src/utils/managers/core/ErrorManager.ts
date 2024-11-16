@@ -16,7 +16,7 @@ import {
     ErrorConfig, 
     PrettyErrorType,
     ErrorType
-} from '../../types/common/errors';
+} from '../../core/errors';
 import { logger } from '../../core/logger';
 import { MetadataFactory } from '../../factories/metadataFactory';
 
