@@ -44,7 +44,7 @@ export {
     calculateTaskCost,
     calculateTotalWorkflowCost,
     formatCost
-} from './helpers/costs/llmCostCalculator';
+} from './helpers/llm/llmCostCalculator';
 
 // Agent utils
 export {
@@ -66,7 +66,7 @@ export {
     calculateTaskStats,
     calculateAverageCostPerToken,
     calculateTokenRate
-} from './helpers/stats';
+} from './helpers/tasks/stats';
 
 /**
  * Manager Implementations

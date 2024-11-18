@@ -1,45 +1,37 @@
 /**
  * @file Task.ts
- * @description Core Task implementation with updated type system
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\tasks\Tasks.ts
+ * @description Core Task entity implementation with pure entity focus
+ *
+ * @module @entities
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { logger } from '@/utils/core/logger';
 import { PrettyError } from '@/utils/core/errors';
-import { DefaultFactory } from '@/utils/factories';
-import { LogCreator } from '@/utils/factories/logCreator';
-import { MetadataFactory } from '@/utils/factories/metadataFactory';
-import { calculateTaskCost } from '@/utils/helpers/costs/llmCostCalculator';
-import { calculateTaskStats } from '@/utils/helpers/stats';
 
-// Import types from their canonical locations
+// Import types from canonical locations
 import type { 
     TaskType,
-    TaskStats,
-    TaskMetadata,
     ITaskParams,
-    TaskValidationResult,
-    TaskResult
+    TaskResult,
+    FeedbackObject 
 } from '@/utils/types/task/base';
 
-import type {
-    TaskStoreState,
-    TaskRuntimeState,
-    TaskExecutionStats
-} from '@/utils/types/task/store';
+import type { 
+    IReactChampionAgent 
+} from '@/utils/types/agent/base';
 
-import type { IReactChampionAgent } from '@/utils/types/agent/base';
-import type { TeamStore } from '@/utils/types/team/store';
-import type { ModelStats } from '@/utils/types/workflow/stats';
-import type { LLMUsageStats } from '@/utils/types/llm/responses';
-import type { CostDetails } from '@/utils/types/workflow/costs';
+import type { 
+    LLMUsageStats 
+} from '@/utils/types/llm/responses';
 
 import { TASK_STATUS_enum } from '@/utils/types/common/enums';
 
 /**
- * Core Task implementation
+ * Core Task entity implementation
  */
 export class Task implements TaskType {
+    // Required properties
     public readonly id: string;
     public title: string;
     public description: string;
@@ -47,10 +39,14 @@ export class Task implements TaskType {
     public agent: IReactChampionAgent;
     public isDeliverable: boolean;
     public externalValidationRequired: boolean;
-    public inputs: Record<string, unknown>;
-    public feedbackHistory: FeedbackObject[];
+
+    // State properties
     public status: keyof typeof TASK_STATUS_enum;
     public result: TaskResult;
+    public inputs: Record<string, unknown>;
+    public feedbackHistory: FeedbackObject[];
+
+    // Optional properties
     public interpolatedTaskDescription?: string;
     public duration?: number;
     public startTime?: number;
@@ -58,11 +54,11 @@ export class Task implements TaskType {
     public llmUsageStats?: LLMUsageStats;
     public iterationCount?: number;
     public error?: string;
-    private store!: TeamStore;
 
     constructor(params: ITaskParams) {
         this.validateParams(params);
 
+        // Initialize required properties
         this.id = uuidv4();
         this.title = params.title || params.description.substring(0, 50);
         this.description = params.description;
@@ -70,13 +66,15 @@ export class Task implements TaskType {
         this.agent = params.agent;
         this.isDeliverable = params.isDeliverable ?? false;
         this.externalValidationRequired = params.externalValidationRequired ?? false;
-        this.inputs = {};
-        this.feedbackHistory = [];
+
+        // Initialize state properties
         this.status = TASK_STATUS_enum.TODO;
         this.result = null;
+        this.inputs = {};
+        this.feedbackHistory = [];
 
+        // Validate agent
         this.validateAgent();
-        logger.debug(`Created new task: ${this.title} (${this.id})`);
     }
 
     /**
@@ -102,141 +100,6 @@ export class Task implements TaskType {
      * Validate assigned agent
      */
     private validateAgent(): void {
-        if (!this.agent.store) {
-            throw new PrettyError({
-                message: 'Agent must have a store initialized',
-                context: { agentId: this.agent.id },
-                type: 'TaskValidationError'
-            });
-        }
-    }
-
-    /**
-     * Set store reference
-     */
-    public setStore(store: TeamStore): void {
-        if (!store) {
-            throw new PrettyError({
-                message: 'Cannot set null store',
-                context: { taskId: this.id },
-                type: 'TaskValidationError'
-            });
-        }
-        this.store = store;
-        logger.debug(`Store set for task: ${this.id}`);
-    }
-
-    /**
-     * Execute task
-     */
-    public async execute(data: unknown): Promise<unknown> {
-        this.validateStoreAndAgent();
-        
-        try {
-            logger.info(`Executing task: ${this.title}`);
-            this.status = TASK_STATUS_enum.DOING;
-            this.startTime = Date.now();
-            this.inputs = { ...this.inputs, ...data };
-
-            const agentResult = await this.agent.workOnTask(this);
-
-            this.endTime = Date.now();
-            this.duration = this.endTime - this.startTime;
-
-            const taskResult: TaskResult = agentResult.result?.finalAnswer || null;
-
-            if (this.externalValidationRequired) {
-                this.status = TASK_STATUS_enum.AWAITING_VALIDATION;
-                logger.info(`Task ${this.id} awaiting validation`);
-            } else {
-                this.status = TASK_STATUS_enum.DONE;
-                this.result = taskResult;
-                logger.info(`Task ${this.id} completed successfully`);
-            }
-
-            if (agentResult.metadata) {
-                this.iterationCount = agentResult.metadata.iterations;
-            }
-
-            // Calculate statistics using factory defaults where needed
-            const stats = calculateTaskStats(this, this.store.getState().workflowLogs);
-            const modelCode = this.agent.llmConfig.model;
-            const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
-
-            this.llmUsageStats = stats.llmUsageStats;
-
-            // Create task log using LogCreator
-            const taskLog = LogCreator.createTaskLog({
-                task: this,
-                description: `Task ${this.status === TASK_STATUS_enum.DONE ? 'completed' : 'awaiting validation'}: ${this.title}`,
-                status: this.status,
-                metadata: {
-                    ...stats,
-                    costDetails,
-                    result: taskResult
-                }
-            });
-
-            this.store.setState(state => ({
-                workflowLogs: [...state.workflowLogs, taskLog]
-            }));
-
-            return taskResult;
-
-        } catch (error) {
-            await this.handleExecutionError(error);
-            throw error;
-        }
-    }
-
-    /**
-     * Handle execution error
-     */
-    private async handleExecutionError(error: unknown): Promise<void> {
-        this.error = error instanceof Error ? error.message : String(error);
-        this.status = TASK_STATUS_enum.ERROR;
-        this.endTime = Date.now();
-        this.duration = this.endTime - (this.startTime || this.endTime);
-
-        const prettyError = new PrettyError({
-            message: this.error,
-            context: { taskId: this.id, taskTitle: this.title },
-            rootError: error instanceof Error ? error : undefined,
-            type: 'TaskExecutionError'
-        });
-
-        // Create error log using LogCreator
-        const errorLog = LogCreator.createTaskLog({
-            task: this,
-            description: `Task error: ${prettyError.message}`,
-            status: this.status,
-            metadata: {
-                error: prettyError,
-                duration: this.duration,
-                llmUsageStats: DefaultFactory.createLLMUsageStats(),
-                costDetails: DefaultFactory.createCostDetails()
-            }
-        });
-
-        this.store.setState(state => ({
-            workflowLogs: [...state.workflowLogs, errorLog]
-        }));
-
-        logger.error(`Error executing task ${this.id}:`, prettyError);
-    }
-
-    /**
-     * Validate store and agent setup
-     */
-    private validateStoreAndAgent(): void {
-        if (!this.store) {
-            throw new PrettyError({
-                message: 'Task store must be set before execution',
-                context: { taskId: this.id },
-                type: 'TaskValidationError'
-            });
-        }
-
         if (!this.agent) {
             throw new PrettyError({
                 message: 'Task must have an assigned agent',
@@ -247,60 +110,123 @@ export class Task implements TaskType {
     }
 
     /**
-     * Get task statistics
+     * Get task state
      */
-    public getStats(): TaskStats {
-        if (!this.store) {
-            throw new PrettyError({
-                message: 'Task store must be set to get statistics',
-                context: { taskId: this.id },
-                type: 'TaskValidationError'
-            });
-        }
-
-        return calculateTaskStats(this, this.store.getState().workflowLogs);
+    public getState(): Record<string, unknown> {
+        return {
+            id: this.id,
+            title: this.title,
+            description: this.description,
+            expectedOutput: this.expectedOutput,
+            agent: this.agent.id,
+            isDeliverable: this.isDeliverable,
+            externalValidationRequired: this.externalValidationRequired,
+            status: this.status,
+            result: this.result,
+            inputs: this.inputs,
+            feedbackHistory: this.feedbackHistory,
+            interpolatedTaskDescription: this.interpolatedTaskDescription,
+            duration: this.duration,
+            startTime: this.startTime,
+            endTime: this.endTime,
+            llmUsageStats: this.llmUsageStats,
+            iterationCount: this.iterationCount,
+            error: this.error
+        };
     }
 
     /**
-     * Get cost details
+     * Update task state
      */
-    public getCostDetails(): CostDetails {
-        if (!this.agent?.llmConfig?.model) {
-            throw new PrettyError({
-                message: 'Task agent must have LLM configuration to calculate costs',
-                context: { taskId: this.id },
-                type: 'TaskValidationError'
-            });
-        }
-
-        const stats = this.getStats();
-        return calculateTaskCost(this.agent.llmConfig.model, stats.llmUsageStats);
+    public setState(updates: Partial<TaskType>): void {
+        Object.assign(this, updates);
     }
 
     /**
-     * Get model-specific statistics
+     * Add feedback to task history
      */
-    public getModelStats(): Record<string, ModelStats> {
-        const stats = this.getStats();
-        return Object.entries(stats.modelUsage || {}).reduce((acc, [model, usage]) => {
-            acc[model] = {
-                tokens: {
-                    input: usage.inputTokens,
-                    output: usage.outputTokens
-                },
-                requests: {
-                    successful: usage.callsCount - usage.callsErrorCount,
-                    failed: usage.callsErrorCount
-                },
-                latency: {
-                    average: usage.averageLatency,
-                    p95: usage.averageLatency * 1.5,
-                    max: usage.totalLatency
-                },
-                cost: usage.costBreakdown.total
-            };
-            return acc;
-        }, {} as Record<string, ModelStats>);
+    public addFeedback(feedback: FeedbackObject): void {
+        this.feedbackHistory.push(feedback);
+    }
+
+    /**
+     * Update task status
+     */
+    public updateStatus(status: keyof typeof TASK_STATUS_enum): void {
+        this.status = status;
+    }
+
+    /**
+     * Set task result
+     */
+    public setResult(result: TaskResult): void {
+        this.result = result;
+    }
+
+    /**
+     * Set error state
+     */
+    public setError(error: Error | string): void {
+        this.error = error instanceof Error ? error.message : error;
+        this.status = TASK_STATUS_enum.ERROR;
+    }
+
+    /**
+     * Check if task is complete
+     */
+    public isComplete(): boolean {
+        return this.status === TASK_STATUS_enum.DONE || 
+               this.status === TASK_STATUS_enum.VALIDATED;
+    }
+
+    /**
+     * Check if task has error
+     */
+    public hasError(): boolean {
+        return this.status === TASK_STATUS_enum.ERROR || !!this.error;
+    }
+
+    /**
+     * Check if task needs validation
+     */
+    public needsValidation(): boolean {
+        return this.status === TASK_STATUS_enum.AWAITING_VALIDATION;
+    }
+
+    /**
+     * Check if task can be executed
+     */
+    public canExecute(): boolean {
+        return this.status === TASK_STATUS_enum.TODO || 
+               this.status === TASK_STATUS_enum.REVISE;
+    }
+
+    /**
+     * Reset task state
+     */
+    public reset(): void {
+        this.status = TASK_STATUS_enum.TODO;
+        this.result = null;
+        this.duration = undefined;
+        this.startTime = undefined;
+        this.endTime = undefined;
+        this.llmUsageStats = undefined;
+        this.iterationCount = undefined;
+        this.error = undefined;
+    }
+
+    /**
+     * Clone task
+     */
+    public clone(): Task {
+        return new Task({
+            title: this.title,
+            description: this.description,
+            expectedOutput: this.expectedOutput,
+            agent: this.agent,
+            isDeliverable: this.isDeliverable,
+            externalValidationRequired: this.externalValidationRequired
+        });
     }
 }
 

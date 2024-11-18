@@ -1,6 +1,6 @@
 /**
  * @file logging.ts
- * @path KaibanJS/src/utils/types/common/logging.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\types\common\logging.ts
  * @description Core logging types and interfaces
  */
 

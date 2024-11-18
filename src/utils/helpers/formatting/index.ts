@@ -1,12 +1,11 @@
 /**
  * @file index.ts
- * @path KaibanJS/src/utils/helpers/formatting/index.ts
- * @description Formatting helper functions exports
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\helpers\formatting\index.ts
+ * @description Centralized exports for formatting-related utilities
+ * 
+ * @packageDocumentation
+ * @module @helpers/formatting
  */
 
-export {
-    logPrettyTaskCompletion,
-    logPrettyTaskStatus,
-    logPrettyWorkflowStatus,
-    logPrettyWorkflowResult
-} from './prettyLogs';
+// Exporting PrettyLogs utilities
+export * from './prettyLogs';

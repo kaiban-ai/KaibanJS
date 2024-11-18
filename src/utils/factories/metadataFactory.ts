@@ -1,6 +1,6 @@
 /**
  * @file metadataFactory.ts
- * @path KaibanJS/src/utils/factories/metadataFactory.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\factories\metadataFactory.ts
  * @description Factory for creating metadata objects for various system entities
  * 
  * @packageDocumentation
@@ -18,7 +18,7 @@ import {
     TeamState,
     FunctionCall
 } from '@/utils/types';
-import DefaultFactory from './defaultFactory';
+import { DefaultFactory } from './defaultFactory';
 import { MessageRole } from '@/utils/types/messaging/base';
 import { PrettyError, LLMInvocationError, LLMConfigurationError } from '@/utils/core/errors';
 

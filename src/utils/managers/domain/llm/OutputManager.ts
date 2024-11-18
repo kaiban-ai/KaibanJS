@@ -1,47 +1,37 @@
 /**
- * @file OutputManager.ts
- * @path src/managers/domain/llm/OutputManager.ts
- * @description Output processing and validation for LLM responses
- *
- * @module @managers/domain/llm
+ * @file outputManager.ts
+ * @path src/utils/managers/domain/llm/outputManager.ts
+ * @description Output processing and validation for LLM responses with CoreManager integration
  */
 
-import CoreManager from '../../core/CoreManager';
-import { ErrorManager } from '../../core/ErrorManager';
-import { LogManager } from '../../core/LogManager';
-import { StatusManager } from '../../core/StatusManager';
+import CoreManager from '../../core/coreManager';
+import { AGENT_STATUS_enum } from '@/utils/types/common/enums';
+import { getParsedJSON } from '@/utils/parsers/parser';
 
-// Import types from canonical locations
-import type { 
+import type {
     Output,
     ParsedOutput,
-    OutputProcessResult,
-    OutputValidationResult,
-    AgentType,
-    TaskType
-} from '@/utils/types';
+    LLMResponse
+} from '@/utils/types/llm/responses';
 
-import type { 
+import type {
     ParsingHandlerParams,
-    ParseErrorHandlerParams 
+    ParseErrorHandlerParams,
+    OutputProcessResult,
+    OutputValidationResult
 } from '@/utils/types/llm/parsing';
 
-import { AGENT_STATUS_enum } from '@/utils/types/common/enums';
+import type { 
+    AgentType,
+    TaskType 
+} from '@/utils/types';
 
-/**
- * Manages LLM output processing and validation
- */
 export class OutputManager extends CoreManager {
     private static instance: OutputManager;
-    private readonly logManager: LogManager;
-    private readonly errorManager: ErrorManager;
-    private readonly statusManager: StatusManager;
 
     private constructor() {
         super();
-        this.logManager = LogManager.getInstance();
-        this.errorManager = ErrorManager.getInstance();
-        this.statusManager = StatusManager.getInstance();
+        this.registerDomainManager('OutputManager', this);
     }
 
     public static getInstance(): OutputManager {
@@ -51,17 +41,49 @@ export class OutputManager extends CoreManager {
         return OutputManager.instance;
     }
 
-    // ─── Output Processing ─────────────────────────────────────────────────────
+    public async processLLMResponse(response: LLMResponse): Promise<Output> {
+        return await this.safeExecute(async () => {
+            const rawOutput = response.rawOutput?.toString() || '';
+            const parsedOutput = getParsedJSON(rawOutput);
 
-    /**
-     * Process LLM output with validation and error handling
-     */
+            if (!parsedOutput) {
+                throw new Error('Failed to parse LLM response');
+            }
+
+            return {
+                llmOutput: rawOutput,
+                llmUsageStats: {
+                    inputTokens: response.usage.promptTokens,
+                    outputTokens: response.usage.completionTokens,
+                    callsCount: 1,
+                    callsErrorCount: 0,
+                    parsingErrors: 0,
+                    totalLatency: response.metadata.latency,
+                    averageLatency: response.metadata.latency,
+                    lastUsed: Date.now(),
+                    memoryUtilization: {
+                        peakMemoryUsage: 0,
+                        averageMemoryUsage: 0,
+                        cleanupEvents: 0
+                    },
+                    costBreakdown: {
+                        input: 0,
+                        output: 0,
+                        total: 0,
+                        currency: 'USD'
+                    }
+                },
+                ...parsedOutput
+            };
+        }, 'LLM response processing failed');
+    }
+
     public async processOutput(
         output: Output,
         agent: AgentType,
         task: TaskType
     ): Promise<OutputProcessResult> {
-        try {
+        return await this.safeExecute(async () => {
             const parsedOutput = await this.parseOutput(output.llmOutput || '');
             const actionType = this.determineActionType(parsedOutput);
 
@@ -72,11 +94,7 @@ export class OutputManager extends CoreManager {
 
             const feedback = await this.generateFeedback(actionType, parsedOutput, output, agent, task);
 
-            this.logManager.debug('Output processed successfully', {
-                actionType,
-                agentName: agent.name,
-                taskId: task.id
-            });
+            this.log('Output processed successfully', agent.name, task.id);
 
             return {
                 actionType,
@@ -85,26 +103,12 @@ export class OutputManager extends CoreManager {
                 shouldContinue: actionType !== AGENT_STATUS_enum.FINAL_ANSWER
             };
 
-        } catch (error) {
-            await this.handleParsingError({
-                agent,
-                task,
-                output,
-                llmOutput: output.llmOutput || '',
-                error: error as Error
-            });
-            throw error;
-        }
+        }, 'Output processing failed');
     }
 
-    // ─── Output Parsing ──────────────────────────────────────────────────────
-
-    /**
-     * Parse raw LLM output into structured format
-     */
     private async parseOutput(content: string): Promise<ParsedOutput | null> {
-        try {
-            const parsed = JSON.parse(content);
+        return await this.safeExecute(async () => {
+            const parsed = getParsedJSON(content);
             if (!parsed) return null;
 
             return {
@@ -118,65 +122,46 @@ export class OutputManager extends CoreManager {
                     reasoning: parsed.reasoning,
                     confidence: parsed.confidence,
                     alternativeActions: parsed.alternativeActions,
-                    metrics: {
-                        processingTime: parsed.metrics?.processingTime,
-                        tokenCount: parsed.metrics?.tokenCount,
-                        memoryUsage: parsed.metrics?.memoryUsage
-                    },
-                    context: {
-                        inputContextLength: parsed.context?.inputContextLength,
-                        keyFactors: parsed.context?.keyFactors,
-                        constraints: parsed.context?.constraints
-                    }
+                    metrics: parsed.metrics,
+                    context: parsed.context
                 }
             };
-        } catch (error) {
-            this.logManager.error('Error parsing output:', error);
-            return null;
-        }
+        }, 'Output parsing failed');
     }
 
-    // ─── Output Validation ────────────────────────────────────────────────────
-
-    /**
-     * Validate parsed output format and content
-     */
     private async validateOutput(
         parsedOutput: ParsedOutput | null,
         agent: AgentType,
         task: TaskType
     ): Promise<OutputValidationResult> {
-        if (!parsedOutput) {
-            return {
-                isValid: false,
-                error: new Error('Failed to parse output')
-            };
-        }
+        return await this.safeExecute(async () => {
+            if (!parsedOutput) {
+                return {
+                    isValid: false,
+                    error: new Error('Failed to parse output')
+                };
+            }
 
-        if (parsedOutput.finalAnswer && 
-            typeof parsedOutput.finalAnswer !== 'string' && 
-            typeof parsedOutput.finalAnswer !== 'object') {
-            return {
-                isValid: false,
-                error: new Error('Invalid final answer format')
-            };
-        }
+            if (parsedOutput.finalAnswer && 
+                typeof parsedOutput.finalAnswer !== 'string' && 
+                typeof parsedOutput.finalAnswer !== 'object') {
+                return {
+                    isValid: false,
+                    error: new Error('Invalid final answer format')
+                };
+            }
 
-        if (parsedOutput.action && !this.validateActionFormat(parsedOutput)) {
-            return {
-                isValid: false,
-                error: new Error('Invalid action format')
-            };
-        }
+            if (parsedOutput.action && !this.validateActionFormat(parsedOutput)) {
+                return {
+                    isValid: false,
+                    error: new Error('Invalid action format')
+                };
+            }
 
-        return { isValid: true };
+            return { isValid: true };
+        }, 'Output validation failed');
     }
 
-    // ─── Action Type Determination ────────────────────────────────────────────
-
-    /**
-     * Determine the action type based on parsed output
-     */
     private determineActionType(
         parsedOutput: ParsedOutput | null
     ): keyof typeof AGENT_STATUS_enum {
@@ -205,11 +190,6 @@ export class OutputManager extends CoreManager {
         return AGENT_STATUS_enum.WEIRD_LLM_OUTPUT;
     }
 
-    // ─── Feedback Generation ──────────────────────────────────────────────────
-
-    /**
-     * Generate appropriate feedback based on action type
-     */
     private async generateFeedback(
         actionType: keyof typeof AGENT_STATUS_enum,
         parsedOutput: ParsedOutput | null,
@@ -222,85 +202,50 @@ export class OutputManager extends CoreManager {
         switch (actionType) {
             case AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT:
                 return templates.INVALID_JSON_FEEDBACK({ 
-                    agent, 
-                    task, 
-                    llmOutput: output.llmOutput || '' 
+                    agent, task, llmOutput: output.llmOutput || '' 
                 });
 
             case AGENT_STATUS_enum.THOUGHT:
                 return templates.THOUGHT_FEEDBACK({ 
-                    agent, 
-                    task, 
-                    thought: parsedOutput?.thought || '' 
+                    agent, task, thought: parsedOutput?.thought || '' 
                 });
 
             case AGENT_STATUS_enum.SELF_QUESTION:
                 return templates.SELF_QUESTION_FEEDBACK({ 
-                    agent, 
-                    task, 
-                    question: parsedOutput?.actionInput?.question as string || '' 
+                    agent, task, question: parsedOutput?.actionInput?.question as string || '' 
                 });
 
             case AGENT_STATUS_enum.OBSERVATION:
-                return templates.OBSERVATION_FEEDBACK({ 
-                    agent, 
-                    task 
-                });
+                return templates.OBSERVATION_FEEDBACK({ agent, task });
 
             case AGENT_STATUS_enum.WEIRD_LLM_OUTPUT:
-                return templates.WEIRD_OUTPUT_FEEDBACK({ 
-                    agent, 
-                    task 
-                });
+                return templates.WEIRD_OUTPUT_FEEDBACK({ agent, task });
 
             default:
                 return '';
         }
     }
 
-    // ─── Error Handling ─────────────────────────────────────────────────────
+    private validateActionFormat(parsedOutput: ParsedOutput): boolean {
+        return typeof parsedOutput.action === 'string' && 
+               (!parsedOutput.actionInput || typeof parsedOutput.actionInput === 'object');
+    }
 
-    /**
-     * Handle parsing errors with appropriate manager calls
-     */
     private async handleParsingError(params: ParseErrorHandlerParams): Promise<void> {
         const { agent, task, output, llmOutput, error } = params;
 
-        await this.statusManager.transition({
+        await this.handleStatusTransition({
             currentStatus: agent.status,
             targetStatus: AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT,
             entity: 'agent',
             entityId: agent.id,
             metadata: {
-                error,
                 llmOutput,
                 timestamp: Date.now()
             }
         });
 
-        await this.errorManager.handleParsingError({
-            agent,
-            task,
-            output,
-            llmOutput,
-            error
-        });
-
-        this.logManager.error('Output parsing error:', {
-            error,
-            agentName: agent.name,
-            taskId: task.id
-        });
-    }
-
-    // ─── Utility Methods ─────────────────────────────────────────────────────
-
-    /**
-     * Validate action format in parsed output
-     */
-    private validateActionFormat(parsedOutput: ParsedOutput): boolean {
-        return typeof parsedOutput.action === 'string' && 
-               (!parsedOutput.actionInput || typeof parsedOutput.actionInput === 'object');
+        this.log('Output parsing error:', agent.name, task.id, 'error', error);
     }
 }
 

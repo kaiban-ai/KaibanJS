@@ -1,6 +1,6 @@
 /**
  * @file prettyLogs.ts
- * @path KaibanJS/src/utils/helpers/formatting/prettyLogs.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\helpers\formatting\prettyLogs.ts
  * @description Pretty formatting and logging utilities for consistent output format
  */
 

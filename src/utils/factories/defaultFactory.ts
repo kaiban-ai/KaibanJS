@@ -1,6 +1,6 @@
 /**
  * @file defaultFactory.ts
- * @path KaibanJS/src/utils/factories/defaultFactory.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\factories\defaultFactory.ts
  * @description Default factory for creating standard objects and instances
  *
  * @packageDocumentation
@@ -9,7 +9,9 @@
 
 import { IterationStats } from '../types/agent/iteration';
 import type { CostDetails, LLMUsageStats } from '../types/tool/execution';
-import { createDefaultCostDetails } from '../helpers/costs';
+import { createDefaultCostDetails } from '../helpers';
+import type { AgentValidationSchema } from '../types/agent/config';
+import type { BaseAgentConfig } from '../types/agent/config';
 
 export class DefaultFactory {
     static createIterationStats(): IterationStats {
@@ -47,6 +49,33 @@ export class DefaultFactory {
                 output: 0,
                 total: 0,
                 currency: 'USD'
+            }
+        };
+    }
+
+    /**
+     * Create a default agent validation schema
+     * @returns Default validation schema for agents
+     */
+    static createAgentValidationSchema(): AgentValidationSchema {
+        return {
+            required: ['name', 'role', 'goal', 'background'],
+            constraints: {
+                name: {
+                    minLength: 2,
+                    maxLength: 100
+                },
+                role: {
+                    allowedValues: ['assistant', 'analyst', 'researcher', 'developer']
+                },
+                tools: {
+                    minCount: 1,
+                    maxCount: 10
+                }
+            },
+            customValidation: (config: BaseAgentConfig) => {
+                // Optional custom validation logic
+                return config.name.trim().length > 0 && config.tools.length > 0;
             }
         };
     }

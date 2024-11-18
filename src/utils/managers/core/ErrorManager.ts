@@ -1,13 +1,13 @@
 /**
- * @file ErrorManager.ts
- * @path src/managers/core/ErrorManager.ts
+ * @file errorManager.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\managers\core\errorManager.ts
  * @description Core error management and handling implementation
  * 
  * @module @core
  */
 
-import CoreManager from './CoreManager';
-import { LogManager } from './LogManager';
+import CoreManager from './coreManager';
+import { LogManager } from './logManager';
 import { 
     createPrettyError, 
     toErrorType, 
@@ -275,7 +275,7 @@ export class ErrorManager extends CoreManager {
         return createPrettyError({
             ...config,
             name: config.type || 'Error',
-            location: 'ErrorManager'
+            location: 'errorManager'
         });
     }
 

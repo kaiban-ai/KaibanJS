@@ -1,160 +1,142 @@
 /**
  * @file store.ts
- * @path KaibanJS/src/utils/types/task/store.ts
+ * @path src/utils/types/task/store.ts
  * @description Task store types and interfaces
  */
 
-import type { TaskType, TaskStats } from './base';
+import type { IBaseStoreState, IBaseStoreMethods } from '../store/base';
+import type { TaskType } from './base';
 import type { AgentType } from '../agent/base';
-import type { ErrorType } from '../common/errors';
-import type { Output } from '../llm/responses';
-import type { CostDetails } from '../workflow/costs';
 import type { TASK_STATUS_enum } from '../common/enums';
-import type { BaseStoreState } from '../store/base';
 
-/**
- * Current runtime state of task execution
- */
-export interface TaskRuntimeState {
-    currentTask: TaskType | null;
-    lastError: Error | null;
-    tasksInitialized: boolean;
-}
+// ─── Store Configuration Types ────────────────────────────────────────────────
 
-/**
- * Task execution statistics
- */
-export interface TaskExecutionStats {
-    resources: {
-        memory: number;
-        cpu: number;
-        tokens: number;
-    };
-    performance: {
-        averageExecutionTime: number;
-        peakMemoryUsage: number;
-        tokensPerSecond: number;
-    };
-    errors: {
-        count: number;
-        types: Record<string, number>;
-        retries: number;
-    };
-    llmUsageStats?: {
-        totalTokens?: number;
-        promptTokens?: number;
-        completionTokens?: number;
-        totalCost?: number;
+export interface ITaskStoreConfig {
+    name: string;
+    maxRetries?: number;
+    retryDelay?: number;
+    taskTimeout?: number;
+    middleware?: {
+        devtools?: boolean;
+        subscribeWithSelector?: boolean;
+        persistence?: boolean;
     };
 }
 
-/**
- * Parameters for task status updates
- */
-export interface TaskStatusUpdateParams {
-    taskId: string;
+// ─── Task State Types ─────────────────────────────────────────────────────────
+
+export interface ITaskMetadata {
+    id: string;
+    name: string;
+    description?: string;
+    priority: number;
+    created: Date;
+    deadline?: Date;
+    tags?: string[];
+}
+
+export interface ITaskExecutionState {
     status: keyof typeof TASK_STATUS_enum;
-    metadata?: {
-        reason?: string;
-        changedBy?: string;
-        timestamp?: number;
-        previousStatus?: keyof typeof TASK_STATUS_enum;
-        statusDuration?: number;
-    };
+    assignedAgent?: AgentType;
+    startTime?: Date;
+    endTime?: Date;
+    retryCount: number;
+    lastError?: Error;
+    progress: number;
 }
 
-/**
- * Available task store actions
- */
-export interface TaskStoreActions {
-    handleTaskCompletion: (params: {
-        agent: AgentType;
-        task: TaskType;
-        result: unknown;
-        metadata?: {
-            duration?: number;
-            iterationCount?: number;
-            llmUsageStats?: TaskStoreState['stats']['llmUsageStats'];
-            costDetails?: CostDetails;
-        };
-    }) => void;
-
-    handleTaskError: (params: {
-        task: TaskType;
-        error: ErrorType;
-        context?: {
-            phase?: string;
-            attemptNumber?: number;
-            lastSuccessfulOperation?: string;
-            recoveryPossible?: boolean;
-        };
-    }) => void;
-
-    handleTaskStatusChange: (
-        taskId: string,
-        status: keyof typeof TASK_STATUS_enum,
-        metadata?: Record<string, unknown>
-    ) => void;
-
-    addTaskFeedback: (
-        taskId: string,
-        content: string,
-        metadata?: Record<string, unknown>
-    ) => void;
-
-    updateTaskStats: (params: {
-        taskId: string;
-        stats: Partial<TaskStats>;
-        output?: Output;
-    }) => void;
-
-    trackResourceUsage: (params: {
-        taskId: string;
-        resourceStats: {
-            memory: number;
-            tokens: number;
-            cpuTime?: number;
-        };
-    }) => void;
+export interface ITaskPerformanceStats {
+    duration?: number;
+    retryCount: number;
+    tokenCount: number;
+    cost: number;
 }
 
-/**
- * Complete task store state extending base store state
- */
-export interface TaskStoreState extends BaseStoreState {
-    runtime: TaskRuntimeState;
-    stats: TaskExecutionStats;
+export interface ITaskState extends IBaseStoreState {
+    tasks: TaskType[];
+    activeTasks: TaskType[];
+    metadata: Record<string, ITaskMetadata>;
+    executionState: Record<string, ITaskExecutionState>;
+    performanceStats: Record<string, ITaskPerformanceStats>;
+    errors: Error[];
+    loading: boolean;
 }
 
-/**
- * Type guards for task store types
- */
+// ─── Store Action Types ────────────────────────────────────────────────────────
+
+export interface ITaskErrorActions {
+    handleTaskError: (taskId: string, error: Error) => void;
+    clearTaskErrors: () => void;
+}
+
+export interface ITaskExecutionActions {
+    startTask: (taskId: string, agent: AgentType) => void;
+    completeTask: (taskId: string) => void;
+    failTask: (taskId: string, error: Error) => void;
+    updateTaskProgress: (taskId: string, progress: number) => void;
+}
+
+export interface ITaskManagementActions {
+    addTask: (task: TaskType) => void;
+    removeTask: (taskId: string) => void;
+    updateTaskPriority: (taskId: string, priority: number) => void;
+    updateTaskMetadata: (taskId: string, metadata: Partial<ITaskMetadata>) => void;
+}
+
+export interface ITaskStoreActions extends
+    ITaskErrorActions,
+    ITaskExecutionActions,
+    ITaskManagementActions {}
+
+export interface ITaskStoreMethods extends 
+    IBaseStoreMethods<ITaskState>,
+    ITaskStoreActions {}
+
+// ─── Type Guards ────────────────────────────────────────────────────────────
+
 export const TaskStoreTypeGuards = {
-    isTaskStoreState: (value: unknown): value is TaskStoreState => {
+    isTaskMetadata: (value: unknown): value is ITaskMetadata => {
+        if (typeof value !== 'object' || value === null) return false;
+        const metadata = value as Partial<ITaskMetadata>;
         return (
-            typeof value === 'object' &&
-            value !== null &&
-            'runtime' in value &&
-            'stats' in value
+            typeof metadata.id === 'string' &&
+            typeof metadata.name === 'string' &&
+            typeof metadata.priority === 'number' &&
+            metadata.created instanceof Date
         );
     },
 
-    hasTaskStoreActions: (value: unknown): value is TaskStoreActions => {
+    isTaskExecutionState: (value: unknown): value is ITaskExecutionState => {
+        if (typeof value !== 'object' || value === null) return false;
+        const state = value as Partial<ITaskExecutionState>;
         return (
-            typeof value === 'object' &&
-            value !== null &&
-            'handleTaskCompletion' in value &&
-            'handleTaskError' in value &&
-            'handleTaskStatusChange' in value
+            typeof state.status === 'string' &&
+            typeof state.retryCount === 'number' &&
+            typeof state.progress === 'number'
         );
     },
 
-    isTaskStatusUpdateParams: (value: unknown): value is TaskStatusUpdateParams => {
+    isTaskPerformanceStats: (value: unknown): value is ITaskPerformanceStats => {
+        if (typeof value !== 'object' || value === null) return false;
+        const stats = value as Partial<ITaskPerformanceStats>;
         return (
-            typeof value === 'object' &&
-            value !== null &&
-            'taskId' in value &&
-            'status' in value
+            typeof stats.retryCount === 'number' &&
+            typeof stats.tokenCount === 'number' &&
+            typeof stats.cost === 'number'
+        );
+    },
+
+    isTaskState: (value: unknown): value is ITaskState => {
+        if (typeof value !== 'object' || value === null) return false;
+        const state = value as Partial<ITaskState>;
+        return (
+            Array.isArray(state.tasks) &&
+            Array.isArray(state.activeTasks) &&
+            typeof state.metadata === 'object' &&
+            typeof state.executionState === 'object' &&
+            typeof state.performanceStats === 'object' &&
+            Array.isArray(state.errors) &&
+            typeof state.loading === 'boolean'
         );
     }
 };

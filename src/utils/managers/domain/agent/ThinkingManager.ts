@@ -1,53 +1,52 @@
 /**
- * @file ThinkingManager.ts
- * @path src/managers/domain/agent/ThinkingManager.ts
- * @description Centralized thinking process management using LLM interactions
+ * @file thinkingManager.ts 
+ * @path src/utils/managers/domain/agent/thinkingManager.ts
+ * @description Centralized manager for agent thinking processes and LLM interactions
  *
  * @module @managers/domain/agent
  */
 
-import CoreManager from '../../core/CoreManager';
-import { ErrorManager } from '../../core/ErrorManager';
-import { LogManager } from '../../core/LogManager';
-import { StatusManager } from '../../core/StatusManager';
-import { LLMManager } from '../llm/LLMManager';
-import { MessageManager } from '../llm/MessageManager';
-import { DefaultFactory } from '@/utils/factories/defaultFactory';
+import CoreManager from '../../core/coreManager';
 
 // Import types from canonical locations
-import type { 
+import type {
+    ThinkingExecutionParams,
+    ThinkingHandlerParams,
+    ThinkingStats
+} from '@/utils/types/agent/thinkingTypes';
+
+import type {
     AgentType,
     TaskType,
-    ThinkingResult,
-    ThinkingHandlerParams,
-    ThinkingExecutionParams,
-    ThinkingStats,
-    Output
+    HandlerResult,
+    Output,
+    ParsedOutput,
+    LLMUsageStats
 } from '@/utils/types';
 
-import type { LLMUsageStats } from '@/utils/types/llm/responses';
-import type { HandlerResult } from '@/utils/types/agent/handlers';
-import type { ErrorType } from '@/utils/types/common/errors';
 import { AGENT_STATUS_enum } from '@/utils/types/common/enums';
 
 /**
- * Manages the thinking process for agents using LLM interactions
+ * Result interface for thinking execution
+ */
+interface ThinkingResult {
+    parsedLLMOutput: ParsedOutput | null;
+    llmOutput: string;
+    llmUsageStats: LLMUsageStats;
+    messages?: any[];
+    output?: Output;
+    error?: Error;
+}
+
+/**
+ * Manages thinking process execution and lifecycle
  */
 export class ThinkingManager extends CoreManager {
     private static instance: ThinkingManager;
-    private readonly errorManager: ErrorManager;
-    private readonly logManager: LogManager;
-    private readonly statusManager: StatusManager;
-    private readonly llmManager: LLMManager;
-    private readonly messageManager: MessageManager;
 
     private constructor() {
         super();
-        this.errorManager = ErrorManager.getInstance();
-        this.logManager = LogManager.getInstance();
-        this.statusManager = StatusManager.getInstance();
-        this.llmManager = LLMManager.getInstance();
-        this.messageManager = MessageManager.getInstance();
+        this.registerManager('ThinkingManager', this);
     }
 
     public static getInstance(): ThinkingManager {
@@ -57,223 +56,148 @@ export class ThinkingManager extends CoreManager {
         return ThinkingManager.instance;
     }
 
-    // ─── Core Thinking Process ───────────────────────────────────────────────────
-
     /**
-     * Execute a thinking iteration
+     * Execute thinking iteration with error handling
      */
     public async executeThinking(params: ThinkingExecutionParams): Promise<ThinkingResult> {
-        const { agent, task, ExecutableAgent, feedbackMessage } = params;
-
-        try {
-            await this.startThinking(agent, task);
-            const messages = await this.messageManager.getMessages();
-
-            const result = await this.executeThoughtProcess(
-                ExecutableAgent,
-                messages,
-                feedbackMessage,
-                task.id
-            );
-
-            const thinkingResult = await this.processThinkingResult(result);
-            await this.endThinking(agent, task, thinkingResult);
-
-            return thinkingResult;
-
-        } catch (error) {
-            await this.handleThinkingError({
-                agent,
-                task,
-                error: error as ErrorType,
-                context: {
-                    phase: 'thinking',
-                    feedbackMessage
-                }
-            });
-            throw error;
-        }
-    }
-
-    /**
-     * Process a streaming chunk of thinking output
-     */
-    public async handleStreamingOutput(params: {
-        agent: AgentType;
-        task: TaskType;
-        chunk: string;
-        isDone: boolean;
-    }): Promise<void> {
-        const { agent, task, chunk, isDone } = params;
-
-        try {
-            const status = isDone ? AGENT_STATUS_enum.THINKING_END : AGENT_STATUS_enum.THINKING;
-            await this.updateAgentStatus(agent, status, {
-                chunk,
-                isDone,
-                timestamp: Date.now()
+        const { task, ExecutableAgent, feedbackMessage } = params;
+        
+        return await this.safeExecute(async () => {
+            const agent = task.agent;
+            
+            // Start thinking process with status transition
+            await this.handleStatusTransition({
+                currentStatus: agent.status,
+                targetStatus: AGENT_STATUS_enum.THINKING,
+                entity: 'agent',
+                entityId: agent.id,
+                metadata: this.prepareMetadata({ agent, task })
             });
 
-        } catch (error) {
-            await this.errorManager.handleError({
-                error: error as Error,
-                context: {
-                    agent,
-                    task,
-                    phase: 'streaming'
-                }
-            });
-        }
-    }
-
-    // ─── Process Control ────────────────────────────────────────────────────────
-
-    private async startThinking(agent: AgentType, task: TaskType): Promise<void> {
-        await this.updateAgentStatus(agent, AGENT_STATUS_enum.THINKING, {
-            taskId: task.id,
-            startTime: Date.now()
-        });
-    }
-
-    private async endThinking(
-        agent: AgentType,
-        task: TaskType,
-        result: ThinkingResult
-    ): Promise<void> {
-        await this.updateAgentStatus(agent, AGENT_STATUS_enum.THINKING_END, {
-            taskId: task.id,
-            endTime: Date.now(),
-            result
-        });
-    }
-
-    private async executeThoughtProcess(
-        executableAgent: any,
-        messages: any[],
-        feedbackMessage: string,
-        taskId: string
-    ): Promise<Output> {
-        try {
-            const response = await executableAgent.invoke(
-                { messages, feedbackMessage },
-                {
+            // Execute the thinking process through the LLM
+            const llmManager = await this.getManager('LLMManager');
+            const result = await ExecutableAgent.invoke(
+                { messages: [], feedbackMessage },
+                { 
                     timeout: 60000,
-                    metadata: { taskId },
+                    metadata: { taskId: task.id },
                     tags: ['thinking']
                 }
             );
 
-            return response;
+            // Extract relevant data from result
+            const { llmOutput, llmUsageStats } = this.extractResultData(result);
 
-        } catch (error) {
-            this.logManager.error('Error in thought process execution:', {
-                error,
-                taskId
+            // Parse the LLM output
+            const parsedLLMOutput = await this.parseThinkingOutput(llmOutput);
+            if (!parsedLLMOutput) {
+                throw new Error('Failed to parse LLM output');
+            }
+
+            // Complete thinking process
+            await this.completeThinking(agent, task, {
+                parsedLLMOutput,
+                llmOutput,
+                llmUsageStats
             });
-            throw error;
-        }
+
+            return {
+                parsedLLMOutput,
+                llmOutput,
+                llmUsageStats
+            };
+
+        }, 'Thinking execution failed');
     }
 
-    private async processThinkingResult(output: Output): Promise<ThinkingResult> {
-        const defaultStats = DefaultFactory.createLLMUsageStats();
-
+    /**
+     * Extract LLM result data
+     */
+    private extractResultData(result: any): {
+        llmOutput: string;
+        llmUsageStats: LLMUsageStats;
+    } {
         return {
-            parsedLLMOutput: this.parseOutput(output.llmOutput || ''),
-            llmOutput: output.llmOutput || '',
-            llmUsageStats: output.llmUsageStats || defaultStats
+            llmOutput: result.output || '',
+            llmUsageStats: result.llmUsageStats || this.createDefaultLLMStats()
         };
     }
 
-    private parseOutput(content: string): Output | null {
+    /**
+     * Parse thinking output
+     */
+    private async parseThinkingOutput(content: string): Promise<ParsedOutput | null> {
         try {
-            return JSON.parse(content);
-        } catch {
-            this.logManager.error('Failed to parse thinking output:', { content });
+            const parsed = JSON.parse(content);
+            return {
+                thought: parsed.thought,
+                action: parsed.action,
+                actionInput: parsed.actionInput,
+                observation: parsed.observation,
+                isFinalAnswerReady: parsed.isFinalAnswerReady,
+                finalAnswer: parsed.finalAnswer,
+                metadata: {
+                    reasoning: parsed.reasoning,
+                    confidence: parsed.confidence,
+                    alternativeActions: parsed.alternativeActions
+                }
+            };
+        } catch (error) {
+            this.log('Error parsing thinking output:', undefined, undefined, 'error', error as Error);
             return null;
         }
     }
 
-    // ─── Error Handling ─────────────────────────────────────────────────────────
-
-    private async handleThinkingError(params: ThinkingHandlerParams): Promise<void> {
-        const { agent, task, error, context } = params;
-
-        await this.updateAgentStatus(agent, AGENT_STATUS_enum.THINKING_ERROR, {
-            error,
-            context,
-            timestamp: Date.now()
-        });
-
-        await this.errorManager.handleError({
-            error,
-            context: {
-                agent,
-                task,
-                ...context
-            }
-        });
-    }
-
-    // ─── Agent Status Management ─────────────────────────────────────────────────
-
-    private async updateAgentStatus(
+    /**
+     * Complete thinking process
+     */
+    private async completeThinking(
         agent: AgentType,
-        status: keyof typeof AGENT_STATUS_enum,
-        metadata?: Record<string, unknown>
+        task: TaskType,
+        result: {
+            parsedLLMOutput: ParsedOutput;
+            llmOutput: string;
+            llmUsageStats: LLMUsageStats;
+        }
     ): Promise<void> {
-        await this.statusManager.transition({
+        await this.handleStatusTransition({
             currentStatus: agent.status,
-            targetStatus: status,
+            targetStatus: AGENT_STATUS_enum.THINKING_END,
             entity: 'agent',
             entityId: agent.id,
-            metadata: {
-                ...metadata,
-                timestamp: Date.now()
-            }
+            metadata: this.prepareMetadata({
+                agent,
+                task,
+                result: result.parsedLLMOutput
+            })
         });
-
-        agent.status = status;
     }
 
-    // ─── Statistics & Metrics ──────────────────────────────────────────────────
-
     /**
-     * Get thinking process statistics
+     * Create default LLM stats
      */
-    public getThinkingStats(task: TaskType): ThinkingStats {
-        const logs = task.store?.getState().workflowLogs || [];
-        const thinkingLogs = logs.filter(log => 
-            log.agentStatus === AGENT_STATUS_enum.THINKING || 
-            log.agentStatus === AGENT_STATUS_enum.THINKING_END
-        );
-
-        const stats: ThinkingStats = {
-            totalThinkingTime: 0,
-            averageThinkingTime: 0,
-            thinkingIterations: 0,
-            llmStats: DefaultFactory.createLLMUsageStats()
+    private createDefaultLLMStats(): LLMUsageStats {
+        return {
+            inputTokens: 0,
+            outputTokens: 0,
+            callsCount: 0,
+            callsErrorCount: 0,
+            parsingErrors: 0,
+            totalLatency: 0,
+            averageLatency: 0,
+            lastUsed: Date.now(),
+            memoryUtilization: {
+                peakMemoryUsage: 0,
+                averageMemoryUsage: 0,
+                cleanupEvents: 0
+            },
+            costBreakdown: {
+                input: 0,
+                output: 0,
+                total: 0,
+                currency: 'USD'
+            }
         };
-
-        thinkingLogs.forEach(log => {
-            if (log.metadata?.duration) {
-                stats.totalThinkingTime += log.metadata.duration;
-                stats.thinkingIterations++;
-            }
-
-            if (log.metadata?.output?.llmUsageStats) {
-                const llmStats = log.metadata.output.llmUsageStats as LLMUsageStats;
-                stats.llmStats.inputTokens += llmStats.inputTokens;
-                stats.llmStats.outputTokens += llmStats.outputTokens;
-                stats.llmStats.callsCount += llmStats.callsCount;
-                stats.llmStats.totalLatency += llmStats.totalLatency;
-            }
-        });
-
-        if (stats.thinkingIterations > 0) {
-            stats.averageThinkingTime = stats.totalThinkingTime / stats.thinkingIterations;
-        }
-
-        return stats;
     }
 }
 

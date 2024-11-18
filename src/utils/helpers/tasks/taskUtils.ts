@@ -1,6 +1,6 @@
 /**
  * @file taskUtils.ts
- * @path KaibanJS/src/utils/helpers/tasks/taskUtils.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\helpers\tasks\taskUtils.ts
  * @description Task utility functions for managing task properties and behaviors.
  * Provides capabilities to interpolate task descriptions with dynamic data,
  * retrieve concise titles for logging purposes, and validate task structures.

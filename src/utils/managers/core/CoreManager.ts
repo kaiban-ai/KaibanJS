@@ -1,15 +1,15 @@
 /**
  * @file CoreManager.ts
- * @path src/managers/core/CoreManager.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\managers\core\coreManager.ts
  * @description Core manager implementation providing base functionality for domain managers
  *
  * @module @core
  */
 
 // Core managers & types
-import { LogManager } from './LogManager';
-import { ErrorManager } from './ErrorManager';
-import { StatusManager } from './StatusManager';
+import { LogManager } from './logManager';
+import { ErrorManager } from './errorManager';
+import { StatusManager } from './statusManager';
 
 // Import types from canonical locations
 import type { 
@@ -29,14 +29,23 @@ import type { LogLevel } from '../../types/common/logging';
  * Abstract base manager class providing core functionality for all managers
  */
 export abstract class CoreManager {
-    protected readonly logManager: LogManager;
-    protected readonly errorManager: ErrorManager;
-    protected readonly statusManager: StatusManager;
+    protected static _instance: any = null;
+    public readonly logManager: LogManager;
+    public readonly errorManager: ErrorManager;
+    public readonly statusManager: StatusManager;
 
-    constructor() {
+    protected constructor() {
         this.logManager = LogManager.getInstance();
         this.errorManager = ErrorManager.getInstance();
         this.statusManager = StatusManager.getInstance();
+    }
+
+    public static getInstance(): CoreManager {
+        const Class = this as any;
+        if (!Class._instance) {
+            Class._instance = new Class();
+        }
+        return Class._instance;
     }
 
     // ─── Protected Methods ─────────────────────────────────────────────────────

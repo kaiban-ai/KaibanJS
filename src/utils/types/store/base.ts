@@ -1,8 +1,9 @@
 /**
  * @file base.ts
- * @path KaibanJS/src/utils/types/store/base.ts
- * @description Core store interfaces and types used across all stores.
- * This file serves as the canonical source for base store types.
+ * @path src/utils/types/store/base.ts
+ * @description Core store interfaces and types used across all stores
+ *
+ * @module @types/store
  */
 
 import { StateCreator, StoreApi, UseBoundStore } from 'zustand';
@@ -13,10 +14,12 @@ import type { WorkflowResult } from '../workflow/base';
 import type { LLMUsageStats } from '../llm/responses';
 import type { CostDetails } from '../workflow/costs';
 
+// ─── Core Store Types ─────────────────────────────────────────────────────────
+
 /**
  * Base store state interface that all stores extend
  */
-export interface BaseStoreState {
+export interface IBaseStoreState {
     name: string;
     agents: AgentType[];
     tasks: TaskType[];
@@ -29,12 +32,14 @@ export interface BaseStoreState {
 /**
  * Base store methods interface
  */
-export interface BaseStoreMethods<T extends BaseStoreState> {
+export interface IBaseStoreMethods<T extends IBaseStoreState> {
     getState: () => T;
     setState: (partial: Partial<T> | ((state: T) => Partial<T>), replace?: boolean) => void;
     subscribe: StoreSubscribe<T>;
     destroy: () => void;
 }
+
+// ─── Store Subscription Types ───────────────────────────────────────────────────
 
 /**
  * Store subscription interface
@@ -51,31 +56,41 @@ export interface StoreSubscribe<T> {
     ): () => void;
 }
 
-/** Type safe store setter */
-export type SetStoreState<T extends BaseStoreState> = (
+/**
+ * Store setter type
+ */
+export type SetStoreState<T extends IBaseStoreState> = (
     partial: Partial<T> | ((state: T) => Partial<T>),
     replace?: boolean
 ) => void;
 
-/** Type safe store getter */
-export type GetStoreState<T extends BaseStoreState> = () => T;
+/**
+ * Store getter type
+ */
+export type GetStoreState<T extends IBaseStoreState> = () => T;
 
-/** Store API types */
-export type IStoreApi<T extends BaseStoreState> = StoreApi<T>;
-export type BoundStore<T extends BaseStoreState> = UseBoundStore<IStoreApi<T>>;
+// ─── Store API Types ──────────────────────────────────────────────────────────
+
+/** Store API interface */
+export type IStoreApi<T extends IBaseStoreState> = StoreApi<T>;
+
+/** Bound store type */
+export type BoundStore<T extends IBaseStoreState> = UseBoundStore<IStoreApi<T>>;
 
 /** Store creator type */
-export type StoreCreator<T extends BaseStoreState> = StateCreator<
+export type StoreCreator<T extends IBaseStoreState> = StateCreator<
     T,
     [['zustand/devtools', never], ['zustand/subscribeWithSelector', never]],
     [],
     T
 >;
 
+// ─── Store Configuration Types ────────────────────────────────────────────────
+
 /**
  * Store configuration options
  */
-export interface StoreConfig {
+export interface IStoreConfig {
     name: string;
     logLevel?: 'debug' | 'info' | 'warn' | 'error';
     devMode?: boolean;
@@ -89,22 +104,24 @@ export interface StoreConfig {
 /**
  * Store validation result
  */
-export interface StoreValidationResult {
+export interface IStoreValidationResult {
     isValid: boolean;
     errors: string[];
     warnings?: string[];
 }
 
+// ─── Store Middleware Types ──────────────────────────────────────────────────
+
 /**
  * Store middleware configuration
  */
-export interface StoreMiddlewareConfig {
+export interface IStoreMiddlewareConfig {
     devtools?: boolean;
     subscribeWithSelector?: boolean;
     persistence?: boolean;
     custom?: Array<
-        (config: StoreConfig) => 
-            <T extends BaseStoreState>(
+        (config: IStoreConfig) => 
+            <T extends IBaseStoreState>(
                 creator: StateCreator<T, [], [], T>
             ) => StateCreator<T, [], [], T>
     >;
@@ -113,10 +130,12 @@ export interface StoreMiddlewareConfig {
 /**
  * Store selector configuration
  */
-export interface StoreSelector<T extends BaseStoreState, U> {
+export interface IStoreSelector<T extends IBaseStoreState, U> {
     selector: (state: T) => U;
     equals?: (a: U, b: U) => boolean;
 }
+
+// ─── Store Event Types ────────────────────────────────────────────────────────
 
 /** Store event types */
 export type StoreEventType = 
@@ -129,52 +148,67 @@ export type StoreEventType =
 /**
  * Store event interface
  */
-export interface StoreEvent {
+export interface IStoreEvent {
     type: StoreEventType;
     data: unknown;
     timestamp: number;
     metadata?: Record<string, unknown>;
 }
 
-/**
- * Type guards for base store types
- */
+// ─── Type Guards ────────────────────────────────────────────────────────────
+
 export const StoreTypeGuards = {
-    isBaseStoreState: (value: unknown): value is BaseStoreState => {
+    /**
+     * Check if value is base store state
+     */
+    isBaseStoreState: (value: unknown): value is IBaseStoreState => {
+        if (typeof value !== 'object' || value === null) return false;
+        const state = value as Partial<IBaseStoreState>;
         return (
-            typeof value === 'object' &&
-            value !== null &&
-            'name' in value &&
-            'agents' in value &&
-            'tasks' in value &&
-            'workflowLogs' in value &&
-            Array.isArray((value as BaseStoreState).agents) &&
-            Array.isArray((value as BaseStoreState).tasks) &&
-            Array.isArray((value as BaseStoreState).workflowLogs)
+            typeof state.name === 'string' &&
+            Array.isArray(state.agents) &&
+            Array.isArray(state.tasks) &&
+            Array.isArray(state.workflowLogs)
         );
     },
 
-    hasStoreMethods: <T extends BaseStoreState>(
+    /**
+     * Check if value has store methods
+     */
+    hasStoreMethods: <T extends IBaseStoreState>(
         value: unknown
-    ): value is BaseStoreMethods<T> => {
+    ): value is IBaseStoreMethods<T> => {
+        if (typeof value !== 'object' || value === null) return false;
+        const methods = value as Partial<IBaseStoreMethods<T>>;
         return (
-            typeof value === 'object' &&
-            value !== null &&
-            'getState' in value &&
-            'setState' in value &&
-            'subscribe' in value &&
-            'destroy' in value
+            typeof methods.getState === 'function' &&
+            typeof methods.setState === 'function' &&
+            typeof methods.subscribe === 'function' &&
+            typeof methods.destroy === 'function'
         );
     },
 
-    isStoreSelector: <T extends BaseStoreState, U>(
+    /**
+     * Check if value is store selector
+     */
+    isStoreSelector: <T extends IBaseStoreState, U>(
         value: unknown
-    ): value is StoreSelector<T, U> => {
+    ): value is IStoreSelector<T, U> => {
+        if (typeof value !== 'object' || value === null) return false;
+        const selector = value as Partial<IStoreSelector<T, U>>;
+        return typeof selector.selector === 'function';
+    },
+
+    /**
+     * Check if value is store event
+     */
+    isStoreEvent: (value: unknown): value is IStoreEvent => {
+        if (typeof value !== 'object' || value === null) return false;
+        const event = value as Partial<IStoreEvent>;
         return (
-            typeof value === 'object' &&
-            value !== null &&
-            'selector' in value &&
-            typeof (value as StoreSelector<T, U>).selector === 'function'
+            typeof event.type === 'string' &&
+            typeof event.timestamp === 'number' &&
+            'data' in event
         );
     }
 };

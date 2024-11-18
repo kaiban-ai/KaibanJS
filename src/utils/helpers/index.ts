@@ -8,7 +8,7 @@
 export * from './agent';
 
 // Cost calculation helpers
-export * from './costs';
+export * from './llm';
 
 // Formatting helpers
 export * from './formatting';
@@ -20,4 +20,4 @@ export * from './prompts';
 export * from './tasks';
 
 // Statistics helpers
-export * from './stats';
+export * from './tasks/stats';

@@ -7,6 +7,7 @@
 import { Output } from './responses';
 import { AgentType } from '../agent/base';
 import { TaskType } from '../task/base';
+import { AGENT_STATUS_enum } from '../common/enums';
 
 /**
  * Base parameters for LLM parsing operations
@@ -38,6 +39,52 @@ export interface ParsingResult<T = unknown> {
     data?: T;
     error?: Error;
     validationIssues?: string[];
+}
+
+/**
+ * Output processing result
+ */
+export interface OutputProcessResult {
+    actionType: keyof typeof AGENT_STATUS_enum;
+    parsedOutput: ParsedOutput | null;
+    feedback: string;
+    shouldContinue: boolean;
+}
+
+/**
+ * Output validation result
+ */
+export interface OutputValidationResult {
+    isValid: boolean;
+    error?: Error;
+    context?: Record<string, unknown>;
+}
+
+/**
+ * Parsed output structure
+ */
+export interface ParsedOutput {
+    thought?: string;
+    action?: string;
+    actionInput?: Record<string, unknown>;
+    observation?: string;
+    isFinalAnswerReady?: boolean;
+    finalAnswer?: string | Record<string, unknown>;
+    metadata?: {
+        reasoning?: string;
+        confidence?: number;
+        alternativeActions?: string[];
+        metrics?: {
+            processingTime?: number;
+            tokenCount?: number;
+            memoryUsage?: number;
+        };
+        context?: {
+            inputContextLength?: number;
+            keyFactors?: string[];
+            constraints?: string[];
+        };
+    };
 }
 
 /**

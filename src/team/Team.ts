@@ -12,9 +12,9 @@ import { LogCreator } from '@/utils/factories/logCreator';
 import { MetadataFactory } from '@/utils/factories/metadataFactory';
 import { MessageManager } from '@/managers/domain/llm/MessageManager';
 import { teamHandler } from '@/utils/handlers/teamHandler';
-import { calculateTaskStats } from '@/utils/helpers/stats';
+import { calculateTaskStats } from '@/utils/helpers/tasks/stats';
 import { logPrettyWorkflowResult } from '@/utils/helpers/formatting/prettyLogs';
-import { calculateTotalWorkflowCost } from '@/utils/helpers/costs/llmCostCalculator';
+import { calculateTotalWorkflowCost } from '@/utils/helpers/llm/llmCostCalculator';
 import { subscribeTaskStatusUpdates } from '@/subscribers/taskSubscriber';
 import { subscribeWorkflowStatusUpdates } from '@/subscribers/teamSubscriber';
 

@@ -1,6 +1,6 @@
 /**
  * @file state.ts
- * @path KaibanJS/src/stores/taskStore/state.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\stores\taskStore\state.ts
  * @description Task store state interface and initial state definition
  */
 

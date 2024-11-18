@@ -1,19 +1,15 @@
 /**
- * @file ResourceManager.ts
- * @path src/managers/domain/task/ResourceManager.ts
- * @description Domain manager for task resource tracking and limitations
+ * @file resourceManager.ts
+ * @path src/utils/managers/domain/task/resourceManager.ts
+ * @description Task resource tracking and management implementation using CoreManager
  *
  * @module @managers/domain/task
  */
 
-import CoreManager from '../../core/CoreManager';
-import { ErrorManager } from '../../core/ErrorManager';
-import { LogManager } from '../../core/LogManager';
-import { StatusManager } from '../../core/StatusManager';
-import { DefaultFactory } from '../../../factories/defaultFactory';
-import { calculateTaskStats } from '../../../helpers/stats';
+import CoreManager from '../../core/coreManager';
+import type { TASK_STATUS_enum } from '@/utils/types/common/enums';
+import { DefaultFactory } from '@/utils/factories/defaultFactory';
 
-// Import types from canonical locations
 import type { 
     TaskType,
     TaskResourceParams,
@@ -23,56 +19,27 @@ import type {
 
 import type {
     LLMUsageStats,
-    Output
+    Output,
+    ParsedOutput
 } from '@/utils/types/llm';
 
 import type { CostDetails } from '@/utils/types/workflow';
-import { TASK_STATUS_enum } from '@/utils/types/common/enums';
 
-/**
- * Resource threshold configuration
- */
-interface ResourceThresholds {
-    memory: number;
-    tokens: number;
-    cpuTime?: number;
-    networkRequests?: number;
-    cost: number;
-}
-
-/**
- * Resource usage tracking
- */
-interface ResourceUsage {
-    startTime: number;
-    memory: number[];
-    tokens: number[];
-    cpuTime: number[];
-    networkRequests: number;
-    peakMemory: number;
-    totalTokens: number;
-    averageCpuTime: number;
-    cost: number;
-}
-
-/**
- * Manages task resource tracking and limitations
- */
 export class ResourceManager extends CoreManager {
     private static instance: ResourceManager;
-    private readonly errorManager: ErrorManager;
-    private readonly logManager: LogManager;
-    private readonly statusManager: StatusManager;
-    private readonly resourceUsage: Map<string, ResourceUsage>;
-    private readonly thresholds: Map<string, ResourceThresholds>;
+    private readonly activeResources: Map<string, {
+        startTime: number;
+        memory: number[];
+        tokens: number[];
+        networkRequests: number;
+        llmUsageStats: LLMUsageStats;
+        costDetails: CostDetails;
+    }>;
 
     private constructor() {
         super();
-        this.errorManager = ErrorManager.getInstance();
-        this.logManager = LogManager.getInstance();
-        this.statusManager = StatusManager.getInstance();
-        this.resourceUsage = new Map();
-        this.thresholds = new Map();
+        this.activeResources = new Map();
+        this.registerDomainManager('ResourceManager', this);
     }
 
     public static getInstance(): ResourceManager {
@@ -82,43 +49,25 @@ export class ResourceManager extends CoreManager {
         return ResourceManager.instance;
     }
 
-    // ─── Resource Tracking Methods ───────────────────────────────────────────────
+    // ─── Resource Tracking Methods ─────────────────────────────────────────────────
 
-    /**
-     * Track task resource usage
-     */
     public async trackResourceUsage(params: TaskResourceParams): Promise<HandlerResult> {
         const { task, resourceStats, thresholds } = params;
 
-        try {
-            // Initialize or get existing resource tracking
-            const usage = this.getOrCreateResourceUsage(task.id);
+        return await this.safeExecute(async () => {
+            // Get or initialize resource tracking
+            const resources = this.getOrCreateResources(task.id);
             
             // Update resource metrics
-            usage.memory.push(resourceStats.memory);
-            usage.tokens.push(resourceStats.tokens);
-            if (resourceStats.cpuTime) {
-                usage.cpuTime.push(resourceStats.cpuTime);
-            }
-            if (resourceStats.networkRequests) {
-                usage.networkRequests += resourceStats.networkRequests;
-            }
+            resources.memory.push(resourceStats.memory);
+            resources.tokens.push(resourceStats.tokens);
+            resources.networkRequests += resourceStats.networkRequests || 0;
 
-            // Update peak values
-            usage.peakMemory = Math.max(usage.peakMemory, resourceStats.memory);
-            usage.totalTokens += resourceStats.tokens;
-            usage.averageCpuTime = usage.cpuTime.reduce((a, b) => a + b, 0) / usage.cpuTime.length;
-
-            // Calculate costs using task stats
-            const stats = await this.calculateResourceStats(task);
-            usage.cost = stats.costDetails.totalCost;
-
-            // Check thresholds
+            // Check thresholds if provided
             if (thresholds) {
-                this.thresholds.set(task.id, thresholds);
-                const violations = await this.checkThresholds(task.id);
+                const violations = this.checkThresholds(task.id, thresholds);
                 if (violations.length > 0) {
-                    return this.handleThresholdViolations(task, violations);
+                    return await this.handleThresholdViolation(task, violations);
                 }
             }
 
@@ -128,7 +77,7 @@ export class ResourceManager extends CoreManager {
                 logDescription: 'Resource usage updated',
                 metadata: {
                     resourceStats,
-                    usage,
+                    resources,
                     timestamp: Date.now()
                 },
                 logType: 'TaskStatusUpdate',
@@ -143,116 +92,102 @@ export class ResourceManager extends CoreManager {
 
             return {
                 success: true,
-                data: usage
+                data: resources
             };
 
-        } catch (error) {
-            return this.handleTrackingError(task, error);
-        }
+        }, 'Resource tracking failed');
     }
 
-    /**
-     * Get current resource usage for task
-     */
-    public getResourceUsage(taskId: string): ResourceUsage | null {
-        return this.resourceUsage.get(taskId) || null;
+    // ─── Task Statistics Methods ──────────────────────────────────────────────────
+
+    public async getTaskStats(task: TaskType): Promise<TaskStats> {
+        return await this.safeExecute(async () => {
+            const resources = this.activeResources.get(task.id);
+            if (!resources) {
+                return this.createDefaultTaskStats();
+            }
+
+            const endTime = Date.now();
+            const duration = endTime - resources.startTime;
+
+            return {
+                startTime: resources.startTime,
+                endTime,
+                duration,
+                llmUsageStats: resources.llmUsageStats,
+                iterationCount: task.iterationCount || 0,
+                modelUsage: {}  // Populated by LLM manager
+            };
+
+        }, 'Task stats calculation failed') || this.createDefaultTaskStats();
     }
 
-    /**
-     * Set resource thresholds for task
-     */
-    public setThresholds(taskId: string, thresholds: ResourceThresholds): void {
-        this.thresholds.set(taskId, thresholds);
+    // ─── Resource Management Methods ───────────────────────────────────────────────
+
+    public async cleanup(taskId: string): Promise<void> {
+        return await this.safeExecute(async () => {
+            const resources = this.activeResources.get(taskId);
+            if (!resources) return;
+
+            // Log final resource state
+            this.logManager.debug('Resource cleanup', undefined, taskId, {
+                finalMemory: Math.max(...resources.memory),
+                totalTokens: resources.tokens.reduce((a, b) => a + b, 0),
+                networkRequests: resources.networkRequests
+            });
+
+            this.activeResources.delete(taskId);
+
+        }, 'Resource cleanup failed');
     }
 
-    /**
-     * Clear resource tracking for task
-     */
-    public clearTracking(taskId: string): void {
-        this.resourceUsage.delete(taskId);
-        this.thresholds.delete(taskId);
-    }
+    // ─── Protected Helper Methods ───────────────────────────────────────────────
 
-    // ─── Private Helper Methods ───────────────────────────────────────────────────
-
-    /**
-     * Get or create resource usage tracking
-     */
-    private getOrCreateResourceUsage(taskId: string): ResourceUsage {
-        if (!this.resourceUsage.has(taskId)) {
-            this.resourceUsage.set(taskId, {
+    protected getOrCreateResources(taskId: string) {
+        if (!this.activeResources.has(taskId)) {
+            this.activeResources.set(taskId, {
                 startTime: Date.now(),
                 memory: [],
                 tokens: [],
-                cpuTime: [],
                 networkRequests: 0,
-                peakMemory: 0,
-                totalTokens: 0,
-                averageCpuTime: 0,
-                cost: 0
+                llmUsageStats: DefaultFactory.createLLMUsageStats(),
+                costDetails: DefaultFactory.createCostDetails()
             });
         }
-        return this.resourceUsage.get(taskId)!;
+        return this.activeResources.get(taskId)!;
     }
 
-    /**
-     * Check resource thresholds
-     */
-    private async checkThresholds(taskId: string): Promise<string[]> {
-        const usage = this.resourceUsage.get(taskId);
-        const thresholds = this.thresholds.get(taskId);
+    protected checkThresholds(
+        taskId: string,
+        thresholds: Record<string, number>
+    ): string[] {
+        const resources = this.activeResources.get(taskId);
+        if (!resources) return [];
+
         const violations: string[] = [];
+        const currentMemory = Math.max(...resources.memory);
+        const totalTokens = resources.tokens.reduce((a, b) => a + b, 0);
 
-        if (!usage || !thresholds) return violations;
-
-        if (usage.peakMemory > thresholds.memory) {
-            violations.push(`Memory usage (${usage.peakMemory}) exceeds threshold (${thresholds.memory})`);
+        if (thresholds.maxMemory && currentMemory > thresholds.maxMemory) {
+            violations.push(`Memory usage (${currentMemory}) exceeds threshold (${thresholds.maxMemory})`);
         }
 
-        if (usage.totalTokens > thresholds.tokens) {
-            violations.push(`Token usage (${usage.totalTokens}) exceeds threshold (${thresholds.tokens})`);
+        if (thresholds.maxTokens && totalTokens > thresholds.maxTokens) {
+            violations.push(`Token usage (${totalTokens}) exceeds threshold (${thresholds.maxTokens})`);
         }
 
-        if (thresholds.cpuTime && usage.averageCpuTime > thresholds.cpuTime) {
-            violations.push(`CPU time (${usage.averageCpuTime}) exceeds threshold (${thresholds.cpuTime})`);
-        }
-
-        if (thresholds.networkRequests && usage.networkRequests > thresholds.networkRequests) {
-            violations.push(`Network requests (${usage.networkRequests}) exceeds threshold (${thresholds.networkRequests})`);
-        }
-
-        if (usage.cost > thresholds.cost) {
-            violations.push(`Cost (${usage.cost}) exceeds threshold (${thresholds.cost})`);
+        if (thresholds.maxNetworkRequests && resources.networkRequests > thresholds.maxNetworkRequests) {
+            violations.push(`Network requests (${resources.networkRequests}) exceeds threshold (${thresholds.maxNetworkRequests})`);
         }
 
         return violations;
     }
 
-    /**
-     * Calculate resource statistics
-     */
-    private async calculateResourceStats(task: TaskType): Promise<TaskStats> {
-        const stats = task.store ? calculateTaskStats(task, task.store.getState().workflowLogs) : {
-            startTime: Date.now(),
-            endTime: Date.now(),
-            duration: 0,
-            llmUsageStats: DefaultFactory.createLLMUsageStats(),
-            costDetails: DefaultFactory.createCostDetails(),
-            iterationCount: 0,
-            modelUsage: {}
-        };
-
-        return stats;
-    }
-
-    /**
-     * Handle threshold violations
-     */
-    private async handleThresholdViolations(
+    protected async handleThresholdViolation(
         task: TaskType,
         violations: string[]
     ): Promise<HandlerResult> {
-        await this.statusManager.transition({
+        await this.handleStatusTransition({
             currentStatus: task.status,
             targetStatus: TASK_STATUS_enum.ERROR,
             entity: 'task',
@@ -268,7 +203,7 @@ export class ResourceManager extends CoreManager {
             logDescription: `Resource thresholds violated: ${violations.join(', ')}`,
             metadata: {
                 violations,
-                usage: this.resourceUsage.get(task.id),
+                resources: this.activeResources.get(task.id),
                 timestamp: Date.now()
             },
             logType: 'TaskStatusUpdate',
@@ -286,44 +221,21 @@ export class ResourceManager extends CoreManager {
             error: new Error('Resource thresholds violated'),
             data: {
                 violations,
-                usage: this.resourceUsage.get(task.id)
+                resources: this.activeResources.get(task.id)
             }
         };
     }
 
-    /**
-     * Handle tracking error
-     */
-    private handleTrackingError(task: TaskType, error: unknown): HandlerResult {
-        this.logManager.error('Resource tracking error:', error);
-
-        const log = task.store?.prepareNewLog({
-            task,
-            logDescription: `Resource tracking error: ${error instanceof Error ? error.message : String(error)}`,
-            metadata: {
-                error,
-                usage: this.resourceUsage.get(task.id),
-                timestamp: Date.now()
-            },
-            logType: 'TaskStatusUpdate',
-            taskStatus: task.status
-        });
-
-        if (log && task.store) {
-            task.store.setState(state => ({
-                workflowLogs: [...state.workflowLogs, log]
-            }));
-        }
-
+    private createDefaultTaskStats(): TaskStats {
         return {
-            success: false,
-            error: error instanceof Error ? error : new Error(String(error)),
-            data: {
-                taskId: task.id,
-                usage: this.resourceUsage.get(task.id)
-            }
+            startTime: Date.now(),
+            endTime: Date.now(),
+            duration: 0,
+            llmUsageStats: DefaultFactory.createLLMUsageStats(),
+            iterationCount: 0,
+            modelUsage: {}
         };
     }
 }
 
-export default ResourceManager.getInstance();
+export default ResourceManager.getInstance();0

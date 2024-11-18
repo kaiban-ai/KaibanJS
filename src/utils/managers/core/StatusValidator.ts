@@ -1,13 +1,13 @@
 /**
- * @file StatusValidator.ts
- * @path src/managers/core/StatusValidator.ts
+ * @file statusValidator.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\managers\core\statusValidator.ts
  * @description Status validation and transition rule enforcement
  * 
  * @module @core
  */
 
-import CoreManager from './CoreManager';
-import { transitionRules } from './TransitionRules';
+import CoreManager from './coreManager';
+import { TransitionRules } from './transitionRules';
 
 // Import types from canonical locations
 import type {
@@ -66,7 +66,7 @@ export class StatusValidator extends CoreManager {
             }
 
             // Get transition rules for entity
-            const rules = transitionRules.get(context.entity);
+            const rules = TransitionRules.get(context.entity);
             if (!rules) {
                 return {
                     isValid: false,
@@ -144,7 +144,7 @@ export class StatusValidator extends CoreManager {
      * Get available transitions for a status
      */
     public getAvailableTransitions(status: StatusType, entity: StatusEntity): StatusType[] {
-        const rules = transitionRules.get(entity);
+        const rules = TransitionRules.get(entity);
         if (!rules) return [];
 
         return rules

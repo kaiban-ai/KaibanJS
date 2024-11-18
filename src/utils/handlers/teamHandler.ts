@@ -1,6 +1,6 @@
 /**
  * @file TeamHandler.ts
- * @path KaibanJS/src/utils/handlers/teamHandler.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\handlers\teamHandler.ts
  * @description High-level team operations handling and orchestration
  */
 

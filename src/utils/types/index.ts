@@ -31,6 +31,13 @@ export type {
     ThinkingResult
 } from './agent';
 
+// Thinking-specific types
+export type {
+    ThinkingExecutionParams,
+    ThinkingHandlerParams as ThinkingDomainHandlerParams,
+    ThinkingStats
+} from './agent/thinkingTypes';
+
 // Common types and interfaces
 export type {
     ErrorType,
@@ -201,11 +208,8 @@ export {
     WorkflowStoreTypeGuards,
 } from './workflow';
 
-
-
 // Constants
 export {
     TOKEN_LIMITS,
     LLMProviders
 } from './llm';
-

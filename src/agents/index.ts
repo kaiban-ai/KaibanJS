@@ -1,17 +1,14 @@
 /**
  * @file index.ts
- * @path KaibanJS/src/agents/index.ts
- * @description Central export point for agent implementations
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\agents\index.ts
+ * @description Centralized exports for agent-related classes and implementations, including base and specialized agents.
+ * 
+ * @packageDocumentation
+ * @module @agents
  */
 
-export { BaseAgent } from './baseAgent';
-export { ReactChampionAgent } from './reactChampionAgent';
+// Exporting BaseAgent class
+export { BaseAgentImplementation as BaseAgent } from './baseAgent';
 
-// Re-export agent types
-export type {
-    IBaseAgent,
-    IReactChampionAgent,
-    AgentType,
-    BaseAgentConfig,
-    IAgentParams
-} from '@/utils/types/agent';
+// Exporting ReactChampionAgent class
+export { default as ReactChampionAgent } from './reactChampionAgent';

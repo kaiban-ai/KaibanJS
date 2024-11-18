@@ -1,11 +1,11 @@
 /**
  * @file agentUtils.ts
- * @path KaibanJS/src/utils/helpers/agent/agentUtils.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\helpers\agent\agentUtils.ts
  * @description Utility functions for agent operations
  */
 
 import { LLMConfig } from '@/utils/types/llm';
-import { AgentAttributes } from '@/utils/types/agent';
+import { AgentAttributes } from '@/utils/types/agent/utils';
 import { logger } from '../../core/logger';
 
 /**

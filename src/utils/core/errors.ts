@@ -1,6 +1,6 @@
 /**
  * @file errors.ts
- * @path KaibanJS/src/utils/types/common/errors.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\core\errors.ts
  * @description Core error types and interfaces
  */
 

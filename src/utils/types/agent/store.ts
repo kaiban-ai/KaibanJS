@@ -1,166 +1,213 @@
 /**
  * @file store.ts
- * @path KaibanJS/src/utils/types/agent/store.ts 
- * @description Agent store types and interfaces for managing agent operations
+ * @path src/utils/types/agent/store.ts
+ * @description Agent store types and interfaces
+ *
+ * @module @types/agent
  */
 
-import type { AGENT_STATUS_enum } from '../common/enums';
+import type { IBaseStoreState, IBaseStoreMethods } from '../store/base';
 import type { AgentType } from './base';
 import type { TaskType } from '../task/base';
 import type { Output, ParsedOutput, LLMUsageStats } from '../llm/responses';
-import type { CostDetails } from '../workflow/costs';
-import type { BaseStoreState } from '../store/base';
-import type { ThinkingExecutionResult } from './handlers';
-import type { AgenticLoopResult } from '../llm/instance';
+import type { AGENT_STATUS_enum } from '../common/enums';
+import type { HandlerResult } from './handlers';
+import type { IAgentMetadata, IAgentExecutionState, IAgentPerformanceStats } from './state';
 
-// ─── Agent Runtime State ────────────────────────────────────────────────────────
+// ─── Store Configuration Types ────────────────────────────────────────────────
 
-export interface AgentRuntimeState {
-    currentAgent: AgentType | null;
-    currentTask: TaskType | null;
-    lastError: Error | null;
-    status: keyof typeof AGENT_STATUS_enum;
+/**
+ * Agent store configuration interface
+ */
+export interface IAgentStoreConfig {
+    name: string;
+    maxConcurrentTasks?: number;
+    taskTimeout?: number;
+    progressCheckInterval?: number;
+    maxRetries?: number;
+    retryDelay?: number;
+    middleware?: {
+        devtools?: boolean;
+        subscribeWithSelector?: boolean;
+        persistence?: boolean;
+    };
 }
 
-// ─── Agent Execution Metrics ──────────────────────────────────────────────────
-
-export interface AgentExecutionMetrics {
-    llmUsageStats: LLMUsageStats;
-    iterationCount: number;
-    totalCalls: number;
-    errorCount: number;
-    averageLatency: number;
-    costDetails: CostDetails;
+/**
+ * Agent validation rules interface
+ */
+export interface IAgentValidationRules {
+    requiredFields?: string[];
+    validators?: Array<(state: IAgentState) => boolean>;
+    costThresholds?: {
+        warning: number;
+        critical: number;
+    };
 }
 
-// ─── Agent Execution Context ──────────────────────────────────────────────────
+// ─── Store State Types ──────────────────────────────────────────────────────────
 
-export interface AgentExecutionContext {
-    startTime: number;
-    totalExecutions: number;
-    consecutiveFailures: number;
-    totalDuration: number;
-    lastSuccessTime?: number;
-    lastErrorTime?: number;
-    lastError?: Error;
-    metadata?: Record<string, unknown>;
+/**
+ * Complete agent store state
+ */
+export interface IAgentState extends IBaseStoreState {
+    agents: AgentType[];
+    activeAgents: AgentType[];
+    metadata: Record<string, IAgentMetadata>;
+    executionState: Record<string, IAgentExecutionState>;
+    performanceStats: Record<string, IAgentPerformanceStats>;
+    errors: Error[];
+    loading: boolean;
 }
 
-// ─── Agent Store State ─────────────────────────────────────────────────────────
+// ─── Store Action Types ────────────────────────────────────────────────────────
 
-export interface AgentStoreState extends BaseStoreState {
-    runtime: AgentRuntimeState;
-    stats: AgentExecutionMetrics;
+/**
+ * Agent error actions interface
+ */
+export interface IAgentErrorActions {
+    handleAgentError: (params: {
+        agent: AgentType;
+        task: TaskType;
+        error: Error;
+        context?: Record<string, unknown>;
+    }) => Promise<HandlerResult>;
 }
 
-// ─── Agent Store Actions ────────────────────────────────────────────────────────
-
-export interface AgentStoreActions {
-    handleAgentStatusChange: (
-        agent: AgentType,
-        status: keyof typeof AGENT_STATUS_enum
-    ) => void;
-
+/**
+ * Agent thinking actions interface
+ */
+export interface IAgentThinkingActions {
     handleAgentThinking: (params: {
         agent: AgentType;
         task: TaskType;
-        messages?: any[];
+        messages: any[];
         output?: Output;
-    }) => Promise<ThinkingExecutionResult>;
-
-    handleIterationStart: (params: {
-        agent: AgentType;
-        task: TaskType;
-        iterations: number;
-        maxAgentIterations: number;
-    }) => void;
-
-    handleIterationEnd: (params: {
-        agent: AgentType;
-        task: TaskType;
-        iterations: number;
-        maxAgentIterations: number;
-    }) => void;
-
-    handleFinalAnswer: (params: {
-        agent: AgentType;
-        task: TaskType;
-        parsedLLMOutput: ParsedOutput;
-    }) => ParsedOutput;
+    }) => Promise<HandlerResult>;
 
     handleAgentOutput: (params: {
         agent: AgentType;
         task: TaskType;
         output: Output;
         type: 'thought' | 'observation' | 'finalAnswer' | 'selfQuestion' | 'weird';
-    }) => void;
+    }) => Promise<HandlerResult>;
 }
 
-// ─── Agent Execution Result ──────────────────────────────────────────────────
+/**
+ * Agent tool actions interface
+ */
+export interface IAgentToolActions {
+    handleStreamingOutput: (params: {
+        agent: AgentType;
+        task: TaskType;
+        chunk: string;
+        isDone: boolean;
+    }) => Promise<HandlerResult>;
 
-export interface AgentExecutionResult {
-    success: boolean;
-    result?: AgenticLoopResult;
-    error?: Error;
-    stats?: {
-        duration: number;
-        iterationCount: number;
-        llmUsageStats: LLMUsageStats;
-    };
-    context?: AgentExecutionContext;
+    handleFinalAnswer: (params: {
+        agent: AgentType;
+        task: TaskType;
+        parsedLLMOutput: ParsedOutput;
+    }) => ParsedOutput;
 }
 
-// ─── Agent Selection Criteria ────────────────────────────────────────────────
+/**
+ * Agent status actions interface
+ */
+export interface IAgentStatusActions {
+    handleAgentStatusChange: (
+        agent: AgentType,
+        status: keyof typeof AGENT_STATUS_enum,
+        task: TaskType
+    ) => Promise<void>;
 
-export interface AgentSelectionCriteria {
-    role?: string;
-    tools?: string[];
-    capabilities?: string[];
-    preferredModels?: string[];
-    costConstraints?: {
-        maxCostPerTask?: number;
-        maxTotalCost?: number;
-    };
+    handleIterationStart: (params: {
+        agent: AgentType;
+        task: TaskType;
+        iterations: number;
+        maxAgentIterations: number;
+    }) => Promise<void>;
+
+    handleIterationEnd: (params: {
+        agent: AgentType;
+        task: TaskType;
+        iterations: number;
+        maxAgentIterations: number;
+    }) => Promise<void>;
 }
 
-// ─── Type Guards ────────────────────────────────────────────────────────────────
+// ─── Store Methods Types ───────────────────────────────────────────────────────
+
+/**
+ * Complete agent store actions interface
+ */
+export interface IAgentStoreActions extends
+    IAgentErrorActions,
+    IAgentThinkingActions,
+    IAgentToolActions,
+    IAgentStatusActions {}
+
+/**
+ * Complete agent store methods interface
+ */
+export interface IAgentStoreMethods extends 
+    IBaseStoreMethods<IAgentState>,
+    IAgentStoreActions {}
+
+// ─── Type Guards ────────────────────────────────────────────────────────────
 
 export const AgentStoreTypeGuards = {
-    isAgentStoreState: (value: unknown): value is AgentStoreState => {
+    /**
+     * Check if value has store actions
+     */
+    hasStoreActions: (value: unknown): value is IAgentStoreActions => {
+        if (typeof value !== 'object' || value === null) return false;
+        const actions = value as Partial<IAgentStoreActions>;
         return (
-            typeof value === 'object' &&
-            value !== null &&
-            'runtime' in value &&
-            'stats' in value
+            typeof actions.handleAgentError === 'function' &&
+            typeof actions.handleAgentThinking === 'function' &&
+            typeof actions.handleAgentOutput === 'function' &&
+            typeof actions.handleStreamingOutput === 'function' &&
+            typeof actions.handleFinalAnswer === 'function' &&
+            typeof actions.handleAgentStatusChange === 'function' &&
+            typeof actions.handleIterationStart === 'function' &&
+            typeof actions.handleIterationEnd === 'function'
         );
     },
 
-    isAgentExecutionResult: (value: unknown): value is AgentExecutionResult => {
+    /**
+     * Check if value is agent store methods
+     */
+    isAgentStoreMethods: (value: unknown): value is IAgentStoreMethods => {
+        if (typeof value !== 'object' || value === null) return false;
+        
+        const methods = value as { 
+            getState?: unknown; 
+            setState?: unknown; 
+            subscribe?: unknown; 
+            destroy?: unknown; 
+        };
+
         return (
-            typeof value === 'object' &&
-            value !== null &&
-            'success' in value
+            AgentStoreTypeGuards.hasStoreActions(value) &&
+            typeof methods.getState === 'function' &&
+            typeof methods.setState === 'function' &&
+            typeof methods.subscribe === 'function' &&
+            typeof methods.destroy === 'function'
         );
     },
 
-    isAgentExecutionContext: (value: unknown): value is AgentExecutionContext => {
+    /**
+     * Check if value is agent store config
+     */
+    isAgentStoreConfig: (value: unknown): value is IAgentStoreConfig => {
+        if (typeof value !== 'object' || value === null) return false;
+        const config = value as Partial<IAgentStoreConfig>;
         return (
-            typeof value === 'object' &&
-            value !== null &&
-            'startTime' in value &&
-            'totalExecutions' in value &&
-            'consecutiveFailures' in value &&
-            'totalDuration' in value
-        );
-    },
-
-    hasAgentStoreActions: (value: unknown): value is AgentStoreActions => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            'handleAgentStatusChange' in value &&
-            'handleAgentThinking' in value &&
-            'handleAgentOutput' in value
+            typeof config.name === 'string' &&
+            (!config.maxConcurrentTasks || typeof config.maxConcurrentTasks === 'number') &&
+            (!config.taskTimeout || typeof config.taskTimeout === 'number') &&
+            (!config.progressCheckInterval || typeof config.progressCheckInterval === 'number')
         );
     }
 };

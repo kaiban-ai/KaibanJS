@@ -1,6 +1,6 @@
 /**
  * @file parser.ts
- * @path KaibanJS/src/utils/parsers/parser.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\parsers\parser.ts
  * @description JSON parsing and recovery utilities
  */
 
@@ -104,12 +104,15 @@ export function parseJSON<T = any>(str: string, config: ParserConfig = {}): Pars
             }
         }
 
-        // Return error result
+        // Return error result with flexible context
         return {
             success: false,
             error: {
                 message: initialError instanceof Error ? initialError.message : 'Unknown parsing error',
-                context: str
+                context: typeof initialError === 'object' && initialError !== null 
+                    ? JSON.stringify(initialError) 
+                    : String(initialError),
+                position: undefined
             },
             recoveryAttempted: finalConfig.attemptRecovery,
             originalInput: str

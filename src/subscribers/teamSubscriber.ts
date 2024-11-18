@@ -1,5 +1,13 @@
 /**
- * Path: src/subscribers/teamSubscriber.ts
+ * @file teamSubscriber.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\subscribers\teamSubscriber.ts
+ * @description Monitors and handles workflow status updates within the team workflow. 
+ * Provides functionality to log detailed workflow statuses and results, 
+ * ensuring structured insights for team activities and performance metrics.
+ * 
+ * 
+ * @packageDocumentation
+ * @module @subscribers/team
  */
 
 // Imports

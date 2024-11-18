@@ -1,29 +1,32 @@
 /**
- * @file ProviderManager.ts
- * @path src/managers/domain/llm/ProviderManager.ts
- * @description LLM Provider management and configuration
+ * @file providerManager.ts
+ * @path src/utils/managers/domain/llm/providerManager.ts
+ * @description LLM provider management implementation using service registry pattern
+ *
+ * @module @managers/domain/llm
  */
 
-import { CoreManager } from '../../core/CoreManager';
-import { configUtils } from '@/utils/helpers/config';
-import { validateProviderConfig } from '@/utils/types/llm/providers';
+import CoreManager from '../../core/coreManager';
+import { ChatGroq } from '@langchain/groq';
+import { ChatOpenAI } from '@langchain/openai';
+import { ChatAnthropic } from '@langchain/anthropic';
+import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
+import { ChatMistralAI } from '@langchain/mistralai';
 
-// Import types from canonical locations
-import type { 
+import type {
+    LLMConfig,
+    LLMProvider,
+    LLMRuntimeOptions,
+    ActiveLLMConfig
+} from '@/utils/types/llm/common';
+
+import type {
     GroqConfig,
     OpenAIConfig,
     AnthropicConfig,
     GoogleConfig,
-    MistralConfig,
-    ChatFormat
+    MistralConfig
 } from '@/utils/types/llm/providers';
-
-import type {
-    LLMProvider,
-    LLMConfig,
-    LLMRuntimeOptions,
-    BaseLLMConfig
-} from '@/utils/types/llm/common';
 
 import type {
     LLMResponse,
@@ -31,22 +34,16 @@ import type {
     TokenUsage
 } from '@/utils/types/llm/responses';
 
-// Provider-specific Chat Models
-import { ChatGroq } from '@langchain/groq';
-import { ChatOpenAI } from '@langchain/openai';
-import { ChatAnthropic } from '@langchain/anthropic';
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
-import { ChatMistralAI } from '@langchain/mistralai';
-
-// ─── Provider Manager Implementation ───────────────────────────────────────────
-
 export class ProviderManager extends CoreManager {
     private static instance: ProviderManager;
-    private providers: Map<LLMProvider, any>;
+    private readonly providers: Map<LLMProvider, any>;
+    private readonly configs: Map<string, LLMConfig>;
 
     private constructor() {
         super();
         this.providers = new Map();
+        this.configs = new Map();
+        this.registerDomainManager('ProviderManager', this);
     }
 
     public static getInstance(): ProviderManager {
@@ -56,36 +53,23 @@ export class ProviderManager extends CoreManager {
         return ProviderManager.instance;
     }
 
-    // ─── Provider Instance Management ────────────────────────────────────────────
+    // ─── Provider Instance Management ───────────────────────────────────────────
 
     public async getProviderInstance(config: LLMConfig): Promise<any> {
-        const provider = config.provider;
-        
-        if (this.providers.has(provider)) {
-            return this.providers.get(provider);
-        }
+        return await this.safeExecute(async () => {
+            const provider = config.provider;
+            
+            if (this.providers.has(provider)) {
+                return this.providers.get(provider);
+            }
 
-        const instance = await this.createProviderInstance(config);
-        this.providers.set(provider, instance);
-        return instance;
+            const instance = await this.createProviderInstance(config);
+            this.providers.set(provider, instance);
+            this.configs.set(this.generateInstanceId(config), config);
+
+            return instance;
+        }, 'Failed to get provider instance');
     }
-
-    public async validateProviderConfig(config: LLMConfig): Promise<void> {
-        validateProviderConfig(config);
-        configUtils.validateApiKey(config);
-        configUtils.validateTemperature(config.temperature);
-        configUtils.validateStreaming(config.streaming, config.provider);
-    }
-
-    public async cleanupProvider(provider: LLMProvider): Promise<void> {
-        const instance = this.providers.get(provider);
-        if (instance?.cleanup) {
-            await instance.cleanup();
-        }
-        this.providers.delete(provider);
-    }
-
-    // ─── Provider Creation ──────────────────────────────────────────────────────
 
     private async createProviderInstance(config: LLMConfig): Promise<any> {
         switch (config.provider) {
@@ -103,6 +87,8 @@ export class ProviderManager extends CoreManager {
                 throw new Error(`Unsupported provider: ${config.provider}`);
         }
     }
+
+    // ─── Provider Instance Creation ────────────────────────────────────────────
 
     private createGroqInstance(config: GroqConfig): ChatGroq {
         return new ChatGroq({
@@ -174,50 +160,72 @@ export class ProviderManager extends CoreManager {
         });
     }
 
-    // ─── Provider Configuration ───────────────────────────────────────────────────
+    // ─── Configuration Management ─────────────────────────────────────────────
 
-    public getProviderConfig(provider: LLMProvider): BaseLLMConfig {
-        const instance = this.providers.get(provider);
-        if (!instance) {
-            throw new Error(`No configuration found for provider: ${provider}`);
-        }
-        return instance.configuration;
+    public async validateProviderConfig(config: LLMConfig): Promise<void> {
+        return await this.safeExecute(async () => {
+            if (config.provider === 'none') return;
+
+            const requiredFields: Partial<Record<LLMProvider, (keyof ActiveLLMConfig)[]>> = {
+                groq: ['model', 'apiKey'],
+                openai: ['model', 'apiKey'],
+                anthropic: ['model', 'apiKey'],
+                google: ['model', 'apiKey'],
+                mistral: ['model', 'apiKey']
+            };
+
+            const required = requiredFields[config.provider];
+            if (required) {
+                const missingFields = required.filter(field => !(field in config));
+                if (missingFields.length > 0) {
+                    throw new Error(
+                        `Missing required fields for ${config.provider}: ${missingFields.join(', ')}`
+                    );
+                }
+            }
+
+            // Validate token limits
+            await this.validateTokenLimits(config);
+        }, 'Configuration validation failed');
     }
 
-    public async updateProviderConfig(
-        provider: LLMProvider, 
-        config: Partial<LLMConfig>
-    ): Promise<void> {
-        const instance = this.providers.get(provider);
-        if (!instance) {
-            throw new Error(`Provider not found: ${provider}`);
-        }
+    private async validateTokenLimits(config: LLMConfig): Promise<void> {
+        const maxTokens = {
+            groq: 8192,
+            openai: 8192,
+            anthropic: 100000,
+            google: 32768,
+            mistral: 32768
+        }[config.provider];
 
-        // Update instance configuration
-        if (instance.updateConfiguration) {
-            await instance.updateConfiguration(config);
+        const configuredMax = this.getConfiguredMaxTokens(config);
+        if (configuredMax && configuredMax > maxTokens) {
+            throw new Error(
+                `Token limit ${configuredMax} exceeds maximum of ${maxTokens} for ${config.provider}`
+            );
         }
-
-        // Re-validate the updated configuration
-        await this.validateProviderConfig({
-            ...instance.configuration,
-            ...config
-        });
     }
 
-    // ─── Runtime Operations ─────────────────────────────────────────────────────
+    private getConfiguredMaxTokens(config: LLMConfig): number | undefined {
+        if ('maxTokens' in config) return config.maxTokens;
+        if ('maxOutputTokens' in config) return config.maxOutputTokens;
+        if ('maxTokensToSample' in config) return config.maxTokensToSample;
+        return undefined;
+    }
+
+    // ─── Provider Operations ──────────────────────────────────────────────────
 
     public async generateResponse(
         provider: LLMProvider,
         input: string,
         options?: LLMRuntimeOptions
     ): Promise<LLMResponse> {
-        const instance = this.providers.get(provider);
-        if (!instance) {
-            throw new Error(`Provider not found: ${provider}`);
-        }
+        return await this.safeExecute(async () => {
+            const instance = this.providers.get(provider);
+            if (!instance) {
+                throw new Error(`Provider not found: ${provider}`);
+            }
 
-        try {
             const result = await instance.generate([input], options);
             return {
                 content: result.generations[0].text,
@@ -227,15 +235,12 @@ export class ProviderManager extends CoreManager {
                     model: instance.configuration.model,
                     provider: provider,
                     timestamp: Date.now(),
-                    latency: 0, // Will be calculated by LLMManager
+                    latency: 0,
                     requestId: result.id,
                     finishReason: result.generations[0].finishReason
                 }
             };
-        } catch (error) {
-            this.handleError(error as Error);
-            throw error;
-        }
+        }, 'Response generation failed');
     }
 
     public async *generateStream(
@@ -262,7 +267,7 @@ export class ProviderManager extends CoreManager {
                     done: false
                 };
             }
-            
+
             yield {
                 content: '',
                 metadata: {
@@ -271,12 +276,16 @@ export class ProviderManager extends CoreManager {
                 done: true
             };
         } catch (error) {
-            this.handleError(error as Error);
+            this.handleError(error as Error, 'Stream generation failed');
             throw error;
         }
     }
 
-    // ─── Private Utility Methods ──────────────────────────────────────────────────
+    // ─── Utility Methods ────────────────────────────────────────────────────
+
+    private generateInstanceId(config: LLMConfig): string {
+        return `${config.provider}-${config.model}-${Date.now()}`;
+    }
 
     private extractTokenUsage(result: any): TokenUsage {
         return {
@@ -284,6 +293,13 @@ export class ProviderManager extends CoreManager {
             completionTokens: result.usage?.completion_tokens || 0,
             totalTokens: result.usage?.total_tokens || 0
         };
+    }
+
+    public async cleanup(): Promise<void> {
+        await this.safeExecute(async () => {
+            this.providers.clear();
+            this.configs.clear();
+        }, 'Provider cleanup failed');
     }
 }
 

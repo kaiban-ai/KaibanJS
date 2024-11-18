@@ -1,40 +1,26 @@
 /**
- * @file AgenticLoopManager.ts
- * @path src/managers/domain/agent/AgenticLoopManager.ts
+ * @file agenticLoopManager.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\managers\domain\agent\agenticLoopManager.ts
  * @description Orchestrates the agentic loop execution using other managers
  *
  * @module @managers/domain/agent
  */
-import { IReactChampionAgent } from 'KaibanJS/src/utils/types/agent/base';
-import CoreManager from '../../core/CoreManager';
-import { ThinkingManager } from './ThinkingManager';
-import { ToolManager } from './ToolManager';
-import { IterationManager } from './IterationManager';
-import { StatusManager } from '../../core/StatusManager';
-
-import { AgenticLoopResult } from '@/utils/types/llm';
+import CoreManager from '../../core/coreManager';
 import type {
     AgentType,
     TaskType,
     Output,
     ParsedOutput
 } from '@/utils/types';
-
 import { AGENT_STATUS_enum } from '@/utils/types/common/enums';
+import type { IReactChampionAgent } from 'KaibanJS/src/utils/types/agent/base';
+import type { AgenticLoopResult } from '@/utils/types/llm';
 
 export class AgenticLoopManager extends CoreManager {
     private static instance: AgenticLoopManager;
-    private readonly thinkingManager: ThinkingManager;
-    private readonly toolManager: ToolManager;
-    private readonly iterationManager: IterationManager;
-    protected readonly statusManager: StatusManager; // Matches CoreManager visibility
 
     private constructor() {
         super();
-        this.thinkingManager = ThinkingManager.getInstance();
-        this.toolManager = ToolManager.getInstance();
-        this.iterationManager = IterationManager.getInstance();
-        this.statusManager = StatusManager.getInstance();
     }
 
     public static getInstance(): AgenticLoopManager {
@@ -55,14 +41,14 @@ export class AgenticLoopManager extends CoreManager {
 
         try {
             while (iterations < agent.maxIterations) {
-                await this.iterationManager.handleIterationStart({
+                await this.getDomainManager('IterationManager').handleIterationStart({
                     agent,
                     task,
                     iterations,
                     maxAgentIterations: agent.maxIterations
                 });
 
-                const thinkingResult = await this.thinkingManager.executeThinking({
+                const thinkingResult = await this.getDomainManager('ThinkingManager').executeThinking({
                     agent,
                     task,
                     ExecutableAgent: agent.executableAgent,
@@ -87,7 +73,7 @@ export class AgenticLoopManager extends CoreManager {
                 };
 
                 if (thinkingResult.parsedLLMOutput.finalAnswer) {
-                    await this.iterationManager.handleIterationEnd({
+                    await this.getDomainManager('IterationManager').handleIterationEnd({
                         agent,
                         task,
                         iterations,
@@ -124,7 +110,7 @@ export class AgenticLoopManager extends CoreManager {
                     }
                 }
 
-                await this.iterationManager.handleIterationEnd({
+                await this.getDomainManager('IterationManager').handleIterationEnd({
                     agent,
                     task,
                     iterations,
@@ -166,7 +152,7 @@ export class AgenticLoopManager extends CoreManager {
         }
 
         try {
-            const result = await this.toolManager.executeTool({
+            const result = await this.getDomainManager('ToolManager').executeTool({
                 agent,
                 task,
                 tool,
@@ -201,7 +187,7 @@ export class AgenticLoopManager extends CoreManager {
     }): Promise<AgenticLoopResult> {
         const { agent, task, iterations, lastOutput } = params;
 
-        await this.iterationManager.handleMaxIterationsError({
+        await this.getDomainManager('IterationManager').handleMaxIterationsError({
             agent,
             task,
             iterations,
@@ -220,7 +206,7 @@ export class AgenticLoopManager extends CoreManager {
     }
 
     private async handleStatus(agent: AgentType, status: keyof typeof AGENT_STATUS_enum): Promise<void> {
-        await this.statusManager.transition({
+        await this.getDomainManager('StatusManager').transition({
             currentStatus: agent.status,
             targetStatus: status,
             entity: 'agent',

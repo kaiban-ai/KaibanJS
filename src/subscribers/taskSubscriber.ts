@@ -1,5 +1,13 @@
 /**
- * Path: src/subscribers/taskSubscriber.ts
+ * @file taskSubscriber.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\subscribers\taskSubscriber.ts
+ * @description Handles task status updates and logging within the team workflow. 
+ * Provides a subscription mechanism to monitor and respond to task status changes, 
+ * ensuring detailed logging for task updates and completion metrics.
+ * 
+ * 
+ * @packageDocumentation
+ * @module @subscribers/task
  */
 
 import { UseBoundStore } from 'zustand';

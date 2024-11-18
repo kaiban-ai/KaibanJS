@@ -1,13 +1,13 @@
 /**
  * @file logger.ts
- * @path KaibanJS/src/utils/core/logger.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\core\logger.ts
  * @description Core logging implementation using LogManager
  */
 
 import log from 'loglevel';
-import { LogManager } from '../managers/core/LogManager';
-import type { LogLevel, LoggerConfig } from '@/utils/types/common/logging';
-import { isLogLevel, isLoggerConfig } from '@/utils/types/common/logging';
+import { LogManager } from '../managers/core/logManager';
+import type { LogLevel, LoggerConfig } from '../types/common/logging';
+import { isLogLevel, isLoggerConfig } from '../types/common/logging';
 
 // ─── Configuration ───────────────────────────────────────────────────────────
 
@@ -38,32 +38,28 @@ export function setLogLevel(level: LogLevel): void {
     log.setLevel(level);
 }
 
+// Get the LogManager instance
+const logManager = LogManager.getInstance();
+
 export function createLogger(name: string) {
     return {
         ...log.getLogger(name),
         error: (message: unknown, metadata?: Record<string, unknown>) => {
-            const logEntry = LogManager.createMessageLog({
-                role: 'system',
-                content: String(message),
-                metadata
-            });
-            log.error(logEntry.logDescription);
+            // Create an error object if metadata is provided
+            const error = metadata ? new Error(String(message)) : undefined;
+            if (error && metadata) {
+                Object.assign(error, metadata);
+            }
+            logManager.error(String(message), undefined, undefined, error);
+            log.error(String(message));
         },
         warn: (message: unknown, metadata?: Record<string, unknown>) => {
-            const logEntry = LogManager.createMessageLog({
-                role: 'system',
-                content: String(message),
-                metadata
-            });
-            log.warn(logEntry.logDescription);
+            logManager.warn(String(message), undefined, undefined);
+            log.warn(String(message));
         },
         info: (message: unknown, metadata?: Record<string, unknown>) => {
-            const logEntry = LogManager.createMessageLog({
-                role: 'system',
-                content: String(message),
-                metadata
-            });
-            log.info(logEntry.logDescription);
+            logManager.info(String(message), undefined, undefined);
+            log.info(String(message));
         }
     };
 }

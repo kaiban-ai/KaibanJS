@@ -1,10 +1,9 @@
 /**
  * @file base.ts
- * @path KaibanJS/src/utils/types/agent/base.ts
- * @description Core agent interfaces and types
+ * @path src/utils/types/agent/base.ts
+ * @description Core agent interfaces and types that serve as the foundation for the agent system
  *
- * @packageDocumentation
- * @module @types/agent
+ * @module @types/agent/base
  */
 
 import { Tool } from "langchain/tools";
@@ -12,50 +11,61 @@ import { AGENT_STATUS_enum } from "../common/enums";
 import { ErrorType } from "../common";
 import { BaseMessage } from "@langchain/core/messages";
 import { LLMConfig } from "../llm";
-import { Output, ParsedOutput } from "../llm/responses";
-import { LLMInstance, AgenticLoopResult } from "../llm/instance";
 import { TeamStore } from "../team/base";
+import { LLMInstance, AgenticLoopResult } from "../llm/instance";
 import { TaskType, FeedbackObject } from "../task/base";
 import { IMessageHistory } from "../messaging/history";
+import { ValidationSchema } from "../common/validation";
 import { REACTChampionAgentPrompts } from "./prompts";
+import { Runnable } from "@langchain/core/runnables";
+import { ChatMessageHistory } from "langchain/stores/message/in_memory";
+
+// ─── Core Types ────────────────────────────────────────────────────────────────
 
 export type StatusType = keyof typeof AGENT_STATUS_enum;
 
-export interface BaseAgentConfig {
-    id?: string;
-    name: string;
-    role: string;
-    goal: string;
-    background?: string;
-    tools?: Tool[];
-    maxIterations?: number;
-    store?: TeamStore;
-    status?: StatusType;
-    env?: Record<string, unknown>;
-    llmConfig: LLMConfig;
-    llmSystemMessage?: string;
-    forceFinalAnswer?: boolean;
-    promptTemplates?: REACTChampionAgentPrompts;
-    messageHistoryConfig?: Partial<IMessageHistory>;
+/**
+ * Agent capabilities interface
+ */
+export interface IAgentCapabilities {
+    canThink: boolean;
+    canUseTools: boolean;
+    canLearn: boolean;
+    supportedToolTypes: string[];
+    maxConcurrentTasks?: number;
+    memoryCapacity?: number;
 }
 
+/**
+ * Core agent interface
+ */
 export interface IBaseAgent {
-    id: string;
-    name: string;
-    role: string;
-    goal: string;
-    background: string;
+    // Core properties
+    readonly id: string;
+    readonly name: string;
+    readonly role: string;
+    readonly goal: string;
+    readonly background: string;
+    readonly version: string;
+    readonly capabilities: IAgentCapabilities;
+    readonly validationSchema: ValidationSchema;
+
+    // Configuration
     tools: Tool[];
     maxIterations: number;
     store: TeamStore;
     status: StatusType;
     env: Record<string, unknown> | null;
+
+    // LLM-related
     llmInstance: LLMInstance | null;
     llmConfig: LLMConfig;
     llmSystemMessage: string | null;
     forceFinalAnswer: boolean;
     promptTemplates: REACTChampionAgentPrompts;
     messageHistory: IMessageHistory;
+
+    // Methods
     initialize(store: TeamStore, env: Record<string, unknown>): void;
     setStore(store: TeamStore): void;
     setStatus(status: StatusType): void;
@@ -64,8 +74,9 @@ export interface IBaseAgent {
     workOnFeedback(task: TaskType, feedbackList: FeedbackObject[], context: string): Promise<void>;
     normalizeLlmConfig(llmConfig: LLMConfig): LLMConfig;
     createLLMInstance(): void;
-    
-    // New methods added to the interface
+    cleanup?(): Promise<void> | void;
+
+    // Optional analytics methods
     getMetrics?(): {
         totalTasks: number;
         completedTasks: number;
@@ -92,12 +103,20 @@ export interface IBaseAgent {
             };
         };
     };
-    
-    cleanup?(): Promise<void> | void;
 }
 
+interface ExecutableAgent {
+  runnable: Runnable;
+  getMessageHistory: () => ChatMessageHistory;
+  inputMessagesKey: string;
+  historyMessagesKey: string;
+}
+
+/**
+ * React Champion agent interface extending base agent
+ */
 export interface IReactChampionAgent extends IBaseAgent {
-    executableAgent: any;
+    executableAgent: ExecutableAgent;
     messageHistory: IMessageHistory;
     workOnTask(task: TaskType): Promise<AgenticLoopResult>;
     createLLMInstance(): void;
@@ -106,12 +125,15 @@ export interface IReactChampionAgent extends IBaseAgent {
     handleThinkingError(params: { task: TaskType; error: ErrorType }): void;
     handleMaxIterationsError(params: { task: TaskType; iterations: number; maxAgentIterations: number }): void;
     handleAgenticLoopError(params: { task: TaskType; error: ErrorType; iterations: number; maxAgentIterations: number }): void;
-    handleTaskCompleted(params: { task: TaskType; parsedResultWithFinalAnswer: ParsedOutput; iterations: number; maxAgentIterations: number }): void;
-    handleFinalAnswer(params: { agent: IBaseAgent; task: TaskType; parsedLLMOutput: ParsedOutput }): ParsedOutput;
-    handleIssuesParsingLLMOutput(params: { agent: IBaseAgent; task: TaskType; output: Output; llmOutput: string }): string;
+    handleTaskCompleted(params: { task: TaskType; parsedResultWithFinalAnswer: any; iterations: number; maxAgentIterations: number }): void;
+    handleFinalAnswer(params: { agent: IBaseAgent; task: TaskType; parsedLLMOutput: any }): any;
+    handleIssuesParsingLLMOutput(params: { agent: IBaseAgent; task: TaskType; output: any; llmOutput: string }): string;
 }
 
-export interface SystemAgent extends IBaseAgent {
+/**
+ * System agent interface for internal operations
+ */
+export interface ISystemAgent extends IBaseAgent {
     readonly id: 'system';
     readonly name: 'System';
     readonly role: 'System Message Handler';
@@ -121,7 +143,10 @@ export interface SystemAgent extends IBaseAgent {
     readonly status: StatusType;
 }
 
+// Union type for any agent type
 export type AgentType = IBaseAgent | IReactChampionAgent;
+
+// ─── Type Guards ─────────────────────────────────────────────────────────────
 
 export const AgentTypeGuards = {
     isBaseAgent: (agent: unknown): agent is IBaseAgent => {
@@ -133,21 +158,41 @@ export const AgentTypeGuards = {
             'role' in agent &&
             'goal' in agent &&
             'tools' in agent &&
-            'status' in agent
+            'status' in agent &&
+            'capabilities' in agent
         );
     },
+
     isReactChampionAgent: (agent: unknown): agent is IReactChampionAgent => {
         return (
             AgentTypeGuards.isBaseAgent(agent) &&
             'executableAgent' in agent &&
-            'messageHistory' in agent
+            'messageHistory' in agent &&
+            typeof agent.handleIterationStart === 'function' &&
+            typeof agent.handleIterationEnd === 'function'
         );
     },
-    isSystemAgent: (agent: unknown): agent is SystemAgent => {
+
+    isSystemAgent: (agent: unknown): agent is ISystemAgent => {
         return (
             AgentTypeGuards.isBaseAgent(agent) &&
             agent.id === 'system' &&
-            agent.name === 'System'
+            agent.name === 'System' &&
+            agent.role === 'System Message Handler'
+        );
+    },
+
+    hasAgentCapabilities: (value: unknown): value is IAgentCapabilities => {
+        if (typeof value !== 'object' || value === null) return false;
+        const caps = value as Partial<IAgentCapabilities>;
+        return (
+            typeof caps.canThink === 'boolean' &&
+            typeof caps.canUseTools === 'boolean' &&
+            typeof caps.canLearn === 'boolean' &&
+            Array.isArray(caps.supportedToolTypes)
         );
     }
 };
+
+// Export type utilities
+export { ValidationSchema };

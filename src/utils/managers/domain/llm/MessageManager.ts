@@ -1,33 +1,20 @@
 /**
- * @file MessageManager.ts
- * @path src/managers/domain/llm/MessageManager.ts
- * @description Centralized message handling and history management
+ * @file messageManager.ts
+ * @path src/utils/managers/domain/llm/messageManager.ts
+ * @description Centralized message handling and history management that integrates with CoreManager
  *
  * @module @managers/domain/llm
  */
 
-import CoreManager from '../../core/CoreManager';
-import errorHandler from '../handlers/errorHandler';
-import { MessageTypeGuards } from '@/utils/types/messaging/history';
+import CoreManager from '../../core/coreManager';
 import { BaseMessage, HumanMessage, AIMessage, SystemMessage, FunctionMessage } from "@langchain/core/messages";
-
-// Import types from canonical locations
 import type { 
-    MessageRole,
     MessageContext,
     MessageContent,
     MessageMetadataFields,
-    FunctionCall,
-    BaseMessageMetadataFields,
-    ChatMessageMetadataFields
+    MessageRole,
+    FunctionCall 
 } from '@/utils/types/messaging/base';
-
-import type {
-    MessageHistoryConfig,
-    MessageHistoryState,
-    MessageHistoryMetrics,
-    IMessageHistory
-} from '@/utils/types/messaging/history';
 
 import type {
     MessageHandlerConfig,
@@ -38,111 +25,82 @@ import type {
 } from '@/utils/types/messaging/handlers';
 
 /**
- * Centralized message management implementation
+ * Message management implementation with CoreManager integration
  */
-export class MessageManager extends CoreManager implements IMessageHistory {
+export class MessageManager extends CoreManager {
     private static instance: MessageManager;
-    private messages: BaseMessage[] = [];
-    private config: Required<MessageHistoryConfig>;
+    private readonly messages: BaseMessage[];
+    private readonly messageMetadata: Map<string, MessageMetadataFields>;
+    private readonly messageValidators: ((message: BaseMessage) => boolean)[];
 
-    private constructor(config: MessageHistoryConfig = {}) {
+    private constructor() {
         super();
-        this.config = {
-            maxMessages: config.maxMessages ?? 1000,
-            maxTokens: config.maxTokens ?? 8192,
-            pruningStrategy: config.pruningStrategy ?? 'fifo',
-            retentionPeriod: config.retentionPeriod ?? 24 * 60 * 60 * 1000,
-            persistenceEnabled: config.persistenceEnabled ?? false,
-            compressionEnabled: config.compressionEnabled ?? false
-        };
+        this.messages = [];
+        this.messageMetadata = new Map();
+        this.messageValidators = [];
+        this.registerDomainManager('MessageManager', this);
     }
 
-    public static getInstance(config?: MessageHistoryConfig): MessageManager {
+    public static getInstance(): MessageManager {
         if (!MessageManager.instance) {
-            MessageManager.instance = new MessageManager(config);
+            MessageManager.instance = new MessageManager();
         }
         return MessageManager.instance;
     }
 
-    // ─── Message History Operations ─────────────────────────────────────────────
+    // ─── Message Operations ────────────────────────────────────────────────────
 
-    /**
-     * Add message to history
-     */
     public async addMessage(message: BaseMessage): Promise<void> {
-        if (!this.validateMessage(message)) {
-            throw new Error("Invalid message type");
-        }
+        return await this.safeExecute(async () => {
+            if (!this.validateMessage(message)) {
+                throw new Error('Invalid message format');
+            }
 
-        this.messages.push(message);
-        await this.enforceLimits();
-        this.log(`Added ${message.constructor.name} to history`, 'debug');
+            this.messages.push(message);
+            await this.updateMetadata(message);
+            this.logManager.debug('Message added', undefined, message.type);
+        }, 'Message addition failed');
     }
 
-    /**
-     * Get all messages in history
-     */
-    public async getMessages(): Promise<BaseMessage[]> {
-        return this.messages;
-    }
-
-    /**
-     * Clear message history
-     */
-    public async clear(): Promise<void> {
-        this.messages = [];
-        this.log('Message history cleared', 'info');
-    }
-
-    /**
-     * Get current message count
-     */
-    public get length(): number {
-        return this.messages.length;
-    }
-
-    // ─── Message Type Operations ──────────────────────────────────────────────
-
-    /**
-     * Add user message
-     */
     public async addUserMessage(content: string): Promise<void> {
         await this.addMessage(new HumanMessage(content));
     }
 
-    /**
-     * Add AI message
-     */
     public async addAIMessage(content: string): Promise<void> {
         await this.addMessage(new AIMessage(content));
     }
 
-    /**
-     * Add system message
-     */
     public async addSystemMessage(content: string): Promise<void> {
         await this.addMessage(new SystemMessage(content));
     }
 
-    /**
-     * Add function message
-     */
     public async addFunctionMessage(name: string, content: string): Promise<void> {
         await this.addMessage(new FunctionMessage(content, name));
     }
 
+    public async getMessages(): Promise<BaseMessage[]> {
+        return this.messages;
+    }
+
+    public async clear(): Promise<void> {
+        return await this.safeExecute(async () => {
+            this.messages.length = 0;
+            this.messageMetadata.clear();
+            this.logManager.info('Message history cleared');
+        }, 'Message history clearing failed');
+    }
+
     // ─── Message Processing ─────────────────────────────────────────────────────
 
-    /**
-     * Process a message with validation and metadata
-     */
     public async processMessage(
         content: string,
         role: MessageRole = 'assistant',
         context?: MessageContext
     ): Promise<MessageProcessResult> {
-        try {
-            this.validateMessageContent(content, role);
+        return await this.safeExecute(async () => {
+            if (!this.validateMessageContent(content, role)) {
+                throw new Error('Invalid message content or role');
+            }
 
             const message = await this.buildMessage({
                 role,
@@ -160,15 +118,9 @@ export class MessageManager extends CoreManager implements IMessageHistory {
                     ...context
                 }
             };
-
-        } catch (error) {
-            return this.handleProcessingError(error);
-        }
+        }, 'Message processing failed');
     }
 
-    /**
-     * Process streaming messages
-     */
     public async processStream(
         content: string,
         config: MessageStreamConfig
@@ -176,7 +128,9 @@ export class MessageManager extends CoreManager implements IMessageHistory {
         const { bufferSize = 100, onToken, onComplete } = config;
         let buffer = '';
 
-        try {
+        return await this.safeExecute(async () => {
+            const streamingManager = this.getDomainManager('StreamingManager');
+            
             for (const chunk of content) {
                 buffer += chunk;
 
@@ -193,133 +147,39 @@ export class MessageManager extends CoreManager implements IMessageHistory {
             if (onComplete) {
                 await onComplete(content);
             }
-
-        } catch (error) {
-            await errorHandler.handleError({
-                error: error as Error,
-                context: { content: buffer }
-            });
-        }
+        }, 'Stream processing failed');
     }
 
-    // ─── State & Metrics ───────────────────────────────────────────────────────
+    // ─── Protected Helper Methods ───────────────────────────────────────────────
 
-    /**
-     * Get current history state
-     */
-    public getState(): MessageHistoryState {
-        return {
-            messages: this.messages,
-            metadata: {
-                totalMessages: this.messages.length,
-                totalTokens: this.calculateTotalTokens(),
-                lastPruneTime: Date.now()
-            }
-        };
-    }
-
-    /**
-     * Get history metrics
-     */
-    public getMetrics(): MessageHistoryMetrics {
-        const messageCount = this.messages.length;
-        const tokenCount = this.calculateTotalTokens();
-        
-        return {
-            messageCount,
-            tokenCount,
-            averageMessageSize: messageCount > 0 ? tokenCount / messageCount : 0,
-            pruneCount: 0,
-            compressionRatio: this.config.compressionEnabled ? this.calculateCompressionRatio() : undefined,
-            loadTimes: { average: 0, max: 0, min: 0 }
-        };
-    }
-
-    // ─── Private Helper Methods ───────────────────────────────────────────────
-
-    /**
-     * Enforce message limits
-     */
-    private async enforceLimits(): Promise<void> {
-        if (this.messages.length > this.config.maxMessages) {
-            await this.prune();
-        }
-    }
-
-    /**
-     * Prune message history
-     */
-    private async prune(): Promise<void> {
-        switch (this.config.pruningStrategy) {
-            case 'fifo':
-                this.messages = this.messages.slice(-this.config.maxMessages);
-                break;
-            case 'lru':
-                // TODO: Implement LRU pruning
-                this.messages = this.messages.slice(-this.config.maxMessages);
-                break;
-            case 'relevance':
-                // TODO: Implement relevance-based pruning
-                this.messages = this.messages.slice(-this.config.maxMessages);
-                break;
-            default:
-                this.messages = this.messages.slice(-this.config.maxMessages);
-        }
-        this.log('Message history pruned', 'warn');
-    }
-
-    /**
-     * Calculate total tokens
-     */
-    private calculateTotalTokens(): number {
-        return this.messages.reduce((total, message) => {
-            const content = typeof message.content === 'string' ? message.content : JSON.stringify(message.content);
-            return total + Math.ceil(content.length / 4);
-        }, 0);
-    }
-
-    /**
-     * Calculate compression ratio
-     */
-    private calculateCompressionRatio(): number {
-        if (!this.config.compressionEnabled) return 0;
-        const rawSize = this.messages.reduce((total, message) => total + JSON.stringify(message).length, 0);
-        return rawSize > 0 ? 0.5 : 0; // Placeholder for actual compression
-    }
-
-    /**
-     * Create metadata for message
-     */
-    private createMetadata(metadata?: MessageMetadataFields): MessageMetadataFields {
-        return {
-            messageId: metadata?.messageId || crypto.randomUUID(),
+    protected async updateMetadata(message: BaseMessage): Promise<void> {
+        const metadata: MessageMetadataFields = {
+            messageId: crypto.randomUUID(),
             timestamp: Date.now(),
-            ...metadata
+            role: message.type,
+            content: message.content
         };
+
+        this.messageMetadata.set(metadata.messageId, metadata);
     }
 
-    /**
-     * Validate message content
-     */
-    private validateMessageContent(content: string | MessageContent, role: MessageRole): boolean {
+    protected validateMessage(message: BaseMessage): boolean {
+        if (!message.content || !message.type) {
+            return false;
+        }
+
+        return this.messageValidators.every(validator => validator(message));
+    }
+
+    protected validateMessageContent(content: string | MessageContent, role: MessageRole): boolean {
         return content !== null && content !== undefined && content !== '';
     }
 
-    /**
-     * Validate message
-     */
-    private validateMessage(message: BaseMessage): boolean {
-        return MessageTypeGuards.isBaseMessage(message);
-    }
-
-    /**
-     * Handle processing error
-     */
-    private handleProcessingError(error: unknown): MessageProcessResult {
-        this.log('Message processing error:', 'error', error as Error);
+    protected createMetadata(context?: MessageContext): MessageMetadataFields {
         return {
-            success: false,
-            error: error instanceof Error ? error : new Error(String(error))
+            messageId: crypto.randomUUID(),
+            timestamp: Date.now(),
+            ...context
         };
     }
 }

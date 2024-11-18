@@ -1,13 +1,13 @@
 /**
- * @file StatusManager.ts
- * @path src/managers/core/status/StatusManager.ts
+ * @file statusManager.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\managers\core\statusManager.ts
  * @description Core status management implementation centralizing status transitions and validation
  */
 
-import { ErrorManager } from './ErrorManager';
-import { LogManager } from './LogManager';
-import { transitionRules } from './TransitionRules';
-import { StatusValidator } from './StatusValidator';
+import { ErrorManager } from './errorManager';
+import { LogManager } from './logManager';
+import { TransitionRules } from './transitionRules';
+import { StatusValidator } from './statusValidator';
 import { EnumTypeGuards } from '../../types/common/enums';
 import { toErrorType } from '../../types/common/errors';
 
@@ -370,7 +370,7 @@ export class StatusManager {
      * Get available transitions for status
      */
     public getAvailableTransitions(status: StatusType, entity: StatusEntity): StatusType[] {
-        const rules = transitionRules.get(entity);
+        const rules = TransitionRules.get(entity);
         if (!rules) return [];
 
         return rules

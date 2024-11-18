@@ -1,49 +1,41 @@
 /**
- * @file ValidationManager.ts
- * @path src/managers/domain/task/ValidationManager.ts
- * @description Domain manager for task validation and constraints
+ * @file validationManager.ts
+ * @path src/utils/managers/domain/task/validationManager.ts
+ * @description Task validation management implementation using service registry pattern
  *
  * @module @managers/domain/task
  */
 
-import CoreManager from '../../core/CoreManager';
-import { ErrorManager } from '../../core/ErrorManager';
-import { LogManager } from '../../core/LogManager';
-import { DefaultFactory } from '../../../factories/defaultFactory';
-import { MetadataFactory } from '../../../factories/metadataFactory';
-import { StatusManager } from '../../core/StatusManager';
+import CoreManager from '../../core/coreManager';
+import { TASK_STATUS_enum } from '@/utils/types/common/enums';
+import { DefaultFactory } from '@/utils/factories/defaultFactory';
 
-// Import types from canonical locations
 import type { 
     TaskType,
-    TaskValidationResult,
     TaskValidationParams,
-    HandlerResult
+    TaskValidationResult,
+    HandlerResult 
 } from '@/utils/types/task';
 
 import type { 
     ValidationConfig,
-    ValidationRule 
+    ValidationRule,
+    ValidationFunction 
 } from '@/utils/types/common/validation';
 
-import { TASK_STATUS_enum } from '@/utils/types/common/enums';
-
 /**
- * Manages task validation and constraint checking
+ * Task validation management implementation
  */
 export class ValidationManager extends CoreManager {
     private static instance: ValidationManager;
-    private readonly errorManager: ErrorManager;
-    private readonly logManager: LogManager;
-    private readonly statusManager: StatusManager;
     private readonly validationRules: Map<string, ValidationRule[]>;
+    private readonly validators: Map<string, ValidationFunction<unknown>[]>;
 
     private constructor() {
         super();
-        this.errorManager = ErrorManager.getInstance();
-        this.logManager = LogManager.getInstance();
-        this.statusManager = StatusManager.getInstance();
         this.validationRules = new Map();
+        this.validators = new Map();
+        this.registerDomainManager('ValidationManager', this);
     }
 
     public static getInstance(): ValidationManager {
@@ -53,15 +45,15 @@ export class ValidationManager extends CoreManager {
         return ValidationManager.instance;
     }
 
-    // ─── Task Validation Methods ─────────────────────────────────────────────────
+    // ─── Validation Methods ────────────────────────────────────────────────────
 
     /**
-     * Validate task with optional configuration
+     * Validate task with comprehensive validation
      */
     public async validateTask(params: TaskValidationParams): Promise<HandlerResult> {
         const { task, context = {}, options = {} } = params;
 
-        try {
+        return await this.safeExecute(async () => {
             const validationResult = await this.performValidation(task, options);
             if (!validationResult.isValid) {
                 await this.handleValidationFailure(task, validationResult);
@@ -75,11 +67,7 @@ export class ValidationManager extends CoreManager {
             const log = task.store?.prepareNewLog({
                 task,
                 logDescription: 'Task validation successful',
-                metadata: MetadataFactory.forTask(
-                    DefaultFactory.createTaskStats(),
-                    null,
-                    DefaultFactory.createCostDetails()
-                ),
+                metadata: this.prepareMetadata({ task, context }),
                 logType: 'TaskStatusUpdate',
                 taskStatus: task.status
             });
@@ -95,37 +83,31 @@ export class ValidationManager extends CoreManager {
                 data: validationResult
             };
 
-        } catch (error) {
-            return this.handleValidationError(task, error, context);
-        }
+        }, 'Task validation failed');
     }
 
     /**
-     * Add validation rule for task type
+     * Add task validation rule
      */
-    public addValidationRule(taskType: string, rule: ValidationRule): void {
-        const rules = this.validationRules.get(taskType) || [];
+    public addValidationRule(ruleId: string, rule: ValidationRule): void {
+        const rules = this.validationRules.get(ruleId) || [];
         rules.push(rule);
-        this.validationRules.set(taskType, rules);
+        this.validationRules.set(ruleId, rules);
     }
 
     /**
      * Remove validation rule
      */
-    public removeValidationRule(taskType: string, ruleId: string): void {
-        const rules = this.validationRules.get(taskType);
-        if (rules) {
-            const filtered = rules.filter(rule => rule.id !== ruleId);
-            this.validationRules.set(taskType, filtered);
-        }
+    public removeValidationRule(ruleId: string): void {
+        this.validationRules.delete(ruleId);
     }
 
-    // ─── Private Helper Methods ───────────────────────────────────────────────────
+    // ─── Protected Methods ─────────────────────────────────────────────────────
 
     /**
-     * Perform comprehensive task validation
+     * Perform comprehensive validation
      */
-    private async performValidation(
+    protected async performValidation(
         task: TaskType,
         options: ValidationConfig = {}
     ): Promise<TaskValidationResult> {
@@ -135,9 +117,10 @@ export class ValidationManager extends CoreManager {
         if (!task.title) errors.push('Task title is required');
         if (!task.description) errors.push('Task description is required');
         if (!task.agent) errors.push('Task must have an assigned agent');
+        if (!task.expectedOutput) errors.push('Expected output is required');
 
-        // Custom rules validation
-        const rules = this.validationRules.get(task.constructor.name) || [];
+        // Rule validation
+        const rules = this.validationRules.get(task.id) || [];
         for (const rule of rules) {
             try {
                 const result = await rule.validate(task);
@@ -147,12 +130,6 @@ export class ValidationManager extends CoreManager {
             } catch (error) {
                 errors.push(`Rule ${rule.id} validation failed: ${error instanceof Error ? error.message : String(error)}`);
             }
-        }
-
-        // Dependency validation
-        if (options.validateDependencies) {
-            const dependencyErrors = await this.validateDependencies(task);
-            errors.push(...dependencyErrors);
         }
 
         // Custom validator execution
@@ -180,54 +157,13 @@ export class ValidationManager extends CoreManager {
     }
 
     /**
-     * Validate task dependencies
-     */
-    private async validateDependencies(task: TaskType): Promise<string[]> {
-        const errors: string[] = [];
-        const state = task.store?.getState();
-        if (!state) return ['Task store not available'];
-
-        // Check for circular dependencies
-        const visited = new Set<string>();
-        const visiting = new Set<string>();
-
-        const checkCyclicDependencies = (taskId: string): boolean => {
-            if (visiting.has(taskId)) {
-                errors.push(`Circular dependency detected involving task ${taskId}`);
-                return true;
-            }
-            if (visited.has(taskId)) return false;
-
-            visiting.add(taskId);
-
-            // Implementation would check actual task dependencies here
-            // This is a placeholder for the dependency check logic
-            const dependencies: string[] = []; // Would be populated from task dependencies
-
-            for (const depId of dependencies) {
-                if (checkCyclicDependencies(depId)) {
-                    return true;
-                }
-            }
-
-            visiting.delete(taskId);
-            visited.add(taskId);
-            return false;
-        };
-
-        checkCyclicDependencies(task.id);
-
-        return errors;
-    }
-
-    /**
      * Handle validation failure
      */
-    private async handleValidationFailure(
+    protected async handleValidationFailure(
         task: TaskType,
         result: TaskValidationResult
     ): Promise<void> {
-        await this.statusManager.transition({
+        await this.handleStatusTransition({
             currentStatus: task.status,
             targetStatus: TASK_STATUS_enum.ERROR,
             entity: 'task',
@@ -257,40 +193,13 @@ export class ValidationManager extends CoreManager {
     }
 
     /**
-     * Handle validation error
+     * Create default validation options
      */
-    private handleValidationError(
-        task: TaskType,
-        error: unknown,
-        context: Record<string, unknown>
-    ): HandlerResult {
-        this.logManager.error('Task validation error:', error);
-
-        const log = task.store?.prepareNewLog({
-            task,
-            logDescription: `Task validation error: ${error instanceof Error ? error.message : String(error)}`,
-            metadata: {
-                error,
-                context,
-                timestamp: Date.now()
-            },
-            logType: 'TaskStatusUpdate',
-            taskStatus: TASK_STATUS_enum.ERROR
-        });
-
-        if (log && task.store) {
-            task.store.setState(state => ({
-                workflowLogs: [...state.workflowLogs, log]
-            }));
-        }
-
+    protected createDefaultOptions(): ValidationConfig {
         return {
-            success: false,
-            error: error instanceof Error ? error : new Error(String(error)),
-            data: {
-                taskId: task.id,
-                context
-            }
+            strict: true,
+            validateDependencies: true,
+            customValidators: []
         };
     }
 }

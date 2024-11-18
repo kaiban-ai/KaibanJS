@@ -1,6 +1,6 @@
 /**
- * @file LogManager.ts
- * @path src/managers/core/LogManager.ts
+ * @file logManager.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\managers\core\logManager.ts
  * @description Centralized logging implementation
  * 
  * @module @core

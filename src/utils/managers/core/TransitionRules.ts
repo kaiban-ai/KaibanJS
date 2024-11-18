@@ -1,6 +1,6 @@
 /**
- * @file TransitionRules.ts
- * @path src/managers/core/TransitionRules.ts
+ * @file transitionRules.ts
+ * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\managers\core\transitionRules.ts
  * @description Status transition rules and validation for all entities
  * 
  * @module @core
@@ -20,7 +20,7 @@ import {
 /**
  * Core status transition rules for all entities
  */
-export const transitionRules: Map<StatusEntity, StatusTransitionRule[]> = new Map([
+export const TransitionRules: Map<StatusEntity, StatusTransitionRule[]> = new Map([
     // ─── Agent Status Rules ────────────────────────────────────────────────────
     ['agent', [
         // Initial transitions
@@ -282,7 +282,7 @@ export function isTransitionAllowed(
         return false;
     }
 
-    const entityRules = transitionRules.get(entity);
+    const entityRules = TransitionRules.get(entity);
     if (!entityRules) return false;
 
     return entityRules.some(rule => {
@@ -310,7 +310,7 @@ export function getAvailableTransitions(
         return [];
     }
 
-    const entityRules = transitionRules.get(entity);
+    const entityRules = TransitionRules.get(entity);
     if (!entityRules) return [];
 
     return entityRules
@@ -330,4 +330,4 @@ export const TransitionUtils = {
     getAvailableTransitions
 };
 
-export default transitionRules;
+export default TransitionRules;
