@@ -39,7 +39,57 @@ The YouTube Captions Scraper tool allows agents to extract captions from YouTube
 
 Learn more: https://developers.google.com/youtube/v3
 
-Getting YouTube API Access Token
+#### Guide: Obtain YouTube API Authorization Token Without Custom Credentials
+
+This guide will help you get a YouTube API authorization token for testing purposes using Google’s OAuth 2.0 Playground without requiring a Client ID and Client Secret.
+
+##### **Step 1: Access OAuth 2.0 Playground**
+
+- Go to the [OAuth 2.0 Playground](https://developers.google.com/oauthplayground/).
+- This tool allows you to interact with Google APIs and generate authorization tokens.
+
+##### **Step 2: Select YouTube API Scopes**
+
+- Look for the **YouTube Data API scopes** in Step 1 of the Playground.
+- Choose the appropriate scopes depending on the API actions you want to test:
+  - **`https://www.googleapis.com/auth/youtube`**: Full access to manage YouTube account.
+  - **`https://www.googleapis.com/auth/youtube.readonly`**: Read-only access to YouTube account.
+  - **`https://www.googleapis.com/auth/youtube.force-ssl`**: Allows uploading, managing, and retrieving video content securely, including captions.
+
+##### **Step 3: Authorize the APIs**
+
+- Click the **"Authorize APIs"** button.
+- A Google sign-in page will appear:
+  - Sign in with your Google account.
+  - Grant the requested permissions.
+
+##### **Step 4: Exchange Authorization Code for Tokens**
+
+- After successful authorization, go to Step 2 of the Playground.
+- Click the **"Exchange authorization code for tokens"** button.
+- The Playground will generate:
+  - **Access Token:** Use this token to make API requests.
+  - (Optional) **Refresh Token:** If available, use this to get a new access token when the current one expires.
+
+##### **Step 5: Test API Requests**
+
+- Use Step 3 of the Playground to test API requests directly:
+  1. Enter the YouTube API endpoint (e.g., `https://www.googleapis.com/youtube/v3/videos`).
+  2. Add required parameters and headers.
+  3. Use the generated access token for authentication.
+
+##### **Limitations**
+
+- **Short-lived Access Token:** The token typically expires in 1 hour.
+- **Default Credentials Restrictions:** Some advanced API features may not be accessible.
+- **No Persistent Refresh Token:** A new authorization process might be needed for extended testing.
+
+##### **Recommendation for Advanced Testing**
+
+For more comprehensive testing, create your own project in the [Google Cloud Console](https://console.cloud.google.com/) and obtain a **Client ID** and **Client Secret** to fully unlock the YouTube API features.
+
+#### Getting YouTube API Access Token
+
 To use the YouTube Captions Scraper tool, you need to obtain a YouTube API access token. Follow these steps:
 
 - Go to the Google Cloud Console.
