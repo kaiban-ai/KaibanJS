@@ -156,4 +156,23 @@ describe('YouTubeCaptionsScraper', () => {
     const result = await tool._call(input);
     expect(result).toBe('Invalid video URL: Unable to extract video ID');
   });
+
+  test('YouTubeCaptionsScraper is exported correctly in both paths', () => {
+    const {
+      YouTubeCaptionsScraper,
+    } = require('../../dist/youtube-captions-scraper/index.cjs.js');
+    const {
+      YouTubeCaptionsScraper: YouTubeCaptionsScraperMain,
+    } = require('../../dist/index.cjs.js');
+
+    // Check that both imports are constructor functions
+    expect(typeof YouTubeCaptionsScraper).toBe('function');
+    expect(typeof YouTubeCaptionsScraperMain).toBe('function');
+
+    // Check they have the same name and properties
+    expect(YouTubeCaptionsScraper.name).toBe(YouTubeCaptionsScraperMain.name);
+    expect(Object.keys(YouTubeCaptionsScraper.prototype)).toEqual(
+      Object.keys(YouTubeCaptionsScraperMain.prototype)
+    );
+  });
 });
