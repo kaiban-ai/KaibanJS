@@ -93,6 +93,12 @@ Key features:
 
 Learn more: https://www.wolframalpha.com/
 
+### 6. Github Issues
+
+Github Issues is a tool that allows agents to interact with the Github API, enabling them to fetch issues from a repository.
+
+Learn more: https://docs.github.com/en/rest/issues/issues
+
 ## Development
 
 ### Local Setup

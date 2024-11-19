@@ -13,6 +13,7 @@ const toolFolders = [
   'exa',
   'wolfram-alpha',
   'youtube-captions-scraper',
+  'github-issues',
 ]; // Add more folder names as needed
 
 const toolConfigs = toolFolders.map((tool) => {

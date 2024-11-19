@@ -149,4 +149,19 @@ describe('Firecrawl', () => {
 
     expect(result).toBe('An unexpected error occurred: Network Error');
   });
+
+  test('Firecrawl is exported correctly in both paths', () => {
+    const { Firecrawl } = require('../../dist/firecrawl/index.cjs.js');
+    const { Firecrawl: FirecrawlMain } = require('../../dist/index.cjs.js');
+
+    // Check that both imports are constructor functions
+    expect(typeof Firecrawl).toBe('function');
+    expect(typeof FirecrawlMain).toBe('function');
+
+    // Check they have the same name and properties
+    expect(Firecrawl.name).toBe(FirecrawlMain.name);
+    expect(Object.keys(Firecrawl.prototype)).toEqual(
+      Object.keys(FirecrawlMain.prototype)
+    );
+  });
 });
