@@ -4,7 +4,7 @@
  * @description Task store state interface and initial state definition
  */
 
-import { PrepareNewLogParams } from '@/utils/types/team';
+import { PrepareNewLogParams } from '@/types/team';
 import { 
     TaskType, 
     TaskStats,

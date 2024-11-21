@@ -4,7 +4,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { createTeamStore, useTeamStore } from '@/stores/teamStore';
+import { createTeamStore, useTeamStore } from '@/stores/teamStore/teamIndex';
 import { PrettyError } from '@/utils/core/errors';
 import { logger } from '@/utils/core/logger';
 import { DefaultFactory } from '@/utils/factories';
@@ -25,14 +25,14 @@ import type {
     TeamEnvironment,
     TeamInputs,
     TeamStoreConfig
-} from '@/utils/types/team';
+} from '@/types/team';
 
 import type {
     WorkflowStartResult,
     WorkflowResult,
     WorkflowStats,
     WorkflowError
-} from '@/utils/types/workflow';
+} from '@/types/workflow';
 
 import type {
     AgentType,
@@ -45,7 +45,7 @@ import type {
  
 import type { 
     ModelStats 
-} from '@/utils/types/workflow';
+} from '@/types/workflow';
 
 import { 
     TASK_STATUS_enum, 

@@ -6,30 +6,30 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { Tool } from "langchain/tools";
-import { BaseAgentManager } from '../utils/managers/domain/agent/baseAgentManager';
-import { LLMManager } from '../utils/managers/domain/llm/llmManager';
-import { TaskManager } from '../utils/managers/domain/task/taskManager';
+import { BaseAgentManager } from '../managers/domain/agent/baseAgentManager';
+import { LLMManager } from '../managers/domain/llm/llmManager';
+import { TaskManager } from '../managers/domain/task/taskManager';
 import { getApiKey } from '../utils/helpers/agent/agentUtils';
 
 import type { 
     IReactChampionAgent, 
     IBaseAgent 
-} from '../utils/types/agent/base';
+} from '../types/agent/agentBaseTypes';
 import type { 
     TaskType, 
     FeedbackObject 
-} from '../utils/types/task/base';
+} from '../types/task/taskBase';
 import type { 
     Output, 
     ParsedOutput 
-} from '../utils/types/llm/responses';
-import type { AgenticLoopResult } from '../utils/types/llm/instance';
-import type { ErrorType } from '../utils/types/common';
-import type { HandlerResult } from '../utils/types/agent/handlers';
-import { AGENT_STATUS_enum } from '../utils/types/common/enums';
-import { REACTChampionAgentPrompts } from '../utils/types/agent/prompts';
+} from '../types/llm/llmResponseTypes';
+import type { AgenticLoopResult } from '../types/llm/llmInstanceTypes';
+import type { ErrorType } from '../types/common';
+import type { HandlerResult } from '../types/agent/agentHandlersTypes';
+import { AGENT_STATUS_enum } from '../types/common/commonEnums';
+import { REACTChampionAgentPrompts } from '../types/agent/promptsTypes';
 import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from '../utils/helpers/prompts';
-import { LLMProviders } from '../utils/types/llm/common';
+import { LLMProviders } from '../types/llm/llmCommonTypes';
 
 interface ValidationResult {
     isValid: boolean;

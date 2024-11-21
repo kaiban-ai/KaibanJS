@@ -7,7 +7,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { PrettyError } from '@/utils/core/errors';
+import { PrettyError } from '../utils/core/errors';
 
 // Import types from canonical locations
 import type { 
@@ -15,17 +15,18 @@ import type {
     ITaskParams,
     TaskResult,
     FeedbackObject 
-} from '@/utils/types/task/base';
+} from '../types/task/taskBase';
 
 import type { 
-    IReactChampionAgent 
-} from '@/utils/types/agent/base';
+    AgentType 
+} from '../types/agent/agentBaseTypes';
 
 import type { 
     LLMUsageStats 
-} from '@/utils/types/llm/responses';
+} from '../types/llm/llmResponseTypes';
 
-import { TASK_STATUS_enum } from '@/utils/types/common/enums';
+import { TASK_STATUS_enum } from '../types/common/commonEnums';
+import type { TeamStore } from '../types/team/teamBaseTypes';
 
 /**
  * Core Task entity implementation
@@ -36,7 +37,7 @@ export class Task implements TaskType {
     public title: string;
     public description: string;
     public expectedOutput: string;
-    public agent: IReactChampionAgent;
+    public agent: AgentType;
     public isDeliverable: boolean;
     public externalValidationRequired: boolean;
 
@@ -55,6 +56,9 @@ export class Task implements TaskType {
     public iterationCount?: number;
     public error?: string;
 
+    // Store reference
+    private store?: TeamStore;
+
     constructor(params: ITaskParams) {
         this.validateParams(params);
 
@@ -68,13 +72,46 @@ export class Task implements TaskType {
         this.externalValidationRequired = params.externalValidationRequired ?? false;
 
         // Initialize state properties
-        this.status = TASK_STATUS_enum.TODO;
+        this.status = 'TODO' as keyof typeof TASK_STATUS_enum;
         this.result = null;
         this.inputs = {};
         this.feedbackHistory = [];
 
         // Validate agent
         this.validateAgent();
+    }
+
+    /**
+     * Set team store reference
+     */
+    public setStore(store: TeamStore): void {
+        this.store = store;
+    }
+
+    /**
+     * Execute task with provided data
+     */
+    public async execute(data: unknown): Promise<unknown> {
+        try {
+            this.startTime = Date.now();
+            this.status = 'DOING' as keyof typeof TASK_STATUS_enum;
+
+            // Execute task using agent
+            const result = await this.agent.execute({
+                task: this,
+                inputs: data
+            });
+
+            this.endTime = Date.now();
+            this.duration = this.endTime - this.startTime;
+            this.result = result;
+            this.status = 'DONE' as keyof typeof TASK_STATUS_enum;
+
+            return result;
+        } catch (error) {
+            this.setError(error as Error);
+            throw error;
+        }
     }
 
     /**
@@ -91,7 +128,7 @@ export class Task implements TaskType {
             throw new PrettyError({
                 message: 'Invalid task parameters',
                 context: { params, errors },
-                type: 'TaskValidationError'
+                type: 'ValidationError'
             });
         }
     }
@@ -104,7 +141,7 @@ export class Task implements TaskType {
             throw new PrettyError({
                 message: 'Task must have an assigned agent',
                 context: { taskId: this.id },
-                type: 'TaskValidationError'
+                type: 'ValidationError'
             });
         }
     }
@@ -168,44 +205,44 @@ export class Task implements TaskType {
      */
     public setError(error: Error | string): void {
         this.error = error instanceof Error ? error.message : error;
-        this.status = TASK_STATUS_enum.ERROR;
+        this.status = 'ERROR' as keyof typeof TASK_STATUS_enum;
     }
 
     /**
      * Check if task is complete
      */
     public isComplete(): boolean {
-        return this.status === TASK_STATUS_enum.DONE || 
-               this.status === TASK_STATUS_enum.VALIDATED;
+        return this.status === 'DONE' || 
+               this.status === 'VALIDATED';
     }
 
     /**
      * Check if task has error
      */
     public hasError(): boolean {
-        return this.status === TASK_STATUS_enum.ERROR || !!this.error;
+        return this.status === 'ERROR' || !!this.error;
     }
 
     /**
      * Check if task needs validation
      */
     public needsValidation(): boolean {
-        return this.status === TASK_STATUS_enum.AWAITING_VALIDATION;
+        return this.status === 'AWAITING_VALIDATION';
     }
 
     /**
      * Check if task can be executed
      */
     public canExecute(): boolean {
-        return this.status === TASK_STATUS_enum.TODO || 
-               this.status === TASK_STATUS_enum.REVISE;
+        return this.status === 'TODO' || 
+               this.status === 'REVISE';
     }
 
     /**
      * Reset task state
      */
     public reset(): void {
-        this.status = TASK_STATUS_enum.TODO;
+        this.status = 'TODO' as keyof typeof TASK_STATUS_enum;
         this.result = null;
         this.duration = undefined;
         this.startTime = undefined;

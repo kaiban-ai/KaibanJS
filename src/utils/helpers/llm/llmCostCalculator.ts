@@ -6,9 +6,9 @@
 
 import { logger } from "../../core/logger";
 
-import { ModelPricing } from "@/utils/types/workflow";
-import { RequiredPricingFields } from "@/utils/types/workflow";
-import { CostCalculationConfig } from "@/utils/types/workflow";
+import { ModelPricing } from "@/types/workflow";
+import { RequiredPricingFields } from "@/types/workflow";
+import { CostCalculationConfig } from "@/types/workflow";
 import { 
     
     ModelUsageStats,

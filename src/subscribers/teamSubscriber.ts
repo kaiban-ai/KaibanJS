@@ -16,9 +16,9 @@ import { logPrettyWorkflowStatus, logPrettyWorkflowResult } from "@/utils/helper
 import { WORKFLOW_STATUS_enum } from "@/utils/types/common/enums";
 import { logger } from "@/utils/core/logger";
 
-import type { TeamStore, TeamState } from '@/utils/types/team/base';
-import type { WorkflowLogMetadata, Log } from '@/utils/types/team/logs';
-import type { CostDetails } from '@/utils/types/workflow/stats';
+import type { TeamStore, TeamState } from '@/types/team/teamBaseTypes';
+import type { WorkflowLogMetadata, Log } from '@/types/team/teamLogsTypes';
+import type { CostDetails } from '@/types/workflow/workflowStats';
 import type { LLMUsageStats } from '@/utils/types/llm/responses';
 
 // Define interface

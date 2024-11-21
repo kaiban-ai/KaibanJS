@@ -86,11 +86,11 @@ export {
  */
 // Common type guards
 export { EnumTypeGuards } from './types';
-export { LogTypeGuards } from './types/team/logs';
-export { MessageTypeUtils } from './types/messaging/base';
+export { LogTypeGuards } from '../types/team/teamLogsTypes';
+export { MessageTypeUtils } from '../types/messaging/messagingBaseTypes';
 export { AgentTypeGuards } from './types/agent/base';
-export { TaskTypeGuards } from './types/task/base';
-export { TeamTypeGuards } from './types/team/base';
+export { TaskTypeGuards } from '../types/task/taskBase';
+export { TeamTypeGuards } from '../types/team/teamBaseTypes';
 export { WorkflowStoreTypeGuards } from './types';
 
 /**
@@ -149,7 +149,7 @@ export type {
     ChatMessage,
     MessageContext,
     IMessageHistory
-} from './types/messaging';
+} from '../types/messaging';
 
 // Task types
 export type {
@@ -158,7 +158,7 @@ export type {
     TaskStats,
     FeedbackObject,
     ITaskParams
-} from './types/task';
+} from '../types/task';
 
 // Team types
 export type {
@@ -174,7 +174,7 @@ export type {
     WorkflowLogMetadata,
     MessageLogMetadata,
     PrepareNewLogParams
-} from './types/team';
+} from '../types/team';
 
 // Workflow types
 export type {
@@ -182,7 +182,7 @@ export type {
     WorkflowError,
     WorkflowStats,
     CostDetails
-} from './types/workflow';
+} from '../types/workflow';
 
 
 

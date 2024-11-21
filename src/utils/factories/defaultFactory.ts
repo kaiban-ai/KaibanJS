@@ -8,7 +8,7 @@
  */
 
 import { IterationStats } from '../types/agent/iteration';
-import type { CostDetails, LLMUsageStats } from '../types/tool/execution';
+import type { CostDetails, LLMUsageStats } from '../../types/tool/toolExecutionTypes';
 import { createDefaultCostDetails } from '../helpers';
 import type { AgentValidationSchema } from '../types/agent/config';
 import type { BaseAgentConfig } from '../types/agent/config';

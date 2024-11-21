@@ -17,14 +17,14 @@ import { TASK_STATUS_enum } from "@/utils/types/common/enums";
 import { logger } from "@/utils/core/logger";
 
 // Import types from their specific locations
-import type { TaskType } from '@/utils/types/task/base';
-import type { TeamStore } from '@/utils/types/team/base';
+import type { TaskType } from '@/types/task/taskBase';
+import type { TeamStore } from '@/types/team/teamBaseTypes';
 import type { 
     Log, 
     TaskLogMetadata 
-} from '@/utils/types/team/logs';
+} from '@/types/team/teamLogsTypes';
 import type { LLMUsageStats } from '@/utils/types/llm/responses';
-import type { CostDetails } from '@/utils/types/workflow/stats';
+import type { CostDetails } from '@/types/workflow/workflowStats';
 
 // Default values for required stats
 const DEFAULT_LLM_STATS: LLMUsageStats = {

@@ -1,33 +1,45 @@
 /**
  * @file prompts.ts
- * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\helpers\prompts\prompts.ts
- * @description Implementation of agent prompt templates for REACT Champion agents, focusing on structured reasoning, systematic task execution, and robust JSON compliance. Provides templates for system messages, initial task setups, and detailed feedback scenarios to guide agents through complex workflows.
+ * @path KaibanJS/src/utils/helpers/prompts/prompts.ts
+ * @description Implementation of agent prompt templates for REACT Champion agents
  * 
- * @packageDocumentation
  * @module @helpers/prompts
  */
 
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { Tool } from "langchain/tools";
-import { 
-    REACTChampionAgentPrompts,
-    SystemMessageParams,
-    InitialMessageParams,
-    InvalidJSONFeedbackParams,
-    ThoughtWithSelfQuestionParams,
-    ThoughtFeedbackParams,
-    SelfQuestionParams,
-    ToolResultParams,
-    ToolErrorParams,
-    ToolNotExistParams,
-    ForceFinalAnswerParams,
-    FeedbackMessageParams,
-    ObservationFeedbackParams,
-    WeirdOutputFeedbackParams
-} from '@/utils/types/agent/prompts';
+import type { 
+    // Base prompt template
+    IAgentPromptTemplate,
+    
+    // REACT Champion agent prompts
+    IREACTChampionAgentPrompts,
+    
+    // Parameter types
+    ISystemMessageParams,
+    IInitialMessageParams,
+    IInvalidJSONFeedbackParams,
+    IThoughtWithSelfQuestionParams,
+    IThoughtFeedbackParams,
+    ISelfQuestionParams,
+    IToolResultParams,
+    IToolErrorParams,
+    IToolNotExistParams,
+    IObservationFeedbackParams,
+    IWeirdOutputFeedbackParams,
+    IForceFinalAnswerParams,
+    IFeedbackMessageParams
+} from '../../../types/agent';
 
-export const REACT_CHAMPION_AGENT_DEFAULT_PROMPTS: REACTChampionAgentPrompts = {
-    SYSTEM_MESSAGE: ({ agent, task }: SystemMessageParams): string => {
+import { validatePrompts } from './index';
+
+/**
+ * Default prompt templates for REACT Champion agents
+ * Provides a complete set of templates for agent-task interactions
+ */
+const REACT_CHAMPION_AGENT_DEFAULT_PROMPTS = {
+    SYSTEM_MESSAGE: function systemMessageTemplate(params: ISystemMessageParams): string {
+        const { agent, task } = params;
         const toolDescriptions = agent.tools.length > 0 
             ? agent.tools.map((tool: Tool) => 
                 `${tool.name}: ${tool.description} Tool Input Schema: ${JSON.stringify(zodToJsonSchema(tool.schema))}`)
@@ -91,74 +103,99 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
 **IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.`;
     },
 
-    INITIAL_MESSAGE: ({ agent, task, context }: InitialMessageParams): string => 
-        `Starting task for ${agent.role}.
+    INITIAL_MESSAGE: function initialMessageTemplate(params: IInitialMessageParams): string {
+        const { agent, task, context } = params;
+        return `Starting task for ${agent.role}.
          Task: ${task.description}
          Expected Output: ${task.expectedOutput}
          ${context ? `Context from previous tasks: ${context}` : ''}
-         Let's begin by analyzing the task and planning our approach.`,
+         Let's begin by analyzing the task and planning our approach.`;
+    },
 
-    INVALID_JSON_FEEDBACK: ({ agent, task, llmOutput }: InvalidJSONFeedbackParams): string => 
-        `Invalid JSON output detected.
+    INVALID_JSON_FEEDBACK: function invalidJsonFeedbackTemplate(params: IInvalidJSONFeedbackParams): string {
+        const { agent, task, llmOutput } = params;
+        return `Invalid JSON output detected.
          Agent: ${agent.role}
          Task: ${task.description}
          Problematic Output: ${llmOutput}
-         Please ensure your response is a valid JSON structure.`,
+         Please ensure your response is a valid JSON structure.`;
+    },
 
-    THOUGHT_WITH_SELF_QUESTION_FEEDBACK: ({ agent, task, thought, question, parsedLLMOutput }: ThoughtWithSelfQuestionParams): string => 
-        `Reflection for ${agent.role}:
+    THOUGHT_WITH_SELF_QUESTION_FEEDBACK: function thoughtWithSelfQuestionTemplate(params: IThoughtWithSelfQuestionParams): string {
+        const { agent, thought, question } = params;
+        return `Reflection for ${agent.role}:
          Current Thought: ${thought}
          Self-Questioning: ${question}
-         Please address this question and continue reasoning using the correct JSON format.`,
+         Please address this question and continue reasoning using the correct JSON format.`;
+    },
 
-    THOUGHT_FEEDBACK: ({ agent, task, thought, parsedLLMOutput }: ThoughtFeedbackParams): string => 
-        `Thought Analysis for ${agent.role}:
+    THOUGHT_FEEDBACK: function thoughtFeedbackTemplate(params: IThoughtFeedbackParams): string {
+        const { agent, task, thought } = params;
+        return `Thought Analysis for ${agent.role}:
          Task: ${task.description}
          Thought: ${thought}
-         Please evaluate this reasoning and determine next steps in JSON format.`,
+         Please evaluate this reasoning and determine next steps in JSON format.`;
+    },
 
-    SELF_QUESTION_FEEDBACK: ({ agent, task, question, parsedLLMOutput }: SelfQuestionParams): string => 
-        `Self-Reflection for ${agent.role}:
+    SELF_QUESTION_FEEDBACK: function selfQuestionFeedbackTemplate(params: ISelfQuestionParams): string {
+        const { agent, task, question } = params;
+        return `Self-Reflection for ${agent.role}:
          Task: ${task.description}
          Reflective Question: ${question}
-         Please answer this question to guide your problem-solving strategy. Respond in JSON format.`,
+         Please answer this question to guide your problem-solving strategy. Respond in JSON format.`;
+    },
 
-    TOOL_RESULT_FEEDBACK: ({ agent, task, toolResult, parsedLLMOutput }: ToolResultParams): string => 
-        `Tool Execution Result for ${agent.role}:
+    TOOL_RESULT_FEEDBACK: function toolResultFeedbackTemplate(params: IToolResultParams): string {
+        const { agent, task, toolResult } = params;
+        return `Tool Execution Result for ${agent.role}:
          Task: ${task.description}
          Result: ${JSON.stringify(toolResult)}
-         Please analyze this result and determine next steps in JSON format.`,
+         Please analyze this result and determine next steps in JSON format.`;
+    },
 
-    TOOL_ERROR_FEEDBACK: ({ agent, task, toolName, error, parsedLLMOutput }: ToolErrorParams): string => 
-        `Tool Error for ${agent.role}:
+    TOOL_ERROR_FEEDBACK: function toolErrorFeedbackTemplate(params: IToolErrorParams): string {
+        const { agent, task, toolName, error } = params;
+        return `Tool Error for ${agent.role}:
          Task: ${task.description}
          Tool: ${toolName}
          Error: ${error.message}
-         Please adjust strategy and consider alternative approaches in JSON format.`,
+         Please adjust strategy and consider alternative approaches in JSON format.`;
+    },
 
-    TOOL_NOT_EXIST_FEEDBACK: ({ agent, task, toolName, parsedLLMOutput }: ToolNotExistParams): string => 
-        `Tool Unavailability for ${agent.role}:
+    TOOL_NOT_EXIST_FEEDBACK: function toolNotExistFeedbackTemplate(params: IToolNotExistParams): string {
+        const { agent, task, toolName } = params;
+        return `Tool Unavailability for ${agent.role}:
          Task: ${task.description}
          Missing Tool: ${toolName}
-         Please reassess using only available tools listed in initial instructions. Respond in JSON format.`,
+         Please reassess using only available tools listed in initial instructions. Respond in JSON format.`;
+    },
 
-    OBSERVATION_FEEDBACK: ({ agent, task, parsedLLMOutput }: ObservationFeedbackParams): string => 
-        `Observation phase. Please analyze current state and prepare next action in JSON format.`,
+    OBSERVATION_FEEDBACK: function observationFeedbackTemplate(params: IObservationFeedbackParams): string {
+        return `Observation phase. Please analyze current state and prepare next action in JSON format.`;
+    },
 
-    WEIRD_OUTPUT_FEEDBACK: ({ agent, task, parsedLLMOutput }: WeirdOutputFeedbackParams): string => 
-        `Unexpected output format detected. Please ensure your response follows the specified JSON structure.`,
+    WEIRD_OUTPUT_FEEDBACK: function weirdOutputFeedbackTemplate(params: IWeirdOutputFeedbackParams): string {
+        return `Unexpected output format detected. Please ensure your response follows the specified JSON structure.`;
+    },
 
-    FORCE_FINAL_ANSWER_FEEDBACK: ({ agent, task, iterations, maxAgentIterations }: ForceFinalAnswerParams): string => 
-        `Final Answer Compilation for ${agent.role}:
+    FORCE_FINAL_ANSWER_FEEDBACK: function forceFinalAnswerFeedbackTemplate(params: IForceFinalAnswerParams): string {
+        const { agent, task, iterations, maxAgentIterations } = params;
+        return `Final Answer Compilation for ${agent.role}:
          Task: ${task.description}
          Iterations: ${iterations}/${maxAgentIterations}
-         Please synthesize key insights and provide final solution in JSON format.`,
+         Please synthesize key insights and provide final solution in JSON format.`;
+    },
 
-    WORK_ON_FEEDBACK_FEEDBACK: ({ agent, task, feedback }: FeedbackMessageParams): string => 
-        `Feedback Processing for ${agent.role}:
+    WORK_ON_FEEDBACK_FEEDBACK: function workOnFeedbackFeedbackTemplate(params: IFeedbackMessageParams): string {
+        const { agent, task, feedback } = params;
+        return `Feedback Processing for ${agent.role}:
          Task: ${task.description}
          Feedback: ${feedback}
-         Please incorporate this feedback and refine your approach in JSON format.`
-};
+         Please incorporate this feedback and refine your approach in JSON format.`;
+    }
+} as const;
+
+// Validate prompts at runtime
+validatePrompts(REACT_CHAMPION_AGENT_DEFAULT_PROMPTS);
 
 export default REACT_CHAMPION_AGENT_DEFAULT_PROMPTS;

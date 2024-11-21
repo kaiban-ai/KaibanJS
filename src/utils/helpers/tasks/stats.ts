@@ -6,11 +6,11 @@
 
 import { logger } from "../../core/logger";
 import { TASK_STATUS_enum, AGENT_STATUS_enum } from "@/utils/types/common/enums";
-import { TaskType, TaskStats } from "@/utils/types/task/base";
-import { Log, AgentLogMetadata } from "@/utils/types/team/logs";
+import { TaskType, TaskStats } from "@/types/task/taskBase";
+import { Log, AgentLogMetadata } from "@/types/team/teamLogsTypes";
 import { LLMUsageStats, Output } from "@/utils/types/llm/responses";
 import { formatCost } from "../llm/llmCostCalculator";
-import { ModelStats, ModelUsageStats } from "../../types/workflow";
+import { ModelStats, ModelUsageStats } from "../../../types/workflow";
 
 /**
  * Type guard to check if metadata is AgentLogMetadata

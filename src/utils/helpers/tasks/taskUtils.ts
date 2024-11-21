@@ -7,7 +7,7 @@
  */
 
 import { logger } from "@/utils/core/logger";
-import { TaskType } from '@/utils/types/task/base';
+import { TaskType } from '@/types/task/taskBase';
 
 /**
  * Retrieves a concise title for a task, suitable for logging purposes.
