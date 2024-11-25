@@ -82,6 +82,43 @@ Github Issues is a tool that allows agents to interact with the Github API, enab
 
 Learn more: https://docs.github.com/en/rest/issues/issues
 
+### 7. Simple RAG
+
+The Simple RAG Tool integrates with various components from the langchain library to provide a simple interface for asking questions and retrieving answers using the Retrieval-Augmented Generation (RAG) approach. By default use MemoryVectorStore for storing vectors, OpenAIEmbeddings for embeddings, and OpenAI LLM for generating answers.
+
+### Features
+
+- Integrates with the RAG Toolkit for handling the RAG process
+- Uses a Loader instance to load and process documents
+- Utilizes a Chunker instance to chunk and process text
+- Employs an Embeddings instance for handling embeddings
+- Stores vectors using a VectorStore instance
+- Leverages an LLM instance for the language model
+- Defines a promptQuestionTemplate for asking questions
+- Requires an OpenAI API key for interacting with the OpenAI API
+
+### Usage
+
+```js
+const tool = new SimpleRAG({
+  OPENAI_API_KEY: 'your-openai-api-key',
+  content: 'Large content to process',
+});
+const result = await tool._call({ query: 'question to ask' });
+```
+
+or
+
+```js
+const tool = new SimpleRAG({
+  OPENAI_API_KEY: 'your-openai-api-key',
+});
+const result = await tool._call({
+  content: 'large content to process',
+  query: 'question to ask',
+});
+```
+
 ## Development
 
 ### Local Setup

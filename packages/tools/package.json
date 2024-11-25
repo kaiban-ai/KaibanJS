@@ -29,6 +29,10 @@
     "./wolframalpha": {
       "import": "./dist/wolframalpha/index.esm.js",
       "require": "./dist/wolframalpha/index.cjs.js"
+    },
+    "./simple-rag": {
+      "import": "./dist/simple-rag/index.esm.js",
+      "require": "./dist/simple-rag/index.cjs.js"
     }
   },
   "files": [
