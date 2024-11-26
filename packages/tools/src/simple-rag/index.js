@@ -27,7 +27,7 @@
  */
 
 import { Tool } from '@langchain/core/tools';
-import RagToolkit from '../_utils/rag/ragToolkit';
+import RagToolkit from '../../dist/rag-toolkit/index.esm';
 import { z } from 'zod';
 
 export class SimpleRAG extends Tool {

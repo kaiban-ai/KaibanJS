@@ -8,7 +8,6 @@
  *
  * The tool uses the following components:
  * - A RAG Toolkit instance, which handles the RAG process
- * - A Loader instance, which loads and processes documents for the RAG model
  * - A Chunker instance, which chunks and processes text for the RAG model
  * - An Embeddings instance, which handles embeddings for the RAG model
  * - A VectorStore instance, which stores vectors for the RAG model
@@ -30,7 +29,7 @@
 
 import { Tool } from '@langchain/core/tools';
 import { CheerioWebBaseLoader } from '@langchain/community/document_loaders/web/cheerio';
-import RagToolkit from '../_utils/rag/ragToolkit';
+import RagToolkit from '../../dist/rag-toolkit/index.esm';
 import { z } from 'zod';
 
 export class WebsiteSearch extends Tool {
