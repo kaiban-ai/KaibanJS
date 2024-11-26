@@ -104,4 +104,4 @@ const ragToolkitConfig = defineConfig({
     terser(),
   ],
 });
-export default [...toolConfigs, ragToolkitConfig, mainConfig];
+export default [ragToolkitConfig, ...toolConfigs, mainConfig];
