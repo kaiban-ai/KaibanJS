@@ -29,6 +29,10 @@
     "./wolframalpha": {
       "import": "./dist/wolframalpha/index.esm.js",
       "require": "./dist/wolframalpha/index.cjs.js"
+    },
+    "./simple-rag": {
+      "import": "./dist/simple-rag/index.esm.js",
+      "require": "./dist/simple-rag/index.cjs.js"
     }
   },
   "files": [
@@ -73,7 +77,9 @@
   "license": "MIT",
   "dependencies": {
     "@langchain/core": "0.2.16",
+    "@langchain/openai": "^0.2.2",
     "ky": "^1.7.2",
+    "langchain": "^0.2.10",
     "zod": "^3.23.8"
   },
   "devDependencies": {

@@ -13,6 +13,7 @@ const toolFolders = [
   'exa',
   'wolfram-alpha',
   'github-issues',
+  'simple-rag',
 ]; // Add more folder names as needed
 
 const toolConfigs = toolFolders.map((tool) => {
@@ -25,11 +26,13 @@ const toolConfigs = toolFolders.map((tool) => {
         file: `dist/${tool}/index.cjs.js`,
         format: 'cjs',
         sourcemap: false,
+        inlineDynamicImports: true,
       },
       {
         file: `dist/${tool}/index.esm.js`,
         format: 'esm',
         sourcemap: false,
+        inlineDynamicImports: true,
       },
     ],
     plugins: [
@@ -53,11 +56,13 @@ const mainConfig = defineConfig({
       file: 'dist/index.cjs.js',
       format: 'cjs',
       sourcemap: false,
+      inlineDynamicImports: true,
     },
     {
       file: 'dist/index.esm.js',
       format: 'esm',
       sourcemap: false,
+      inlineDynamicImports: true,
     },
   ],
   plugins: [
@@ -71,5 +76,31 @@ const mainConfig = defineConfig({
     terser(),
   ],
 });
-
-export default [...toolConfigs, mainConfig];
+const ragToolkitConfig = defineConfig({
+  input: 'src/_utils/rag/ragToolkit.js',
+  output: [
+    {
+      file: 'dist/rag-toolkit/index.cjs.js',
+      format: 'cjs',
+      sourcemap: false,
+      inlineDynamicImports: true,
+    },
+    {
+      file: 'dist/rag-toolkit/index.esm.js',
+      format: 'esm',
+      sourcemap: false,
+      inlineDynamicImports: true,
+    },
+  ],
+  plugins: [
+    nodeResolve({
+      browser: true,
+      preferBuiltins: false,
+    }),
+    commonjs(),
+    json(),
+    nodePolyfills(),
+    terser(),
+  ],
+});
+export default [...toolConfigs, ragToolkitConfig, mainConfig];
