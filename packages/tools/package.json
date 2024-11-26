@@ -77,6 +77,8 @@
   "license": "MIT",
   "dependencies": {
     "@langchain/core": "0.2.16",
+    "langchain": "0.2.10",
+    "@langchain/openai": "0.2.2",
     "ky": "^1.7.2",
     "zod": "^3.23.8"
   },
