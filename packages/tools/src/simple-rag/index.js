@@ -43,11 +43,11 @@ export class SimpleRAG extends Tool {
     this.promptQuestionTemplate = fields.promptQuestionTemplate;
     this.name = 'simple-rag';
     this.description =
-      'A simple tool for asking questions using the RAG approach. Input should be a question string.';
+      'A simple tool for asking questions using the RAG approach. Input should be a string text content such as a knowledge base and a question string.';
 
     // Define the input schema using Zod
     this.schema = z.object({
-      content: z.string().describe('The content test to process.').isOptional(),
+      content: z.string().describe('The content text to process.'),
       query: z.string().describe('The question to ask.'),
     });
     this.ragToolkit = new RagToolkit({
