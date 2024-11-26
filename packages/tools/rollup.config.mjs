@@ -14,6 +14,7 @@ const toolFolders = [
   'wolfram-alpha',
   'github-issues',
   'simple-rag',
+  'website-search',
 ]; // Add more folder names as needed
 
 const toolConfigs = toolFolders.map((tool) => {
