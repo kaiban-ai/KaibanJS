@@ -86,7 +86,7 @@ class RAGToolkit {
     );
 
     const chain = await createStuffDocumentsChain({
-      llmInstance: this.llmInstance,
+      llm: this.llmInstance,
       prompt: promptTemplate,
       outputParser: new StringOutputParser(),
     });

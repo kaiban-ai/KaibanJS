@@ -100,7 +100,7 @@ export const Default = {
   args: {
     toolInstance: simpleRAGTool,
     callParams: {
-      query: 'What is the capital of France?',
+      query: 'What is Kaiban?',
       content,
     },
   },
