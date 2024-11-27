@@ -60,11 +60,10 @@ Experience the Kaiban Board for yourself and see how it can streamline your AI d
 const simpleRAGTool = new SimpleRAG({
   OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY,
   //   /* Use just if want to customize the tool with different options instead default values */
-  //   loaderOptions: { /* loader-specific options */ },
   //   chunkOptions: { chunkSize: 1000, chunkOverlap: 200 },
   //   embeddings: new OpenAIEmbeddings({ apiKey: import.meta.env.VITE_OPENAI_API_KEY }),
   //   vectorStore: new MemoryVectorStore(new OpenAIEmbeddings({ apiKey: import.meta.env.VITE_OPENAI_API_KEY })),
-  //   llm: new ChatOpenAI({ apiKey: import.meta.env.VITE_OPENAI_API_KEY }),
+  //   llmInstance: new ChatOpenAI({ apiKey: import.meta.env.VITE_OPENAI_API_KEY }),
   //   promptQuestionTemplate: 'Your custom prompt template',
 });
 

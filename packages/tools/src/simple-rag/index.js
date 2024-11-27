@@ -39,7 +39,7 @@ export class SimpleRAG extends Tool {
     this.chunkOptions = fields.chunkOptions;
     this.embeddings = fields.embeddings;
     this.vectorStore = fields.vectorStore;
-    this.llm = fields.llm;
+    this.llmInstance = fields.llmInstance;
     this.promptQuestionTemplate = fields.promptQuestionTemplate;
     this.name = 'simple-rag';
     this.description =
@@ -55,7 +55,7 @@ export class SimpleRAG extends Tool {
       chunkOptions: this.chunkOptions,
       embeddings: this.embeddings,
       vectorStore: this.vectorStore,
-      llm: this.llm,
+      llmInstance: this.llmInstance,
       promptQuestionTemplate: this.promptQuestionTemplate,
       env: { OPENAI_API_KEY: this.OPENAI_API_KEY },
     });
@@ -67,10 +67,10 @@ export class SimpleRAG extends Tool {
       this.content = content;
     }
     if (!this.content || this.content === '') {
-      throw new Error('Please provide content to process.');
+      return "ERROR_MISSING_CONTENT: No text content was provided for analysis. Agent should provide content in the 'content' field.";
     }
     if (!query || query === '') {
-      throw new Error('Please provide a question to ask.');
+      return "ERROR_MISSING_QUERY: No question was provided. Agent should provide a question in the 'query' field.";
     }
 
     try {
@@ -79,8 +79,7 @@ export class SimpleRAG extends Tool {
       const response = await ragToolkit.askQuestion(query);
       return response;
     } catch (error) {
-      console.error(error);
-      throw new Error('An unexpected error occurred: in SimpleRAG');
+      return `ERROR_RAG_PROCESSING: RAG processing failed. Details: ${error.message}. Agent should verify content format and query validity.`;
     }
   }
 }

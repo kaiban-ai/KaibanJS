@@ -40,7 +40,7 @@ export class WebsiteSearch extends Tool {
     this.chunkOptions = fields.chunkOptions;
     this.embeddings = fields.embeddings;
     this.vectorStore = fields.vectorStore;
-    this.llm = fields.llm;
+    this.llmInstance = fields.llmInstance;
     this.promptQuestionTemplate = fields.promptQuestionTemplate;
     this.name = 'website-search';
     this.description =
@@ -55,7 +55,7 @@ export class WebsiteSearch extends Tool {
       chunkOptions: this.chunkOptions,
       embeddings: this.embeddings,
       vectorStore: this.vectorStore,
-      llm: this.llm,
+      llmInstance: this.llmInstance,
       promptQuestionTemplate: this.promptQuestionTemplate,
       env: { OPENAI_API_KEY: this.OPENAI_API_KEY },
     });
@@ -71,10 +71,10 @@ export class WebsiteSearch extends Tool {
       this.url = url;
     }
     if (!this.url || this.url === '') {
-      throw new Error('Please provide url to process.');
+      return "ERROR_MISSING_URL: No url was provided for analysis. Agent should provide valid url in the 'url' field.";
     }
     if (!query || query === '') {
-      throw new Error('Please provide a question to ask.');
+      return "ERROR_MISSING_QUERY: No question was provided. Agent should provide a question in the 'query' field.";
     }
 
     try {
@@ -83,8 +83,7 @@ export class WebsiteSearch extends Tool {
       const response = await ragToolkit.askQuestion(query);
       return response;
     } catch (error) {
-      console.error(error);
-      throw new Error('An unexpected error occurred: in WebsiteSearch');
+      return `ERROR_WEBSITE_SEARCH_PROCESSING: An unexpected error occurred: in WebsiteSearch tool. Details: ${error.message}. Agent should verify content format and query validity.`;
     }
   }
 }

@@ -22,15 +22,13 @@ describe('SimpleRAG', () => {
 
   test('should throw an error if no content is provided', async () => {
     tool.content = '';
-    await expect(tool._call({ query: 'Test question' })).rejects.toThrow(
-      'Please provide content to process.'
-    );
+    const result = await tool._call({ query: 'Test question' });
+    expect(result).toContain('ERROR_MISSING_CONTENT');
   });
 
   test('should throw an error if no query is provided', async () => {
-    await expect(
-      tool._call({ content: 'Test content', query: '' })
-    ).rejects.toThrow('Please provide a question to ask.');
+    const result = await tool._call({ content: 'Test content', query: '' });
+    expect(result).toContain('ERROR_MISSING_QUERY');
   });
 
   test('should call addDocuments and askQuestion with correct parameters', async () => {
@@ -53,10 +51,11 @@ describe('SimpleRAG', () => {
     mockRagToolkit.addDocuments.mockImplementationOnce(() => {
       throw new Error('Test addDocuments error');
     });
-
-    await expect(
-      tool._call({ content: 'Test content', query: 'Test question' })
-    ).rejects.toThrow('An unexpected error occurred: in SimpleRAG');
+    const result = await tool._call({
+      content: 'Test content',
+      query: 'Test question',
+    });
+    expect(result).toContain('ERROR_RAG_PROCESSING');
   });
 
   test('should correctly instantiate with default values', () => {

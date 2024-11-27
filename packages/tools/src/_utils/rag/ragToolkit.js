@@ -17,10 +17,10 @@ class RAGToolkit {
       new OpenAIEmbeddings({ apiKey: options?.env?.OPENAI_API_KEY });
     this.vectorStore =
       options.vectorStore || new MemoryVectorStore(this.embeddings);
-    this.llm =
-      options.llm ||
+    this.llmInstance =
+      options.llmInstance ||
       new ChatOpenAI({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         temperature: 0,
         apiKey: options?.env?.OPENAI_API_KEY,
       });
@@ -39,14 +39,6 @@ class RAGToolkit {
 
     this.loaders = {
       string: (source) => new TextInputLoader(source),
-      // text: source => new TextLoader(source),
-      // pdf: source =>
-      //   typeof window !== "undefined" && typeof window.document !== "undefined"
-      //     ? new BrowserPDFLoader(new File([source as any], "document.pdf"))
-      //     : new PDFLoader(source),
-      // web: source => new CheerioWebBaseLoader(source),
-      // browserPdf: source =>
-      //   new BrowserPDFLoader(new File([source as any], "document.pdf"))
     };
   }
 
@@ -94,7 +86,7 @@ class RAGToolkit {
     );
 
     const chain = await createStuffDocumentsChain({
-      llm: this.llm,
+      llmInstance: this.llmInstance,
       prompt: promptTemplate,
       outputParser: new StringOutputParser(),
     });
