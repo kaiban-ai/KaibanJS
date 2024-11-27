@@ -8,63 +8,23 @@
 
 import type { IAgentType } from '../agent/agentBaseTypes';
 import type { ITeamStoreMethods } from '../team/teamBaseTypes';
-import type { ILLMUsageStats } from '../llm/llmResponseTypes';
 import type { TASK_STATUS_enum, FEEDBACK_STATUS_enum } from '../common/commonEnums';
-
-// ─── Task Result Types ─────────────────────────────────────────────────────────
-
-export interface ITaskResult {
-    value: string | Record<string, unknown> | null;
-}
-
-// ─── Task Metrics Types ────────────────────────────────────────────────────────
+import type { ITaskMetrics, ITaskHandlerResult, ITaskHandlerMetadata } from './taskHandlerTypes';
 
 /**
- * Task resource metrics
+ * Task creation parameters
  */
-export interface ITaskResourceMetrics {
-    memory: number;
-    cpu: number;
-    tokens: number;
+export interface ITaskParams {
+    title?: string;
+    description: string;
+    expectedOutput: string;
+    agent: IAgentType;
+    isDeliverable?: boolean;
+    externalValidationRequired?: boolean;
 }
 
 /**
- * Task performance metrics
- */
-export interface ITaskPerformanceMetrics {
-    averageIterationTime: number;
-    averageTokensPerSecond: number;
-    peakMemoryUsage: number;
-}
-
-/**
- * Task cost metrics
- */
-export interface ITaskCostMetrics {
-    input: number;
-    output: number;
-    total: number;
-    currency: string;
-}
-
-/**
- * Task metrics
- */
-export interface ITaskMetrics {
-    startTime: number;
-    endTime: number;
-    duration: number;
-    iterationCount: number;
-    resources: ITaskResourceMetrics;
-    performance: ITaskPerformanceMetrics;
-    costs: ITaskCostMetrics;
-    llmUsage: ILLMUsageStats;
-}
-
-// ─── Task Progress Types ────────────────────────────────────────────────────────
-
-/**
- * Task progress
+ * Task progress tracking
  */
 export interface ITaskProgress {
     status: keyof typeof TASK_STATUS_enum;
@@ -74,8 +34,6 @@ export interface ITaskProgress {
     currentStep?: string;
     blockingReason?: string;
 }
-
-// ─── Task History Types ─────────────────────────────────────────────────────────
 
 /**
  * Task history entry
@@ -91,8 +49,6 @@ export interface ITaskHistoryEntry {
     details?: Record<string, unknown>;
 }
 
-// ─── Task Feedback Types ────────────────────────────────────────────────────────
-
 /**
  * Task feedback
  */
@@ -106,8 +62,6 @@ export interface ITaskFeedback {
     priority?: 'low' | 'medium' | 'high';
     assignedTo?: string;
 }
-
-// ─── Core Task Interface ────────────────────────────────────────────────────────
 
 /**
  * Core task interface
@@ -130,37 +84,26 @@ export interface ITaskType {
     inputs: Record<string, unknown>;
     
     // Results and state
-    result?: string | Record<string, unknown> | null;
-    error?: string;
-    interpolatedTaskDescription?: string;
+    result?: ITaskHandlerResult;
+    error?: Error;
+    metadata?: ITaskHandlerMetadata;
     
     // Tracking and metrics
     metrics: ITaskMetrics;
     progress: ITaskProgress;
     history: ITaskHistoryEntry[];
+    
+    // Feedback
     feedback: ITaskFeedback[];
     
     // Methods
     setStore: (store: ITeamStoreMethods) => void;
-    execute: (data: unknown) => Promise<unknown>;
+    execute: (data: unknown) => Promise<ITaskHandlerResult>;
 }
-
-// ─── Task Parameters Interface ───────────────────────────────────────────────────
 
 /**
- * Task creation parameters
+ * Type guards
  */
-export interface ITaskParams {
-    title?: string;
-    description: string;
-    expectedOutput: string;
-    agent: IAgentType;
-    isDeliverable?: boolean;
-    externalValidationRequired?: boolean;
-}
-
-// ─── Type Guards ────────────────────────────────────────────────────────────────
-
 export const TaskTypeGuards = {
     /**
      * Check if value is TaskType

@@ -13,11 +13,34 @@ import type { ITaskType } from '../task/taskBaseTypes';
 import type { IOutput, IParsedOutput } from '../llm/llmResponseTypes';
 import type { AGENT_STATUS_enum } from '../common/commonEnums';
 import type { IHandlerResult } from '../common/commonHandlerTypes';
-import type { IResourceMetrics, IUsageMetrics, IPerformanceMetrics } from '../common/commonMetricTypes';
+import type { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
+import type { IPerformanceMetrics } from '../common/commonMetricTypes';
 import type { IAgentExecutionState } from './agentStateTypes';
 
 // Re-export types from agentStateTypes
 export type { IAgentExecutionState };
+
+// ─── Agent Handler Types ──────────────────────────────────────────────────────
+
+/** Agent-specific metadata interface */
+export interface IAgentHandlerMetadata extends IBaseHandlerMetadata {
+    agentId: string;
+    agentName: string;
+    agentType: string;
+    status: keyof typeof AGENT_STATUS_enum;
+    currentTask?: string;
+    agentMetrics: {
+        tokensUsed: number;
+        iterationCount: number;
+        successRate: number;
+    };
+    metrics: {
+        performance: IPerformanceMetrics;
+    };
+}
+
+/** Agent handler result type */
+export type IAgentHandlerResult<T = unknown> = IHandlerResult<T, IAgentHandlerMetadata>;
 
 // ─── Store State Interface ────────────────────────────────────────────────────
 
@@ -55,7 +78,7 @@ export interface IAgentErrorActions {
         task: ITaskType;
         error: Error;
         context?: Record<string, unknown>;
-    }) => Promise<IHandlerResult>;
+    }) => Promise<IAgentHandlerResult<Error>>;
 }
 
 /**
@@ -67,14 +90,14 @@ export interface IAgentThinkingActions {
         task: ITaskType;
         messages: any[];
         output?: IOutput;
-    }) => Promise<IHandlerResult>;
+    }) => Promise<IAgentHandlerResult<IOutput>>;
 
     handleAgentOutput: (params: {
         agent: IAgentType;
         task: ITaskType;
         output: IOutput;
         type: 'thought' | 'observation' | 'finalAnswer' | 'selfQuestion' | 'weird';
-    }) => Promise<IHandlerResult>;
+    }) => Promise<IAgentHandlerResult<IOutput>>;
 }
 
 /**
@@ -85,7 +108,7 @@ export interface IAgentStatusActions {
         agent: IAgentType,
         status: keyof typeof AGENT_STATUS_enum,
         task: ITaskType
-    ) => Promise<void>;
+    ) => Promise<IAgentHandlerResult<void>>;
 
     /**
      * Handle iteration start for REACT Champion agents
@@ -97,7 +120,7 @@ export interface IAgentStatusActions {
         task: ITaskType;
         iterations: number;
         maxAgentIterations: number;
-    }) => Promise<void>;
+    }) => Promise<IAgentHandlerResult<void>>;
 
     /**
      * Handle iteration end for REACT Champion agents
@@ -109,7 +132,7 @@ export interface IAgentStatusActions {
         task: ITaskType;
         iterations: number;
         maxAgentIterations: number;
-    }) => Promise<void>;
+    }) => Promise<IAgentHandlerResult<void>>;
 }
 
 /**
@@ -162,5 +185,72 @@ export const IAgentStoreTypeGuards = {
     isAgentStoreMethods: (value: unknown): value is IAgentStoreMethods => {
         if (typeof value !== 'object' || value === null) return false;
         return IAgentStoreTypeGuards.hasStoreActions(value);
+    },
+
+    isAgentHandlerMetadata: (value: unknown): value is IAgentHandlerMetadata => {
+        if (typeof value !== 'object' || value === null) return false;
+        const metadata = value as Partial<IAgentHandlerMetadata>;
+
+        // Basic metadata validation
+        if (
+            typeof metadata.agentId !== 'string' ||
+            typeof metadata.agentName !== 'string' ||
+            typeof metadata.agentType !== 'string' ||
+            typeof metadata.status !== 'string' ||
+            typeof metadata.agentMetrics !== 'object' ||
+            metadata.agentMetrics === null ||
+            typeof metadata.metrics !== 'object' ||
+            metadata.metrics === null ||
+            typeof metadata.metrics.performance !== 'object' ||
+            metadata.metrics.performance === null
+        ) {
+            return false;
+        }
+
+        // Validate agent-specific metrics
+        if (
+            typeof metadata.agentMetrics.tokensUsed !== 'number' ||
+            typeof metadata.agentMetrics.iterationCount !== 'number' ||
+            typeof metadata.agentMetrics.successRate !== 'number'
+        ) {
+            return false;
+        }
+
+        const performance = metadata.metrics.performance;
+        
+        // Validate IPerformanceMetrics structure
+        return (
+            // Execution Time
+            typeof performance.executionTime === 'object' &&
+            typeof performance.executionTime.total === 'number' &&
+            typeof performance.executionTime.average === 'number' &&
+            typeof performance.executionTime.min === 'number' &&
+            typeof performance.executionTime.max === 'number' &&
+            
+            // Throughput
+            typeof performance.throughput === 'object' &&
+            typeof performance.throughput.operationsPerSecond === 'number' &&
+            typeof performance.throughput.dataProcessedPerSecond === 'number' &&
+            
+            // Error Metrics
+            typeof performance.errorMetrics === 'object' &&
+            typeof performance.errorMetrics.totalErrors === 'number' &&
+            typeof performance.errorMetrics.errorRate === 'number' &&
+            
+            // Resource Utilization
+            typeof performance.resourceUtilization === 'object' &&
+            typeof performance.resourceUtilization.cpuUsage === 'number' &&
+            typeof performance.resourceUtilization.memoryUsage === 'number' &&
+            typeof performance.resourceUtilization.diskIO === 'object' &&
+            typeof performance.resourceUtilization.diskIO.read === 'number' &&
+            typeof performance.resourceUtilization.diskIO.write === 'number' &&
+            typeof performance.resourceUtilization.networkUsage === 'object' &&
+            typeof performance.resourceUtilization.networkUsage.upload === 'number' &&
+            typeof performance.resourceUtilization.networkUsage.download === 'number' &&
+            typeof performance.resourceUtilization.timestamp === 'number' &&
+            
+            // Global timestamp
+            typeof performance.timestamp === 'number'
+        );
     }
 };

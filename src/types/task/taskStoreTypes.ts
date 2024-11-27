@@ -10,9 +10,39 @@ import type { IBaseStoreState, IBaseStoreMethods } from '../store/baseStoreTypes
 import type { ITaskType } from './taskBaseTypes';
 import type { TASK_STATUS_enum } from '../common/commonEnums';
 import type { IHandlerResult } from '../common/commonHandlerTypes';
-import { IResourceMetrics, IUsageMetrics, IPerformanceMetrics } from '../common/commonMetricTypes';
+import type { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
+import type { 
+    ITaskResourceMetrics,
+    ITaskPerformanceMetrics,
+    ITaskUsageMetrics 
+} from './taskMetricTypes';
 import type { IAgentType } from '../agent/agentBaseTypes';
 import type { ITaskExecutionState } from './taskStateTypes';
+
+// ─── Task Handler Types ──────────────────────────────────────────────────────
+
+/** Task-specific metadata interface */
+export interface ITaskHandlerMetadata extends IBaseHandlerMetadata {
+    taskId: string;
+    taskName: string;
+    status: keyof typeof TASK_STATUS_enum;
+    priority: number;
+    assignedAgent?: string;
+    progress: number;
+    metrics: {
+        resources: ITaskResourceMetrics;
+        usage: ITaskUsageMetrics;
+        performance: ITaskPerformanceMetrics;
+    };
+    dependencies: {
+        completed: string[];
+        pending: string[];
+        blocked: string[];
+    };
+}
+
+/** Task handler result type */
+export type ITaskHandlerResult<T = unknown> = IHandlerResult<T, ITaskHandlerMetadata>;
 
 // ─── Store State Types ─────────────────────────────────────────────────────────
 
@@ -56,25 +86,25 @@ export interface ITaskMetadata {
 // ─── Task Performance Types ──────────────────────────────────────────────────────
 
 export interface ITaskPerformanceStats {
-    resources: IResourceMetrics;
-    usage: IUsageMetrics;
-    performance: IPerformanceMetrics;
+    resources: ITaskResourceMetrics;
+    usage: ITaskUsageMetrics;
+    performance: ITaskPerformanceMetrics;
 }
 
 // ─── Store Action Types ────────────────────────────────────────────────────────
 
 export interface ITaskErrorActions {
-    handleTaskError: (taskId: string, error: Error) => Promise<IHandlerResult>;
+    handleTaskError: (taskId: string, error: Error) => Promise<ITaskHandlerResult<Error>>;
     clearTaskErrors: () => void;
 }
 
 export interface ITaskExecutionActions {
-    startTask: (taskId: string, agent: IAgentType) => Promise<IHandlerResult>;
-    completeTask: (taskId: string) => Promise<IHandlerResult>;
-    failTask: (taskId: string, error: Error) => Promise<IHandlerResult>;
-    updateTaskProgress: (taskId: string, progress: number) => void;
-    blockTask: (taskId: string, reason: string) => Promise<IHandlerResult>;
-    unblockTask: (taskId: string) => Promise<IHandlerResult>;
+    startTask: (taskId: string, agent: IAgentType) => Promise<ITaskHandlerResult<void>>;
+    completeTask: (taskId: string) => Promise<ITaskHandlerResult<void>>;
+    failTask: (taskId: string, error: Error) => Promise<ITaskHandlerResult<Error>>;
+    updateTaskProgress: (taskId: string, progress: number) => Promise<ITaskHandlerResult<number>>;
+    blockTask: (taskId: string, reason: string) => Promise<ITaskHandlerResult<string>>;
+    unblockTask: (taskId: string) => Promise<ITaskHandlerResult<void>>;
 }
 
 export interface ITaskStoreActions extends 
@@ -110,6 +140,28 @@ export const TaskStoreTypeGuards = {
             typeof actions.clearTaskErrors === 'function' &&
             typeof actions.startTask === 'function' &&
             typeof actions.completeTask === 'function'
+        );
+    },
+
+    isTaskHandlerMetadata: (value: unknown): value is ITaskHandlerMetadata => {
+        if (typeof value !== 'object' || value === null) return false;
+        const metadata = value as Partial<ITaskHandlerMetadata>;
+        return (
+            typeof metadata.taskId === 'string' &&
+            typeof metadata.taskName === 'string' &&
+            typeof metadata.status === 'string' &&
+            typeof metadata.priority === 'number' &&
+            typeof metadata.progress === 'number' &&
+            typeof metadata.metrics === 'object' &&
+            metadata.metrics !== null &&
+            typeof metadata.metrics.resources === 'object' &&
+            typeof metadata.metrics.usage === 'object' &&
+            typeof metadata.metrics.performance === 'object' &&
+            typeof metadata.dependencies === 'object' &&
+            metadata.dependencies !== null &&
+            Array.isArray(metadata.dependencies.completed) &&
+            Array.isArray(metadata.dependencies.pending) &&
+            Array.isArray(metadata.dependencies.blocked)
         );
     }
 };

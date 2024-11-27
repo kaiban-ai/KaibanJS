@@ -6,37 +6,36 @@
  * @module types/llm
  */
 
+import { LLM_PROVIDER_enum } from '../common/commonEnums';
 import { 
-    ILLMResponse, 
-    IOutput 
-} from './llmResponseTypes';
-
-import type { 
-    IGroqConfig,
-    IOpenAIConfig, 
-    IAnthropicConfig,
-    IGoogleConfig,
-    IMistralConfig 
+    type LLMProviderConfig,
+    type IBaseLLMConfig,
+    type IGroqConfig,
+    type IOpenAIConfig,
+    type IAnthropicConfig,
+    type IGoogleConfig,
+    type IMistralConfig
 } from './llmProviderTypes';
+
 import { 
-    ILLMConfig, 
-    ILLMProvider, 
-    ILLMRuntimeOptions,
-    IStreamingChunk,
-    IActiveLLMConfig,
-    ensureApiKey
+    type ILLMRuntimeOptions,
+    type IStreamingChunk
 } from './llmCommonTypes';
+
+import type { LLMResponse } from './llmResponseTypes';
+import type { IOutput } from './llmResponseTypes';
+import type { IValidationResult } from '../common/commonValidationTypes';
 
 // ─── Core Instance Interface ─────────────────────────────────────────────────────
 
 export interface ILLMInstance {
-    generate(input: string, options?: ILLMRuntimeOptions): Promise<ILLMResponse>;
+    generate(input: string, options?: ILLMRuntimeOptions): Promise<LLMResponse>;
     generateStream(input: string, options?: ILLMRuntimeOptions): AsyncIterator<IStreamingChunk>;
-    validateConfig(): Promise<void>;
+    validateConfig(config: LLMProviderConfig): Promise<IValidationResult<unknown>>;
     cleanup(): Promise<void>;
-    getConfig(): IActiveLLMConfig;
-    updateConfig(updates: Partial<IActiveLLMConfig>): void;
-    getProvider(): ILLMProvider;
+    getConfig(): IBaseLLMConfig;
+    updateConfig(updates: Partial<IBaseLLMConfig>): void;
+    getProvider(): LLM_PROVIDER_enum;
 }
 
 export interface IAgenticLoopResult {
@@ -51,23 +50,23 @@ export interface IAgenticLoopResult {
 // ─── Provider-Specific Types ─────────────────────────────────────────────────────
 
 export interface IGroqInstance extends ILLMInstance {
-    getConfig(): IActiveLLMConfig & { provider: 'groq' };
+    getConfig(): IGroqConfig;
 }
 
 export interface IOpenAIInstance extends ILLMInstance {
-    getConfig(): IActiveLLMConfig & { provider: 'openai' };
+    getConfig(): IOpenAIConfig;
 }
 
 export interface IAnthropicInstance extends ILLMInstance {
-    getConfig(): IActiveLLMConfig & { provider: 'anthropic' };
+    getConfig(): IAnthropicConfig;
 }
 
 export interface IGoogleInstance extends ILLMInstance {
-    getConfig(): IActiveLLMConfig & { provider: 'google' };
+    getConfig(): IGoogleConfig;
 }
 
 export interface IMistralInstance extends ILLMInstance {
-    getConfig(): IActiveLLMConfig & { provider: 'mistral' };
+    getConfig(): IMistralConfig;
 }
 
 // ─── Type Guards ─────────────────────────────────────────────────────────────────
@@ -75,34 +74,34 @@ export interface IMistralInstance extends ILLMInstance {
 export const LLMInstanceGuards = {
     isGroqInstance: (instance: ILLMInstance): instance is IGroqInstance => {
         const config = instance.getConfig();
-        return config.provider === 'groq' && config.apiKey !== undefined;
+        return config.provider === LLM_PROVIDER_enum.GROQ && config.apiKey !== undefined;
     },
     
     isOpenAIInstance: (instance: ILLMInstance): instance is IOpenAIInstance => {
         const config = instance.getConfig();
-        return config.provider === 'openai' && config.apiKey !== undefined;
+        return config.provider === LLM_PROVIDER_enum.OPENAI && config.apiKey !== undefined;
     },
     
     isAnthropicInstance: (instance: ILLMInstance): instance is IAnthropicInstance => {
         const config = instance.getConfig();
-        return config.provider === 'anthropic' && config.apiKey !== undefined;
+        return config.provider === LLM_PROVIDER_enum.ANTHROPIC && config.apiKey !== undefined;
     },
     
     isGoogleInstance: (instance: ILLMInstance): instance is IGoogleInstance => {
         const config = instance.getConfig();
-        return config.provider === 'google' && config.apiKey !== undefined;
+        return config.provider === LLM_PROVIDER_enum.GOOGLE && config.apiKey !== undefined;
     },
     
     isMistralInstance: (instance: ILLMInstance): instance is IMistralInstance => {
         const config = instance.getConfig();
-        return config.provider === 'mistral' && config.apiKey !== undefined;
+        return config.provider === LLM_PROVIDER_enum.MISTRAL && config.apiKey !== undefined;
     }
 };
 
 // ─── Instance Factory Types ─────────────────────────────────────────────────────
 
 export interface ILLMInstanceFactory {
-    createInstance(config: ILLMConfig): Promise<ILLMInstance>;
+    createInstance(config: LLMProviderConfig): Promise<ILLMInstance>;
 }
 
 export interface ILLMInstanceOptions {
@@ -117,8 +116,4 @@ export interface ILLMInstanceOptions {
         maxSize?: number;
         ttl?: number;
     };
-}
-
-export function toActiveConfig(config: ILLMConfig): IActiveLLMConfig {
-    return ensureApiKey(config);
 }

@@ -20,8 +20,9 @@ import { IHandlerResult } from "../common/commonHandlerTypes";
 import { IResourceMetrics, IUsageMetrics } from "../common/commonMetricTypes";
 import { Runnable } from "@langchain/core/runnables";
 import { ChatMessageHistory } from "langchain/stores/message/in_memory";
-import { IMessageHistory } from "../messaging/messagingHistoryTypes";
+import { IMessageHistory } from "../llm/message/messagingHistoryTypes";
 import { IAgentExecutionState } from "./agentStateTypes";
+import { ToolName } from "../tool/toolTypes";
 
 // ─── Common Types ───────────────────────────────────────────────────────────────
 
@@ -33,7 +34,7 @@ export interface IAgentMetadata {
     id: string;
     name: string;
     description?: string;
-    capabilities: string[];
+    capabilities: ToolName[];
     skills: string[];
     created: Date;
     lastActive?: Date;
@@ -44,8 +45,8 @@ export interface IAgentCapabilities {
     canThink: boolean;
     canUseTools: boolean;
     canLearn: boolean;
-    supportedToolTypes: string[];
-    supportedTools?: string[];
+    supportedToolTypes: ToolName[];
+    supportedTools?: ToolName[];
     maxConcurrentTasks?: number;
     memoryCapacity?: number;
 }
@@ -71,7 +72,7 @@ export interface IBaseAgent {
     readonly background: string;
     readonly version: string;
     readonly capabilities: IAgentCapabilities;
-    readonly validationSchema: IValidationSchema;
+    readonly validationSchema: IValidationSchema<IBaseAgent>;
 
     tools: Tool[];
     maxIterations: number;
@@ -202,11 +203,13 @@ export const IAgentTypeGuards = {
             Array.isArray(executionState.assignedTasks) &&
             Array.isArray(executionState.completedTasks) &&
             Array.isArray(executionState.failedTasks) &&
+            Array.isArray(executionState.blockedTasks) &&
+            Array.isArray(executionState.history) &&
             typeof executionState.iterations === 'number' &&
             typeof executionState.maxIterations === 'number' &&
             typeof executionState.performance === 'object' &&
-            typeof executionState.resourceUsage === 'object' &&
-            typeof executionState.llmMetrics === 'object'
+            typeof executionState.metrics === 'object' &&
+            executionState.metrics !== null
         );
     }
 };

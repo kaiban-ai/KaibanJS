@@ -1,6 +1,9 @@
 /**
  * @file teamStoreTypes.ts
+ * @path KaibanJS\src\types\team\teamStoreTypes.ts
  * @description Team store type definitions and interfaces for managing team state and configuration
+ * 
+ * @module @types/team
  */
 
 import type { StoreApi, UseBoundStore } from 'zustand';
@@ -19,6 +22,25 @@ import type {
     IWorkflowMetadata,
     IBaseHandlerMetadata
 } from '../common/commonMetadataTypes';
+import type { IPerformanceMetrics } from '../common/commonMetricTypes';
+
+// ─── Team Handler Types ──────────────────────────────────────────────────────
+
+/** Team-specific metadata interface */
+export interface ITeamHandlerMetadata extends IBaseHandlerMetadata {
+    teamId: string;
+    teamName: string;
+    agentCount: number;
+    taskCount: number;
+    workflowStatus: string;
+    performance: IPerformanceMetrics & {
+        agentUtilization: number;
+        taskCompletion: number;
+    };
+}
+
+/** Team handler result type */
+export type ITeamHandlerResult<T = unknown> = IHandlerResult<T, ITeamHandlerMetadata>;
 
 // ─── Store Configuration ─────────────────────────────────────────────────────
 
@@ -65,15 +87,15 @@ export interface ITeamStoreMethods {
     setState: (fn: (state: ITeamState) => Partial<ITeamState>) => void;
     subscribe: IStoreSubscribe<ITeamState>;
     destroy: () => void;
-    startWorkflow: () => Promise<IHandlerResult<unknown, IWorkflowMetadata>>;
-    stopWorkflow: () => Promise<IHandlerResult<unknown, IWorkflowMetadata>>;
-    handleWorkflowError: () => Promise<IHandlerResult<unknown, IErrorMetadata>>;
-    handleAgentStatusChange: () => Promise<IHandlerResult<unknown, ISuccessMetadata>>;
-    handleAgentError: () => Promise<IHandlerResult<unknown, IErrorMetadata>>;
-    handleTaskStatusChange: () => Promise<IHandlerResult<unknown, ISuccessMetadata>>;
-    handleTaskError: () => Promise<IHandlerResult<unknown, IErrorMetadata>>;
-    handleTaskBlocked: () => Promise<IHandlerResult<unknown, ISuccessMetadata>>;
-    provideFeedback: () => Promise<IHandlerResult<unknown, ISuccessMetadata>>;
+    startWorkflow: () => Promise<ITeamHandlerResult<IWorkflowResult>>;
+    stopWorkflow: () => Promise<ITeamHandlerResult<void>>;
+    handleWorkflowError: () => Promise<ITeamHandlerResult<IErrorMetadata>>;
+    handleAgentStatusChange: () => Promise<ITeamHandlerResult<void>>;
+    handleAgentError: () => Promise<ITeamHandlerResult<IErrorMetadata>>;
+    handleTaskStatusChange: () => Promise<ITeamHandlerResult<void>>;
+    handleTaskError: () => Promise<ITeamHandlerResult<IErrorMetadata>>;
+    handleTaskBlocked: () => Promise<ITeamHandlerResult<void>>;
+    provideFeedback: () => Promise<ITeamHandlerResult<void>>;
 }
 
 // ─── Configured Store Types ──────────────────────────────────────────────────
@@ -121,6 +143,41 @@ export const TeamStoreTypeGuards = {
         const config = value as ITeamStoreConfig;
         return typeof config.name === 'string' &&
             (!config.logLevel || ['debug', 'info', 'warn', 'error'].includes(config.logLevel));
+    },
+
+    isTeamHandlerMetadata: (value: unknown): value is ITeamHandlerMetadata => {
+        if (typeof value !== 'object' || value === null) return false;
+        const metadata = value as Partial<ITeamHandlerMetadata>;
+        return (
+            typeof metadata.teamId === 'string' &&
+            typeof metadata.teamName === 'string' &&
+            typeof metadata.agentCount === 'number' &&
+            typeof metadata.taskCount === 'number' &&
+            typeof metadata.workflowStatus === 'string' &&
+            typeof metadata.performance === 'object' &&
+            metadata.performance !== null &&
+            // Validate IPerformanceMetrics structure
+            typeof metadata.performance.executionTime === 'object' &&
+            typeof metadata.performance.executionTime.total === 'number' &&
+            typeof metadata.performance.executionTime.average === 'number' &&
+            typeof metadata.performance.executionTime.min === 'number' &&
+            typeof metadata.performance.executionTime.max === 'number' &&
+            typeof metadata.performance.throughput === 'object' &&
+            typeof metadata.performance.throughput.operationsPerSecond === 'number' &&
+            typeof metadata.performance.throughput.dataProcessedPerSecond === 'number' &&
+            typeof metadata.performance.errorMetrics === 'object' &&
+            typeof metadata.performance.errorMetrics.totalErrors === 'number' &&
+            typeof metadata.performance.errorMetrics.errorRate === 'number' &&
+            typeof metadata.performance.resourceUtilization === 'object' &&
+            typeof metadata.performance.resourceUtilization.cpuUsage === 'number' &&
+            typeof metadata.performance.resourceUtilization.memoryUsage === 'number' &&
+            typeof metadata.performance.resourceUtilization.diskIO === 'object' &&
+            typeof metadata.performance.resourceUtilization.networkUsage === 'object' &&
+            typeof metadata.performance.timestamp === 'number' &&
+            // Validate team-specific metrics
+            typeof metadata.performance.agentUtilization === 'number' &&
+            typeof metadata.performance.taskCompletion === 'number'
+        );
     }
 };
 

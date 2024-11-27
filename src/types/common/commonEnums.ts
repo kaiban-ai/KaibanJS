@@ -61,17 +61,43 @@ export enum TASK_STATUS_enum {
 
 export enum WORKFLOW_STATUS_enum {
     INITIAL = 'INITIAL',
+    CREATED = 'CREATED',
+    INITIALIZED = 'INITIALIZED',
     RUNNING = 'RUNNING',
+    PAUSED = 'PAUSED',
     STOPPING = 'STOPPING',
     STOPPED = 'STOPPED',
-    ERRORED = 'ERRORED',
+    BLOCKED = 'BLOCKED',
+    COMPLETED = 'COMPLETED',
     FINISHED = 'FINISHED',
-    BLOCKED = 'BLOCKED'
+    FAILED = 'FAILED',
+    ERRORED = 'ERRORED',
+    CANCELLED = 'CANCELLED'
 }
 
 export enum FEEDBACK_STATUS_enum {
     PENDING = 'PENDING',
     PROCESSED = 'PROCESSED'
+}
+
+// ─── Event Type Enums ─────────────────────────────────────────────────────────
+
+export enum TASK_EVENT_TYPE_enum {
+    TASK_CREATED = 'task.created',
+    TASK_UPDATED = 'task.updated',
+    TASK_DELETED = 'task.deleted',
+    TASK_STATUS_CHANGED = 'task.status.changed',
+    TASK_PROGRESS_UPDATED = 'task.progress.updated',
+    TASK_COMPLETED = 'task.completed',
+    TASK_FAILED = 'task.failed',
+    TASK_VALIDATION_COMPLETED = 'task.validation.completed',
+    TASK_FEEDBACK_ADDED = 'task.feedback.added',
+    TASK_METRICS_UPDATED = 'task.metrics.updated',
+    TASK_ERROR_OCCURRED = 'task.error.occurred',
+    TASK_ERROR_HANDLED = 'task.error.handled',
+    TASK_ERROR_RECOVERY_STARTED = 'task.error.recovery.started',
+    TASK_ERROR_RECOVERY_COMPLETED = 'task.error.recovery.completed',
+    TASK_ERROR_RECOVERY_FAILED = 'task.error.recovery.failed'
 }
 
 export enum STATUS_LOG_TYPE_enum {
@@ -85,6 +111,87 @@ export enum MESSAGE_LOG_TYPE_enum {
     USER = 'UserMessage',
     AI = 'AIMessage',
     FUNCTION = 'FunctionMessage'
+}
+
+export enum METRIC_TYPE_enum {
+    RESOURCE = 'RESOURCE',
+    PERFORMANCE = 'PERFORMANCE',
+    USAGE = 'USAGE',
+    COST = 'COST'
+}
+
+export enum EVENT_TYPE_enum {
+    STATE_CHANGE = 'STATE_CHANGE',
+    RESOURCE_UPDATE = 'RESOURCE_UPDATE',
+    METRIC_UPDATE = 'METRIC_UPDATE',
+    ERROR = 'ERROR'
+}
+
+export enum RESOURCE_STATUS_enum {
+    AVAILABLE = 'AVAILABLE',
+    IN_USE = 'IN_USE',
+    RESERVED = 'RESERVED',
+    UNAVAILABLE = 'UNAVAILABLE',
+    FAILED = 'FAILED'
+}
+
+export enum ERROR_TYPE_enum {
+    VALIDATION = 'VALIDATION',
+    EXECUTION = 'EXECUTION',
+    RESOURCE = 'RESOURCE',
+    TIMEOUT = 'TIMEOUT',
+    SYSTEM = 'SYSTEM'
+}
+
+export enum MESSAGE_ERROR_TYPE_enum {
+    QUEUE_OVERFLOW = 'QUEUE_OVERFLOW',
+    BUFFER_OVERFLOW = 'BUFFER_OVERFLOW',
+    CHANNEL_FAILURE = 'CHANNEL_FAILURE',
+    DELIVERY_FAILURE = 'DELIVERY_FAILURE',
+    PROCESSING_FAILURE = 'PROCESSING_FAILURE',
+    VALIDATION_FAILURE = 'VALIDATION_FAILURE',
+    RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
+    RESOURCE_EXHAUSTED = 'RESOURCE_EXHAUSTED',
+    NETWORK_ERROR = 'NETWORK_ERROR',
+    TIMEOUT = 'TIMEOUT'
+}
+
+// ─── LLM Provider Enums ───────────────────────────────────────────────────────
+
+export enum LLM_PROVIDER_enum {
+    GROQ = 'GROQ',
+    OPENAI = 'OPENAI',
+    ANTHROPIC = 'ANTHROPIC',
+    GOOGLE = 'GOOGLE',
+    MISTRAL = 'MISTRAL'
+}
+
+export enum GROQ_MODEL_enum {
+    MIXTRAL = 'mixtral-8x7b-32768',
+    LLAMA2 = 'llama2-70b-4096'
+}
+
+export enum OPENAI_MODEL_enum {
+    GPT4 = 'gpt-4',
+    GPT4_TURBO = 'gpt-4-turbo',
+    GPT35_TURBO = 'gpt-3.5-turbo'
+}
+
+export enum ANTHROPIC_MODEL_enum {
+    CLAUDE3_OPUS = 'claude-3-opus',
+    CLAUDE3_SONNET = 'claude-3-sonnet',
+    CLAUDE21 = 'claude-2.1'
+}
+
+export enum GOOGLE_MODEL_enum {
+    GEMINI_PRO = 'gemini-pro',
+    GEMINI_PRO_VISION = 'gemini-pro-vision'
+}
+
+export enum MISTRAL_MODEL_enum {
+    TINY = 'mistral-tiny',
+    SMALL = 'mistral-small',
+    MEDIUM = 'mistral-medium'
 }
 
 // ─── Log Level Enum ──────────────────────────────────────────────────────────
@@ -132,9 +239,17 @@ export interface IEnumTypeGuards {
     isWorkflowStatus: (status: unknown) => status is keyof typeof WORKFLOW_STATUS_enum;
     isFeedbackStatus: (status: unknown) => status is keyof typeof FEEDBACK_STATUS_enum;
     isValidStatusForEntity: (status: unknown, entity: string) => boolean;
+    isLLMProvider: (provider: unknown) => provider is keyof typeof LLM_PROVIDER_enum;
+    isGroqModel: (model: unknown) => model is keyof typeof GROQ_MODEL_enum;
+    isOpenAIModel: (model: unknown) => model is keyof typeof OPENAI_MODEL_enum;
+    isAnthropicModel: (model: unknown) => model is keyof typeof ANTHROPIC_MODEL_enum;
+    isGoogleModel: (model: unknown) => model is keyof typeof GOOGLE_MODEL_enum;
+    isMistralModel: (model: unknown) => model is keyof typeof MISTRAL_MODEL_enum;
+    isValidModelForProvider: (model: unknown, provider: keyof typeof LLM_PROVIDER_enum) => boolean;
 }
 
 export const EnumTypeGuards: IEnumTypeGuards = {
+    // Status-related Type Guards
     isAgentStatus: (status: unknown): status is keyof typeof AGENT_STATUS_enum => {
         return typeof status === 'string' && status in AGENT_STATUS_enum;
     },
@@ -170,5 +285,48 @@ export const EnumTypeGuards: IEnumTypeGuards = {
             default:
                 return false;
         }
+    },
+
+    // Model-related Type Guards
+    isLLMProvider: (provider: unknown): provider is keyof typeof LLM_PROVIDER_enum => {
+        return typeof provider === 'string' && provider in LLM_PROVIDER_enum;
+    },
+
+    isGroqModel: (model: unknown): model is keyof typeof GROQ_MODEL_enum => {
+        return typeof model === 'string' && model in GROQ_MODEL_enum;
+    },
+
+    isOpenAIModel: (model: unknown): model is keyof typeof OPENAI_MODEL_enum => {
+        return typeof model === 'string' && model in OPENAI_MODEL_enum;
+    },
+
+    isAnthropicModel: (model: unknown): model is keyof typeof ANTHROPIC_MODEL_enum => {
+        return typeof model === 'string' && model in ANTHROPIC_MODEL_enum;
+    },
+
+    isGoogleModel: (model: unknown): model is keyof typeof GOOGLE_MODEL_enum => {
+        return typeof model === 'string' && model in GOOGLE_MODEL_enum;
+    },
+
+    isMistralModel: (model: unknown): model is keyof typeof MISTRAL_MODEL_enum => {
+        return typeof model === 'string' && model in MISTRAL_MODEL_enum;
+    },
+
+    isValidModelForProvider: (model: unknown, provider: keyof typeof LLM_PROVIDER_enum): boolean => {
+        switch (provider) {
+            case LLM_PROVIDER_enum.GROQ:
+                return EnumTypeGuards.isGroqModel(model);
+            case LLM_PROVIDER_enum.OPENAI:
+                return EnumTypeGuards.isOpenAIModel(model);
+            case LLM_PROVIDER_enum.ANTHROPIC:
+                return EnumTypeGuards.isAnthropicModel(model);
+            case LLM_PROVIDER_enum.GOOGLE:
+                return EnumTypeGuards.isGoogleModel(model);
+            case LLM_PROVIDER_enum.MISTRAL:
+                return EnumTypeGuards.isMistralModel(model);
+            default:
+                return false;
+        }
     }
 };
+

@@ -6,8 +6,10 @@
  * retrieve concise titles for logging purposes, and validate task structures.
  */
 
-import { logger } from "@/utils/core/logger";
-import { TaskType } from '@/types/task/taskBase';
+import CoreManager from '../../../managers/core/coreManager';
+import type { TaskType } from '../../../types/task/taskBaseTypes';
+
+const coreManager = CoreManager.getInstance();
 
 /**
  * Retrieves a concise title for a task, suitable for logging purposes.
@@ -29,12 +31,12 @@ export function getTaskTitleForLogs(task: TaskType): string {
  */
 export function validateTask(task: TaskType): boolean {
     if (!task) {
-        logger.error("Task is undefined or null");
+        coreManager.logError("Task is undefined or null");
         return false;
     }
 
     if (!Array.isArray(task.feedbackHistory)) {
-        logger.warn(`Expected feedbackHistory to be an array, but got ${typeof task.feedbackHistory}`);
+        coreManager.logWarning(`Expected feedbackHistory to be an array, but got ${typeof task.feedbackHistory}`);
         task.feedbackHistory = [];
     }
 
@@ -48,7 +50,7 @@ export function validateTask(task: TaskType): boolean {
     );
 
     if (!isValid) {
-        logger.warn("Task is missing required fields (id, title, description, or agent)");
+        coreManager.logWarning("Task is missing required fields (id, title, description, or agent)");
     }
 
     return isValid;

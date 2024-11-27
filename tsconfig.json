@@ -15,12 +15,29 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "baseUrl": ".",
+    "baseUrl": "src",
     "paths": {
-      "@/*": ["src/*"],
-      "@types/*": ["types/*"]
-    }
+      "@core/*": ["managers/core/*"],
+      "@domain/*": ["managers/domain/*"],
+      "@types/*": ["types/*"],
+      "@utils/*": ["utils/*"],
+      "@stores/*": ["stores/*"],
+      "@agents/*": ["agents/*"],
+      "@tasks/*": ["tasks/*"],
+      "@team/*": ["team/*"]
+    },
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*", "types/**/*.d.ts", "types/**/*.ts"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

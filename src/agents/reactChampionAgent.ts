@@ -1,416 +1,286 @@
 /**
  * @file reactChampionAgent.ts
- * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\agents\reactChampionAgent.ts
- * @description React Champion agent implementation using manager-based architecture
+ * @path src/agents/reactChampionAgent.ts
+ * @description React Champion agent implementation using CoreManager services
+ *
+ * @module @agents
  */
 
-import { v4 as uuidv4 } from 'uuid';
+// LLM Provider Imports
+import { ChatGroq } from '@langchain/groq';
+import { ChatOpenAI } from '@langchain/openai';
+import { ChatAnthropic } from '@langchain/anthropic';
+import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
+import { ChatMistralAI } from '@langchain/mistralai';
+
+// Core LangChain Imports
+import { SystemMessage } from '@langchain/core/messages';
+import { StringOutputParser } from '@langchain/core/output_parsers';
+import { RunnableWithMessageHistory } from '@langchain/core/runnables';
+import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
+import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { Tool } from "langchain/tools";
-import { BaseAgentManager } from '../managers/domain/agent/baseAgentManager';
-import { LLMManager } from '../managers/domain/llm/llmManager';
-import { TaskManager } from '../managers/domain/task/taskManager';
+import { Runnable } from "@langchain/core/runnables";
+
+// Local Imports
+import { BaseAgent } from './baseAgent';
 import { getApiKey } from '../utils/helpers/agent/agentUtils';
+import { createError } from '../types/common/commonErrorTypes';
 
 import type { 
     IReactChampionAgent, 
-    IBaseAgent 
+    IBaseAgent,
+    IExecutableAgent
 } from '../types/agent/agentBaseTypes';
 import type { 
-    TaskType, 
-    FeedbackObject 
-} from '../types/task/taskBase';
+    ITaskType, 
+    ITaskFeedback 
+} from '../types/task/taskBaseTypes';
 import type { 
-    Output, 
-    ParsedOutput 
+    IOutput, 
+    IParsedOutput 
 } from '../types/llm/llmResponseTypes';
-import type { AgenticLoopResult } from '../types/llm/llmInstanceTypes';
-import type { ErrorType } from '../types/common';
-import type { HandlerResult } from '../types/agent/agentHandlersTypes';
+import type { IAgenticLoopResult } from '../types/llm/llmInstanceTypes';
+import type { IErrorType, IErrorKind } from '../types/common/commonErrorTypes';
+import type { IHandlerResult } from '../types/common/commonHandlerTypes';
 import { AGENT_STATUS_enum } from '../types/common/commonEnums';
-import { REACTChampionAgentPrompts } from '../types/agent/promptsTypes';
-import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from '../utils/helpers/prompts';
-import { LLMProviders } from '../types/llm/llmCommonTypes';
+import type { IREACTChampionAgentPrompts } from '../types/agent/promptsTypes';
+import type { IMessageHistory } from '../types/llm/message/messagingHistoryTypes';
+import type { ILLMManager } from '../types/llm/llmManagerTypes';
+import type { IThinkingManager } from '../types/agent/agentHandlersTypes';
+import { 
+    type ILLMConfig,
+    type LLMProviderConfig
+} from '../types/llm/llmCommonTypes';
 
-interface ValidationResult {
-    isValid: boolean;
-    errors: string[];
-}
+export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent {
+    public executableAgent: IExecutableAgent;
 
-export class ReactChampionAgent extends BaseAgentManager implements IReactChampionAgent {
-    public id: string;
-    public name: string;
-    public role: string;
-    public goal: string;
-    public background: string;
-    public tools: Tool[];
-    public maxIterations: number;
-    public store!: any;
-    public status: keyof typeof AGENT_STATUS_enum;
-    public env: Record<string, any> | null;
-    public llmInstance: any | null;
-    public llmConfig: any;
-    public llmSystemMessage: string | null;
-    public forceFinalAnswer: boolean;
-    public promptTemplates: REACTChampionAgentPrompts;
-    public messageHistory: any;
-    public executableAgent: any;
-
-    private static instance: ReactChampionAgent;
-
-    constructor(config: any) {
-        super();
-
-        const mergedConfig = {
-            ...config,
-            promptTemplates: {
-                ...REACT_CHAMPION_AGENT_DEFAULT_PROMPTS,
-                ...config.promptTemplates
-            }
-        };
-
-        // Validate required configuration parameters
-        this.validateRequiredParams(mergedConfig, ['name', 'role', 'goal']);
-
-        // Initialize required properties
-        this.id = uuidv4();
-        this.name = mergedConfig.name;
-        this.role = mergedConfig.role;
-        this.goal = mergedConfig.goal;
-        this.background = mergedConfig.background || '';
-        this.tools = mergedConfig.tools || [];
-        this.maxIterations = mergedConfig.maxIterations || 10;
-        this.status = AGENT_STATUS_enum.INITIAL;
-        this.env = null;
-        this.llmInstance = mergedConfig.llmInstance || null;
-        this.llmConfig = this.normalizeLlmConfig(mergedConfig.llmConfig || {});
-        this.llmSystemMessage = null;
-        this.forceFinalAnswer = mergedConfig.forceFinalAnswer ?? true;
-        this.promptTemplates = mergedConfig.promptTemplates;
-
-        this.log(`Agent created: ${this.name}`);
-    }
-
-    public static getInstance(config?: any): ReactChampionAgent {
-        if (!ReactChampionAgent.instance) {
-            ReactChampionAgent.instance = new ReactChampionAgent(config);
-        }
-        return ReactChampionAgent.instance;
-    }
-
-    protected async validateAgent(agent: IBaseAgent): Promise<ValidationResult> {
-        const errors: string[] = [];
-
-        try {
-            this.validateRequiredParams(
-                { name: agent.name, role: agent.role, goal: agent.goal },
-                ['name', 'role', 'goal']
-            );
-        } catch (error) {
-            errors.push((error as Error).message);
-        }
-
-        if (!agent.llmConfig?.provider) {
-            errors.push('LLM configuration missing or invalid');
-        }
-
-        return {
-            isValid: errors.length === 0,
-            errors
-        };
-    }
-
-    protected async initializeAgent(agent: IBaseAgent): Promise<void> {
-        const result = await this.safeExecute(async () => {
-            if (!agent.llmInstance) {
-                const apiKey = getApiKey(agent.llmConfig, agent.env as Record<string, string> || {});
-                if (!apiKey) {
-                    throw new Error('API key is required via config or environment');
-                }
-                agent.llmConfig.apiKey = apiKey;
-                this.createLLMInstance();
-            }
-
-            await this.handleStatusTransition({
-                currentStatus: agent.status,
-                targetStatus: AGENT_STATUS_enum.INITIAL,
-                entity: 'agent',
-                entityId: agent.id,
-                metadata: this.prepareMetadata({ agent })
-            });
-        }, 'Agent initialization failed');
-
-        if (result === null) {
-            throw new Error('Agent initialization failed');
-        }
-    }
-
-    protected async cleanupAgent(agentId: string): Promise<void> {
-        const result = await this.safeExecute(async () => {
-            const agent = this.activeAgents.get(agentId);
-            if (agent) {
-                agent.llmInstance = null;
-                await this.handleStatusTransition({
-                    currentStatus: agent.status,
-                    targetStatus: AGENT_STATUS_enum.IDLE,
-                    entity: 'agent',
-                    entityId: agentId,
-                    metadata: this.prepareMetadata({ reason: 'cleanup' })
-                });
-            }
-        }, 'Agent cleanup failed');
-
-        if (result === null) {
-            throw new Error('Agent cleanup failed');
-        }
-    }
-
-    protected async handleAgentOperation(params: {
-        agent: IBaseAgent;
-        task: TaskType;
+    constructor(config: {
+        id: string;
+        name: string;
+        role: string;
+        goal: string;
+        tools?: Tool[];
+        llmConfig: ILLMConfig;
+        promptTemplates: IREACTChampionAgentPrompts;
+        messageHistory: IMessageHistory;
         store: any;
-    }): Promise<HandlerResult> {
-        const result = await this.safeExecute(async () => {
-            const { agent, task } = params;
-            
-            // Core agent operation logic would go here
-            
-            return {
-                success: true,
-                data: this.prepareMetadata({
-                    agentId: agent.id,
-                    taskId: task.id,
-                    completed: true
-                })
-            } as HandlerResult;
-        }, 'Agent operation failed');
+    }) {
+        super({
+            ...config,
+            llmConfig: config.llmConfig
+        });
 
-        if (result === null) {
-            throw new Error('Agent operation failed');
-        }
+        this.executableAgent = {
+            runnable: {} as Runnable,
+            getMessageHistory: () => new ChatMessageHistory(),
+            inputMessagesKey: 'input',
+            historyMessagesKey: 'history'
+        };
 
-        return result;
+        this.logInfo(`Agent created: ${this.name}`);
     }
 
-    protected async handleFeedback(params: {
-        agent: IBaseAgent;
-        task: TaskType;
-        feedback: string;
-        context: string;
-    }): Promise<HandlerResult> {
-        const result = await this.safeExecute(async () => {
-            const { agent, task } = params;
-            
-            // Feedback handling logic would go here
-            
-            return {
-                success: true,
-                data: this.prepareMetadata({
-                    agentId: agent.id,
-                    taskId: task.id,
-                    feedbackProcessed: true
-                })
-            } as HandlerResult;
-        }, 'Feedback handling failed');
+    // ─── Task Execution ──────────────────────────────────────────────────────
 
-        if (result === null) {
-            throw new Error('Feedback handling failed');
-        }
+    public async workOnTask(task: ITaskType): Promise<IAgenticLoopResult> {
+        const result = await this.agentManager.executeAgentLoop(this, task);
 
-        return result;
-    }
-
-    public async workOnTask(task: TaskType): Promise<AgenticLoopResult> {
-        const result = await this.safeExecute(async () => {
-            await this.registerAgent(this as unknown as IBaseAgent);
-            
-            const operationResult = await this.handleAgentOperation({
-                agent: this as unknown as IBaseAgent,
-                task,
-                store: this.store
+        if (!result.success) {
+            throw createError({
+                message: typeof result.error === 'string' ? result.error : result.error?.message || 'Failed to execute task',
+                type: 'ExecutionError' as IErrorKind,
+                context: {
+                    component: this.constructor.name,
+                    agentId: this.id,
+                    taskId: task.id
+                }
             });
-
-            if (!operationResult.success) {
-                throw operationResult.error;
-            }
-
-            await this.unregisterAgent(this.id);
-
-            return {
-                result: operationResult.data,
-                metadata: operationResult.data
-            } as AgenticLoopResult;
-        }, 'Task execution failed');
-
-        if (result === null) {
-            throw new Error('Task execution failed');
         }
-
-        return result;
-    }
-
-    public async workOnFeedback(
-        task: TaskType,
-        feedbackList: FeedbackObject[],
-        context: string
-    ): Promise<void> {
-        const result = await this.safeExecute(async () => {
-            await Promise.all(
-                feedbackList.map(async (feedback) => {
-                    return await this.handleFeedback({
-                        agent: this as unknown as IBaseAgent,
-                        task,
-                        feedback: feedback.content,
-                        context
-                    });
-                })
-            );
-        }, 'Feedback processing failed');
-
-        if (result === null) {
-            throw new Error('Feedback processing failed');
-        }
-    }
-
-    public handleAgenticLoopError(params: {
-        task: TaskType;
-        error: ErrorType;
-        iterations: number;
-        maxAgentIterations: number;
-    }): AgenticLoopResult {
-        const { error, iterations, maxAgentIterations } = params;
-
-        this.handleError(
-            error as Error,
-            'Agentic loop error'
-        );
 
         return {
-            error: error.message,
+            result: result.result,
             metadata: {
-                iterations,
-                maxAgentIterations,
-                ...this.prepareMetadata()
+                iterations: result.metadata.iterations,
+                maxAgentIterations: result.metadata.maxAgentIterations
             }
         };
     }
 
-    public createLLMInstance(): void {
-        const result = this.safeExecute(async () => {
-            this.llmInstance = this.llmManager.createInstance(this.llmConfig);
-        }, 'LLM instance creation failed');
+    // ─── LLM Management ──────────────────────────────────────────────────────
+
+    public normalizeLlmConfig(llmConfig: ILLMConfig): ILLMConfig {
+        const llmManager = this.getDomainManager<ILLMManager>('LLMManager');
+        return llmManager.normalizeConfig(llmConfig);
     }
 
-    public handleTaskCompleted(params: {
-        task: TaskType;
-        parsedResultWithFinalAnswer: ParsedOutput;
-        iterations: number;
-        maxAgentIterations: number;
-    }): void {
-        const { task, parsedResultWithFinalAnswer, iterations, maxAgentIterations } = params;
-        
-        this.handleStatusTransition({
-            currentStatus: this.status,
-            targetStatus: AGENT_STATUS_enum.TASK_COMPLETED,
-            entity: 'agent',
-            entityId: this.id,
-            metadata: this.prepareMetadata({
-                iterations,
-                maxAgentIterations,
-                result: parsedResultWithFinalAnswer
-            })
-        });
-        
-        const log = this.store.prepareNewLog({
-            agent: this,
-            task,
-            logDescription: 'Task completed successfully',
-            metadata: this.prepareMetadata({
-                iterations,
-                maxAgentIterations,
-                result: parsedResultWithFinalAnswer
-            }),
-            logType: 'AgentStatusUpdate',
-            agentStatus: AGENT_STATUS_enum.TASK_COMPLETED
-        });
+    public async createLLMInstance(): Promise<void> {
+        const llmManager = this.getDomainManager<ILLMManager>('LLMManager');
+        const instance = await llmManager.createInstance(this.llmConfig);
+        if (!instance.success || !instance.data) {
+            throw createError({
+                message: instance.error?.message || 'Failed to create LLM instance',
+                type: 'InitializationError' as IErrorKind,
+                context: {
+                    component: this.constructor.name,
+                    agentId: this.id
+                }
+            });
+        }
 
-        this.store.setState((state: any) => ({
-            workflowLogs: [...state.workflowLogs, log]
-        }));
+        // Create a complete LLMInstance with all required methods
+        this.llmInstance = {
+            ...instance.data,
+            generate: instance.data.generate.bind(instance.data),
+            generateStream: instance.data.generateStream.bind(instance.data),
+            validateConfig: instance.data.validateConfig.bind(instance.data),
+            cleanup: instance.data.cleanup.bind(instance.data),
+            getConfig: () => this.llmConfig,
+            updateConfig: (updates) => {
+                this.llmConfig = { ...this.llmConfig, ...updates };
+            },
+            getProvider: () => this.llmConfig.provider
+        };
     }
+
+    // ─── Iteration Handling ───────────────────────────────────────────────────
 
     public handleIterationStart(params: { 
-        task: TaskType; 
+        task: ITaskType; 
         iterations: number; 
         maxAgentIterations: number; 
     }): void {
         this.handleStatusTransition({
-            currentStatus: this.status,
-            targetStatus: AGENT_STATUS_enum.ITERATION_START,
             entity: 'agent',
             entityId: this.id,
-            metadata: this.prepareMetadata(params)
+            currentStatus: this.status,
+            targetStatus: 'ITERATION_START' as keyof typeof AGENT_STATUS_enum,
+            context: {
+                agentId: this.id,
+                agentName: this.name,
+                operation: 'iteration_start',
+                ...params
+            }
         });
-        
-        this.log(
-            `Starting iteration ${params.iterations + 1}/${params.maxAgentIterations}`,
-            this.name,
-            params.task.id
-        );
     }
 
     public handleIterationEnd(params: { 
-        task: TaskType; 
+        task: ITaskType; 
         iterations: number; 
         maxAgentIterations: number; 
     }): void {
         this.handleStatusTransition({
-            currentStatus: this.status,
-            targetStatus: AGENT_STATUS_enum.ITERATION_END,
             entity: 'agent',
             entityId: this.id,
-            metadata: this.prepareMetadata(params)
+            currentStatus: this.status,
+            targetStatus: 'ITERATION_END' as keyof typeof AGENT_STATUS_enum,
+            context: {
+                agentId: this.id,
+                agentName: this.name,
+                operation: 'iteration_end',
+                ...params
+            }
         });
-        
-        this.log(
-            `Completed iteration ${params.iterations + 1}/${params.maxAgentIterations}`,
-            this.name,
-            params.task.id
-        );
     }
 
-    public handleFinalAnswer(params: {
-        agent: IBaseAgent;
-        task: TaskType;
-        parsedLLMOutput: ParsedOutput;
-    }): ParsedOutput {
-        return params.parsedLLMOutput;
-    }
-
-    public handleMaxIterationsError(params: { 
-        task: TaskType; 
-        iterations: number; 
-        maxAgentIterations: number; 
-    }): void {
-        this.handleError(
-            new Error(`Maximum iterations (${params.maxAgentIterations}) reached`),
-            'Max iterations exceeded'
-        );
-    }
+    // ─── Error Handling ──────────────────────────────────────────────────────
 
     public handleThinkingError(params: {
-        task: TaskType;
-        error: ErrorType;
+        task: ITaskType;
+        error: IErrorType;
     }): void {
         this.handleError(
-            params.error as Error,
+            createError({
+                message: params.error.message,
+                type: 'CognitiveError' as IErrorKind,
+                context: {
+                    component: this.constructor.name,
+                    agentId: this.id,
+                    taskId: params.task.id
+                }
+            }),
             'Error during thinking phase'
         );
     }
 
+    public handleMaxIterationsError(params: { 
+        task: ITaskType; 
+        iterations: number; 
+        maxAgentIterations: number; 
+    }): void {
+        this.handleError(
+            createError({
+                message: `Maximum iterations (${params.maxAgentIterations}) reached`,
+                type: 'ExecutionError' as IErrorKind,
+                context: {
+                    component: this.constructor.name,
+                    agentId: this.id,
+                    taskId: params.task.id,
+                    iterations: params.iterations,
+                    maxIterations: params.maxAgentIterations
+                }
+            }),
+            'Max iterations exceeded'
+        );
+    }
+
+    public handleAgenticLoopError(params: {
+        task: ITaskType;
+        error: IErrorType;
+        iterations: number;
+        maxAgentIterations: number;
+    }): void {
+        this.handleError(
+            createError({
+                message: params.error.message,
+                type: 'ExecutionError' as IErrorKind,
+                context: {
+                    component: this.constructor.name,
+                    agentId: this.id,
+                    taskId: params.task.id,
+                    iterations: params.iterations,
+                    maxIterations: params.maxAgentIterations
+                }
+            }),
+            'Agentic loop error'
+        );
+    }
+
+    // ─── Task Completion ─────────────────────────────────────────────────────
+
+    public handleTaskCompleted(params: {
+        task: ITaskType;
+        parsedResultWithFinalAnswer: IParsedOutput;
+        iterations: number;
+        maxAgentIterations: number;
+    }): void {
+        this.handleStatusTransition({
+            entity: 'agent',
+            entityId: this.id,
+            currentStatus: this.status,
+            targetStatus: 'TASK_COMPLETED' as keyof typeof AGENT_STATUS_enum,
+            context: {
+                agentId: this.id,
+                agentName: this.name,
+                operation: 'task_completed',
+                ...params
+            }
+        });
+    }
+
+    public handleFinalAnswer(params: {
+        agent: IBaseAgent;
+        task: ITaskType;
+        parsedLLMOutput: IParsedOutput;
+    }): IParsedOutput {
+        return params.parsedLLMOutput;
+    }
+
     public handleIssuesParsingLLMOutput(params: {
         agent: IBaseAgent;
-        task: TaskType;
-        output: Output;
+        task: ITaskType;
+        output: IOutput;
         llmOutput: string;
     }): string {
         return this.promptTemplates.INVALID_JSON_FEEDBACK?.({
@@ -420,77 +290,27 @@ export class ReactChampionAgent extends BaseAgentManager implements IReactChampi
         }) || 'Unable to parse LLM output';
     }
 
-    public normalizeLlmConfig(llmConfig: any): any {
-        if (llmConfig.provider === 'none') {
-            return {
-                provider: LLMProviders.OPENAI,
-                model: 'gpt-4',
-                apiKey: ''
-            };
-        }
-        
-        return {
-            ...llmConfig,
-            provider: llmConfig.provider || LLMProviders.OPENAI,
-            model: llmConfig.model || 'gpt-4',
-            apiKey: llmConfig.apiKey || ''
-        };
-    }
+    // ─── Abstract Method Implementation ────────────────────────────────────────
 
-    public setStatus(status: keyof typeof AGENT_STATUS_enum): void {
-        this.handleStatusTransition({
-            currentStatus: this.status,
-            targetStatus: status,
-            entity: 'agent',
-            entityId: this.id,
-            metadata: this.prepareMetadata()
-        });
-    }
-
-    public setStore(store: any): void {
-        const result = this.safeExecute(async () => {
-            this.validateRequiredParams({ store }, ['store']);
-            this.store = store;
-        }, 'Store setting failed');
-
-        if (result === null) {
-            throw new Error('Store setting failed');
-        }
-    }
-
-    public setEnv(env: Record<string, any>): void {
-        const result = this.safeExecute(async () => {
-            this.env = env;
-            this.log(`Environment updated for agent: ${this.name}`, this.name);
-        }, 'Environment setting failed');
-
-        if (result === null) {
-            throw new Error('Environment setting failed');
-        }
-    }
-
-    public initialize(store: any, env: Record<string, any>): void {
-        const result = this.safeExecute(async () => {
-            this.validateRequiredParams({ store }, ['store']);
-            this.store = store;
-            this.env = env;
-
-            if (!this.llmInstance) {
-                const apiKey = getApiKey(this.llmConfig, this.env as Record<string, string> || {});
-                if (!apiKey) {
-                    throw new Error('API key is required via config or environment');
+    public async think(): Promise<IHandlerResult<unknown>> {
+        const thinkingManager = this.getDomainManager<IThinkingManager>('ThinkingManager');
+        if (!this.executionState.currentTask) {
+            throw createError({
+                message: 'No current task assigned',
+                type: 'StateError' as IErrorKind,
+                context: {
+                    component: this.constructor.name,
+                    agentId: this.id
                 }
-                this.llmConfig.apiKey = apiKey;
-                this.createLLMInstance();
-            }
-
-            this.log(`Initialized agent: ${this.name}`, this.name);
-        }, 'Agent initialization failed');
-
-        if (result === null) {
-            throw new Error('Agent initialization failed');
+            });
         }
+
+        const result = await thinkingManager.executeThinking({
+            agent: this,
+            task: this.executionState.currentTask,
+            ExecutableAgent: this.executableAgent
+        });
+
+        return result;
     }
 }
-
-export default ReactChampionAgent;

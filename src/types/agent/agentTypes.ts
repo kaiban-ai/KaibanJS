@@ -20,7 +20,7 @@ import { IHandlerResult } from '../common/commonHandlerTypes';
 import { IResourceMetrics, IUsageMetrics } from '../common/commonMetricTypes';
 import { Runnable } from "@langchain/core/runnables";
 import { ChatMessageHistory } from "langchain/stores/message/in_memory";
-import { IMessageHistory } from '../messaging/messagingHistoryTypes';
+import { IMessageHistory } from '../llm/message/messagingHistoryTypes';
 import { IAgentMetadata } from './agentBaseTypes';
 import { IAgentExecutionState } from './agentStateTypes';
 import { IAgentTypeGuards } from './agentBaseTypes';

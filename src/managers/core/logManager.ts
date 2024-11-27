@@ -1,18 +1,16 @@
 /**
- * @file logManager.ts
- * @path src/managers/core/logManager.ts
- * @description Core logging implementation with centralized log management
- * 
- * @module @core
- */
+* @file logManager.ts
+* @path src/managers/core/logManager.ts
+* @description Core logging implementation with event-based log management
+*
+* @module @managers/core
+*/
 
-// Import types from canonical locations
 import type { 
     ILog,
     ITaskLogMetadata,
     IWorkflowLogMetadata,
-    IAgentLogMetadata,
-    IBaseLogMetadata
+    IAgentLogMetadata
 } from '../../types/team/teamLogsTypes';
 
 import type {
@@ -22,19 +20,27 @@ import type {
 } from '../../types/common/commonLoggingTypes';
 
 import type { ILogLevel } from '../../types/common/commonEnums';
-import type { ILLMUsageStats } from '../../types/llm/llmResponseTypes';
-import type { ICostDetails } from '../../types/workflow/workflowCostsTypes';
+import type { IEventHandler, IValidationResult } from '../../types/common/commonEventTypes';
+import type {
+    LogEvent,
+    ILogCreatedEvent,
+    ILogUpdatedEvent,
+    ILogClearedEvent,
+    ITaskLogAddedEvent,
+    IWorkflowLogAddedEvent,
+    IAgentLogAddedEvent
+} from '../../types/common/commonLoggingEventTypes';
+import { LogEventEmitter } from './logEventEmitter';
 
 /**
  * Core logging manager implementation
  */
 export class LogManager {
     private static instance: LogManager;
-    private state: unknown;
     private config: Required<ILoggerConfig>;
+    private eventEmitter: LogEventEmitter;
 
     private constructor(config: ILoggerConfig = {}) {
-        this.state = {};
         this.config = {
             level: config.level || 'info',
             timestamp: config.timestamp ?? true,
@@ -42,6 +48,8 @@ export class LogManager {
             formatter: config.formatter || this.defaultFormatter,
             serializer: config.serializer || this.defaultSerializer
         };
+        this.eventEmitter = LogEventEmitter.getInstance();
+        this.setupEventHandlers();
     }
 
     public static getInstance(): LogManager {
@@ -53,56 +61,34 @@ export class LogManager {
 
     // ─── Core Logging Methods ───────────────────────────────────────────────────
 
-    /**
-     * Log a message with flexible parameters
-     */
-    public log(
+    public async log(
         message: string, 
         agentName: string | null | undefined = undefined, 
         taskId: string | undefined = undefined, 
         level: ILogLevel = 'info',
         error?: Error
-    ): void {
-        const log: ILog = {
-            id: crypto.randomUUID(),
-            timestamp: Date.now(),
-            level,
-            message,
-            agentName: agentName || 'Unknown Agent',
-            taskId: taskId || 'unknown',
-            meta: error ? {
-                error: {
-                    name: error.name,
-                    message: error.message,
-                    stack: error.stack,
-                }
-            } : undefined,
-        };
-
-        this.processLog(log);
+    ): Promise<void> {
+        await this.eventEmitter[level](message, agentName, taskId, error);
     }
 
-    public debug(message: string, agentName?: string | null, taskId?: string): void {
-        this.log(message, agentName, taskId, 'debug');
+    public async debug(message: string, agentName?: string | null, taskId?: string): Promise<void> {
+        await this.eventEmitter.debug(message, agentName, taskId);
     }
 
-    public info(message: string, agentName?: string | null, taskId?: string): void {
-        this.log(message, agentName, taskId, 'info');
+    public async info(message: string, agentName?: string | null, taskId?: string): Promise<void> {
+        await this.eventEmitter.info(message, agentName, taskId);
     }
 
-    public warn(message: string, agentName?: string | null, taskId?: string): void {
-        this.log(message, agentName, taskId, 'warn');
+    public async warn(message: string, agentName?: string | null, taskId?: string): Promise<void> {
+        await this.eventEmitter.warn(message, agentName, taskId);
     }
 
-    public error(message: string, agentName?: string | null, taskId?: string, error?: Error): void {
-        this.log(message, agentName, taskId, 'error', error);
+    public async error(message: string, agentName?: string | null, taskId?: string, error?: Error): Promise<void> {
+        await this.eventEmitter.error(message, agentName, taskId, error);
     }
 
     // ─── Log Validation ───────────────────────────────────────────────────────
 
-    /**
-     * Validate log metadata
-     */
     public validateLogMetadata(metadata: unknown): boolean {
         if (!metadata || typeof metadata !== 'object') {
             return false;
@@ -115,9 +101,6 @@ export class LogManager {
         );
     }
 
-    /**
-     * Validate task log metadata
-     */
     public validateTaskMetadata(metadata: unknown): metadata is ITaskLogMetadata {
         if (!this.validateLogMetadata(metadata)) {
             return false;
@@ -134,9 +117,6 @@ export class LogManager {
         );
     }
 
-    /**
-     * Validate workflow log metadata
-     */
     public validateWorkflowMetadata(metadata: unknown): metadata is IWorkflowLogMetadata {
         if (!this.validateLogMetadata(metadata)) {
             return false;
@@ -154,9 +134,6 @@ export class LogManager {
         );
     }
 
-    /**
-     * Validate agent log metadata
-     */
     public validateAgentMetadata(metadata: unknown): metadata is IAgentLogMetadata {
         if (!this.validateLogMetadata(metadata)) {
             return false;
@@ -171,24 +148,93 @@ export class LogManager {
         );
     }
 
-    // ─── State Management ─────────────────────────────────────────────────────
-
-    public getState(): unknown {
-        return this.state;
-    }
-
-    public setState(fn: (state: unknown) => unknown): void {
-        this.state = fn(this.state);
-    }
-
     // ─── Private Helper Methods ───────────────────────────────────────────────
 
-    private processLog(log: ILog): void {
-        const formattedMessage = this.config.formatter(log.level, log.message);
-        if (this.config.timestamp) {
-            console.log(`[${new Date(log.timestamp).toISOString()}] ${formattedMessage}`);
-        } else {
-            console.log(formattedMessage);
+    private setupEventHandlers(): void {
+        const logHandler: IEventHandler<LogEvent> = {
+            handle: async (event: LogEvent): Promise<void> => {
+                const log = this.getLogFromEvent(event);
+                if (!log) return;
+
+                const formattedMessage = this.config.formatter(log.level, log.message);
+                if (this.config.timestamp) {
+                    console.log(`[${new Date(log.timestamp).toISOString()}] ${formattedMessage}`);
+                } else {
+                    console.log(formattedMessage);
+                }
+            },
+            validate: async (event: LogEvent): Promise<IValidationResult> => {
+                const log = this.getLogFromEvent(event);
+                if (!log) {
+                    return {
+                        isValid: false,
+                        errors: ['Log object is required'],
+                        warnings: [],
+                        metadata: {
+                            timestamp: Date.now(),
+                            duration: 0,
+                            validatorName: 'LogManager'
+                        }
+                    };
+                }
+                if (!log.message) {
+                    return {
+                        isValid: false,
+                        errors: ['Log message is required'],
+                        warnings: [],
+                        metadata: {
+                            timestamp: Date.now(),
+                            duration: 0,
+                            validatorName: 'LogManager'
+                        }
+                    };
+                }
+                if (!log.level) {
+                    return {
+                        isValid: false,
+                        errors: ['Log level is required'],
+                        warnings: [],
+                        metadata: {
+                            timestamp: Date.now(),
+                            duration: 0,
+                            validatorName: 'LogManager'
+                        }
+                    };
+                }
+                return {
+                    isValid: true,
+                    errors: [],
+                    warnings: [],
+                    metadata: {
+                        timestamp: Date.now(),
+                        duration: 0,
+                        validatorName: 'LogManager'
+                    }
+                };
+            }
+        };
+
+        this.eventEmitter.on('log.created', logHandler);
+        this.eventEmitter.on('log.updated', logHandler);
+        this.eventEmitter.on('log.task.added', logHandler);
+        this.eventEmitter.on('log.workflow.added', logHandler);
+        this.eventEmitter.on('log.agent.added', logHandler);
+    }
+
+    private getLogFromEvent(event: LogEvent): ILog | undefined {
+        switch (event.type) {
+            case 'log.created':
+                return (event as ILogCreatedEvent).log;
+            case 'log.updated':
+                return (event as ILogUpdatedEvent).newLog;
+            case 'log.task.added':
+                return (event as ITaskLogAddedEvent).log;
+            case 'log.workflow.added':
+                return (event as IWorkflowLogAddedEvent).log;
+            case 'log.agent.added':
+                return (event as IAgentLogAddedEvent).log;
+            default:
+                return undefined;
         }
     }
 

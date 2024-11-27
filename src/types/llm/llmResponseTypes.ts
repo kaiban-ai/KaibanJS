@@ -1,196 +1,223 @@
 /**
  * @file llmResponseTypes.ts
- * @path KaibanJS/src/types/llm/llmResponseTypes.ts
- * @description Type definitions for LLM responses and related interfaces
+ * @path src/types/llm/llmResponseTypes.ts
+ * @description LLM response type definitions for different providers
  *
- * @module types/llm
+ * @module @types/llm
  */
 
-import { ILLMProvider } from "./llmCommonTypes";
-import { IAgentType } from "../agent/agentBaseTypes";
-import { ITaskType } from "../task/taskBaseTypes";
-import { AGENT_STATUS_enum } from "../common/commonEnums";
-import { IParserResult } from "../common/commonParserTypes";
+import { LLM_PROVIDER_enum } from '../common/commonEnums';
+import type { IBaseMetrics } from '../metrics/base/baseMetrics';
 
-// ─── Token Usage Types ────────────────────────────────────────────────────────
+// ─── Legacy Output Types ────────────────────────────────────────────────────────
 
-export interface ITokenUsage {
-    promptTokens: number;
-    completionTokens: number;
-    totalTokens: number;
-}
-
-// ─── Response Types ───────────────────────────────────────────────────────────
-
-export interface IResponseMetadata {
-    model: string;
-    provider: ILLMProvider;
-    timestamp: number;
-    latency: number;
-    finishReason?: string;
-    requestId?: string;
+export interface IOutput {
+    content: string;
+    usage: {
+        promptTokens: number;
+        completionTokens: number;
+        totalTokens: number;
+    };
+    metadata: ILLMEventMetadata;
 }
 
 export interface IParsedOutput {
     thought?: string;
     action?: string;
-    actionInput?: Record<string, unknown>;
+    actionInput?: any;
     observation?: string;
-    isFinalAnswerReady?: boolean;
-    finalAnswer?: string | Record<string, unknown>;
-    metadata?: {
-        reasoning?: string;
-        confidence?: number;
-        alternativeActions?: string[];
-        metrics?: {
-            processingTime?: number;
-            tokenCount?: number;
-            memoryUsage?: number;
-        };
-        context?: {
-            inputContextLength?: number;
-            keyFactors?: string[];
-            constraints?: string[];
-        };
-    };
+    finalAnswer?: string;
 }
 
-export interface IOutput extends IParsedOutput {
-    llmOutput?: string;
-    llmUsageStats?: ILLMUsageStats;
-    generations?: Array<{
-        message: {
-            content: string;
-            role?: string;
-            usage_metadata?: ITokenUsage;
-            functionCall?: {
-                name: string;
-                arguments: Record<string, unknown>;
-            };
-        };
-    }>;
-    modelInfo?: {
+export interface ILLMEventMetadata {
+    timestamp: number;
+    latency: number;
+    requestId: string;
+    provider: LLM_PROVIDER_enum;
+    model: string;
+    metrics?: IBaseMetrics;
+    llm?: {
         name: string;
-        provider: ILLMProvider;
-        temperature: number;
-        maxTokens?: number;
+        version: string;
+        config: {
+            temperature: number;
+            maxTokens: number;
+            topP: number;
+            topK: number;
+            [key: string]: any;
+        };
     };
 }
 
-export interface ILLMResponse<T = unknown> {
+// ─── Base Response Types ────────────────────────────────────────────────────────
+
+export interface IBaseLLMResponse {
     content: string;
-    rawOutput: T;
-    usage: ITokenUsage;
-    metadata: IResponseMetadata;
+    provider: LLM_PROVIDER_enum;
+    model: string;
+    usage: {
+        promptTokens: number;
+        completionTokens: number;
+        totalTokens: number;
+    };
+    metadata: {
+        timestamp: number;
+        latency: number;
+        requestId: string;
+    };
+    metrics: IBaseMetrics;
 }
 
-export interface ICompletionResponse {
-    content?: string;
-    usage?: {
-        prompt_tokens?: number;
-        completion_tokens?: number;
-        total_tokens?: number;
+// ─── Provider-Specific Response Types ──────────────────────────────────────────
+
+export interface IGroqResponse extends IBaseLLMResponse {
+    provider: LLM_PROVIDER_enum.GROQ;
+    streamingMetrics?: {
+        firstTokenLatency: number;
+        tokensPerSecond: number;
+        totalStreamingTime: number;
     };
-    message?: {
-        content: string;
-        role?: string;
-        function_call?: Record<string, unknown>;
-        usage_metadata?: {
-            input_tokens?: number;
-            output_tokens?: number;
-        };
+    gpuMetrics?: {
+        utilization: number;
+        memoryUsed: number;
+        temperature: number;
     };
-    generations?: Array<{
-        message: {
-            content: string;
-            role?: string;
-            usage_metadata?: {
-                input_tokens?: number;
-                output_tokens?: number;
-            };
+}
+
+export interface IOpenAIResponse extends IBaseLLMResponse {
+    provider: LLM_PROVIDER_enum.OPENAI;
+    finishReason: 'stop' | 'length' | 'content_filter' | null;
+    systemFingerprint?: string;
+    promptFilterResults?: {
+        filtered: boolean;
+        reason?: string;
+    };
+}
+
+export interface IAnthropicResponse extends IBaseLLMResponse {
+    provider: LLM_PROVIDER_enum.ANTHROPIC;
+    stopReason: 'end_turn' | 'max_tokens' | 'stop_sequence';
+    modelVersion: string;
+    intermediateResponses?: {
+        delta: string;
+        usage: {
+            inputTokens: number;
+            outputTokens: number;
         };
+    }[];
+}
+
+export interface IGoogleResponse extends IBaseLLMResponse {
+    provider: LLM_PROVIDER_enum.GOOGLE;
+    safetyRatings: Array<{
+        category: string;
+        probability: number;
+        filtered: boolean;
     }>;
-    finishReason?: 'stop' | 'length' | 'content_filter' | 'function_call' | null;
-}
-
-// ─── Usage Statistics Types ──────────────────────────────────────────────────
-
-export interface ILLMUsageStats {
-    inputTokens: number;
-    outputTokens: number;
-    callsCount: number;
-    callsErrorCount: number;
-    parsingErrors: number;
-    totalLatency: number;
-    averageLatency: number;
-    lastUsed: number;
-    memoryUtilization: {
-        peakMemoryUsage: number;
-        averageMemoryUsage: number;
-        cleanupEvents: number;
-    };
-    costBreakdown: {
-        input: number;
-        output: number;
-        total: number;
-        currency: string;
+    citationMetadata?: {
+        citations: Array<{
+            startIndex: number;
+            endIndex: number;
+            url: string;
+            title?: string;
+        }>;
     };
 }
 
-// ─── Handler Parameter Types ─────────────────────────────────────────────────
-
-export interface IParsingHandlerParams {
-    agent: IAgentType;
-    task: ITaskType;
-    output: IOutput;
-    llmOutput: string;
-}
-
-export interface IParseErrorHandlerParams extends IParsingHandlerParams {
-    error?: Error;
-    context?: {
-        expectedFormat?: string;
-        failurePoint?: string;
-        partialResult?: unknown;
+export interface IMistralResponse extends IBaseLLMResponse {
+    provider: LLM_PROVIDER_enum.MISTRAL;
+    performance: {
+        inferenceTime: number;
+        throughput: number;
+        gpuMemoryPeak: number;
+    };
+    responseQuality?: {
+        coherence: number;
+        relevance: number;
+        toxicity: number;
     };
 }
 
-// ─── Result Types ────────────────────────────────────────────────────────────
+// ─── Response Type Union ────────────────────────────────────────────────────────
 
-export interface IOutputProcessResult {
-    actionType: keyof typeof AGENT_STATUS_enum;
-    parsedOutput: IParsedOutput | null;
-    feedback: string;
-    shouldContinue: boolean;
-}
-
-export interface IOutputValidationResult {
-    isValid: boolean;
-    error?: Error;
-    context?: Record<string, unknown>;
-}
+export type LLMResponse = 
+    | IGroqResponse 
+    | IOpenAIResponse 
+    | IAnthropicResponse 
+    | IGoogleResponse 
+    | IMistralResponse;
 
 // ─── Type Guards ────────────────────────────────────────────────────────────
 
-export function isParsingHandlerParams(value: unknown): value is IParsingHandlerParams {
-    return (
-        typeof value === 'object' &&
-        value !== null &&
-        'agent' in value &&
-        'task' in value &&
-        'output' in value &&
-        'llmOutput' in value
-    );
-}
+export const LLMResponseTypeGuards = {
+    isGroqResponse: (response: LLMResponse): response is IGroqResponse => {
+        return response.provider === LLM_PROVIDER_enum.GROQ;
+    },
 
-export const ParsingTypeGuards = {
-    isParsingHandlerParams,
-    isParseErrorHandlerParams: (value: unknown): value is IParseErrorHandlerParams => {
-        return (
-            typeof value === 'object' &&
-            value !== null &&
-            isParsingHandlerParams(value) &&
-            ('error' in value || 'context' in value)
-        );
+    isOpenAIResponse: (response: LLMResponse): response is IOpenAIResponse => {
+        return response.provider === LLM_PROVIDER_enum.OPENAI;
+    },
+
+    isAnthropicResponse: (response: LLMResponse): response is IAnthropicResponse => {
+        return response.provider === LLM_PROVIDER_enum.ANTHROPIC;
+    },
+
+    isGoogleResponse: (response: LLMResponse): response is IGoogleResponse => {
+        return response.provider === LLM_PROVIDER_enum.GOOGLE;
+    },
+
+    isMistralResponse: (response: LLMResponse): response is IMistralResponse => {
+        return response.provider === LLM_PROVIDER_enum.MISTRAL;
+    }
+};
+
+// ─── Response Validation ────────────────────────────────────────────────────────
+
+export const LLMResponseValidation = {
+    validateResponse: (response: LLMResponse): boolean => {
+        // Common validation
+        if (!response.content || !response.provider || !response.model) {
+            return false;
+        }
+
+        if (response.usage.totalTokens < 0 || 
+            response.metadata.latency < 0) {
+            return false;
+        }
+
+        // Provider-specific validation
+        switch (response.provider) {
+            case LLM_PROVIDER_enum.GROQ:
+                const groqResp = response as IGroqResponse;
+                return !groqResp.streamingMetrics || (
+                    groqResp.streamingMetrics.firstTokenLatency >= 0 &&
+                    groqResp.streamingMetrics.tokensPerSecond >= 0
+                );
+
+            case LLM_PROVIDER_enum.OPENAI:
+                const openaiResp = response as IOpenAIResponse;
+                return ['stop', 'length', 'content_filter', null].includes(openaiResp.finishReason);
+
+            case LLM_PROVIDER_enum.ANTHROPIC:
+                const anthropicResp = response as IAnthropicResponse;
+                return ['end_turn', 'max_tokens', 'stop_sequence'].includes(anthropicResp.stopReason);
+
+            case LLM_PROVIDER_enum.GOOGLE:
+                const googleResp = response as IGoogleResponse;
+                return Array.isArray(googleResp.safetyRatings) &&
+                    googleResp.safetyRatings.every(rating => 
+                        typeof rating.category === 'string' &&
+                        typeof rating.probability === 'number' &&
+                        typeof rating.filtered === 'boolean'
+                    );
+
+            case LLM_PROVIDER_enum.MISTRAL:
+                const mistralResp = response as IMistralResponse;
+                return mistralResp.performance.inferenceTime >= 0 &&
+                    mistralResp.performance.throughput >= 0;
+
+            default:
+                return false;
+        }
     }
 };

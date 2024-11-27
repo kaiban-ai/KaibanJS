@@ -15,8 +15,8 @@ import { IParsedOutput } from '../llm/llmResponseTypes';
 /**
  * Base prompt template function type
  */
-export interface IAgentPromptTemplate {
-    (params: any): string;
+export interface IAgentPromptTemplate<T> {
+    (params: T): string;
 }
 
 // ─── Prompt Parameters ─────────────────────────────────────────────────────────
@@ -155,7 +155,7 @@ export const IPromptTypeGuards = {
     /**
      * Check if value is a valid prompt template
      */
-    isPromptTemplate: (value: unknown): value is IAgentPromptTemplate => {
+    isPromptTemplate: <T>(value: unknown): value is IAgentPromptTemplate<T> => {
         return typeof value === 'function';
     },
 
@@ -190,17 +190,17 @@ export const IPromptTypeGuards = {
  * Complete set of prompt templates for REACT Champion agents
  */
 export interface IREACTChampionAgentPrompts {
-    SYSTEM_MESSAGE: IAgentPromptTemplate & ((params: ISystemMessageParams) => string);
-    INITIAL_MESSAGE: IAgentPromptTemplate & ((params: IInitialMessageParams) => string);
-    INVALID_JSON_FEEDBACK: IAgentPromptTemplate & ((params: IInvalidJSONFeedbackParams) => string);
-    THOUGHT_WITH_SELF_QUESTION_FEEDBACK: IAgentPromptTemplate & ((params: IThoughtWithSelfQuestionParams) => string);
-    THOUGHT_FEEDBACK: IAgentPromptTemplate & ((params: IThoughtFeedbackParams) => string);
-    SELF_QUESTION_FEEDBACK: IAgentPromptTemplate & ((params: ISelfQuestionParams) => string);
-    TOOL_RESULT_FEEDBACK: IAgentPromptTemplate & ((params: IToolResultParams) => string);
-    TOOL_ERROR_FEEDBACK: IAgentPromptTemplate & ((params: IToolErrorParams) => string);
-    TOOL_NOT_EXIST_FEEDBACK: IAgentPromptTemplate & ((params: IToolNotExistParams) => string);
-    OBSERVATION_FEEDBACK: IAgentPromptTemplate & ((params: IObservationFeedbackParams) => string);
-    WEIRD_OUTPUT_FEEDBACK: IAgentPromptTemplate & ((params: IWeirdOutputFeedbackParams) => string);
-    FORCE_FINAL_ANSWER_FEEDBACK: IAgentPromptTemplate & ((params: IForceFinalAnswerParams) => string);
-    WORK_ON_FEEDBACK_FEEDBACK: IAgentPromptTemplate & ((params: IFeedbackMessageParams) => string);
+    SYSTEM_MESSAGE: IAgentPromptTemplate<ISystemMessageParams>;
+    INITIAL_MESSAGE: IAgentPromptTemplate<IInitialMessageParams>;
+    INVALID_JSON_FEEDBACK: IAgentPromptTemplate<IInvalidJSONFeedbackParams>;
+    THOUGHT_WITH_SELF_QUESTION_FEEDBACK: IAgentPromptTemplate<IThoughtWithSelfQuestionParams>;
+    THOUGHT_FEEDBACK: IAgentPromptTemplate<IThoughtFeedbackParams>;
+    SELF_QUESTION_FEEDBACK: IAgentPromptTemplate<ISelfQuestionParams>;
+    TOOL_RESULT_FEEDBACK: IAgentPromptTemplate<IToolResultParams>;
+    TOOL_ERROR_FEEDBACK: IAgentPromptTemplate<IToolErrorParams>;
+    TOOL_NOT_EXIST_FEEDBACK: IAgentPromptTemplate<IToolNotExistParams>;
+    OBSERVATION_FEEDBACK: IAgentPromptTemplate<IObservationFeedbackParams>;
+    WEIRD_OUTPUT_FEEDBACK: IAgentPromptTemplate<IWeirdOutputFeedbackParams>;
+    FORCE_FINAL_ANSWER_FEEDBACK: IAgentPromptTemplate<IForceFinalAnswerParams>;
+    WORK_ON_FEEDBACK_FEEDBACK: IAgentPromptTemplate<IFeedbackMessageParams>;
 }

@@ -1,229 +1,198 @@
 /**
  * @file commonErrorTypes.ts
- * @path KaibanJS/src/types/common/commonErrorTypes.ts
- * @description Core error types and interfaces for centralized error handling
+ * @description Common error type definitions and utilities
  *
- * @module types/common
+ * @module @types/common
  */
 
-import { logger } from '../../utils/core';
-import { MetadataFactory } from '../../utils/factories/metadataFactory';
-import type { ITeamStoreMethods } from '../team/teamStoreTypes';
-import type { IBaseHandlerParams } from './commonHandlerTypes';
-import type { IErrorMetadata } from './commonMetadataTypes';
-import type { IReactChampionAgent } from '../agent/agentBaseTypes';
-import type { ITaskType } from '../task/taskBaseTypes';
-
-// Re-export IErrorMetadata for convenience
-export type { IErrorMetadata };
-
-// ─── Error Handler Types ──────────────────────────────────────────────────────
-
-export interface IErrorHandlerParams extends IBaseHandlerParams {
-    error: unknown;
-    context: Record<string, unknown>;
-    task?: ITaskType;
-    agent?: IReactChampionAgent;
-    store?: ITeamStoreMethods;
-    metadata: IErrorMetadata;
-}
-
-/** Team-specific error handler params requiring store and all context */
-export interface ITeamErrorHandlerParams extends Omit<IErrorHandlerParams, 'store' | 'task' | 'agent'> {
-    store: ITeamStoreMethods;
-    task: ITaskType;
-    agent: IReactChampionAgent;
-}
-
-// ─── Error Types ────────────────────────────────────────────────────────────────
-
-export type IErrorKind = 
-    | 'SystemError'
-    | 'ValidationError'
-    | 'ConfigurationError'
-    | 'LLMError'
-    | 'AgentError'
-    | 'TaskError'
-    | 'WorkflowError'
-    | 'StoreError';
-
-export interface IBaseError {
-    name: string;
+// Basic error types
+export type IErrorType = {
     message: string;
     type: IErrorKind;
-    stepId?: string;  // Added for workflow step tracking
     context?: Record<string, unknown>;
+};
+
+export type IErrorKind =
+    | 'ValidationError'
+    | 'SystemError'
+    | 'TaskError'
+    | 'AgentError'
+    | 'NetworkError'
+    | 'StoreError'
+    | 'StateError'
+    | 'ResourceError'
+    | 'ConfigError'
+    | 'AuthError'
+    | 'WorkflowError'
+    | 'ToolError'
+    | 'ConfigurationError'
+    | 'LLMError';
+
+export interface IErrorMetadata {
+    timestamp: number;
+    source: string;
+    severity: 'low' | 'medium' | 'high' | 'critical';
+    [key: string]: unknown;
 }
 
-// Export IErrorType as an alias for IBaseError since it's the canonical error type
-export type IErrorType = IBaseError;
+export interface IErrorContext {
+    taskId?: string;
+    agentId?: string;
+    operation?: string;
+    state?: Record<string, unknown>;
+    recommendedAction?: string;
+    originalError?: Error;
+    [key: string]: unknown;
+}
 
 export interface IErrorOptions {
+    metadata?: IErrorMetadata;
+    context?: IErrorContext;
+    cause?: Error;
+}
+
+export interface IBaseErrorHandlerParams {
+    error: Error | string;
+    context?: IErrorContext;
+    task?: unknown;
+    agent?: unknown;
+    recommendedAction?: string;
+}
+
+export interface IErrorHandlerParams extends IBaseErrorHandlerParams {
+    // Keeping for backward compatibility
+}
+
+export interface ITeamErrorHandlerParams extends IBaseErrorHandlerParams {
+    store: unknown;
+}
+
+export interface IBaseError extends Error {
+    type: IErrorKind;
+    metadata?: IErrorMetadata;
+    context?: IErrorContext;
+    cause?: Error;
+    toString(): string;
+}
+
+export interface IErrorParams {
     message: string;
     type: IErrorKind;
-    stepId?: string;  // Added for workflow step tracking
-    context?: Record<string, unknown>;
+    context?: IErrorContext;
+    cause?: Error;
+    options?: IErrorOptions;
     recommendedAction?: string;
-    location?: string;
 }
 
-// ─── Domain-Specific Error Types ───────────────────────────────────────────────
-
-export interface ILLMError extends IBaseError {
-    type: 'LLMError';
-    provider: string;
-    retryable: boolean;
-    model?: string;
-    requestId?: string;
-}
-
+// Specific error types
 export interface IValidationError extends IBaseError {
     type: 'ValidationError';
-    validationType: string;
-    invalidValue?: unknown;
-    expectedFormat?: string;
+    validationErrors: string[];
+    timestamp?: number;
 }
 
 export interface IWorkflowError extends IBaseError {
     type: 'WorkflowError';
     workflowId: string;
-    phase: string;
-    recoverable: boolean;
+    step?: string;
 }
 
-// ─── Error Implementation ──────────────────────────────────────────────────────
+export interface IToolError extends IBaseError {
+    type: 'ToolError';
+    toolId: string;
+    operation: string;
+    retryable?: boolean;
+}
 
-export class KaibanError extends Error implements IBaseError {
-    readonly type: IErrorKind;
-    readonly stepId?: string;
-    readonly context?: Record<string, unknown>;
-    readonly recommendedAction?: string;
+export interface ILLMError extends IBaseError {
+    type: 'LLMError';
+    provider: string;
+    requestId?: string;
+}
 
-    constructor(options: IErrorOptions) {
-        super(options.message);
-        this.name = 'KaibanError';
-        this.type = options.type;
-        this.stepId = options.stepId;
-        this.context = options.context;
-        this.recommendedAction = options.recommendedAction;
+// Error creation and conversion utilities
+export class BaseError extends Error implements IBaseError {
+    public readonly type: IErrorKind;
+    public metadata?: IErrorMetadata;
+    public context?: IErrorContext;
+    public cause?: Error;
 
-        // Preserve stack trace
-        Error.captureStackTrace(this, KaibanError);
-
-        // Log error with metadata
-        this.logError();
-    }
-
-    private logError(): void {
-        const metadata = MetadataFactory.createErrorMetadata(this);
-        logger.error(`[${this.type}] ${this.message}`, {
-            name: this.name,
-            type: this.type,
-            stepId: this.stepId,
-            context: this.context,
-            recommendedAction: this.recommendedAction,
-            metadata
-        });
-    }
-
-    public toJSON(): Record<string, unknown> {
-        return {
-            name: this.name,
-            type: this.type,
-            message: this.message,
-            stepId: this.stepId,
-            context: this.context,
-            recommendedAction: this.recommendedAction,
-            stack: this.stack
+    constructor(params: IErrorParams) {
+        super(params.message);
+        this.type = params.type;
+        this.metadata = params.options?.metadata;
+        this.context = {
+            ...params.context,
+            ...params.options?.context,
+            recommendedAction: params.recommendedAction
         };
+        this.cause = params.cause || params.options?.cause;
+        this.name = this.constructor.name;
+    }
+
+    toString(): string {
+        let result = `${this.name}: ${this.message}`;
+        if (this.context?.recommendedAction) {
+            result += `\nRecommended Action: ${this.context.recommendedAction}`;
+        }
+        if (this.cause) {
+            result += `\nCaused by: ${this.cause.message}`;
+        }
+        return result;
     }
 }
 
-// ─── Type Guards ────────────────────────────────────────────────────────────────
+export class ToolError extends BaseError implements IToolError {
+    public readonly type: 'ToolError' = 'ToolError';
+    public toolId: string;
+    public operation: string;
+    public retryable: boolean;
 
-export const IErrorTypeGuards = {
-    isKaibanError: (error: unknown): error is KaibanError => {
-        return error instanceof KaibanError;
-    },
+    constructor(params: { message: string; toolId: string; operation: string; options?: IErrorOptions }) {
+        super({ message: params.message, type: 'ToolError', options: params.options });
+        this.toolId = params.toolId;
+        this.operation = params.operation;
+        this.retryable = params.options?.context?.retryable as boolean ?? false;
+    }
 
-    isLLMError: (error: unknown): error is ILLMError => {
-        return (
-            IErrorTypeGuards.isBaseError(error) &&
-            error.type === 'LLMError' &&
-            'provider' in error &&
-            'retryable' in error
-        );
-    },
+    toString(): string {
+        return `${super.toString()}\nTool: ${this.toolId}\nOperation: ${this.operation}`;
+    }
+}
 
-    isValidationError: (error: unknown): error is IValidationError => {
-        return (
-            IErrorTypeGuards.isBaseError(error) &&
-            error.type === 'ValidationError' &&
-            'validationType' in error
-        );
-    },
-
-    isWorkflowError: (error: unknown): error is IWorkflowError => {
-        return (
-            IErrorTypeGuards.isBaseError(error) &&
-            error.type === 'WorkflowError' &&
-            'workflowId' in error &&
-            'phase' in error
-        );
-    },
-
+export const ErrorTypeGuards = {
     isBaseError: (error: unknown): error is IBaseError => {
-        return (
-            typeof error === 'object' &&
-            error !== null &&
-            'name' in error &&
-            'message' in error &&
-            'type' in error
-        );
+        return error instanceof Error && 'type' in error;
+    },
+    isToolError: (error: unknown): error is IToolError => {
+        return ErrorTypeGuards.isBaseError(error) && error.type === 'ToolError';
     }
 };
 
-// ─── Utility Functions ────────────────────────────────────────────────────────
+export function createError(params: IErrorParams): IBaseError {
+    return new BaseError(params);
+}
 
-export function toKaibanError(error: unknown): KaibanError {
-    if (error instanceof KaibanError) {
+export function toBaseError(error: unknown): IBaseError {
+    if (ErrorTypeGuards.isBaseError(error)) {
         return error;
     }
-
-    if (error instanceof Error) {
-        return new KaibanError({
-            message: error.message,
-            type: 'SystemError',
-            context: {
-                originalErrorName: error.name,
-                originalErrorMessage: error.message
-            },
-            recommendedAction: 'Review system error and retry'
-        });
-    }
-
-    return new KaibanError({
-        message: String(error),
-        type: 'SystemError',
-        context: typeof error === 'object' ? error as Record<string, unknown> : undefined,
-        recommendedAction: 'Review unknown error and retry'
+    return createError({
+        message: error instanceof Error ? error.message : String(error),
+        type: 'SystemError'
     });
 }
 
-/**
- * Convert any error type to a BaseError (ErrorType)
- */
 export function toErrorType(error: unknown): IErrorType {
-    const kaibanError = toKaibanError(error);
+    if (ErrorTypeGuards.isBaseError(error)) {
+        return {
+            message: error.message,
+            type: error.type,
+            context: error.context
+        };
+    }
     return {
-        name: kaibanError.name,
-        message: kaibanError.message,
-        type: kaibanError.type,
-        stepId: kaibanError.stepId,
-        context: kaibanError.context
+        message: error instanceof Error ? error.message : String(error),
+        type: 'SystemError'
     };
-}
-
-export function createError(options: IErrorOptions): KaibanError {
-    return new KaibanError(options);
 }

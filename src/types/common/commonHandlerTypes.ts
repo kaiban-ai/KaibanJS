@@ -2,8 +2,6 @@
  * @file commonHandlerTypes.ts
  * @path KaibanJS/src/types/common/commonHandlerTypes.ts
  * @description Canonical handler type definitions used across all domains
- *
- * @module types/common
  */
 
 import { Tool } from "langchain/tools";
@@ -23,16 +21,25 @@ import {
     IToolExecutionMetadata,
     ITaskMetadata,
     IResponseMetadata,
-    ILLMEventMetadata,
     IAgentMetadata,
     IAgentCreationMetadata,
-    IAgentExecutionMetadata
+    IAgentExecutionMetadata,
+    IBaseContextPartial
 } from './commonMetadataTypes';
 import { IValidationResult } from './commonValidationTypes';
 
+// ─── Base Handler Interface ────────────────────────────────────────────────────
+
+/** Base handler interface defining core functionality */
+export interface IBaseHandler {
+    validate(): Promise<boolean>;
+    execute(): Promise<void>;
+    handleError(error: Error): Promise<void>;
+}
+
 // ─── Core Handler Types ─────────────────────────────────────────────────────────
 
-/** Generic handler result interface */
+/** Generic handler result interface with improved type support */
 export interface IHandlerResult<T = unknown, M extends IBaseHandlerMetadata = IBaseHandlerMetadata> {
     success: boolean;
     error?: IErrorType;
@@ -40,28 +47,33 @@ export interface IHandlerResult<T = unknown, M extends IBaseHandlerMetadata = IB
     metadata: M;
 }
 
-/** Base handler parameters */
+/** Base handler parameters - now requiring agent and task */
 export interface IBaseHandlerParams {
-    agent?: IAgentType;
-    task?: ITaskType;
+    agent: IAgentType;
+    task: ITaskType;
     metadata: IBaseHandlerMetadata;
+    context?: IBaseContextPartial;
 }
 
-// ─── Error Handling Types ─────────────────────────────────────────────────────
+/** Base execution options */
+export interface IBaseExecutionOptions {
+    timeout?: number;
+    retries?: number;
+    signal?: AbortSignal;
+    strict?: boolean;
+    customValidators?: ((value: unknown) => boolean)[];
+}
+
+// ─── Enhanced Handler Types ────────────────────────────────────────────────────
 
 /** Error handler parameters */
 export interface IErrorHandlerParams extends IBaseHandlerParams {
     error: IErrorType;
-    context: Record<string, unknown>;
     metadata: IErrorMetadata;
 }
 
-// ─── Agent Handler Types ──────────────────────────────────────────────────────
-
 /** Thinking handler parameters */
-export interface IThinkingHandlerParams {
-    agent: IAgentType;
-    task: ITaskType;
+export interface IThinkingHandlerParams extends IBaseHandlerParams {
     messages: unknown[];
     output?: IOutput;
     metadata: IBaseHandlerMetadata & {
@@ -71,34 +83,21 @@ export interface IThinkingHandlerParams {
 }
 
 /** Tool handler parameters */
-export interface IToolHandlerParams {
-    agent: IAgentType;
-    task: ITaskType;
+export interface IToolHandlerParams extends IBaseHandlerParams {
     tool?: Tool;
     error: IBaseError;
     toolName: string;
     metadata: IBaseHandlerMetadata & IToolExecutionMetadata;
 }
 
-// ─── Task Handler Types ───────────────────────────────────────────────────────
-
 /** Task execution parameters */
-export interface ITaskExecutionParams {
-    task: ITaskType;
-    agent: IAgentType;
+export interface ITaskExecutionParams extends IBaseHandlerParams {
     input?: unknown;
-    metadata: IBaseHandlerMetadata;
-    options?: {
-        timeout?: number;
-        retries?: number;
-        signal?: AbortSignal;
-    };
+    options?: IBaseExecutionOptions;
 }
 
 /** Task completion parameters */
-export interface ITaskCompletionParams {
-    task: ITaskType;
-    agent: IAgentType;
+export interface ITaskCompletionParams extends IBaseHandlerParams {
     result: IParsedOutput | null;
     store: IBaseStoreMethods<IBaseStoreState>;
     metadata: IBaseHandlerMetadata & {
@@ -107,40 +106,17 @@ export interface ITaskCompletionParams {
     };
 }
 
-// ─── Team Handler Types ───────────────────────────────────────────────────────
-
-/** Team inputs interface for workflow initialization */
-export interface ITeamInputs {
-    context?: Record<string, unknown>;
-    parameters?: Record<string, unknown>;
-    metadata: IBaseHandlerMetadata & IWorkflowMetadata;
-}
+// ─── Team & Resource Types ────────────────────────────────────────────────────
 
 /** Team message handler parameters */
-export interface ITeamMessageParams {
+export interface ITeamMessageParams extends Omit<IBaseHandlerParams, 'agent' | 'task'> {
     content: string | BaseMessage;
-    context?: Record<string, unknown>;
     type: 'system' | 'user' | 'ai' | 'function';
     functionName?: string;
     metadata: IBaseHandlerMetadata & IMessageMetadata;
 }
 
-// ─── Resource & Validation Types ────────────────────────────────────────────────
-
-/** Validation handler parameters */
-export interface IValidationHandlerParams extends IBaseHandlerParams {
-    context: Record<string, unknown>;
-    metadata: IBaseHandlerMetadata & {
-        validation: IValidationResult;
-        context: Record<string, unknown>;
-    };
-    options?: {
-        strict?: boolean;
-        customValidators?: ((value: unknown) => boolean)[];
-    };
-}
-
-/** Resource handler parameters */  
+/** Resource handler parameters */
 export interface IResourceHandlerParams extends IBaseHandlerParams {
     resourceStats: {
         memory: number;
@@ -149,60 +125,97 @@ export interface IResourceHandlerParams extends IBaseHandlerParams {
         networkRequests: number;
     };
     thresholds: Record<string, number>;
-    metadata: IBaseHandlerMetadata;
 }
+
+// ─── Type Guard Utilities ────────────────────────────────────────────────────
+
+/** Type guard check function type */
+type TypeGuardCheck<T> = (value: unknown) => value is T;
+
+/** Create a type guard with multiple checks */
+const createTypeGuard = <T>(checks: Array<(value: unknown) => boolean>): TypeGuardCheck<T> => {
+    return (value: unknown): value is T => {
+        return checks.every(check => check(value));
+    };
+};
+
+/** Common type checks */
+const commonChecks = {
+    isObject: (value: unknown): boolean => 
+        typeof value === 'object' && value !== null,
+    hasProperty: (prop: string) => 
+        (value: unknown): boolean => 
+            typeof value === 'object' && 
+            value !== null && 
+            prop in value,
+    isType: <T>(prop: string, type: string) =>
+        (value: unknown): boolean =>
+            typeof value === 'object' &&
+            value !== null &&
+            typeof (value as any)[prop] === type
+};
 
 // ─── Type Guards ─────────────────────────────────────────────────────────────
 
-export const IHandlerTypeGuards = {
-    isBaseHandlerMetadata: (value: unknown): value is IBaseHandlerMetadata => {
-        if (typeof value !== 'object' || value === null) return false;
-        const metadata = value as Partial<IBaseHandlerMetadata>;
-        return (
-            typeof metadata.timestamp === 'number' &&
-            typeof metadata.component === 'string' &&
-            typeof metadata.operation === 'string' &&
-            !!metadata.performance
-        );
-    },
+/** Handler type guards interface */
+export interface IHandlerTypeGuardsInterface {
+    isBaseHandlerMetadata: TypeGuardCheck<IBaseHandlerMetadata>;
+    isHandlerResult: TypeGuardCheck<IHandlerResult>;
+    isErrorHandlerParams: TypeGuardCheck<IErrorHandlerParams>;
+    isBaseHandler: TypeGuardCheck<IBaseHandler>;
+}
 
-    isHandlerResult: <T, M extends IBaseHandlerMetadata>(value: unknown): value is IHandlerResult<T, M> => {
-        if (typeof value !== 'object' || value === null) return false;
-        const result = value as Partial<IHandlerResult<T, M>>;
-        return (
-            typeof result.success === 'boolean' &&
-            IHandlerTypeGuards.isBaseHandlerMetadata(result.metadata!)
-        );
-    },
+/** Handler type guards implementation */
+export const IHandlerTypeGuards: IHandlerTypeGuardsInterface = {
+    isBaseHandlerMetadata: createTypeGuard<IBaseHandlerMetadata>([
+        commonChecks.isObject,
+        commonChecks.isType('timestamp', 'number'),
+        commonChecks.isType('component', 'string'),
+        commonChecks.isType('operation', 'string'),
+        value => !!((value as any).performance)
+    ]),
 
-    isErrorHandlerParams: (value: unknown): value is IErrorHandlerParams => {
-        if (typeof value !== 'object' || value === null) return false;
-        const params = value as Partial<IErrorHandlerParams>;
-        return !!(
-            params.error &&
-            params.context &&
-            IHandlerTypeGuards.isBaseHandlerMetadata(params.metadata!)
-        );
-    }
+    isHandlerResult: createTypeGuard<IHandlerResult>([
+        commonChecks.isObject,
+        commonChecks.isType('success', 'boolean'),
+        value => IHandlerTypeGuards.isBaseHandlerMetadata((value as any).metadata)
+    ]),
+
+    isErrorHandlerParams: createTypeGuard<IErrorHandlerParams>([
+        commonChecks.isObject,
+        commonChecks.hasProperty('error'),
+        commonChecks.hasProperty('metadata'),
+        value => IHandlerTypeGuards.isBaseHandlerMetadata((value as any).metadata)
+    ]),
+
+    isBaseHandler: createTypeGuard<IBaseHandler>([
+        commonChecks.isObject,
+        commonChecks.hasProperty('validate'),
+        commonChecks.hasProperty('execute'),
+        commonChecks.hasProperty('handleError'),
+        value => typeof (value as any).validate === 'function' &&
+                typeof (value as any).execute === 'function' &&
+                typeof (value as any).handleError === 'function'
+    ])
 };
 
 // ─── Utility Functions ──────────────────────────────────────────────────────
 
-/** Create a success handler result */
-export const createSuccessResult = <T>(
+/** Create a success handler result with generic metadata support */
+export const createSuccessResult = <T, M extends IBaseHandlerMetadata>(
     data: T,
-    metadata: ISuccessMetadata
-): IHandlerResult<T, ISuccessMetadata> => ({
+    metadata: M
+): IHandlerResult<T, M> => ({
     success: true,
     data,
     metadata
 });
 
-/** Create an error handler result */
-export const createErrorResult = (
+/** Create an error handler result with generic metadata support */
+export const createErrorResult = <M extends IBaseHandlerMetadata>(
     error: IErrorType,
-    metadata: IErrorMetadata
-): IHandlerResult<never, IErrorMetadata> => ({
+    metadata: M
+): IHandlerResult<never, M> => ({
     success: false,
     error,
     metadata
@@ -217,10 +230,39 @@ export const createBaseMetadata = (
     component,
     operation,
     performance: {
-        startTime: Date.now(),
-        endTime: 0,
-        duration: 0,
-        memoryUsage: process.memoryUsage().heapUsed
+        executionTime: {
+            total: 0,
+            average: 0,
+            min: 0,
+            max: 0
+        },
+        throughput: {
+            operationsPerSecond: 0,
+            dataProcessedPerSecond: 0
+        },
+        errorMetrics: {
+            totalErrors: 0,
+            errorRate: 0
+        },
+        resourceUtilization: {
+            cpuUsage: 0,
+            memoryUsage: process.memoryUsage().heapUsed,
+            diskIO: { read: 0, write: 0 },
+            networkUsage: { upload: 0, download: 0 },
+            timestamp: Date.now()
+        },
+        timestamp: Date.now()
+    },
+    context: {
+        source: component,
+        target: operation,
+        correlationId: Date.now().toString(),
+        causationId: Date.now().toString()
+    },
+    validation: {
+        isValid: true,
+        errors: [],
+        warnings: []
     }
 });
 
@@ -229,10 +271,10 @@ export const createValidationMetadata = (
     component: string,
     operation: string,
     validation: IValidationResult,
-    context: Record<string, unknown>
+    context: IBaseContextPartial
 ): IBaseHandlerMetadata & {
     validation: IValidationResult;
-    context: Record<string, unknown>;
+    context: IBaseContextPartial;
 } => ({
     ...createBaseMetadata(component, operation),
     validation,

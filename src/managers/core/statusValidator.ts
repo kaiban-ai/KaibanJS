@@ -8,6 +8,7 @@
 
 import CoreManager from './coreManager';
 import { TransitionRules } from './transitionRules';
+import { createValidationResult } from '../../types/common/commonValidationTypes';
 
 // Import types from canonical locations
 import type {
@@ -30,6 +31,14 @@ import {
     EnumTypeGuards
 } from '../../types/common/commonEnums';
 
+type Phase = 'pre-execution' | 'execution' | 'post-execution' | 'error';
+const VALID_PHASE_TRANSITIONS: Record<Phase, Phase[]> = {
+    'pre-execution': ['execution', 'error'],
+    'execution': ['post-execution', 'error'],
+    'post-execution': ['error'],
+    'error': []
+};
+
 /**
  * Status validation implementation
  */
@@ -51,19 +60,57 @@ export class StatusValidator extends CoreManager {
      * Validate a proposed status transition
      */
     public async validateTransition(context: IStatusTransitionContext): Promise<IStatusValidationResult> {
+        const startTime = Date.now();
         try {
-            // Basic validity checks
+            // Validate required fields
+            const fieldErrors = this.validateRequiredFields(context);
+            if (fieldErrors.length > 0) {
+                return {
+                    ...createValidationResult(false, 'StatusValidator'),
+                    errors: fieldErrors,
+                    metadata: {
+                        timestamp: Date.now(),
+                        duration: Date.now() - startTime,
+                        validatorName: 'StatusValidator'
+                    }
+                };
+            }
+
+            // Validate phase transition
+            if (!this.isValidPhaseTransition(context.phase)) {
+                return {
+                    ...createValidationResult(false, 'StatusValidator'),
+                    errors: [`Invalid phase transition to: ${context.phase}`],
+                    metadata: {
+                        timestamp: Date.now(),
+                        duration: Date.now() - startTime,
+                        validatorName: 'StatusValidator'
+                    }
+                };
+            }
+
+            // Basic status validity checks
             if (!this.isValidStatus(context.currentStatus, context.entity)) {
                 return {
-                    isValid: false,
-                    errors: [`Invalid current status: ${context.currentStatus}`]
+                    ...createValidationResult(false, 'StatusValidator'),
+                    errors: [`Invalid current status: ${context.currentStatus}`],
+                    metadata: {
+                        timestamp: Date.now(),
+                        duration: Date.now() - startTime,
+                        validatorName: 'StatusValidator'
+                    }
                 };
             }
 
             if (!this.isValidStatus(context.targetStatus, context.entity)) {
                 return {
-                    isValid: false,
-                    errors: [`Invalid target status: ${context.targetStatus}`]
+                    ...createValidationResult(false, 'StatusValidator'),
+                    errors: [`Invalid target status: ${context.targetStatus}`],
+                    metadata: {
+                        timestamp: Date.now(),
+                        duration: Date.now() - startTime,
+                        validatorName: 'StatusValidator'
+                    }
                 };
             }
 
@@ -71,8 +118,13 @@ export class StatusValidator extends CoreManager {
             const rules = TransitionRules.get(context.entity);
             if (!rules) {
                 return {
-                    isValid: false,
-                    errors: [`No transition rules defined for entity: ${context.entity}`]
+                    ...createValidationResult(false, 'StatusValidator'),
+                    errors: [`No transition rules defined for entity: ${context.entity}`],
+                    metadata: {
+                        timestamp: Date.now(),
+                        duration: Date.now() - startTime,
+                        validatorName: 'StatusValidator'
+                    }
                 };
             }
 
@@ -80,10 +132,15 @@ export class StatusValidator extends CoreManager {
             const isAllowed = this.isTransitionAllowed(rules, context.currentStatus, context.targetStatus);
             if (!isAllowed) {
                 return {
-                    isValid: false,
+                    ...createValidationResult(false, 'StatusValidator'),
                     errors: [
                         `Transition from ${context.currentStatus} to ${context.targetStatus} not allowed for ${context.entity}`
-                    ]
+                    ],
+                    metadata: {
+                        timestamp: Date.now(),
+                        duration: Date.now() - startTime,
+                        validatorName: 'StatusValidator'
+                    }
                 };
             }
 
@@ -94,8 +151,13 @@ export class StatusValidator extends CoreManager {
                         const isValid = await rule.validation(context);
                         if (!isValid) {
                             return {
-                                isValid: false,
-                                errors: [`Custom validation failed for transition`]
+                                ...createValidationResult(false, 'StatusValidator'),
+                                errors: [`Custom validation failed for transition`],
+                                metadata: {
+                                    timestamp: Date.now(),
+                                    duration: Date.now() - startTime,
+                                    validatorName: 'StatusValidator'
+                                }
                             };
                         }
                     }
@@ -103,26 +165,85 @@ export class StatusValidator extends CoreManager {
             }
 
             return {
-                isValid: true,
-                errors: [], // Include empty errors array for successful validation
+                ...createValidationResult(true, 'StatusValidator'),
+                metadata: {
+                    timestamp: Date.now(),
+                    duration: Date.now() - startTime,
+                    validatorName: 'StatusValidator'
+                },
                 context: {
                     entity: context.entity,
                     transition: `${context.currentStatus} -> ${context.targetStatus}`,
-                    metadata: context.metadata
+                    metadata: context.metadata,
+                    performance: context.performanceMetrics,
+                    resources: context.resourceMetrics
+                },
+                domainMetadata: {
+                    phase: context.phase,
+                    operation: context.operation,
+                    startTime: context.startTime,
+                    duration: context.duration
+                },
+                transition: {
+                    from: context.currentStatus,
+                    to: context.targetStatus
                 }
             };
 
         } catch (error) {
             this.log(`Validation error: ${error}`, undefined, undefined, 'error');
             return {
-                isValid: false,
+                ...createValidationResult(false, 'StatusValidator'),
                 errors: [(error as Error).message],
+                metadata: {
+                    timestamp: Date.now(),
+                    duration: Date.now() - startTime,
+                    validatorName: 'StatusValidator'
+                },
                 context: {
                     entity: context.entity,
-                    transition: `${context.currentStatus} -> ${context.targetStatus}`
+                    transition: `${context.currentStatus} -> ${context.targetStatus}`,
+                    error: error as Error
                 }
             };
         }
+    }
+
+    /**
+     * Validate required fields in transition context
+     */
+    private validateRequiredFields(context: IStatusTransitionContext): string[] {
+        const errors: string[] = [];
+
+        if (!context.operation) {
+            errors.push('Operation is required');
+        }
+
+        if (!context.phase) {
+            errors.push('Phase is required');
+        }
+
+        if (!context.startTime) {
+            errors.push('Start time is required');
+        }
+
+        if (!context.resourceMetrics) {
+            errors.push('Resource metrics are required');
+        }
+
+        if (!context.performanceMetrics) {
+            errors.push('Performance metrics are required');
+        }
+
+        return errors;
+    }
+
+    /**
+     * Validate phase transition
+     */
+    private isValidPhaseTransition(phase: Phase): boolean {
+        return phase === 'pre-execution' || 
+               VALID_PHASE_TRANSITIONS[phase]?.length > 0;
     }
 
     /**

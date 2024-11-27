@@ -1,36 +1,41 @@
 /**
  * @file agentHandlersTypes.ts
- * @path KaibanJS/src/types/agent/agentHandlersTypes.ts
- * @description Type definitions for agent event handlers and processing
+ * @path src/types/agent/agentHandlersTypes.ts
+ * @description Type definitions for agent handlers and their parameters
  *
- * @module types/agent
+ * @module @types/agent
  */
 
 import type { IAgentType } from './agentBaseTypes';
 import type { ITaskType } from '../task/taskBaseTypes';
-import type { IOutput, IParsedOutput } from '../llm/llmResponseTypes';
-import type { IErrorType } from '../common/commonErrorTypes';
+import type { 
+    IOutput, 
+    IParsedOutput, 
+    ILLMEventMetadata 
+} from '../llm/llmResponseTypes';
+import type { ILLMMetrics } from '../llm/llmMetricTypes';
 import type { IHandlerResult } from '../common/commonHandlerTypes';
+import type { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
+import type { IStandardCostDetails } from '../common/commonMetricTypes';
+import type {
+    IAgentResourceMetrics,
+    IAgentPerformanceMetrics,
+    IAgentUsageMetrics
+} from './agentMetricTypes';
 
-// ─── Handler Parameter Types ──────────────────────────────────────────────────
+// ─── Handler Parameters ─────────────────────────────────────────────────────────
 
-/**
- * Error handler parameters
- */
 export interface IErrorHandlerParams {
     /** The agent instance that encountered the error */
     agent: IAgentType;
-    /** The task being processed when the error occurred */
+    /** The task being executed when the error occurred */
     task: ITaskType;
     /** The error that was encountered */
-    error: IErrorType;
-    /** Optional context information about the error */
+    error: Error;
+    /** Additional context about the error */
     context?: Record<string, unknown>;
 }
 
-/**
- * Thinking handler parameters
- */
 export interface IThinkingHandlerParams {
     /** The agent instance that is thinking */
     agent: IAgentType;
@@ -38,58 +43,111 @@ export interface IThinkingHandlerParams {
     task: ITaskType;
     /** The messages being processed */
     messages: unknown[];
-    /** Optional output from the thinking process */
+    /** The output from processing */
+    output?: IOutput;
+}
+
+export interface IToolHandlerParams {
+    /** The agent instance using the tool */
+    agent: IAgentType;
+    /** The task being executed */
+    task: ITaskType;
+    /** The tool being used */
+    tool?: unknown;
+    /** Any error that occurred */
+    error: Error;
+    /** The name of the tool */
+    toolName: string;
+}
+
+// ─── Thinking Types ───────────────────────────────────────────────────────────
+
+/**
+ * Thinking-specific metadata interface
+ */
+export interface IThinkingMetadata extends IBaseHandlerMetadata {
+    [key: string]: unknown;
+    thinking: {
+        messageCount: number;
+        processingTime: number;
+        metrics: ILLMMetrics;
+        context: {
+            iteration: number;
+            totalTokens: number;
+            confidence: number;
+            reasoningChain: string[];
+        };
+        performance: IAgentPerformanceMetrics;
+        resources: IAgentResourceMetrics;
+        usage: IAgentUsageMetrics;
+        costs: IStandardCostDetails;
+    };
+    agent: {
+        id: string;
+        name: string;
+        metrics: {
+            iterations: number;
+            executionTime: number;
+            llmMetrics: ILLMMetrics;
+        };
+    };
+    task: {
+        id: string;
+        title: string;
+        metrics: {
+            iterations: number;
+            executionTime: number;
+            llmMetrics: ILLMMetrics;
+        };
+    };
+    llm: ILLMEventMetadata['llm'];
+}
+
+/**
+ * Thinking execution parameters
+ */
+export interface IThinkingExecutionParams {
+    /** The agent instance that is thinking */
+    agent: IAgentType;
+    /** The task being processed */
+    task: ITaskType;
+    /** The executable agent instance */
+    ExecutableAgent: any;
+    /** Optional feedback message */
+    feedbackMessage?: string;
+}
+
+/**
+ * Thinking result interface
+ */
+export interface IThinkingResult {
+    /** The parsed LLM output */
+    parsedLLMOutput: IParsedOutput | null;
+    /** The raw LLM output */
+    llmOutput: string;
+    /** LLM metrics */
+    metrics: ILLMMetrics;
+    /** Messages processed */
+    messages?: any[];
+    /** Final output */
     output?: IOutput;
 }
 
 /**
- * Tool handler parameters
+ * Domain-specific handler result type
  */
-export interface IToolHandlerParams {
-    /** The agent instance using the tool */
-    agent: IAgentType;
-    /** The task being processed */
-    task: ITaskType;
-    /** The tool being used (optional) */
-    tool?: unknown;
-    /** Any error that occurred during tool use */
-    error: Error;
-    /** The name of the tool being used */
-    toolName: string;
+export type IThinkingHandlerResult<T = unknown> = IHandlerResult<T, IThinkingMetadata>;
+
+// ─── Manager Interfaces ────────────────────────────────────────────────────────
+
+/**
+ * Thinking manager interface
+ */
+export interface IThinkingManager {
+    /**
+     * Execute thinking process
+     * @param params Thinking execution parameters
+     * @returns Handler result containing thinking output
+     */
+    executeThinking(params: IThinkingExecutionParams): Promise<IHandlerResult<IThinkingResult>>;
 }
-
-// ─── Handler Type Guards ────────────────────────────────────────────────────────
-
-export const IHandlerTypeGuards = {
-    /**
-     * Check if value is error handler parameters
-     */
-    isErrorHandlerParams: (value: unknown): value is IErrorHandlerParams => {
-        if (typeof value !== 'object' || value === null) return false;
-        const params = value as Partial<IErrorHandlerParams>;
-        return !!(params.agent && params.task && params.error);
-    },
-
-    /**
-     * Check if value is thinking handler parameters
-     */
-    isThinkingHandlerParams: (value: unknown): value is IThinkingHandlerParams => {
-        if (typeof value !== 'object' || value === null) return false;
-        const params = value as Partial<IThinkingHandlerParams>;
-        return !!(params.agent && params.task && Array.isArray(params.messages));
-    },
-
-    /**
-     * Check if value is tool handler parameters
-     */
-    isToolHandlerParams: (value: unknown): value is IToolHandlerParams => {
-        if (typeof value !== 'object' || value === null) return false;
-        const params = value as Partial<IToolHandlerParams>;
-        return !!(
-            params.agent && 
-            params.task && 
-            params.error instanceof Error &&
-            typeof params.toolName === 'string'
-        );
-    }
-};

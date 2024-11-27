@@ -24,7 +24,7 @@ import {
     MessageBuildParams,
     MessageProcessResult,
     MessageTransformOptions
-} from "./messagingHandlersTypes";
+} from "../llm/message/messagingHandlersTypes";
 
 // Importing from history.ts
 import {
@@ -33,7 +33,7 @@ import {
     MessageHistoryState,
     MessageHistoryMetrics,
     MessageTypeGuards
-} from "./messagingHistoryTypes";
+} from "../llm/message/messagingHistoryTypes";
 
 // Exporting all modules, types, interfaces, and utility functions
 export {

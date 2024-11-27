@@ -10,7 +10,7 @@ import type {
     IStatusEntity, 
     IStatusTransitionRule, 
     IStatusType 
-} from '@/types/common/commonStatusTypes';
+} from '../../types/common/commonStatusTypes';
 
 import {
     AGENT_STATUS_enum,

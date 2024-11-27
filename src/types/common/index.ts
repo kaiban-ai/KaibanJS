@@ -13,8 +13,7 @@ export type {
     IValidationRule,
     IValidationSchema,
     IValidationContext,
-    IValidationFunction,
-    IValidationHandlerConfig
+    IValidationFunction
 } from './commonValidationTypes';
 export { ValidationTypeGuards, DEFAULT_VALIDATION_CONFIG } from './commonValidationTypes';
 
@@ -69,9 +68,9 @@ export type {
     IWorkflowError
 } from './commonErrorTypes';
 export {
-    KaibanError,
-    IErrorTypeGuards,
-    toKaibanError,
+    BaseError,
+    ErrorTypeGuards,
+    toBaseError,
     toErrorType,
     createError
 } from './commonErrorTypes';

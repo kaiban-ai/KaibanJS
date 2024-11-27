@@ -1,132 +1,82 @@
 /**
  * @file teamBaseTypes.ts
- * @path KaibanJS/src/types/team/teamBaseTypes.ts
- * @description Core team state and interface definitions
- *
- * @module @types/team
+ * @path src/types/team/teamBaseTypes.ts
+ * @description Team base type definitions
  */
 
-import type { IBaseStoreState, IBaseStoreMethods } from '../store/baseStoreTypes';
-import type { WORKFLOW_STATUS_enum } from '../common/commonEnums';
-import type { IResourceMetrics, IUsageMetrics } from '../common/commonMetricTypes';
-import type { IAgentType } from '../agent/agentBaseTypes';
-import type { ITaskType } from '../task/taskBaseTypes';
-import type { IWorkflowResult } from '../workflow/workflowBaseTypes';
-import type { IWorkflowStats } from '../workflow/workflowStatsTypes';
-import type { IHandlerResult } from '../common/commonHandlerTypes';
-import type { ILog } from './teamLogsTypes';
+import { IHistoricalMetrics } from './teamTimeWindowTypes';
+import { IAgentResourceMetrics, IAgentPerformanceMetrics, IAgentUsageMetrics } from '../agent/agentMetricTypes';
+import { IWorkflowResult } from '../workflow/workflowBaseTypes';
+import { IWorkflowStats } from '../workflow/workflowStatsTypes';
+import { IHandlerResult } from '../common/commonHandlerTypes';
+import { IBaseHandlerMetadata, IErrorMetadata } from '../common/commonMetadataTypes';
+import { IPerformanceMetrics } from '../common/commonMetricTypes';
 
-// ─── Core Team State ──────────────────────────────────────────────────────────
+// ─── Team Agent Types ───────────────────────────────────────────────────────────
 
-export interface ITeamState extends IBaseStoreState {
-    teamWorkflowStatus: keyof typeof WORKFLOW_STATUS_enum;
-    workflowContext: string;
-    inputs: ITeamInputs;
-    env: Record<string, unknown>;
-    tasksInitialized: boolean;
+export interface ITeamAgentSnapshot {
+    readonly resource: IAgentResourceMetrics;
+    readonly performance: IAgentPerformanceMetrics;
+    readonly usage: IAgentUsageMetrics;
+    readonly timestamp: number;
 }
 
-// ─── Team Configuration ────────────────────────────────────────────────────────
-
-export interface ITeamEnvironment {
-    [key: string]: unknown;
+export interface ITeamAgentMetrics {
+    readonly perAgent: Record<string, IHistoricalMetrics<ITeamAgentSnapshot>>;
+    readonly aggregated: {
+        readonly totalAgents: number;
+        readonly activeAgents: number;
+        readonly efficiency: number;
+    };
 }
 
-export interface ITeamInputs {
-    context?: Record<string, unknown>;
-    parameters?: Record<string, unknown>;
-    metadata?: Record<string, unknown>;
+// ─── Team State Types ───────────────────────────────────────────────────────────
+
+export interface ITeamState {
+    readonly name: string;
+    readonly agents: string[];
+    readonly tasks: string[];
+    readonly workflowLogs: string[];
+    readonly teamWorkflowStatus: string;
+    readonly workflowContext: Record<string, unknown>;
+    readonly inputs: Record<string, unknown>;
+    readonly env: Record<string, string>;
+    readonly tasksInitialized: boolean;
+    readonly workflowResult?: IWorkflowResult;
 }
 
-// ─── Team Metrics ────────────────────────────────────────────────────────────
+// ─── Team Handler Types ──────────────────────────────────────────────────────
 
-export interface ITeamMetrics {
-    resources: IResourceMetrics;
-    usage: IUsageMetrics;
-    workflow: IWorkflowStats;
+/** Team-specific metadata interface */
+export interface ITeamHandlerMetadata extends IBaseHandlerMetadata {
+    teamId: string;
+    teamName: string;
+    agentCount: number;
+    taskCount: number;
+    workflowStatus: string;
+    performance: IPerformanceMetrics & {
+        agentUtilization: number;
+        taskCompletion: number;
+    };
 }
 
-// ─── Team Methods ───────────────────────────────────────────────────────────
+/** Team handler result type */
+export type ITeamHandlerResult<T = unknown> = IHandlerResult<T, ITeamHandlerMetadata>;
 
-export interface ITeamWorkflowMethods {
-    startWorkflow: (inputs?: ITeamInputs) => Promise<IHandlerResult>;
-    stopWorkflow: (reason?: string) => Promise<void>;
-    handleWorkflowError: (params: {
-        task?: ITaskType;
-        error: Error;
-        context?: Record<string, unknown>;
-    }) => Promise<void>;
+// ─── Team Store Methods ─────────────────────────────────────────────────────────
+
+export interface ITeamStoreMethods {
+    getState: () => ITeamState;
+    setState: (fn: (state: ITeamState) => Partial<ITeamState>) => void;
+    subscribe: (listener: (state: ITeamState) => void) => () => void;
+    destroy: () => void;
+    startWorkflow: () => Promise<ITeamHandlerResult<IWorkflowResult>>;
+    stopWorkflow: () => Promise<ITeamHandlerResult<void>>;
+    handleWorkflowError: () => Promise<ITeamHandlerResult<IErrorMetadata>>;
+    handleAgentStatusChange: () => Promise<ITeamHandlerResult<void>>;
+    handleAgentError: () => Promise<ITeamHandlerResult<IErrorMetadata>>;
+    handleTaskStatusChange: () => Promise<ITeamHandlerResult<void>>;
+    handleTaskError: () => Promise<ITeamHandlerResult<IErrorMetadata>>;
+    handleTaskBlocked: () => Promise<ITeamHandlerResult<void>>;
+    provideFeedback: () => Promise<ITeamHandlerResult<void>>;
 }
-
-export interface ITeamAgentMethods {
-    handleAgentStatusChange: (
-        agent: IAgentType,
-        status: string,
-        task?: ITaskType
-    ) => Promise<void>;
-    handleAgentError: (params: {
-        agent: IAgentType;
-        task: ITaskType;
-        error: Error;
-        context?: Record<string, unknown>;
-    }) => Promise<IHandlerResult>;
-}
-
-export interface ITeamTaskMethods {
-    handleTaskStatusChange: (
-        taskId: string,
-        status: string,
-        metadata?: Record<string, unknown>
-    ) => Promise<void>;
-    handleTaskError: (
-        task: ITaskType, 
-        error: Error, 
-        context?: Record<string, unknown>
-    ) => Promise<void>;
-    handleTaskBlocked: (
-        taskId: string, 
-        reason: string
-    ) => Promise<void>;
-}
-
-// ─── Combined Store Methods ──────────────────────────────────────────────────
-
-export interface ITeamStoreMethods extends 
-    IBaseStoreMethods<ITeamState>,
-    ITeamWorkflowMethods,
-    ITeamAgentMethods,
-    ITeamTaskMethods {
-    provideFeedback: (
-        taskId: string,
-        feedback: string,
-        metadata?: Record<string, unknown>
-    ) => Promise<void>;
-}
-
-// ─── Type Guards ────────────────────────────────────────────────────────────
-
-export const ITeamTypeGuards = {
-    isTeamState: (value: unknown): value is ITeamState => {
-        if (!value || typeof value !== 'object') return false;
-        const state = value as Partial<ITeamState>;
-        return (
-            typeof state.name === 'string' &&
-            typeof state.teamWorkflowStatus === 'string' &&
-            typeof state.workflowContext === 'string' &&
-            Array.isArray(state.agents) &&
-            Array.isArray(state.tasks) &&
-            Array.isArray(state.workflowLogs)
-        );
-    },
-
-    hasTeamMethods: (value: unknown): value is ITeamStoreMethods => {
-        if (!value || typeof value !== 'object') return false;
-        const methods = value as Partial<ITeamStoreMethods>;
-        return (
-            typeof methods.startWorkflow === 'function' &&
-            typeof methods.stopWorkflow === 'function' &&
-            typeof methods.handleTaskStatusChange === 'function' &&
-            typeof methods.handleAgentStatusChange === 'function'
-        );
-    }
-};

@@ -1,13 +1,13 @@
 /**
  * @file commonStatus.ts
- * @path KaibanJS/src/types/common/commonStatus.ts
  * @description Core status types and interfaces
- * 
- * @module @types/common
  */
 
 import type { ITaskType } from "../task/taskBaseTypes";
 import type { IAgentType } from "../agent/agentBaseTypes";
+import type { IStatusChangeMetadata } from "./commonMetadataTypes";
+import type { IPerformanceMetrics, IResourceMetrics } from "./commonMetricTypes";
+import type { IBaseError } from "./commonErrorTypes";
 import type {
     AGENT_STATUS_enum,
     MESSAGE_STATUS_enum,
@@ -31,7 +31,7 @@ export interface IStatusUpdateParams {
     task: ITaskType;
     agent: IAgentType;
     status: IStatusType;
-    metadata?: Record<string, unknown>;
+    metadata?: IStatusChangeMetadata;
     description?: string;
 }
 
@@ -48,7 +48,19 @@ export interface IStatusError {
     type: IStatusErrorType;
     message: string;
     context?: IStatusTransitionContext;
-    metadata?: Record<string, unknown>;
+    metadata?: IStatusChangeMetadata;
+}
+
+// ─── Error Context Types ─────────────────────────────────────────────────────
+
+export interface IErrorContext {
+    error: IBaseError;
+    recoverable: boolean;
+    retryCount: number;
+    lastRetryTimestamp?: number;
+    failureReason?: string;
+    recommendedAction?: string;
+    diagnostics?: Record<string, unknown>;
 }
 
 // ─── Status Transition Types ─────────────────────────────────────────────────
@@ -56,13 +68,26 @@ export interface IStatusError {
 export interface IStatusTransition {
     currentStatus: IStatusType;
     targetStatus: IStatusType;
-    metadata?: Record<string, unknown>;
+    metadata?: IStatusChangeMetadata;
 }
 
 export interface IStatusTransitionContext extends IStatusTransition {
     entity: IStatusEntity;
     entityId: string;
-    // Include task and agent instances when they're relevant to the entity
+    // Operation metadata
+    operation: string;
+    phase: 'pre-execution' | 'execution' | 'post-execution' | 'error';
+    startTime: number;
+    duration?: number;
+    
+    // Performance tracking
+    resourceMetrics: IResourceMetrics;
+    performanceMetrics: IPerformanceMetrics;
+    
+    // Error handling
+    errorContext?: IErrorContext;
+    
+    // Entity references
     task?: ITaskType;
     agent?: IAgentType;
 }
@@ -77,12 +102,12 @@ export interface IStatusTransitionRule {
 // ─── Status Change Event Types ───────────────────────────────────────────────
 
 export interface IStatusChangeEvent {
-  entity: IStatusEntity;
-  entityId: string;
-  from: IStatusType;
-  to: IStatusType;
-  timestamp: number;
-  metadata?: Record<string, unknown>;
+    entity: IStatusEntity;
+    entityId: string;
+    from: IStatusType;
+    to: IStatusType;
+    timestamp: number;
+    metadata: IStatusChangeMetadata;
 }
 
 export type IStatusChangeCallback = (event: IStatusChangeEvent) => void;
@@ -90,14 +115,14 @@ export type IStatusChangeCallback = (event: IStatusChangeEvent) => void;
 // ─── Status Manager Config Type ──────────────────────────────────────────────
 
 export interface IStatusManagerConfig {
-  entity: IStatusEntity;
-  initialStatus?: IStatusType;
-  transitions: IStatusTransitionRule[];
-  onChange?: IStatusChangeCallback;
-  enableHistory?: boolean;
-  maxHistoryLength?: number;
-  validationTimeout?: number;
-  allowConcurrentTransitions?: boolean;
+    entity: IStatusEntity;
+    initialStatus?: IStatusType;
+    transitions: IStatusTransitionRule[];
+    onChange?: IStatusChangeCallback;
+    enableHistory?: boolean;
+    maxHistoryLength?: number;
+    validationTimeout?: number;
+    allowConcurrentTransitions?: boolean;
 }
 
 // ─── Type Guards ────────────────────────────────────────────────────────────
@@ -115,11 +140,45 @@ export function isStatusTransition(value: unknown): value is IStatusTransition {
     );
 }
 
+export function isErrorContext(value: unknown): value is IErrorContext {
+    if (!value || typeof value !== 'object') return false;
+    const context = value as Partial<IErrorContext>;
+    return (
+        typeof context.error === 'object' &&
+        context.error !== null &&
+        typeof context.recoverable === 'boolean' &&
+        typeof context.retryCount === 'number'
+    );
+}
+
 export function isStatusTransitionContext(value: unknown): value is IStatusTransitionContext {
     if (!isStatusTransition(value)) return false;
     const context = value as Partial<IStatusTransitionContext>;
     return (
         isStatusEntity(context.entity as string) &&
-        typeof context.entityId === 'string'
+        typeof context.entityId === 'string' &&
+        typeof context.operation === 'string' &&
+        ['pre-execution', 'execution', 'post-execution', 'error'].includes(context.phase as string) &&
+        typeof context.startTime === 'number' &&
+        (context.duration === undefined || typeof context.duration === 'number') &&
+        typeof context.resourceMetrics === 'object' &&
+        context.resourceMetrics !== null &&
+        typeof context.performanceMetrics === 'object' &&
+        context.performanceMetrics !== null &&
+        (context.errorContext === undefined || isErrorContext(context.errorContext))
+    );
+}
+
+export function isStatusChangeEvent(value: unknown): value is IStatusChangeEvent {
+    if (!value || typeof value !== 'object') return false;
+    const event = value as Partial<IStatusChangeEvent>;
+    return (
+        isStatusEntity(event.entity as string) &&
+        typeof event.entityId === 'string' &&
+        typeof event.from === 'string' &&
+        typeof event.to === 'string' &&
+        typeof event.timestamp === 'number' &&
+        typeof event.metadata === 'object' &&
+        event.metadata !== null
     );
 }

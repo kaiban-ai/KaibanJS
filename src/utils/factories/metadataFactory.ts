@@ -1,18 +1,14 @@
 /**
  * @file metadataFactory.ts
- * @description Factory for creating metadata objects for various system entities
- * 
- * @packageDocumentation
- * @module @factories/metadata
+ * @path KaibanJS\src\utils\factories\metadataFactory.ts
+ * @description Factory for creating metadata objects with runtime validation
  */
 
 import { 
     ITaskLogMetadata,
     IWorkflowLogMetadata,
     IBaseLogMetadata,
-    IToolExecutionMetadataPayload,
-    IErrorMetadataPayload,
-    ILogMetadataPayload
+    IToolExecutionMetadataPayload
 } from '../../types/team/teamLogsTypes';
 import { 
     MessageMetadataFields,
@@ -20,203 +16,77 @@ import {
     FunctionCall
 } from '../../types/messaging/messagingBaseTypes';
 import { 
-    ILLMProvider, 
     LLMProviders,
-    IStreamingChunk,
-    ILLMEventMetadata
+    IStreamingChunk
 } from '../../types/llm/llmCommonTypes';
-import { ITaskResult } from '../../types/task/taskBaseTypes';
+import { ITaskType, ITaskResult } from '../../types/task/taskBaseTypes';
 import { ICostDetails } from '../../types/workflow/workflowCostsTypes';
-import { IWorkflowMetadata, createDefaultWorkflowMetadata } from '../../types/workflow/workflowMetadataTypes';
 import { ITeamState } from '../../types/team/teamBaseTypes';
 import { DefaultFactory } from './defaultFactory';
-import { IValidationResult } from '../../types/common/commonValidationTypes';
+import { 
+    IValidationResult,
+    createValidationResult
+} from '../../types/common/commonValidationTypes';
 import { 
     IToolExecutionMetadata,
     IErrorMetadata,
     ISuccessMetadata,
-    ITeamMetadata,
     IAgentMetadata,
     ITaskMetadata,
-    IAgentCreationMetadata,
-    IAgentExecutionMetadata,
-    createBaseMetadata 
+    IBaseHandlerMetadata,
+    IStatusChangeMetadata,
+    createBaseMetadata,
+    createDefaultResourceMetrics,
 } from '../../types/common/commonMetadataTypes';
-import { IHandlerResult } from '../../types/common/commonHandlerTypes';
-import { IBaseError, IErrorType, toErrorType } from '../../types/common/commonErrorTypes';
+import { MetadataTypeGuards } from '../../types/common/commonTypeGuards';
+import {
+    IPerformanceMetrics,
+    IResourceMetrics,
+    IUsageMetrics,
+    IStandardCostDetails
+} from '../../types/common/commonMetricTypes';
+import { 
+    IHandlerResult,
+    createSuccessResult,
+    createErrorResult
+} from '../../types/common/commonHandlerTypes';
+import { IBaseError, IErrorType, createError } from '../../types/common/commonErrorTypes';
 import { ILLMUsageStats } from '../../types/llm/llmResponseTypes';
+import { validateMetadataWithDetails } from '../validation/metadataValidation';
+import { 
+    ITeamHandlerResult,
+    ITeamHandlerMetadata,
+    TeamStoreTypeGuards
+} from '../../types/team/teamStoreTypes';
+import { IStatusEntity, IStatusType } from '../../types/common/commonStatusTypes';
+import { ILoopHandlerMetadata } from '../../types/agent/agentLoopTypes';
+import { IReactChampionAgent } from '../../types/agent/agentBaseTypes';
 
 export class MetadataFactory {
-    // ─── Team Metadata Creation ────────────────────────────────────────────────
+    // ─── Base Methods ────────────────────────────────────────────────────────
 
-    static createTeamResult<T>(
-        data: T,
-        teamName: string,
-        agents: Record<string, IAgentMetadata>,
-        tasks: Record<string, ITaskMetadata>
-    ): IHandlerResult<T, ITeamMetadata> {
-        const metadata: ITeamMetadata = {
-            ...createBaseMetadata('team', 'execution'),
-            team: {
-                name: teamName,
-                agents,
-                tasks,
-                performance: {
-                    startTime: Date.now(),
-                    endTime: 0,
-                    duration: 0,
-                    memoryUsage: process.memoryUsage().heapUsed
-                },
-                llmUsageStats: DefaultFactory.createLLMUsageStats(),
-                costDetails: DefaultFactory.createCostDetails(),
-                messageCount: 0,
-                iterationCount: 0
-            }
-        };
-
-        return {
-            success: true,
-            data,
-            metadata
-        };
-    }
-
-    // ─── Workflow Metadata Creation ─────────────────────────────────────────────
-
-    static createWorkflowResult<T>(
-        data: T,
-        teamName: string
-    ): IHandlerResult<T, IWorkflowMetadata> {
-        const metadata: IWorkflowMetadata = {
-            ...createBaseMetadata('workflow', 'execution'),
-            workflow: {
-                performance: {
-                    startTime: Date.now(),
-                    endTime: 0,
-                    duration: 0,
-                    memoryUsage: process.memoryUsage().heapUsed
-                },
-                debugInfo: {
-                    lastCheckpoint: 'workflow_start',
-                    warnings: []
-                },
-                priority: 1,
-                retryCount: 0,
-                taskCount: 0,
-                agentCount: 0,
-                costDetails: DefaultFactory.createCostDetails(),
-                llmUsageStats: DefaultFactory.createLLMUsageStats(),
-                teamName
-            }
-        };
-
-        return {
-            success: true,
-            data,
-            metadata
-        };
-    }
-
-    static createWorkflowMetadata(
+    private static createBaseMetadata(
+        component: string,
         operation: string,
-        teamName: string = 'default'
-    ): IWorkflowMetadata {
-        return createDefaultWorkflowMetadata('workflow', operation, teamName);
-    }
-
-    // ─── Agent Metadata Creation ────────────────────────────────────────────────
-
-    static createAgentResult<T>(
-        data: T,
-        agentId: string,
-        agentName: string,
-        role: string,
-        status: string
-    ): IHandlerResult<T, IAgentMetadata> {
-        const metadata: IAgentMetadata = {
-            ...createBaseMetadata('agent', 'execution'),
-            agent: {
-                id: agentId,
-                name: agentName,
-                role,
-                status,
-                metrics: {
-                    iterations: 0,
-                    executionTime: 0,
-                    llmUsageStats: DefaultFactory.createLLMUsageStats()
-                }
+        source = 'system',
+        target = 'system'
+    ): IBaseHandlerMetadata {
+        return {
+            timestamp: Date.now(),
+            component,
+            operation,
+            performance: this.createPerformanceMetrics(),
+            context: {
+                source,
+                target,
+                correlationId: `${component}-${Date.now()}`,
+                causationId: `${operation}-${Date.now()}`
+            },
+            validation: {
+                isValid: true,
+                errors: [],
+                warnings: []
             }
-        };
-
-        return {
-            success: true,
-            data,
-            metadata
-        };
-    }
-
-    static createAgentCreationResult<T>(
-        data: T,
-        configHash: string,
-        version: string,
-        validation?: IValidationResult
-    ): IHandlerResult<T, IAgentCreationMetadata> {
-        const metadata: IAgentCreationMetadata = {
-            ...createBaseMetadata('agent', 'creation'),
-            createdAt: Date.now(),
-            configHash,
-            version,
-            validation
-        };
-
-        return {
-            success: true,
-            data,
-            metadata
-        };
-    }
-
-    static createAgentExecutionResult<T>(
-        data: T,
-        iterations: number,
-        executionTime: number,
-        llmUsageStats: ILLMUsageStats
-    ): IHandlerResult<T, IAgentExecutionMetadata> {
-        const metadata: IAgentExecutionMetadata = {
-            ...createBaseMetadata('agent', 'execution'),
-            iterations,
-            executionTime,
-            llmUsageStats
-        };
-
-        return {
-            success: true,
-            data,
-            metadata
-        };
-    }
-
-    // ─── Task Metadata Creation ────────────────────────────────────────────────
-
-    static createTaskResult<T>(
-        data: T,
-        iterations: number,
-        executionTime: number,
-        llmUsageStats: ILLMUsageStats
-    ): IHandlerResult<T, ITaskMetadata> {
-        const metadata: ITaskMetadata = {
-            ...createBaseMetadata('task', 'execution'),
-            task: {
-                iterations,
-                executionTime,
-                llmUsageStats
-            }
-        };
-
-        return {
-            success: true,
-            data,
-            metadata
         };
     }
 
@@ -224,113 +94,139 @@ export class MetadataFactory {
 
     static createSuccessResult<T>(data: T): IHandlerResult<T, ISuccessMetadata> {
         const metadata: ISuccessMetadata = {
-            ...createBaseMetadata('success', 'completion'),
-            details: { data }
+            ...this.createBaseMetadata('success', 'completion'),
+            validation: createValidationResult(),
+            details: {
+                duration: 0,
+                status: 'success',
+                warnings: [],
+                metrics: {
+                    executionTime: 0,
+                    memoryUsage: process.memoryUsage().heapUsed,
+                    cpuUsage: 0
+                }
+            }
         };
 
-        return {
-            success: true,
-            data,
-            metadata
-        };
+        if (!MetadataTypeGuards.isSuccessMetadata(metadata)) {
+            const error = createError({
+                message: 'Invalid success metadata structure',
+                type: 'ValidationError',
+                context: { metadata }
+            });
+            throw error;
+        }
+
+        return createSuccessResult(data, metadata);
     }
 
     static createErrorResult(error: Error | IBaseError): IHandlerResult<never, IErrorMetadata> {
-        const actualError = error instanceof Error ? error : new Error(JSON.stringify(error));
-        const errorType = error instanceof Error ? toErrorType(error) : error;
+        const baseError: IErrorType = error instanceof Error ? createError({
+            message: error.message,
+            type: 'SystemError',
+            context: {
+                source: 'system',
+                target: 'error-handler',
+                data: error
+            }
+        }) : error;
+
         const metadata: IErrorMetadata = {
-            ...createBaseMetadata('error', 'handling'),
+            ...this.createBaseMetadata('error', 'handling'),
             error: {
-                code: errorType.name,
-                type: errorType.type,
-                message: errorType.message,
-                context: errorType.context || {},
+                code: baseError.name,
+                type: baseError.type,
+                message: baseError.message,
+                context: {
+                    source: 'system',
+                    target: 'error-handler',
+                    data: error
+                },
                 severity: 'medium',
-                rootError: actualError,
+                rootError: error instanceof Error ? error : new Error(error.message),
                 recommendedAction: 'Review error and retry operation',
-                stackTrace: actualError.stack
+                stackTrace: error instanceof Error ? error.stack || '' : '',
+                metrics: {
+                    occurrenceCount: 1,
+                    lastOccurrence: Date.now(),
+                    meanTimeBetweenFailures: 0,
+                    performance: this.createPerformanceMetrics()
+                }
             },
             debug: {
-                lastKnownState: undefined,
-                recoveryAttempts: 0
+                lastKnownState: 'error',
+                recoveryAttempts: 0,
+                diagnostics: {
+                    memory: process.memoryUsage().heapUsed,
+                    cpu: 0,
+                    network: 0
+                }
+            },
+            validation: createValidationResult(),
+            transition: {
+                from: 'running',
+                to: 'error',
+                entity: 'system',
+                entityId: `error-${Date.now()}`,
+                timestamp: Date.now()
             }
         };
 
-        return {
-            success: false,
-            error: errorType,
+        if (!MetadataTypeGuards.isErrorMetadata(metadata)) {
+            const validationError = createError({
+                message: 'Invalid error metadata structure',
+                type: 'ValidationError',
+                context: { metadata }
+            });
+            throw validationError;
+        }
+
+        return createErrorResult(baseError, metadata);
+    }
+
+    // ─── Tool Execution Methods ────────────────────────────────────────────────
+
+    static forToolExecution(params: {
+        toolName: string;
+        input: unknown;
+        output?: unknown;
+        error?: Error | IBaseError;
+        metadata?: IToolExecutionMetadata;
+    }): IBaseLogMetadata {
+        const { toolName, input, output, error, metadata } = params;
+        const base = createBaseMetadata('tool', 'execution');
+
+        const baseError = error instanceof Error ? createError({
+            message: error.message,
+            type: 'SystemError',
+            context: {
+                toolName,
+                originalError: error
+            }
+        }) : error;
+
+        const toolExecution: IToolExecutionMetadataPayload = {
+            tool: toolName,
+            input,
+            output,
+            ...(error && {
+                error: {
+                    message: baseError?.message || '',
+                    name: baseError?.name || '',
+                    stack: error instanceof Error ? error.stack : undefined
+                }
+            }),
             metadata
         };
-    }
 
-    static createErrorMetadata(error: Error | IBaseError): IErrorMetadata {
-        const actualError = error instanceof Error ? error : new Error(JSON.stringify(error));
-        const errorType = error instanceof Error ? toErrorType(error) : error;
         return {
-            ...createBaseMetadata('error', 'handling'),
-            error: {
-                code: errorType.name,
-                type: errorType.type,
-                message: errorType.message,
-                context: errorType.context || {},
-                severity: 'medium',
-                rootError: actualError,
-                recommendedAction: 'Review error and retry operation',
-                stackTrace: actualError.stack
-            },
-            debug: {
-                lastKnownState: undefined,
-                recoveryAttempts: 0
-            }
+            ...base,
+            llmUsageStats: DefaultFactory.createLLMUsageStats(),
+            meta: { toolExecution }
         };
     }
 
-    // ─── Utility Methods ───────────────────────────────────────────────────────
-
-    static forTask(
-        stats: { 
-            llmUsageStats: ILLMUsageStats; 
-            iterationCount: number; 
-            duration: number 
-        },
-        result: ITaskResult,
-        costDetails: ICostDetails
-    ): ITaskLogMetadata {
-        return {
-            ...createBaseMetadata('task', 'execution'),
-            task: {
-                llmUsageStats: stats.llmUsageStats,
-                iterationCount: stats.iterationCount,
-                duration: stats.duration,
-                costDetails,
-                result
-            }
-        };
-    }
-
-    static forWorkflow(
-        state: ITeamState,
-        stats: {
-            duration: number;
-            llmUsageStats: ILLMUsageStats;
-            iterationCount: number;
-            costDetails: ICostDetails;
-        }
-    ): IWorkflowLogMetadata {
-        return {
-            ...createBaseMetadata('workflow', 'execution'),
-            workflow: {
-                result: state.workflowResult?.status || '',
-                duration: stats.duration,
-                llmUsageStats: stats.llmUsageStats,
-                iterationCount: stats.iterationCount,
-                costDetails: stats.costDetails,
-                teamName: state.name,
-                taskCount: state.tasks.length,
-                agentCount: state.agents.length
-            }
-        };
-    }
+    // ─── Message Methods ───────────────────────────────────────────────────────
 
     static forMessage(params: {
         role: MessageRole;
@@ -357,27 +253,13 @@ export class MetadataFactory {
         };
     }
 
-    static forHandler(metadata?: IToolExecutionMetadata): IBaseLogMetadata {
-        const base = createBaseMetadata('handler', 'execution');
-        const toolExecution: IToolExecutionMetadataPayload = {
-            tool: 'handler',
-            input: {},
-            metadata
-        };
-
-        return {
-            ...base,
-            llmUsageStats: DefaultFactory.createLLMUsageStats(),
-            meta: { toolExecution }
-        };
-    }
+    // ─── Streaming Methods ─────────────────────────────────────────────────────
 
     static forStreamingOutput(params: {
         content: string;
-        chunk?: string;
         done: boolean;
     }): IStreamingChunk {
-        const { content, chunk, done } = params;
+        const { content, done } = params;
         
         return {
             content,
@@ -394,58 +276,227 @@ export class MetadataFactory {
         };
     }
 
-    static forToolExecution(params: {
-        toolName: string;
-        input: unknown;
-        output?: unknown;
-        error?: Error;
-        metadata?: IToolExecutionMetadata;
-    }): IBaseLogMetadata {
-        const { toolName, input, output, error, metadata } = params;
-        const base = createBaseMetadata('tool', 'execution');
+    // ─── Task & Workflow Methods ──────────────────────────────────────────────
 
-        const toolExecution: IToolExecutionMetadataPayload = {
-            tool: toolName,
-            input,
-            output,
-            ...(error && {
-                error: {
-                    message: error.message,
-                    name: error.name,
-                    stack: error.stack
-                }
-            }),
-            metadata
+    static forTask(
+        stats: { 
+            llmUsageStats: ILLMUsageStats; 
+            iterationCount: number; 
+            duration: number 
+        },
+        result: ITaskResult,
+        costDetails: ICostDetails
+    ): ITaskLogMetadata {
+        const metadata = {
+            ...createBaseMetadata('task', 'execution'),
+            task: {
+                llmUsageStats: stats.llmUsageStats,
+                iterationCount: stats.iterationCount,
+                duration: stats.duration,
+                costDetails,
+                result
+            }
         };
 
+        if (!MetadataTypeGuards.isTaskMetadata(metadata)) {
+            const error = createError({
+                message: 'Invalid task metadata structure',
+                type: 'ValidationError',
+                context: { metadata }
+            });
+            throw error;
+        }
+
+        return metadata;
+    }
+
+    static forWorkflow(
+        state: ITeamState,
+        stats: {
+            duration: number;
+            llmUsageStats: ILLMUsageStats;
+            iterationCount: number;
+            costDetails: ICostDetails;
+        }
+    ): IWorkflowLogMetadata {
+        const metadata = {
+            ...createBaseMetadata('workflow', 'execution'),
+            workflow: {
+                result: state.workflowResult?.status || '',
+                duration: stats.duration,
+                llmUsageStats: stats.llmUsageStats,
+                iterationCount: stats.iterationCount,
+                costDetails: stats.costDetails,
+                teamName: state.name,
+                taskCount: state.tasks.length,
+                agentCount: state.agents.length
+            }
+        };
+
+        if (!MetadataTypeGuards.isWorkflowMetadata(metadata)) {
+            const error = createError({
+                message: 'Invalid workflow metadata structure',
+                type: 'ValidationError',
+                context: { metadata }
+            });
+            throw error;
+        }
+
+        return metadata;
+    }
+
+    // ─── Loop Methods ────────────────────────────────────────────────────────
+
+    static forLoop(params: {
+        agent: IReactChampionAgent;
+        task: ITaskType;
+    }): ILoopHandlerMetadata {
+        const baseMetadata = createBaseMetadata('AgenticLoopManager', 'executeLoop');
+        const performanceMetrics = this.createPerformanceMetrics();
+        const defaultLLMStats = this.createDefaultLLMStats();
+
+        const metadata: ILoopHandlerMetadata = {
+            ...baseMetadata,
+            loop: {
+                iterations: 0,
+                maxIterations: params.agent.maxIterations,
+                status: 'running',
+                performance: performanceMetrics,
+                context: {
+                    startTime: Date.now(),
+                    totalTokens: 0,
+                    confidence: 0,
+                    reasoningChain: []
+                },
+                resources: this.createResourceMetrics(),
+                usage: this.createUsageMetrics(),
+                costs: this.createCostDetails(),
+                llmStats: defaultLLMStats
+            },
+            agent: {
+                id: params.agent.id,
+                name: params.agent.name,
+                metrics: {
+                    iterations: 0,
+                    executionTime: 0,
+                    llmUsageStats: defaultLLMStats,
+                    performance: performanceMetrics
+                }
+            },
+            task: {
+                id: params.task.id,
+                title: params.task.title,
+                metrics: {
+                    iterations: 0,
+                    executionTime: 0,
+                    llmUsageStats: defaultLLMStats,
+                    performance: performanceMetrics
+                }
+            }
+        };
+
+        try {
+            validateMetadataWithDetails(
+                metadata,
+                MetadataTypeGuards.isBaseHandlerMetadata,
+                'LoopHandlerMetadata'
+            );
+            return metadata;
+        } catch (error) {
+            throw createError({
+                message: error instanceof Error ? error.message : 'Invalid loop metadata structure',
+                type: 'ValidationError',
+                context: { 
+                    metadata,
+                    originalError: error
+                }
+            });
+        }
+    }
+
+    // ─── Metrics Methods ──────────────────────────────────────────────────────
+
+    static createPerformanceMetrics(executionTime: number = 0): IPerformanceMetrics {
         return {
-            ...base,
-            llmUsageStats: DefaultFactory.createLLMUsageStats(),
-            meta: { toolExecution }
+            executionTime: {
+                total: executionTime,
+                average: executionTime,
+                min: executionTime,
+                max: executionTime
+            },
+            throughput: {
+                operationsPerSecond: executionTime > 0 ? 1000 / executionTime : 0,
+                dataProcessedPerSecond: 0
+            },
+            errorMetrics: {
+                totalErrors: 0,
+                errorRate: 0
+            },
+            resourceUtilization: {
+                cpuUsage: process.cpuUsage().user / 1000000,
+                memoryUsage: process.memoryUsage().heapUsed,
+                diskIO: { read: 0, write: 0 },
+                networkUsage: { upload: 0, download: 0 },
+                timestamp: Date.now()
+            },
+            timestamp: Date.now()
         };
     }
 
-    static forError(
-        error: Error | Record<string, unknown>,
-        metadata?: IErrorMetadata
-    ): IBaseLogMetadata {
-        const base = createBaseMetadata('error', 'handling');
-        const actualError = error instanceof Error ? error : new Error(JSON.stringify(error));
-        const errorPayload: IErrorMetadataPayload = {
-            error: {
-                message: actualError.message,
-                name: actualError.name,
-                stack: actualError.stack
-            },
-            ...(metadata && { errorMetadata: metadata })
-        };
-
+    static createResourceMetrics(): IResourceMetrics {
         return {
-            ...base,
-            llmUsageStats: DefaultFactory.createLLMUsageStats(),
-            meta: { error: errorPayload }
+            cpuUsage: 0,
+            memoryUsage: process.memoryUsage().heapUsed,
+            diskIO: { read: 0, write: 0 },
+            networkUsage: { upload: 0, download: 0 },
+            timestamp: Date.now()
+        };
+    }
+
+    static createUsageMetrics(): IUsageMetrics {
+        return {
+            totalOperations: 0,
+            successRate: 0,
+            averageDuration: 0,
+            costDetails: this.createCostDetails(),
+            timestamp: Date.now()
+        };
+    }
+
+    static createCostDetails(): IStandardCostDetails {
+        return {
+            inputCost: 0,
+            outputCost: 0,
+            totalCost: 0,
+            currency: 'USD',
+            breakdown: {
+                promptTokens: { count: 0, cost: 0 },
+                completionTokens: { count: 0, cost: 0 }
+            }
+        };
+    }
+
+    static createDefaultLLMStats(): ILLMUsageStats {
+        return {
+            inputTokens: 0,
+            outputTokens: 0,
+            callsCount: 0,
+            callsErrorCount: 0,
+            parsingErrors: 0,
+            totalLatency: 0,
+            averageLatency: 0,
+            lastUsed: Date.now(),
+            memoryUtilization: {
+                peakMemoryUsage: 0,
+                averageMemoryUsage: 0,
+                cleanupEvents: 0
+            },
+            costBreakdown: {
+                input: 0,
+                output: 0,
+                total: 0,
+                currency: 'USD'
+            }
         };
     }
 }
-
-export default MetadataFactory;

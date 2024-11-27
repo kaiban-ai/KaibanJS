@@ -5,12 +5,12 @@
  */
 
 import { logger } from "../core/logger";
-import { ParsedJSON, ParserConfig, ParserResult } from '../types/common/parser';
+import { IParsedJSON, IParserConfig, IParserResult } from '../../types/common';
 
 /**
  * Default parser configuration
  */
-const DEFAULT_CONFIG: Required<ParserConfig> = {
+const DEFAULT_CONFIG: Required<IParserConfig> = {
     attemptRecovery: true,
     maxDepth: 10,
     allowNonStringProps: true,
@@ -74,7 +74,7 @@ function recoverJson(str: string): string | null {
  * @param config - Parser configuration
  * @returns Parser result with parsed data or error
  */
-export function parseJSON<T = any>(str: string, config: ParserConfig = {}): ParserResult<T> {
+export function parseJSON<T = any>(str: string, config: IParserConfig = {}): IParserResult<T> {
     const finalConfig = { ...DEFAULT_CONFIG, ...config };
     
     try {
@@ -100,7 +100,7 @@ export function parseJSON<T = any>(str: string, config: ParserConfig = {}): Pars
                     };
                 }
             } catch (recoveryError) {
-                logger.debug('Recovery attempt failed:', recoveryError);
+                logger.debug('Recovery attempt failed:', { error: recoveryError });
             }
         }
 
@@ -125,12 +125,12 @@ export function parseJSON<T = any>(str: string, config: ParserConfig = {}): Pars
  * @param str - Input string to parse
  * @returns Parsed JSON object or null if parsing fails
  */
-export function getParsedJSON(str: string): ParsedJSON | null {
-    const result = parseJSON<ParsedJSON>(str);
+export function getParsedJSON(str: string): IParsedJSON | null {
+    const result = parseJSON<IParsedJSON>(str);
     
     if (!result.success) {
-        logger.error("Failed to parse JSON:", result.error?.message);
-        logger.debug("Original input:", result.originalInput);
+        logger.error("Failed to parse JSON", { error: result.error?.message });
+        logger.debug("Original input", { input: result.originalInput });
         return null;
     }
 

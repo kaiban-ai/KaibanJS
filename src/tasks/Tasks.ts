@@ -7,75 +7,166 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { PrettyError } from '../utils/core/errors';
+import { BaseError } from '../types/common/commonErrorTypes';
 
 // Import types from canonical locations
 import type { 
-    TaskType,
+    ITaskType,
     ITaskParams,
-    TaskResult,
-    FeedbackObject 
-} from '../types/task/taskBase';
+    ITaskMetrics,
+    ITaskProgress,
+    ITaskHistoryEntry,
+    ITaskFeedback
+} from '../types/task/taskBaseTypes';
 
-import type { 
-    AgentType 
-} from '../types/agent/agentBaseTypes';
-
-import type { 
-    LLMUsageStats 
-} from '../types/llm/llmResponseTypes';
-
+import type { IAgentType } from '../types/agent/agentBaseTypes';
+import type { ILLMUsageStats } from '../types/llm/llmResponseTypes';
+import type { ILoopResult } from '../types/agent/agentLoopTypes';
 import { TASK_STATUS_enum } from '../types/common/commonEnums';
-import type { TeamStore } from '../types/team/teamBaseTypes';
+import type { ITeamStoreMethods } from '../types/team/teamBaseTypes';
 
 /**
  * Core Task entity implementation
  */
-export class Task implements TaskType {
-    // Required properties
+export class Task implements ITaskType {
+    // Core properties
     public readonly id: string;
     public title: string;
     public description: string;
     public expectedOutput: string;
-    public agent: AgentType;
+    public agent: IAgentType;
+    public status: keyof typeof TASK_STATUS_enum;
+    public stepId: string;
+
+    // Configuration
     public isDeliverable: boolean;
     public externalValidationRequired: boolean;
-
-    // State properties
-    public status: keyof typeof TASK_STATUS_enum;
-    public result: TaskResult;
     public inputs: Record<string, unknown>;
-    public feedbackHistory: FeedbackObject[];
 
-    // Optional properties
-    public interpolatedTaskDescription?: string;
-    public duration?: number;
-    public startTime?: number;
-    public endTime?: number;
-    public llmUsageStats?: LLMUsageStats;
-    public iterationCount?: number;
+    // Results and state
+    public result?: string | Record<string, unknown> | null;
     public error?: string;
+    public interpolatedTaskDescription?: string;
+
+    // Tracking and metrics
+    public metrics: ITaskMetrics;
+    public progress: ITaskProgress;
+    public history: ITaskHistoryEntry[];
+    public feedback: ITaskFeedback[];
 
     // Store reference
-    private store?: TeamStore;
+    private store?: ITeamStoreMethods;
 
     constructor(params: ITaskParams) {
         this.validateParams(params);
 
-        // Initialize required properties
+        // Initialize core properties
         this.id = uuidv4();
         this.title = params.title || params.description.substring(0, 50);
         this.description = params.description;
         this.expectedOutput = params.expectedOutput;
         this.agent = params.agent;
+        this.status = 'TODO';
+        this.stepId = uuidv4();
+
+        // Initialize configuration
         this.isDeliverable = params.isDeliverable ?? false;
         this.externalValidationRequired = params.externalValidationRequired ?? false;
-
-        // Initialize state properties
-        this.status = 'TODO' as keyof typeof TASK_STATUS_enum;
-        this.result = null;
         this.inputs = {};
-        this.feedbackHistory = [];
+
+        // Initialize tracking and metrics
+        this.metrics = {
+            startTime: 0,
+            endTime: 0,
+            duration: 0,
+            iterationCount: 0,
+            resources: {
+                cpuUsage: 0,
+                memoryUsage: 0,
+                diskIO: { read: 0, write: 0 },
+                networkUsage: { upload: 0, download: 0 },
+                timestamp: Date.now()
+            },
+            performance: {
+                executionTime: {
+                    total: 0,
+                    average: 0,
+                    min: 0,
+                    max: 0
+                },
+                latency: {
+                    total: 0,
+                    average: 0,
+                    min: 0,
+                    max: 0
+                },
+                throughput: {
+                    operationsPerSecond: 0,
+                    dataProcessedPerSecond: 0
+                },
+                responseTime: {
+                    total: 0,
+                    average: 0,
+                    min: 0,
+                    max: 0
+                },
+                queueLength: 0,
+                errorRate: 0,
+                successRate: 1,
+                errorMetrics: {
+                    totalErrors: 0,
+                    errorRate: 0
+                },
+                resourceUtilization: {
+                    cpuUsage: 0,
+                    memoryUsage: 0,
+                    diskIO: { read: 0, write: 0 },
+                    networkUsage: { upload: 0, download: 0 },
+                    timestamp: Date.now()
+                },
+                timestamp: Date.now()
+            },
+            costs: {
+                inputCost: 0,
+                outputCost: 0,
+                totalCost: 0,
+                currency: 'USD',
+                breakdown: {
+                    promptTokens: { count: 0, cost: 0 },
+                    completionTokens: { count: 0, cost: 0 }
+                }
+            },
+            llmUsage: {
+                inputTokens: 0,
+                outputTokens: 0,
+                callsCount: 0,
+                callsErrorCount: 0,
+                parsingErrors: 0,
+                totalLatency: 0,
+                averageLatency: 0,
+                lastUsed: 0,
+                memoryUtilization: {
+                    peakMemoryUsage: 0,
+                    averageMemoryUsage: 0,
+                    cleanupEvents: 0
+                },
+                costBreakdown: {
+                    input: 0,
+                    output: 0,
+                    total: 0,
+                    currency: 'USD'
+                }
+            }
+        };
+
+        this.progress = {
+            status: 'TODO',
+            progress: 0,
+            timeElapsed: 0
+        };
+
+        this.history = [];
+        this.feedback = [];
 
         // Validate agent
         this.validateAgent();
@@ -84,7 +175,7 @@ export class Task implements TaskType {
     /**
      * Set team store reference
      */
-    public setStore(store: TeamStore): void {
+    public setStore(store: ITeamStoreMethods): void {
         this.store = store;
     }
 
@@ -93,21 +184,47 @@ export class Task implements TaskType {
      */
     public async execute(data: unknown): Promise<unknown> {
         try {
-            this.startTime = Date.now();
-            this.status = 'DOING' as keyof typeof TASK_STATUS_enum;
+            this.metrics.startTime = Date.now();
+            this.status = 'DOING';
+            this.progress.status = 'DOING';
 
-            // Execute task using agent
-            const result = await this.agent.execute({
-                task: this,
-                inputs: data
+            // Add history entry
+            this.history.push({
+                timestamp: Date.now(),
+                eventType: 'EXECUTION_STARTED',
+                statusChange: {
+                    from: 'TODO',
+                    to: 'DOING'
+                },
+                agent: this.agent.id
             });
 
-            this.endTime = Date.now();
-            this.duration = this.endTime - this.startTime;
-            this.result = result;
-            this.status = 'DONE' as keyof typeof TASK_STATUS_enum;
+            // Execute task using agent's workOnTask method
+            const loopResult = await this.agent.workOnTask(this) as ILoopResult;
+            
+            this.metrics.endTime = Date.now();
+            this.metrics.duration = this.metrics.endTime - this.metrics.startTime;
+            
+            // Extract finalAnswer from the result if available
+            this.result = loopResult.result?.finalAnswer ?? null;
+            
+            this.status = 'DONE';
+            this.progress.status = 'DONE';
+            this.progress.progress = 100;
 
-            return result;
+            // Add history entry
+            this.history.push({
+                timestamp: Date.now(),
+                eventType: 'EXECUTION_COMPLETED',
+                statusChange: {
+                    from: 'DOING',
+                    to: 'DONE'
+                },
+                agent: this.agent.id,
+                details: { result: loopResult }
+            });
+
+            return loopResult;
         } catch (error) {
             this.setError(error as Error);
             throw error;
@@ -125,10 +242,11 @@ export class Task implements TaskType {
         if (!params.agent) errors.push('Agent is required');
 
         if (errors.length > 0) {
-            throw new PrettyError({
+            throw new BaseError({
                 message: 'Invalid task parameters',
+                type: 'ValidationError',
                 context: { params, errors },
-                type: 'ValidationError'
+                recommendedAction: 'Provide all required task parameters'
             });
         }
     }
@@ -138,131 +256,33 @@ export class Task implements TaskType {
      */
     private validateAgent(): void {
         if (!this.agent) {
-            throw new PrettyError({
+            throw new BaseError({
                 message: 'Task must have an assigned agent',
+                type: 'ValidationError',
                 context: { taskId: this.id },
-                type: 'ValidationError'
+                recommendedAction: 'Assign an agent to the task'
             });
         }
     }
 
     /**
-     * Get task state
-     */
-    public getState(): Record<string, unknown> {
-        return {
-            id: this.id,
-            title: this.title,
-            description: this.description,
-            expectedOutput: this.expectedOutput,
-            agent: this.agent.id,
-            isDeliverable: this.isDeliverable,
-            externalValidationRequired: this.externalValidationRequired,
-            status: this.status,
-            result: this.result,
-            inputs: this.inputs,
-            feedbackHistory: this.feedbackHistory,
-            interpolatedTaskDescription: this.interpolatedTaskDescription,
-            duration: this.duration,
-            startTime: this.startTime,
-            endTime: this.endTime,
-            llmUsageStats: this.llmUsageStats,
-            iterationCount: this.iterationCount,
-            error: this.error
-        };
-    }
-
-    /**
-     * Update task state
-     */
-    public setState(updates: Partial<TaskType>): void {
-        Object.assign(this, updates);
-    }
-
-    /**
-     * Add feedback to task history
-     */
-    public addFeedback(feedback: FeedbackObject): void {
-        this.feedbackHistory.push(feedback);
-    }
-
-    /**
-     * Update task status
-     */
-    public updateStatus(status: keyof typeof TASK_STATUS_enum): void {
-        this.status = status;
-    }
-
-    /**
-     * Set task result
-     */
-    public setResult(result: TaskResult): void {
-        this.result = result;
-    }
-
-    /**
      * Set error state
      */
-    public setError(error: Error | string): void {
+    private setError(error: Error | string): void {
         this.error = error instanceof Error ? error.message : error;
-        this.status = 'ERROR' as keyof typeof TASK_STATUS_enum;
-    }
-
-    /**
-     * Check if task is complete
-     */
-    public isComplete(): boolean {
-        return this.status === 'DONE' || 
-               this.status === 'VALIDATED';
-    }
-
-    /**
-     * Check if task has error
-     */
-    public hasError(): boolean {
-        return this.status === 'ERROR' || !!this.error;
-    }
-
-    /**
-     * Check if task needs validation
-     */
-    public needsValidation(): boolean {
-        return this.status === 'AWAITING_VALIDATION';
-    }
-
-    /**
-     * Check if task can be executed
-     */
-    public canExecute(): boolean {
-        return this.status === 'TODO' || 
-               this.status === 'REVISE';
-    }
-
-    /**
-     * Reset task state
-     */
-    public reset(): void {
-        this.status = 'TODO' as keyof typeof TASK_STATUS_enum;
-        this.result = null;
-        this.duration = undefined;
-        this.startTime = undefined;
-        this.endTime = undefined;
-        this.llmUsageStats = undefined;
-        this.iterationCount = undefined;
-        this.error = undefined;
-    }
-
-    /**
-     * Clone task
-     */
-    public clone(): Task {
-        return new Task({
-            title: this.title,
-            description: this.description,
-            expectedOutput: this.expectedOutput,
-            agent: this.agent,
-            isDeliverable: this.isDeliverable,
-            externalValidationRequired: this.externalValidationRequired
+        this.status = 'ERROR';
+        this.progress.status = 'ERROR';
+        
+        // Add history entry
+        this.history.push({
+            timestamp: Date.now(),
+            eventType: 'ERROR',
+            statusChange: {
+                from: this.status,
+                to: 'ERROR'
+            },
+            agent: this.agent.id,
+            details: { error: this.error }
         });
     }
 }

@@ -8,7 +8,7 @@
 
 import type { ITaskType } from '../task/taskBaseTypes';
 import type { AGENT_STATUS_enum } from '../common/commonEnums';
-import type { ILLMUsageStats } from '../llm/llmResponseTypes';
+import type { ILLMMetrics } from '../llm/llmMetricTypes';
 import type { IAgentMetadata } from './agentBaseTypes';
 
 // ─── Unified Agent Execution State ──────────────────────────────────────────────
@@ -37,10 +37,11 @@ export interface IAgentExecutionState {
     assignedTasks: ITaskType[];
     completedTasks: ITaskType[];
     failedTasks: ITaskType[];
+    blockedTasks: ITaskType[];
     iterations: number;
     maxIterations: number;
     
-    // Metrics
+    // Task Performance
     performance: {
         completedTaskCount: number;
         failedTaskCount: number;
@@ -49,19 +50,17 @@ export interface IAgentExecutionState {
         averageIterationsPerTask: number;
     };
     
-    resourceUsage: {
-        cpuUsage?: number;
-        memoryUsage?: number;
-        networkUsage?: number;
-    };
-    
-    llmMetrics: {
-        totalTokensUsed: number;
-        promptTokens: number;
-        completionTokens: number;
-        totalCost: number;
-        averageResponseTime: number;
-    };
+    // Resource, Performance and Usage Metrics
+    metrics: ILLMMetrics;
+
+    // History
+    history: Array<{
+        timestamp: Date;
+        action: string;
+        details: Record<string, unknown>;
+        taskId?: string;
+        result?: unknown;
+    }>;
 }
 
 // ─── Type Guards ────────────────────────────────────────────────────────────
@@ -92,11 +91,13 @@ export const IAgentStateTypeGuards = {
             Array.isArray(state.assignedTasks) &&
             Array.isArray(state.completedTasks) &&
             Array.isArray(state.failedTasks) &&
+            Array.isArray(state.blockedTasks) &&
+            Array.isArray(state.history) &&
             typeof state.iterations === 'number' &&
             typeof state.maxIterations === 'number' &&
             typeof state.performance === 'object' &&
-            typeof state.resourceUsage === 'object' &&
-            typeof state.llmMetrics === 'object'
+            typeof state.metrics === 'object' &&
+            state.metrics !== null
         );
     }
 };

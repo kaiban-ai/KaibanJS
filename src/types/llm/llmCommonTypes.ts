@@ -1,133 +1,160 @@
 /**
  * @file llmCommonTypes.ts
- * @path KaibanJS/src/types/llm/llmCommonTypes.ts
- * @description Common type definitions shared across LLM modules
+ * @path src/types/llm/llmCommonTypes.ts
+ * @description Common LLM type definitions integrated with Langchain
  *
- * @module types/llm
+ * @module @types/llm
  */
 
-import { ILLMUsageStats } from './llmResponseTypes';
-import { ICostDetails } from '../tool/toolExecutionTypes';
-import { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
+import { BaseChatModel, BaseChatModelParams } from '@langchain/core/language_models/chat_models';
+import { 
+    LLM_PROVIDER_enum,
+    GROQ_MODEL_enum,
+    OPENAI_MODEL_enum,
+    ANTHROPIC_MODEL_enum,
+    GOOGLE_MODEL_enum,
+    MISTRAL_MODEL_enum,
+    EnumTypeGuards
+} from '../common/commonEnums';
+import type { IValidationResult } from '../common/commonValidationTypes';
 
-// ─── Provider Constants ─────────────────────────────────────────────────────────
+// Provider display names mapping
+export const LLMProviders: Record<LLM_PROVIDER_enum, string> = {
+    [LLM_PROVIDER_enum.GROQ]: 'Groq',
+    [LLM_PROVIDER_enum.OPENAI]: 'OpenAI',
+    [LLM_PROVIDER_enum.ANTHROPIC]: 'Anthropic',
+    [LLM_PROVIDER_enum.GOOGLE]: 'Google',
+    [LLM_PROVIDER_enum.MISTRAL]: 'Mistral'
+};
 
-export const LLMProviders = {
-    GROQ: 'groq',
-    OPENAI: 'openai',
-    ANTHROPIC: 'anthropic',
-    GOOGLE: 'google',
-    MISTRAL: 'mistral',
-    NONE: 'none'
-} as const;
+// Runtime options extending Langchain's base params
+export interface ILLMRuntimeOptions extends BaseChatModelParams {
+    temperature?: number;
+    maxTokens?: number;
+    topP?: number;
+    topK?: number;
+    streaming?: boolean;
+    timeout?: number;
+}
 
-export type ILLMProvider = (typeof LLMProviders)[keyof typeof LLMProviders];
-
-// ─── Streaming Types ──────────────────────────────────────────────────────────
-
-export const StreamingFinishReasons = {
-    STOP: 'stop',
-    LENGTH: 'length',
-    TOOL_CALLS: 'tool_calls',
-    CONTENT_FILTER: 'content_filter',
-    ERROR: 'error'
-} as const;
-
-export type IStreamingFinishReason = typeof StreamingFinishReasons[keyof typeof StreamingFinishReasons];
-
-export interface ILLMEventMetadata extends IBaseHandlerMetadata {
-    llm: {
-        provider: ILLMProvider;
-        model: string;
-        requestId?: string;
+// Streaming chunk type for streaming responses
+export interface IStreamingChunk {
+    content: string;
+    done: boolean;
+    metadata?: {
+        timestamp: number;
+        chunkIndex: number;
+        totalChunks?: number;
     };
 }
 
-export interface IStreamingChunk {
-    content: string;
-    metadata?: ILLMEventMetadata;
-    finishReason?: IStreamingFinishReason;
-    done: boolean;
-}
-
-// ─── Runtime Options ─────────────────────────────────────────────────────────
-
-export interface ILLMRuntimeOptions {
-    timeoutMs?: number;
-    maxRetries?: number;
-    abortSignal?: AbortSignal;
-    metadata?: Record<string, unknown>;
-    
-    onChunk?: (chunk: IStreamingChunk) => void;
-    onComplete?: (chunk: IStreamingChunk) => void;
-    onError?: (error: Error) => void;
-}
-
-// ─── Token Limits ───────────────────────────────────────────────────────────
-
-export const TOKEN_LIMITS = {
-    GROQ_DEFAULT: 8192,
-    OPENAI_GPT4: 8192,
-    ANTHROPIC_CLAUDE: 100000,
-    GOOGLE_GEMINI: 32768,
-    MISTRAL_LARGE: 32768
-} as const;
-
-// ─── Configuration Types ──────────────────────────────────────────────────────
-
-export interface IBaseLLMConfig {
-    provider: ILLMProvider;
-    model?: string;
+// Base configuration type extending Langchain's base params
+export interface IBaseLLMConfig extends BaseChatModelParams {
+    provider: LLM_PROVIDER_enum;
+    model: string;
     apiKey?: string;
-    temperature?: number;
-    streaming?: boolean;
     apiBaseUrl?: string;
     maxRetries?: number;
     timeout?: number;
-    maxConcurrency?: number;
-    headers?: Record<string, string>;
-    debug?: boolean;
-    stopSequences?: string[];
-    
-    usageStats?: ILLMUsageStats;
-    costDetails?: ICostDetails;
+    temperature?: number;
+    maxTokens?: number;
+    topP?: number;
+    topK?: number;
+    contextWindow?: number;
+    streamingLatency?: number;
 }
 
-export interface IActiveLLMConfig extends IBaseLLMConfig {
-    provider: Exclude<ILLMProvider, 'none'>;
-    model: string;
-    apiKey: string;
+// Provider-specific configurations extending Langchain's base model
+export interface IGroqConfig extends Omit<IBaseLLMConfig, 'model'> {
+    provider: LLM_PROVIDER_enum.GROQ;
+    model: GROQ_MODEL_enum;
 }
 
-export interface INoneLLMConfig extends IBaseLLMConfig {
-    provider: 'none';
+export interface IOpenAIConfig extends Omit<IBaseLLMConfig, 'model'> {
+    provider: LLM_PROVIDER_enum.OPENAI;
+    model: OPENAI_MODEL_enum;
 }
 
-export type ILLMConfig = IActiveLLMConfig | INoneLLMConfig;
+export interface IAnthropicConfig extends Omit<IBaseLLMConfig, 'model'> {
+    provider: LLM_PROVIDER_enum.ANTHROPIC;
+    model: ANTHROPIC_MODEL_enum;
+}
 
-// ─── Type Guards ─────────────────────────────────────────────────────────────
+export interface IGoogleConfig extends Omit<IBaseLLMConfig, 'model'> {
+    provider: LLM_PROVIDER_enum.GOOGLE;
+    model: GOOGLE_MODEL_enum;
+}
 
-export const isActiveConfig = (config: ILLMConfig): config is IActiveLLMConfig => {
-    return config.provider !== 'none';
+export interface IMistralConfig extends Omit<IBaseLLMConfig, 'model'> {
+    provider: LLM_PROVIDER_enum.MISTRAL;
+    model: MISTRAL_MODEL_enum;
+}
+
+// Union type for all provider configurations
+export type LLMProviderConfig = 
+    | IGroqConfig
+    | IOpenAIConfig
+    | IAnthropicConfig
+    | IGoogleConfig
+    | IMistralConfig;
+
+// Common configuration type used by agents
+export type ILLMConfig = LLMProviderConfig;
+
+// Default configuration
+export const DEFAULT_LLM_CONFIG: IBaseLLMConfig = {
+    provider: LLM_PROVIDER_enum.GROQ,
+    model: GROQ_MODEL_enum.MIXTRAL,
+    maxRetries: 3,
+    timeout: 30000,
+    temperature: 0.7,
+    maxTokens: 2048,
+    topP: 1,
+    topK: 40
 };
 
-// ─── Helper Functions ────────────────────────────────────────────────────────
-
-export const ensureApiKey = (config: ILLMConfig, fallbackApiKey?: string): IActiveLLMConfig => {
-    if (config.provider === 'none') {
-        throw new Error('Cannot ensure API key for non-active provider');
+// Utility functions
+export const convertToProviderConfig = (config: IBaseLLMConfig): LLMProviderConfig => {
+    if (!EnumTypeGuards.isLLMProvider(config.provider)) {
+        throw new Error(`Invalid provider: ${config.provider}`);
     }
 
-    if (config.apiKey) {
-        return config as IActiveLLMConfig;
+    if (!EnumTypeGuards.isValidModelForProvider(config.model, config.provider)) {
+        throw new Error(`Invalid model ${config.model} for provider ${config.provider}`);
     }
 
-    if (fallbackApiKey) {
-        return {
-            ...config,
-            apiKey: fallbackApiKey
-        } as IActiveLLMConfig;
-    }
+    return config as LLMProviderConfig;
+};
 
-    throw new Error(`API key is required for provider ${config.provider}`);
+// Langchain integration types
+export interface ILangchainConfig extends BaseChatModelParams {
+    provider: LLM_PROVIDER_enum;
+    model: string;
+    // Additional KaibanJS-specific fields
+    apiKey?: string;
+    apiBaseUrl?: string;
+    maxRetries?: number;
+    streamingLatency?: number;
+}
+
+// Type guard for Langchain model instances
+export const isLangchainModel = (model: any): model is BaseChatModel => {
+    return model instanceof BaseChatModel;
+};
+
+// Runtime configuration types
+export interface IRuntimeLLMConfig extends Omit<IBaseLLMConfig, 'provider' | 'model'> {
+    provider: LLM_PROVIDER_enum;
+    model: string;
+}
+
+// Active configuration type for runtime
+export interface IActiveLLMConfig extends IRuntimeLLMConfig {
+    tags?: string[];
+}
+
+// Validation helper
+export const isValidProviderConfig = (config: IBaseLLMConfig): config is LLMProviderConfig => {
+    return EnumTypeGuards.isLLMProvider(config.provider) && 
+           EnumTypeGuards.isValidModelForProvider(config.model, config.provider);
 };
