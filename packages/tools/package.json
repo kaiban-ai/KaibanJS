@@ -37,6 +37,14 @@
     "./website-search": {
       "import": "./dist/website-search/index.esm.js",
       "require": "./dist/website-search/index.cjs.js"
+    },
+    "./pdf-search": {
+      "import": "./dist/pdf-search/index.esm.js",
+      "require": "./dist/pdf-search/index.cjs.js"
+    },
+    "./textfile-search": {
+      "import": "./dist/textfile-search/index.esm.js",
+      "require": "./dist/textfile-search/index.cjs.js"
     }
   },
   "files": [
@@ -86,6 +94,9 @@
     "cheerio": "^1.0.0",
     "ky": "^1.7.2",
     "langchain": "^0.2.10",
+    "pdf-parse": "^1.1.1",
+    "pdfjs-dist": "^4.8.69",
+    "xmlhttprequest": "^1.8.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -95,6 +106,7 @@
     "@rollup/plugin-commonjs": "^25.0.8",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-replace": "^6.0.1",
     "@rollup/plugin-terser": "^0.4.4",
     "@storybook/addon-essentials": "^8.3.6",
     "@storybook/addon-interactions": "^8.3.6",

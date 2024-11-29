@@ -4,6 +4,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import json from '@rollup/plugin-json';
 import nodePolyfills from 'rollup-plugin-node-polyfills'; // Correct plugin name
+import replace from '@rollup/plugin-replace';
 
 // Array of tool folder names
 const toolFolders = [
@@ -15,6 +16,8 @@ const toolFolders = [
   'github-issues',
   'simple-rag',
   'website-search',
+  'pdf-search',
+  'textfile-search',
 ]; // Add more folder names as needed
 
 const toolConfigs = toolFolders.map((tool) => {
@@ -45,6 +48,13 @@ const toolConfigs = toolFolders.map((tool) => {
       json(),
       nodePolyfills(), // Correctly named polyfill plugin for Node.js
       terser(),
+      replace({
+        preventAssignment: true,
+        values: {
+          'Promise.withResolvers':
+            '(() => ({ promise: new Promise(() => {}), resolve: () => {}, reject: () => {} }))',
+        },
+      }),
     ],
   });
 });
@@ -75,6 +85,13 @@ const mainConfig = defineConfig({
     json(),
     nodePolyfills(),
     terser(),
+    replace({
+      preventAssignment: true,
+      values: {
+        'Promise.withResolvers':
+          '(() => ({ promise: new Promise(() => {}), resolve: () => {}, reject: () => {} }))',
+      },
+    }),
   ],
 });
 const ragToolkitConfig = defineConfig({

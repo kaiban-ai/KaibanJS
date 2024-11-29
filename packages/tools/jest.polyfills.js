@@ -21,3 +21,8 @@ Object.defineProperties(globalThis, {
   Request: { value: Request },
   Response: { value: Response },
 });
+
+const { XMLHttpRequest } = require('xmlhttprequest');
+Object.defineProperties(globalThis, {
+  XMLHttpRequest: { value: XMLHttpRequest },
+});
