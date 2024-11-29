@@ -11,10 +11,11 @@ import { createError } from '../../../types/common/commonErrorTypes';
 import { TASK_STATUS_enum } from '../../../types/common/commonEnums';
 import { TaskEventEmitter } from './taskEventEmitter';
 import { TaskUtilsManager } from './taskUtilsManager';
-import { MetadataFactory } from '../../../utils/factories/metadataFactory';
+import { TaskManager } from './taskManager';
+import { createValidationError, createValidationWarning } from '../../../types/common/commonValidationTypes';
 
 import type { ITaskType } from '../../../types/task/taskBaseTypes';
-import type { ITaskValidationResult } from '../../../types/task/taskHandlersTypes';
+import type { ITaskValidationResult } from '../../../types/task/taskHandlerTypes';
 import type { IStatusTransitionContext } from '../../../types/common/commonStatusTypes';
 
 // ─── Validator Implementation ───────────────────────────────────────────────────
@@ -22,11 +23,13 @@ import type { IStatusTransitionContext } from '../../../types/common/commonStatu
 export class TaskValidator extends CoreManager {
     private readonly eventEmitter: TaskEventEmitter;
     private readonly utilsManager: TaskUtilsManager;
+    private readonly taskManager: TaskManager;
 
     constructor() {
         super();
         this.eventEmitter = TaskEventEmitter.getInstance();
         this.utilsManager = TaskUtilsManager.getInstance();
+        this.taskManager = TaskManager.getInstance();
     }
 
     public async validateTask(task: ITaskType): Promise<ITaskValidationResult> {
@@ -49,8 +52,8 @@ export class TaskValidator extends CoreManager {
                 operation: 'validateTask',
                 phase: 'execution',
                 startTime,
-                resourceMetrics: task.metrics?.resources || MetadataFactory.createResourceMetrics(),
-                performanceMetrics: task.metrics?.performance || MetadataFactory.createPerformanceMetrics(),
+                resourceMetrics: task.metrics?.resources,
+                performanceMetrics: task.metrics?.performance,
                 task,
                 agent: task.agent
             };
@@ -134,7 +137,8 @@ export class TaskValidator extends CoreManager {
 
             const validationResult: ITaskValidationResult = {
                 isValid: errors.length === 0,
-                errors,
+                errors: errors.map(error => createValidationError({ code: 'VALIDATION_ERROR', message: error })),
+                warnings: warnings.map(warning => createValidationWarning({ code: 'VALIDATION_WARNING', message: warning })),
                 context: {
                     taskId: task.id,
                     taskStatus: task.status,
@@ -145,11 +149,7 @@ export class TaskValidator extends CoreManager {
             // Emit validation completed event
             await this.eventEmitter.emitTaskValidationCompleted({
                 taskId: task.id,
-                validationResult: {
-                    valid: validationResult.isValid,
-                    errors: validationResult.errors,
-                    warnings
-                }
+                validationResult
             });
 
             // If validation failed, also emit error occurred event
@@ -160,7 +160,7 @@ export class TaskValidator extends CoreManager {
                     context: {
                         taskId: task.id,
                         errors: validationResult.errors,
-                        warnings
+                        warnings: validationResult.warnings
                     }
                 });
 
@@ -183,7 +183,8 @@ export class TaskValidator extends CoreManager {
         } catch (error) {
             const errorResult: ITaskValidationResult = {
                 isValid: false,
-                errors: [(error as Error).message],
+                errors: [createValidationError({ code: 'VALIDATION_ERROR', message: (error as Error).message })],
+                warnings: [],
                 context: {
                     taskId: task.id,
                     taskStatus: task.status,

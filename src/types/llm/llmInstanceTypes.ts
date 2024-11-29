@@ -1,15 +1,19 @@
 /**
  * @file llmInstanceTypes.ts
  * @path KaibanJS/src/types/llm/llmInstanceTypes.ts
- * @description LLM instance interfaces and runtime behavior types
+ * @description LLM instance interfaces and runtime behavior types using Langchain
  *
  * @module types/llm
  */
 
+import { BaseChatModel, BaseChatModelParams, BaseChatModelCallOptions } from '@langchain/core/language_models/chat_models';
+import { BaseMessage, BaseMessageLike, AIMessage, AIMessageChunk, MessageType } from '@langchain/core/messages';
+import { BaseLanguageModelInput } from '@langchain/core/language_models/base';
+import { LLMResult } from '@langchain/core/outputs';
+import { Callbacks } from '@langchain/core/callbacks/manager';
 import { LLM_PROVIDER_enum } from '../common/commonEnums';
 import { 
     type LLMProviderConfig,
-    type IBaseLLMConfig,
     type IGroqConfig,
     type IOpenAIConfig,
     type IAnthropicConfig,
@@ -17,30 +21,35 @@ import {
     type IMistralConfig
 } from './llmProviderTypes';
 
-import { 
-    type ILLMRuntimeOptions,
-    type IStreamingChunk
-} from './llmCommonTypes';
-
 import type { LLMResponse } from './llmResponseTypes';
-import type { IOutput } from './llmResponseTypes';
 import type { IValidationResult } from '../common/commonValidationTypes';
 
 // ─── Core Instance Interface ─────────────────────────────────────────────────────
 
 export interface ILLMInstance {
-    generate(input: string, options?: ILLMRuntimeOptions): Promise<LLMResponse>;
-    generateStream(input: string, options?: ILLMRuntimeOptions): AsyncIterator<IStreamingChunk>;
-    validateConfig(config: LLMProviderConfig): Promise<IValidationResult<unknown>>;
+    id: string;
+    generate(
+        messages: BaseLanguageModelInput,
+        options?: BaseChatModelCallOptions,
+        callbacks?: Callbacks
+    ): Promise<LLMResponse>;
+
+    generateStream(
+        messages: BaseLanguageModelInput,
+        options?: BaseChatModelCallOptions,
+        callbacks?: Callbacks
+    ): AsyncGenerator<AIMessageChunk>;
+
+    validateConfig(config: LLMProviderConfig): Promise<IValidationResult>;
     cleanup(): Promise<void>;
-    getConfig(): IBaseLLMConfig;
-    updateConfig(updates: Partial<IBaseLLMConfig>): void;
+    getConfig(): LLMProviderConfig;
+    updateConfig(updates: Partial<BaseChatModelCallOptions>): void;
     getProvider(): LLM_PROVIDER_enum;
 }
 
 export interface IAgenticLoopResult {
     error?: string;
-    result?: IOutput | null;
+    result?: LLMResult | null;
     metadata: {
         iterations: number;
         maxAgentIterations: number;
@@ -49,52 +58,45 @@ export interface IAgenticLoopResult {
 
 // ─── Provider-Specific Types ─────────────────────────────────────────────────────
 
-export interface IGroqInstance extends ILLMInstance {
-    getConfig(): IGroqConfig;
+export interface IProviderConfig extends BaseChatModelParams {
+    provider: LLM_PROVIDER_enum;
+    apiKey: string;
 }
 
-export interface IOpenAIInstance extends ILLMInstance {
-    getConfig(): IOpenAIConfig;
+export interface IProviderInstance<T extends LLMProviderConfig> extends ILLMInstance {
+    config: T;
 }
 
-export interface IAnthropicInstance extends ILLMInstance {
-    getConfig(): IAnthropicConfig;
-}
-
-export interface IGoogleInstance extends ILLMInstance {
-    getConfig(): IGoogleConfig;
-}
-
-export interface IMistralInstance extends ILLMInstance {
-    getConfig(): IMistralConfig;
-}
+export type IGroqInstance = IProviderInstance<IGroqConfig>;
+export type IOpenAIInstance = IProviderInstance<IOpenAIConfig>;
+export type IAnthropicInstance = IProviderInstance<IAnthropicConfig>;
+export type IGoogleInstance = IProviderInstance<IGoogleConfig>;
+export type IMistralInstance = IProviderInstance<IMistralConfig>;
 
 // ─── Type Guards ─────────────────────────────────────────────────────────────────
 
 export const LLMInstanceGuards = {
-    isGroqInstance: (instance: ILLMInstance): instance is IGroqInstance => {
-        const config = instance.getConfig();
-        return config.provider === LLM_PROVIDER_enum.GROQ && config.apiKey !== undefined;
+    isLLMInstance: (instance: unknown): instance is ILLMInstance => {
+        return instance !== null &&
+               typeof instance === 'object' &&
+               'id' in instance &&
+               'generate' in instance &&
+               'generateStream' in instance &&
+               'getProvider' in instance;
     },
-    
-    isOpenAIInstance: (instance: ILLMInstance): instance is IOpenAIInstance => {
-        const config = instance.getConfig();
-        return config.provider === LLM_PROVIDER_enum.OPENAI && config.apiKey !== undefined;
+
+    isProviderConfig: (config: unknown): config is IProviderConfig => {
+        return config !== null &&
+               typeof config === 'object' &&
+               'provider' in config &&
+               'apiKey' in config;
     },
-    
-    isAnthropicInstance: (instance: ILLMInstance): instance is IAnthropicInstance => {
-        const config = instance.getConfig();
-        return config.provider === LLM_PROVIDER_enum.ANTHROPIC && config.apiKey !== undefined;
-    },
-    
-    isGoogleInstance: (instance: ILLMInstance): instance is IGoogleInstance => {
-        const config = instance.getConfig();
-        return config.provider === LLM_PROVIDER_enum.GOOGLE && config.apiKey !== undefined;
-    },
-    
-    isMistralInstance: (instance: ILLMInstance): instance is IMistralInstance => {
-        const config = instance.getConfig();
-        return config.provider === LLM_PROVIDER_enum.MISTRAL && config.apiKey !== undefined;
+
+    isProviderInstance: <T extends LLMProviderConfig>(
+        instance: ILLMInstance,
+        provider: LLM_PROVIDER_enum
+    ): instance is IProviderInstance<T> => {
+        return instance.getProvider() === provider;
     }
 };
 
@@ -104,9 +106,8 @@ export interface ILLMInstanceFactory {
     createInstance(config: LLMProviderConfig): Promise<ILLMInstance>;
 }
 
-export interface ILLMInstanceOptions {
+export interface ILLMInstanceOptions extends BaseChatModelCallOptions {
     maxConcurrentRequests?: number;
-    requestTimeout?: number;
     retry?: {
         maxRetries: number;
         backoffFactor: number;
@@ -116,4 +117,27 @@ export interface ILLMInstanceOptions {
         maxSize?: number;
         ttl?: number;
     };
+}
+
+// ─── Message Conversion Utilities ────────────────────────────────────────────────
+
+export function convertToBaseMessages(input: BaseLanguageModelInput): BaseMessage[] {
+    if (Array.isArray(input)) {
+        return input.map(msg => {
+            if (msg instanceof BaseMessage) {
+                return msg;
+            }
+            if (typeof msg === 'object' && msg !== null && 'content' in msg && 'type' in msg) {
+                return new AIMessage({ content: String(msg.content) });
+            }
+            return new AIMessage({ content: String(msg) });
+        });
+    }
+    if (typeof input === 'string') {
+        return [new AIMessage({ content: input })];
+    }
+    if (input instanceof BaseMessage) {
+        return [input];
+    }
+    throw new Error('Invalid message format');
 }

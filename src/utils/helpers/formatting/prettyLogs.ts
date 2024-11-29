@@ -6,7 +6,7 @@
 
 // Core utilities
 import ansis from "ansis";
-import { logger } from "@/utils/core/logger";
+import { logger } from "../../core/logger";
 
 // Import types from canonical locations
 import type { 
@@ -14,7 +14,7 @@ import type {
     TaskStatusProps,
     WorkflowStatusProps, 
     WorkflowResultProps 
-} from '@/utils/types/common/logging';
+} from '../../../types/common/loggingTypes';
 
 // ─── Format Constants ────────────────────────────────────────────────────────────
 
@@ -26,7 +26,7 @@ const LINE_SEP = '|-----------------------------------------|';
 export function logPrettyTaskCompletion({
     iterationCount,
     duration,
-    llmUsageStats,
+    llmUsageMetrics,
     agentName,
     agentModel,
     taskTitle,
@@ -46,16 +46,16 @@ export function logPrettyTaskCompletion({
         "|",
         ansis.black("| Iterations: ") + ansis.cyan(iterationCount.toString()),
         ansis.black("| Duration: ") + ansis.cyan(duration.toString()) + ansis.cyan(" seconds"),
-        ansis.black("| Input Tokens: ") + ansis.yellow(llmUsageStats.inputTokens.toString()),
-        ansis.black("| Output Tokens: ") + ansis.yellow(llmUsageStats.outputTokens.toString()),
+        ansis.black("| Input Tokens: ") + ansis.yellow(llmUsageMetrics.tokenDistribution.prompt.toString()),
+        ansis.black("| Output Tokens: ") + ansis.yellow(llmUsageMetrics.tokenDistribution.completion.toString()),
         "|",
         ansis.black("| Cost Input Tokens: ") + ansis.cyan(`$${costDetails.breakdown.promptTokens.cost.toString()}`),
         ansis.black("| Cost Output Tokens: ") + ansis.cyan(`$${costDetails.breakdown.completionTokens.cost.toString()}`),
         ansis.black("| Total Cost: ") + ansis.cyan(`$${costDetails.totalCost.toString()}`),
         "|",
-        ansis.black("| Calls Count: ") + ansis.green(llmUsageStats.callsCount.toString()),
-        ansis.black("| Calls Error Count: ") + ansis.green(llmUsageStats.callsErrorCount.toString()),
-        ansis.black("| Parsing Errors: ") + ansis.green(llmUsageStats.parsingErrors.toString()),
+        ansis.black("| Total Requests: ") + ansis.green(llmUsageMetrics.totalRequests.toString()),
+        ansis.black("| Active Instances: ") + ansis.green(llmUsageMetrics.activeInstances.toString()),
+        ansis.black("| Requests/Second: ") + ansis.green(llmUsageMetrics.requestsPerSecond.toString()),
         ansis.black(SEPARATOR + "\n\n"),
     ].join("\n");
     
@@ -110,7 +110,7 @@ export function logPrettyWorkflowResult({
     const { 
         result, 
         duration, 
-        llmUsageStats, 
+        llmUsageMetrics, 
         iterationCount, 
         costDetails, 
         teamName, 
@@ -130,16 +130,16 @@ export function logPrettyWorkflowResult({
         "|",
         ansis.black("| Iterations: ") + ansis.yellow(iterationCount.toString()),
         ansis.black("| Duration: ") + ansis.yellow(duration.toString()) + ansis.yellow(" seconds"),
-        ansis.black("| Input Tokens: ") + ansis.yellow(llmUsageStats.inputTokens.toString()),
-        ansis.black("| Output Tokens: ") + ansis.yellow(llmUsageStats.outputTokens.toString()),
+        ansis.black("| Input Tokens: ") + ansis.yellow(llmUsageMetrics.tokenDistribution.prompt.toString()),
+        ansis.black("| Output Tokens: ") + ansis.yellow(llmUsageMetrics.tokenDistribution.completion.toString()),
         "|",
         ansis.black("| Cost Input Tokens: ") + ansis.cyan(`$${costDetails.breakdown.promptTokens.cost.toString()}`),
         ansis.black("| Cost Output Tokens: ") + ansis.cyan(`$${costDetails.breakdown.completionTokens.cost.toString()}`),
         ansis.black("| Total Cost: ") + ansis.cyan(`$${costDetails.totalCost.toString()}`),
         "|",
-        ansis.black("| Calls Count: ") + ansis.red(llmUsageStats.callsCount.toString()),
-        ansis.black("| Calls Error Count: ") + ansis.red(llmUsageStats.callsErrorCount.toString()),
-        ansis.black("| Parsing Errors: ") + ansis.red(llmUsageStats.parsingErrors.toString()),
+        ansis.black("| Total Requests: ") + ansis.red(llmUsageMetrics.totalRequests.toString()),
+        ansis.black("| Active Instances: ") + ansis.red(llmUsageMetrics.activeInstances.toString()),
+        ansis.black("| Requests/Second: ") + ansis.red(llmUsageMetrics.requestsPerSecond.toString()),
         ansis.black(SEPARATOR + "\n"),
     ].join("\n");
 

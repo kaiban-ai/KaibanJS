@@ -1,20 +1,22 @@
 /**
  * @file agentManagerTypes.ts
- * @description Type definitions for agent-related managers
+ * @description Type definitions for agent-related managers using Langchain types
  * 
  * @module @types/agent
  */
 
+import { BaseMessage } from '@langchain/core/messages';
+import { LLMResult } from '@langchain/core/outputs';
+import { Tool } from 'langchain/tools';
 import { IHandlerResult } from '../common/commonHandlerTypes';
 import { IAgentType, IReactChampionAgent } from './agentBaseTypes';
 import { IExecutionContext } from './agentConfigTypes';
 import { ITaskType } from '../task/taskBaseTypes';
-import { IParsedOutput, IOutput, ILLMUsageStats } from '../llm/llmResponseTypes';
-import { Tool } from 'langchain/tools';
 import { IErrorType } from '../common/commonErrorTypes';
 import { IThinkingResult, IThinkingHandlerResult } from './agentHandlersTypes';
 import { IIterationContext, IIterationHandlerResult } from './agentIterationTypes';
 import { ILoopHandlerResult } from './agentLoopTypes';
+import { ILLMUsageMetrics } from '../llm/llmMetricTypes';
 
 export interface IIterationManager {
     handleIterationStart(params: {
@@ -36,7 +38,7 @@ export interface IIterationManager {
         task: ITaskType;
         iterations: number;
         maxIterations: number;
-        error: Error;
+        error: IErrorType;
     }): Promise<IIterationHandlerResult<IIterationContext>>;
 }
 
@@ -55,10 +57,10 @@ export interface IToolManager {
         task: ITaskType;
         tool: Tool;
         input: Record<string, unknown>;
-        parsedOutput: IParsedOutput;
+        messages: BaseMessage[];
     }): Promise<IHandlerResult>;
-    validateToolConfig(tool: any): Promise<void>;
-    initializeTools(agent: IAgentType): Promise<any[]>;
+    validateToolConfig(tool: Tool): Promise<void>;
+    initializeTools(agent: IAgentType): Promise<Tool[]>;
     cleanupTools(agent: IAgentType): Promise<void>;
 }
 
@@ -73,20 +75,20 @@ export interface IAgenticLoopManager {
 export interface IMessageManager {
     clear(): Promise<void>;
     getMessageCount(): Promise<number>;
-    getMessages(): Promise<any[]>;
+    getMessages(): Promise<BaseMessage[]>;
 }
 
 export interface ILLMManager {
     validateConfig(config: any): Promise<void>;
     createInstance(config: any): Promise<any>;
     cleanup(instance: any): Promise<void>;
-    getUsageStats(): Promise<ILLMUsageStats>;
+    getUsageStats(): Promise<ILLMUsageMetrics>;
 }
 
 export interface ILoopResult {
     success: boolean;
-    result?: IOutput;
-    error?: string;
+    result?: LLMResult;
+    error?: IErrorType;
     metadata: {
         iterations: number;
         maxAgentIterations: number;

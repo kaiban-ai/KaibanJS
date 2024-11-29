@@ -8,7 +8,7 @@
 
 import { ILogLevel } from '../common';
 import { MESSAGE_LOG_TYPE_enum, STATUS_LOG_TYPE_enum } from '../common';
-import type { ILLMUsageStats } from '../llm/llmResponseTypes';
+import type { ILLMUsageMetrics } from '../llm/llmMetricTypes';
 import type { ICostDetails } from '../workflow/workflowCostsTypes';
 import type { 
     IBaseHandlerMetadata,
@@ -75,13 +75,13 @@ export type ILogMetadataPayload = {
 // ─── Metadata Interfaces ─────────────────────────────────────────────────────────
 
 export interface IBaseLogMetadata extends IBaseHandlerMetadata {
-    llmUsageStats?: ILLMUsageStats;
+    llmUsageMetrics?: ILLMUsageMetrics;
     meta?: ILogMetadataPayload;
 }
 
 export interface ITaskLogMetadata extends IBaseLogMetadata {
     task: {
-        llmUsageStats: ILLMUsageStats;
+        llmUsageMetrics: ILLMUsageMetrics;
         iterationCount: number;
         duration: number;
         costDetails: ICostDetails;
@@ -93,7 +93,7 @@ export interface IWorkflowLogMetadata extends IBaseLogMetadata {
     workflow: {
         result?: string;
         duration: number;
-        llmUsageStats: ILLMUsageStats;
+        llmUsageMetrics: ILLMUsageMetrics;
         iterationCount: number;
         costDetails: ICostDetails;
         teamName: string;
@@ -105,7 +105,7 @@ export interface IWorkflowLogMetadata extends IBaseLogMetadata {
 export interface IAgentLogMetadata extends IBaseLogMetadata {
     agent: {
         output: {
-            llmUsageStats: ILLMUsageStats;
+            llmUsageMetrics: ILLMUsageMetrics;
             [key: string]: unknown;
         };
     };
@@ -157,7 +157,7 @@ export const LogTypeGuards = {
             metadata.operation &&
             metadata.performance &&
             metadata.task &&
-            metadata.task.llmUsageStats &&
+            metadata.task.llmUsageMetrics &&
             typeof metadata.task.iterationCount === 'number' &&
             typeof metadata.task.duration === 'number' &&
             metadata.task.costDetails
@@ -174,7 +174,7 @@ export const LogTypeGuards = {
             metadata.performance &&
             metadata.workflow &&
             typeof metadata.workflow.duration === 'number' &&
-            metadata.workflow.llmUsageStats &&
+            metadata.workflow.llmUsageMetrics &&
             typeof metadata.workflow.iterationCount === 'number' &&
             metadata.workflow.costDetails &&
             typeof metadata.workflow.teamName === 'string' &&
@@ -194,7 +194,7 @@ export const LogTypeGuards = {
             metadata.agent &&
             metadata.agent.output &&
             typeof metadata.agent.output === 'object' &&
-            'llmUsageStats' in metadata.agent.output
+            'llmUsageMetrics' in metadata.agent.output
         );
     }
 };

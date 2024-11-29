@@ -2,151 +2,164 @@
  * @file taskHandlerTypes.ts
  * @path KaibanJS/src/types/task/taskHandlerTypes.ts
  * @description Task handler type definitions and interfaces
- * 
- * @module @types/task
  */
 
-import type { IBaseMetrics } from '../metrics/base/baseMetrics';
-import type { ITaskResourceMetrics, ITaskPerformanceMetrics, ITaskUsageMetrics } from './taskMetricTypes';
-import type { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
-import type { IAgentType } from '../agent/agentTypes';
-import type { ITaskType } from './taskBaseTypes';
-import type { ILLMUsageStats } from '../llm/llmResponseTypes';
+import type { ILLMUsageMetrics } from '../llm/llmMetricTypes';
 import type { IStandardCostDetails } from '../common/commonMetricTypes';
-import type { IResourceMetrics } from '../metrics/base/resourceMetrics';
+import type { ITaskType } from './taskBaseTypes';
+import type { IHandlerResult } from '../common/commonHandlerTypes';
+import type { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
+import type { ITaskResourceMetrics, ITaskPerformanceMetrics, ITaskUsageMetrics } from './taskMetricTypes';
+import type { ValidationErrorType, ValidationWarningType } from '../common/commonValidationTypes';
 
-/**
- * Task metrics interface
- */
-export interface ITaskMetrics extends IBaseMetrics {
-    // Core metrics
-    resources: ITaskResourceMetrics;
-    performance: ITaskPerformanceMetrics;
-    usage: ITaskUsageMetrics;
+// ─── Task Validation Types ────────────────────────────────────────────────────
 
-    // Timing metrics
-    startTime: number;
-    endTime: number;
-    duration: number;
-    iterationCount: number;
-
-    // Cost and usage metrics
-    costs: IStandardCostDetails;
-    llmUsage: ILLMUsageStats;
-}
-
-/**
- * Task handler metadata
- */
-export interface ITaskHandlerMetadata extends IBaseHandlerMetadata {
-    stepId?: string;
-    priority?: number;
-    deadline?: number;
-    retryCount?: number;
-}
-
-/**
- * Task handler result
- */
-export interface ITaskHandlerResult<T = unknown> {
-    success: boolean;
-    data: T;
-    metadata?: ITaskHandlerMetadata;
-}
-
-/**
- * Task execution parameters
- */
-export interface ITaskExecutionParams {
-    task: ITaskType;
-    agent: IAgentType;
-    metadata?: ITaskHandlerMetadata;
-    input?: unknown;
-    options?: {
-        timeout?: number;
-        retries?: number;
-        signal?: AbortSignal;
-        strict?: boolean;
-    };
-}
-
-/**
- * Task validation context
- */
-export interface ITaskValidationContext {
-    taskId: string;
-    metadata?: ITaskHandlerMetadata;
-    metrics?: ITaskMetrics;
-}
-
-/**
- * Task execution context
- */
-export interface ITaskExecutionContext {
-    taskId: string;
-    agentId?: string;
-    metadata?: ITaskHandlerMetadata;
-    timestamp: number;
-}
-
-/**
- * Task validation result
- */
 export interface ITaskValidationResult {
-    isValid: boolean;
-    errors: string[];
-    context?: {
-        taskId: string;
-        taskStatus: string;
-        validationTime: number;
+    isValid: boolean;                 // Validation status
+    errors: ValidationErrorType[];    // List of validation errors
+    warnings: ValidationWarningType[]; // List of validation warnings
+    context?: Record<string, unknown>; // Optional validation context
+}
+
+// ─── Task Metrics Types ──────────────────────────────────────────────────────
+
+export interface ITaskMetrics {
+    costs: IStandardCostDetails;            // Cost-related metrics
+    llmUsageMetrics: ILLMUsageMetrics;      // LLM usage metrics
+    resources: ITaskResourceMetrics;        // Resource utilization metrics
+    performance: ITaskPerformanceMetrics;   // Performance metrics
+    usage: ITaskUsageMetrics;               // Usage metrics
+    startTime: number;                      // Execution start timestamp
+    endTime: number;                        // Execution end timestamp
+    duration: number;                       // Total execution duration
+    iterationCount: number;                 // Number of iterations
+}
+
+// ─── Task Handler Types ──────────────────────────────────────────────────────
+
+export interface ITaskHandlerMetadata extends IBaseHandlerMetadata {
+    taskId: string;           // Task ID
+    taskName: string;         // Task name
+    status: string;           // Task status
+    priority: number;         // Task priority
+    assignedAgent: string;    // Assigned agent ID
+    progress: number;         // Task progress
+    metrics: {                // Task metrics
+        resources: ITaskResourceMetrics;    // Resource metrics
+        usage: ITaskUsageMetrics;           // Usage metrics
+        performance: ITaskPerformanceMetrics; // Performance metrics
+    };
+    dependencies: {           // Task dependencies
+        completed: string[];  // Completed dependencies
+        pending: string[];    // Pending dependencies
+        blocked: string[];    // Blocked dependencies
     };
 }
 
-/**
- * Create default task metrics
- */
-export function createDefaultTaskMetrics(): ITaskMetrics {
-    const now = Date.now();
-    return {
-        // Base metrics (from IBaseMetrics)
-        resource: {
-            cpuUsage: 0,
-            memoryUsage: 0,
-            diskIO: { read: 0, write: 0 },
-            networkUsage: { upload: 0, download: 0 },
-            timestamp: now
-        },
-        timestamp: now,
+export interface ITaskHandlerResult<T = unknown> extends IHandlerResult<T, ITaskHandlerMetadata> {
+    success: boolean;         // Operation success status
+    data?: T;                 // Optional task output data
+    metadata: ITaskHandlerMetadata;  // Task metadata
+}
 
-        // Task-specific metrics
-        startTime: now,
-        endTime: now,
-        duration: 0,
-        iterationCount: 0,
+// ─── Factory Functions ───────────────────────────────────────────────────────
+
+export const createEmptyTaskMetrics = (): ITaskMetrics => {
+    const emptyLLMMetrics: ILLMUsageMetrics = {
+        totalRequests: 0,
+        activeInstances: 0,
+        requestsPerSecond: 0,
+        averageResponseLength: 0,
+        peakMemoryUsage: 0,
+        uptime: 0,
+        rateLimit: {
+            current: 0,
+            limit: 0,
+            remaining: 0,
+            resetTime: 0
+        },
+        tokenDistribution: {
+            prompt: 0,
+            completion: 0,
+            total: 0
+        },
+        modelDistribution: {
+            gpt4: 0,
+            gpt35: 0,
+            other: 0
+        },
+        timestamp: Date.now()
+    };
+
+    return {
+        costs: {
+            inputCost: 0,
+            outputCost: 0,
+            totalCost: 0,
+            currency: 'USD',
+            breakdown: {
+                promptTokens: { count: 0, cost: 0 },
+                completionTokens: { count: 0, cost: 0 }
+            }
+        },
+        llmUsageMetrics: emptyLLMMetrics,
         resources: {
             cpuUsage: 0,
             memoryUsage: 0,
-            diskIO: { read: 0, write: 0 },
-            networkUsage: { upload: 0, download: 0 },
-            timestamp: now
+            diskIO: {
+                read: 0,
+                write: 0
+            },
+            networkUsage: {
+                upload: 0,
+                download: 0
+            },
+            timestamp: Date.now()
         },
         performance: {
-            executionTime: { total: 0, average: 0, min: 0, max: 0 },
-            latency: { total: 0, average: 0, min: 0, max: 0 },
-            throughput: { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
-            responseTime: { total: 0, average: 0, min: 0, max: 0 },
+            executionTime: {
+                total: 0,
+                average: 0,
+                min: 0,
+                max: 0
+            },
+            latency: {
+                total: 0,
+                average: 0,
+                min: 0,
+                max: 0
+            },
+            throughput: {
+                operationsPerSecond: 0,
+                dataProcessedPerSecond: 0
+            },
+            responseTime: {
+                total: 0,
+                average: 0,
+                min: 0,
+                max: 0
+            },
             queueLength: 0,
             errorRate: 0,
-            successRate: 0,
-            errorMetrics: { totalErrors: 0, errorRate: 0 },
+            successRate: 1,
+            errorMetrics: {
+                totalErrors: 0,
+                errorRate: 0
+            },
             resourceUtilization: {
                 cpuUsage: 0,
                 memoryUsage: 0,
-                diskIO: { read: 0, write: 0 },
-                networkUsage: { upload: 0, download: 0 },
-                timestamp: now
+                diskIO: {
+                    read: 0,
+                    write: 0
+                },
+                networkUsage: {
+                    upload: 0,
+                    download: 0
+                },
+                timestamp: Date.now()
             },
-            timestamp: now
+            timestamp: Date.now()
         },
         usage: {
             totalRequests: 0,
@@ -159,40 +172,13 @@ export function createDefaultTaskMetrics(): ITaskMetrics {
                 current: 0,
                 limit: 0,
                 remaining: 0,
-                resetTime: now
+                resetTime: 0
             },
-            timestamp: now
+            timestamp: Date.now()
         },
-        costs: {
-            inputCost: 0,
-            outputCost: 0,
-            totalCost: 0,
-            currency: 'USD',
-            breakdown: {
-                promptTokens: { count: 0, cost: 0 },
-                completionTokens: { count: 0, cost: 0 }
-            }
-        },
-        llmUsage: {
-            inputTokens: 0,
-            outputTokens: 0,
-            callsCount: 0,
-            callsErrorCount: 0,
-            parsingErrors: 0,
-            totalLatency: 0,
-            averageLatency: 0,
-            lastUsed: now,
-            memoryUtilization: {
-                peakMemoryUsage: 0,
-                averageMemoryUsage: 0,
-                cleanupEvents: 0
-            },
-            costBreakdown: {
-                input: 0,
-                output: 0,
-                total: 0,
-                currency: 'USD'
-            }
-        }
+        startTime: Date.now(),
+        endTime: Date.now(),
+        duration: 0,
+        iterationCount: 0
     };
 }

@@ -26,6 +26,8 @@ import type {
 } from '../../types/metrics/base/metricsManagerTypes';
 import type { IResourceMetrics } from '../../types/metrics/base/resourceMetrics';
 import type { IPerformanceMetrics } from '../../types/metrics/base/performanceMetrics';
+import type { IIterationContext } from '../../types/agent/agentIterationTypes';
+import type { ICostDetails } from '../../types/workflow/workflowCostsTypes';
 
 /**
  * Core metrics manager implementation
@@ -48,6 +50,125 @@ export class MetricsManager extends CoreManager implements IMetricsManager {
             MetricsManager.instance = new MetricsManager();
         }
         return MetricsManager.instance;
+    }
+
+    /**
+     * Create base time metrics structure
+     */
+    private createBaseTimeMetrics() {
+        return {
+            total: 0,
+            average: 0,
+            min: 0,
+            max: 0
+        };
+    }
+
+    /**
+     * Create base cost details structure
+     */
+    public createCostDetails(): ICostDetails {
+        return {
+            inputCost: 0,
+            outputCost: 0,
+            totalCost: 0,
+            currency: 'USD',
+            breakdown: {
+                promptTokens: { count: 0, cost: 0 },
+                completionTokens: { count: 0, cost: 0 }
+            }
+        };
+    }
+
+    /**
+     * Create iteration context with default metrics
+     */
+    public createIterationContext(): IIterationContext {
+        const defaultTimeMetrics = this.createBaseTimeMetrics();
+
+        return {
+            startTime: Date.now(),
+            iterations: 0,
+            maxIterations: 0,
+            lastUpdateTime: Date.now(),
+            status: 'running',
+            performance: {
+                executionTime: defaultTimeMetrics,
+                throughput: {
+                    operationsPerSecond: 0,
+                    dataProcessedPerSecond: 0
+                },
+                errorMetrics: {
+                    totalErrors: 0,
+                    errorRate: 0
+                },
+                resourceUtilization: {
+                    cpuUsage: 0,
+                    memoryUsage: process.memoryUsage().heapUsed,
+                    diskIO: { read: 0, write: 0 },
+                    networkUsage: { upload: 0, download: 0 },
+                    timestamp: Date.now()
+                },
+                timestamp: Date.now(),
+                thinking: {
+                    reasoningTime: defaultTimeMetrics,
+                    planningTime: defaultTimeMetrics,
+                    learningTime: defaultTimeMetrics,
+                    decisionConfidence: 0,
+                    learningEfficiency: 0
+                },
+                taskSuccessRate: 0,
+                goalAchievementRate: 0,
+                latency: defaultTimeMetrics,
+                responseTime: defaultTimeMetrics,
+                queueLength: 0,
+                errorRate: 0,
+                successRate: 0
+            },
+            resources: {
+                cpuUsage: 0,
+                memoryUsage: process.memoryUsage().heapUsed,
+                diskIO: { read: 0, write: 0 },
+                networkUsage: { upload: 0, download: 0 },
+                timestamp: Date.now(),
+                cognitive: {
+                    memoryAllocation: 0,
+                    cognitiveLoad: 0,
+                    processingCapacity: 1,
+                    contextUtilization: 0
+                }
+            },
+            usage: {
+                // Base IUsageMetrics properties
+                totalRequests: 0,
+                activeUsers: 0,
+                requestsPerSecond: 0,
+                averageResponseSize: 0,
+                peakMemoryUsage: 0,
+                uptime: 0,
+                rateLimit: {
+                    current: 0,
+                    limit: 0,
+                    remaining: 0,
+                    resetTime: Date.now()
+                },
+                timestamp: Date.now(),
+                // Additional IAgentUsageMetrics properties
+                state: {
+                    currentState: 'initialized',
+                    stateTime: 0,
+                    transitionCount: 0,
+                    failedTransitions: 0,
+                    blockedTaskCount: 0,
+                    historyEntryCount: 0,
+                    lastHistoryUpdate: Date.now()
+                },
+                toolUsageFrequency: {},
+                taskCompletionCount: 0,
+                averageTaskTime: 0
+            },
+            costs: this.createCostDetails()
+        };
     }
 
     /**

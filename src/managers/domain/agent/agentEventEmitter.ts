@@ -2,14 +2,12 @@
  * @file agentEventEmitter.ts
  * @path src/managers/domain/agent/agentEventEmitter.ts
  * @description Agent-specific event emitter implementation
- *
- * @module @managers/domain/agent
  */
 
 import { CoreManager } from '../../core/coreManager';
 import { BaseEventEmitter } from '../../core/eventEmitter';
 import { AgentMetricsManager } from './agentMetricsManager';
-import { createValidationResult } from '../../../utils/validation/validationUtils';
+import { createValidationResult, createValidationMetadata } from '../../../types/common/commonValidationTypes';
 import { AGENT_EVENT_TYPE } from '../../../types/agent/agentEventTypes';
 import { AGENT_STATUS_enum } from '../../../types/common/commonEnums';
 import type { 
@@ -265,7 +263,7 @@ export class AgentEventEmitter extends CoreManager {
     // ─── Helper Methods ─────────────────────────────────────────────────────────
 
     protected async createAgentMetadata(operation: string, agentId: string): Promise<IAgentEventMetadata> {
-        const metrics = await this.metricsManager.getCurrentMetrics();
+        const metrics = await this.metricsManager.getCurrentMetrics(agentId);
         const timestamp = Date.now();
 
         const timeMetrics: ITimeMetrics = {
@@ -304,20 +302,41 @@ export class AgentEventEmitter extends CoreManager {
             timestamp
         };
 
-        return {
-            source: 'AgentEventEmitter',
-            target: operation,
-            timestamp,
-            correlationId: timestamp.toString(),
-            causationId: timestamp.toString(),
+        // Create validation metadata
+        const validationMetadata = createValidationMetadata({
             component: 'AgentEventEmitter',
             operation,
+            validatedFields: ['agentId', 'metrics'],
+            validationDuration: 0
+        });
+
+        // Create validation result
+        const validation = createValidationResult({
+            isValid: true,
+            errors: [],
+            warnings: [],
+            metadata: validationMetadata
+        });
+
+        // Create base metadata with agent context
+        const baseMetadata = {
+            timestamp,
+            component: 'AgentEventEmitter',
+            operation,
+            performance,
             context: {
+                source: 'AgentEventEmitter',
+                target: operation,
+                correlationId: timestamp.toString(),
+                causationId: timestamp.toString(),
                 agentId,
                 timestamp
             },
-            validation: createValidationResult(true, []),
-            performance,
+            validation
+        };
+
+        return {
+            ...baseMetadata,
             agent: {
                 id: agentId,
                 name: '',  // Will be populated by agent manager

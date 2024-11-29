@@ -1,205 +1,256 @@
 /**
  * @file taskEventValidation.ts
  * @path src/types/task/taskEventValidation.ts
- * @description Task event validation types, schemas, and type guards
+ * @description Task event validation type definitions
  *
  * @module @types/task
  */
 
-import type { 
-    IValidationResult, 
-    IValidationSchema,
-    IValidationRule,
-    createTypeGuard,
-    validationChecks
+import { 
+    type IValidationResult,
+    type ValidationErrorType,
+    createValidationMetadata,
+    createValidationResult,
+    createValidationError
 } from '../common/commonValidationTypes';
-import type {
-    TaskEvent,
-    ITaskEventMetadata,
-    ITaskCreatedEvent,
-    ITaskUpdatedEvent,
-    ITaskDeletedEvent,
-    ITaskStatusChangedEvent,
-    ITaskProgressUpdatedEvent,
-    ITaskCompletedEvent,
-    ITaskFailedEvent,
-    ITaskValidationCompletedEvent,
-    ITaskFeedbackAddedEvent,
-    ITaskMetricsUpdatedEvent,
-    ITaskErrorOccurredEvent,
-    ITaskErrorHandledEvent,
-    ITaskErrorRecoveryStartedEvent,
-    ITaskErrorRecoveryCompletedEvent,
-    ITaskErrorRecoveryFailedEvent
-} from './taskEventTypes';
-import { TASK_EVENT_TYPE_enum, TASK_STATUS_enum } from '../common/commonEnums';
+import { TASK_EVENT_TYPE_enum } from '../common/commonEnums';
+import type { TaskEvent } from './taskEventTypes';
 
-// ─── Task Event Validation Types ────────────────────────────────────────────────
+// ─── Event Validation Result ────────────────────────────────────────────────────
 
-/** Task event validation result */
-export interface ITaskEventValidationResult extends IValidationResult<TaskEvent> {
-    eventType: TASK_EVENT_TYPE_enum;
-    metadata: ITaskEventMetadata;
-}
+export const createTaskValidationResult = (params: {
+    isValid: boolean;
+    errors: ValidationErrorType[];
+    warnings?: ValidationErrorType[];
+    validatorName: string;
+    duration?: number;
+    component?: string;
+    validatedFields?: string[];
+}): IValidationResult => {
+    return createValidationResult({
+        isValid: params.isValid,
+        errors: params.errors,
+        warnings: params.warnings || [],
+        metadata: createValidationMetadata({
+            component: params.component || 'task',
+            validatorName: params.validatorName,
+            validationDuration: params.duration,
+            validatedFields: params.validatedFields || ['task']
+        })
+    });
+};
 
-/** Task event validation schema */
-export interface ITaskEventValidationSchema extends IValidationSchema<TaskEvent> {
-    eventType: TASK_EVENT_TYPE_enum;
-    allowedTransitions?: Array<{
-        from: keyof typeof TASK_STATUS_enum;
-        to: keyof typeof TASK_STATUS_enum;
-    }>;
-}
+// ─── Event Validation Functions ────────────────────────────────────────────────
 
-// ─── Task Event Type Guards ───────────────────────────────────────────────────
-
-/** Type guard for task event metadata */
-export const isTaskEventMetadata = (value: unknown): value is ITaskEventMetadata => {
-    if (!validationChecks.isObject(value)) return false;
-    const metadata = value as ITaskEventMetadata;
+export const validateTaskEvent = (params: {
+    event: TaskEvent;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
     
-    return (
-        typeof metadata.task === 'object' &&
-        typeof metadata.task.id === 'string' &&
-        typeof metadata.task.title === 'string' &&
-        typeof metadata.task.status === 'string' &&
-        typeof metadata.task.stepId === 'string' &&
-        typeof metadata.task.metrics === 'object' &&
-        typeof metadata.task.progress === 'object'
-    );
+    if (!params.event.type || !Object.values(TASK_EVENT_TYPE_enum).includes(params.event.type)) {
+        errors.push(createValidationError({
+            code: 'INVALID_EVENT_TYPE',
+            message: 'Invalid task event type'
+        }));
+    }
+
+    if (!params.event.taskId) {
+        errors.push(createValidationError({
+            code: 'INVALID_TASK_ID',
+            message: 'Task ID is required'
+        }));
+    }
+
+    return createTaskValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'task.event',
+        validatedFields: ['type', 'taskId']
+    });
 };
 
-/** Type guard for base task event properties */
-const hasBaseTaskEventProperties = (value: unknown): boolean => {
-    if (!validationChecks.isObject(value)) return false;
-    const event = value as TaskEvent;
-    
-    return (
-        typeof event.type === 'string' &&
-        typeof event.taskId === 'string' &&
-        isTaskEventMetadata(event.metadata)
-    );
+export const validateTaskCreated = (params: {
+    taskId: string;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.taskId) {
+        errors.push(createValidationError({
+            code: 'INVALID_TASK_ID',
+            message: 'Task ID is required'
+        }));
+    }
+
+    return createTaskValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'task.created',
+        validatedFields: ['taskId']
+    });
 };
 
-/** Type guards for specific task events */
-export const TaskEventTypeGuards = {
-    isTaskCreatedEvent: (value: unknown): value is ITaskCreatedEvent => 
-        hasBaseTaskEventProperties(value) &&
-        (value as ITaskCreatedEvent).type === TASK_EVENT_TYPE_enum.TASK_CREATED &&
-        typeof (value as ITaskCreatedEvent).task === 'object',
+export const validateTaskUpdated = (params: {
+    taskId: string;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.taskId) {
+        errors.push(createValidationError({
+            code: 'INVALID_TASK_ID',
+            message: 'Task ID is required'
+        }));
+    }
 
-    isTaskUpdatedEvent: (value: unknown): value is ITaskUpdatedEvent =>
-        hasBaseTaskEventProperties(value) &&
-        (value as ITaskUpdatedEvent).type === TASK_EVENT_TYPE_enum.TASK_UPDATED &&
-        typeof (value as ITaskUpdatedEvent).previousState === 'object' &&
-        typeof (value as ITaskUpdatedEvent).newState === 'object',
-
-    isTaskDeletedEvent: (value: unknown): value is ITaskDeletedEvent =>
-        hasBaseTaskEventProperties(value) &&
-        (value as ITaskDeletedEvent).type === TASK_EVENT_TYPE_enum.TASK_DELETED &&
-        typeof (value as ITaskDeletedEvent).finalState === 'object',
-
-    isTaskStatusChangedEvent: (value: unknown): value is ITaskStatusChangedEvent =>
-        hasBaseTaskEventProperties(value) &&
-        (value as ITaskStatusChangedEvent).type === TASK_EVENT_TYPE_enum.TASK_STATUS_CHANGED &&
-        typeof (value as ITaskStatusChangedEvent).previousStatus === 'string' &&
-        typeof (value as ITaskStatusChangedEvent).newStatus === 'string' &&
-        typeof (value as ITaskStatusChangedEvent).reason === 'string',
-
-    isTaskProgressUpdatedEvent: (value: unknown): value is ITaskProgressUpdatedEvent =>
-        hasBaseTaskEventProperties(value) &&
-        (value as ITaskProgressUpdatedEvent).type === TASK_EVENT_TYPE_enum.TASK_PROGRESS_UPDATED &&
-        typeof (value as ITaskProgressUpdatedEvent).previousProgress === 'object' &&
-        typeof (value as ITaskProgressUpdatedEvent).newProgress === 'object',
-
-    isTaskCompletedEvent: (value: unknown): value is ITaskCompletedEvent =>
-        hasBaseTaskEventProperties(value) &&
-        (value as ITaskCompletedEvent).type === TASK_EVENT_TYPE_enum.TASK_COMPLETED &&
-        typeof (value as ITaskCompletedEvent).result === 'object' &&
-        typeof (value as ITaskCompletedEvent).duration === 'number',
-
-    isTaskFailedEvent: (value: unknown): value is ITaskFailedEvent =>
-        hasBaseTaskEventProperties(value) &&
-        (value as ITaskFailedEvent).type === TASK_EVENT_TYPE_enum.TASK_FAILED &&
-        value instanceof Error &&
-        typeof (value as ITaskFailedEvent).context === 'object',
-
-    // Add type guards for other task events...
+    return createTaskValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'task.updated',
+        validatedFields: ['taskId']
+    });
 };
 
-// ─── Task Event Flow Documentation ───────────────────────────────────────────────
+export const validateTaskDeleted = (params: {
+    taskId: string;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.taskId) {
+        errors.push(createValidationError({
+            code: 'INVALID_TASK_ID',
+            message: 'Task ID is required'
+        }));
+    }
 
-/**
- * Task Event Flow
- * 
- * 1. Task Creation
- *    - TASK_CREATED event is emitted when a new task is created
- *    - Contains initial task state and metadata
- * 
- * 2. Task Lifecycle Events
- *    - TASK_UPDATED: Task properties are modified
- *    - TASK_STATUS_CHANGED: Task status transitions occur
- *    - TASK_PROGRESS_UPDATED: Progress is reported
- *    - TASK_VALIDATION_COMPLETED: Validation checks complete
- *    - TASK_FEEDBACK_ADDED: User/system feedback is added
- *    - TASK_METRICS_UPDATED: Performance metrics are updated
- * 
- * 3. Task Completion Events
- *    - TASK_COMPLETED: Task successfully completes
- *    - TASK_FAILED: Task encounters unrecoverable error
- * 
- * 4. Error Handling Flow
- *    a. Error Detection
- *       - TASK_ERROR_OCCURRED: Initial error detection
- * 
- *    b. Error Processing
- *       - TASK_ERROR_HANDLED: Error is processed
- * 
- *    c. Recovery Attempt
- *       - TASK_ERROR_RECOVERY_STARTED: Recovery process begins
- *       - TASK_ERROR_RECOVERY_COMPLETED: Recovery succeeds
- *       - TASK_ERROR_RECOVERY_FAILED: Recovery fails
- * 
- * 5. Task Deletion
- *    - TASK_DELETED: Task is removed from system
- */
-
-// ─── Validation Rules ─────────────────────────────────────────────────────────
-
-/** Task event validation rules */
-export const taskEventValidationRules: Record<TASK_EVENT_TYPE_enum, IValidationRule<TaskEvent>> = {
-    [TASK_EVENT_TYPE_enum.TASK_CREATED]: {
-        id: 'task-created-validation',
-        validate: async (event) => {
-            const isValid = TaskEventTypeGuards.isTaskCreatedEvent(event);
-            return {
-                isValid,
-                errors: isValid ? [] : ['Invalid TASK_CREATED event format'],
-                warnings: [],
-                metadata: {
-                    timestamp: Date.now(),
-                    duration: 0,
-                    validatorName: 'TaskCreatedValidator'
-                }
-            };
-        }
-    },
-    // Add validation rules for other event types...
+    return createTaskValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'task.deleted',
+        validatedFields: ['taskId']
+    });
 };
 
-/** Task status transition validation */
-export const validateTaskStatusTransition = (
-    from: keyof typeof TASK_STATUS_enum,
-    to: keyof typeof TASK_STATUS_enum
-): boolean => {
-    const allowedTransitions: Record<keyof typeof TASK_STATUS_enum, Array<keyof typeof TASK_STATUS_enum>> = {
-        PENDING: ['IN_PROGRESS', 'CANCELLED'],
-        IN_PROGRESS: ['COMPLETED', 'FAILED', 'PAUSED'],
-        PAUSED: ['IN_PROGRESS', 'CANCELLED'],
-        COMPLETED: [],
-        FAILED: ['IN_PROGRESS'],
-        CANCELLED: []
-    };
+export const validateTaskStatusChanged = (params: {
+    taskId: string;
+    status: string;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.taskId) {
+        errors.push(createValidationError({
+            code: 'INVALID_TASK_ID',
+            message: 'Task ID is required'
+        }));
+    }
+    if (!params.status) {
+        errors.push(createValidationError({
+            code: 'INVALID_STATUS',
+            message: 'Status is required'
+        }));
+    }
 
-    return allowedTransitions[from]?.includes(to) ?? false;
+    return createTaskValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'task.status',
+        validatedFields: ['taskId', 'status']
+    });
+};
+
+export const validateTaskProgressUpdated = (params: {
+    taskId: string;
+    progress: number;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.taskId) {
+        errors.push(createValidationError({
+            code: 'INVALID_TASK_ID',
+            message: 'Task ID is required'
+        }));
+    }
+    if (typeof params.progress !== 'number' || params.progress < 0 || params.progress > 100) {
+        errors.push(createValidationError({
+            code: 'INVALID_PROGRESS',
+            message: 'Progress must be a number between 0 and 100'
+        }));
+    }
+
+    return createTaskValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'task.progress',
+        validatedFields: ['taskId', 'progress']
+    });
+};
+
+export const validateTaskCompleted = (params: {
+    taskId: string;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.taskId) {
+        errors.push(createValidationError({
+            code: 'INVALID_TASK_ID',
+            message: 'Task ID is required'
+        }));
+    }
+
+    return createTaskValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'task.completed',
+        validatedFields: ['taskId']
+    });
+};
+
+export const validateTaskFailed = (params: {
+    taskId: string;
+    error: Error;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.taskId) {
+        errors.push(createValidationError({
+            code: 'INVALID_TASK_ID',
+            message: 'Task ID is required'
+        }));
+    }
+    if (!params.error) {
+        errors.push(createValidationError({
+            code: 'INVALID_ERROR',
+            message: 'Error is required'
+        }));
+    }
+
+    return createTaskValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'task.failed',
+        validatedFields: ['taskId', 'error']
+    });
 };

@@ -11,7 +11,7 @@ import { AGENT_STATUS_enum } from "../common/commonEnums";
 import { IErrorType } from "../common/commonErrorTypes";
 import { IValidationSchema } from "../common/commonValidationTypes";
 import { BaseMessage } from "@langchain/core/messages";
-import { ILLMConfig } from "../llm/llmCommonTypes";
+import { ILLMConfig, IRuntimeLLMConfig } from "../llm/llmCommonTypes";
 import { IAgentStoreMethods } from "./agentStoreTypes";
 import { ILLMInstance, IAgenticLoopResult } from "../llm/llmInstanceTypes";
 import { ITaskType, ITaskFeedback } from "../task/taskBaseTypes";
@@ -82,7 +82,7 @@ export interface IBaseAgent {
     metrics?: IAgentMetrics;
 
     llmInstance: ILLMInstance | null;
-    llmConfig: ILLMConfig;
+    llmConfig: IRuntimeLLMConfig;
     llmSystemMessage: string | null;
     forceFinalAnswer: boolean;
     promptTemplates: IREACTChampionAgentPrompts;
@@ -97,7 +97,7 @@ export interface IBaseAgent {
     setEnv(env: Record<string, unknown>): void;
     workOnTask(task: ITaskType): Promise<IAgenticLoopResult>;
     workOnFeedback(task: ITaskType, feedbackList: ITaskFeedback[], context: string): Promise<void>;
-    normalizeLlmConfig(llmConfig: ILLMConfig): ILLMConfig;
+    normalizeLlmConfig(llmConfig: IRuntimeLLMConfig): ILLMConfig;
     createLLMInstance(): void;
     cleanup?(): Promise<void> | void;
 }

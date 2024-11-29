@@ -1,82 +1,83 @@
 /**
  * @file defaultFactory.ts
- * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\factories\defaultFactory.ts
  * @description Default factory for creating standard objects and instances
- *
+ * @deprecated This factory is being deprecated in favor of domain-specific managers:
+ * - Use MetricsManager.getInstance() for metrics and iteration context
+ * - Use LLMManager.getInstance() for LLM-specific functionality
+ * - Use AgentManager.getInstance() for agent validation
+ * 
  * @packageDocumentation
  * @module @factories
  */
 
-import { IterationStats } from '../types/agent/iteration';
-import type { CostDetails, LLMUsageStats } from '../../types/tool/toolExecutionTypes';
-import { createDefaultCostDetails } from '../helpers';
-import type { AgentValidationSchema } from '../types/agent/config';
-import type { BaseAgentConfig } from '../types/agent/config';
+import type { IIterationContext } from '../../types/agent/agentIterationTypes';
+import type { ICostDetails } from '../../types/workflow/workflowCostsTypes';
+import type { ILLMUsageMetrics } from '../../types/llm/llmMetricTypes';
+import { AgentValidationSchema } from '../../types/agent/agentValidationTypes';
+import { LLM_PROVIDER_enum } from '../../types/common/commonEnums';
+import { MetricsManager } from '../../managers/core/metricsManager';
+import { AgentManager } from '../../managers/domain/agent/agentManager';
 
+/**
+ * @deprecated This factory is being deprecated in favor of domain-specific managers.
+ * See class documentation for migration details.
+ */
 export class DefaultFactory {
-    static createIterationStats(): IterationStats {
-        return {
-            startTime: Date.now(),
-            endTime: Date.now(),
-            duration: 0,
-            iterations: 0,
-            maxIterations: 0,
-            status: 'running'
-        };
+    /**
+     * @deprecated Use MetricsManager.getInstance().createIterationContext() instead
+     */
+    static createIterationContext(): IIterationContext {
+        console.warn('DefaultFactory.createIterationContext() is deprecated. Use MetricsManager.getInstance().createIterationContext() instead.');
+        return MetricsManager.getInstance().createIterationContext();
     }
 
-    static createCostDetails(): CostDetails {
-        return createDefaultCostDetails('USD');
+    /**
+     * @deprecated Use MetricsManager.getInstance().createCostDetails() instead
+     */
+    static createCostDetails(): ICostDetails {
+        console.warn('DefaultFactory.createCostDetails() is deprecated. Use MetricsManager.getInstance().createCostDetails() instead.');
+        return MetricsManager.getInstance().createCostDetails();
     }
 
-    static createLLMUsageStats(): LLMUsageStats {
+    /**
+     * @deprecated Use LLMManager.getInstance() and appropriate methods instead
+     */
+    static createDefaultLLMMetrics(): ILLMUsageMetrics {
+        console.warn('DefaultFactory.createDefaultLLMMetrics() is deprecated. Use LLMManager.getInstance() and appropriate methods instead.');
         return {
-            inputTokens: 0,
-            outputTokens: 0,
-            callsCount: 0,
-            callsErrorCount: 0,
-            parsingErrors: 0,
-            totalLatency: 0,
-            averageLatency: 0,
-            lastUsed: Date.now(),
-            memoryUtilization: {
-                peakMemoryUsage: 0,
-                averageMemoryUsage: 0,
-                cleanupEvents: 0
+            totalRequests: 0,
+            activeInstances: 0,
+            requestsPerSecond: 0,
+            averageResponseLength: 0,
+            peakMemoryUsage: 0,
+            uptime: 0,
+            rateLimit: {
+                current: 0,
+                limit: 0,
+                remaining: 0,
+                resetTime: Date.now()
             },
-            costBreakdown: {
-                input: 0,
-                output: 0,
-                total: 0,
-                currency: 'USD'
-            }
+            tokenDistribution: {
+                prompt: 0,
+                completion: 0,
+                total: 0
+            },
+            modelDistribution: {
+                gpt4: 0,
+                gpt35: 0,
+                other: 0
+            },
+            timestamp: Date.now()
         };
     }
 
     /**
-     * Create a default agent validation schema
+     * Create a default agent validation schema using Zod
+     * @deprecated Use AgentManager.getInstance().createValidationSchema() instead
      * @returns Default validation schema for agents
      */
-    static createAgentValidationSchema(): AgentValidationSchema {
-        return {
-            required: ['name', 'role', 'goal', 'background'],
-            constraints: {
-                name: {
-                    minLength: 2,
-                    maxLength: 100
-                },
-                role: {
-                    allowedValues: ['assistant', 'analyst', 'researcher', 'developer']
-                },
-                tools: {
-                    minCount: 1,
-                    maxCount: 10
-                }
-            },
-            customValidation: (config: BaseAgentConfig) => {
-                // Optional custom validation logic
-                return config.name.trim().length > 0 && config.tools.length > 0;
-            }
-        };
+    static createAgentValidationSchema() {
+        console.warn('DefaultFactory.createAgentValidationSchema() is deprecated. Use AgentManager.getInstance().createValidationSchema() instead.');
+        return AgentManager.getInstance().createValidationSchema();
     }
 }

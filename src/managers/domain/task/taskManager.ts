@@ -2,8 +2,6 @@
  * @file taskManager.ts
  * @path src/managers/domain/task/taskManager.ts
  * @description Primary Task Domain Manager implementation
- *
- * @module @managers/domain/task
  */
 
 import { CoreManager } from '../../core/coreManager';
@@ -15,17 +13,26 @@ import { TaskValidator } from './taskValidator';
 import { TaskMetricsManager } from './taskMetricsManager';
 import { TaskEventEmitter } from './taskEventEmitter';
 import { taskEventHandlers } from './taskEventHandlers';
+import { 
+    createValidationError,
+    createValidationWarning,
+    ValidationErrorType,
+    ValidationWarningType
+} from '../../../types/common/commonValidationTypes';
 
 import type { ITaskType } from '../../../types/task/taskBaseTypes';
 import type { 
     ITaskHandlerResult,
-    ITaskHandlerMetadata
+    ITaskHandlerMetadata,
+    ITaskValidationResult
 } from '../../../types/task/taskHandlerTypes';
 import type { ITaskExecutionParams } from '../../../types/task/taskHandlersTypes';
 import type { IStatusTransitionContext } from '../../../types/common/commonStatusTypes';
 
-// ─── Manager Implementation ───────────────────────────────────────────────────
-
+/**
+ * Task Manager
+ * Manages task lifecycle, execution, and metrics
+ */
 export class TaskManager extends CoreManager {
     private static instance: TaskManager;
     private readonly activeTasks: Map<string, ITaskType>;
@@ -67,15 +74,13 @@ export class TaskManager extends CoreManager {
         if (!validationResult.isValid) {
             await this.eventEmitter.emitTaskValidationCompleted({
                 taskId: task.id,
-                validationResult: {
-                    valid: false,
-                    errors: validationResult.errors,
-                    warnings: validationResult.warnings
-                }
+                validationResult
             });
 
             throw createError({
-                message: validationResult.errors.join(', '),
+                message: validationResult.errors.map((e: ValidationErrorType | string) => 
+                    typeof e === 'string' ? e : e.message
+                ).join(', '),
                 type: 'ValidationError',
                 context: validationResult.context
             });
@@ -98,12 +103,12 @@ export class TaskManager extends CoreManager {
                 resources: task.metrics.resources,
                 performance: task.metrics.performance,
                 costs: task.metrics.costs,
-                llmUsage: task.metrics.llmUsage
+                llmUsageMetrics: task.metrics.llmUsageMetrics
             });
 
             await this.eventEmitter.emitTaskCompleted({
                 taskId: task.id,
-                result,
+                outputs: { result },
                 duration: metrics.duration
             });
 
@@ -133,7 +138,11 @@ export class TaskManager extends CoreManager {
 
         await this.eventEmitter.emitTaskCreated({
             taskId: task.id,
-            task
+            task: {
+                title: task.title,
+                description: task.description,
+                priority: 0
+            }
         });
 
         const previousStatus = task.status;
@@ -169,7 +178,13 @@ export class TaskManager extends CoreManager {
         if (task) {
             await this.eventEmitter.emitTaskDeleted({
                 taskId,
-                finalState: task
+                finalState: {
+                    id: task.id,
+                    title: task.title,
+                    description: task.description,
+                    status: task.status,
+                    metrics: task.metrics
+                }
             });
         }
         this.activeTasks.delete(taskId);
@@ -205,7 +220,6 @@ export class TaskManager extends CoreManager {
     }
 
     private async handleTaskError(task: ITaskType, error: Error): Promise<void> {
-        // First emit error occurred event
         await this.eventEmitter.emitTaskErrorOccurred({
             taskId: task.id,
             error,
@@ -259,7 +273,6 @@ export class TaskManager extends CoreManager {
 
         await this.statusManager.transition(transitionContext);
 
-        // Emit status change event
         await this.eventEmitter.emitTaskStatusChanged({
             taskId: task.id,
             previousStatus,
@@ -267,7 +280,6 @@ export class TaskManager extends CoreManager {
             reason: error.message
         });
 
-        // Finally emit task failed event
         await this.eventEmitter.emitTaskFailed({
             taskId: task.id,
             error,

@@ -1,370 +1,343 @@
-import { IValidationResult } from '../common/commonValidationTypes';
+/**
+ * @file workflowEventValidation.ts
+ * @path src/types/workflow/workflowEventValidation.ts
+ * @description Workflow event validation type definitions
+ *
+ * @module @types/workflow
+ */
+
 import { 
-    IWorkflowStepEvent, 
-    IWorkflowControlEvent, 
-    IWorkflowAgentEvent, 
-    IWorkflowTaskEvent,
-    WorkflowEventType
-} from './workflowEventTypes';
-import { TASK_STATUS_enum } from '../common/commonEnums';
-import { MetadataTypeGuards } from '../common/commonMetadataTypes';
-import { IAgentType } from '../agent/agentBaseTypes';
-import { ITaskType } from '../task/taskBaseTypes';
-import { TypeGuardCheck, createTypeGuard, metadataChecks } from '../common/commonTypeGuards';
+    createValidationMetadata, 
+    createValidationResult, 
+    createValidationError,
+    type IValidationResult,
+    type ValidationErrorType
+} from '../common/commonValidationTypes';
+import { WORKFLOW_EVENT_TYPE_enum } from '../common/commonEnums';
+import type { WorkflowEvent } from './workflowEventTypes';
 
-/**
- * Type guard for agent type
- */
-const isAgentType: TypeGuardCheck<IAgentType> = createTypeGuard<IAgentType>([
-    metadataChecks.isObject,
-    (value: unknown): boolean => {
-        const agent = value as IAgentType;
-        return (
-            typeof agent.id === 'string' &&
-            typeof agent.name === 'string' &&
-            typeof agent.role === 'string'
-        );
-    }
-]);
+// ─── Validation Results ────────────────────────────────────────────────────────
 
-/**
- * Type guard for task type
- */
-const isTaskType: TypeGuardCheck<ITaskType> = createTypeGuard<ITaskType>([
-    metadataChecks.isObject,
-    (value: unknown): boolean => {
-        const task = value as ITaskType;
-        return (
-            typeof task.id === 'string' &&
-            typeof task.title === 'string' &&
-            typeof task.status === 'string'
-        );
-    }
-]);
+export const createWorkflowValidationResult = (params: {
+    isValid: boolean;
+    errors: ValidationErrorType[];
+    warnings?: ValidationErrorType[];
+    validatorName: string;
+    duration?: number;
+    component?: string;
+}): IValidationResult => {
+    return createValidationResult({
+        isValid: params.isValid,
+        errors: params.errors,
+        warnings: params.warnings || [],
+        metadata: createValidationMetadata({
+            component: params.component || 'workflow',
+            validatorName: params.validatorName,
+            validationDuration: params.duration,
+            validatedFields: ['workflow']
+        })
+    });
+};
 
-/**
- * Validates workflow step events
- */
-export function validateStepEvent(event: IWorkflowStepEvent): IValidationResult {
-    if (!event.stepId || typeof event.stepId !== 'string') {
-        return { 
-            isValid: false, 
-            errors: ['Invalid stepId in workflow step event'],
-            warnings: [],
-            metadata: {
-                timestamp: Date.now(),
-                duration: 0,
-                validatorName: 'WorkflowStepValidator'
-            }
-        };
+// ─── Generic Event Validation ────────────────────────────────────────────────
+
+export const validateWorkflowEvent = (params: {
+    event: WorkflowEvent;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    
+    if (!params.event.type || !Object.values(WORKFLOW_EVENT_TYPE_enum).includes(params.event.type)) {
+        errors.push(createValidationError({
+            code: 'INVALID_EVENT_TYPE',
+            message: 'Invalid workflow event type'
+        }));
     }
 
-    if (!['start', 'complete', 'fail', 'skip'].includes(event.type)) {
-        return { 
-            isValid: false, 
-            errors: ['Invalid step event type'],
-            warnings: [],
-            metadata: {
-                timestamp: Date.now(),
-                duration: 0,
-                validatorName: 'WorkflowStepValidator'
-            }
-        };
+    if (!params.event.workflowId) {
+        errors.push(createValidationError({
+            code: 'INVALID_WORKFLOW_ID',
+            message: 'Workflow ID is required'
+        }));
     }
 
-    if (event.agent && !isAgentType(event.agent)) {
-        return { 
-            isValid: false, 
-            errors: ['Invalid agent in workflow step event'],
-            warnings: [],
-            metadata: {
-                timestamp: Date.now(),
-                duration: 0,
-                validatorName: 'WorkflowStepValidator'
-            }
-        };
-    }
+    // Validate event-specific fields based on type
+    switch (params.event.type) {
+        case WORKFLOW_EVENT_TYPE_enum.WORKFLOW_CREATED:
+            return validateWorkflowCreated({
+                workflowId: params.event.workflowId,
+                validatorName: params.validatorName,
+                duration: params.duration
+            });
 
-    if (!MetadataTypeGuards.isBaseHandlerMetadata(event.metadata)) {
-        return {
-            isValid: false,
-            errors: ['Invalid metadata in workflow step event'],
-            warnings: [],
-            metadata: {
-                timestamp: Date.now(),
-                duration: 0,
-                validatorName: 'WorkflowStepValidator'
-            }
-        };
-    }
+        case WORKFLOW_EVENT_TYPE_enum.WORKFLOW_UPDATED:
+            return validateWorkflowUpdated({
+                workflowId: params.event.workflowId,
+                validatorName: params.validatorName,
+                duration: params.duration
+            });
 
-    return { 
-        isValid: true, 
-        errors: [], 
-        warnings: [],
-        metadata: {
-            timestamp: Date.now(),
-            duration: 0,
-            validatorName: 'WorkflowStepValidator'
-        }
-    };
-}
+        case WORKFLOW_EVENT_TYPE_enum.WORKFLOW_DELETED:
+            return validateWorkflowDeleted({
+                workflowId: params.event.workflowId,
+                validatorName: params.validatorName,
+                duration: params.duration
+            });
 
-/**
- * Validates workflow control events
- */
-export function validateControlEvent(event: IWorkflowControlEvent): IValidationResult {
-    if (!['start', 'pause', 'resume', 'stop', 'reset'].includes(event.type)) {
-        return { 
-            isValid: false, 
-            errors: ['Invalid control event type'],
-            warnings: [],
-            metadata: {
-                timestamp: Date.now(),
-                duration: 0,
-                validatorName: 'WorkflowControlValidator'
-            }
-        };
-    }
+        case WORKFLOW_EVENT_TYPE_enum.WORKFLOW_STARTED:
+            return validateWorkflowStarted({
+                workflowId: params.event.workflowId,
+                validatorName: params.validatorName,
+                duration: params.duration
+            });
 
-    if (!MetadataTypeGuards.isBaseHandlerMetadata(event.metadata)) {
-        return {
-            isValid: false,
-            errors: ['Invalid metadata in workflow control event'],
-            warnings: [],
-            metadata: {
-                timestamp: Date.now(),
-                duration: 0,
-                validatorName: 'WorkflowControlValidator'
-            }
-        };
-    }
+        case WORKFLOW_EVENT_TYPE_enum.WORKFLOW_PAUSED:
+            return validateWorkflowPaused({
+                workflowId: params.event.workflowId,
+                validatorName: params.validatorName,
+                duration: params.duration
+            });
 
-    return { 
-        isValid: true, 
-        errors: [], 
-        warnings: [],
-        metadata: {
-            timestamp: Date.now(),
-            duration: 0,
-            validatorName: 'WorkflowControlValidator'
-        }
-    };
-}
+        case WORKFLOW_EVENT_TYPE_enum.WORKFLOW_RESUMED:
+            return validateWorkflowResumed({
+                workflowId: params.event.workflowId,
+                validatorName: params.validatorName,
+                duration: params.duration
+            });
 
-/**
- * Validates workflow agent events
- */
-export function validateAgentEvent(event: IWorkflowAgentEvent): IValidationResult {
-    if (!event.stepId || typeof event.stepId !== 'string') {
-        return { 
-            isValid: false, 
-            errors: ['Invalid stepId in workflow agent event'],
-            warnings: [],
-            metadata: {
-                timestamp: Date.now(),
-                duration: 0,
-                validatorName: 'WorkflowAgentValidator'
-            }
-        };
-    }
+        case WORKFLOW_EVENT_TYPE_enum.WORKFLOW_CANCELLED:
+            return validateWorkflowCancelled({
+                workflowId: params.event.workflowId,
+                validatorName: params.validatorName,
+                duration: params.duration
+            });
 
-    if (!['assign', 'unassign'].includes(event.type)) {
-        return { 
-            isValid: false, 
-            errors: ['Invalid agent event type'],
-            warnings: [],
-            metadata: {
-                timestamp: Date.now(),
-                duration: 0,
-                validatorName: 'WorkflowAgentValidator'
-            }
-        };
-    }
+        case WORKFLOW_EVENT_TYPE_enum.WORKFLOW_COMPLETED:
+            return validateWorkflowCompleted({
+                workflowId: params.event.workflowId,
+                validatorName: params.validatorName,
+                duration: params.duration
+            });
 
-    if (event.type === 'assign' && !event.agent) {
-        return {
-            isValid: false,
-            errors: ['Agent must be provided for assign event'],
-            warnings: [],
-            metadata: {
-                timestamp: Date.now(),
-                duration: 0,
-                validatorName: 'WorkflowAgentValidator'
-            }
-        };
-    }
+        case WORKFLOW_EVENT_TYPE_enum.WORKFLOW_FAILED:
+            return validateWorkflowFailed({
+                workflowId: params.event.workflowId,
+                validatorName: params.validatorName,
+                duration: params.duration
+            });
 
-    if (event.agent && !isAgentType(event.agent)) {
-        return {
-            isValid: false,
-            errors: ['Invalid agent in workflow agent event'],
-            warnings: [],
-            metadata: {
-                timestamp: Date.now(),
-                duration: 0,
-                validatorName: 'WorkflowAgentValidator'
-            }
-        };
-    }
-
-    if (!MetadataTypeGuards.isBaseHandlerMetadata(event.metadata)) {
-        return {
-            isValid: false,
-            errors: ['Invalid metadata in workflow agent event'],
-            warnings: [],
-            metadata: {
-                timestamp: Date.now(),
-                duration: 0,
-                validatorName: 'WorkflowAgentValidator'
-            }
-        };
-    }
-
-    return { 
-        isValid: true, 
-        errors: [], 
-        warnings: [],
-        metadata: {
-            timestamp: Date.now(),
-            duration: 0,
-            validatorName: 'WorkflowAgentValidator'
-        }
-    };
-}
-
-/**
- * Validates workflow task events
- */
-export function validateTaskEvent(event: IWorkflowTaskEvent): IValidationResult {
-    if (!['add', 'remove', 'update'].includes(event.type)) {
-        return { 
-            isValid: false, 
-            errors: ['Invalid task event type'],
-            warnings: [],
-            metadata: {
-                timestamp: Date.now(),
-                duration: 0,
-                validatorName: 'WorkflowTaskValidator'
-            }
-        };
-    }
-
-    if (!isTaskType(event.task)) {
-        return {
-            isValid: false,
-            errors: ['Invalid task in workflow task event'],
-            warnings: [],
-            metadata: {
-                timestamp: Date.now(),
-                duration: 0,
-                validatorName: 'WorkflowTaskValidator'
-            }
-        };
-    }
-
-    if (event.status && !(event.status in TASK_STATUS_enum)) {
-        return {
-            isValid: false,
-            errors: ['Invalid task status'],
-            warnings: [],
-            metadata: {
-                timestamp: Date.now(),
-                duration: 0,
-                validatorName: 'WorkflowTaskValidator'
-            }
-        };
-    }
-
-    if (!MetadataTypeGuards.isBaseHandlerMetadata(event.metadata)) {
-        return {
-            isValid: false,
-            errors: ['Invalid metadata in workflow task event'],
-            warnings: [],
-            metadata: {
-                timestamp: Date.now(),
-                duration: 0,
-                validatorName: 'WorkflowTaskValidator'
-            }
-        };
-    }
-
-    return { 
-        isValid: true, 
-        errors: [], 
-        warnings: [],
-        metadata: {
-            timestamp: Date.now(),
-            duration: 0,
-            validatorName: 'WorkflowTaskValidator'
-        }
-    };
-}
-
-/**
- * Type guard for workflow event types
- */
-export function isWorkflowEvent(event: unknown): event is WorkflowEventType {
-    if (!event || typeof event !== 'object') {
-        return false;
-    }
-
-    const { type } = event as { type?: string };
-
-    if (!type) {
-        return false;
-    }
-
-    // Check for step events
-    if (['start', 'complete', 'fail', 'skip'].includes(type)) {
-        return validateStepEvent(event as IWorkflowStepEvent).isValid;
-    }
-
-    // Check for control events
-    if (['start', 'pause', 'resume', 'stop', 'reset'].includes(type)) {
-        return validateControlEvent(event as IWorkflowControlEvent).isValid;
-    }
-
-    // Check for agent events
-    if (['assign', 'unassign'].includes(type)) {
-        return validateAgentEvent(event as IWorkflowAgentEvent).isValid;
-    }
-
-    // Check for task events
-    if (['add', 'remove', 'update'].includes(type)) {
-        return validateTaskEvent(event as IWorkflowTaskEvent).isValid;
-    }
-
-    return false;
-}
-
-/**
- * Validates any workflow event
- */
-export function validateWorkflowEvent(event: WorkflowEventType): IValidationResult {
-    switch (true) {
-        case ['start', 'complete', 'fail', 'skip'].includes(event.type):
-            return validateStepEvent(event as IWorkflowStepEvent);
-        
-        case ['start', 'pause', 'resume', 'stop', 'reset'].includes(event.type):
-            return validateControlEvent(event as IWorkflowControlEvent);
-        
-        case ['assign', 'unassign'].includes(event.type):
-            return validateAgentEvent(event as IWorkflowAgentEvent);
-        
-        case ['add', 'remove', 'update'].includes(event.type):
-            return validateTaskEvent(event as IWorkflowTaskEvent);
-        
         default:
-            return {
+            errors.push(createValidationError({
+                code: 'UNKNOWN_EVENT_TYPE',
+                message: `Unknown workflow event type: ${params.event.type}`
+            }));
+            return createWorkflowValidationResult({
                 isValid: false,
-                errors: ['Unknown workflow event type'],
-                warnings: [],
-                metadata: {
-                    timestamp: Date.now(),
-                    duration: 0,
-                    validatorName: 'WorkflowEventValidator'
-                }
-            };
+                errors,
+                validatorName: params.validatorName,
+                duration: params.duration,
+                component: 'workflow.event'
+            });
     }
-}
+};
+
+// ─── Workflow Event Validation ────────────────────────────────────────────────
+
+export const validateWorkflowCreated = (params: {
+    workflowId: string;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.workflowId) {
+        errors.push(createValidationError({
+            code: 'INVALID_WORKFLOW_ID',
+            message: 'Workflow ID is required'
+        }));
+    }
+
+    return createWorkflowValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'workflow.created'
+    });
+};
+
+export const validateWorkflowUpdated = (params: {
+    workflowId: string;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.workflowId) {
+        errors.push(createValidationError({
+            code: 'INVALID_WORKFLOW_ID',
+            message: 'Workflow ID is required'
+        }));
+    }
+
+    return createWorkflowValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'workflow.updated'
+    });
+};
+
+export const validateWorkflowDeleted = (params: {
+    workflowId: string;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.workflowId) {
+        errors.push(createValidationError({
+            code: 'INVALID_WORKFLOW_ID',
+            message: 'Workflow ID is required'
+        }));
+    }
+
+    return createWorkflowValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'workflow.deleted'
+    });
+};
+
+export const validateWorkflowStarted = (params: {
+    workflowId: string;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.workflowId) {
+        errors.push(createValidationError({
+            code: 'INVALID_WORKFLOW_ID',
+            message: 'Workflow ID is required'
+        }));
+    }
+
+    return createWorkflowValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'workflow.started'
+    });
+};
+
+export const validateWorkflowPaused = (params: {
+    workflowId: string;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.workflowId) {
+        errors.push(createValidationError({
+            code: 'INVALID_WORKFLOW_ID',
+            message: 'Workflow ID is required'
+        }));
+    }
+
+    return createWorkflowValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'workflow.paused'
+    });
+};
+
+export const validateWorkflowResumed = (params: {
+    workflowId: string;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.workflowId) {
+        errors.push(createValidationError({
+            code: 'INVALID_WORKFLOW_ID',
+            message: 'Workflow ID is required'
+        }));
+    }
+
+    return createWorkflowValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'workflow.resumed'
+    });
+};
+
+export const validateWorkflowCancelled = (params: {
+    workflowId: string;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.workflowId) {
+        errors.push(createValidationError({
+            code: 'INVALID_WORKFLOW_ID',
+            message: 'Workflow ID is required'
+        }));
+    }
+
+    return createWorkflowValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'workflow.cancelled'
+    });
+};
+
+export const validateWorkflowCompleted = (params: {
+    workflowId: string;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.workflowId) {
+        errors.push(createValidationError({
+            code: 'INVALID_WORKFLOW_ID',
+            message: 'Workflow ID is required'
+        }));
+    }
+
+    return createWorkflowValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'workflow.completed'
+    });
+};
+
+export const validateWorkflowFailed = (params: {
+    workflowId: string;
+    validatorName: string;
+    duration?: number;
+}): IValidationResult => {
+    const errors: ValidationErrorType[] = [];
+    if (!params.workflowId) {
+        errors.push(createValidationError({
+            code: 'INVALID_WORKFLOW_ID',
+            message: 'Workflow ID is required'
+        }));
+    }
+
+    return createWorkflowValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        validatorName: params.validatorName,
+        duration: params.duration,
+        component: 'workflow.failed'
+    });
+};

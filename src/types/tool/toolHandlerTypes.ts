@@ -6,7 +6,7 @@
  * @module types/tool
  */
 
-import { Tool } from 'langchain/tools';
+import { Tool, StructuredTool } from '@langchain/core/tools';
 import { IAgentType } from '../agent/agentBaseTypes';
 import { ITaskType } from '../task/taskBaseTypes';
 import { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
@@ -15,8 +15,9 @@ import {
     IStandardCostDetails,
     IPerformanceMetrics
 } from '../common/commonMetricTypes';
-import { ILLMUsageStats } from '../llm/llmResponseTypes';
+import { ILLMUsageMetrics } from '../llm/llmMetricTypes';
 import { IToolUsageMetrics } from './toolMetricTypes';
+import { z } from 'zod';
 
 // ─── Tool Handler Types ──────────────────────────────────────────────────────
 
@@ -47,29 +48,33 @@ export interface IToolHandlerMetadata extends IBaseHandlerMetadata, Record<strin
         performance: IPerformanceMetrics;
     };
     costDetails: IStandardCostDetails;
-    usageStats?: ILLMUsageStats;
+    usageStats?: ILLMUsageMetrics;
     [key: string]: unknown;
 }
 
 /** Tool handler parameters interface */
-export interface IToolHandlerParams {
+export interface IToolHandlerParams<T extends StructuredTool = StructuredTool> {
     agent: IAgentType;
     task: ITaskType;
-    tool: Tool;
-    input: unknown;
+    tool: T;
+    input: z.infer<T['schema']>;
+    messages?: unknown[];
     context?: Record<string, unknown>;
     metadata?: IToolHandlerMetadata;
+}
+
+/** Tool handler data interface */
+export interface IToolHandlerData {
+    result?: string;
+    error?: Error;
+    feedbackMessage?: string;
 }
 
 /** Tool handler result interface */
 export interface IToolHandlerResult {
     success: boolean;
     error?: Error;
-    data: {
-        result?: string;
-        error?: Error;
-        feedbackMessage?: string;
-    };
+    data: IToolHandlerData;
     metadata: IToolHandlerMetadata;
 }
 
@@ -107,12 +112,23 @@ export const ToolHandlerTypeGuards = {
         );
     },
 
+    isToolHandlerData: (value: unknown): value is IToolHandlerData => {
+        if (typeof value !== 'object' || value === null) return false;
+        const data = value as Partial<IToolHandlerData>;
+        return (
+            (data.result === undefined || typeof data.result === 'string') &&
+            (data.error === undefined || data.error instanceof Error) &&
+            (data.feedbackMessage === undefined || typeof data.feedbackMessage === 'string')
+        );
+    },
+
     isToolHandlerResult: (value: unknown): value is IToolHandlerResult => {
         if (typeof value !== 'object' || value === null) return false;
         const result = value as Partial<IToolHandlerResult>;
         return (
             typeof result.success === 'boolean' &&
-            ToolHandlerTypeGuards.isToolHandlerMetadata(result.metadata!)
+            ToolHandlerTypeGuards.isToolHandlerMetadata(result.metadata!) &&
+            ToolHandlerTypeGuards.isToolHandlerData(result.data!)
         );
     }
 };
@@ -121,11 +137,7 @@ export const ToolHandlerTypeGuards = {
 export const createToolHandlerResult = (
     success: boolean,
     metadata: IToolHandlerMetadata,
-    data: {
-        result?: string;
-        error?: Error;
-        feedbackMessage?: string;
-    }
+    data: IToolHandlerData
 ): IToolHandlerResult => ({
     success,
     data,

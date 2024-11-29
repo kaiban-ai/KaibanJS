@@ -1,252 +1,303 @@
 /**
  * @file commonValidationTypes.ts
  * @path src/types/common/commonValidationTypes.ts
- * @description Centralized validation types and interfaces with improved type safety
+ * @description Common validation type definitions
  *
  * @module @types/common
  */
 
-import { IErrorType, IBaseError, IErrorMetadata, BaseError } from './commonErrorTypes';
-import { IAgentType } from '../agent/agentBaseTypes';
-import { ITaskType } from '../task/taskBaseTypes';
+import type { IErrorType, IErrorMetadata } from './commonErrorTypes';
 
-// ─── Core Validation Types ───────────────────────────────────────────────────────
+// ─── Base Validation Types ────────────────────────────────────────────────────
 
-/** Generic validation result with improved type safety */
-export interface IValidationResult<T = unknown> {
-    isValid: boolean;
-    errors: string[];
-    warnings: string[];
-    metadata: {
-        timestamp: number;
-        duration: number;
-        validatorName: string;
-    };
-    context?: Record<string, unknown>;
-    validatedEntity?: T;
-    validatedFields?: string[];
+export type ValidationErrorType = string | IValidationError;
+export type ValidationWarningType = string | IValidationWarning;
+
+export interface IValidationError {
+    code: string;
+    message: string;
+    path?: string[];
+    value?: unknown;
 }
 
-/** Enhanced validation options */
+export interface IValidationWarning {
+    code: string;
+    message: string;
+    path?: string[];
+    value?: unknown;
+}
+
+export interface IValidationMetadata extends IErrorMetadata {
+    validatedFields: string[];
+    validationDuration?: number;
+    duration?: number; // Alias for validationDuration for backward compatibility
+    configHash?: string;
+    validatorName?: string; // For backward compatibility
+    component: string;
+}
+
 export interface IValidationOptions {
     strict?: boolean;
-    validateDependencies?: boolean;
-    customValidators?: Array<(value: unknown) => boolean | Promise<boolean>>;
-    timeoutMs?: number;
-    stopOnFirstError?: boolean;
-    validateAsync?: boolean;
+    allowUnknown?: boolean;
+    abortEarly?: boolean;
+    context?: Record<string, unknown>;
 }
 
-/** Strongly typed validation constraint */
-export interface IValidationConstraint<T = unknown> {
-    type: 'string' | 'number' | 'boolean' | 'array' | 'object';
-    required?: boolean;
-    minLength?: number;
-    maxLength?: number;
+// ─── Validation Results ────────────────────────────────────────────────────────
+
+export interface IBaseValidationResult {
+    isValid: boolean;
+    errors: ValidationErrorType[];
+    warnings: ValidationWarningType[];
+    metadata: IValidationMetadata;
+}
+
+export interface IValidationResult<T = unknown> extends IBaseValidationResult {
+    data?: T;
+}
+
+// ─── Status Validation ────────────────────────────────────────────────────────
+
+export interface IStatusValidationResult extends IBaseValidationResult {
+    currentStatus: string;
+    targetStatus: string;
+    allowedTransitions: string[];
+}
+
+// ─── Event Validation ─────────────────────────────────────────────────────────
+
+export interface IEventValidationMetadata extends IValidationMetadata {
+    eventType: string;
+    entityId: string;
+}
+
+export interface IEventValidationResult extends IBaseValidationResult {
+    metadata: IEventValidationMetadata;
+    eventType: string;
+    entityId: string;
+}
+
+// ─── Validation Schema ────────────────────────────────────────────────────────
+
+export interface IValidationConstraint {
+    type: string;
+    required: boolean;
+    min?: number;
+    max?: number;
     pattern?: RegExp;
-    allowedValues?: T[];
-    custom?: (value: T) => boolean | Promise<boolean>;
-    message?: string;
+    enum?: unknown[];
+    custom?: (value: unknown) => boolean;
 }
 
-/** Enhanced validation schema with generic support */
-export interface IValidationSchema<T> {
-    required: Array<keyof T>;
-    constraints: {
-        [P in keyof T]?: IValidationConstraint<T[P]>;
-    };
-    customValidation?: (value: T) => boolean | Promise<boolean>;
+export interface IValidationSchema<T = unknown> {
+    required: string[];
+    constraints: Record<string, IValidationConstraint>;
+    customValidation?: (value: T) => boolean;
 }
 
-// ─── Domain-Specific Validation Types ─────────────────────────────────────────
+// ─── Helper Functions ─────────────────────────────────────────────────────────
 
-/** Generic domain validation result */
-export interface IDomainValidationResult<T> extends IValidationResult<T> {
-    domainMetadata?: Record<string, unknown>;  // Additional domain-specific metadata
-    transition?: {
-        from: string;
-        to: string;
-    };
-}
+export const createValidationError = (params: {
+    message: string;
+    code: string;
+    path?: string[];
+    value?: unknown;
+}): ValidationErrorType => ({
+    code: params.code,
+    message: params.message,
+    path: params.path,
+    value: params.value
+});
 
-/** Agent validation result */
-export type IAgentValidationResult = IDomainValidationResult<IAgentType>;
+export const createValidationWarning = (params: {
+    message: string;
+    code: string;
+    path?: string[];
+    value?: unknown;
+}): ValidationWarningType => ({
+    code: params.code,
+    message: params.message,
+    path: params.path,
+    value: params.value
+});
 
-/** Task validation result */
-export type ITaskValidationResult = IDomainValidationResult<ITaskType>;
+export const createValidationMetadata = (params: {
+    component: string;
+    operation?: string;
+    validatedFields: string[];
+    validationDuration?: number;
+    configHash?: string;
+    validatorName?: string;
+    details?: Record<string, unknown>;
+}): IValidationMetadata => ({
+    timestamp: Date.now(),
+    component: params.component,
+    operation: params.operation,
+    validatedFields: params.validatedFields || [],
+    validationDuration: params.validationDuration,
+    duration: params.validationDuration, // For backward compatibility
+    configHash: params.configHash,
+    validatorName: params.validatorName,
+    details: params.details
+});
 
-/** Status validation result */
-export type IStatusValidationResult = IDomainValidationResult<string>;
+export const createLegacyValidationMetadata = (params: {
+    timestamp?: number;
+    duration?: number;
+    validatorName?: string;
+    component?: string;
+}): IValidationMetadata => ({
+    timestamp: params.timestamp || Date.now(),
+    component: params.component || 'legacy',
+    validatedFields: [],
+    validationDuration: params.duration,
+    duration: params.duration,
+    validatorName: params.validatorName
+});
 
-// ─── Validation Rules & Context ───────────────────────────────────────────────
+export const createEventValidationMetadata = (params: {
+    component: string;
+    operation?: string;
+    validatedFields: string[];
+    validationDuration?: number;
+    configHash?: string;
+    validatorName?: string;
+    eventType: string;
+    entityId: string;
+    details?: Record<string, unknown>;
+}): IEventValidationMetadata => ({
+    ...createValidationMetadata(params),
+    eventType: params.eventType,
+    entityId: params.entityId
+});
 
-/** Generic validation rule */
-export interface IValidationRule<T = unknown> {
-    id: string;
-    validate: (value: T) => Promise<IValidationResult<T>> | IValidationResult<T>;
-    errorMessage?: string;
-    priority?: number;
-    dependencies?: string[];
-}
+export const createValidationResult = <T>(params: {
+    isValid: boolean;
+    errors: ValidationErrorType[];
+    warnings: ValidationWarningType[];
+    metadata: IValidationMetadata;
+    data?: T;
+}): IValidationResult<T> => ({
+    isValid: params.isValid,
+    errors: params.errors.map(e => typeof e === 'string' ? createValidationError({ code: 'ERROR', message: e }) : e),
+    warnings: params.warnings.map(w => typeof w === 'string' ? createValidationWarning({ code: 'WARNING', message: w }) : w),
+    metadata: params.metadata,
+    data: params.data
+});
 
-/** Validation context with improved tracking */
-export interface IValidationContext {
-    startTime: number;
-    endTime?: number;
-    validatedFields: Set<string>;
-    failedFields: Set<string>;
-    validationErrors: Map<string, string[]>;
-    metadata?: Record<string, unknown>;
-}
+export const createStatusValidationResult = (params: {
+    isValid: boolean;
+    errors: ValidationErrorType[];
+    warnings: ValidationWarningType[];
+    metadata: IValidationMetadata;
+    currentStatus: string;
+    targetStatus: string;
+    allowedTransitions: string[];
+}): IStatusValidationResult => ({
+    isValid: params.isValid,
+    errors: params.errors.map(e => typeof e === 'string' ? createValidationError({ code: 'ERROR', message: e }) : e),
+    warnings: params.warnings.map(w => typeof w === 'string' ? createValidationWarning({ code: 'WARNING', message: w }) : w),
+    metadata: params.metadata,
+    currentStatus: params.currentStatus,
+    targetStatus: params.targetStatus,
+    allowedTransitions: params.allowedTransitions
+});
 
-/** Enhanced validation error */
-export interface IValidationError extends IBaseError {
-    type: 'ValidationError';
-    validationType: string;
-    invalidValue?: unknown;
-    expectedFormat?: string;
-    fieldName?: string;
-    constraint?: string;
-}
+export const createEventValidationResult = (params: {
+    isValid: boolean;
+    errors: ValidationErrorType[];
+    warnings: ValidationWarningType[];
+    metadata: IEventValidationMetadata;
+    eventType: string;
+    entityId: string;
+}): IEventValidationResult => ({
+    isValid: params.isValid,
+    errors: params.errors.map(e => typeof e === 'string' ? createValidationError({ code: 'ERROR', message: e }) : e),
+    warnings: params.warnings.map(w => typeof w === 'string' ? createValidationWarning({ code: 'WARNING', message: w }) : w),
+    metadata: params.metadata,
+    eventType: params.eventType,
+    entityId: params.entityId
+});
 
 // ─── Type Guards ────────────────────────────────────────────────────────────
 
-/** Type guard check function type */
-type TypeGuardCheck<T> = (value: unknown) => value is T;
-
-/** Create a type guard with multiple checks */
-const createTypeGuard = <T>(checks: Array<(value: unknown) => boolean>): TypeGuardCheck<T> => {
-    return (value: unknown): value is T => {
-        return checks.every(check => check(value));
-    };
+export const isValidationError = (error: unknown): error is IValidationError => {
+    if (typeof error === 'string') return true;
+    if (typeof error !== 'object' || error === null) return false;
+    const err = error as Partial<IValidationError>;
+    return (
+        typeof err.code === 'string' &&
+        typeof err.message === 'string' &&
+        (err.path === undefined || Array.isArray(err.path))
+    );
 };
 
-/** Common validation checks */
-const validationChecks = {
-    isObject: (value: unknown): boolean => 
-        typeof value === 'object' && value !== null,
-    hasProperty: (prop: string) => 
-        (value: unknown): boolean => 
-            typeof value === 'object' && 
-            value !== null && 
-            prop in value,
-    isType: (prop: string, type: string) =>
-        (value: unknown): boolean =>
-            typeof value === 'object' &&
-            value !== null &&
-            typeof (value as any)[prop] === type,
-    isArrayOf: (prop: string, elementCheck: (element: unknown) => boolean) =>
-        (value: unknown): boolean =>
-            Array.isArray((value as any)[prop]) &&
-            (value as any)[prop].every(elementCheck)
+export const isValidationWarning = (warning: unknown): warning is IValidationWarning => {
+    if (typeof warning === 'string') return true;
+    if (typeof warning !== 'object' || warning === null) return false;
+    const warn = warning as Partial<IValidationWarning>;
+    return (
+        typeof warn.code === 'string' &&
+        typeof warn.message === 'string' &&
+        (warn.path === undefined || Array.isArray(warn.path))
+    );
 };
 
-/** Validation type guards interface */
-export interface IValidationTypeGuards {
-    isValidationResult: TypeGuardCheck<IValidationResult>;
-    isValidationRule: TypeGuardCheck<IValidationRule>;
-    isValidationContext: TypeGuardCheck<IValidationContext>;
-    isValidationError: TypeGuardCheck<IValidationError>;
-}
-
-/** Validation type guards implementation */
-export const ValidationTypeGuards: IValidationTypeGuards = {
-    isValidationResult: createTypeGuard<IValidationResult>([
-        validationChecks.isObject,
-        validationChecks.isType('isValid', 'boolean'),
-        value => Array.isArray((value as any).errors),
-        value => Array.isArray((value as any).warnings),
-        value => validationChecks.isObject((value as any).metadata),
-        value => typeof (value as any).metadata.timestamp === 'number',
-        value => typeof (value as any).metadata.duration === 'number',
-        value => typeof (value as any).metadata.validatorName === 'string'
-    ]),
-
-    isValidationRule: createTypeGuard<IValidationRule>([
-        validationChecks.isObject,
-        validationChecks.isType('id', 'string'),
-        validationChecks.hasProperty('validate')
-    ]),
-
-    isValidationContext: createTypeGuard<IValidationContext>([
-        validationChecks.isObject,
-        validationChecks.isType('startTime', 'number'),
-        value => value instanceof Set || value instanceof Map
-    ]),
-
-    isValidationError: createTypeGuard<IValidationError>([
-        validationChecks.isObject,
-        validationChecks.isType('type', 'string'),
-        validationChecks.isType('validationType', 'string')
-    ])
+export const isValidationResult = <T>(result: unknown): result is IValidationResult<T> => {
+    if (typeof result !== 'object' || result === null) return false;
+    const res = result as Partial<IValidationResult<T>>;
+    return (
+        typeof res.isValid === 'boolean' &&
+        Array.isArray(res.errors) &&
+        Array.isArray(res.warnings) &&
+        typeof res.metadata === 'object' &&
+        res.metadata !== null &&
+        typeof res.metadata.component === 'string' &&
+        Array.isArray(res.metadata.validatedFields)
+    );
 };
 
-// ─── Utility Types & Functions ───────────────────────────────────────────────
-
-/** Validation function type */
-export type ValidationFunction<T> = (value: T) => Promise<IValidationResult<T>> | IValidationResult<T>;
-
-/** Default validation configuration */
-export const DEFAULT_VALIDATION_CONFIG: IValidationOptions = {
-    timeoutMs: 5000,
-    stopOnFirstError: false,
-    validateAsync: true,
-    strict: false
+export const isStatusValidationResult = (result: unknown): result is IStatusValidationResult => {
+    if (!isValidationResult(result)) return false;
+    const res = result as Partial<IStatusValidationResult>;
+    return (
+        typeof res.currentStatus === 'string' &&
+        typeof res.targetStatus === 'string' &&
+        Array.isArray(res.allowedTransitions)
+    );
 };
 
-/** Validation rule factory */
-export const createValidationRule = <T>(
-    id: string,
-    validate: (value: T) => Promise<IValidationResult<T>> | IValidationResult<T>,
-    options?: Partial<Omit<IValidationRule<T>, 'id' | 'validate'>>
-): IValidationRule<T> => ({
-    id,
-    validate,
-    ...options
-});
+export const isEventValidationResult = (result: unknown): result is IEventValidationResult => {
+    if (!isValidationResult(result)) return false;
+    const res = result as Partial<IEventValidationResult>;
+    return (
+        typeof res.eventType === 'string' &&
+        typeof res.entityId === 'string' &&
+        typeof res.metadata === 'object' &&
+        res.metadata !== null &&
+        typeof (res.metadata as IEventValidationMetadata).eventType === 'string' &&
+        typeof (res.metadata as IEventValidationMetadata).entityId === 'string'
+    );
+};
 
-/**
- * Create a default validation result
- * @param isValid Initial validation state
- * @param validatorName Name of the validator
- * @returns A properly initialized validation result
- */
-export const createValidationResult = <T>(
-    isValid: boolean = true,
-    validatorName: string = 'default'
-): IValidationResult<T> => ({
-    isValid,
-    errors: [],
-    warnings: [],
-    metadata: {
-        timestamp: Date.now(),
-        duration: 0,
-        validatorName
-    },
-    validatedFields: []
-});
+// ─── Type Conversion ─────────────────────────────────────────────────────────
 
-/** Create validation error result */
-export const createValidationError = (
-    message: string,
-    validationType: string,
-    details?: Partial<Omit<IValidationError, 'name' | 'message' | 'type' | 'validationType'>>
-): IValidationError => {
-    const error = new BaseError({
-        message,
-        type: 'ValidationError',
-        options: {
-            metadata: {
-                timestamp: Date.now(),
-                source: 'validation',
-                severity: 'medium'
-            }
-        }
-    });
+export const toValidationError = (error: string | IValidationError): ValidationErrorType => {
+    if (typeof error === 'string') {
+        return {
+            code: 'ERROR',
+            message: error
+        };
+    }
+    return error;
+};
 
-    return {
-        ...error,
-        validationType,
-        ...details
-    } as IValidationError;
+export const toValidationWarning = (warning: string | IValidationWarning): ValidationWarningType => {
+    if (typeof warning === 'string') {
+        return {
+            code: 'WARNING',
+            message: warning
+        };
+    }
+    return warning;
 };

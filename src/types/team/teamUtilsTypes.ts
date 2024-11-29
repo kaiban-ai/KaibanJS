@@ -9,7 +9,7 @@
 import { IAgentType } from '../agent/agentBaseTypes';
 import { ITaskType } from '../task/taskBaseTypes';
 import { WORKFLOW_STATUS_enum, TASK_STATUS_enum } from '../common';
-import { ILLMUsageStats } from '../llm';
+import { ILLMUsageMetrics } from '../llm/llmMetricTypes';
 import { ICostDetails } from '../workflow';
 
 // ─── Team Initialization ────────────────────────────────────────────────────────
@@ -48,7 +48,7 @@ export interface ITeamExecutionContext {
         completedTaskCount: number;
         completionPercentage: number;
         taskStatusCounts: Record<keyof typeof TASK_STATUS_enum, number>;
-        llmUsageStats: ILLMUsageStats;
+        llmUsageMetrics: ILLMUsageMetrics;
         costDetails: ICostDetails;
     };
     lastError?: Error;
@@ -181,26 +181,30 @@ export const createEmptyContext = (): ITeamExecutionContext => ({
             AWAITING_VALIDATION: 0,
             VALIDATED: 0
         },
-        llmUsageStats: {
-            inputTokens: 0,
-            outputTokens: 0,
-            callsCount: 0,
-            callsErrorCount: 0,
-            parsingErrors: 0,
-            totalLatency: 0,
-            averageLatency: 0,
-            lastUsed: Date.now(),
-            memoryUtilization: {
-                peakMemoryUsage: 0,
-                averageMemoryUsage: 0,
-                cleanupEvents: 0
+        llmUsageMetrics: {
+            totalRequests: 0,
+            activeInstances: 0,
+            requestsPerSecond: 0,
+            averageResponseLength: 0,
+            peakMemoryUsage: 0,
+            uptime: 0,
+            rateLimit: {
+                current: 0,
+                limit: 0,
+                remaining: 0,
+                resetTime: 0
             },
-            costBreakdown: {
-                input: 0,
-                output: 0,
-                total: 0,
-                currency: 'USD'
-            }
+            tokenDistribution: {
+                prompt: 0,
+                completion: 0,
+                total: 0
+            },
+            modelDistribution: {
+                gpt4: 0,
+                gpt35: 0,
+                other: 0
+            },
+            timestamp: Date.now()
         },
         costDetails: {
             inputCost: 0,

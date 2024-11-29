@@ -1,13 +1,20 @@
 /**
  * @file llmMetricTypes.ts
  * @path KaibanJS/src/types/llm/llmMetricTypes.ts
- * @description LLM-specific metric type definitions
+ * @description LLM-specific metric type definitions and validation
  */
 
 import type { IRateLimitMetrics } from '../metrics/base/usageMetrics';
 import type { ITimeMetrics, IThroughputMetrics, IErrorMetrics } from '../metrics/base/performanceMetrics';
-import { createValidationResult } from '@utils/validation/validationUtils';
-import type { IValidationResult } from '../common/commonValidationTypes';
+import { 
+    createValidationResult, 
+    createValidationError, 
+    createValidationWarning,
+    createValidationMetadata,
+    type ValidationErrorType,
+    type ValidationWarningType,
+    type IValidationResult
+} from '../common/commonValidationTypes';
 
 /**
  * LLM-specific resource metrics
@@ -79,10 +86,14 @@ export interface ILLMUsageMetrics {
     readonly totalRequests: number;
     /** Number of active model instances */
     readonly activeInstances: number;
+    /** Number of active users */
+    readonly activeUsers: number;
     /** Requests processed per second */
     readonly requestsPerSecond: number;
     /** Average response length in tokens */
     readonly averageResponseLength: number;
+    /** Average response size in bytes */
+    readonly averageResponseSize: number;
     /** Peak memory usage in bytes */
     readonly peakMemoryUsage: number;
     /** System uptime in seconds */
@@ -119,6 +130,9 @@ export interface ILLMMetrics {
     readonly timestamp: number;
 }
 
+/**
+ * Type guards for LLM metrics
+ */
 export const LLMMetricsTypeGuards = {
     isLLMResourceMetrics: (value: unknown): value is ILLMResourceMetrics => {
         if (typeof value !== 'object' || value === null) return false;
@@ -179,8 +193,10 @@ export const LLMMetricsTypeGuards = {
         return (
             typeof metrics.totalRequests === 'number' &&
             typeof metrics.activeInstances === 'number' &&
+            typeof metrics.activeUsers === 'number' &&
             typeof metrics.requestsPerSecond === 'number' &&
             typeof metrics.averageResponseLength === 'number' &&
+            typeof metrics.averageResponseSize === 'number' &&
             typeof metrics.peakMemoryUsage === 'number' &&
             typeof metrics.uptime === 'number' &&
             typeof metrics.rateLimit === 'object' &&
@@ -218,197 +234,390 @@ export const LLMMetricsTypeGuards = {
     }
 };
 
+/**
+ * Validation functions for LLM metrics
+ */
 export const LLMMetricsValidation = {
     validateLLMResourceMetrics(metrics: unknown): IValidationResult {
-        const errors: string[] = [];
-        const warnings: string[] = [];
+        const errors: ValidationErrorType[] = [];
+        const warnings: ValidationWarningType[] = [];
 
         if (!LLMMetricsTypeGuards.isLLMResourceMetrics(metrics)) {
-            errors.push('Invalid LLM resource metrics structure');
-            return createValidationResult(false, errors);
+            errors.push(createValidationError({
+                code: 'INVALID_STRUCTURE',
+                message: '❌ Invalid LLM resource metrics structure'
+            }));
+        } else {
+            if (metrics.cpuUsage < 0 || metrics.cpuUsage > 100) {
+                errors.push(createValidationError({
+                    code: 'INVALID_CPU_USAGE',
+                    message: '❌ CPU usage must be between 0 and 100'
+                }));
+            }
+
+            if (metrics.memoryUsage < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_MEMORY_USAGE',
+                    message: '❌ Memory usage cannot be negative'
+                }));
+            }
+
+            if (metrics.diskIO.read < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_DISK_READ',
+                    message: '❌ Disk read cannot be negative'
+                }));
+            }
+
+            if (metrics.diskIO.write < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_DISK_WRITE',
+                    message: '❌ Disk write cannot be negative'
+                }));
+            }
+
+            if (metrics.networkUsage.upload < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_NETWORK_UPLOAD',
+                    message: '❌ Network upload cannot be negative'
+                }));
+            }
+
+            if (metrics.networkUsage.download < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_NETWORK_DOWNLOAD',
+                    message: '❌ Network download cannot be negative'
+                }));
+            }
+
+            if (metrics.gpuMemoryUsage < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_GPU_MEMORY',
+                    message: '❌ GPU memory usage cannot be negative'
+                }));
+            }
+
+            if (metrics.modelMemoryAllocation.weights < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_MODEL_WEIGHTS',
+                    message: '❌ Model weights memory cannot be negative'
+                }));
+            }
+
+            if (metrics.modelMemoryAllocation.cache < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_MODEL_CACHE',
+                    message: '❌ Model cache memory cannot be negative'
+                }));
+            }
+
+            if (metrics.modelMemoryAllocation.workspace < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_MODEL_WORKSPACE',
+                    message: '❌ Model workspace memory cannot be negative'
+                }));
+            }
+
+            if (metrics.timestamp > Date.now()) {
+                warnings.push(createValidationWarning({
+                    code: 'FUTURE_TIMESTAMP',
+                    message: '⚠️ Timestamp is in the future'
+                }));
+            }
         }
 
-        if (metrics.cpuUsage < 0 || metrics.cpuUsage > 100) {
-            errors.push('CPU usage must be between 0 and 100');
-        }
-
-        if (metrics.memoryUsage < 0) {
-            errors.push('Memory usage cannot be negative');
-        }
-
-        if (metrics.diskIO.read < 0) {
-            errors.push('Disk read cannot be negative');
-        }
-
-        if (metrics.diskIO.write < 0) {
-            errors.push('Disk write cannot be negative');
-        }
-
-        if (metrics.networkUsage.upload < 0) {
-            errors.push('Network upload cannot be negative');
-        }
-
-        if (metrics.networkUsage.download < 0) {
-            errors.push('Network download cannot be negative');
-        }
-
-        if (metrics.gpuMemoryUsage < 0) {
-            errors.push('GPU memory usage cannot be negative');
-        }
-
-        if (metrics.modelMemoryAllocation.weights < 0) {
-            errors.push('Model weights memory cannot be negative');
-        }
-
-        if (metrics.modelMemoryAllocation.cache < 0) {
-            errors.push('Model cache memory cannot be negative');
-        }
-
-        if (metrics.modelMemoryAllocation.workspace < 0) {
-            errors.push('Model workspace memory cannot be negative');
-        }
-
-        if (metrics.timestamp > Date.now()) {
-            warnings.push('Timestamp is in the future');
-        }
-
-        return createValidationResult(errors.length === 0, errors, warnings);
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'LLMMetricsValidation',
+                operation: 'validateResource',
+                validatedFields: [
+                    'cpuUsage',
+                    'memoryUsage',
+                    'diskIO',
+                    'networkUsage',
+                    'gpuMemoryUsage',
+                    'modelMemoryAllocation',
+                    'timestamp'
+                ]
+            })
+        });
     },
 
     validateLLMPerformanceMetrics(metrics: unknown): IValidationResult {
-        const errors: string[] = [];
-        const warnings: string[] = [];
+        const errors: ValidationErrorType[] = [];
+        const warnings: ValidationWarningType[] = [];
 
         if (!LLMMetricsTypeGuards.isLLMPerformanceMetrics(metrics)) {
-            errors.push('Invalid LLM performance metrics structure');
-            return createValidationResult(false, errors);
+            errors.push(createValidationError({
+                code: 'INVALID_STRUCTURE',
+                message: '❌ Invalid LLM performance metrics structure'
+            }));
+        } else {
+            if (metrics.queueLength < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_QUEUE_LENGTH',
+                    message: '❌ Queue length cannot be negative'
+                }));
+            }
+
+            if (metrics.errorRate < 0 || metrics.errorRate > 100) {
+                errors.push(createValidationError({
+                    code: 'INVALID_ERROR_RATE',
+                    message: '❌ Error rate must be between 0 and 100'
+                }));
+            }
+
+            if (metrics.successRate < 0 || metrics.successRate > 100) {
+                errors.push(createValidationError({
+                    code: 'INVALID_SUCCESS_RATE',
+                    message: '❌ Success rate must be between 0 and 100'
+                }));
+            }
+
+            if (metrics.tokensPerSecond < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_TOKENS_PER_SECOND',
+                    message: '❌ Tokens per second cannot be negative'
+                }));
+            }
+
+            if (metrics.coherenceScore < 0 || metrics.coherenceScore > 1) {
+                errors.push(createValidationError({
+                    code: 'INVALID_COHERENCE_SCORE',
+                    message: '❌ Coherence score must be between 0 and 1'
+                }));
+            }
+
+            if (metrics.temperatureImpact < -1 || metrics.temperatureImpact > 1) {
+                errors.push(createValidationError({
+                    code: 'INVALID_TEMPERATURE_IMPACT',
+                    message: '❌ Temperature impact must be between -1 and 1'
+                }));
+            }
+
+            if (metrics.timestamp > Date.now()) {
+                warnings.push(createValidationWarning({
+                    code: 'FUTURE_TIMESTAMP',
+                    message: '⚠️ Timestamp is in the future'
+                }));
+            }
         }
 
-        if (metrics.queueLength < 0) {
-            errors.push('Queue length cannot be negative');
-        }
-
-        if (metrics.errorRate < 0 || metrics.errorRate > 100) {
-            errors.push('Error rate must be between 0 and 100');
-        }
-
-        if (metrics.successRate < 0 || metrics.successRate > 100) {
-            errors.push('Success rate must be between 0 and 100');
-        }
-
-        if (metrics.tokensPerSecond < 0) {
-            errors.push('Tokens per second cannot be negative');
-        }
-
-        if (metrics.coherenceScore < 0 || metrics.coherenceScore > 1) {
-            errors.push('Coherence score must be between 0 and 1');
-        }
-
-        if (metrics.temperatureImpact < -1 || metrics.temperatureImpact > 1) {
-            errors.push('Temperature impact must be between -1 and 1');
-        }
-
-        if (metrics.timestamp > Date.now()) {
-            warnings.push('Timestamp is in the future');
-        }
-
-        return createValidationResult(errors.length === 0, errors, warnings);
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'LLMMetricsValidation',
+                operation: 'validatePerformance',
+                validatedFields: [
+                    'queueLength',
+                    'errorRate',
+                    'successRate',
+                    'tokensPerSecond',
+                    'coherenceScore',
+                    'temperatureImpact',
+                    'timestamp'
+                ]
+            })
+        });
     },
 
     validateLLMUsageMetrics(metrics: unknown): IValidationResult {
-        const errors: string[] = [];
-        const warnings: string[] = [];
+        const errors: ValidationErrorType[] = [];
+        const warnings: ValidationWarningType[] = [];
 
         if (!LLMMetricsTypeGuards.isLLMUsageMetrics(metrics)) {
-            errors.push('Invalid LLM usage metrics structure');
-            return createValidationResult(false, errors);
+            errors.push(createValidationError({
+                code: 'INVALID_STRUCTURE',
+                message: '❌ Invalid LLM usage metrics structure'
+            }));
+        } else {
+            if (metrics.totalRequests < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_TOTAL_REQUESTS',
+                    message: '❌ Total requests cannot be negative'
+                }));
+            }
+
+            if (metrics.activeInstances < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_ACTIVE_INSTANCES',
+                    message: '❌ Active instances cannot be negative'
+                }));
+            }
+
+            if (metrics.activeUsers < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_ACTIVE_USERS',
+                    message: '❌ Active users cannot be negative'
+                }));
+            }
+
+            if (metrics.requestsPerSecond < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_REQUESTS_PER_SECOND',
+                    message: '❌ Requests per second cannot be negative'
+                }));
+            }
+
+            if (metrics.averageResponseLength < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_RESPONSE_LENGTH',
+                    message: '❌ Average response length cannot be negative'
+                }));
+            }
+
+            if (metrics.averageResponseSize < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_RESPONSE_SIZE',
+                    message: '❌ Average response size cannot be negative'
+                }));
+            }
+
+            if (metrics.peakMemoryUsage < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_PEAK_MEMORY',
+                    message: '❌ Peak memory usage cannot be negative'
+                }));
+            }
+
+            if (metrics.uptime < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_UPTIME',
+                    message: '❌ Uptime cannot be negative'
+                }));
+            }
+
+            if (metrics.tokenDistribution.prompt < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_PROMPT_TOKENS',
+                    message: '❌ Prompt token count cannot be negative'
+                }));
+            }
+
+            if (metrics.tokenDistribution.completion < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_COMPLETION_TOKENS',
+                    message: '❌ Completion token count cannot be negative'
+                }));
+            }
+
+            if (metrics.tokenDistribution.total < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_TOTAL_TOKENS',
+                    message: '❌ Total token count cannot be negative'
+                }));
+            }
+
+            if (metrics.tokenDistribution.total !== 
+                metrics.tokenDistribution.prompt + metrics.tokenDistribution.completion) {
+                errors.push(createValidationError({
+                    code: 'INVALID_TOKEN_SUM',
+                    message: '❌ Total tokens must equal sum of prompt and completion tokens'
+                }));
+            }
+
+            if (metrics.modelDistribution.gpt4 < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_GPT4_USAGE',
+                    message: '❌ GPT-4 usage count cannot be negative'
+                }));
+            }
+
+            if (metrics.modelDistribution.gpt35 < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_GPT35_USAGE',
+                    message: '❌ GPT-3.5 usage count cannot be negative'
+                }));
+            }
+
+            if (metrics.modelDistribution.other < 0) {
+                errors.push(createValidationError({
+                    code: 'INVALID_OTHER_MODELS_USAGE',
+                    message: '❌ Other models usage count cannot be negative'
+                }));
+            }
+
+            if (metrics.timestamp > Date.now()) {
+                warnings.push(createValidationWarning({
+                    code: 'FUTURE_TIMESTAMP',
+                    message: '⚠️ Timestamp is in the future'
+                }));
+            }
         }
 
-        if (metrics.totalRequests < 0) {
-            errors.push('Total requests cannot be negative');
-        }
-
-        if (metrics.activeInstances < 0) {
-            errors.push('Active instances cannot be negative');
-        }
-
-        if (metrics.requestsPerSecond < 0) {
-            errors.push('Requests per second cannot be negative');
-        }
-
-        if (metrics.averageResponseLength < 0) {
-            errors.push('Average response length cannot be negative');
-        }
-
-        if (metrics.peakMemoryUsage < 0) {
-            errors.push('Peak memory usage cannot be negative');
-        }
-
-        if (metrics.uptime < 0) {
-            errors.push('Uptime cannot be negative');
-        }
-
-        if (metrics.tokenDistribution.prompt < 0) {
-            errors.push('Prompt token count cannot be negative');
-        }
-
-        if (metrics.tokenDistribution.completion < 0) {
-            errors.push('Completion token count cannot be negative');
-        }
-
-        if (metrics.tokenDistribution.total < 0) {
-            errors.push('Total token count cannot be negative');
-        }
-
-        if (metrics.tokenDistribution.total !== 
-            metrics.tokenDistribution.prompt + metrics.tokenDistribution.completion) {
-            errors.push('Total tokens must equal sum of prompt and completion tokens');
-        }
-
-        if (metrics.modelDistribution.gpt4 < 0) {
-            errors.push('GPT-4 usage count cannot be negative');
-        }
-
-        if (metrics.modelDistribution.gpt35 < 0) {
-            errors.push('GPT-3.5 usage count cannot be negative');
-        }
-
-        if (metrics.modelDistribution.other < 0) {
-            errors.push('Other models usage count cannot be negative');
-        }
-
-        if (metrics.timestamp > Date.now()) {
-            warnings.push('Timestamp is in the future');
-        }
-
-        return createValidationResult(errors.length === 0, errors, warnings);
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'LLMMetricsValidation',
+                operation: 'validateUsage',
+                validatedFields: [
+                    'totalRequests',
+                    'activeInstances',
+                    'activeUsers',
+                    'requestsPerSecond',
+                    'averageResponseLength',
+                    'averageResponseSize',
+                    'peakMemoryUsage',
+                    'uptime',
+                    'tokenDistribution',
+                    'modelDistribution',
+                    'timestamp'
+                ]
+            })
+        });
     },
 
     validateLLMMetrics(metrics: unknown): IValidationResult {
-        const errors: string[] = [];
-        const warnings: string[] = [];
+        const errors: ValidationErrorType[] = [];
+        const warnings: ValidationWarningType[] = [];
 
         if (!LLMMetricsTypeGuards.isLLMMetrics(metrics)) {
-            errors.push('Invalid LLM metrics structure');
-            return createValidationResult(false, errors);
+            errors.push(createValidationError({
+                code: 'INVALID_STRUCTURE',
+                message: '❌ Invalid LLM metrics structure'
+            }));
+        } else {
+            const resourceResult = this.validateLLMResourceMetrics(metrics.resources);
+            errors.push(...resourceResult.errors);
+            warnings.push(...resourceResult.warnings);
+
+            const performanceResult = this.validateLLMPerformanceMetrics(metrics.performance);
+            errors.push(...performanceResult.errors);
+            warnings.push(...performanceResult.warnings);
+
+            const usageResult = this.validateLLMUsageMetrics(metrics.usage);
+            errors.push(...usageResult.errors);
+            warnings.push(...usageResult.warnings);
+
+            if (metrics.timestamp > Date.now()) {
+                warnings.push(createValidationWarning({
+                    code: 'FUTURE_TIMESTAMP',
+                    message: '⚠️ Timestamp is in the future'
+                }));
+            }
         }
 
-        const resourceResult = this.validateLLMResourceMetrics(metrics.resources);
-        errors.push(...resourceResult.errors);
-        warnings.push(...resourceResult.warnings);
-
-        const performanceResult = this.validateLLMPerformanceMetrics(metrics.performance);
-        errors.push(...performanceResult.errors);
-        warnings.push(...performanceResult.warnings);
-
-        const usageResult = this.validateLLMUsageMetrics(metrics.usage);
-        errors.push(...usageResult.errors);
-        warnings.push(...usageResult.warnings);
-
-        if (metrics.timestamp > Date.now()) {
-            warnings.push('Timestamp is in the future');
-        }
-
-        return createValidationResult(errors.length === 0, errors, warnings);
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'LLMMetricsValidation',
+                operation: 'validateMetrics',
+                validatedFields: [
+                    'resources',
+                    'performance',
+                    'usage',
+                    'timestamp'
+                ]
+            })
+        });
     }
 };

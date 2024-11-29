@@ -18,6 +18,7 @@ import type {
     ITaskHandlerMetadata 
 } from '../../../types/task/taskHandlerTypes';
 import type { IStatusTransitionContext } from '../../../types/common/commonStatusTypes';
+import type { ITaskMetrics } from '../../../types/task/taskEventTypes';
 
 // ─── Executor Implementation ───────────────────────────────────────────────────
 
@@ -82,7 +83,7 @@ export class TaskExecutor extends CoreManager {
                         totalRequests: task.metrics.iterationCount,
                         activeUsers: 1,
                         requestsPerSecond: 1000 / task.metrics.duration,
-                        averageResponseSize: task.metrics.llmUsage.inputTokens + task.metrics.llmUsage.outputTokens,
+                        averageResponseSize: task.metrics.llmUsage.tokenDistribution.prompt + task.metrics.llmUsage.tokenDistribution.completion,
                         peakMemoryUsage: process.memoryUsage().heapUsed,
                         uptime: process.uptime(),
                         rateLimit: {
@@ -105,20 +106,20 @@ export class TaskExecutor extends CoreManager {
             // Emit task completed event
             await this.eventEmitter.emitTaskCompleted({
                 taskId: task.id,
-                result,
+                outputs: { result },
                 duration: task.metrics.duration
             });
 
             // Emit metrics updated event
             await this.eventEmitter.emitTaskMetricsUpdated({
                 taskId: task.id,
-                previousMetrics: {
-                    ...task.metrics,
+                metrics: {
                     startTime: task.metrics.startTime,
-                    endTime: task.metrics.startTime,
-                    duration: 0
-                },
-                newMetrics: task.metrics
+                    endTime: task.metrics.endTime,
+                    duration: task.metrics.duration,
+                    resourceUsage: task.metrics.resources,
+                    performance: task.metrics.performance
+                }
             });
 
             return {

@@ -9,7 +9,7 @@
 import { CoreManager } from '../../core/coreManager';
 import { BaseEventEmitter } from '../../core/eventEmitter';
 import { TaskMetricsManager } from './taskMetricsManager';
-import { createValidationResult } from '../../../utils/validation/validationUtils';
+import { createValidationResult, createValidationMetadata } from '../../../utils/validation/validationUtils';
 import { TASK_EVENT_TYPE_enum, TASK_STATUS_enum } from '../../../types/common/commonEnums';
 import type { 
     TaskEvent,
@@ -28,7 +28,8 @@ import type {
     ITaskErrorRecoveryStartedEvent,
     ITaskErrorRecoveryCompletedEvent,
     ITaskErrorRecoveryFailedEvent,
-    ITaskEventMetadata
+    ITaskEventMetadata,
+    createTaskEventMetadata
 } from '../../../types/task/taskEventTypes';
 import type { IEventHandler } from '../../../types/common/commonEventTypes';
 import type { IValidationResult } from '../../../types/common/commonValidationTypes';
@@ -253,62 +254,19 @@ export class TaskEventEmitter extends CoreManager {
     protected async createTaskMetadata(operation: string, taskId: string): Promise<ITaskEventMetadata> {
         const metrics = this.metricsManager.getMetrics(taskId);
         const timestamp = Date.now();
+        const runId = timestamp.toString();
 
-        const timeMetrics: ITimeMetrics = {
-            total: 0,
-            average: 0,
-            min: 0,
-            max: 0
-        };
-
-        const throughputMetrics: IThroughputMetrics = {
-            operationsPerSecond: 0,
-            dataProcessedPerSecond: 0
-        };
-
-        const errorMetrics: IErrorMetrics = {
-            totalErrors: 0,
-            errorRate: 0
-        };
-
-        const performance: IPerformanceMetrics = {
-            executionTime: timeMetrics,
-            latency: timeMetrics,
-            throughput: throughputMetrics,
-            responseTime: timeMetrics,
-            queueLength: 0,
-            errorRate: 0,
-            successRate: 0,
-            errorMetrics,
-            resourceUtilization: {
-                cpuUsage: 0,
-                memoryUsage: 0,
-                diskIO: { read: 0, write: 0 },
-                networkUsage: { upload: 0, download: 0 },
-                timestamp
-            },
-            timestamp
-        };
-
-        return {
-            source: 'TaskEventEmitter',
-            target: operation,
-            timestamp,
-            correlationId: timestamp.toString(),
-            causationId: timestamp.toString(),
-            component: 'TaskEventEmitter',
+        return createTaskEventMetadata(
+            'TaskEventEmitter',
             operation,
-            context: {
+            runId,
+            0, // duration
+            undefined, // previousState
+            undefined, // newState
+            undefined, // parentRunId
+            undefined, // tags
+            {
                 taskId,
-                timestamp
-            },
-            validation: createValidationResult(true, []),
-            performance,
-            task: {
-                id: taskId,
-                title: '',  // Will be populated by task manager
-                status: TASK_STATUS_enum.PENDING,  // Will be populated by task manager
-                stepId: '',  // Will be populated by task manager
                 metrics: metrics || this.metricsManager.initializeMetrics(taskId),
                 progress: {
                     status: TASK_STATUS_enum.PENDING,
@@ -316,7 +274,7 @@ export class TaskEventEmitter extends CoreManager {
                     timeElapsed: 0
                 }
             }
-        };
+        );
     }
 
     public cleanup(): void {

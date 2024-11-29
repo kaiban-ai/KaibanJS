@@ -6,6 +6,8 @@
  * @module @types/agent
  */
 
+import { BaseMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
+import { LLMResult } from '@langchain/core/outputs';
 import type { IAgentType } from './agentBaseTypes';
 import type { ITaskType } from '../task/taskBaseTypes';
 import type { 
@@ -42,9 +44,9 @@ export interface IThinkingHandlerParams {
     /** The task being processed */
     task: ITaskType;
     /** The messages being processed */
-    messages: unknown[];
+    messages: BaseMessage[];
     /** The output from processing */
-    output?: IOutput;
+    output?: LLMResult;
 }
 
 export interface IToolHandlerParams {
@@ -100,6 +102,7 @@ export interface IThinkingMetadata extends IBaseHandlerMetadata {
             llmMetrics: ILLMMetrics;
         };
     };
+    /** @deprecated Use LLMResult.llmOutput.modelConfig instead */
     llm: ILLMEventMetadata['llm'];
 }
 
@@ -121,16 +124,16 @@ export interface IThinkingExecutionParams {
  * Thinking result interface
  */
 export interface IThinkingResult {
-    /** The parsed LLM output */
+    /** @deprecated Use messages instead */
     parsedLLMOutput: IParsedOutput | null;
-    /** The raw LLM output */
+    /** @deprecated Use LLMResult.generations[0][0].text instead */
     llmOutput: string;
     /** LLM metrics */
     metrics: ILLMMetrics;
-    /** Messages processed */
-    messages?: any[];
-    /** Final output */
-    output?: IOutput;
+    /** The messages processed */
+    messages: BaseMessage[];
+    /** The final output */
+    output: LLMResult;
 }
 
 /**

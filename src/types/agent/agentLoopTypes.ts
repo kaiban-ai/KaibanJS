@@ -4,11 +4,13 @@
  * @description Types for agentic loop handling and control flow
  */
 
+import { LLMResult } from '@langchain/core/outputs';
 import type { IHandlerResult } from '../common/commonHandlerTypes';
 import type { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
 import type { IAgentType } from './agentBaseTypes';
 import type { ITaskType } from '../task/taskBaseTypes';
-import type { IOutput, ILLMUsageStats } from '../llm/llmResponseTypes';
+import type { ILLMUsageMetrics } from '../llm/llmMetricTypes';
+import type { IErrorType } from '../common/commonErrorTypes';
 import type { 
     IPerformanceMetrics,
     IResourceMetrics,
@@ -39,12 +41,12 @@ export interface ILoopContext {
     maxIterations: number;
     lastUpdateTime: number;
     status: 'running' | 'completed' | 'error';
-    error?: any;
+    error?: IErrorType;
     performance: IPerformanceMetrics;
     resources: IResourceMetrics;
     usage: IUsageMetrics;
     costs: IStandardCostDetails;
-    lastOutput?: IOutput;
+    lastOutput?: LLMResult;
 }
 
 export interface ILoopControl {
@@ -76,7 +78,7 @@ export interface ILoopHandlerMetadata extends IBaseHandlerMetadata {
         resources: IResourceMetrics;
         usage: IUsageMetrics;
         costs: IStandardCostDetails;
-        llmStats: ILLMUsageStats;
+        llmUsageMetrics: ILLMUsageMetrics;
     };
     agent: {
         id: string;
@@ -84,7 +86,7 @@ export interface ILoopHandlerMetadata extends IBaseHandlerMetadata {
         metrics: {
             iterations: number;
             executionTime: number;
-            llmUsageStats: ILLMUsageStats;
+            llmUsageMetrics: ILLMUsageMetrics;
             performance: IPerformanceMetrics;
         };
     };
@@ -94,7 +96,7 @@ export interface ILoopHandlerMetadata extends IBaseHandlerMetadata {
         metrics: {
             iterations: number;
             executionTime: number;
-            llmUsageStats: ILLMUsageStats;
+            llmUsageMetrics: ILLMUsageMetrics;
             performance: IPerformanceMetrics;
         };
     };
@@ -103,8 +105,8 @@ export interface ILoopHandlerMetadata extends IBaseHandlerMetadata {
 
 export interface ILoopResult {
     success: boolean;
-    result?: IOutput;
-    error?: string;
+    result?: LLMResult;
+    error?: IErrorType;
     metadata: {
         iterations: number;
         maxAgentIterations: number;
@@ -114,6 +116,7 @@ export interface ILoopResult {
             usage: IUsageMetrics;
             costs: IStandardCostDetails;
         };
+        [key: string]: unknown;
     };
 }
 
@@ -124,26 +127,24 @@ export const createLoopHandlerResult = (
     success: boolean,
     metadata: ILoopHandlerMetadata,
     data: {
-        result?: IOutput;
-        error?: string;
+        success: boolean;
+        result?: LLMResult;
+        error?: IErrorType;
+        metadata: {
+            iterations: number;
+            maxAgentIterations: number;
+            metrics?: {
+                performance: IPerformanceMetrics;
+                resources: IResourceMetrics;
+                usage: IUsageMetrics;
+                costs: IStandardCostDetails;
+            };
+            [key: string]: unknown;
+        };
     }
 ): ILoopHandlerResult<ILoopResult> => ({
     success,
-    data: {
-        success,
-        result: data.result,
-        error: data.error,
-        metadata: {
-            iterations: metadata.loop.iterations,
-            maxAgentIterations: metadata.loop.maxIterations,
-            metrics: {
-                performance: metadata.loop.performance,
-                resources: metadata.loop.resources,
-                usage: metadata.loop.usage,
-                costs: metadata.loop.costs
-            }
-        }
-    },
+    data,
     metadata
 });
 
@@ -188,8 +189,8 @@ export const ILoopTypeGuards = {
             metadata.loop.usage !== null &&
             typeof metadata.loop.costs === 'object' &&
             metadata.loop.costs !== null &&
-            typeof metadata.loop.llmStats === 'object' &&
-            metadata.loop.llmStats !== null &&
+            typeof metadata.loop.llmUsageMetrics === 'object' &&
+            metadata.loop.llmUsageMetrics !== null &&
             metadata.agent !== undefined &&
             typeof metadata.agent.id === 'string' &&
             typeof metadata.agent.name === 'string' &&

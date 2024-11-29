@@ -1,25 +1,24 @@
 /**
  * @file llmCostCalculator.ts
- * @path C:\Users\pwalc\Documents\GroqEmailAssistant\KaibanJS\src\utils\helpers\llm\llmCostCalculator.ts
  * @description Implementation of LLM cost calculations
  */
 
-import { logger } from "../../core/logger";
+import { LogManager } from "../../../managers/core/logManager";
+import type { ILLMUsageMetrics } from '../../../types/llm/llmMetricTypes';
+import type { 
+    IModelPricing,
+    RequiredPricingFields,
+    ICostCalculationConfig,
+    ICostDetails
+} from '../../../types/workflow/workflowCostsTypes';
+import type { IModelUsageStats } from '../../../types/workflow/workflowStatsTypes';
 
-import { ModelPricing } from "@/types/workflow";
-import { RequiredPricingFields } from "@/types/workflow";
-import { CostCalculationConfig } from "@/types/workflow";
-import { 
-    
-    ModelUsageStats,
-    CostDetails,
-    LLMUsageStats 
-} from '@/utils/types';
+const logger = LogManager.getInstance();
 
 /**
  * Standard model pricing configurations
  */
-const modelsPricing: ModelPricing[] = [
+const modelsPricing: IModelPricing[] = [
     // GPT Models
     {
         modelCode: "gpt-4o-mini",
@@ -93,7 +92,7 @@ const modelsPricing: ModelPricing[] = [
 /**
  * Default cost calculation configuration
  */
-const DEFAULT_CONFIG: Required<CostCalculationConfig> = {
+const DEFAULT_CONFIG: Required<ICostCalculationConfig> = {
     includeFailedRequests: false,
     currency: 'USD',
     pricingOverrides: {},
@@ -121,9 +120,9 @@ function getModelPricing(modelCode: string, overrides?: Record<string, RequiredP
  */
 export function calculateTaskCost(
     modelCode: string, 
-    llmUsageStats: LLMUsageStats,
-    config: CostCalculationConfig = {}
-): CostDetails {
+    llmUsageMetrics: ILLMUsageMetrics,
+    config: ICostCalculationConfig = {}
+): ICostDetails {
     const finalConfig = { ...DEFAULT_CONFIG, ...config };
     const pricing = getModelPricing(modelCode, finalConfig.pricingOverrides);
 
@@ -132,10 +131,12 @@ export function calculateTaskCost(
         return createDefaultCostDetails(finalConfig.currency);
     }
     
-    // Calculate costs using the pricing (now guaranteed to have required fields)
-    const inputCost = (llmUsageStats.inputTokens / 1000000) * pricing.inputPricePerMillionTokens;
-    const outputCost = (llmUsageStats.outputTokens / 1000000) * pricing.outputPricePerMillionTokens;
+    // Calculate costs using the pricing
+    const inputCost = (llmUsageMetrics.tokenDistribution.prompt / 1000000) * pricing.inputPricePerMillionTokens;
+    const outputCost = (llmUsageMetrics.tokenDistribution.completion / 1000000) * pricing.outputPricePerMillionTokens;
     const totalCost = inputCost + outputCost;
+
+    logger.debug(`Calculated costs for model ${modelCode}: input=${inputCost}, output=${outputCost}, total=${totalCost}`);
 
     return {
         inputCost: roundToDecimal(inputCost, finalConfig.precision),
@@ -144,11 +145,11 @@ export function calculateTaskCost(
         currency: finalConfig.currency,
         breakdown: {
             promptTokens: {
-                count: llmUsageStats.inputTokens,
+                count: llmUsageMetrics.tokenDistribution.prompt,
                 cost: roundToDecimal(inputCost, finalConfig.precision)
             },
             completionTokens: {
-                count: llmUsageStats.outputTokens,
+                count: llmUsageMetrics.tokenDistribution.completion,
                 cost: roundToDecimal(outputCost, finalConfig.precision)
             }
         }
@@ -159,9 +160,9 @@ export function calculateTaskCost(
  * Calculate total workflow cost
  */
 export function calculateTotalWorkflowCost(
-    modelUsageStats: ModelUsageStats,
-    config: CostCalculationConfig = {}
-): CostDetails {
+    modelUsageStats: IModelUsageStats,
+    config: ICostCalculationConfig = {}
+): ICostDetails {
     const finalConfig = { ...DEFAULT_CONFIG, ...config };
     let totalInputCost = 0;
     let totalOutputCost = 0;
@@ -172,15 +173,21 @@ export function calculateTotalWorkflowCost(
         const pricing = getModelPricing(modelCode, finalConfig.pricingOverrides);
         if (!pricing) {
             logger.warn(`No pricing information found for model ${modelCode}`);
-            return createDefaultCostDetails(finalConfig.currency);
+            continue;
         }
 
-        // Adjusted to use tokens.input and tokens.output
-        totalInputCost += (stats.tokens.input / 1000000) * pricing.inputPricePerMillionTokens;
-        totalOutputCost += (stats.tokens.output / 1000000) * pricing.outputPricePerMillionTokens;
+        const inputCost = (stats.tokens.input / 1000000) * pricing.inputPricePerMillionTokens;
+        const outputCost = (stats.tokens.output / 1000000) * pricing.outputPricePerMillionTokens;
+
+        logger.debug(`Model ${modelCode} costs: input=${inputCost}, output=${outputCost}`);
+
+        totalInputCost += inputCost;
+        totalOutputCost += outputCost;
         totalPromptTokens += stats.tokens.input;
         totalCompletionTokens += stats.tokens.output;
     }
+
+    logger.info(`Total workflow costs: input=${totalInputCost}, output=${totalOutputCost}, total=${totalInputCost + totalOutputCost}`);
 
     return {
         inputCost: roundToDecimal(totalInputCost, finalConfig.precision),
@@ -200,11 +207,11 @@ export function calculateTotalWorkflowCost(
     };
 }
 
-
 /**
  * Create default cost details
  */
-export function createDefaultCostDetails(currency: string): CostDetails {
+export function createDefaultCostDetails(currency: string): ICostDetails {
+    logger.warn('Creating default cost details due to missing pricing information');
     return {
         inputCost: -1,
         outputCost: -1,
@@ -234,4 +241,20 @@ export function formatCost(cost: number, currency: string = 'USD'): string {
         minimumFractionDigits: 2,
         maximumFractionDigits: 4
     }).format(cost);
+}
+
+/**
+ * Get all available model pricing configurations
+ */
+export function getAllModelPricing(): IModelPricing[] {
+    logger.debug('Retrieving all model pricing configurations');
+    return [...modelsPricing];
+}
+
+/**
+ * Get pricing configurations for a specific provider
+ */
+export function getProviderPricing(provider: string): IModelPricing[] {
+    logger.debug(`Retrieving pricing configurations for provider: ${provider}`);
+    return modelsPricing.filter(pricing => pricing.provider === provider);
 }

@@ -100,6 +100,31 @@ export enum TASK_EVENT_TYPE_enum {
     TASK_ERROR_RECOVERY_FAILED = 'task.error.recovery.failed'
 }
 
+export enum WORKFLOW_EVENT_TYPE_enum {
+    WORKFLOW_CREATED = 'workflow.created',
+    WORKFLOW_UPDATED = 'workflow.updated',
+    WORKFLOW_DELETED = 'workflow.deleted',
+    WORKFLOW_STARTED = 'workflow.started',
+    WORKFLOW_PAUSED = 'workflow.paused',
+    WORKFLOW_RESUMED = 'workflow.resumed',
+    WORKFLOW_CANCELLED = 'workflow.cancelled',
+    WORKFLOW_COMPLETED = 'workflow.completed',
+    WORKFLOW_FAILED = 'workflow.failed',
+    WORKFLOW_STEP_STARTED = 'workflow.step.started',
+    WORKFLOW_STEP_COMPLETED = 'workflow.step.completed',
+    WORKFLOW_STEP_FAILED = 'workflow.step.failed',
+    WORKFLOW_AGENT_ASSIGNED = 'workflow.agent.assigned',
+    WORKFLOW_AGENT_RELEASED = 'workflow.agent.released',
+    WORKFLOW_TASK_CREATED = 'workflow.task.created',
+    WORKFLOW_TASK_COMPLETED = 'workflow.task.completed',
+    WORKFLOW_TASK_FAILED = 'workflow.task.failed',
+    WORKFLOW_ERROR_OCCURRED = 'workflow.error.occurred',
+    WORKFLOW_ERROR_HANDLED = 'workflow.error.handled',
+    WORKFLOW_ERROR_RECOVERY_STARTED = 'workflow.error.recovery.started',
+    WORKFLOW_ERROR_RECOVERY_COMPLETED = 'workflow.error.recovery.completed',
+    WORKFLOW_ERROR_RECOVERY_FAILED = 'workflow.error.recovery.failed'
+}
+
 export enum STATUS_LOG_TYPE_enum {
     AGENT_STATUS = 'AgentStatusUpdate',
     TASK_STATUS = 'TaskStatusUpdate',
@@ -156,6 +181,16 @@ export enum MESSAGE_ERROR_TYPE_enum {
     TIMEOUT = 'TIMEOUT'
 }
 
+export enum LLM_ERROR_KIND_enum {
+    VALIDATION_ERROR = 'VALIDATION_ERROR',
+    EXECUTION_ERROR = 'EXECUTION_ERROR',
+    GENERATION_ERROR = 'GENERATION_ERROR',
+    STREAMING_ERROR = 'STREAMING_ERROR',
+    INITIALIZATION_ERROR = 'INITIALIZATION_ERROR',
+    COGNITIVE_ERROR = 'COGNITIVE_ERROR',
+    STATE_ERROR = 'STATE_ERROR'
+}
+
 // ─── LLM Provider Enums ───────────────────────────────────────────────────────
 
 export enum LLM_PROVIDER_enum {
@@ -194,7 +229,7 @@ export enum MISTRAL_MODEL_enum {
     MEDIUM = 'mistral-medium'
 }
 
-// ─── Log Level Enum ──────────────────────────────────────────────────────────
+// ─── Log Level Type ──────────────────────────────────────────────────────────
 
 export type ILogLevel = 'debug' | 'info' | 'warn' | 'error';
 
@@ -249,7 +284,6 @@ export interface IEnumTypeGuards {
 }
 
 export const EnumTypeGuards: IEnumTypeGuards = {
-    // Status-related Type Guards
     isAgentStatus: (status: unknown): status is keyof typeof AGENT_STATUS_enum => {
         return typeof status === 'string' && status in AGENT_STATUS_enum;
     },
@@ -287,7 +321,6 @@ export const EnumTypeGuards: IEnumTypeGuards = {
         }
     },
 
-    // Model-related Type Guards
     isLLMProvider: (provider: unknown): provider is keyof typeof LLM_PROVIDER_enum => {
         return typeof provider === 'string' && provider in LLM_PROVIDER_enum;
     },
@@ -329,4 +362,3 @@ export const EnumTypeGuards: IEnumTypeGuards = {
         }
     }
 };
-

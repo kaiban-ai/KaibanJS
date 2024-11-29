@@ -4,10 +4,10 @@
  * @description Strict metadata type definitions with enhanced type safety
  */
 
-import type { IValidationResult } from './commonValidationTypes';
+import type { IValidationResult, ValidationErrorType, ValidationWarningType } from './commonValidationTypes';
 import type { IStatusEntity, IStatusType } from './commonStatusTypes';
-import type { IPerformanceMetrics, IResourceMetrics, IUsageMetrics } from './commonMetricTypes';
-import type { ILLMUsageStats } from '../llm/llmResponseTypes';
+import type { IPerformanceMetrics, IResourceMetrics } from './commonMetricTypes';
+import type { ILLMUsageMetrics } from '../llm/llmMetricTypes';
 import type { ICostDetails } from '../workflow/workflowCostsTypes';
 import type { 
     AGENT_STATUS_enum,
@@ -54,8 +54,8 @@ export interface IBaseHandlerMetadata {
     readonly context: IBaseContextPartial;
     readonly validation: {
         readonly isValid: boolean;
-        readonly errors: ReadonlyArray<string>;
-        readonly warnings: ReadonlyArray<string>;
+        readonly errors: ReadonlyArray<ValidationErrorType>;
+        readonly warnings: ReadonlyArray<ValidationWarningType>;
     };
 }
 
@@ -83,7 +83,7 @@ export interface ISuccessMetadata extends IBaseHandlerMetadata {
     readonly details: {
         readonly duration: number;
         readonly status: 'success' | 'partial' | 'warning';
-        readonly warnings: ReadonlyArray<string>;
+        readonly warnings: ReadonlyArray<ValidationWarningType>;
         readonly metrics: {
             readonly executionTime: number;
             readonly memoryUsage: number;
@@ -184,7 +184,7 @@ export interface IMessageMetadata extends IBaseHandlerMetadata {
             readonly path: ReadonlyArray<string>;
         };
         readonly performance: IPerformanceMetrics;
-        readonly type: 'command' | 'response' | 'error' | 'status';
+        readonly type: MESSAGE_STATUS_enum;
     };
 }
 
@@ -195,7 +195,7 @@ export interface ITeamMetadata extends IBaseHandlerMetadata {
         readonly agents: Readonly<Record<string, IAgentMetadata>>;
         readonly tasks: Readonly<Record<string, ITaskMetadata>>;
         readonly performance: IPerformanceMetrics;
-        readonly llmUsageStats: ILLMUsageStats;
+        readonly llmUsageMetrics: ILLMUsageMetrics;
         readonly costDetails: ICostDetails;
         readonly messageCount: number;
         readonly iterationCount: number;
@@ -216,7 +216,7 @@ export interface IWorkflowMetadata extends IBaseHandlerMetadata {
         readonly performance: IPerformanceMetrics;
         readonly debugInfo: {
             readonly lastCheckpoint: string;
-            readonly warnings: ReadonlyArray<string>;
+            readonly warnings: ReadonlyArray<ValidationWarningType>;
             readonly errors: ReadonlyArray<{
                 readonly code: string;
                 readonly message: string;
@@ -228,11 +228,11 @@ export interface IWorkflowMetadata extends IBaseHandlerMetadata {
         readonly taskCount: number;
         readonly agentCount: number;
         readonly costDetails: ICostDetails;
-        readonly llmUsageStats: ILLMUsageStats;
+        readonly llmUsageMetrics: ILLMUsageMetrics;
         readonly teamName: string;
         readonly messageCount: number;
         readonly iterationCount: number;
-        readonly status: 'pending' | 'running' | 'completed' | 'failed';
+        readonly status: WORKFLOW_STATUS_enum;
     };
 }
 
@@ -242,11 +242,11 @@ export interface IAgentMetadata extends IBaseHandlerMetadata {
         readonly id: string;
         readonly name: string;
         readonly role: string;
-        readonly status: string;
+        readonly status: AGENT_STATUS_enum;
         readonly metrics: {
             readonly iterations: number;
             readonly executionTime: number;
-            readonly llmUsageStats: ILLMUsageStats;
+            readonly llmUsageMetrics: ILLMUsageMetrics;
             readonly performance: IPerformanceMetrics;
             readonly resources: IResourceMetrics;
             readonly successRate: number;
@@ -268,7 +268,7 @@ export interface IAgentCreationMetadata extends IBaseHandlerMetadata {
     readonly initialization: {
         readonly duration: number;
         readonly status: 'success' | 'failed';
-        readonly errors: ReadonlyArray<string>;
+        readonly errors: ReadonlyArray<ValidationErrorType>;
     };
 }
 
@@ -276,10 +276,10 @@ export interface IAgentCreationMetadata extends IBaseHandlerMetadata {
 export interface IAgentExecutionMetadata extends IBaseHandlerMetadata {
     readonly iterations: number;
     readonly executionTime: number;
-    readonly llmUsageStats: ILLMUsageStats;
+    readonly llmUsageMetrics: ILLMUsageMetrics;
     readonly performance: IPerformanceMetrics;
     readonly resources: IResourceMetrics;
-    readonly status: 'running' | 'completed' | 'failed';
+    readonly status: AGENT_STATUS_enum;
     readonly error?: {
         readonly code: string;
         readonly message: string;
@@ -293,11 +293,11 @@ export interface ITaskMetadata extends IBaseHandlerMetadata {
         readonly id: string;
         readonly type: string;
         readonly priority: number;
-        readonly status: 'pending' | 'running' | 'completed' | 'failed';
+        readonly status: TASK_STATUS_enum;
         readonly metrics: {
             readonly iterations: number;
             readonly executionTime: number;
-            readonly llmUsageStats: ILLMUsageStats;
+            readonly llmUsageMetrics: ILLMUsageMetrics;
             readonly performance: IPerformanceMetrics;
             readonly resources: IResourceMetrics;
             readonly completionRate: number;
@@ -473,7 +473,7 @@ export const MetadataTypeGuards: IMetadataTypeGuards = {
         value => MetadataTypeGuards.isBaseHandlerMetadata(value as any),
         value => typeof (value as any).iterations === 'number',
         value => typeof (value as any).executionTime === 'number',
-        value => metadataChecks.isObject((value as any).llmUsageStats),
+        value => metadataChecks.isObject((value as any).llmUsageMetrics),
         value => metadataChecks.isObject((value as any).performance)
     ])
 };
@@ -520,28 +520,7 @@ export const createBaseMetadata = (
     },
     validation: {
         isValid: true,
-        errors: [],
-        warnings: []
-    }
-});
-
-/** Create default resource metrics */
-export const createDefaultResourceMetrics = (): IResourceMetrics => ({
-    cpuUsage: 0,
-    memoryUsage: process.memoryUsage().heapUsed,
-    diskIO: { read: 0, write: 0 },
-    networkUsage: { upload: 0, download: 0 },
-    timestamp: Date.now()
-});
-
-/** Create default validation result */
-export const createDefaultValidation = (): IValidationResult => ({
-    isValid: true,
-    errors: [],
-    warnings: [],
-    metadata: {
-        timestamp: Date.now(),
-        duration: 0,
-        validatorName: 'default'
+        errors: Object.freeze([]) as ReadonlyArray<ValidationErrorType>,
+        warnings: Object.freeze([]) as ReadonlyArray<ValidationWarningType>
     }
 });

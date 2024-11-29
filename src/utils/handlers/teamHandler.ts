@@ -5,9 +5,9 @@
  */
 
 // Core utilities
-import { logger } from "@/utils/core/logger";
-import { PrettyError } from "@/utils/core/errors";
-import { TeamManager } from "@/utils/managers/domain/team/TeamManager";
+import { logger } from '../core/logger';
+import { PrettyError } from '../core/errors';
+import { TeamManager } from '../managers/domain/team/TeamManager';
 
 // Types from canonical locations
 import type {
@@ -19,14 +19,13 @@ import type {
     WorkflowStartResult,
     WorkflowResult,
     ModelUsageStats,
-    LLMUsageStats,
     CostDetails,
     ErrorType,
     SystemAgent,
     HandlerResult
-} from '@/utils/types';
-
-import { WORKFLOW_STATUS_enum } from '@/utils/types/common/enums';
+} from '../types';
+import type { ILLMUsageMetrics } from '../../types/llm/llmMetricTypes';
+import { WORKFLOW_STATUS_enum } from '../types/common/enums';
 
 /**
  * High-level team operation handling
@@ -109,10 +108,10 @@ export class TeamHandler {
     public async handleResourceTracking(
         store: TeamStore,
         task: TaskType,
-        llmUsageStats: LLMUsageStats
+        llmUsageMetrics: ILLMUsageMetrics
     ): Promise<HandlerResult<void>> {
         try {
-            return await this.teamManager.updateResourceTracking(store, task, llmUsageStats);
+            return await this.teamManager.updateResourceTracking(store, task, llmUsageMetrics);
         } catch (error) {
             logger.error('Error updating resource tracking:', error);
             throw error;

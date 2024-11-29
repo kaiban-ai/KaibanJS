@@ -1,11 +1,11 @@
 /**
  * @file llmProviderTypes.ts
  * @path src/types/llm/llmProviderTypes.ts
- * @description LLM provider-specific type definitions and configuration
- *
- * @module @types/llm
+ * @description LLM provider-specific type definitions using Langchain
  */
 
+import { BaseChatModel, BaseChatModelParams } from '@langchain/core/language_models/chat_models';
+import { CallbackManagerForLLMRun } from '@langchain/core/callbacks/manager';
 import { 
     LLM_PROVIDER_enum,
     GROQ_MODEL_enum,
@@ -15,27 +15,12 @@ import {
     MISTRAL_MODEL_enum,
     EnumTypeGuards
 } from '../common/commonEnums';
+import { HarmCategory, HarmBlockThreshold, SafetySetting } from './googleTypes';
 import type { IBaseMetrics } from '../metrics/base/baseMetrics';
 import type { IResourceMetrics } from '../metrics/base/resourceMetrics';
 import type { IPerformanceMetrics } from '../metrics/base/performanceMetrics';
 import type { IUsageMetrics } from '../metrics/base/usageMetrics';
-
-// ─── Base Configuration ────────────────────────────────────────────────────────
-
-export interface IBaseLLMConfig {
-    apiKey?: string;        // API key for authentication
-    apiBaseUrl?: string;    // Base URL for API requests
-    maxRetries?: number;    // Maximum retries for failed requests
-    timeout?: number;       // Timeout in milliseconds */
-    model: string;          // Model identifier */
-    provider: LLM_PROVIDER_enum;  // Provider identifier */
-    temperature?: number;   // Temperature for response generation */
-    maxTokens?: number;     // Maximum tokens to generate */
-    topP?: number;          // Top P sampling */
-    topK?: number;          // Top K sampling */
-    callbacks?: any;        // Callback functions
-    metadata?: Record<string, unknown>; // Additional metadata
-}
+import type { IBaseLLMConfig } from './llmCommonTypes';
 
 // ─── Provider-Specific Configurations ──────────────────────────────────────────
 
@@ -65,10 +50,7 @@ export interface IGoogleConfig extends Omit<IBaseLLMConfig, 'model' | 'provider'
     provider: LLM_PROVIDER_enum.GOOGLE;
     model: GOOGLE_MODEL_enum;
     baseUrl?: string;
-    safetySettings?: {
-        category: string;
-        threshold: number;
-    }[];
+    safetySettings?: SafetySetting[];
 }
 
 export interface IMistralConfig extends Omit<IBaseLLMConfig, 'model' | 'provider'> {
@@ -101,6 +83,7 @@ export interface IBaseProviderMetrics extends IBaseMetrics {
     resources: IResourceMetrics;
     performance: IPerformanceMetrics;
     usage: IUsageMetrics;
+    callback?: CallbackManagerForLLMRun;
 }
 
 export interface IGroqMetrics extends IBaseProviderMetrics {
@@ -131,7 +114,7 @@ export interface IAnthropicMetrics extends IBaseProviderMetrics {
 export interface IGoogleMetrics extends IBaseProviderMetrics {
     provider: LLM_PROVIDER_enum.GOOGLE;
     model: GOOGLE_MODEL_enum;
-    safetyRatings: Record<string, number>;
+    safetyRatings: Record<HarmCategory, number>;
     modelLatency: number;
     apiOverhead: number;
 }
@@ -164,120 +147,42 @@ export type LLMProviderMetrics =
 
 export const LLMProviderTypeGuards = {
     isGroqConfig: (config: LLMProviderConfig): config is IGroqConfig => {
-        return config.provider === LLM_PROVIDER_enum.GROQ;
+        return config.provider === LLM_PROVIDER_enum.GROQ && EnumTypeGuards.isGroqModel(config.model);
     },
 
     isOpenAIConfig: (config: LLMProviderConfig): config is IOpenAIConfig => {
-        return config.provider === LLM_PROVIDER_enum.OPENAI;
+        return config.provider === LLM_PROVIDER_enum.OPENAI && EnumTypeGuards.isOpenAIModel(config.model);
     },
 
     isAnthropicConfig: (config: LLMProviderConfig): config is IAnthropicConfig => {
-        return config.provider === LLM_PROVIDER_enum.ANTHROPIC;
+        return config.provider === LLM_PROVIDER_enum.ANTHROPIC && EnumTypeGuards.isAnthropicModel(config.model);
     },
 
     isGoogleConfig: (config: LLMProviderConfig): config is IGoogleConfig => {
-        return config.provider === LLM_PROVIDER_enum.GOOGLE;
+        return config.provider === LLM_PROVIDER_enum.GOOGLE && EnumTypeGuards.isGoogleModel(config.model);
     },
 
     isMistralConfig: (config: LLMProviderConfig): config is IMistralConfig => {
-        return config.provider === LLM_PROVIDER_enum.MISTRAL;
+        return config.provider === LLM_PROVIDER_enum.MISTRAL && EnumTypeGuards.isMistralModel(config.model);
     },
 
     isGroqMetrics: (metrics: LLMProviderMetrics): metrics is IGroqMetrics => {
-        return metrics.provider === LLM_PROVIDER_enum.GROQ;
+        return metrics.provider === LLM_PROVIDER_enum.GROQ && EnumTypeGuards.isGroqModel(metrics.model);
     },
 
     isOpenAIMetrics: (metrics: LLMProviderMetrics): metrics is IOpenAIMetrics => {
-        return metrics.provider === LLM_PROVIDER_enum.OPENAI;
+        return metrics.provider === LLM_PROVIDER_enum.OPENAI && EnumTypeGuards.isOpenAIModel(metrics.model);
     },
 
     isAnthropicMetrics: (metrics: LLMProviderMetrics): metrics is IAnthropicMetrics => {
-        return metrics.provider === LLM_PROVIDER_enum.ANTHROPIC;
+        return metrics.provider === LLM_PROVIDER_enum.ANTHROPIC && EnumTypeGuards.isAnthropicModel(metrics.model);
     },
 
     isGoogleMetrics: (metrics: LLMProviderMetrics): metrics is IGoogleMetrics => {
-        return metrics.provider === LLM_PROVIDER_enum.GOOGLE;
+        return metrics.provider === LLM_PROVIDER_enum.GOOGLE && EnumTypeGuards.isGoogleModel(metrics.model);
     },
 
     isMistralMetrics: (metrics: LLMProviderMetrics): metrics is IMistralMetrics => {
-        return metrics.provider === LLM_PROVIDER_enum.MISTRAL;
+        return metrics.provider === LLM_PROVIDER_enum.MISTRAL && EnumTypeGuards.isMistralModel(metrics.model);
     }
-};
-
-// ─── Runtime Configuration Helpers ────────────────────────────────────────────
-
-export interface IRuntimeConfig extends Omit<IBaseLLMConfig, 'provider' | 'model'> {
-    provider: LLM_PROVIDER_enum;
-    model: string;
-}
-
-export const createProviderConfig = (config: IRuntimeConfig): LLMProviderConfig => {
-    const { provider, model, ...rest } = config;
-
-    switch (provider) {
-        case LLM_PROVIDER_enum.GROQ:
-            if (!EnumTypeGuards.isGroqModel(model)) {
-                throw new Error(`Invalid model ${model} for provider ${provider}`);
-            }
-            return {
-                ...rest,
-                provider,
-                model: model as GROQ_MODEL_enum
-            };
-
-        case LLM_PROVIDER_enum.OPENAI:
-            if (!EnumTypeGuards.isOpenAIModel(model)) {
-                throw new Error(`Invalid model ${model} for provider ${provider}`);
-            }
-            return {
-                ...rest,
-                provider,
-                model: model as OPENAI_MODEL_enum
-            };
-
-        case LLM_PROVIDER_enum.ANTHROPIC:
-            if (!EnumTypeGuards.isAnthropicModel(model)) {
-                throw new Error(`Invalid model ${model} for provider ${provider}`);
-            }
-            return {
-                ...rest,
-                provider,
-                model: model as ANTHROPIC_MODEL_enum
-            };
-
-        case LLM_PROVIDER_enum.GOOGLE:
-            if (!EnumTypeGuards.isGoogleModel(model)) {
-                throw new Error(`Invalid model ${model} for provider ${provider}`);
-            }
-            return {
-                ...rest,
-                provider,
-                model: model as GOOGLE_MODEL_enum
-            };
-
-        case LLM_PROVIDER_enum.MISTRAL:
-            if (!EnumTypeGuards.isMistralModel(model)) {
-                throw new Error(`Invalid model ${model} for provider ${provider}`);
-            }
-            return {
-                ...rest,
-                provider,
-                model: model as MISTRAL_MODEL_enum
-            };
-
-        default:
-            throw new Error(`Unsupported provider: ${provider}`);
-    }
-};
-
-// ─── Runtime Type Guard ────────────────────────────────────────────────────────
-
-export const isRuntimeConfig = (config: unknown): config is IRuntimeConfig => {
-    if (typeof config !== 'object' || config === null) return false;
-    const c = config as IRuntimeConfig;
-    return (
-        typeof c.provider === 'string' &&
-        typeof c.model === 'string' &&
-        Object.values(LLM_PROVIDER_enum).includes(c.provider as LLM_PROVIDER_enum)
-    );
 };

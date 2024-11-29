@@ -8,9 +8,14 @@
 
 import { CoreManager } from '../../core/coreManager';
 import { TASK_EVENT_TYPE_enum, TASK_STATUS_enum } from '../../../types/common/commonEnums';
-import { createBaseMetadata } from '../../../types/common/commonMetadataTypes';
 import { MetadataTypeGuards } from '../../../types/common/commonTypeGuards';
-import { createValidationResult } from '../../../types/common/commonValidationTypes';
+import { 
+    createValidationResult, 
+    createValidationMetadata,
+    IValidationResult,
+    ValidationErrorType,
+    ValidationWarningType
+} from '../../../types/common/commonValidationTypes';
 import { createError } from '../../../types/common/commonErrorTypes';
 import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
 
@@ -18,22 +23,13 @@ import type {
     TaskEvent,
     ITaskCreatedEvent,
     ITaskUpdatedEvent,
-    ITaskDeletedEvent,
     ITaskStatusChangedEvent,
     ITaskProgressUpdatedEvent,
     ITaskCompletedEvent,
     ITaskFailedEvent,
-    ITaskErrorOccurredEvent,
-    ITaskValidationCompletedEvent,
-    ITaskFeedbackAddedEvent,
-    ITaskMetricsUpdatedEvent,
-    ITaskErrorHandledEvent,
-    ITaskErrorRecoveryStartedEvent,
-    ITaskErrorRecoveryCompletedEvent,
-    ITaskErrorRecoveryFailedEvent
+    ITaskErrorOccurredEvent
 } from '../../../types/task/taskEventTypes';
-import type { IEventHandler, IEventValidationResult } from '../../../types/common/commonEventTypes';
-import type { IErrorKind } from '../../../types/common/commonErrorTypes';
+import type { IEventHandler } from '../../../types/common/commonEventTypes';
 import type { IStatusTransitionContext } from '../../../types/common/commonStatusTypes';
 
 // ─── Base Handler ────────────────────────────────────────────────────────────
@@ -46,28 +42,52 @@ abstract class BaseTaskEventHandler<T extends TaskEvent> extends CoreManager imp
 
     abstract handle(event: T): Promise<void>;
 
-    async validate(event: T): Promise<IEventValidationResult> {
+    async validate(event: T): Promise<IValidationResult<unknown>> {
         const startTime = Date.now();
-        const errors: string[] = [];
-        const warnings: string[] = [];
+        const errors: ValidationErrorType[] = [];
+        const warnings: ValidationWarningType[] = [];
 
         if (!event.id || typeof event.id !== 'string') {
-            errors.push('Invalid event ID');
+            errors.push({
+                code: 'INVALID_ID',
+                message: 'Invalid event ID'
+            });
         }
         if (!event.timestamp || typeof event.timestamp !== 'number') {
-            errors.push('Invalid event timestamp');
+            errors.push({
+                code: 'INVALID_TIMESTAMP',
+                message: 'Invalid event timestamp'
+            });
         }
         if (!event.type || !Object.values(TASK_EVENT_TYPE_enum).includes(event.type)) {
-            errors.push('Invalid event type');
+            errors.push({
+                code: 'INVALID_TYPE',
+                message: 'Invalid event type'
+            });
         }
         if (!event.taskId || typeof event.taskId !== 'string') {
-            errors.push('Invalid task ID');
+            errors.push({
+                code: 'INVALID_TASK_ID',
+                message: 'Invalid task ID'
+            });
         }
         if (!MetadataTypeGuards.isBaseHandlerMetadata(event.metadata)) {
-            errors.push('Invalid event metadata');
+            errors.push({
+                code: 'INVALID_METADATA',
+                message: 'Invalid event metadata'
+            });
         }
 
-        return createValidationResult(errors.length === 0, 'TaskEventHandler');
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'TaskEventHandler',
+                operation: 'validate',
+                validatedFields: ['id', 'timestamp', 'type', 'taskId', 'metadata']
+            })
+        });
     }
 
     protected async handleStatusTransition(params: IStatusTransitionContext): Promise<boolean> {
@@ -245,7 +265,7 @@ export class TaskStatusChangedHandler extends BaseTaskEventHandler<ITaskStatusCh
 
     async handle(event: ITaskStatusChangedEvent): Promise<void> {
         try {
-            const { taskId, previousStatus, newStatus, reason } = event;
+            const { taskId, previousStatus, newStatus, reason = 'Status changed' } = event;
             this.logInfo(`Task ${taskId} status changed from ${previousStatus} to ${newStatus}: ${reason}`);
 
             const transitionContext: IStatusTransitionContext = {
@@ -277,7 +297,7 @@ export class TaskStatusChangedHandler extends BaseTaskEventHandler<ITaskStatusCh
         }
     }
 
-    private async updateMetrics(taskId: string, from: string, to: string): Promise<void> {
+    private async updateMetrics(taskId: string, from: TASK_STATUS_enum, to: TASK_STATUS_enum): Promise<void> {
         this.logDebug(`Updating metrics for task ${taskId}`);
         await this.getMetricsManager().trackMetric({
             domain: MetricDomain.TASK,
@@ -288,7 +308,7 @@ export class TaskStatusChangedHandler extends BaseTaskEventHandler<ITaskStatusCh
         });
     }
 
-    private async logTransition(taskId: string, from: string, to: string, reason: string): Promise<void> {
+    private async logTransition(taskId: string, from: TASK_STATUS_enum, to: TASK_STATUS_enum, reason: string): Promise<void> {
         this.logDebug(`Logging transition for task ${taskId}`);
         this.logManager.info(`Task ${taskId} transitioned from ${from} to ${to}: ${reason}`, null, taskId);
     }
@@ -313,7 +333,7 @@ export class TaskProgressUpdatedHandler extends BaseTaskEventHandler<ITaskProgre
     async handle(event: ITaskProgressUpdatedEvent): Promise<void> {
         try {
             const { taskId, previousProgress, newProgress } = event;
-            this.logInfo(`Task ${taskId} progress updated: ${newProgress.progress}%`);
+            this.logInfo(`Task ${taskId} progress updated: ${newProgress}%`);
             
             await this.updateProgressTracking(taskId, previousProgress, newProgress);
             await this.updateMetrics(taskId, newProgress);
@@ -384,12 +404,12 @@ export class TaskCompletedHandler extends BaseTaskEventHandler<ITaskCompletedEve
 
     async handle(event: ITaskCompletedEvent): Promise<void> {
         try {
-            const { taskId, result, duration } = event;
+            const { taskId, outputs, duration } = event;
             this.logInfo(`Task ${taskId} completed in ${duration}ms`);
             
-            await this.processCompletion(taskId, result);
+            await this.processCompletion(taskId, outputs);
             await this.updateMetrics(taskId, duration);
-            await this.logCompletion(taskId, result, duration);
+            await this.logCompletion(taskId, outputs, duration);
 
             const transitionContext: IStatusTransitionContext = {
                 entity: 'task',
@@ -409,12 +429,12 @@ export class TaskCompletedHandler extends BaseTaskEventHandler<ITaskCompletedEve
         }
     }
 
-    private async processCompletion(taskId: string, result: unknown): Promise<void> {
+    private async processCompletion(taskId: string, outputs: unknown): Promise<void> {
         this.logDebug(`Processing completion for task ${taskId}`);
         await this.getMetricsManager().trackMetric({
             domain: MetricDomain.TASK,
             type: MetricType.PERFORMANCE,
-            value: JSON.stringify(result),
+            value: JSON.stringify(outputs),
             timestamp: Date.now(),
             metadata: { taskId, operation: 'complete' }
         });
@@ -432,7 +452,7 @@ export class TaskCompletedHandler extends BaseTaskEventHandler<ITaskCompletedEve
         });
     }
 
-    private async logCompletion(taskId: string, result: unknown, duration: number): Promise<void> {
+    private async logCompletion(taskId: string, outputs: unknown, duration: number): Promise<void> {
         this.logDebug(`Logging completion for task ${taskId}`);
         this.logManager.info(`Task ${taskId} completed in ${duration}ms`, null, taskId);
     }
@@ -652,6 +672,6 @@ export const taskEventHandlers = new Map<TASK_EVENT_TYPE_enum, IEventHandler<Tas
     [TASK_EVENT_TYPE_enum.TASK_COMPLETED, TaskCompletedHandler.getInstance()],
     [TASK_EVENT_TYPE_enum.TASK_ERROR_OCCURRED, TaskErrorOccurredHandler.getInstance()],
     [TASK_EVENT_TYPE_enum.TASK_FAILED, TaskFailedHandler.getInstance()]
-]);
+]) as ReadonlyMap<TASK_EVENT_TYPE_enum, IEventHandler<TaskEvent>>;
 
 export default taskEventHandlers;

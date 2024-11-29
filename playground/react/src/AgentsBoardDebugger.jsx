@@ -24,11 +24,11 @@ const WorkflowStats = ({ stats }) => {
             </p>
             <h4>LLM Usage:</h4>
             <ul>
-                <li>Input Tokens: {stats.llmUsageStats.inputTokens}</li>
-                <li>Output Tokens: {stats.llmUsageStats.outputTokens}</li>
-                <li>API Calls: {stats.llmUsageStats.callsCount}</li>
-                <li>Errors: {stats.llmUsageStats.callsErrorCount}</li>
-                <li>Parsing Errors: {stats.llmUsageStats.parsingErrors}</li>
+                <li>Input Tokens: {stats.llmUsageMetrics.tokenDistribution.prompt}</li>
+                <li>Output Tokens: {stats.llmUsageMetrics.tokenDistribution.completion}</li>
+                <li>Total Requests: {stats.llmUsageMetrics.totalRequests}</li>
+                <li>Active Instances: {stats.llmUsageMetrics.activeInstances}</li>
+                <li>Requests/Second: {stats.llmUsageMetrics.requestsPerSecond}</li>
             </ul>
             <p>
                 <strong>Total Cost:</strong> $
@@ -104,10 +104,6 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
     useEffect(() => {
         setStatusLog((prevLog) => [...prevLog, teamWorkflowStatus]);
     }, [teamWorkflowStatus]);
-
-    // useEffect(() => {
-    //     console.log('Tasks:', tasks);
-    // }, [tasks]);
 
     const startTeam = async () => {
         try {

@@ -1,9 +1,6 @@
 /**
  * @file providerManager.ts
- * @path src/utils/managers/domain/llm/providerManager.ts
  * @description LLM provider management implementation using service registry pattern
- *
- * @module @managers/domain/llm
  */
 
 import CoreManager from '../../core/coreManager';
@@ -12,38 +9,47 @@ import { ChatOpenAI } from '@langchain/openai';
 import { ChatAnthropic } from '@langchain/anthropic';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { ChatMistralAI } from '@langchain/mistralai';
+import { LLM_PROVIDER_enum } from '../../../types/common/commonEnums';
+import { createError } from '../../../types/common/commonErrorTypes';
+import { MetadataFactory } from '../../../utils/factories/metadataFactory';
+import { LLMProviderTypeGuards } from '../../../types/llm/llmProviderTypes';
+import { SafetySetting } from '../../../types/llm/googleTypes';
 
-import type {
-    LLMConfig,
-    LLMProvider,
-    LLMRuntimeOptions,
-    ActiveLLMConfig
-} from '@/utils/types/llm/common';
+import type { ILLMValidationResult } from '../../../types/llm/llmManagerTypes';
+import type { 
+    LLMProviderConfig,
+    IGroqConfig,
+    IOpenAIConfig,
+    IAnthropicConfig,
+    IGoogleConfig,
+    IMistralConfig
+} from '../../../types/llm/llmProviderTypes';
+import type { IHandlerResult } from '../../../types/common/commonHandlerTypes';
 
-import type {
-    GroqConfig,
-    OpenAIConfig,
-    AnthropicConfig,
-    GoogleConfig,
-    MistralConfig
-} from '@/utils/types/llm/providers';
-
-import type {
-    LLMResponse,
-    StreamingChunk,
-    TokenUsage
-} from '@/utils/types/llm/responses';
+type ProviderInstanceMap = {
+    [LLM_PROVIDER_enum.GROQ]: ChatGroq;
+    [LLM_PROVIDER_enum.OPENAI]: ChatOpenAI;
+    [LLM_PROVIDER_enum.ANTHROPIC]: ChatAnthropic;
+    [LLM_PROVIDER_enum.GOOGLE]: ChatGoogleGenerativeAI;
+    [LLM_PROVIDER_enum.MISTRAL]: ChatMistralAI;
+};
 
 export class ProviderManager extends CoreManager {
     private static instance: ProviderManager;
-    private readonly providers: Map<LLMProvider, any>;
-    private readonly configs: Map<string, LLMConfig>;
+    private readonly providers: Map<LLM_PROVIDER_enum, ProviderInstanceMap[LLM_PROVIDER_enum]>;
+    private readonly configs: Map<string, LLMProviderConfig>;
 
     private constructor() {
         super();
         this.providers = new Map();
         this.configs = new Map();
         this.registerDomainManager('ProviderManager', this);
+        
+        // Register dependencies
+        if (!this.hasDomainManager('OutputManager')) {
+            const OutputManager = require('./outputManager').default;
+            this.registerDomainManager('OutputManager', OutputManager);
+        }
     }
 
     public static getInstance(): ProviderManager {
@@ -55,251 +61,262 @@ export class ProviderManager extends CoreManager {
 
     // ─── Provider Instance Management ───────────────────────────────────────────
 
-    public async getProviderInstance(config: LLMConfig): Promise<any> {
+    public async getProviderInstance(config: LLMProviderConfig): Promise<IHandlerResult<ProviderInstanceMap[LLM_PROVIDER_enum]>> {
         return await this.safeExecute(async () => {
-            const provider = config.provider;
+            const instanceId = this.generateInstanceId(config);
             
-            if (this.providers.has(provider)) {
-                return this.providers.get(provider);
+            if (this.providers.has(config.provider)) {
+                return this.providers.get(config.provider)!;
             }
 
             const instance = await this.createProviderInstance(config);
-            this.providers.set(provider, instance);
-            this.configs.set(this.generateInstanceId(config), config);
+            this.providers.set(config.provider, instance);
+            this.configs.set(instanceId, config);
 
+            this.logInfo(`Created new provider instance: ${LLM_PROVIDER_enum[config.provider]}`, null, instanceId);
             return instance;
         }, 'Failed to get provider instance');
     }
 
-    private async createProviderInstance(config: LLMConfig): Promise<any> {
-        switch (config.provider) {
-            case 'groq':
-                return this.createGroqInstance(config as GroqConfig);
-            case 'openai':
-                return this.createOpenAIInstance(config as OpenAIConfig);
-            case 'anthropic':
-                return this.createAnthropicInstance(config as AnthropicConfig);
-            case 'google':
-                return this.createGoogleInstance(config as GoogleConfig);
-            case 'mistral':
-                return this.createMistralInstance(config as MistralConfig);
-            default:
-                throw new Error(`Unsupported provider: ${config.provider}`);
+    private async createProviderInstance(config: LLMProviderConfig): Promise<ProviderInstanceMap[LLM_PROVIDER_enum]> {
+        try {
+            if (LLMProviderTypeGuards.isGroqConfig(config)) {
+                return this.createGroqInstance(config);
+            }
+            if (LLMProviderTypeGuards.isOpenAIConfig(config)) {
+                return this.createOpenAIInstance(config);
+            }
+            if (LLMProviderTypeGuards.isAnthropicConfig(config)) {
+                return this.createAnthropicInstance(config);
+            }
+            if (LLMProviderTypeGuards.isGoogleConfig(config)) {
+                return this.createGoogleInstance(config);
+            }
+            if (LLMProviderTypeGuards.isMistralConfig(config)) {
+                return this.createMistralInstance(config);
+            }
+
+            throw createError({
+                message: '❌ Unsupported provider configuration',
+                type: 'InitializationError',
+                context: { providerType: config.provider }
+            });
+        } catch (error) {
+            throw createError({
+                message: '❌ Failed to create provider instance',
+                type: 'InitializationError',
+                context: { providerType: config.provider },
+                cause: error instanceof Error ? error : undefined
+            });
         }
     }
 
-    // ─── Provider Instance Creation ────────────────────────────────────────────
+    // ─── Provider-Specific Instance Creation ───────────────────────────────────
 
-    private createGroqInstance(config: GroqConfig): ChatGroq {
+    private createGroqInstance(config: IGroqConfig): ChatGroq {
         return new ChatGroq({
             apiKey: config.apiKey,
             modelName: config.model,
-            temperature: config.temperature,
             streaming: config.streaming,
+            maxRetries: config.maxRetries,
+            temperature: config.temperature,
             maxTokens: config.maxTokens,
-            stopSequences: config.stop,
-            ...config
+            stopSequences: config.stop
         });
     }
 
-    private createOpenAIInstance(config: OpenAIConfig): ChatOpenAI {
+    private createOpenAIInstance(config: IOpenAIConfig): ChatOpenAI {
         return new ChatOpenAI({
-            openAIApiKey: config.apiKey,
+            apiKey: config.apiKey,
             modelName: config.model,
-            temperature: config.temperature,
             streaming: config.streaming,
+            maxRetries: config.maxRetries,
+            temperature: config.temperature,
             maxTokens: config.maxTokens,
             presencePenalty: config.presencePenalty,
-            frequencyPenalty: config.frequencyPenalty,
-            topP: config.topP,
-            n: config.n,
-            stop: config.stop,
-            organization: config.organization,
-            ...config
+            frequencyPenalty: config.frequencyPenalty
         });
     }
 
-    private createAnthropicInstance(config: AnthropicConfig): ChatAnthropic {
+    private createAnthropicInstance(config: IAnthropicConfig): ChatAnthropic {
         return new ChatAnthropic({
-            anthropicApiKey: config.apiKey,
+            apiKey: config.apiKey,
             modelName: config.model,
-            temperature: config.temperature,
-            maxTokensToSample: config.maxTokensToSample,
-            stopSequences: config.stopSequences,
-            topK: config.topK,
-            topP: config.topP,
             streaming: config.streaming,
-            ...config
+            maxRetries: config.maxRetries,
+            temperature: config.temperature,
+            maxTokens: config.maxTokens
         });
     }
 
-    private createGoogleInstance(config: GoogleConfig): ChatGoogleGenerativeAI {
+    private createGoogleInstance(config: IGoogleConfig): ChatGoogleGenerativeAI {
         return new ChatGoogleGenerativeAI({
             apiKey: config.apiKey,
             modelName: config.model,
-            maxOutputTokens: config.maxOutputTokens,
-            temperature: config.temperature,
-            topP: config.topP,
-            topK: config.topK,
             streaming: config.streaming,
-            safetySettings: config.safetySettings,
-            ...config
+            maxRetries: config.maxRetries,
+            temperature: config.temperature,
+            maxOutputTokens: config.maxTokens,
+            safetySettings: config.safetySettings as SafetySetting[]
         });
     }
 
-    private createMistralInstance(config: MistralConfig): ChatMistralAI {
+    private createMistralInstance(config: IMistralConfig): ChatMistralAI {
         return new ChatMistralAI({
             apiKey: config.apiKey,
             modelName: config.model,
+            streaming: config.streaming,
+            maxRetries: config.maxRetries,
             temperature: config.temperature,
             maxTokens: config.maxTokens,
-            topP: config.topP,
-            safeMode: config.safeMode,
-            streaming: config.streaming,
-            ...config
+            safeMode: config.inferenceOptions?.useGpu
         });
     }
 
-    // ─── Configuration Management ─────────────────────────────────────────────
+    // ─── Utility Methods ────────────────────────────────────────────────────────
 
-    public async validateProviderConfig(config: LLMConfig): Promise<void> {
-        return await this.safeExecute(async () => {
-            if (config.provider === 'none') return;
-
-            const requiredFields: Partial<Record<LLMProvider, (keyof ActiveLLMConfig)[]>> = {
-                groq: ['model', 'apiKey'],
-                openai: ['model', 'apiKey'],
-                anthropic: ['model', 'apiKey'],
-                google: ['model', 'apiKey'],
-                mistral: ['model', 'apiKey']
-            };
-
-            const required = requiredFields[config.provider];
-            if (required) {
-                const missingFields = required.filter(field => !(field in config));
-                if (missingFields.length > 0) {
-                    throw new Error(
-                        `Missing required fields for ${config.provider}: ${missingFields.join(', ')}`
-                    );
-                }
-            }
-
-            // Validate token limits
-            await this.validateTokenLimits(config);
-        }, 'Configuration validation failed');
+    private generateInstanceId(config: LLMProviderConfig): string {
+        return `${LLM_PROVIDER_enum[config.provider]}_${config.model}_${Date.now()}`;
     }
 
-    private async validateTokenLimits(config: LLMConfig): Promise<void> {
-        const maxTokens = {
-            groq: 8192,
-            openai: 8192,
-            anthropic: 100000,
-            google: 32768,
-            mistral: 32768
-        }[config.provider];
-
-        const configuredMax = this.getConfiguredMaxTokens(config);
-        if (configuredMax && configuredMax > maxTokens) {
-            throw new Error(
-                `Token limit ${configuredMax} exceeds maximum of ${maxTokens} for ${config.provider}`
-            );
-        }
+    public getProviderConfig(instanceId: string): LLMProviderConfig | undefined {
+        return this.configs.get(instanceId);
     }
 
-    private getConfiguredMaxTokens(config: LLMConfig): number | undefined {
-        if ('maxTokens' in config) return config.maxTokens;
-        if ('maxOutputTokens' in config) return config.maxOutputTokens;
-        if ('maxTokensToSample' in config) return config.maxTokensToSample;
-        return undefined;
+    public hasProvider(provider: LLM_PROVIDER_enum): boolean {
+        return this.providers.has(provider);
     }
 
-    // ─── Provider Operations ──────────────────────────────────────────────────
-
-    public async generateResponse(
-        provider: LLMProvider,
-        input: string,
-        options?: LLMRuntimeOptions
-    ): Promise<LLMResponse> {
-        return await this.safeExecute(async () => {
-            const instance = this.providers.get(provider);
-            if (!instance) {
-                throw new Error(`Provider not found: ${provider}`);
-            }
-
-            const result = await instance.generate([input], options);
-            return {
-                content: result.generations[0].text,
-                rawOutput: result,
-                usage: this.extractTokenUsage(result),
-                metadata: {
-                    model: instance.configuration.model,
-                    provider: provider,
-                    timestamp: Date.now(),
-                    latency: 0,
-                    requestId: result.id,
-                    finishReason: result.generations[0].finishReason
-                }
-            };
-        }, 'Response generation failed');
+    public clearProviders(): void {
+        this.providers.clear();
+        this.configs.clear();
+        this.logInfo('Cleared all provider instances');
     }
 
-    public async *generateStream(
-        provider: LLMProvider,
-        input: string,
-        options?: LLMRuntimeOptions
-    ): AsyncIterator<StreamingChunk> {
-        const instance = this.providers.get(provider);
-        if (!instance) {
-            throw new Error(`Provider not found: ${provider}`);
+    // ─── Validation Methods ────────────────────────────────────────────────────
+
+    public validateConfig(config: LLMProviderConfig): ILLMValidationResult {
+        const errors: string[] = [];
+        const warnings: string[] = [];
+
+        // Common validation
+        if (!config.apiKey) {
+            errors.push('❌ API key is required');
         }
 
-        if (!instance.configuration.streaming) {
-            throw new Error('Streaming not enabled for this provider');
+        if (!config.model) {
+            errors.push('❌ Model is required');
         }
 
-        try {
-            for await (const chunk of instance.stream(input, options)) {
-                yield {
-                    content: chunk.text,
-                    metadata: {
-                        timestamp: Date.now()
-                    },
-                    done: false
-                };
-            }
-
-            yield {
-                content: '',
-                metadata: {
-                    timestamp: Date.now()
-                },
-                done: true
-            };
-        } catch (error) {
-            this.handleError(error as Error, 'Stream generation failed');
-            throw error;
+        if (config.temperature && (config.temperature < 0 || config.temperature > 1)) {
+            errors.push('❌ Temperature must be between 0 and 1');
         }
-    }
 
-    // ─── Utility Methods ────────────────────────────────────────────────────
+        if (config.maxTokens && config.maxTokens < 1) {
+            errors.push('❌ Max tokens must be greater than 0');
+        }
 
-    private generateInstanceId(config: LLMConfig): string {
-        return `${config.provider}-${config.model}-${Date.now()}`;
-    }
+        if (config.maxRetries === undefined) {
+            warnings.push('⚠️ No max retries specified, using default value');
+        }
 
-    private extractTokenUsage(result: any): TokenUsage {
+        // Provider-specific validation using type guards
+        if (LLMProviderTypeGuards.isGroqConfig(config)) {
+            this.validateGroqConfig(config, errors, warnings);
+        } else if (LLMProviderTypeGuards.isOpenAIConfig(config)) {
+            this.validateOpenAIConfig(config, errors, warnings);
+        } else if (LLMProviderTypeGuards.isAnthropicConfig(config)) {
+            this.validateAnthropicConfig(config, errors, warnings);
+        } else if (LLMProviderTypeGuards.isGoogleConfig(config)) {
+            this.validateGoogleConfig(config, errors, warnings);
+        } else if (LLMProviderTypeGuards.isMistralConfig(config)) {
+            this.validateMistralConfig(config, errors, warnings);
+        } else {
+            errors.push('❌ Unsupported provider configuration');
+        }
+
+        const metadata = MetadataFactory.createValidationMetadata({
+            component: 'ProviderManager',
+            operation: 'validateConfig',
+            validatedFields: ['apiKey', 'model', 'temperature', 'maxTokens'],
+            timestamp: Date.now()
+        });
+
         return {
-            promptTokens: result.usage?.prompt_tokens || 0,
-            completionTokens: result.usage?.completion_tokens || 0,
-            totalTokens: result.usage?.total_tokens || 0
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata
         };
     }
 
-    public async cleanup(): Promise<void> {
-        await this.safeExecute(async () => {
-            this.providers.clear();
-            this.configs.clear();
-        }, 'Provider cleanup failed');
+    private validateGroqConfig(config: IGroqConfig, errors: string[], warnings: string[]): void {
+        if (config.streamingLatency !== undefined && config.streamingLatency < 0) {
+            errors.push('❌ Streaming latency must be non-negative');
+        }
+        if (config.streamingLatency === undefined) {
+            warnings.push('⚠️ No streaming latency specified, using default value');
+        }
+        if (config.contextWindow && config.contextWindow > 32768) {
+            warnings.push('⚠️ Large context window may impact performance');
+        }
+    }
+
+    private validateOpenAIConfig(config: IOpenAIConfig, errors: string[], warnings: string[]): void {
+        if (config.presencePenalty !== undefined && (config.presencePenalty < -2 || config.presencePenalty > 2)) {
+            errors.push('❌ Presence penalty must be between -2 and 2');
+        }
+        if (config.frequencyPenalty !== undefined && (config.frequencyPenalty < -2 || config.frequencyPenalty > 2)) {
+            errors.push('❌ Frequency penalty must be between -2 and 2');
+        }
+        if (!config.organization) {
+            warnings.push('⚠️ No organization ID specified, using default organization');
+        }
+        if (config.temperature && config.temperature > 0.8) {
+            warnings.push('⚠️ High temperature may lead to less focused responses');
+        }
+    }
+
+    private validateAnthropicConfig(config: IAnthropicConfig, errors: string[], warnings: string[]): void {
+        if (config.contextUtilization !== undefined && (config.contextUtilization < 0 || config.contextUtilization > 1)) {
+            errors.push('❌ Context utilization must be between 0 and 1');
+        }
+        if (!config.anthropicApiUrl) {
+            warnings.push('⚠️ Using default API URL, consider specifying for better control');
+        }
+        if (config.maxTokens && config.maxTokens > 4096) {
+            warnings.push('⚠️ Large token limit may increase latency and costs');
+        }
+    }
+
+    private validateGoogleConfig(config: IGoogleConfig, errors: string[], warnings: string[]): void {
+        if (!config.safetySettings || config.safetySettings.length === 0) {
+            warnings.push('⚠️ No safety settings specified, using default safety settings');
+        } else {
+            config.safetySettings.forEach((setting, index) => {
+                if (!Object.values(SafetySetting).includes(setting)) {
+                    errors.push(`❌ Invalid safety setting at index ${index}`);
+                }
+            });
+        }
+        if (!config.baseUrl) {
+            warnings.push('⚠️ Using default API endpoint, consider specifying for better control');
+        }
+    }
+
+    private validateMistralConfig(config: IMistralConfig, errors: string[], warnings: string[]): void {
+        if (config.inferenceOptions?.numThreads !== undefined && config.inferenceOptions.numThreads < 1) {
+            errors.push('❌ Number of threads must be greater than 0');
+        }
+        if (!config.inferenceOptions) {
+            warnings.push('⚠️ No inference options specified, using default settings');
+        }
+        if (config.inferenceOptions?.useGpu === undefined) {
+            warnings.push('⚠️ GPU usage preference not specified, defaulting to CPU');
+        }
+        if (!config.endpoint) {
+            warnings.push('⚠️ Using default API endpoint, consider specifying for better control');
+        }
     }
 }
 

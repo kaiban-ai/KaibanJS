@@ -1,11 +1,12 @@
 /**
  * @file llmManagerTypes.ts
  * @path src/types/llm/llmManagerTypes.ts
- * @description LLM manager type definitions and interfaces
- *
- * @module @types/llm
+ * @description LLM manager type definitions using Langchain
  */
 
+import { BaseChatModel, BaseChatModelCallOptions } from '@langchain/core/language_models/chat_models';
+import { BaseMessageLike, AIMessageChunk } from '@langchain/core/messages';
+import { Callbacks } from '@langchain/core/callbacks/manager';
 import { LLM_PROVIDER_enum } from '../common/commonEnums';
 import type { 
     LLMProviderConfig,
@@ -14,43 +15,37 @@ import type {
     IAnthropicConfig,
     IGoogleConfig,
     IMistralConfig,
-    IBaseLLMConfig,
-    IRuntimeConfig
+    IBaseProviderMetrics
 } from './llmProviderTypes';
 
-import type {
-    LLMResponse,
-    IGroqResponse,
-    IOpenAIResponse,
-    IAnthropicResponse,
-    IGoogleResponse,
-    IMistralResponse,
-    ILLMEventMetadata
-} from './llmResponseTypes';
-
+import type { IRuntimeLLMConfig } from './llmCommonTypes';
+import type { LLMResponse } from './llmResponseTypes';
 import type { IBaseMetrics } from '../metrics/base/baseMetrics';
-import type { IHandlerResult } from '../common/commonHandlerTypes';
-import type { IValidationResult } from '../common/commonValidationTypes';
+import type { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
 
-// ─── Config Types ───────────────────────────────────────────────────────────
+// ─── Handler Result Types ────────────────────────────────────────────────────
 
-export interface ILLMConfig {
-    provider: string;
-    model: string;
-    apiKey?: string;
-    apiBaseUrl?: string;
-    maxRetries?: number;
-    timeout?: number;
-    temperature?: number;
-    maxTokens?: number;
-    topP?: number;
-    topK?: number;
-    [key: string]: any;
+export interface IHandlerResult<T = unknown, M extends IBaseHandlerMetadata = IBaseHandlerMetadata> {
+    success: boolean;
+    error?: Error;
+    data?: T;
+    metadata: M;
 }
 
-// Active configuration with runtime flexibility
-export interface IActiveLLMConfig extends IRuntimeConfig {
-    tags?: string[];
+/**
+ * LLM-specific validation result interface.
+ * 
+ * This differs from the common IValidationResult because LLM provider validation:
+ * 1. Uses simple string errors/warnings for provider-specific messages
+ * 2. Has optional metadata specific to LLM handlers
+ * 3. Focuses on external provider validation rather than internal system validation
+ */
+export interface ILLMValidationResult<T = unknown> {
+    isValid: boolean;
+    errors: string[];
+    warnings: string[];
+    data?: T;
+    metadata?: IBaseHandlerMetadata;
 }
 
 // ─── Manager Configuration ────────────────────────────────────────────────────
@@ -78,78 +73,81 @@ export interface ILLMInstance {
     id: string;
     provider: LLM_PROVIDER_enum;
     config: LLMProviderConfig;
-    metrics: IBaseMetrics;
+    metrics: IBaseProviderMetrics;
     status: 'active' | 'error' | 'terminated';
     lastUsed: number;
     errorCount: number;
 
     // Instance methods
-    generate(input: string, options?: any): Promise<LLMResponse>;
-    generateStream(input: string, options?: any): AsyncGenerator<any>;
-    validateConfig(config: LLMProviderConfig): Promise<IValidationResult>;
+    generate(
+        messages: BaseMessageLike[][],
+        options?: BaseChatModelCallOptions | string[],
+        callbacks?: Callbacks
+    ): Promise<LLMResponse>;
+
+    generateStream(
+        messages: BaseMessageLike[][],
+        options?: BaseChatModelCallOptions | string[],
+        callbacks?: Callbacks
+    ): AsyncGenerator<AIMessageChunk>;
+
+    validateConfig(config: LLMProviderConfig): Promise<ILLMValidationResult>;
     cleanup(): Promise<void>;
-    getMetrics(): Promise<IBaseMetrics>;
+    getMetrics(): Promise<IBaseProviderMetrics>;
     getStatus(): Promise<string>;
     reset(): Promise<void>;
 }
 
 export interface IProviderInstance {
-    groq?: any;    // ChatGroq instance
-    openai?: any;  // ChatOpenAI instance
-    anthropic?: any; // ChatAnthropic instance
-    google?: any;  // ChatGoogleGenerativeAI instance
-    mistral?: any; // ChatMistralAI instance
+    groq?: BaseChatModel;    // ChatGroq instance
+    openai?: BaseChatModel;  // ChatOpenAI instance
+    anthropic?: BaseChatModel; // ChatAnthropic instance
+    google?: BaseChatModel;  // ChatGoogleGenerativeAI instance
+    mistral?: BaseChatModel; // ChatMistralAI instance
 }
 
 // ─── Request Types ───────────────────────────────────────────────────────────
 
 export interface ILLMRequest {
     instanceId: string;
-    content: string;
-    options?: {
-        temperature?: number;
-        maxTokens?: number;
-        topP?: number;
-        topK?: number;
-        streaming?: boolean;
-        timeout?: number;
-    };
-    metadata?: Record<string, any>;
+    messages: BaseMessageLike[][];
+    options?: BaseChatModelCallOptions;
+    callbacks?: Callbacks;
 }
 
 // ─── Handler Types ───────────────────────────────────────────────────────────
 
 export interface ILLMHandler {
     handleRequest(request: ILLMRequest): Promise<IHandlerResult<LLMResponse>>;
-    handleError(error: Error, metadata: ILLMEventMetadata): void;
-    handleMetrics(metrics: IBaseMetrics): void;
+    handleError(error: Error, callbacks?: Callbacks): void;
+    handleMetrics(metrics: IBaseProviderMetrics): void;
 }
 
 // ─── Provider-Specific Handlers ─────────────────────────────────────────────────
 
 export interface IGroqHandler extends ILLMHandler {
     config: IGroqConfig;
-    handleRequest(request: ILLMRequest): Promise<IHandlerResult<IGroqResponse>>;
+    handleRequest(request: ILLMRequest): Promise<IHandlerResult<LLMResponse>>;
 }
 
 export interface IOpenAIHandler extends ILLMHandler {
     config: IOpenAIConfig;
-    handleRequest(request: ILLMRequest): Promise<IHandlerResult<IOpenAIResponse>>;
+    handleRequest(request: ILLMRequest): Promise<IHandlerResult<LLMResponse>>;
 }
 
 export interface IAnthropicHandler extends ILLMHandler {
     config: IAnthropicConfig;
-    handleRequest(request: ILLMRequest): Promise<IHandlerResult<IAnthropicResponse>>;
+    handleRequest(request: ILLMRequest): Promise<IHandlerResult<LLMResponse>>;
 }
 
 export interface IGoogleHandler extends ILLMHandler {
     config: IGoogleConfig;
-    handleRequest(request: ILLMRequest): Promise<IHandlerResult<IGoogleResponse>>;
+    handleRequest(request: ILLMRequest): Promise<IHandlerResult<LLMResponse>>;
 }
 
 export interface IMistralHandler extends ILLMHandler {
     config: IMistralConfig;
-    handleRequest(request: ILLMRequest): Promise<IHandlerResult<IMistralResponse>>;
+    handleRequest(request: ILLMRequest): Promise<IHandlerResult<LLMResponse>>;
 }
 
 // ─── Manager Interface ────────────────────────────────────────────────────────
@@ -173,52 +171,25 @@ export interface ILLMManager {
     /**
      * Validate an LLM configuration
      */
-    validateConfig(config: LLMProviderConfig): Promise<IValidationResult>;
+    validateConfig(config: LLMProviderConfig): Promise<ILLMValidationResult>;
 
     /**
      * Get metrics for an LLM instance
      */
-    getMetrics(instanceId: string): Promise<IHandlerResult<IBaseMetrics>>;
+    getMetrics(instanceId: string): Promise<IHandlerResult<IBaseProviderMetrics>>;
 
     /**
      * Terminate an LLM instance
      */
     terminateInstance(instanceId: string): Promise<IHandlerResult<void>>;
-
-    /**
-     * Normalize LLM configuration
-     */
-    normalizeConfig(config: ILLMConfig): IActiveLLMConfig;
 }
 
 // ─── Factory Types ───────────────────────────────────────────────────────────
 
 export interface ILLMFactory {
-    /**
-     * Create a provider-specific handler
-     */
     createHandler(provider: LLM_PROVIDER_enum, config: LLMProviderConfig): Promise<ILLMHandler>;
-
-    /**
-     * Create a provider-specific instance
-     */
-    createProviderInstance(config: LLMProviderConfig): Promise<any>;
-
-    /**
-     * Validate provider-specific configuration
-     */
-    validateProviderConfig(config: LLMProviderConfig): Promise<IValidationResult>;
-}
-
-// ─── Event Types ────────────────────────────────────────────────────────────
-
-export interface ILLMEvent {
-    type: 'request' | 'response' | 'error' | 'metrics';
-    timestamp: number;
-    instanceId: string;
-    provider: LLM_PROVIDER_enum;
-    metadata: ILLMEventMetadata;
-    data?: any;
+    createProviderInstance(config: LLMProviderConfig): Promise<BaseChatModel>;
+    validateProviderConfig(config: LLMProviderConfig): Promise<ILLMValidationResult>;
 }
 
 // ─── Utility Types ───────────────────────────────────────────────────────────
@@ -232,14 +203,3 @@ export type LLMHandler =
 
 // Provider handler mapping using string literal types
 export type ProviderHandlerMap = Record<LLM_PROVIDER_enum, ILLMHandler>;
-
-// Runtime configuration helpers
-export const isValidProviderConfig = (config: unknown): config is LLMProviderConfig => {
-    if (typeof config !== 'object' || config === null) return false;
-    const c = config as LLMProviderConfig;
-    return (
-        typeof c.provider === 'string' &&
-        typeof c.model === 'string' &&
-        Object.values(LLM_PROVIDER_enum).includes(c.provider as LLM_PROVIDER_enum)
-    );
-};

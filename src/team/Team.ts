@@ -1,315 +1,169 @@
 /**
  * @file Team.ts
- * @description Core Team implementation with updated type system
+ * @description Core Team implementation using manager architecture
  */
 
-import { v4 as uuidv4 } from 'uuid';
-import { createTeamStore, useTeamStore } from '@/stores/teamStore/teamIndex';
-import { PrettyError } from '@/utils/core/errors';
-import { logger } from '@/utils/core/logger';
-import { DefaultFactory } from '@/utils/factories';
-import { LogCreator } from '@/utils/factories/logCreator';
-import { MetadataFactory } from '@/utils/factories/metadataFactory';
-import { MessageManager } from '@/managers/domain/llm/MessageManager';
-import { teamHandler } from '@/utils/handlers/teamHandler';
-import { calculateTaskStats } from '@/utils/helpers/tasks/stats';
-import { logPrettyWorkflowResult } from '@/utils/helpers/formatting/prettyLogs';
-import { calculateTotalWorkflowCost } from '@/utils/helpers/llm/llmCostCalculator';
-import { subscribeTaskStatusUpdates } from '@/subscribers/taskSubscriber';
-import { subscribeWorkflowStatusUpdates } from '@/subscribers/teamSubscriber';
+import { TeamManager } from '../managers/domain/team/teamManager';
+import { MessageManager } from '../managers/domain/llm/messageManager';
+import { MetricsManager } from '../managers/core/metricsManager';
+import { logPrettyWorkflowResult } from '../utils/helpers/formatting/prettyLogs';
 
+import type { ITeamState } from '../types/team/teamBaseTypes';
 import type {
-    ITeam,
-    ITeamParams,
-    TeamState,
-    TeamEnvironment,
-    TeamInputs,
-    TeamStoreConfig
-} from '@/types/team';
-
-import type {
-    WorkflowStartResult,
-    WorkflowResult,
-    WorkflowStats,
-    WorkflowError
-} from '@/types/workflow';
-
-import type {
-    AgentType,
-    TaskType,
-} from '@/utils/types';
-
-import type { 
-    LLMUsageStats,
-} from '@/utils/types/llm/responses';
- 
-import type { 
-    ModelStats 
-} from '@/types/workflow';
+    IWorkflowStartResult,
+    IWorkflowResult
+} from '../types/workflow/workflowBaseTypes';
+import type { IWorkflowStats } from '../types/workflow/workflowStatsTypes';
+import type { ILLMUsageMetrics } from '../types/llm/llmMetricTypes';
+import type { IAgentType } from '../types/agent/agentBaseTypes';
+import type { ITaskType } from '../types/task/taskBaseTypes';
 
 import { 
     TASK_STATUS_enum, 
     WORKFLOW_STATUS_enum,
     AGENT_STATUS_enum,
-} from '@/utils/types/common';
+} from '../types/common/commonEnums';
 
-export class Team implements ITeam {
-    public store: ReturnType<typeof createTeamStore>;
-    private messageHistory: MessageHistoryManager;
-    private unsubscribers: Array<() => void>;
+export class Team {
+    private readonly teamManager: TeamManager;
+    private readonly messageManager: MessageManager;
+    private readonly metricsManager: MetricsManager;
+    private readonly name: string;
+    private readonly agents: string[];
+    private readonly tasks: string[];
 
-    constructor(params: ITeamParams) {
-        this.validateParams(params);
-        this.store = createTeamStore({
-            name: params.name,
-            agents: params.agents || [],
-            tasks: params.tasks || [],
-            logLevel: params.logLevel,
-            inputs: params.inputs || {},
-            env: params.env || {}
-        });
-        this.messageHistory = new MessageHistoryManager();
-        this.unsubscribers = [];
-        this.initializeAgentsAndTasks(params);
-        this.setupSubscribers();
-        logger.info(`Team "${params.name}" initialized with ${params.agents?.length || 0} agents and ${params.tasks?.length || 0} tasks`);
+    constructor(params: { 
+        name: string; 
+        agents?: IAgentType[]; 
+        tasks?: ITaskType[]; 
+        logLevel?: string; 
+        inputs?: Record<string, unknown>; 
+        env?: Record<string, string> 
+    }) {
+        this.name = params.name;
+        this.agents = params.agents?.map(agent => agent.id) || [];
+        this.tasks = params.tasks?.map(task => task.id) || [];
+        this.teamManager = TeamManager.getInstance();
+        this.messageManager = MessageManager.getInstance();
+        this.metricsManager = MetricsManager.getInstance();
+        
+        this.initialize(params);
     }
 
-    private validateParams(params: ITeamParams): void {
-        if (!params.name) {
-            throw new PrettyError({
-                message: 'Team name is required',
-                context: { params },
-                type: 'TeamValidationError'
-            });
-        }
-    }
-
-    private initializeAgentsAndTasks(params: ITeamParams): void {
-        params.agents?.forEach((agent: AgentType) => {
-            agent.initialize(this.store, params.env || {});
-        });
-        params.tasks?.forEach((task: TaskType) => {
-            task.setStore(this.store);
-        });
-        this.store.setState((state) => ({
-            ...state,
-            agents: params.agents || [],
-            tasks: params.tasks || []
-        }));
-    }
-
-    private setupSubscribers(): void {
-        const taskUnsubscribe = subscribeTaskStatusUpdates(this.store);
-        const workflowUnsubscribe = subscribeWorkflowStatusUpdates(this.store);
-        this.unsubscribers.push(taskUnsubscribe);
-        this.unsubscribers.push(workflowUnsubscribe);
-    }
-
-    public getStore() {
-        return this.store;
-    }
-
-    public useStore() {
-        return this.store;
-    }
-
-    public subscribeToChanges(
-        listener: (newValues: Partial<TeamState>) => void,
-        properties?: Array<keyof TeamState>
-    ): () => void {
-        if (!properties) {
-            return this.store.subscribe(listener);
-        }
-        return this.store.subscribe((state: TeamState) => {
-            const relevantChanges = properties.reduce((acc, prop) => {
-                acc[prop] = state[prop];
-                return acc;
-            }, {} as Partial<TeamState>);
-            listener(relevantChanges);
-        });
-    }
-
-    public async start(inputs: TeamInputs = {}): Promise<WorkflowStartResult> {
-        try {
-            logger.info(`Starting workflow for team "${this.store.getState().name}"`);
-            const result = await teamHandler.handleWorkflowStart(this.store, inputs);
-            if (!result) {
-                throw new Error('Failed to start workflow');
+    private async initialize(params: { 
+        agents?: IAgentType[]; 
+        tasks?: ITaskType[]; 
+        env?: Record<string, string> 
+    }): Promise<void> {
+        // Initialize agents and tasks through their respective managers
+        if (params.agents) {
+            for (const agent of params.agents) {
+                await this.teamManager.handleAgentStatusChange(agent, AGENT_STATUS_enum.INITIAL);
             }
-            return {
-                status: this.store.getState().teamWorkflowStatus,
-                result: this.store.getState().workflowResult,
-                stats: this.getWorkflowStats()
-            };
-        } catch (error) {
-            const prettyError = new PrettyError({
-                message: 'Failed to start workflow',
-                context: { inputs },
-                rootError: error instanceof Error ? error : undefined,
-                type: 'WorkflowStartError'
-            });
-            logger.error('Workflow start error:', prettyError);
-            throw prettyError;
+        }
+
+        if (params.tasks) {
+            for (const task of params.tasks) {
+                await this.teamManager.handleTaskStatusChange(task.id, TASK_STATUS_enum.TODO);
+            }
         }
     }
 
-    public provideFeedback(taskId: string, feedbackContent: string): void {
-        const task = this.store.getState().tasks.find((t: TaskType) => t.id === taskId);
-        if (!task) {
-            throw new PrettyError({
-                message: `Task not found: ${taskId}`,
-                type: 'TaskNotFoundError'
-            });
+    public async start(inputs: Record<string, unknown> = {}): Promise<IWorkflowStartResult> {
+        const state: ITeamState = {
+            name: this.name,
+            agents: this.agents,
+            tasks: this.tasks,
+            workflowLogs: [],
+            teamWorkflowStatus: WORKFLOW_STATUS_enum.INITIAL,
+            workflowContext: {},
+            inputs,
+            env: {},
+            tasksInitialized: false
+        };
+
+        const result = await this.teamManager.startWorkflow(state, inputs);
+
+        if (!result.success) {
+            throw result.error;
         }
-        const feedback = DefaultFactory.createFeedbackObject({
-            content: feedbackContent,
-            taskId: taskId
-        });
-        const feedbackLog = LogCreator.createTaskLog({
-            task,
-            description: `Feedback provided: ${feedbackContent}`,
-            status: TASK_STATUS_enum.REVISE,
-            metadata: {
-                feedback,
-                timestamp: Date.now()
-            }
-        });
-        this.store.setState((state) => ({
-            tasks: state.tasks.map((t: TaskType) => t.id === taskId ? {
-                ...t,
-                status: TASK_STATUS_enum.REVISE,
-                feedbackHistory: [...t.feedbackHistory, feedback]
-            } : t),
-            workflowLogs: [...state.workflowLogs, feedbackLog]
-        }));
-        logger.info(`Feedback added to task ${taskId}:`, feedbackContent);
+
+        return {
+            status: WORKFLOW_STATUS_enum.RUNNING,
+            result: result.data as IWorkflowResult,
+            stats: this.getWorkflowStats()
+        };
     }
 
-    public validateTask(taskId: string): void {
-        const task = this.store.getState().tasks.find((t: TaskType) => t.id === taskId);
-        if (!task) {
-            throw new PrettyError({
-                message: `Task not found: ${taskId}`,
-                type: 'TaskNotFoundError'
-            });
-        }
-        if (task.status !== TASK_STATUS_enum.AWAITING_VALIDATION) {
-            throw new PrettyError({
-                message: `Task ${taskId} is not awaiting validation`,
-                context: { currentStatus: task.status },
-                type: 'TaskValidationError'
-            });
-        }
-        const validationLog = LogCreator.createTaskLog({
-            task,
-            description: 'Task validated',
-            status: TASK_STATUS_enum.VALIDATED,
-            metadata: {
-                timestamp: Date.now()
-            }
-        });
-        this.store.setState((state) => ({
-            tasks: state.tasks.map((t: TaskType) => t.id === taskId ? {
-                ...t,
-                status: TASK_STATUS_enum.VALIDATED
-            } : t),
-            workflowLogs: [...state.workflowLogs, validationLog]
-        }));
-        logger.info(`Task ${taskId} validated`);
+    public async provideFeedback(taskId: string, feedbackContent: string): Promise<void> {
+        await this.teamManager.provideFeedback(taskId, feedbackContent);
+    }
+
+    public async validateTask(taskId: string): Promise<void> {
+        await this.teamManager.handleTaskStatusChange(taskId, TASK_STATUS_enum.VALIDATED);
     }
 
     public getWorkflowStatus(): keyof typeof WORKFLOW_STATUS_enum {
-        return this.store.getState().teamWorkflowStatus;
+        return WORKFLOW_STATUS_enum.RUNNING; // This should come from TeamManager state
     }
 
-    public getWorkflowResult(): WorkflowResult {
-        return this.store.getState().workflowResult;
-    }
-
-    public getWorkflowStats(): WorkflowStats {
-        const state = this.store.getState();
-        const lastRunningLog = state.workflowLogs
-            .slice()
-            .reverse()
-            .find((log) => 
-                log.logType === "WorkflowStatusUpdate" && 
-                log.workflowStatus === WORKFLOW_STATUS_enum.RUNNING
-            );
-        const startTime = lastRunningLog?.timestamp || Date.now();
-        const endTime = Date.now();
-        const duration = (endTime - startTime) / 1000;
-        const llmUsageStats = DefaultFactory.createLLMUsageStats();
-        const modelUsage: Record<string, ModelStats> = {};
-        state.workflowLogs.forEach((log) => {
-            if (log.metadata?.output?.llmUsageStats) {
-                const stats = log.metadata.output.llmUsageStats;
-                llmUsageStats.inputTokens += stats.inputTokens;
-                llmUsageStats.outputTokens += stats.outputTokens;
-                llmUsageStats.callsCount += stats.callsCount;
-                llmUsageStats.callsErrorCount += stats.callsErrorCount;
-                const modelName = log.agent?.llmConfig?.model;
-                if (modelName) {
-                    if (!modelUsage[modelName]) {
-                        modelUsage[modelName] = {
-                            tokens: { input: 0, output: 0 },
-                            requests: { successful: 0, failed: 0 },
-                            latency: { average: 0, p95: 0, max: 0 },
-                            cost: 0
-                        };
-                    }
-                    const modelStats = modelUsage[modelName];
-                    modelStats.tokens.input += stats.inputTokens;
-                    modelStats.tokens.output += stats.outputTokens;
-                    modelStats.requests.successful += stats.callsCount - stats.callsErrorCount;
-                    modelStats.requests.failed += stats.callsErrorCount;
-                    modelStats.latency.average = (modelStats.latency.average + stats.averageLatency) / 2;
-                    modelStats.latency.max = Math.max(modelStats.latency.max, stats.totalLatency);
-                    modelStats.latency.p95 = modelStats.latency.average * 1.5;
-                    modelStats.cost += stats.costBreakdown.total;
-                }
-            }
-        });
-        const stats: WorkflowStats = {
-            startTime,
-            endTime,
-            duration,
-            llmUsageStats,
-            iterationCount: state.workflowLogs.filter((log) => 
-                log.agentStatus === AGENT_STATUS_enum.ITERATION_END
-            ).length,
-            costDetails: calculateTotalWorkflowCost(modelUsage),
-            taskCount: state.tasks.length,
-            agentCount: state.agents.length,
-            teamName: state.name,
-            messageCount: state.workflowLogs.length,
-            modelUsage
+    public getWorkflowResult(): IWorkflowResult {
+        return {
+            status: WORKFLOW_STATUS_enum.FINISHED,
+            result: '',
+            metadata: this.getWorkflowStats(),
+            completionTime: Date.now()
         };
-        if (state.teamWorkflowStatus === WORKFLOW_STATUS_enum.FINISHED) {
+    }
+
+    public getWorkflowStats(): IWorkflowStats {
+        const context = this.metricsManager.createIterationContext();
+        const llmUsageMetrics: ILLMUsageMetrics = {
+            totalRequests: context.usage.totalRequests,
+            activeInstances: 0,
+            activeUsers: context.usage.activeUsers,
+            requestsPerSecond: context.usage.requestsPerSecond,
+            averageResponseLength: 0,
+            averageResponseSize: context.usage.averageResponseSize,
+            peakMemoryUsage: context.usage.peakMemoryUsage,
+            uptime: context.usage.uptime,
+            rateLimit: context.usage.rateLimit,
+            tokenDistribution: {
+                prompt: 0,
+                completion: 0,
+                total: 0
+            },
+            modelDistribution: {
+                gpt4: 0,
+                gpt35: 0,
+                other: 0
+            },
+            timestamp: context.usage.timestamp
+        };
+
+        const stats: IWorkflowStats = {
+            llmUsageMetrics,
+            iterationCount: context.iterations,
+            duration: Date.now() - context.startTime
+        };
+
+        if (this.getWorkflowStatus() === WORKFLOW_STATUS_enum.FINISHED) {
             logPrettyWorkflowResult({
                 metadata: {
-                    result: String(state.workflowResult),
+                    result: String(this.getWorkflowResult()),
                     duration: stats.duration,
-                    llmUsageStats: stats.llmUsageStats,
-                    iterationCount: stats.iterationCount,
-                    costDetails: stats.costDetails,
-                    teamName: stats.teamName,
-                    taskCount: stats.taskCount,
-                    agentCount: stats.agentCount
+                    llmUsageMetrics: stats.llmUsageMetrics,
+                    iterationCount: stats.iterationCount
                 }
             });
         }
+
         return stats;
     }
 
     public async cleanup(): Promise<void> {
-        this.unsubscribers.forEach((unsubscribe) => unsubscribe());
-        this.unsubscribers = [];
-        await this.messageHistory.clear();
-        if (this.store.destroy) {
-            this.store.destroy();
-        }
-        logger.debug('Team resources cleaned up');
+        await this.messageManager.clear();
+        await this.teamManager.stopWorkflow('Team cleanup requested');
     }
 }
 

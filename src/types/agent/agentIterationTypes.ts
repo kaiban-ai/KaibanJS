@@ -10,7 +10,8 @@ import type { IHandlerResult } from '../common/commonHandlerTypes';
 import type { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
 import type { IAgentType } from './agentBaseTypes';
 import type { ITaskType } from '../task/taskBaseTypes';
-import type { IOutput, ILLMUsageStats } from '../llm/llmResponseTypes';
+import type { LLMResponse } from '../llm/llmResponseTypes';
+import type { ILLMUsageMetrics } from '../llm/llmMetricTypes';
 import type { IStandardCostDetails } from '../common/commonMetricTypes';
 import type {
     IAgentResourceMetrics,
@@ -28,7 +29,7 @@ export interface IIterationStartParams {
 }
 
 export interface IIterationEndParams extends IIterationStartParams {
-    output?: IOutput;
+    output?: LLMResponse;
 }
 
 export interface IIterationControlParams {
@@ -93,7 +94,7 @@ export interface IIterationHandlerMetadata extends IBaseHandlerMetadata {
         metrics: {
             iterations: number;
             executionTime: number;
-            llmUsageStats: ILLMUsageStats;
+            llmUsageMetrics: ILLMUsageMetrics;
             performance: IAgentPerformanceMetrics;
         };
     };
@@ -103,7 +104,7 @@ export interface IIterationHandlerMetadata extends IBaseHandlerMetadata {
         metrics: {
             iterations: number;
             executionTime: number;
-            llmUsageStats: ILLMUsageStats;
+            llmUsageMetrics: ILLMUsageMetrics;
             performance: IAgentPerformanceMetrics;
         };
     };
@@ -111,7 +112,7 @@ export interface IIterationHandlerMetadata extends IBaseHandlerMetadata {
         model: string;
         provider: string;
         requestId: string;
-        usageStats: ILLMUsageStats;
+        usageMetrics: ILLMUsageMetrics;
     };
 }
 
@@ -124,7 +125,7 @@ export interface IIterationResult {
         usage: IAgentUsageMetrics;
         costs: IStandardCostDetails;
     };
-    output?: IOutput;
+    output?: LLMResponse;
 }
 
 export type IIterationHandlerResult<T = unknown> = IHandlerResult<T, IIterationHandlerMetadata>;

@@ -2,21 +2,20 @@
  * @file taskMetricsManager.ts
  * @path src/managers/domain/task/taskMetricsManager.ts
  * @description Task metrics management implementation
- *
- * @module @managers/domain/task
  */
 
 import { CoreManager } from '../../core/coreManager';
 import { createError } from '../../../types/common/commonErrorTypes';
 import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
 
-import type { ITaskMetrics } from '../../../types/task/taskBaseTypes';
+import type { ITaskMetrics } from '../../../types/task/taskHandlerTypes';
 import type { 
     ITaskResourceMetrics,
     ITaskPerformanceMetrics,
     ITaskUsageMetrics 
 } from '../../../types/task/taskMetricTypes';
 import type { IStandardCostDetails } from '../../../types/common/commonMetricTypes';
+import type { ILLMUsageMetrics } from '../../../types/llm/llmMetricTypes';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -29,6 +28,32 @@ const DEFAULT_COST_METRICS: IStandardCostDetails = {
         promptTokens: { count: 0, cost: 0 },
         completionTokens: { count: 0, cost: 0 }
     }
+};
+
+const DEFAULT_LLM_METRICS: ILLMUsageMetrics = {
+    totalRequests: 0,
+    activeInstances: 0,
+    requestsPerSecond: 0,
+    averageResponseLength: 0,
+    peakMemoryUsage: 0,
+    uptime: 0,
+    rateLimit: {
+        current: 0,
+        limit: 0,
+        remaining: 0,
+        resetTime: 0
+    },
+    tokenDistribution: {
+        prompt: 0,
+        completion: 0,
+        total: 0
+    },
+    modelDistribution: {
+        gpt4: 0,
+        gpt35: 0,
+        other: 0
+    },
+    timestamp: Date.now()
 };
 
 // ─── Manager Implementation ───────────────────────────────────────────────────
@@ -50,27 +75,8 @@ export class TaskMetricsManager extends CoreManager {
             resources: this.getInitialResourceMetrics(),
             performance: this.getInitialPerformanceMetrics(),
             costs: DEFAULT_COST_METRICS,
-            llmUsage: {
-                inputTokens: 0,
-                outputTokens: 0,
-                callsCount: 0,
-                callsErrorCount: 0,
-                parsingErrors: 0,
-                totalLatency: 0,
-                averageLatency: 0,
-                lastUsed: Date.now(),
-                memoryUtilization: {
-                    peakMemoryUsage: 0,
-                    averageMemoryUsage: 0,
-                    cleanupEvents: 0
-                },
-                costBreakdown: {
-                    input: 0,
-                    output: 0,
-                    total: 0,
-                    currency: 'USD'
-                }
-            }
+            llmUsageMetrics: DEFAULT_LLM_METRICS,
+            usage: this.getInitialUsageMetrics()
         };
 
         this.metrics.set(taskId, initialMetrics);
@@ -104,9 +110,13 @@ export class TaskMetricsManager extends CoreManager {
                 ...currentMetrics.costs,
                 ...updates.costs
             },
-            llmUsage: {
-                ...currentMetrics.llmUsage,
-                ...updates.llmUsage
+            llmUsageMetrics: {
+                ...currentMetrics.llmUsageMetrics,
+                ...updates.llmUsageMetrics
+            },
+            usage: {
+                ...currentMetrics.usage,
+                ...updates.usage
             }
         };
 
@@ -160,6 +170,24 @@ export class TaskMetricsManager extends CoreManager {
                 errorRate: 0
             },
             resourceUtilization: this.getInitialResourceMetrics(),
+            timestamp: Date.now()
+        };
+    }
+
+    private getInitialUsageMetrics(): ITaskUsageMetrics {
+        return {
+            totalRequests: 0,
+            activeUsers: 0,
+            requestsPerSecond: 0,
+            averageResponseSize: 0,
+            peakMemoryUsage: 0,
+            uptime: 0,
+            rateLimit: {
+                current: 0,
+                limit: 0,
+                remaining: 0,
+                resetTime: 0
+            },
             timestamp: Date.now()
         };
     }

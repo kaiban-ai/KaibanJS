@@ -1,198 +1,159 @@
 /**
  * @file commonErrorTypes.ts
- * @description Common error type definitions and utilities
+ * @path src/types/common/commonErrorTypes.ts
+ * @description Common error type definitions
  *
  * @module @types/common
  */
 
-// Basic error types
-export type IErrorType = {
-    message: string;
-    type: IErrorKind;
-    context?: Record<string, unknown>;
-};
+export const ERROR_KINDS = {
+    ValidationError: 'ValidationError',
+    ExecutionError: 'ExecutionError',
+    InitializationError: 'InitializationError',
+    StateError: 'StateError',
+    CognitiveError: 'CognitiveError',
+    NetworkError: 'NetworkError',
+    ResourceError: 'ResourceError',
+    ConfigurationError: 'ConfigurationError',
+    AuthenticationError: 'AuthenticationError',
+    PermissionError: 'PermissionError',
+    NotFoundError: 'NotFoundError',
+    TimeoutError: 'TimeoutError',
+    RateLimitError: 'RateLimitError',
+    SystemError: 'SystemError',
+    TaskError: 'TaskError',
+    AgentError: 'AgentError',
+    UnknownError: 'UnknownError'
+} as const;
 
-export type IErrorKind =
-    | 'ValidationError'
-    | 'SystemError'
-    | 'TaskError'
-    | 'AgentError'
-    | 'NetworkError'
-    | 'StoreError'
-    | 'StateError'
-    | 'ResourceError'
-    | 'ConfigError'
-    | 'AuthError'
-    | 'WorkflowError'
-    | 'ToolError'
-    | 'ConfigurationError'
-    | 'LLMError';
+export type IErrorKind = typeof ERROR_KINDS[keyof typeof ERROR_KINDS];
 
 export interface IErrorMetadata {
     timestamp: number;
-    source: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
-    [key: string]: unknown;
+    component: string;
+    operation?: string;
+    details?: Record<string, unknown>;
+}
+
+export interface IBaseError {
+    name: string;
+    message: string;
+    type: IErrorKind;
+    metadata?: IErrorMetadata;
+    context?: Record<string, unknown>;
+    cause?: Error;
+}
+
+export interface IErrorType extends IBaseError {
+    metadata?: IErrorMetadata;
+    context?: Record<string, unknown>;
 }
 
 export interface IErrorContext {
-    taskId?: string;
-    agentId?: string;
+    component: string;
     operation?: string;
-    state?: Record<string, unknown>;
-    recommendedAction?: string;
-    originalError?: Error;
-    [key: string]: unknown;
-}
-
-export interface IErrorOptions {
-    metadata?: IErrorMetadata;
-    context?: IErrorContext;
-    cause?: Error;
-}
-
-export interface IBaseErrorHandlerParams {
-    error: Error | string;
-    context?: IErrorContext;
-    task?: unknown;
-    agent?: unknown;
-    recommendedAction?: string;
-}
-
-export interface IErrorHandlerParams extends IBaseErrorHandlerParams {
-    // Keeping for backward compatibility
-}
-
-export interface ITeamErrorHandlerParams extends IBaseErrorHandlerParams {
-    store: unknown;
-}
-
-export interface IBaseError extends Error {
-    type: IErrorKind;
-    metadata?: IErrorMetadata;
-    context?: IErrorContext;
-    cause?: Error;
-    toString(): string;
-}
-
-export interface IErrorParams {
-    message: string;
-    type: IErrorKind;
-    context?: IErrorContext;
-    cause?: Error;
-    options?: IErrorOptions;
-    recommendedAction?: string;
-}
-
-// Specific error types
-export interface IValidationError extends IBaseError {
-    type: 'ValidationError';
-    validationErrors: string[];
+    details?: Record<string, unknown>;
     timestamp?: number;
 }
 
-export interface IWorkflowError extends IBaseError {
-    type: 'WorkflowError';
-    workflowId: string;
-    step?: string;
+export interface IBaseErrorHandlerParams {
+    error: Error | IErrorType;
+    context?: IErrorContext;
+    type?: IErrorKind;
 }
 
-export interface IToolError extends IBaseError {
-    type: 'ToolError';
-    toolId: string;
-    operation: string;
-    retryable?: boolean;
-}
-
-export interface ILLMError extends IBaseError {
-    type: 'LLMError';
-    provider: string;
-    requestId?: string;
-}
-
-// Error creation and conversion utilities
 export class BaseError extends Error implements IBaseError {
     public readonly type: IErrorKind;
-    public metadata?: IErrorMetadata;
-    public context?: IErrorContext;
-    public cause?: Error;
+    public readonly metadata?: IErrorMetadata;
+    public readonly context?: Record<string, unknown>;
+    public readonly cause?: Error;
 
-    constructor(params: IErrorParams) {
+    constructor(params: {
+        message: string;
+        type: IErrorKind;
+        metadata?: IErrorMetadata;
+        context?: Record<string, unknown>;
+        cause?: Error;
+    }) {
         super(params.message);
+        this.name = 'BaseError';
         this.type = params.type;
-        this.metadata = params.options?.metadata;
-        this.context = {
-            ...params.context,
-            ...params.options?.context,
-            recommendedAction: params.recommendedAction
-        };
-        this.cause = params.cause || params.options?.cause;
-        this.name = this.constructor.name;
-    }
-
-    toString(): string {
-        let result = `${this.name}: ${this.message}`;
-        if (this.context?.recommendedAction) {
-            result += `\nRecommended Action: ${this.context.recommendedAction}`;
-        }
-        if (this.cause) {
-            result += `\nCaused by: ${this.cause.message}`;
-        }
-        return result;
+        this.metadata = params.metadata;
+        this.context = params.context;
+        this.cause = params.cause;
     }
 }
 
-export class ToolError extends BaseError implements IToolError {
-    public readonly type: 'ToolError' = 'ToolError';
-    public toolId: string;
-    public operation: string;
-    public retryable: boolean;
+export const createError = (params: {
+    message: string;
+    type: IErrorKind;
+    metadata?: IErrorMetadata;
+    context?: Record<string, unknown>;
+    cause?: Error;
+}): IErrorType => ({
+    name: params.type,
+    message: params.message,
+    type: params.type,
+    metadata: params.metadata,
+    context: params.context,
+    cause: params.cause
+});
 
-    constructor(params: { message: string; toolId: string; operation: string; options?: IErrorOptions }) {
-        super({ message: params.message, type: 'ToolError', options: params.options });
-        this.toolId = params.toolId;
-        this.operation = params.operation;
-        this.retryable = params.options?.context?.retryable as boolean ?? false;
-    }
-
-    toString(): string {
-        return `${super.toString()}\nTool: ${this.toolId}\nOperation: ${this.operation}`;
-    }
-}
-
-export const ErrorTypeGuards = {
-    isBaseError: (error: unknown): error is IBaseError => {
-        return error instanceof Error && 'type' in error;
-    },
-    isToolError: (error: unknown): error is IToolError => {
-        return ErrorTypeGuards.isBaseError(error) && error.type === 'ToolError';
-    }
+export const isErrorType = (error: unknown): error is IErrorType => {
+    if (typeof error !== 'object' || error === null) return false;
+    const err = error as Partial<IErrorType>;
+    return (
+        typeof err.message === 'string' &&
+        typeof err.type === 'string' &&
+        Object.values(ERROR_KINDS).includes(err.type as IErrorKind)
+    );
 };
 
-export function createError(params: IErrorParams): IBaseError {
-    return new BaseError(params);
-}
+export const isBaseError = (error: unknown): error is IBaseError => {
+    if (typeof error !== 'object' || error === null) return false;
+    const err = error as Partial<IBaseError>;
+    return (
+        typeof err.name === 'string' &&
+        typeof err.message === 'string' &&
+        typeof err.type === 'string' &&
+        Object.values(ERROR_KINDS).includes(err.type as IErrorKind)
+    );
+};
 
-export function toBaseError(error: unknown): IBaseError {
-    if (ErrorTypeGuards.isBaseError(error)) {
-        return error;
-    }
-    return createError({
-        message: error instanceof Error ? error.message : String(error),
-        type: 'SystemError'
-    });
-}
-
-export function toErrorType(error: unknown): IErrorType {
-    if (ErrorTypeGuards.isBaseError(error)) {
+export const toErrorType = (error: Error | unknown, type: IErrorKind = ERROR_KINDS.UnknownError): IErrorType => {
+    if (isErrorType(error)) return error;
+    if (error instanceof Error) {
         return {
+            name: error.name,
             message: error.message,
-            type: error.type,
-            context: error.context
+            type,
+            cause: error
         };
     }
     return {
-        message: error instanceof Error ? error.message : String(error),
-        type: 'SystemError'
+        name: type,
+        message: String(error),
+        type
     };
-}
+};
+
+export const createErrorMetadata = (params: {
+    component: string;
+    operation?: string;
+    details?: Record<string, unknown>;
+}): IErrorMetadata => ({
+    timestamp: Date.now(),
+    component: params.component,
+    operation: params.operation,
+    details: params.details
+});
+
+export const createErrorContext = (params: {
+    component: string;
+    operation?: string;
+    details?: Record<string, unknown>;
+}): Record<string, unknown> => ({
+    component: params.component,
+    operation: params.operation,
+    ...(params.details || {})
+});

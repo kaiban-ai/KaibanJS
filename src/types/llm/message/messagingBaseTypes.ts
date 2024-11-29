@@ -1,126 +1,142 @@
 /**
  * @file messagingBaseTypes.ts
- * @path KaibanJS/src/types/llm/message/messagingBaseTypes.ts
- * @description Core type definitions for messaging system including message roles, metadata, and type guards
- * 
+ * @path src/types/llm/message/messagingBaseTypes.ts
+ * @description Base types for LLM messaging and communication
+ *
  * @module @types/llm/message
  */
 
+import { BaseMessage } from '@langchain/core/messages';
 import type { ILLMUsageMetrics } from '../llmMetricTypes';
 import type { IStandardCostDetails } from '../../common/commonMetricTypes';
-import { BaseMessage, MessageContent } from "@langchain/core/messages";
 
-// Message Role Types
-export type MessageRole = 'system' | 'user' | 'assistant' | 'function';
+// ─── Base Message Types ────────────────────────────────────────────────────────
 
-// Function Call Interface
-export interface IFunctionCall {
-    name: string;
-    arguments: string;
+/**
+ * Base message metadata fields
+ */
+export interface IBaseMessageMetadataFields {
+    timestamp: number;
+    component: string;
+    operation: string;
+    llmUsageMetrics: ILLMUsageMetrics;
+    costDetails: IStandardCostDetails;
+    importance?: number;
 }
 
-// Tool Call Interface
-export interface IToolCall {
-    id: string;
-    type: string;
-    function: {
-        name: string;
-        arguments: string;
+/**
+ * Base message metadata
+ */
+export interface IBaseMessageMetadata {
+    timestamp: number;
+    component: string;
+    operation: string;
+    importance?: number;
+    llmUsageMetrics?: ILLMUsageMetrics;
+    costDetails?: IStandardCostDetails;
+}
+
+/**
+ * Base message properties
+ */
+export interface IBaseMessageProps {
+    content: string;
+    metadata?: IBaseMessageMetadata;
+    role?: string;
+    name?: string;
+    additional_kwargs?: Record<string, unknown>;
+}
+
+/**
+ * Base message interface extending Langchain's BaseMessage
+ */
+export interface IBaseMessage extends BaseMessage {
+    metadata?: IBaseMessageMetadata;
+    role: string;
+    name?: string;
+    additional_kwargs: Record<string, unknown>;
+}
+
+// ─── Message History Types ─────────────────────────────────────────────────────
+
+/**
+ * Message history entry
+ */
+export interface IMessageHistoryEntry {
+    message: IBaseMessage;
+    timestamp: number;
+    metadata?: IBaseMessageMetadata;
+}
+
+/**
+ * Message history interface
+ */
+export interface IMessageHistory {
+    messages: IMessageHistoryEntry[];
+    metadata?: {
+        conversationId?: string;
+        sessionId?: string;
+        llmUsageMetrics?: ILLMUsageMetrics;
+        costDetails?: IStandardCostDetails;
     };
 }
 
-// Additional Arguments for Messages
-export interface IAdditionalKwargs {
-    function_call?: IFunctionCall;
-    tool_calls?: IToolCall[];
-    [key: string]: unknown;
+// ─── Message Validation Types ────────────────────────────────────────────────
+
+/**
+ * Message validation result
+ */
+export interface IMessageValidationResult {
+    isValid: boolean;
+    errors: string[];
+    warnings?: string[];
+    metadata?: {
+        timestamp: number;
+        component: string;
+        operation: string;
+        validatedFields: string[];
+    };
 }
 
-// Base Message Metadata
-export interface IBaseMessageMetadataFields extends IAdditionalKwargs {
-    messageId?: string;
-    parentMessageId?: string;
-    conversationId?: string;
-    timestamp?: number;
-}
+// ─── Type Guards ────────────────────────────────────────────────────────────
 
-// Extended Metadata for Chat Messages
-export interface IChatMessageMetadataFields extends IBaseMessageMetadataFields {
-    id: string;
-    parentId?: string;
-    createdAt: number;
-    updatedAt: number;
-    tags?: string[];
-    importance?: number;
-}
+export const MessageTypeGuards = {
+    /**
+     * Check if value is base message metadata
+     */
+    isBaseMessageMetadata: (value: unknown): value is IBaseMessageMetadata => {
+        if (typeof value !== 'object' || value === null) return false;
+        const metadata = value as Partial<IBaseMessageMetadata>;
+        return (
+            typeof metadata.timestamp === 'number' &&
+            typeof metadata.component === 'string' &&
+            typeof metadata.operation === 'string'
+        );
+    },
 
-// Metadata for Logging Messages
-export interface ILogMessageMetadataFields extends IBaseMessageMetadataFields {
-    llmUsageStats: ILLMUsageMetrics;
-    costDetails: IStandardCostDetails;
-    tokenCount?: number;
-}
+    /**
+     * Check if value is base message
+     */
+    isBaseMessage: (value: unknown): value is IBaseMessage => {
+        if (typeof value !== 'object' || value === null) return false;
+        const message = value as Partial<IBaseMessage>;
+        return (
+            typeof message.content === 'string' &&
+            typeof message.role === 'string' &&
+            typeof message.additional_kwargs === 'object' &&
+            message.additional_kwargs !== null
+        );
+    },
 
-// Combined Message Metadata Fields
-export interface IMessageMetadataFields extends IAdditionalKwargs {
-    messageId?: string;
-    parentMessageId?: string;
-    conversationId?: string;
-    timestamp?: number;
-    id?: string;
-    parentId?: string;
-    createdAt?: number;
-    updatedAt?: number;
-    tags?: string[];
-    importance?: number;
-    llmUsageStats?: ILLMUsageMetrics;
-    costDetails?: IStandardCostDetails;
-    tokenCount?: number;
-    role?: MessageRole;
-    content?: string;
-    name?: string;
-}
-
-// Internal Chat Message Type
-export interface IInternalChatMessage {
-    role: MessageRole;
-    content: MessageContent | null;
-    name?: string;
-    functionCall?: IFunctionCall;
-    metadata?: IMessageMetadataFields;
-    additional_kwargs: IAdditionalKwargs;
-}
-
-// LangChain-Compatible Chat Message
-export interface IChatMessage {
-    role: MessageRole;
-    content: MessageContent;
-    name?: string;
-    functionCall?: IFunctionCall;
-    metadata?: IMessageMetadataFields;
-    additional_kwargs: IAdditionalKwargs;
-}
-
-// Message Context Interface
-export interface IMessageContext {
-    role: MessageRole;
-    content: string;
-    timestamp: number;
-    metadata?: IMessageMetadataFields;
-    tokenCount?: number;
-}
-
-// Type Guard Utilities
-export const MessageTypeUtils = {
-    isBaseMessage: (message: unknown): message is BaseMessage =>
-        message instanceof BaseMessage,
-
-    isInternalChatMessage: (message: unknown): message is IInternalChatMessage =>
-        typeof message === 'object' && message !== null && 'role' in message && 'content' in message && 'additional_kwargs' in message,
-
-    isChatMessage: (message: unknown): message is IChatMessage =>
-        typeof message === 'object' && message !== null && 'role' in message && 'content' in message && 'additional_kwargs' in message,
-
-    isMessageMetadata: (metadata: unknown): metadata is IMessageMetadataFields =>
-        typeof metadata === 'object' && metadata !== null && ('messageId' in metadata || 'role' in metadata)
+    /**
+     * Check if value is message history entry
+     */
+    isMessageHistoryEntry: (value: unknown): value is IMessageHistoryEntry => {
+        if (typeof value !== 'object' || value === null) return false;
+        const entry = value as Partial<IMessageHistoryEntry>;
+        return (
+            typeof entry.timestamp === 'number' &&
+            MessageTypeGuards.isBaseMessage(entry.message as unknown)
+        );
+    }
 };

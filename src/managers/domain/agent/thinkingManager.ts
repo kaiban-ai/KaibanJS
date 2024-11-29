@@ -4,34 +4,36 @@
  * @description Centralized manager for agent thinking processes and LLM interactions
  */
 
-import CoreManager from '../../core/coreManager';
-import { createError, toErrorType } from '../../../types/common/commonErrorTypes';
-import { createBaseMetadata } from '../../../types/common/commonMetadataTypes';
+import { BaseMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
+import { LLMResult } from '@langchain/core/outputs';
+import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
+import { RunnableWithMessageHistory } from '@langchain/core/runnables';
+import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
 
-// Import types from canonical locations
+import CoreManager from '../../core/coreManager';
+import { createError } from '../../../types/common/commonErrorTypes';
+import { createBaseMetadata } from '../../../types/common/commonMetadataTypes';
+import { AGENT_STATUS_enum } from '../../../types/common/commonEnums';
+import { AgentMetricsValidation } from '../../../types/agent/agentMetricTypes';
+
 import type { IAgentType } from '../../../types/agent/agentBaseTypes';
 import type { ITaskType } from '../../../types/task/taskBaseTypes';
-import type { IOutput, IParsedOutput, ILLMUsageStats } from '../../../types/llm/llmResponseTypes';
 import type { IHandlerResult } from '../../../types/common/commonHandlerTypes';
 import type { IBaseHandlerMetadata } from '../../../types/common/commonMetadataTypes';
-import type { IStandardCostDetails } from '../../../types/common/commonMetricTypes';
 import type { ITimeMetrics, IThroughputMetrics, IErrorMetrics } from '../../../types/metrics';
-import {
+import type {
     IAgentUsageMetrics,
     IAgentResourceMetrics,
     IAgentPerformanceMetrics,
-    AgentMetricsTypeGuards,
-    AgentMetricsValidation
+    IAgentStateMetrics
 } from '../../../types/agent/agentMetricTypes';
-import { AGENT_STATUS_enum } from '../../../types/common/commonEnums';
-
-// Import thinking-specific types from canonical location
 import type {
     IThinkingMetadata,
     IThinkingExecutionParams,
     IThinkingResult,
     IThinkingHandlerResult
 } from '../../../types/agent/agentHandlersTypes';
+import type { ILLMMetrics } from '../../../types/llm/llmMetricTypes';
 
 type OperationPhase = 'pre-execution' | 'execution' | 'post-execution' | 'error';
 
@@ -47,7 +49,7 @@ interface OperationContext {
 /**
  * Manages thinking process execution and lifecycle
  */
-export class ThinkingManager extends CoreManager {
+class ThinkingManager extends CoreManager {
     private static instance: ThinkingManager;
     private executionTimesMap: Map<string, number[]> = new Map();
 
@@ -61,6 +63,256 @@ export class ThinkingManager extends CoreManager {
             ThinkingManager.instance = new ThinkingManager();
         }
         return ThinkingManager.instance;
+    }
+
+    /**
+     * Execute thinking iteration with standardized handling
+     */
+    public async executeThinking(params: IThinkingExecutionParams): Promise<IThinkingHandlerResult<IThinkingResult>> {
+        const { task, ExecutableAgent, feedbackMessage } = params;
+        const agent = task.agent;
+
+        // Create base metadata
+        const baseMetadata = createBaseMetadata('ThinkingManager', 'executeThinking');
+        const performanceMetrics = this.createPerformanceMetrics(agent.id, 0);
+        const agentResourceMetrics = this.getInitialResourceMetrics();
+
+        // Create agent-specific state metrics
+        const stateMetrics: IAgentStateMetrics = {
+            currentState: 'thinking',
+            stateTime: 0,
+            transitionCount: 0,
+            failedTransitions: 0,
+            blockedTaskCount: 0,
+            historyEntryCount: 0,
+            lastHistoryUpdate: Date.now()
+        };
+
+        // Create agent-specific usage metrics
+        const usageMetrics: IAgentUsageMetrics = {
+            state: stateMetrics,
+            toolUsageFrequency: {},
+            taskCompletionCount: 0,
+            averageTaskTime: 0,
+            totalRequests: 1,
+            activeUsers: 1,
+            requestsPerSecond: 0,
+            averageResponseSize: 0,
+            peakMemoryUsage: process.memoryUsage().heapUsed,
+            uptime: process.uptime(),
+            rateLimit: {
+                current: 1,
+                limit: 100,
+                remaining: 99,
+                resetTime: Date.now() + 3600000
+            },
+            timestamp: Date.now()
+        };
+
+        // Create LLM metrics
+        const now = Date.now();
+        const llmResourceMetrics = {
+            cpuUsage: 0,
+            memoryUsage: process.memoryUsage().heapUsed,
+            diskIO: { read: 0, write: 0 },
+            networkUsage: { upload: 0, download: 0 },
+            gpuMemoryUsage: 0,
+            modelMemoryAllocation: {
+                weights: 0,
+                cache: 0,
+                workspace: 0
+            },
+            timestamp: now
+        };
+
+        const llmMetrics: ILLMMetrics = {
+            resources: llmResourceMetrics,
+            performance: {
+                executionTime: { total: 0, average: 0, min: 0, max: 0 },
+                latency: { total: 0, average: 0, min: 0, max: 0 },
+                throughput: { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
+                responseTime: { total: 0, average: 0, min: 0, max: 0 },
+                queueLength: 0,
+                errorRate: 0,
+                successRate: 1,
+                errorMetrics: { totalErrors: 0, errorRate: 0 },
+                resourceUtilization: llmResourceMetrics,
+                tokensPerSecond: 0,
+                coherenceScore: 0,
+                temperatureImpact: 0,
+                timestamp: now
+            },
+            usage: {
+                totalRequests: 0,
+                activeInstances: 0,
+                requestsPerSecond: 0,
+                averageResponseLength: 0,
+                peakMemoryUsage: 0,
+                uptime: 0,
+                rateLimit: {
+                    current: 0,
+                    limit: 0,
+                    remaining: 0,
+                    resetTime: now
+                },
+                tokenDistribution: {
+                    prompt: 0,
+                    completion: 0,
+                    total: 0
+                },
+                modelDistribution: {
+                    gpt4: 0,
+                    gpt35: 0,
+                    other: 0
+                },
+                timestamp: now
+            },
+            timestamp: now
+        };
+
+        // Create thinking-specific metadata
+        const metadata: IThinkingMetadata = {
+            ...baseMetadata,
+            thinking: {
+                messageCount: 0,
+                processingTime: 0,
+                metrics: llmMetrics,
+                context: {
+                    iteration: 0,
+                    totalTokens: 0,
+                    confidence: 0,
+                    reasoningChain: []
+                },
+                performance: performanceMetrics,
+                resources: agentResourceMetrics,
+                usage: usageMetrics,
+                costs: {
+                    inputCost: 0,
+                    outputCost: 0,
+                    totalCost: 0,
+                    currency: 'USD',
+                    breakdown: {
+                        promptTokens: { count: 0, cost: 0 },
+                        completionTokens: { count: 0, cost: 0 }
+                    }
+                }
+            },
+            agent: {
+                id: agent.id,
+                name: agent.name,
+                metrics: {
+                    iterations: 0,
+                    executionTime: 0,
+                    llmMetrics
+                }
+            },
+            task: {
+                id: task.id,
+                title: task.title,
+                metrics: {
+                    iterations: 0,
+                    executionTime: 0,
+                    llmMetrics
+                }
+            },
+            llm: {
+                model: agent.llmConfig?.model || 'unknown',
+                provider: agent.llmConfig?.provider || 'unknown',
+                requestId: `req_${Date.now()}`,
+                usageStats: llmMetrics
+            }
+        };
+
+        return this.handleThinkingOperation(
+            async () => {
+                // Create prompt template
+                const prompt = ChatPromptTemplate.fromMessages([
+                    new SystemMessage(agent.llmSystemMessage || ''),
+                    new MessagesPlaceholder('history'),
+                    new MessagesPlaceholder('input')
+                ]);
+
+                // Create message history adapter
+                const messageHistory = new ChatMessageHistory();
+                const messages = await agent.messageHistory.getMessages();
+                for (const message of messages) {
+                    await messageHistory.addMessage(message);
+                }
+
+                // Create runnable with message history
+                const chain = new RunnableWithMessageHistory({
+                    runnable: prompt.pipe(ExecutableAgent),
+                    getMessageHistory: async () => messageHistory,
+                    inputMessagesKey: 'input',
+                    historyMessagesKey: 'history',
+                    outputMessagesKey: 'output'
+                });
+
+                // Execute the thinking process
+                const result = await chain.invoke(
+                    { input: feedbackMessage ? [new AIMessage(feedbackMessage)] : [] },
+                    { 
+                        configurable: { 
+                            timeout: 60000,
+                            metadata: { taskId: task.id },
+                            tags: ['thinking']
+                        }
+                    }
+                ) as LLMResult;
+
+                // Extract metrics from result
+                const metrics = {
+                    inputTokens: result.llmOutput?.tokenUsage?.promptTokens || 0,
+                    outputTokens: result.llmOutput?.tokenUsage?.completionTokens || 0,
+                    callsCount: 1,
+                    callsErrorCount: 0,
+                    parsingErrors: 0,
+                    totalLatency: result.llmOutput?.latency || 0,
+                    averageLatency: result.llmOutput?.latency || 0,
+                    lastUsed: Date.now(),
+                    memoryUtilization: {
+                        peakMemoryUsage: process.memoryUsage().heapUsed,
+                        averageMemoryUsage: process.memoryUsage().heapUsed,
+                        cleanupEvents: 0
+                    },
+                    costBreakdown: {
+                        input: 0,
+                        output: 0,
+                        total: 0,
+                        currency: 'USD'
+                    }
+                };
+
+                // Update metadata with metrics
+                metadata.thinking.metrics = {
+                    ...llmMetrics,
+                    usage: {
+                        ...llmMetrics.usage,
+                        tokenDistribution: {
+                            prompt: metrics.inputTokens,
+                            completion: metrics.outputTokens,
+                            total: metrics.inputTokens + metrics.outputTokens
+                        }
+                    }
+                };
+                metadata.thinking.context.totalTokens = metrics.inputTokens + metrics.outputTokens;
+                metadata.llm.usageStats = metadata.thinking.metrics;
+
+                // Create AIMessage from generation text
+                const generatedMessage = new AIMessage(result.generations[0][0].text);
+
+                return {
+                    parsedLLMOutput: null, // Deprecated
+                    llmOutput: result.generations[0][0].text,
+                    metrics: metadata.thinking.metrics,
+                    messages: [generatedMessage],
+                    output: result
+                };
+            },
+            agent,
+            task,
+            metadata
+        );
     }
 
     /**
@@ -175,148 +427,6 @@ export class ThinkingManager extends CoreManager {
                 }
             });
         }
-    }
-
-    /**
-     * Execute thinking iteration with standardized handling
-     */
-    public async executeThinking(params: IThinkingExecutionParams): Promise<IThinkingHandlerResult<IThinkingResult>> {
-        const { task, ExecutableAgent, feedbackMessage } = params;
-        const agent = task.agent;
-
-        // Create base metadata
-        const baseMetadata = createBaseMetadata('ThinkingManager', 'executeThinking');
-        const performanceMetrics = this.createPerformanceMetrics(agent.id, 0);
-        const resourceMetrics = this.getInitialResourceMetrics();
-
-        // Create agent-specific usage metrics
-        const usageMetrics: IAgentUsageMetrics = {
-            state: {
-                currentState: 'thinking',
-                stateTime: 0,
-                transitionCount: 0,
-                failedTransitions: 0
-            },
-            toolUsageFrequency: {},
-            taskCompletionCount: 0,
-            averageTaskTime: 0,
-            totalRequests: 1,
-            activeUsers: 1,
-            requestsPerSecond: 0,
-            averageResponseSize: 0,
-            peakMemoryUsage: process.memoryUsage().heapUsed,
-            uptime: process.uptime(),
-            rateLimit: {
-                current: 1,
-                limit: 100,
-                remaining: 99,
-                resetTime: Date.now() + 3600000
-            },
-            timestamp: Date.now()
-        };
-
-        // Validate usage metrics
-        const validationResult = AgentMetricsValidation.validateAgentUsageMetrics(usageMetrics);
-        if (!validationResult.isValid) {
-            this.log(
-                `Agent usage metrics validation failed: ${validationResult.errors.join(', ')}`,
-                agent.name,
-                task.id,
-                'error'
-            );
-        }
-
-        // Create thinking-specific metadata
-        const metadata: IThinkingMetadata = {
-            ...baseMetadata,
-            thinking: {
-                messageCount: 0,
-                processingTime: 0,
-                llmStats: this.createDefaultLLMStats(),
-                context: {
-                    iteration: 0,
-                    totalTokens: 0,
-                    confidence: 0,
-                    reasoningChain: []
-                },
-                performance: performanceMetrics,
-                resources: resourceMetrics,
-                usage: usageMetrics,
-                costs: {
-                    inputCost: 0,
-                    outputCost: 0,
-                    totalCost: 0,
-                    currency: 'USD',
-                    breakdown: {
-                        promptTokens: { count: 0, cost: 0 },
-                        completionTokens: { count: 0, cost: 0 }
-                    }
-                }
-            },
-            agent: {
-                id: agent.id,
-                name: agent.name,
-                metrics: {
-                    iterations: 0,
-                    executionTime: 0,
-                    llmUsageStats: this.createDefaultLLMStats()
-                }
-            },
-            task: {
-                id: task.id,
-                title: task.title,
-                metrics: {
-                    iterations: 0,
-                    executionTime: 0,
-                    llmUsageStats: this.createDefaultLLMStats()
-                }
-            },
-            llm: {
-                model: agent.llmConfig?.model || 'unknown',
-                provider: agent.llmConfig?.provider || 'unknown',
-                requestId: `req_${Date.now()}`,
-                usageStats: this.createDefaultLLMStats()
-            }
-        };
-
-        return this.handleThinkingOperation(
-            async () => {
-                // Execute the thinking process through the LLM
-                const result = await ExecutableAgent.invoke(
-                    { messages: [], feedbackMessage },
-                    { 
-                        timeout: 60000,
-                        metadata: { taskId: task.id },
-                        tags: ['thinking']
-                    }
-                );
-
-                // Extract and process result data
-                const { llmOutput, llmUsageStats } = this.extractResultData(result);
-                const parsedLLMOutput = await this.parseThinkingOutput(llmOutput);
-                
-                if (!parsedLLMOutput) {
-                    throw new Error('Failed to parse LLM output');
-                }
-
-                // Update metadata with LLM stats
-                metadata.thinking.llmStats = llmUsageStats;
-                metadata.thinking.context.totalTokens = llmUsageStats.inputTokens + llmUsageStats.outputTokens;
-                metadata.thinking.context.confidence = parsedLLMOutput.metadata?.confidence || 0;
-                metadata.llm.usageStats = llmUsageStats;
-
-                return {
-                    parsedLLMOutput,
-                    llmOutput,
-                    llmUsageStats,
-                    messages: result.messages,
-                    output: result.output
-                };
-            },
-            agent,
-            task,
-            metadata
-        );
     }
 
     /**
@@ -435,44 +545,6 @@ export class ThinkingManager extends CoreManager {
     }
 
     /**
-     * Extract LLM result data
-     */
-    private extractResultData(result: any): {
-        llmOutput: string;
-        llmUsageStats: ILLMUsageStats;
-    } {
-        return {
-            llmOutput: result.output || '',
-            llmUsageStats: result.llmUsageStats || this.createDefaultLLMStats()
-        };
-    }
-
-    /**
-     * Parse thinking output
-     */
-    private async parseThinkingOutput(content: string): Promise<IParsedOutput | null> {
-        try {
-            const parsed = JSON.parse(content);
-            return {
-                thought: parsed.thought,
-                action: parsed.action,
-                actionInput: parsed.actionInput,
-                observation: parsed.observation,
-                isFinalAnswerReady: parsed.isFinalAnswerReady,
-                finalAnswer: parsed.finalAnswer,
-                metadata: {
-                    reasoning: parsed.reasoning,
-                    confidence: parsed.confidence,
-                    alternativeActions: parsed.alternativeActions
-                }
-            };
-        } catch (error) {
-            this.log('Error parsing thinking output:', undefined, undefined, 'error', error as Error);
-            return null;
-        }
-    }
-
-    /**
      * Get initial resource metrics
      */
     private getInitialResourceMetrics(): IAgentResourceMetrics {
@@ -498,33 +570,6 @@ export class ThinkingManager extends CoreManager {
         return {
             ...this.getInitialResourceMetrics(),
             timestamp: Date.now()
-        };
-    }
-
-    /**
-     * Create default LLM stats
-     */
-    private createDefaultLLMStats(): ILLMUsageStats {
-        return {
-            inputTokens: 0,
-            outputTokens: 0,
-            callsCount: 0,
-            callsErrorCount: 0,
-            parsingErrors: 0,
-            totalLatency: 0,
-            averageLatency: 0,
-            lastUsed: Date.now(),
-            memoryUtilization: {
-                peakMemoryUsage: 0,
-                averageMemoryUsage: 0,
-                cleanupEvents: 0
-            },
-            costBreakdown: {
-                input: 0,
-                output: 0,
-                total: 0,
-                currency: 'USD'
-            }
         };
     }
 }

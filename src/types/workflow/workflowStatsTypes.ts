@@ -6,7 +6,7 @@
  * @module types/workflow
  */
 
-import { ILLMUsageStats } from "../llm/llmResponseTypes";
+import { ILLMUsageMetrics } from "../llm/llmMetricTypes";
 import { ICostDetails, ICostBreakdown } from "./workflowCostsTypes";
 
 // ─── Token Usage Types ───────────────────────────────────────────────────────
@@ -65,84 +65,24 @@ export interface IModelUsageStats {
  * Task stats with model usage data
  */
 export interface ITaskStatsWithModelUsage {
-    modelUsage: ILLMUsageStats & {
+    modelUsage: ILLMUsageMetrics & {
         costBreakdown: {
-            total: number;
+            inputCost: number;
+            outputCost: number;
+            totalCost: number;
         };
     };
-    startTime: number;
-    endTime: number;
     duration: number;
-    llmUsageStats: ILLMUsageStats;
-    iterationCount: number;
 }
 
-// ─── Workflow-Level Metrics ──────────────────────────────────────────────────
-
-/**
- * Workflow-level task metrics
- */
-export interface IWorkflowTaskMetrics {
-    completed: number;
-    failed: number;
-    blocked: number;
-    average_duration: number;
-}
-
-/**
- * Resource utilization metrics
- */
-export interface IResourceMetrics {
-    peak_memory: number;
-    average_memory: number;
-    peak_tokens_per_second: number;
-    average_tokens_per_second: number;
-}
-
-/**
- * Error tracking metrics
- */
-export interface IErrorMetrics {
-    total: number;
-    by_type: Record<string, number>;
-    recovery_attempts: number;
-    recovery_success_rate: number;
-}
-
-/**
- * Timing metrics
- */
-export interface ITimingMetrics {
-    total_runtime: number;
-    average_task_time: number;
-    average_agent_response_time: number;
-    idle_time: number;
-}
-
-/**
- * Complete performance metrics interface
- */
-export interface IPerformanceMetrics {
-    tasks: IWorkflowTaskMetrics;
-    resources: IResourceMetrics;
-    errors: IErrorMetrics;
-    timing: ITimingMetrics;
-}
-
-/**
- * Workflow statistics interface
- */
 export interface IWorkflowStats {
-    startTime: number;
-    endTime: number;
-    duration: number;
-    llmUsageStats: ILLMUsageStats;
+    llmUsageMetrics: ILLMUsageMetrics;
     iterationCount: number;
-    costDetails: ICostDetails;
-    taskCount: number;
-    agentCount: number;
-    teamName: string;
-    messageCount: number;
-    modelUsage: IModelUsageStats;
+    duration: number;
 }
 
+export interface IWorkflowStatsWithMetadata {
+    llmUsageMetrics: ILLMUsageMetrics;
+    iterationCount: number;
+    duration: number;
+}

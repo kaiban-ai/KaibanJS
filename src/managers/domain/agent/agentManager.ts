@@ -9,7 +9,8 @@ import { createError } from '../../../types/common/commonErrorTypes';
 import { createBaseMetadata } from '../../../types/common/commonMetadataTypes';
 import AgentEventEmitter from './agentEventEmitter';
 import AgentMetricsManager from './agentMetricsManager';
-import { AGENT_STATUS_enum } from '../../../types/common/commonEnums';
+import { AGENT_STATUS_enum, LLM_PROVIDER_enum } from '../../../types/common/commonEnums';
+import { AgentValidationSchema } from '../../../types/agent/agentValidationTypes';
 
 import type { IAgentType, IReactChampionAgent } from '../../../types/agent';
 import type { ITaskType } from '../../../types/task';
@@ -24,6 +25,7 @@ import type {
 } from '../../../types/agent/agentManagerTypes';
 import type { IAgentValidationResult } from '../../../types/agent/agentValidationTypes';
 import type { IHandlerResult } from '../../../types/common/commonHandlerTypes';
+import type { IBaseError } from '../../../types/common/commonErrorTypes';
 
 export class AgentManager extends CoreManager {
     private static instance: AgentManager | null = null;
@@ -47,6 +49,24 @@ export class AgentManager extends CoreManager {
         return AgentManager.instance;
     }
 
+    /**
+     * Create a default agent validation schema using Zod
+     * @returns Default validation schema for agents
+     */
+    public createValidationSchema() {
+        return AgentValidationSchema.extend({
+            llmConfig: AgentValidationSchema.shape.llmConfig.extend({
+                provider: AgentValidationSchema.shape.llmConfig.shape.provider.default(LLM_PROVIDER_enum.GROQ),
+                model: AgentValidationSchema.shape.llmConfig.shape.model.default('mixtral-8x7b-32768'),
+                temperature: AgentValidationSchema.shape.llmConfig.shape.temperature.default(0.7),
+                streaming: AgentValidationSchema.shape.llmConfig.shape.streaming.default(true),
+                maxRetries: AgentValidationSchema.shape.llmConfig.shape.maxRetries.default(3),
+                timeout: AgentValidationSchema.shape.llmConfig.shape.timeout.default(30000),
+                maxConcurrency: AgentValidationSchema.shape.llmConfig.shape.maxConcurrency.default(1)
+            })
+        });
+    }
+
     public async executeAgentLoop(
         agent: IReactChampionAgent,
         task: ITaskType,
@@ -60,7 +80,7 @@ export class AgentManager extends CoreManager {
         return {
             success: result.success,
             result: result.data?.result,
-            error: result.error?.message,
+            error: result.error as IBaseError | undefined,
             metadata: {
                 iterations: result.data?.metadata.iterations || 0,
                 maxAgentIterations: result.data?.metadata.maxAgentIterations || 0,
@@ -78,6 +98,7 @@ export class AgentManager extends CoreManager {
     }
 
     protected async validateAgent(agent: IAgentType): Promise<IAgentValidationResult> {
+        const startTime = Date.now();
         const result = await this.safeExecute(async () => {
             const errors: string[] = [];
             const warnings: string[] = [];
@@ -99,22 +120,26 @@ export class AgentManager extends CoreManager {
                 }
             }
 
+            const endTime = Date.now();
             const validationResult: IAgentValidationResult = {
                 isValid: errors.length === 0,
                 errors,
                 warnings,
                 metadata: {
-                    timestamp: Date.now(),
+                    timestamp: startTime,
+                    duration: endTime - startTime,
+                    validatorName: this.constructor.name,
                     validatedFields: ['name', 'role', 'goal', 'llmConfig', 'tools'],
-                    configHash: `${agent.name}_${Date.now()}`
+                    configHash: `${agent.name}_${Date.now()}`,
+                    validationDuration: endTime - startTime
                 }
             };
 
-            await this.eventEmitter.emitAgentValidationCompleted(
-                agent.id,
-                validationResult,
-                await this.createAgentEventMetadata(agent, null, 'validation')
-            );
+            const eventMetadata = await this.createAgentEventMetadata(agent, null, 'validation');
+            await this.eventEmitter.emitAgentValidationCompleted({
+                agentId: agent.id,
+                validationResult
+            });
 
             return validationResult;
         }, `Failed to validate agent ${agent.name}`);
@@ -138,11 +163,11 @@ export class AgentManager extends CoreManager {
                 samplingRate: 1000
             });
 
-            await this.eventEmitter.emitAgentCreated(
-                agent.id,
-                agent,
-                await this.createAgentEventMetadata(agent, null, 'initialization')
-            );
+            const eventMetadata = await this.createAgentEventMetadata(agent, null, 'initialization');
+            await this.eventEmitter.emitAgentCreated({
+                agentId: agent.id,
+                agentType: agent
+            });
 
             await this.handleStatusTransition({
                 entity: 'agent',
@@ -170,11 +195,11 @@ export class AgentManager extends CoreManager {
             const toolManager = this.getToolManager();
             await toolManager.cleanupTools(agent);
 
-            await this.eventEmitter.emitAgentDeleted(
-                agent.id,
-                agent,
-                await this.createAgentEventMetadata(agent, null, 'cleanup')
-            );
+            const eventMetadata = await this.createAgentEventMetadata(agent, null, 'cleanup');
+            await this.eventEmitter.emitAgentDeleted({
+                agentId: agent.id,
+                finalState: agent
+            });
 
             this.activeAgents.delete(agentId);
         }, `Failed to cleanup agent ${agentId}`);
@@ -185,7 +210,7 @@ export class AgentManager extends CoreManager {
         task: ITaskType | null,
         operation: string
     ) {
-        const metrics = await this.metricsManager.getCurrentMetrics();
+        const metrics = await this.metricsManager.getCurrentMetrics(agent.id);
         return {
             ...createBaseMetadata('agent', operation),
             agent: {

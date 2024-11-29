@@ -17,7 +17,7 @@ import { IAgenticLoopResult } from '../types/llm/llmInstanceTypes';
 import { AGENT_STATUS_enum } from '../types/common/commonEnums';
 import { IValidationSchema } from '../types/common/commonValidationTypes';
 import { IAgentStoreMethods } from '../types/agent/agentStoreTypes';
-import { ILLMConfig } from '../types/llm/llmCommonTypes';
+import { ILLMConfig, IRuntimeLLMConfig, createProviderConfig, isRuntimeConfig } from '../types/llm/llmCommonTypes';
 import { ILLMInstance } from '../types/llm/llmInstanceTypes';
 import { IMessageHistory } from '../types/llm/message/messagingHistoryTypes';
 import { IREACTChampionAgentPrompts } from '../types/agent/promptsTypes';
@@ -70,7 +70,7 @@ export abstract class BaseAgent extends CoreManager implements IBaseAgent {
     public metrics?: IAgentMetrics;
 
     public llmInstance: ILLMInstance | null = null;
-    public llmConfig: ILLMConfig;
+    public llmConfig: IRuntimeLLMConfig;
     public llmSystemMessage: string | null = null;
     public forceFinalAnswer: boolean = false;
     public promptTemplates: IREACTChampionAgentPrompts;
@@ -85,7 +85,7 @@ export abstract class BaseAgent extends CoreManager implements IBaseAgent {
         role: string;
         goal: string;
         tools?: Tool[];
-        llmConfig: ILLMConfig;
+        llmConfig: IRuntimeLLMConfig;
         promptTemplates: IREACTChampionAgentPrompts;
         messageHistory: IMessageHistory;
         store: IAgentStoreMethods;
@@ -210,8 +210,10 @@ export abstract class BaseAgent extends CoreManager implements IBaseAgent {
                 usage: {
                     totalRequests: 0,
                     activeInstances: 0,
+                    activeUsers: 0,  // Added missing field
                     requestsPerSecond: 0,
                     averageResponseLength: 0,
+                    averageResponseSize: 0,  // Added missing field
                     peakMemoryUsage: 0,
                     uptime: 0,
                     rateLimit: defaultRateLimitMetrics,
@@ -351,10 +353,40 @@ export abstract class BaseAgent extends CoreManager implements IBaseAgent {
     }
 
     /**
-     * Normalize LLM config
+     * Normalize LLM config by converting runtime config to provider-specific config
      */
-    public normalizeLlmConfig(llmConfig: ILLMConfig): ILLMConfig {
-        return llmConfig;
+    public normalizeLlmConfig(llmConfig: IRuntimeLLMConfig): ILLMConfig {
+        try {
+            if (!isRuntimeConfig(llmConfig)) {
+                throw new Error('Invalid runtime LLM configuration');
+            }
+
+            const normalizedConfig = createProviderConfig({
+                ...llmConfig,
+                provider: llmConfig.provider,
+                model: llmConfig.model
+            });
+
+            // Validate the normalized config
+            const validationResult = AgentValidationSchema.shape.llmConfig.safeParse(normalizedConfig);
+            if (!validationResult.success) {
+                throw new Error(`Invalid LLM configuration: ${validationResult.error.message}`);
+            }
+
+            return normalizedConfig;
+        } catch (err) {
+            const error = err instanceof Error ? err : new Error('Unknown error during LLM config normalization');
+            throw createError({
+                message: `Failed to normalize LLM config: ${error.message}`,
+                type: 'ValidationError',
+                context: {
+                    component: this.constructor.name,
+                    agentId: this.id,
+                    config: llmConfig,
+                    error: error
+                }
+            });
+        }
     }
 
     /**

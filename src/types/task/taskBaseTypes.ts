@@ -8,7 +8,7 @@
 
 import type { IAgentType } from '../agent/agentBaseTypes';
 import type { ITeamStoreMethods } from '../team/teamBaseTypes';
-import type { TASK_STATUS_enum, FEEDBACK_STATUS_enum } from '../common/commonEnums';
+import { TASK_STATUS_enum, FEEDBACK_STATUS_enum } from '../common/commonEnums';
 import type { ITaskMetrics, ITaskHandlerResult, ITaskHandlerMetadata } from './taskHandlerTypes';
 
 /**
@@ -27,7 +27,7 @@ export interface ITaskParams {
  * Task progress tracking
  */
 export interface ITaskProgress {
-    status: keyof typeof TASK_STATUS_enum;
+    status: TASK_STATUS_enum;
     progress: number;
     timeElapsed: number;
     estimatedTimeRemaining?: number;
@@ -42,8 +42,8 @@ export interface ITaskHistoryEntry {
     timestamp: number;
     eventType: string;
     statusChange?: {
-        from: keyof typeof TASK_STATUS_enum;
-        to: keyof typeof TASK_STATUS_enum;
+        from: TASK_STATUS_enum;
+        to: TASK_STATUS_enum;
     };
     agent?: string;
     details?: Record<string, unknown>;
@@ -73,7 +73,7 @@ export interface ITaskType {
     description: string;
     expectedOutput: string;
     agent: IAgentType;
-    status: keyof typeof TASK_STATUS_enum;
+    status: TASK_STATUS_enum;
     
     // Workflow tracking
     stepId: string;

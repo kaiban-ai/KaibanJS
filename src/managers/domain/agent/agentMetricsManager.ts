@@ -5,22 +5,16 @@
  */
 
 import CoreManager from '../../core/coreManager';
-import { createError } from '../../../types/common/commonErrorTypes';
-import { createBaseMetadata } from '../../../types/common/commonMetadataTypes';
 import { createValidationResult } from '../../../types/common/commonValidationTypes';
 
 import {
-    AgentMetricsValidation,
-    AgentMetricsTypeGuards
+    AgentMetricsValidation
 } from '../../../types/agent/agentMetricTypes';
 
 import type {
     IAgentResourceMetrics,
     IAgentPerformanceMetrics,
-    IAgentUsageMetrics,
-    ICognitiveResourceMetrics,
-    IThinkingOperationMetrics,
-    IAgentStateMetrics
+    IAgentUsageMetrics
 } from '../../../types/agent/agentMetricTypes';
 
 import type { ITimeMetrics, IThroughputMetrics, IErrorMetrics } from '../../../types/metrics';
@@ -33,6 +27,7 @@ interface IMetricsCollectionOptions {
 }
 
 interface IMetricsSnapshot {
+    agentId: string;
     timestamp: number;
     resources: IAgentResourceMetrics;
     performance: IAgentPerformanceMetrics;
@@ -63,8 +58,9 @@ export class AgentMetricsManager extends CoreManager {
     /**
      * Get current metrics for an agent
      */
-    public async getCurrentMetrics(): Promise<IMetricsSnapshot> {
+    public async getCurrentMetrics(agentId: string): Promise<IMetricsSnapshot> {
         return {
+            agentId,
             timestamp: Date.now(),
             resources: await this.createResourceMetrics(),
             performance: await this.createPerformanceMetrics(),
@@ -255,7 +251,7 @@ export class AgentMetricsManager extends CoreManager {
      * Create a snapshot of current metrics
      */
     private async createMetricsSnapshot(agentId: string): Promise<IMetricsSnapshot> {
-        return await this.getCurrentMetrics();
+        return await this.getCurrentMetrics(agentId);
     }
 
     /**
@@ -342,7 +338,18 @@ export class AgentMetricsManager extends CoreManager {
      */
     private async validateMetricsSnapshot(snapshot: IMetricsSnapshot): Promise<IValidationResult> {
         const startTime = Date.now();
-        const result = createValidationResult(true, 'AgentMetricsValidator');
+        
+        const result = createValidationResult({
+            isValid: true,
+            errors: [],
+            warnings: [],
+            metadata: {
+                component: 'AgentMetricsValidator',
+                validatedFields: ['agentId', 'resources', 'performance', 'usage', 'state'],
+                validationDuration: 0,
+                timestamp: startTime
+            }
+        });
         
         // Validate resource metrics
         const resourceResult = AgentMetricsValidation.validateAgentResourceMetrics(snapshot.resources);
@@ -372,8 +379,7 @@ export class AgentMetricsManager extends CoreManager {
 
         // Update validation metadata
         result.isValid = result.errors.length === 0;
-        result.metadata.duration = Date.now() - startTime;
-        result.validatedFields = ['resources', 'performance', 'usage', 'state'];
+        result.metadata.validationDuration = Date.now() - startTime;
 
         return result;
     }

@@ -1,37 +1,19 @@
 /**
  * @file errorManager.ts
  * @path src/managers/core/errorManager.ts
- * @description Core error management and handling implementation
- * 
- * @module @core
+ * @description Core error handling and management
  */
 
-import CoreManager from './coreManager';
-import { LogManager } from './logManager';
-import { v4 as uuidv4 } from 'uuid';
+import { CoreManager } from './coreManager';
+import { createError } from '../../types/common/commonErrorTypes';
 import { MetadataFactory } from '../../utils/factories/metadataFactory';
-import { createError, toErrorType } from '../../types/common/commonErrorTypes';
+import { LogManager } from './logManager';
 
-// Import types from canonical locations
-import type { 
-    IErrorType,
-    IErrorHandlerParams,
-    ITeamErrorHandlerParams,
-    IErrorKind,
-    IBaseError,
-    IErrorOptions
-} from '../../types/common/commonErrorTypes';
+import type { IBaseError, IErrorKind } from '../../types/common/commonErrorTypes';
+import type { ILLMUsageMetrics } from '../../types/llm/llmMetricTypes';
 
-import type { IErrorMetadata } from '../../types/common/commonMetadataTypes';
-import type { IHandlerResult } from '../../types/common/commonHandlerTypes';
-import type { IAgentType } from '../../types/agent/agentBaseTypes';
-import type { ITaskType } from '../../types/task/taskBaseTypes';
-import type { ITeamState } from '../../types/team/teamBaseTypes';
-import type { ILog } from '../../types/team/teamLogsTypes';
+// ─── Error Manager Implementation ────────────────────────────────────────────
 
-/**
- * Centralized error management implementation
- */
 export class ErrorManager extends CoreManager {
     private static instance: ErrorManager;
     readonly logManager: LogManager;
@@ -39,6 +21,7 @@ export class ErrorManager extends CoreManager {
     private constructor() {
         super();
         this.logManager = LogManager.getInstance();
+        this.registerDomainManager('ErrorManager', this);
     }
 
     public static getInstance(): ErrorManager {
@@ -48,114 +31,100 @@ export class ErrorManager extends CoreManager {
         return ErrorManager.instance;
     }
 
-    // ─── Agent Error Handling ────────────────────────────────────────────────────
-
-    /**
-     * Handle agent-related errors
-     */
-    public async handleAgentError(params: ITeamErrorHandlerParams): Promise<IHandlerResult> {
-        const { error, context, task, agent, store } = params;
-
+    public override handleError(error: unknown, context: string, errorType: IErrorKind = 'SystemError'): void {
         try {
-            const processedError: IErrorType = toErrorType(error);
-            const prettyError = createError({
-                message: processedError.message,
-                type: 'SystemError',
-                context: {
-                    agentId: agent && typeof agent === 'object' && 'id' in agent ? agent.id : undefined,
-                    taskId: task && typeof task === 'object' && 'id' in task ? task.id : undefined,
-                    ...context,
-                    originalError: processedError
-                },
-                recommendedAction: 'Review agent configuration and retry'
-            });
-
-            const timestamp = Date.now();
-            const errorLog: ILog = {
-                id: uuidv4(),
-                level: 'error',
-                message: processedError.message,
-                timestamp,
-                agentName: agent && typeof agent === 'object' && 'name' in agent ? String(agent.name) : 'unknown',
-                taskId: task && typeof task === 'object' && 'id' in task ? String(task.id) : 'unknown',
-                meta: {
-                    error: prettyError,
+            const baseError = this.normalizeError(error);
+            const errorMetadata = {
+                component: this.constructor.name,
+                operation: 'handleError',
+                message: baseError.message,
+                metadata: {
+                    type: errorType,
                     context,
-                    output: {
-                        llmUsageStats: this.createDefaultLLMStats()
-                    },
-                    logType: task ? 'TaskStatusUpdate' : 'WorkflowStatusUpdate',
-                    agentStatus: agent ? 'THINKING_ERROR' : undefined
+                    originalError: error instanceof Error ? error : undefined,
+                    timestamp: Date.now()
                 }
             };
 
-            store.setState((state: ITeamState) => ({
-                ...state,
-                workflowLogs: [...(state.workflowLogs || []), errorLog]
-            }));
-
-            return MetadataFactory.createErrorResult(prettyError);
-
+            this.logManager.log(
+                this.constructor.name,
+                'handleError',
+                `${errorType}: ${baseError.message}`,
+                errorMetadata
+            );
         } catch (handlingError) {
-            const processedHandlingError = toErrorType(handlingError);
-            this.logManager.error('Error handling agent error: ' + processedHandlingError.message);
-            
-            return MetadataFactory.createErrorResult(processedHandlingError);
+            this.logManager.log(
+                this.constructor.name,
+                'handleError',
+                'Error handling error',
+                {
+                    error: handlingError,
+                    timestamp: Date.now()
+                }
+            );
+            throw handlingError;
         }
     }
 
-    // ─── LLM Error Handling ─────────────────────────────────────────────────────
+    private normalizeError(error: unknown): IBaseError {
+        if (this.isBaseError(error)) {
+            return error;
+        }
 
-    /**
-     * Handle LLM-specific errors
-     */
-    public handleLLMError(params: IErrorHandlerParams): IHandlerResult {
-        const { error, context, task, agent } = params;
+        if (error instanceof Error) {
+            return createError({
+                message: error.message,
+                type: 'UnknownError',
+                context: {
+                    originalError: error
+                }
+            });
+        }
 
-        const processedError: IErrorType = toErrorType(error);
-        const prettyError = createError({
-            message: 'LLM Processing Error',
-            type: 'LLMError',
-            context: {
-                agentId: agent && typeof agent === 'object' && 'id' in agent ? agent.id : undefined,
-                taskId: task && typeof task === 'object' && 'id' in task ? task.id : undefined,
-                ...context,
-                originalError: processedError
-            },
-            recommendedAction: 'Check LLM configuration and retry'
+        return createError({
+            message: String(error),
+            type: 'UnknownError',
+            context: { originalError: error }
         });
-
-        this.logManager.error('LLM error: ' + prettyError.message);
-
-        return MetadataFactory.createErrorResult(prettyError);
     }
 
-    // ─── Protected Helper Methods ───────────────────────────────────────────────
+    private isBaseError(error: unknown): error is IBaseError {
+        if (typeof error !== 'object' || error === null) return false;
+        const e = error as Partial<IBaseError>;
+        return (
+            typeof e.name === 'string' &&
+            typeof e.message === 'string' &&
+            typeof e.type === 'string'
+        );
+    }
 
-    /**
-     * Create default LLM stats
-     */
-    private createDefaultLLMStats() {
+    private createDefaultLLMMetrics(): ILLMUsageMetrics {
         return {
-            inputTokens: 0,
-            outputTokens: 0,
-            callsCount: 0,
-            callsErrorCount: 1,
-            parsingErrors: 0,
-            totalLatency: 0,
-            averageLatency: 0,
-            lastUsed: Date.now(),
-            memoryUtilization: {
-                peakMemoryUsage: 0,
-                averageMemoryUsage: 0,
-                cleanupEvents: 0
+            totalRequests: 0,
+            activeInstances: 0,
+            activeUsers: 0,
+            requestsPerSecond: 0,
+            averageResponseLength: 0,
+            averageResponseSize: 0,
+            peakMemoryUsage: 0,
+            uptime: 0,
+            rateLimit: {
+                current: 0,
+                limit: 0,
+                remaining: 0,
+                resetTime: 0
             },
-            costBreakdown: {
-                input: 0,
-                output: 0,
-                total: 0,
-                currency: 'USD'
-            }
+            tokenDistribution: {
+                prompt: 0,
+                completion: 0,
+                total: 0
+            },
+            modelDistribution: {
+                gpt4: 0,
+                gpt35: 0,
+                other: 0
+            },
+            timestamp: Date.now()
         };
     }
 }
