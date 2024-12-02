@@ -30,6 +30,7 @@ import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
 import RagToolkit from '../../dist/rag-toolkit/index.esm';
 import { z } from 'zod';
 import ky, { HTTPError } from 'ky';
+import { BrowserPDFLoader } from '../_utils/rag/loaders/browserPDFLoader';
 
 export class PdfSearch extends Tool {
   constructor(fields) {
@@ -58,7 +59,11 @@ export class PdfSearch extends Tool {
       promptQuestionTemplate: this.promptQuestionTemplate,
       env: { OPENAI_API_KEY: this.OPENAI_API_KEY },
     });
-    this.ragToolkit.registerLoader('pdf', (source) => new PDFLoader(source));
+    this.ragToolkit.registerLoader('pdf', (source) =>
+      typeof window !== 'undefined'
+        ? new BrowserPDFLoader(source)
+        : new PDFLoader(source)
+    );
     this.httpClient = ky;
   }
 
