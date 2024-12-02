@@ -4,7 +4,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import json from '@rollup/plugin-json';
 import nodePolyfills from 'rollup-plugin-node-polyfills'; // Correct plugin name
-import replace from '@rollup/plugin-replace';
+// import replace from '@rollup/plugin-replace';
 
 // Array of tool folder names
 const toolFolders = [
@@ -39,7 +39,7 @@ const toolConfigs = toolFolders.map((tool) => {
         inlineDynamicImports: true,
       },
     ],
-    external: ['pdf-parse'],
+    external: ['pdf-parse', 'pdfjs-dist'],
     plugins: [
       nodeResolve({
         browser: true,
@@ -49,13 +49,13 @@ const toolConfigs = toolFolders.map((tool) => {
       json(),
       nodePolyfills(), // Correctly named polyfill plugin for Node.js
       terser(),
-      replace({
-        preventAssignment: true,
-        values: {
-          'Promise.withResolvers':
-            '(() => ({ promise: new Promise(() => {}), resolve: () => {}, reject: () => {} }))',
-        },
-      }),
+      // replace({
+      //   preventAssignment: true,
+      //   values: {
+      //     'Promise.withResolvers':
+      //       '(() => ({ promise: new Promise(() => {}), resolve: () => {}, reject: () => {} }))',
+      //   },
+      // }),
     ],
   });
 });
@@ -77,7 +77,7 @@ const mainConfig = defineConfig({
       inlineDynamicImports: true,
     },
   ],
-  external: ['pdf-parse'],
+  external: ['pdf-parse', 'pdfjs-dist'],
   plugins: [
     nodeResolve({
       browser: true,
@@ -87,13 +87,13 @@ const mainConfig = defineConfig({
     json(),
     nodePolyfills(),
     terser(),
-    replace({
-      preventAssignment: true,
-      values: {
-        'Promise.withResolvers':
-          '(() => ({ promise: new Promise(() => {}), resolve: () => {}, reject: () => {} }))',
-      },
-    }),
+    // replace({
+    //   preventAssignment: true,
+    //   values: {
+    //     'Promise.withResolvers':
+    //       '(() => ({ promise: new Promise(() => {}), resolve: () => {}, reject: () => {} }))',
+    //   },
+    // }),
   ],
 });
 const ragToolkitConfig = defineConfig({

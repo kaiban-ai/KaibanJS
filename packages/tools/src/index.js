@@ -6,5 +6,5 @@ export * from './wolfram-alpha/index.js';
 export * from './exa/index.js';
 export * from './simple-rag/index.js';
 export * from './website-search/index.js';
-// export * from './pdf-search/index.js';
-// export * from './textfile-search/index.js';
+export * from './pdf-search/index.js';
+export * from './textfile-search/index.js';
