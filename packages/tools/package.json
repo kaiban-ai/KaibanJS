@@ -96,7 +96,6 @@
     "langchain": "^0.2.10",
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^4.8.69",
-    "xmlhttprequest": "^1.8.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
