@@ -29,6 +29,7 @@ import { Tool } from '@langchain/core/tools';
 import { TextLoader } from 'langchain/document_loaders/fs/text';
 import RagToolkit from '../../dist/rag-toolkit/index.esm';
 import { z } from 'zod';
+import ky, { HTTPError } from 'ky';
 
 export class TextFileSearch extends Tool {
   constructor(fields) {
@@ -58,6 +59,7 @@ export class TextFileSearch extends Tool {
       env: { OPENAI_API_KEY: this.OPENAI_API_KEY },
     });
     this.ragToolkit.registerLoader('text', (source) => new TextLoader(source));
+    this.httpClient = ky;
   }
 
   async _call(input) {
@@ -74,9 +76,13 @@ export class TextFileSearch extends Tool {
 
     try {
       const ragToolkit = this.ragToolkit;
+      console.log('file', this.file);
 
-      if (typeof this.file === 'string') {
-        const response = await fetch(this.file);
+      if (typeof this.file === 'string' && typeof window !== 'undefined') {
+        console.log('fetching file');
+
+        const response = await this.httpClient.get(this.file);
+
         const blob = await response.blob();
         this.file = new File([blob], 'file.txt', { type: 'text/plain' });
       }
@@ -85,7 +91,18 @@ export class TextFileSearch extends Tool {
       const response = await ragToolkit.askQuestion(query);
       return response;
     } catch (error) {
-      return `ERROR_TEXTFILE_SEARCH_PROCESSING: An unexpected error occurred: in TextFileSearch tool. Details: ${error.message}. Agent should verify content format and query validity.`;
+      if (error instanceof HTTPError) {
+        const statusCode = error.response.status;
+        let errorType = 'Unknown';
+        if (statusCode >= 400 && statusCode < 500) {
+          errorType = 'Client Error';
+        } else if (statusCode >= 500) {
+          errorType = 'Server Error';
+        }
+        return `Fetch file failed: ${errorType} (${statusCode})`;
+      } else {
+        return `ERROR_TEXTFILE_SEARCH_PROCESSING: An unexpected error occurred: in TextFileSearch tool. Details: ${error.message}. Agent should verify content format and query validity.`;
+      }
     }
   }
 }
