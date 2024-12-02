@@ -20,22 +20,24 @@ const textFileTool = new TextFileSearch({
 
 // Create an agent with the text file tool
 const textFileAnalyzer = new Agent({
-  name: 'Text File Analyzer',
+  name: 'Text File Searcher',
   role: 'Text Content Analyzer',
-  goal: 'Analyze and extract information from text files',
+  goal: 'Conduct semantic searches within the content of a particular text file',
   tools: [textFileTool],
 });
 
 // Create a text analysis task
 const textAnalysisTask = new Task({
-  description: 'Analyze the text file at {filePath} and summarize the content.',
-  expectedOutput: 'A detailed summary of the text file content.',
+  description:
+    'Conduct a semantic search on the following Text file: {file} and answer the question: {query}',
+  expectedOutput:
+    'A detailed answer to the question based on the website content.',
   agent: textFileAnalyzer,
 });
 
 // Create the team
 const team = new Team({
-  name: 'Text Analysis Team',
+  name: 'Text Search Team',
   agents: [textFileAnalyzer],
   tasks: [textAnalysisTask],
   inputs: {

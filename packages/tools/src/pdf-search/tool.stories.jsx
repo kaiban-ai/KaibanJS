@@ -20,7 +20,7 @@ const pdfFileTool = new PdfSearch({
 
 // Create an agent with the text file tool
 const pdfSearcher = new Agent({
-  name: 'PDF File Analyzer',
+  name: 'PDF File Searcher',
   role: 'PDF Content Analyzer',
   goal: 'Conduct semantic searches within the content of a particular pdf file',
   tools: [pdfFileTool],

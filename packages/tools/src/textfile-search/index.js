@@ -76,11 +76,8 @@ export class TextFileSearch extends Tool {
 
     try {
       const ragToolkit = this.ragToolkit;
-      console.log('file', this.file);
 
       if (typeof this.file === 'string' && typeof window !== 'undefined') {
-        console.log('fetching file');
-
         const response = await this.httpClient.get(this.file);
 
         const blob = await response.blob();

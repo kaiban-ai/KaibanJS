@@ -83,8 +83,6 @@ export class PdfSearch extends Tool {
       const ragToolkit = this.ragToolkit;
 
       if (typeof this.file === 'string' && typeof window !== 'undefined') {
-        console.log('fetching file');
-
         const response = await this.httpClient.get(this.file);
 
         const blob = await response.blob();
