@@ -50,16 +50,7 @@ const toolConfigs = toolFolders.map((tool) => {
         preferBuiltins: false, // Use polyfills for Node built-in modules
       }),
       commonjs({
-        ignore: [
-          'pdf-parse',
-          'pdfjs-dist',
-          'pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js',
-        ], // Ignore pdf-parse in commonjs plugin
-        exclude: [
-          'node_modules/pdf-parse/**',
-          'node_modules/pdfjs-dist',
-          'pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js',
-        ], // Exclude pdf-parse from commonjs
+        ignore: ['pdf-parse', 'pdfjs-dist'],
       }),
       json(),
       nodePolyfills(), // Correctly named polyfill plugin for Node.js
@@ -103,16 +94,7 @@ const mainConfig = defineConfig({
       preferBuiltins: false,
     }),
     commonjs({
-      ignore: [
-        'pdf-parse',
-        'pdfjs-dist',
-        'pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js',
-      ], // Ignore pdf-parse in commonjs plugin
-      exclude: [
-        'node_modules/pdf-parse/**',
-        'node_modules/pdfjs-dist',
-        'pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js',
-      ], // Exclude pdf-parse from commonjs
+      ignore: ['pdf-parse', 'pdfjs-dist'], // Ignore pdf-parse in commonjs plugin
     }),
     json(),
     nodePolyfills(),
