@@ -49,9 +49,7 @@ const toolConfigs = toolFolders.map((tool) => {
         browser: true,
         preferBuiltins: false, // Use polyfills for Node built-in modules
       }),
-      commonjs({
-        ignore: ['pdf-parse', 'pdfjs-dist'],
-      }),
+      commonjs(),
       json(),
       nodePolyfills(), // Correctly named polyfill plugin for Node.js
       terser(),
@@ -93,9 +91,7 @@ const mainConfig = defineConfig({
       browser: true,
       preferBuiltins: false,
     }),
-    commonjs({
-      ignore: ['pdf-parse', 'pdfjs-dist'], // Ignore pdf-parse in commonjs plugin
-    }),
+    commonjs(),
     json(),
     nodePolyfills(),
     terser(),
