@@ -27,9 +27,9 @@
 
 import { Tool } from '@langchain/core/tools';
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
-// import { BrowserPDFLoader } from '../_utils/rag/loaders/browserPDFLoader';
 import RagToolkit from '../../dist/rag-toolkit/index.esm';
 import { z } from 'zod';
+import ky, { HTTPError } from 'ky';
 
 export class PdfSearch extends Tool {
   constructor(fields) {
@@ -59,10 +59,7 @@ export class PdfSearch extends Tool {
       env: { OPENAI_API_KEY: this.OPENAI_API_KEY },
     });
     this.ragToolkit.registerLoader('pdf', (source) => new PDFLoader(source));
-    // this.ragToolkit.registerLoader(
-    //   'pdf-browser',
-    //   (source) => new BrowserPDFLoader(source)
-    // );
+    this.httpClient = ky;
   }
 
   async _call(input) {
@@ -80,20 +77,36 @@ export class PdfSearch extends Tool {
     try {
       const ragToolkit = this.ragToolkit;
 
+      if (typeof this.file === 'string' && typeof window !== 'undefined') {
+        console.log('fetching file');
+
+        const response = await this.httpClient.get(this.file);
+
+        const blob = await response.blob();
+        this.file = new File([blob], 'file.pdf', { type: 'application/pdf' });
+      }
+
       await ragToolkit.addDocuments([
         {
           source: this.file,
-          type:
-            typeof window !== 'undefined' &&
-            typeof window.document !== 'undefined'
-              ? 'pdf-browser'
-              : 'pdf',
+          type: 'pdf',
         },
       ]);
       const response = await ragToolkit.askQuestion(query);
       return response;
     } catch (error) {
-      return `ERROR_PDF_SEARCH_PROCESSING: An unexpected error occurred: in PDFSearch tool. Details: ${error.message}. Agent should verify content format and query validity.`;
+      if (error instanceof HTTPError) {
+        const statusCode = error.response.status;
+        let errorType = 'Unknown';
+        if (statusCode >= 400 && statusCode < 500) {
+          errorType = 'Client Error';
+        } else if (statusCode >= 500) {
+          errorType = 'Server Error';
+        }
+        return `Fetch file failed: ${errorType} (${statusCode})`;
+      } else {
+        return `ERROR_PDF_SEARCH_PROCESSING: An unexpected error occurred: in PDFSearch tool. Details: ${error.message}. Agent should verify content format and query validity.`;
+      }
     }
   }
 }

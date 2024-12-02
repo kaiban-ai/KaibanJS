@@ -39,6 +39,7 @@ const toolConfigs = toolFolders.map((tool) => {
         inlineDynamicImports: true,
       },
     ],
+    external: ['pdf-parse'],
     plugins: [
       nodeResolve({
         browser: true,
@@ -76,6 +77,7 @@ const mainConfig = defineConfig({
       inlineDynamicImports: true,
     },
   ],
+  external: ['pdf-parse'],
   plugins: [
     nodeResolve({
       browser: true,
