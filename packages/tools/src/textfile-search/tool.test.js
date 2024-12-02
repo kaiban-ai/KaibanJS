@@ -44,6 +44,7 @@ describe('TextFileSearch', () => {
       query: 'Test question',
     });
 
+    // Check mockRagToolkit calls
     expect(mockRagToolkit.addDocuments).toHaveBeenCalledWith([
       { source: '/path/to/textfile.txt', type: 'text' },
     ]);
@@ -55,10 +56,12 @@ describe('TextFileSearch', () => {
     mockRagToolkit.addDocuments.mockImplementationOnce(() => {
       throw new Error('Test addDocuments error');
     });
+
     const result = await tool._call({
       file: '/path/to/textfile.txt',
       query: 'Test question',
     });
+
     await expect(result).toContain('ERROR_TEXTFILE_SEARCH_PROCESSING');
   });
 
