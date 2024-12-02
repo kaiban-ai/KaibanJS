@@ -1,9 +1,6 @@
 import { BaseDocumentLoader } from '@langchain/core/document_loaders/base';
 import { Document as BaseDocument } from 'langchain/document';
-import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
-
-GlobalWorkerOptions.workerSrc =
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.worker.min.mjs';
+// import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 
 class BrowserPDFLoader extends BaseDocumentLoader {
   constructor(file, metadata = {}) {
@@ -25,6 +22,10 @@ class BrowserPDFLoader extends BaseDocumentLoader {
     }
 
     try {
+      const { getDocument, GlobalWorkerOptions } = await import('pdfjs-dist');
+      GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.worker.min.mjs';
+
       const fileReader = new FileReader();
 
       const fileReaderPromise = new Promise((resolve, reject) => {
