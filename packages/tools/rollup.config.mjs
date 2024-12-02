@@ -4,7 +4,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import json from '@rollup/plugin-json';
 import nodePolyfills from 'rollup-plugin-node-polyfills'; // Correct plugin name
-// import replace from '@rollup/plugin-replace';
+import replace from '@rollup/plugin-replace';
 
 // Array of tool folder names
 const toolFolders = [
@@ -39,23 +39,38 @@ const toolConfigs = toolFolders.map((tool) => {
         inlineDynamicImports: true,
       },
     ],
-    external: ['pdf-parse', 'pdfjs-dist'],
+    external: [
+      'pdf-parse',
+      'pdfjs-dist',
+      'pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js',
+    ],
     plugins: [
       nodeResolve({
         browser: true,
         preferBuiltins: false, // Use polyfills for Node built-in modules
       }),
-      commonjs(),
+      commonjs({
+        ignore: [
+          'pdf-parse',
+          'pdfjs-dist',
+          'pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js',
+        ], // Ignore pdf-parse in commonjs plugin
+        exclude: [
+          'node_modules/pdf-parse/**',
+          'node_modules/pdfjs-dist',
+          'pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js',
+        ], // Exclude pdf-parse from commonjs
+      }),
       json(),
       nodePolyfills(), // Correctly named polyfill plugin for Node.js
       terser(),
-      // replace({
-      //   preventAssignment: true,
-      //   values: {
-      //     'Promise.withResolvers':
-      //       '(() => ({ promise: new Promise(() => {}), resolve: () => {}, reject: () => {} }))',
-      //   },
-      // }),
+      replace({
+        preventAssignment: true,
+        values: {
+          'Promise.withResolvers':
+            '(() => ({ promise: new Promise(() => {}), resolve: () => {}, reject: () => {} }))',
+        },
+      }),
     ],
   });
 });
@@ -77,23 +92,38 @@ const mainConfig = defineConfig({
       inlineDynamicImports: true,
     },
   ],
-  external: ['pdf-parse', 'pdfjs-dist'],
+  external: [
+    'pdf-parse',
+    'pdfjs-dist',
+    'pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js',
+  ],
   plugins: [
     nodeResolve({
       browser: true,
       preferBuiltins: false,
     }),
-    commonjs(),
+    commonjs({
+      ignore: [
+        'pdf-parse',
+        'pdfjs-dist',
+        'pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js',
+      ], // Ignore pdf-parse in commonjs plugin
+      exclude: [
+        'node_modules/pdf-parse/**',
+        'node_modules/pdfjs-dist',
+        'pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js',
+      ], // Exclude pdf-parse from commonjs
+    }),
     json(),
     nodePolyfills(),
     terser(),
-    // replace({
-    //   preventAssignment: true,
-    //   values: {
-    //     'Promise.withResolvers':
-    //       '(() => ({ promise: new Promise(() => {}), resolve: () => {}, reject: () => {} }))',
-    //   },
-    // }),
+    replace({
+      preventAssignment: true,
+      values: {
+        'Promise.withResolvers':
+          '(() => ({ promise: new Promise(() => {}), resolve: () => {}, reject: () => {} }))',
+      },
+    }),
   ],
 });
 const ragToolkitConfig = defineConfig({
