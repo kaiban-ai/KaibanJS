@@ -56,6 +56,7 @@ const toolConfigs = toolFolders.map((tool) => {
       replace({
         preventAssignment: true,
         values: {
+          'node:fs/promises': 'fs/promises',
           'Promise.withResolvers':
             '(() => ({ promise: new Promise(() => {}), resolve: () => {}, reject: () => {} }))',
         },
@@ -98,6 +99,7 @@ const mainConfig = defineConfig({
     replace({
       preventAssignment: true,
       values: {
+        'node:fs/promises': 'fs/promises',
         'Promise.withResolvers':
           '(() => ({ promise: new Promise(() => {}), resolve: () => {}, reject: () => {} }))',
       },
