@@ -4,6 +4,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import json from '@rollup/plugin-json';
 import nodePolyfills from 'rollup-plugin-node-polyfills'; // Correct plugin name
+import replace from '@rollup/plugin-replace';
 
 // Array of tool folder names
 const toolFolders = [
@@ -13,6 +14,10 @@ const toolFolders = [
   'exa',
   'wolfram-alpha',
   'github-issues',
+  'simple-rag',
+  'website-search',
+  'pdf-search',
+  'textfile-search',
 ]; // Add more folder names as needed
 
 const toolConfigs = toolFolders.map((tool) => {
@@ -25,12 +30,19 @@ const toolConfigs = toolFolders.map((tool) => {
         file: `dist/${tool}/index.cjs.js`,
         format: 'cjs',
         sourcemap: false,
+        inlineDynamicImports: true,
       },
       {
         file: `dist/${tool}/index.esm.js`,
         format: 'esm',
         sourcemap: false,
+        inlineDynamicImports: true,
       },
+    ],
+    external: [
+      'pdf-parse',
+      'pdfjs-dist',
+      'pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js',
     ],
     plugins: [
       nodeResolve({
@@ -41,6 +53,14 @@ const toolConfigs = toolFolders.map((tool) => {
       json(),
       nodePolyfills(), // Correctly named polyfill plugin for Node.js
       terser(),
+      replace({
+        preventAssignment: true,
+        values: {
+          'node:fs/promises': 'fs/promises',
+          'Promise.withResolvers':
+            '(() => ({ promise: new Promise(() => {}), resolve: () => {}, reject: () => {} }))',
+        },
+      }),
     ],
   });
 });
@@ -53,11 +73,53 @@ const mainConfig = defineConfig({
       file: 'dist/index.cjs.js',
       format: 'cjs',
       sourcemap: false,
+      inlineDynamicImports: true,
     },
     {
       file: 'dist/index.esm.js',
       format: 'esm',
       sourcemap: false,
+      inlineDynamicImports: true,
+    },
+  ],
+  external: [
+    'pdf-parse',
+    'pdfjs-dist',
+    'pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js',
+  ],
+  plugins: [
+    nodeResolve({
+      browser: true,
+      preferBuiltins: false,
+    }),
+    commonjs(),
+    json(),
+    nodePolyfills(),
+    terser(),
+    replace({
+      preventAssignment: true,
+      values: {
+        'node:fs/promises': 'fs/promises',
+        'Promise.withResolvers':
+          '(() => ({ promise: new Promise(() => {}), resolve: () => {}, reject: () => {} }))',
+      },
+    }),
+  ],
+});
+const ragToolkitConfig = defineConfig({
+  input: 'src/_utils/rag/ragToolkit.js',
+  output: [
+    {
+      file: 'dist/rag-toolkit/index.cjs.js',
+      format: 'cjs',
+      sourcemap: false,
+      inlineDynamicImports: true,
+    },
+    {
+      file: 'dist/rag-toolkit/index.esm.js',
+      format: 'esm',
+      sourcemap: false,
+      inlineDynamicImports: true,
     },
   ],
   plugins: [
@@ -71,5 +133,4 @@ const mainConfig = defineConfig({
     terser(),
   ],
 });
-
-export default [...toolConfigs, mainConfig];
+export default [ragToolkitConfig, ...toolConfigs, mainConfig];
