@@ -2,26 +2,6 @@
 
 This tool is specifically crafted for conducting semantic searches within the content of a PDF file. Leveraging a Retrieval-Augmented Generation (RAG) model, it navigates through the information provided in a given PDF file. Users have the flexibility to either initiate a search across any PDF file known or discovered during its usage or to concentrate the search on a predefined, specific PDF file.
 
-## Installation
-
-Before using the Pdf Search Tool, you need to install the necessary dependencies based on your environment.
-
-### Node.js Environment
-
-For a Node.js environment, install the `pdf-parse` library:
-
-```bash
-npm install pdf-parse
-```
-
-### Browser Environment
-
-For a browser environment, install the `pdfjs-dist` library:
-
-```bash
-npm install pdfjs-dist
-```
-
 ## Components
 
 The tool uses the following components:

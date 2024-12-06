@@ -86,14 +86,6 @@ Learn more: https://docs.github.com/en/rest/issues/issues
 
 The Simple RAG Tool integrates with various components from the langchain library to provide a simple interface for asking questions and retrieving answers using the Retrieval-Augmented Generation (RAG) approach. By default use MemoryVectorStore for storing vectors, OpenAIEmbeddings for embeddings, and OpenAI LLM for generating answers.
 
-#### Installation
-
-Install @langchain/openai v0.2.2 and langchain v0.2.10
-
-```shell
-npm install @langchain/openai@0.2.2 langchain@0.2.10
-```
-
 #### Features
 
 - Integrates with the RAG Toolkit for handling the RAG process
@@ -137,14 +129,6 @@ Conduct semantic searches within the content of a specific website.
 Utilize a RAG model to navigate and retrieve relevant information.
 Flexibility to search across any website or focus on a predefined one.
 Usage
-
-#### Installation
-
-Install @langchain/openai v0.2.2, langchain v0.2.10, @langchain/community v 0.2.19 and cheerio
-
-```shell
-npm install @langchain/openai@0.2.2 langchain@0.2.10  @langchain/community@0.2.19 cheerio
-```
 
 #### Usage
 

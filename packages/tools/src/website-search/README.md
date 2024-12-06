@@ -2,16 +2,6 @@
 
 This tool is specifically crafted for conducting semantic searches within the content of a particular website. Leveraging a Retrieval-Augmented Generation (RAG) model, it navigates through the information provided on a given URL. Users have the flexibility to either initiate a search across any website known or discovered during its usage or to concentrate the search on a predefined, specific website.
 
-## Installation
-
-Before using the Website Search Tool, you need to install the required dependencies. One of the essential dependencies is `cheerio`, which is used for parsing and manipulating HTML.
-
-To install `cheerio`, run the following command:
-
-```bash
-npm install cheerio
-```
-
 ## Components
 
 The tool uses the following components:
