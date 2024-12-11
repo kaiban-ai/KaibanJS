@@ -18,6 +18,7 @@ const toolFolders = [
   'website-search',
   'pdf-search',
   'textfile-search',
+  'zapier-webhook',
 ]; // Add more folder names as needed
 
 const toolConfigs = toolFolders.map((tool) => {
