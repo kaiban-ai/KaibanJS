@@ -49,6 +49,10 @@
     "./zapier-webhook": {
       "import": "./dist/zapier-webhook/index.esm.js",
       "require": "./dist/zapier-webhook/index.cjs.js"
+    },
+    "./make-webhook": {
+      "import": "./dist/make-webhook/index.esm.js",
+      "require": "./dist/make-webhook/index.cjs.js"
     }
   },
   "files": [
