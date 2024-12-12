@@ -1,4 +1,4 @@
-const { MakeWebhook } = require('../../dist/Make-webhook/index.cjs.js');
+const { MakeWebhook } = require('../../dist/make-webhook/index.cjs.js');
 
 describe('MakeWebhook', () => {
   test('MakeWebhook sends correct parameters and receives response', async () => {
