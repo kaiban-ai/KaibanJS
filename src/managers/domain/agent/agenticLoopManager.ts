@@ -4,63 +4,54 @@
  * @description Orchestrates the agentic loop execution using Langchain integration
  */
 
-import { Tool, StructuredTool } from '@langchain/core/tools';
-import { BaseMessage, AIMessage } from '@langchain/core/messages';
-import { LLMResult } from '@langchain/core/outputs';
-
-import CoreManager from '../../core/coreManager';
-import { ERROR_KINDS, BaseError, createError } from '../../../types/common/commonErrorTypes';
-import { createBaseMetadata } from '../../../types/common/commonMetadataTypes';
-import { MetadataFactory } from '../../../utils/factories/metadataFactory';
-import { IAgentTypeGuards } from '../../../types/agent/agentBaseTypes';
-import { ILoopTypeGuards, createLoopHandlerResult } from '../../../types/agent/agentLoopTypes';
+import { AIMessage, BaseMessage } from '@langchain/core/messages';
+import { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import { CoreManager } from '../../core/coreManager';
+import { createError } from '../../../types/common/errorTypes';
+import { AgentTypeGuards } from '../../../types/agent/agentTypeGuards';
+import { createBaseMetadata } from '../../../types/common/baseTypes';
 import { isLangchainTool } from '../../../types/tool/toolTypes';
-import { createToolHandlerResult } from '../../../types/tool/toolHandlerTypes';
+import { MANAGER_CATEGORY_enum } from '../../../types/common/enumTypes';
+
+// Manager imports
+import CacheInitManager from './cache/cacheInitManager';
+import AgenticLoopStateManager from './agenticLoopStateManager';
+import AgentMetricsManager from './agentMetricsManager';
+import IterationManager from './iterationManager';
+import ThinkingManager from './thinkingManager';
+import ToolManager from './toolManager';
 import { MetricsManager } from '../../core/metricsManager';
 
-import type { IAgentType, IReactChampionAgent } from '../../../types/agent/agentBaseTypes';
+// Type imports
+import type { IReactChampionAgent } from '../../../types/agent/agentBaseTypes';
 import type { ITaskType } from '../../../types/task/taskBaseTypes';
-import type { 
-    IIterationManager,
-    IThinkingManager,
-    IToolManager,
-    ILoopResult
-} from '../../../types/agent/agentManagerTypes';
 import type {
     ILoopContext,
-    ILoopHandlerMetadata,
+    ILoopExecutionParams,
     ILoopHandlerResult,
-    ILoopExecutionParams
-} from '../../../types/agent/agentLoopTypes';
-import type {
-    IToolHandlerMetadata,
-    IToolHandlerResult,
-    IToolHandlerParams,
-    IToolHandlerData
-} from '../../../types/tool/toolHandlerTypes';
-import type { IToolUsageMetrics } from '../../../types/tool/toolMetricTypes';
+    ILoopResult,
+    ILoopHandlerMetadata,
+    IStateTransaction
+} from '../../../types/agent/executionFlow';
+import type { IAgenticLoopManager, IBaseManagerMetadata } from '../../../types/agent/agentManagerTypes';
 import type { ILLMUsageMetrics } from '../../../types/llm/llmMetricTypes';
-import type { IThinkingResult } from '../../../types/agent/agentHandlersTypes';
-import type { 
-    IUsageMetrics,
-    IPerformanceMetrics,
-    IResourceMetrics,
-    IStandardCostDetails
-} from '../../../types/common/commonMetricTypes';
 
-/**
- * Manages agentic loop execution and orchestration
- */
-export class AgenticLoopManager extends CoreManager {
+// ─── Manager Implementation ───────────────────────────────────────────────────
+
+export class AgenticLoopManager extends CoreManager implements IAgenticLoopManager {
     private static instance: AgenticLoopManager;
-    private readonly activeLoops: Map<string, ILoopContext>;
-    private readonly metricsManager: MetricsManager;
+    private isInitialized = false;
+    public readonly category = MANAGER_CATEGORY_enum.EXECUTION;
 
     private constructor() {
         super();
-        this.activeLoops = new Map();
-        this.metricsManager = MetricsManager.getInstance();
-        this.registerDomainManager('AgenticLoopManager', this);
+        this.registerDomainManager('CacheInitManager', CacheInitManager);
+        this.registerDomainManager('AgenticLoopStateManager', AgenticLoopStateManager);
+        this.registerDomainManager('AgentMetricsManager', AgentMetricsManager);
+        this.registerDomainManager('IterationManager', IterationManager);
+        this.registerDomainManager('ThinkingManager', ThinkingManager);
+        this.registerDomainManager('ToolManager', ToolManager);
+        this.registerDomainManager('MetricsManager', MetricsManager);
     }
 
     public static getInstance(): AgenticLoopManager {
@@ -70,394 +61,179 @@ export class AgenticLoopManager extends CoreManager {
         return AgenticLoopManager.instance;
     }
 
-    private generateLoopKey(agentId: string, taskId: string): string {
-        return `${agentId}:${taskId}:${Date.now()}`;
-    }
-
-    private createLoopContext(
-        startTime: number,
-        iterations: number,
-        maxIterations: number
-    ): ILoopContext {
-        const defaultContext = this.metricsManager.createIterationContext();
-        const costs = this.metricsManager.createCostDetails();
-        
-        const usage: IUsageMetrics = {
-            totalOperations: iterations,
-            successRate: 1,
-            averageDuration: 0,
-            costDetails: costs,
-            timestamp: startTime
-        };
-
-        return {
-            startTime,
-            iterations,
-            maxIterations,
-            lastUpdateTime: startTime,
-            status: 'running',
-            performance: defaultContext.performance,
-            resources: defaultContext.resources,
-            usage,
-            costs
-        };
-    }
-
-    private createLoopMetadata(agent: IAgentType, task: ITaskType): ILoopHandlerMetadata {
-        const baseMetadata = createBaseMetadata('AgenticLoopManager', 'executeLoop');
-        const now = Date.now();
-        const defaultContext = this.metricsManager.createIterationContext();
-        const costs = this.metricsManager.createCostDetails();
-
-        const usage: IUsageMetrics = {
-            totalOperations: 0,
-            successRate: 1,
-            averageDuration: 0,
-            costDetails: costs,
-            timestamp: now
-        };
-
-        const llmUsageMetrics: ILLMUsageMetrics = {
-            totalRequests: 0,
-            activeInstances: 0,
-            activeUsers: 0,  // Added missing field
-            requestsPerSecond: 0,
-            averageResponseLength: 0,
-            averageResponseSize: 0,  // Added missing field
-            peakMemoryUsage: 0,
-            uptime: 0,
-            rateLimit: {
-                current: 0,
-                limit: 0,
-                remaining: 0,
-                resetTime: now
-            },
-            tokenDistribution: {
-                prompt: 0,
-                completion: 0,
-                total: 0
-            },
-            modelDistribution: {
-                gpt4: 0,
-                gpt35: 0,
-                other: 0
-            },
-            timestamp: now
-        };
-
-        return {
-            ...baseMetadata,
-            loop: {
-                iterations: 0,
-                maxIterations: agent.maxIterations,
-                status: 'running',
-                performance: defaultContext.performance,
-                context: {
-                    startTime: now,
-                    totalTokens: 0,
-                    confidence: 0,
-                    reasoningChain: []
-                },
-                resources: defaultContext.resources,
-                usage,
-                costs,
-                llmUsageMetrics
-            },
-            agent: {
-                id: agent.id,
-                name: agent.name,
-                metrics: {
-                    iterations: 0,
-                    executionTime: 0,
-                    llmUsageMetrics,
-                    performance: defaultContext.performance
-                }
-            },
-            task: {
-                id: task.id,
-                title: task.title,
-                metrics: {
-                    iterations: 0,
-                    executionTime: 0,
-                    llmUsageMetrics,
-                    performance: defaultContext.performance
-                }
-            }
-        };
-    }
-
-    private async handleMaxIterations(
-        agent: IReactChampionAgent,
-        task: ITaskType,
-        iterations: number,
-        lastOutput?: LLMResult
-    ): Promise<ILoopResult> {
-        const iterationManager = this.getDomainManager<IIterationManager>('IterationManager');
-        const defaultContext = this.metricsManager.createIterationContext();
-        const costs = this.metricsManager.createCostDetails();
-
-        const usage: IUsageMetrics = {
-            totalOperations: iterations,
-            successRate: 0,
-            averageDuration: 0,
-            costDetails: costs,
-            timestamp: Date.now()
-        };
-
-        await iterationManager.handleMaxIterationsError({
-            agent,
-            task,
-            iterations,
-            maxIterations: agent.maxIterations,
-            error: createError({
-                message: `Max iterations (${agent.maxIterations}) reached`,
-                type: ERROR_KINDS.ExecutionError,
-                context: {
-                    agentId: agent.id,
-                    taskId: task.id,
-                    iterations,
-                    maxIterations: agent.maxIterations
-                }
-            })
-        });
-
-        return {
-            success: false,
-            result: lastOutput,
-            error: createError({
-                message: `Max iterations (${agent.maxIterations}) reached`,
-                type: ERROR_KINDS.ExecutionError,
-                context: {
-                    agentId: agent.id,
-                    taskId: task.id,
-                    iterations,
-                    maxIterations: agent.maxIterations
-                }
-            }),
-            metadata: {
-                iterations,
-                maxAgentIterations: agent.maxIterations,
-                metrics: {
-                    performance: defaultContext.performance,
-                    resources: defaultContext.resources,
-                    usage,
-                    costs
-                }
-            }
-        };
-    }
-
-    private async executeToolPhase(
-        agent: IReactChampionAgent,
-        task: ITaskType,
-        action: string,
-        actionInput: Record<string, unknown>,
-        messages: BaseMessage[]
-    ): Promise<IToolHandlerResult> {
-        const tool = agent.tools.find(t => t.name === action);
-        
-        if (!tool || !isLangchainTool(tool)) {
-            throw createError({
-                message: `Tool ${action} not found or invalid`,
-                type: ERROR_KINDS.NotFoundError,
-                context: {
-                    agentId: agent.id,
-                    taskId: task.id,
-                    action,
-                    availableTools: agent.tools.map(t => t.name)
-                }
-            });
-        }
-
-        const toolManager = this.getDomainManager<IToolManager>('ToolManager');
-        const now = Date.now();
-        const toolUsageMetrics: IToolUsageMetrics = {
-            totalRequests: 1,
-            activeUsers: 1,
-            requestsPerSecond: 0,
-            averageResponseSize: 0,
-            peakMemoryUsage: process.memoryUsage().heapUsed,
-            uptime: process.uptime(),
-            rateLimit: {
-                current: 1,
-                limit: 100,
-                remaining: 99,
-                resetTime: now + 3600000
-            },
-            utilizationMetrics: {
-                callFrequency: 1,
-                resourceConsumption: {
-                    cpu: process.cpuUsage().user / 1000000,
-                    memory: process.memoryUsage().heapUsed,
-                    bandwidth: 0
-                },
-                peakUsage: {
-                    times: [now],
-                    values: [process.memoryUsage().heapUsed],
-                    duration: [0]
-                }
-            },
-            accessPatterns: {
-                distribution: {},
-                frequency: {},
-                operationTypes: {}
-            },
-            dependencies: {
-                services: [],
-                resources: [],
-                versions: {}
-            },
-            timestamp: now
-        };
-
-        const defaultContext = this.metricsManager.createIterationContext();
-        const toolMetadata: IToolHandlerMetadata = {
-            ...createBaseMetadata('AgenticLoopManager', 'executeToolPhase'),
-            toolId: `${tool.name}_${Date.now()}`,
-            tool: {
-                name: tool.name,
-                executionTime: 0,
-                status: 'success',
-                inputSize: JSON.stringify(actionInput).length,
-                outputSize: 0,
-                performance: defaultContext.performance,
-                resources: defaultContext.resources,
-                environment: process.env.NODE_ENV || 'development',
-                parameters: {},
-                version: '1.0.0'
-            },
-            executionPhase: 'execute',
-            metrics: {
-                resources: defaultContext.resources,
-                usage: toolUsageMetrics,
-                performance: defaultContext.performance
-            },
-            costDetails: this.metricsManager.createCostDetails()
-        };
-
-        const result = await toolManager.executeTool({
-            agent,
-            task,
-            tool: tool as Tool,
-            input: actionInput,
-            messages
-        });
-
-        const resultData = result.data as IToolHandlerData | undefined;
-        const handlerData: IToolHandlerData = {
-            result: resultData?.result,
-            error: result.error,
-            feedbackMessage: resultData?.feedbackMessage
-        };
-
-        return createToolHandlerResult(
-            result.success,
-            toolMetadata,
-            handlerData
-        );
-    }
-
-    public async executeLoop(
-        params: ILoopExecutionParams,
-        context?: ILoopContext
-    ): Promise<ILoopHandlerResult<ILoopResult>> {
-        const { agent, task, feedbackMessage } = params;
-
-        // Validate agent type
-        if (!IAgentTypeGuards.isReactChampionAgent(agent)) {
-            const error = createError({
-                message: 'Agent must be a ReactChampionAgent',
-                type: ERROR_KINDS.ValidationError,
-                context: {
-                    component: this.constructor.name,
-                    agentId: agent?.id,
-                    agentType: agent?.constructor.name
-                }
-            });
-            throw error;
-        }
-
-        const loopKey = this.generateLoopKey(agent.id, task.id);
-        const metadata = this.createLoopMetadata(agent, task);
+    /**
+     * Initialize the manager and its dependencies
+     */
+    public async initialize(): Promise<void> {
+        if (this.isInitialized) return;
 
         try {
-            let iterations = context?.iterations || 0;
-            let lastOutput: LLMResult | undefined = context?.lastOutput;
+            const cacheInitManager = this.getDomainManager<typeof CacheInitManager>('CacheInitManager');
+            await cacheInitManager.initialize();
+            this.isInitialized = true;
+        } catch (error) {
+            throw createError({
+                message: 'AgenticLoopManager initialization failed',
+                type: 'InitializationError',
+                context: { error },
+            });
+        }
+    }
 
-            const loopContext = context || this.createLoopContext(
-                Date.now(),
-                iterations,
-                agent.maxIterations
-            );
-
-            if (!ILoopTypeGuards.isLoopContext(loopContext)) {
-                throw createError({
-                    message: 'Invalid loop context created',
-                    type: ERROR_KINDS.ValidationError,
-                    context: {
-                        component: this.constructor.name,
-                        agentId: agent.id,
-                        taskId: task.id
-                    }
-                });
+    /**
+     * Validate loop parameters
+     */
+    public async validate(params: ILoopExecutionParams): Promise<boolean> {
+        try {
+            if (!params.agent || !params.task) {
+                return false;
             }
 
-            this.activeLoops.set(loopKey, loopContext);
+            if (!AgentTypeGuards.isReactChampionAgent(params.agent)) {
+                return false;
+            }
 
-            const iterationManager = this.getDomainManager<IIterationManager>('IterationManager');
-            const thinkingManager = this.getDomainManager<IThinkingManager>('ThinkingManager');
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
 
+    /**
+     * Get manager metadata
+     */
+    public getMetadata(): IBaseManagerMetadata {
+        return {
+            category: MANAGER_CATEGORY_enum.EXECUTION,
+            operation: 'executeLoop',
+            duration: 0,
+            status: 'success',
+            agent: {
+                id: '',
+                name: '',
+                role: '',
+                status: ''
+            },
+            timestamp: Date.now(),
+            component: 'AgenticLoopManager'
+        };
+    }
+
+    /**
+     * Execute the agentic loop
+     */
+    public async executeLoop(params: ILoopExecutionParams): Promise<ILoopResult> {
+        if (!this.isInitialized) {
+            await this.initialize();
+        }
+
+        const isValid = await this.validate(params);
+        if (!isValid) {
+            throw createError({
+                message: 'Invalid loop execution parameters',
+                type: 'ValidationError',
+                context: {
+                    component: this.constructor.name,
+                    params
+                }
+            });
+        }
+
+        // Ensure agent is ReactChampionAgent
+        if (!AgentTypeGuards.isReactChampionAgent(params.agent)) {
+            throw createError({
+                message: 'Agent must be a ReactChampionAgent',
+                type: 'ValidationError',
+                context: {
+                    component: this.constructor.name,
+                    agentId: params.agent?.id,
+                    agentType: params.agent?.constructor.name,
+                },
+            });
+        }
+
+        const agent = params.agent;
+        const { task, feedbackMessage } = params;
+        const loopKey = this.generateLoopKey(agent.id, task.id);
+        const metadata = await this.createLoopMetadata(agent, task);
+
+        // Setup cache
+        const cacheInitManager = this.getDomainManager<typeof CacheInitManager>('CacheInitManager');
+        const langchainCache = cacheInitManager.createLangchainCacheAdapter(agent.id, task.id);
+        const llm = agent.executableAgent.runnable as BaseChatModel;
+        llm.cache = langchainCache;
+
+        try {
+            const result = await this.executeLoopIteration(agent, task, loopKey, metadata, undefined, feedbackMessage);
+            return result.data as ILoopResult;
+        } catch (error) {
+            const errorResult = await this.handleLoopError(error, agent, task, metadata);
+            return errorResult.data as ILoopResult;
+        }
+    }
+
+    /**
+     * Execute a single loop iteration
+     */
+    private async executeLoopIteration(
+        agent: IReactChampionAgent,
+        task: ITaskType,
+        loopKey: string,
+        metadata: ILoopHandlerMetadata,
+        context?: ILoopContext,
+        feedbackMessage?: string
+    ): Promise<ILoopHandlerResult<ILoopResult>> {
+        const stateManager = this.getDomainManager<typeof AgenticLoopStateManager>('AgenticLoopStateManager');
+        const iterationManager = this.getDomainManager<typeof IterationManager>('IterationManager');
+        const thinkingManager = this.getDomainManager<typeof ThinkingManager>('ThinkingManager');
+
+        let iterations = context?.iterations || 0;
+        let lastOutput = context?.lastOutput;
+
+        // Get iteration context from iteration manager
+        const iterationResult = await iterationManager.handleIterationStart({
+            agent,
+            task,
+            iterations,
+            maxAgentIterations: agent.maxIterations
+        });
+
+        // Convert iteration context to loop context
+        const loopContext = context || await this.convertToLoopContext(iterationResult.data);
+        if (!loopContext) {
+            throw createError({
+                message: 'Failed to create loop context',
+                type: 'InitializationError',
+                context: { agent, task }
+            });
+        }
+
+        // Begin state transaction
+        const transactionId = stateManager.beginTransaction(loopKey, loopContext);
+
+        try {
             while (iterations < agent.maxIterations) {
-                await iterationManager.handleIterationStart({
-                    agent,
-                    task,
-                    iterations,
-                    maxAgentIterations: agent.maxIterations
-                });
-
                 const thinkingResult = await thinkingManager.executeThinking({
                     agent,
                     task,
                     ExecutableAgent: agent.executableAgent,
-                    feedbackMessage: iterations === 0 ? feedbackMessage : undefined
+                    feedbackMessage: iterations === 0 ? feedbackMessage : undefined,
                 });
 
                 if (!thinkingResult?.data) {
                     throw createError({
                         message: 'No data from thinking phase',
-                        type: ERROR_KINDS.ValidationError,
-                        context: {
-                            component: this.constructor.name,
-                            agentId: agent.id,
-                            taskId: task.id,
-                            iterations
-                        }
+                        type: 'ValidationError',
+                        context: { agentId: agent.id, taskId: task.id, iterations },
                     });
                 }
 
-                const thinkingData: IThinkingResult = thinkingResult.data;
-                const messages: BaseMessage[] = thinkingData.messages;
+                const messages = thinkingResult.data.messages as BaseMessage[];
+                lastOutput = thinkingResult.data.output;
 
-                if (!messages?.length) {
-                    throw createError({
-                        message: 'No messages from thinking phase',
-                        type: ERROR_KINDS.ValidationError,
-                        context: {
-                            component: this.constructor.name,
-                            agentId: agent.id,
-                            taskId: task.id,
-                            iterations
-                        }
-                    });
-                }
-
-                lastOutput = thinkingData.output;
-
-                // Check for final answer in messages
+                // Check for final answer
                 const finalAnswerMessage = messages.find(
-                    (msg: BaseMessage) => msg instanceof AIMessage && 
-                        typeof msg.content === 'string' &&
-                        msg.content.includes('Final Answer:')
+                    (msg: BaseMessage) => msg instanceof AIMessage && typeof msg.content === 'string' && msg.content.includes('Final Answer:')
                 );
 
                 if (finalAnswerMessage) {
@@ -468,148 +244,325 @@ export class AgenticLoopManager extends CoreManager {
                         maxAgentIterations: agent.maxIterations
                     });
 
-                    loopContext.status = 'completed';
-                    loopContext.lastOutput = lastOutput;
-                    loopContext.endTime = Date.now();
-                    this.activeLoops.delete(loopKey);
-
-                    const loopResult: ILoopResult = {
-                        success: true,
-                        result: lastOutput,
-                        metadata: {
-                            iterations,
-                            maxAgentIterations: agent.maxIterations,
-                            metrics: {
-                                performance: loopContext.performance,
-                                resources: loopContext.resources,
-                                usage: loopContext.usage,
-                                costs: loopContext.costs
-                            }
-                        }
-                    };
-
-                    return createLoopHandlerResult(true, metadata, loopResult);
+                    stateManager.commitTransaction(transactionId);
+                    return this.handleLoopCompletion(agent, task, iterations, lastOutput, loopContext, loopKey);
                 }
 
-                // Check for action in messages
-                const actionMessage = thinkingData.messages.find(
-                    (msg: BaseMessage) => msg instanceof AIMessage && 
-                        typeof msg.content === 'string' &&
-                        msg.content.includes('Action:')
-                );
+                // Handle action if present
+                const actionMessage = messages.find(
+                    (msg: BaseMessage) => msg instanceof AIMessage && typeof msg.content === 'string' && msg.content.includes('Action:')
+                ) as AIMessage | undefined;
 
                 if (actionMessage && typeof actionMessage.content === 'string') {
-                    const actionMatch = actionMessage.content.match(/Action:\s*(\w+)/);
-                    const inputMatch = actionMessage.content.match(/Action Input:\s*({[^}]+})/);
-
-                    if (actionMatch) {
-                        const action = actionMatch[1];
-                        const actionInput = inputMatch ? JSON.parse(inputMatch[1]) : {};
-
-                        const toolResult = await this.executeToolPhase(
-                            agent,
-                            task,
-                            action,
-                            actionInput,
-                            thinkingData.messages
-                        );
-
-                        if (!toolResult.success) {
-                            throw createError({
-                                message: toolResult.data?.error?.message || 'Unknown tool execution error',
-                                type: ERROR_KINDS.ExecutionError,
-                                context: {
-                                    component: this.constructor.name,
-                                    agentId: agent.id,
-                                    taskId: task.id,
-                                    iterations,
-                                    action,
-                                    toolError: toolResult.data?.error
-                                }
-                            });
-                        }
-                    }
+                    await this.handleToolExecution(agent, task, actionMessage, messages);
                 }
-
-                await iterationManager.handleIterationEnd({
-                    agent,
-                    task,
-                    iterations,
-                    maxAgentIterations: agent.maxIterations
-                });
 
                 iterations++;
                 loopContext.iterations = iterations;
                 loopContext.lastUpdateTime = Date.now();
-                
-                // Get fresh metrics
-                const defaultContext = this.metricsManager.createIterationContext();
-                loopContext.performance = defaultContext.performance;
-                loopContext.resources = defaultContext.resources;
-                loopContext.usage = {
-                    ...defaultContext.usage,
-                    totalOperations: iterations,
-                    successRate: 1,
-                    averageDuration: (Date.now() - loopContext.startTime) / iterations,
-                    costDetails: this.metricsManager.createCostDetails()
-                };
-                loopContext.costs = this.metricsManager.createCostDetails();
-
-                if (!ILoopTypeGuards.isLoopContext(loopContext)) {
-                    throw createError({
-                        message: 'Invalid loop context after update',
-                        type: ERROR_KINDS.ValidationError,
-                        context: {
-                            component: this.constructor.name,
-                            agentId: agent.id,
-                            taskId: task.id,
-                            iterations
-                        }
-                    });
-                }
-
-                this.activeLoops.set(loopKey, loopContext);
             }
 
-            const maxIterationsResult = await this.handleMaxIterations(agent, task, iterations, lastOutput);
-            return createLoopHandlerResult(false, metadata, maxIterationsResult);
-
+            stateManager.commitTransaction(transactionId);
+            return this.handleMaxIterations(agent, task, iterations, lastOutput);
         } catch (error) {
-            const errorType = error instanceof BaseError ? error : createError({
+            stateManager.rollbackTransaction(transactionId);
+            throw error;
+        }
+    }
+
+    /**
+     * Convert iteration context to loop context
+     */
+    private async convertToLoopContext(iterationContext: any): Promise<ILoopContext> {
+        const metricsManager = this.getDomainManager<typeof AgentMetricsManager>('AgentMetricsManager');
+        const metrics = await metricsManager.getCurrentMetrics(iterationContext.agentId);
+
+        return {
+            startTime: iterationContext.startTime,
+            endTime: iterationContext.endTime,
+            iterations: iterationContext.iterations,
+            maxIterations: iterationContext.maxIterations,
+            lastUpdateTime: iterationContext.lastUpdateTime,
+            status: iterationContext.status,
+            error: iterationContext.error,
+            performance: metrics.performance,
+            resources: metrics.resources,
+            usage: metrics.usage,
+            costs: metrics.usage.costs,
+            lastOutput: iterationContext.lastOutput
+        };
+    }
+
+    /**
+     * Generate a unique loop key
+     */
+    private generateLoopKey(agentId: string, taskId: string): string {
+        return `${agentId}:${taskId}:${Date.now()}`;
+    }
+
+    /**
+     * Create loop metadata
+     */
+    private async createLoopMetadata(agent: IReactChampionAgent, task: ITaskType): Promise<ILoopHandlerMetadata> {
+        const metricsManager = this.getDomainManager<typeof AgentMetricsManager>('AgentMetricsManager');
+        const metrics = await metricsManager.getCurrentMetrics(agent.id);
+
+        const llmUsageMetrics: ILLMUsageMetrics = {
+            totalRequests: 0,
+            activeInstances: 1,
+            activeUsers: 0,
+            requestsPerSecond: 0,
+            averageResponseLength: 0,
+            averageResponseSize: 0,
+            peakMemoryUsage: 0,
+            uptime: 0,
+            rateLimit: {
+                current: 0,
+                limit: 0,
+                remaining: 0,
+                resetTime: Date.now()
+            },
+            tokenDistribution: {
+                prompt: 0,
+                completion: 0,
+                total: 0
+            },
+            modelDistribution: {
+                gpt4: 0,
+                gpt35: 0,
+                other: 1
+            },
+            timestamp: Date.now()
+        };
+
+        return {
+            ...createBaseMetadata('AgenticLoopManager', 'executeLoop'),
+            loop: {
+                iterations: 0,
+                maxIterations: agent.maxIterations,
+                status: 'running',
+                performance: metrics.performance,
+                context: {
+                    startTime: Date.now(),
+                    endTime: undefined,
+                    totalTokens: 0,
+                    confidence: 0,
+                    reasoningChain: []
+                },
+                resources: metrics.resources,
+                usage: metrics.usage,
+                costs: metrics.usage.costs,
+                llmUsageMetrics
+            },
+            agent: {
+                id: agent.id,
+                name: agent.name,
+                metrics: {
+                    iterations: 0,
+                    executionTime: 0,
+                    llmUsageMetrics,
+                    performance: metrics.performance
+                }
+            },
+            task: {
+                id: task.id,
+                title: task.title,
+                metrics: {
+                    iterations: 0,
+                    executionTime: 0,
+                    llmUsageMetrics,
+                    performance: metrics.performance
+                }
+            }
+        };
+    }
+
+    /**
+     * Handle tool execution
+     */
+    private async handleToolExecution(
+        agent: IReactChampionAgent,
+        task: ITaskType,
+        actionMessage: AIMessage,
+        messages: BaseMessage[]
+    ): Promise<void> {
+        if (typeof actionMessage.content !== 'string') return;
+
+        const actionMatch = actionMessage.content.match(/Action:\s*(\w+)/);
+        const inputMatch = actionMessage.content.match(/Action Input:\s*({[^}]+})/);
+
+        if (actionMatch) {
+            const action = actionMatch[1];
+            const actionInput = inputMatch ? JSON.parse(inputMatch[1]) : {};
+
+            const tool = agent.tools.find(t => t.name === action);
+            if (!tool || !isLangchainTool(tool)) {
+                throw createError({
+                    message: `Tool ${action} not found or invalid`,
+                    type: 'NotFoundError',
+                    context: {
+                        agentId: agent.id,
+                        taskId: task.id,
+                        action,
+                        availableTools: agent.tools.map(t => t.name),
+                    },
+                });
+            }
+
+            const toolManager = this.getDomainManager<typeof ToolManager>('ToolManager');
+            const result = await toolManager.executeTool({
+                agent,
+                task,
+                tool,
+                input: actionInput,
+                messages,
+            });
+
+            if (!result.success) {
+                throw createError({
+                    message: result.error?.message || 'Unknown tool execution error',
+                    type: 'ExecutionError',
+                    context: {
+                        agentId: agent.id,
+                        taskId: task.id,
+                        action,
+                        toolError: result.error,
+                    },
+                });
+            }
+        }
+    }
+
+    /**
+     * Handle loop completion
+     */
+    private async handleLoopCompletion(
+        agent: IReactChampionAgent,
+        task: ITaskType,
+        iterations: number,
+        lastOutput: any,
+        context: ILoopContext,
+        loopKey: string
+    ): Promise<ILoopHandlerResult<ILoopResult>> {
+        const stateManager = this.getDomainManager<typeof AgenticLoopStateManager>('AgenticLoopStateManager');
+
+        context.status = 'completed';
+        context.lastOutput = lastOutput;
+        context.endTime = Date.now();
+
+        await stateManager.cleanup(loopKey);
+
+        const result: ILoopResult = {
+            success: true,
+            result: lastOutput,
+            metadata: {
+                iterations,
+                maxAgentIterations: agent.maxIterations,
+                metrics: {
+                    performance: context.performance,
+                    resources: context.resources,
+                    usage: context.usage,
+                    costs: context.costs,
+                },
+            },
+        };
+
+        return {
+            success: true,
+            data: result,
+            metadata: await this.createLoopMetadata(agent, task)
+        };
+    }
+
+    /**
+     * Handle max iterations error
+     */
+    private async handleMaxIterations(
+        agent: IReactChampionAgent,
+        task: ITaskType,
+        iterations: number,
+        lastOutput: any
+    ): Promise<ILoopHandlerResult<ILoopResult>> {
+        const iterationManager = this.getDomainManager<typeof IterationManager>('IterationManager');
+
+        const iterationResult = await iterationManager.handleMaxIterationsError({
+            agent,
+            task,
+            iterations,
+            maxIterations: agent.maxIterations,
+            error: createError({
+                message: `Max iterations (${agent.maxIterations}) reached`,
+                type: 'ExecutionError',
+                context: {
+                    agentId: agent.id,
+                    taskId: task.id,
+                    iterations,
+                    maxIterations: agent.maxIterations,
+                },
+            }),
+        });
+
+        const metricsManager = this.getDomainManager<typeof AgentMetricsManager>('AgentMetricsManager');
+        const metrics = await metricsManager.getCurrentMetrics(agent.id);
+
+        const result: ILoopResult = {
+            success: false,
+            result: lastOutput,
+            metadata: {
+                iterations,
+                maxAgentIterations: agent.maxIterations,
+                metrics: {
+                    performance: metrics.performance,
+                    resources: metrics.resources,
+                    usage: metrics.usage,
+                    costs: metrics.usage.costs,
+                },
+            },
+        };
+
+        return {
+            success: false,
+            data: result,
+            metadata: await this.createLoopMetadata(agent, task)
+        };
+    }
+
+    /**
+     * Handle loop error
+     */
+    private async handleLoopError(error: any, agent: IReactChampionAgent, task: ITaskType, metadata: any): Promise<ILoopHandlerResult<ILoopResult>> {
+        const metricsManager = this.getDomainManager<typeof AgentMetricsManager>('AgentMetricsManager');
+        const metrics = await metricsManager.getCurrentMetrics(agent.id);
+
+        const result: ILoopResult = {
+            success: false,
+            error: createError({
                 message: error instanceof Error ? error.message : String(error),
-                type: ERROR_KINDS.ExecutionError,
+                type: 'ExecutionError',
                 context: {
                     component: this.constructor.name,
                     agentId: agent.id,
                     taskId: task.id,
-                    error
-                }
-            });
+                    error,
+                },
+            }),
+            metadata: {
+                iterations: 0,
+                maxAgentIterations: agent.maxIterations,
+                metrics: {
+                    performance: metrics.performance,
+                    resources: metrics.resources,
+                    usage: metrics.usage,
+                    costs: metrics.usage.costs,
+                },
+            },
+        };
 
-            const defaultContext = this.metricsManager.createIterationContext();
-            const loopResult: ILoopResult = {
-                success: false,
-                error: errorType,
-                metadata: {
-                    iterations: context?.iterations || 0,
-                    maxAgentIterations: agent.maxIterations,
-                    metrics: {
-                        performance: defaultContext.performance,
-                        resources: defaultContext.resources,
-                        usage: {
-                            ...defaultContext.usage,
-                            totalOperations: 0,
-                            successRate: 0,
-                            averageDuration: 0,
-                            costDetails: this.metricsManager.createCostDetails()
-                        },
-                        costs: this.metricsManager.createCostDetails()
-                    }
-                }
-            };
-
-            return createLoopHandlerResult(false, metadata, loopResult);
-        }
+        return {
+            success: false,
+            data: result,
+            metadata: await this.createLoopMetadata(agent, task)
+        };
     }
 }
 

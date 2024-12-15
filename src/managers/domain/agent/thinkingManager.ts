@@ -4,36 +4,43 @@
  * @description Centralized manager for agent thinking processes and LLM interactions
  */
 
-import { BaseMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
+import { AIMessage, BaseMessage, SystemMessage } from '@langchain/core/messages';
 import { LLMResult } from '@langchain/core/outputs';
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 import { RunnableWithMessageHistory } from '@langchain/core/runnables';
 import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
 
-import CoreManager from '../../core/coreManager';
+import { CoreManager } from '../../core/coreManager';
 import { createError } from '../../../types/common/commonErrorTypes';
 import { createBaseMetadata } from '../../../types/common/commonMetadataTypes';
-import { AGENT_STATUS_enum } from '../../../types/common/commonEnums';
-import { AgentMetricsValidation } from '../../../types/agent/agentMetricTypes';
+import { AGENT_STATUS_enum, MANAGER_CATEGORY_enum } from '../../../types/common/commonEnums';
+import { MetricsValidation } from '../../../types/agent/agentMetricTypes';
+import { AGENT_EVENT_CATEGORY } from '../../../types/agent/agentEventTypes';
+import type { IStandardCostDetails } from '../../../types/common/commonMetricTypes';
 
 import type { IAgentType } from '../../../types/agent/agentBaseTypes';
 import type { ITaskType } from '../../../types/task/taskBaseTypes';
 import type { IHandlerResult } from '../../../types/common/commonHandlerTypes';
-import type { IBaseHandlerMetadata } from '../../../types/common/commonMetadataTypes';
+import type { IBaseManagerMetadata } from '../../../types/agent/agentManagerTypes';
 import type { ITimeMetrics, IThroughputMetrics, IErrorMetrics } from '../../../types/metrics';
 import type {
     IAgentUsageMetrics,
     IAgentResourceMetrics,
     IAgentPerformanceMetrics,
-    IAgentStateMetrics
+    IAgentStateMetrics,
+    IBaseMetrics,
+    ICognitiveResourceMetrics,
+    IThinkingOperationMetrics,
+    IBaseUsageMetrics
 } from '../../../types/agent/agentMetricTypes';
 import type {
-    IThinkingMetadata,
     IThinkingExecutionParams,
     IThinkingResult,
-    IThinkingHandlerResult
+    IThinkingHandlerResult,
+    IBaseAgentHandlerMetadata
 } from '../../../types/agent/agentHandlersTypes';
 import type { ILLMMetrics } from '../../../types/llm/llmMetricTypes';
+import type { IThinkingManager } from '../../../types/agent/agentManagerTypes';
 
 type OperationPhase = 'pre-execution' | 'execution' | 'post-execution' | 'error';
 
@@ -46,12 +53,33 @@ interface OperationContext {
     errorContext?: any;
 }
 
+interface IThinkingMetadata extends IBaseAgentHandlerMetadata {
+    category: AGENT_EVENT_CATEGORY.ITERATION;
+    thinking: {
+        messageCount: number;
+        processingTime: number;
+        metrics: ILLMMetrics;
+        context: {
+            iteration: number;
+            totalTokens: number;
+            confidence: number;
+            reasoningChain: string[];
+        };
+        performance: IAgentPerformanceMetrics;
+        resources: IAgentResourceMetrics;
+        usage: IAgentUsageMetrics;
+        costs: IStandardCostDetails;
+    };
+}
+
 /**
  * Manages thinking process execution and lifecycle
  */
-class ThinkingManager extends CoreManager {
+class ThinkingManager extends CoreManager implements IThinkingManager {
     private static instance: ThinkingManager;
     private executionTimesMap: Map<string, number[]> = new Map();
+    private isInitialized = false;
+    public readonly category = MANAGER_CATEGORY_enum.EXECUTION;
 
     protected constructor() {
         super();
@@ -66,9 +94,72 @@ class ThinkingManager extends CoreManager {
     }
 
     /**
+     * Initialize the thinking manager
+     */
+    public async initialize(): Promise<void> {
+        if (this.isInitialized) return;
+
+        try {
+            this.executionTimesMap.clear();
+            this.isInitialized = true;
+            this.logInfo('Thinking manager initialized');
+        } catch (error) {
+            throw createError({
+                message: 'Failed to initialize thinking manager',
+                type: 'InitializationError',
+                context: { error }
+            });
+        }
+    }
+
+    /**
+     * Validate thinking result
+     */
+    public async validate(result: IThinkingResult): Promise<boolean> {
+        try {
+            if (!this.isInitialized) {
+                return false;
+            }
+
+            if (!result.metrics || !result.messages || !result.output) {
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            this.logError('Thinking validation failed', error as Error);
+            return false;
+        }
+    }
+
+    /**
+     * Get manager metadata
+     */
+    public getMetadata(): IBaseManagerMetadata {
+        return {
+            category: this.category,
+            operation: 'thinking',
+            duration: 0,
+            status: 'success',
+            agent: {
+                id: '',
+                name: '',
+                role: '',
+                status: ''
+            },
+            timestamp: Date.now(),
+            component: this.constructor.name
+        };
+    }
+
+    /**
      * Execute thinking iteration with standardized handling
      */
     public async executeThinking(params: IThinkingExecutionParams): Promise<IThinkingHandlerResult<IThinkingResult>> {
+        if (!this.isInitialized) {
+            await this.initialize();
+        }
+
         const { task, ExecutableAgent, feedbackMessage } = params;
         const agent = task.agent;
 
@@ -78,35 +169,47 @@ class ThinkingManager extends CoreManager {
         const agentResourceMetrics = this.getInitialResourceMetrics();
 
         // Create agent-specific state metrics
+        const baseMetrics: IBaseMetrics = {
+            timestamp: Date.now(),
+            component: this.constructor.name,
+            category: this.category,
+            version: '1.0.0'
+        };
+
         const stateMetrics: IAgentStateMetrics = {
+            ...baseMetrics,
             currentState: 'thinking',
             stateTime: 0,
             transitionCount: 0,
             failedTransitions: 0,
             blockedTaskCount: 0,
             historyEntryCount: 0,
-            lastHistoryUpdate: Date.now()
+            lastHistoryUpdate: Date.now(),
+            taskStats: {
+                completedCount: 0,
+                failedCount: 0,
+                averageDuration: 0,
+                successRate: 0,
+                averageIterations: 0
+            }
         };
 
         // Create agent-specific usage metrics
         const usageMetrics: IAgentUsageMetrics = {
+            ...baseMetrics,
+            count: 0,
+            rate: 0,
+            total: 0,
             state: stateMetrics,
             toolUsageFrequency: {},
             taskCompletionCount: 0,
             averageTaskTime: 0,
-            totalRequests: 1,
-            activeUsers: 1,
-            requestsPerSecond: 0,
-            averageResponseSize: 0,
-            peakMemoryUsage: process.memoryUsage().heapUsed,
-            uptime: process.uptime(),
-            rateLimit: {
-                current: 1,
-                limit: 100,
-                remaining: 99,
-                resetTime: Date.now() + 3600000
-            },
-            timestamp: Date.now()
+            resourceUtilization: 0,
+            errorRate: 0,
+            successRate: 1,
+            lastUsed: Date.now(),
+            peakUsage: 0,
+            currentLoad: 0
         };
 
         // Create LLM metrics
@@ -145,8 +248,10 @@ class ThinkingManager extends CoreManager {
             usage: {
                 totalRequests: 0,
                 activeInstances: 0,
+                activeUsers: 0,
                 requestsPerSecond: 0,
                 averageResponseLength: 0,
+                averageResponseSize: 0,
                 peakMemoryUsage: 0,
                 uptime: 0,
                 rateLimit: {
@@ -173,6 +278,7 @@ class ThinkingManager extends CoreManager {
         // Create thinking-specific metadata
         const metadata: IThinkingMetadata = {
             ...baseMetadata,
+            category: AGENT_EVENT_CATEGORY.ITERATION,
             thinking: {
                 messageCount: 0,
                 processingTime: 0,
@@ -214,12 +320,6 @@ class ThinkingManager extends CoreManager {
                     executionTime: 0,
                     llmMetrics
                 }
-            },
-            llm: {
-                model: agent.llmConfig?.model || 'unknown',
-                provider: agent.llmConfig?.provider || 'unknown',
-                requestId: `req_${Date.now()}`,
-                usageStats: llmMetrics
             }
         };
 
@@ -296,14 +396,11 @@ class ThinkingManager extends CoreManager {
                     }
                 };
                 metadata.thinking.context.totalTokens = metrics.inputTokens + metrics.outputTokens;
-                metadata.llm.usageStats = metadata.thinking.metrics;
 
                 // Create AIMessage from generation text
                 const generatedMessage = new AIMessage(result.generations[0][0].text);
 
                 return {
-                    parsedLLMOutput: null, // Deprecated
-                    llmOutput: result.generations[0][0].text,
                     metrics: metadata.thinking.metrics,
                     messages: [generatedMessage],
                     output: result
@@ -318,7 +415,7 @@ class ThinkingManager extends CoreManager {
     /**
      * Handle thinking operations with standardized pattern
      */
-    protected async handleThinkingOperation<T>(
+    private async handleThinkingOperation<T>(
         operation: () => Promise<T>,
         agent: IAgentType,
         task: ITaskType,
@@ -430,6 +527,112 @@ class ThinkingManager extends CoreManager {
     }
 
     /**
+     * Create performance metrics
+     */
+    private createPerformanceMetrics(agentId: string, executionTime: number): IAgentPerformanceMetrics {
+        const times = this.executionTimesMap.get(agentId) || [];
+        times.push(executionTime);
+        this.executionTimesMap.set(agentId, times);
+
+        const total = times.reduce((sum, time) => sum + time, 0);
+        const average = total / times.length;
+        const min = Math.min(...times);
+        const max = Math.max(...times);
+        const operationsPerSecond = times.length / (total / 1000);
+
+        const timeMetrics: ITimeMetrics = {
+            total,
+            average,
+            min,
+            max
+        };
+
+        const throughputMetrics: IThroughputMetrics = {
+            operationsPerSecond,
+            dataProcessedPerSecond: 0
+        };
+
+        const errorMetrics: IErrorMetrics = {
+            totalErrors: 0,
+            errorRate: 0
+        };
+
+        const baseMetrics: IBaseMetrics = {
+            timestamp: Date.now(),
+            component: this.constructor.name,
+            category: this.category,
+            version: '1.0.0'
+        };
+
+        const thinkingMetrics: IThinkingOperationMetrics = {
+            ...baseMetrics,
+            duration: executionTime,
+            success: true,
+            errorCount: 0,
+            reasoningTime: timeMetrics,
+            planningTime: timeMetrics,
+            learningTime: timeMetrics,
+            decisionConfidence: 0.8,
+            learningEfficiency: 0.7
+        };
+
+        return {
+            ...baseMetrics,
+            duration: executionTime,
+            success: true,
+            errorCount: 0,
+            thinking: thinkingMetrics,
+            taskSuccessRate: 0.9,
+            goalAchievementRate: 0.85
+        };
+    }
+
+    /**
+     * Get initial resource metrics
+     */
+    private getInitialResourceMetrics(): IAgentResourceMetrics {
+        const baseMetrics: IBaseMetrics = {
+            timestamp: Date.now(),
+            component: this.constructor.name,
+            category: this.category,
+            version: '1.0.0'
+        };
+
+        const cognitiveMetrics: ICognitiveResourceMetrics = {
+            ...baseMetrics,
+            usage: 0,
+            limit: 100,
+            available: 100,
+            memoryAllocation: process.memoryUsage().heapUsed,
+            cognitiveLoad: 0.5,
+            processingCapacity: 0.8,
+            contextUtilization: 0.4
+        };
+
+        return {
+            ...baseMetrics,
+            usage: 0,
+            limit: 100,
+            available: 100,
+            cognitive: cognitiveMetrics,
+            cpuUsage: 0,
+            memoryUsage: process.memoryUsage().heapUsed,
+            diskIO: { read: 0, write: 0 },
+            networkUsage: { upload: 0, download: 0 }
+        };
+    }
+
+    /**
+     * Get current resource metrics
+     */
+    private async getCurrentResourceMetrics(): Promise<IAgentResourceMetrics> {
+        return {
+            ...this.getInitialResourceMetrics(),
+            timestamp: Date.now()
+        };
+    }
+
+    /**
      * Validate thinking operation
      */
     private async validateThinking(agent: IAgentType, task: ITaskType): Promise<{ 
@@ -481,96 +684,15 @@ class ThinkingManager extends CoreManager {
             }
         });
 
-        this.log(
+        this.logError(
             `Thinking error: ${error.message}`,
-            agent.name,
-            task.id,
-            'error',
-            error
+            error,
+            {
+                component: this.constructor.name,
+                agentId: agent.id,
+                taskId: task.id
+            }
         );
-    }
-
-    /**
-     * Create performance metrics
-     */
-    private createPerformanceMetrics(agentId: string, executionTime: number): IAgentPerformanceMetrics {
-        const times = this.executionTimesMap.get(agentId) || [];
-        times.push(executionTime);
-        this.executionTimesMap.set(agentId, times);
-
-        const total = times.reduce((sum, time) => sum + time, 0);
-        const average = total / times.length;
-        const min = Math.min(...times);
-        const max = Math.max(...times);
-        const operationsPerSecond = times.length / (total / 1000);
-
-        const timeMetrics: ITimeMetrics = {
-            total,
-            average,
-            min,
-            max
-        };
-
-        const throughputMetrics: IThroughputMetrics = {
-            operationsPerSecond,
-            dataProcessedPerSecond: 0
-        };
-
-        const errorMetrics: IErrorMetrics = {
-            totalErrors: 0,
-            errorRate: 0
-        };
-
-        return {
-            thinking: {
-                reasoningTime: timeMetrics,
-                planningTime: timeMetrics,
-                learningTime: timeMetrics,
-                decisionConfidence: 0.8,
-                learningEfficiency: 0.7
-            },
-            taskSuccessRate: 0.9,
-            goalAchievementRate: 0.85,
-            executionTime: timeMetrics,
-            latency: { ...timeMetrics, average: average / 2 }, // Estimate latency as half of execution time
-            throughput: throughputMetrics,
-            responseTime: timeMetrics,
-            queueLength: 0,
-            errorRate: 0,
-            successRate: 1,
-            errorMetrics,
-            resourceUtilization: this.getInitialResourceMetrics(),
-            timestamp: Date.now()
-        };
-    }
-
-    /**
-     * Get initial resource metrics
-     */
-    private getInitialResourceMetrics(): IAgentResourceMetrics {
-        return {
-            cognitive: {
-                memoryAllocation: process.memoryUsage().heapUsed,
-                cognitiveLoad: 0.5,
-                processingCapacity: 0.8,
-                contextUtilization: 0.4
-            },
-            cpuUsage: 0,
-            memoryUsage: process.memoryUsage().heapUsed,
-            diskIO: { read: 0, write: 0 },
-            networkUsage: { upload: 0, download: 0 },
-            timestamp: Date.now()
-        };
-    }
-
-    /**
-     * Get current resource metrics
-     */
-    private async getCurrentResourceMetrics(): Promise<IAgentResourceMetrics> {
-        return {
-            ...this.getInitialResourceMetrics(),
-            timestamp: Date.now()
-        };
     }
 }
 

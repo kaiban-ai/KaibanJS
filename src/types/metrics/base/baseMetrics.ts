@@ -14,14 +14,10 @@ import type { IUsageMetrics } from './usageMetrics';
  * Base metrics interface combining all metric types
  */
 export interface IBaseMetrics {
-    /** Resource utilization metrics */
-    resource: IResourceMetrics;
-    /** Performance-related metrics */
-    performance: IPerformanceMetrics;
-    /** Usage statistics and patterns */
-    usage: IUsageMetrics;
-    /** Timestamp of metrics collection */
-    timestamp: number;
+    resources: IResourceMetrics;        // Resource utilization metrics
+    performance: IPerformanceMetrics;   // Performance-related metrics
+    usage: IUsageMetrics;              // Usage statistics and patterns
+    timestamp: number;                  // Timestamp of metrics collection
 }
 
 /**
@@ -37,24 +33,17 @@ export interface IMetricsValidationResult {
  * Base metrics update options
  */
 export interface IMetricsUpdateOptions {
-    /** Whether to validate metrics before update */
-    validate?: boolean;
-    /** Whether to merge with existing metrics */
-    merge?: boolean;
-    /** Custom validation rules */
-    validationRules?: Record<string, (value: any) => boolean>;
+    validate?: boolean;                 // Whether to validate metrics before update
+    merge?: boolean;                    // Whether to merge with existing metrics
+    validationRules?: Record<string, (value: any) => boolean>;  // Custom validation rules
 }
 
 /**
  * Base metrics collection options
  */
 export interface IMetricsCollectionOptions {
-    /** Collection interval in milliseconds */
-    interval?: number;
-    /** Whether to include detailed metrics */
-    detailed?: boolean;
-    /** Specific metrics to collect */
-    include?: string[];
-    /** Metrics to exclude from collection */
-    exclude?: string[];
+    interval?: number;                  // Collection interval in milliseconds
+    detailed?: boolean;                 // Whether to include detailed metrics
+    include?: string[];                 // Specific metrics to collect
+    exclude?: string[];                 // Metrics to exclude from collection
 }

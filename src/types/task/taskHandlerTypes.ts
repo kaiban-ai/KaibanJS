@@ -5,12 +5,16 @@
  */
 
 import type { ILLMUsageMetrics } from '../llm/llmMetricTypes';
-import type { IStandardCostDetails } from '../common/commonMetricTypes';
+import type { IStandardCostDetails } from '../common/baseTypes';
 import type { ITaskType } from './taskBaseTypes';
-import type { IHandlerResult } from '../common/commonHandlerTypes';
-import type { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
+import type { IHandlerResult } from '../common/baseTypes';
+import type { IBaseHandlerMetadata } from '../common/baseTypes';
 import type { ITaskResourceMetrics, ITaskPerformanceMetrics, ITaskUsageMetrics } from './taskMetricTypes';
-import type { ValidationErrorType, ValidationWarningType } from '../common/commonValidationTypes';
+import type { ValidationErrorType, ValidationWarningType } from '../common/validationTypes';
+import type { IErrorMetrics } from '../metrics/base/performanceMetrics';
+import { BATCH_PRIORITY_enum, ERROR_SEVERITY_enum } from '../common/enumTypes';
+import { ERROR_KINDS } from '../common/errorTypes';
+import { RecoveryStrategyType } from '../common/recoveryTypes';
 
 // ─── Task Validation Types ────────────────────────────────────────────────────
 
@@ -41,7 +45,7 @@ export interface ITaskHandlerMetadata extends IBaseHandlerMetadata {
     taskId: string;           // Task ID
     taskName: string;         // Task name
     status: string;           // Task status
-    priority: number;         // Task priority
+    priority: BATCH_PRIORITY_enum; // Task priority using batch priority enum
     assignedAgent: string;    // Assigned agent ID
     progress: number;         // Task progress
     metrics: {                // Task metrics
@@ -67,9 +71,10 @@ export interface ITaskHandlerResult<T = unknown> extends IHandlerResult<T, ITask
 export const createEmptyTaskMetrics = (): ITaskMetrics => {
     const emptyLLMMetrics: ILLMUsageMetrics = {
         totalRequests: 0,
+        activeUsers: 0,
         activeInstances: 0,
         requestsPerSecond: 0,
-        averageResponseLength: 0,
+        averageResponseSize: 0,
         peakMemoryUsage: 0,
         uptime: 0,
         rateLimit: {
@@ -90,6 +95,22 @@ export const createEmptyTaskMetrics = (): ITaskMetrics => {
         },
         timestamp: Date.now()
     };
+
+    // Initialize error distribution records with all enum values
+    const errorDistribution = Object.values(ERROR_KINDS).reduce(
+        (acc, key) => ({ ...acc, [key]: 0 }),
+        {} as Record<string, number>
+    );
+
+    const severityDistribution = Object.values(ERROR_SEVERITY_enum).reduce(
+        (acc, key) => ({ ...acc, [key]: 0 }),
+        {} as Record<string, number>
+    );
+
+    const strategyDistribution = Object.values(RecoveryStrategyType).reduce(
+        (acc, key) => ({ ...acc, [key]: 0 }),
+        {} as Record<string, number>
+    );
 
     return {
         costs: {
@@ -144,7 +165,37 @@ export const createEmptyTaskMetrics = (): ITaskMetrics => {
             successRate: 1,
             errorMetrics: {
                 totalErrors: 0,
-                errorRate: 0
+                errorRate: 0,
+                errorDistribution,
+                severityDistribution,
+                patterns: [],
+                impact: {
+                    severity: ERROR_SEVERITY_enum.ERROR,
+                    businessImpact: 0,
+                    userExperienceImpact: 0,
+                    systemStabilityImpact: 0,
+                    resourceImpact: {
+                        cpu: 0,
+                        memory: 0,
+                        io: 0
+                    }
+                },
+                recovery: {
+                    meanTimeToRecover: 0,
+                    recoverySuccessRate: 0,
+                    strategyDistribution,
+                    failedRecoveries: 0
+                },
+                prevention: {
+                    preventedCount: 0,
+                    preventionRate: 0,
+                    earlyWarnings: 0
+                },
+                trends: {
+                    dailyRates: [],
+                    weeklyRates: [],
+                    monthlyRates: []
+                }
             },
             resourceUtilization: {
                 cpuUsage: 0,

@@ -8,8 +8,9 @@
 
 import type { IAgentType } from '../agent/agentBaseTypes';
 import type { ITeamStoreMethods } from '../team/teamBaseTypes';
-import { TASK_STATUS_enum, FEEDBACK_STATUS_enum } from '../common/commonEnums';
+import { TASK_STATUS_enum, BATCH_PRIORITY_enum } from '../common/enumTypes';
 import type { ITaskMetrics, ITaskHandlerResult, ITaskHandlerMetadata } from './taskHandlerTypes';
+import type { ITaskFeedback } from './taskFeedbackTypes';
 
 /**
  * Task creation parameters
@@ -21,6 +22,7 @@ export interface ITaskParams {
     agent: IAgentType;
     isDeliverable?: boolean;
     externalValidationRequired?: boolean;
+    priority?: BATCH_PRIORITY_enum; // Optional priority, defaults to MEDIUM
 }
 
 /**
@@ -50,20 +52,6 @@ export interface ITaskHistoryEntry {
 }
 
 /**
- * Task feedback
- */
-export interface ITaskFeedback {
-    id: string;
-    content: string;
-    status: keyof typeof FEEDBACK_STATUS_enum;
-    timestamp: Date;
-    userId: string;
-    category?: string;
-    priority?: 'low' | 'medium' | 'high';
-    assignedTo?: string;
-}
-
-/**
  * Core task interface
  */
 export interface ITaskType {
@@ -74,6 +62,7 @@ export interface ITaskType {
     expectedOutput: string;
     agent: IAgentType;
     status: TASK_STATUS_enum;
+    priority: BATCH_PRIORITY_enum; // Required priority for task scheduling
     
     // Workflow tracking
     stepId: string;
@@ -119,22 +108,9 @@ export const TaskTypeGuards = {
             Array.isArray(task.feedback) &&
             task.agent !== undefined &&
             'status' in task &&
-            typeof task.stepId === 'string'
-        );
-    },
-
-    /**
-     * Check if value is TaskFeedback
-     */
-    isTaskFeedback: (value: unknown): value is ITaskFeedback => {
-        if (typeof value !== 'object' || value === null) return false;
-        const feedback = value as Partial<ITaskFeedback>;
-        return (
-            typeof feedback.id === 'string' &&
-            typeof feedback.content === 'string' &&
-            'status' in feedback &&
-            feedback.timestamp instanceof Date &&
-            typeof feedback.userId === 'string'
+            typeof task.stepId === 'string' &&
+            'priority' in task && // Added priority check
+            Object.values(BATCH_PRIORITY_enum).includes(task.priority as BATCH_PRIORITY_enum)
         );
     }
 };

@@ -12,8 +12,8 @@ import {
     createValidationMetadata,
     createValidationResult,
     createValidationError
-} from '../common/commonValidationTypes';
-import { TASK_EVENT_TYPE_enum } from '../common/commonEnums';
+} from '../common/';
+import { TASK_EVENT_TYPE_enum } from '../common/enumTypes';
 import type { TaskEvent } from './taskEventTypes';
 
 // ─── Event Validation Result ────────────────────────────────────────────────────

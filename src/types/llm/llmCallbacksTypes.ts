@@ -1,74 +1,294 @@
 /**
  * @file llmCallbacksTypes.ts
- * @path KaibanJS/src/types/llm/llmCallbacksTypes.ts
- * @description Type definitions for LLM callbacks and event handling
- *
- * @module types/llm
+ * @description LLM callback type definitions using Langchain
  */
 
-import { BaseMessage } from "@langchain/core/messages";
-import { ILLMProvider, ILLMEventMetadata, IStreamingChunk } from "./llmCommonTypes";
-import { IOutput } from "./llmResponseTypes";
-import { IBaseError } from "../common/commonErrorTypes";
+import { CallbackHandlerMethods, NewTokenIndices, HandleLLMNewTokenCallbackFields } from '@langchain/core/callbacks/base';
+import { LLMResult } from '@langchain/core/outputs';
+import { BaseMessage } from '@langchain/core/messages';
+import { Serialized } from '@langchain/core/load/serializable';
+import { LLM_PROVIDER_enum } from '../common/commonEnums';
+import { LLMProviders } from './llmCommonTypes';
+import { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
+import { IBaseMetrics } from '../metrics/base/baseMetrics';
+import { ValidationErrorType, ValidationWarningType } from '../common/commonValidationTypes';
+import { IPerformanceMetrics } from '../metrics/base/performanceMetrics';
+
+// ─── Event Metadata Types ────────────────────────────────────────────────────
 
 /**
- * Callback interface for Groq chat interactions
+ * LLM event metadata extending base handler metadata
  */
-export interface IChatGroqCallbacks {
-    handleLLMStart?: (llm: any, messages: BaseMessage[]) => void | Promise<void>;
-    handleLLMEnd?: (output: IOutput) => void | Promise<void>;
-    handleLLMError?: (error: IBaseError) => void | Promise<void>;
-    handleChainStart?: (chain: any, inputs: Record<string, any>) => void | Promise<void>;
-    handleChainEnd?: (outputs: Record<string, any>) => void | Promise<void>;
-    handleChainError?: (error: IBaseError) => void | Promise<void>;
-    handleToolStart?: (tool: string, input: string) => void | Promise<void>;
-    handleToolEnd?: (output: string) => void | Promise<void>;
-    handleToolError?: (error: IBaseError) => void | Promise<void>;
+export interface ILLMEventMetadata extends IBaseHandlerMetadata {
+    provider: LLM_PROVIDER_enum;
+    model: string;
+    metrics: IBaseMetrics;
+    timestamp: number;
+    runId: string;
+    parentRunId?: string;
+    tags?: string[];
+    component: string;
+    operation: string;
+    performance: IPerformanceMetrics;
+    context: {
+        source: string;
+        target: string;
+        correlationId: string;
+        causationId: string;
+        [key: string]: unknown;
+    };
+    validation: {
+        isValid: boolean;
+        errors: ReadonlyArray<ValidationErrorType>;
+        warnings: ReadonlyArray<ValidationWarningType>;
+    };
 }
 
+// ─── Callback Handler Types ────────────────────────────────────────────────────
+
 /**
- * LLM event types
+ * LLM callback handler extending Langchain's base handler
  */
-export type LLMEventType = 
+export interface ILLMCallbackHandler extends CallbackHandlerMethods {
+    handleLLMStart(
+        llm: Serialized,
+        prompts: string[],
+        runId: string,
+        parentRunId?: string,
+        extraParams?: Record<string, unknown>,
+        tags?: string[],
+        metadata?: Record<string, unknown>,
+        runName?: string
+    ): Promise<void>;
+
+    handleLLMNewToken(
+        token: string,
+        idx: NewTokenIndices,
+        runId: string,
+        parentRunId?: string,
+        tags?: string[],
+        fields?: HandleLLMNewTokenCallbackFields
+    ): Promise<void>;
+
+    handleLLMEnd(
+        output: LLMResult,
+        runId: string,
+        parentRunId?: string,
+        tags?: string[]
+    ): Promise<void>;
+
+    handleLLMError(
+        error: Error,
+        runId: string,
+        parentRunId?: string,
+        tags?: string[]
+    ): Promise<void>;
+}
+
+// ─── Callback Config Types ────────────────────────────────────────────────────
+
+/**
+ * LLM callback configuration
+ */
+export interface ILLMCallbackConfig {
+    handlers?: ILLMCallbackHandler[];
+    metadata?: ILLMEventMetadata;
+    tags?: string[];
+    verbose?: boolean;
+}
+
+// ─── Event Types ────────────────────────────────────────────────────────────
+
+/**
+ * LLM event types including all possible events
+ */
+export type LLMEventType =
+    // Core LLM events
+    | 'llm_start'
+    | 'llm_end'
+    | 'llm_error'
+    | 'llm_new_token'
+    // Chain events
+    | 'chain_start'
+    | 'chain_end'
+    | 'chain_error'
+    // Tool events
+    | 'tool_start'
+    | 'tool_end'
+    | 'tool_error'
+    // Text events
+    | 'text'
+    // Agent events
+    | 'agent_action'
+    | 'agent_end'
+    // Request events
     | 'request.start'
     | 'request.end'
     | 'request.error'
+    // Token events
     | 'token.received'
+    // Rate limit events
     | 'rate.limited'
+    // Cache events
     | 'cache.hit'
     | 'cache.miss'
+    // Memory events
     | 'memory.pruned'
+    // Budget events
     | 'budget.exceeded';
 
 /**
- * LLM event interface
+ * Base event interface without data
  */
-export interface ILLMEvent {
+interface IBaseLLMEvent {
     type: LLMEventType;
+    metadata: ILLMEventMetadata;
     timestamp: number;
-    data: Record<string, unknown>;
-    metadata?: ILLMEventMetadata;
+    runId: string;
+    parentRunId: string | undefined;
+    tags?: string[];
 }
 
 /**
- * Event handler configuration
+ * LLM event base interface with optional data
  */
-export interface IEventHandlerConfig {
-    handlers: Partial<Record<LLMEventType, (event: ILLMEvent) => void>>;
-    errorHandler?: (error: IBaseError, event: ILLMEvent) => void;
-    batchEvents?: boolean;
-    batchSize?: number;
-    batchInterval?: number;
+export interface ILLMEvent extends IBaseLLMEvent {
+    data?: Record<string, unknown>;
 }
 
 /**
- * Streaming handler configuration
+ * LLM start event
  */
-export interface IStreamingHandlerConfig {
-    content?: string;
-    chunk?: IStreamingChunk;
-    metadata?: Record<string, unknown>;
-    onToken?: (token: string) => void;
-    onComplete?: (fullContent: string) => void;
-    onError?: (error: IBaseError) => void;
+export interface ILLMStartEvent extends IBaseLLMEvent {
+    type: 'llm_start' | 'request.start';
+    data: {
+        prompts: string[];
+        extraParams?: Record<string, unknown>;
+    };
 }
+
+/**
+ * LLM end event
+ */
+export interface ILLMEndEvent extends IBaseLLMEvent {
+    type: 'llm_end' | 'request.end';
+    data: {
+        result: LLMResult;
+    };
+}
+
+/**
+ * LLM error event
+ */
+export interface ILLMErrorEvent extends IBaseLLMEvent {
+    type: 'llm_error' | 'request.error';
+    data: {
+        error: Error;
+    };
+}
+
+/**
+ * LLM new token event
+ */
+export interface ILLMNewTokenEvent extends IBaseLLMEvent {
+    type: 'llm_new_token' | 'token.received';
+    data: {
+        token: string;
+        idx?: NewTokenIndices;
+        fields?: HandleLLMNewTokenCallbackFields;
+    };
+}
+
+/**
+ * LLM rate limit event
+ */
+export interface ILLMRateLimitEvent extends IBaseLLMEvent {
+    type: 'rate.limited';
+    data: {
+        limit: number;
+        remaining: number;
+        reset: number;
+        retryAfter: number;
+    };
+}
+
+/**
+ * LLM cache event
+ */
+export interface ILLMCacheEvent extends IBaseLLMEvent {
+    type: 'cache.hit' | 'cache.miss';
+    data: {
+        key: string;
+        size: number;
+    };
+}
+
+/**
+ * LLM memory event
+ */
+export interface ILLMMemoryEvent extends IBaseLLMEvent {
+    type: 'memory.pruned';
+    data: {
+        freedBytes: number;
+        totalBytes: number;
+    };
+}
+
+/**
+ * LLM budget event
+ */
+export interface ILLMBudgetEvent extends IBaseLLMEvent {
+    type: 'budget.exceeded';
+    data: {
+        limit: number;
+        current: number;
+        overage: number;
+    };
+}
+
+// Union type for all specific event types
+export type LLMSpecificEvent =
+    | ILLMStartEvent
+    | ILLMEndEvent
+    | ILLMErrorEvent
+    | ILLMNewTokenEvent
+    | ILLMRateLimitEvent
+    | ILLMCacheEvent
+    | ILLMMemoryEvent
+    | ILLMBudgetEvent;
+
+// ─── Type Guards ────────────────────────────────────────────────────────────
+
+/**
+ * Type guard for LLM events
+ */
+export const isLLMEvent = (event: unknown): event is ILLMEvent => {
+    if (typeof event !== 'object' || event === null) return false;
+    const e = event as ILLMEvent;
+    return (
+        typeof e.type === 'string' &&
+        typeof e.timestamp === 'number' &&
+        typeof e.runId === 'string' &&
+        e.metadata !== undefined
+    );
+};
+
+/**
+ * Type guard for specific LLM events
+ */
+export const isLLMSpecificEvent = (event: ILLMEvent): event is LLMSpecificEvent => {
+    return event.data !== undefined;
+};
+
+/**
+ * Type guard for LLM callback handlers
+ */
+export const isLLMCallbackHandler = (handler: unknown): handler is ILLMCallbackHandler => {
+    if (typeof handler !== 'object' || handler === null) return false;
+    const h = handler as ILLMCallbackHandler;
+    return (
+        typeof h.handleLLMStart === 'function' &&
+        typeof h.handleLLMEnd === 'function' &&
+        typeof h.handleLLMError === 'function'
+    );
+};

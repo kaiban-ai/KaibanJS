@@ -1,69 +1,389 @@
 /**
- * @file statusManager.ts
- * @path src/managers/core/statusManager.ts
- * @description Core status management implementation for centralized state transitions
- */
+* @file statusManager.ts
+* @path src/managers/core/statusManager.ts
+* @description Core status management implementation with enhanced error handling
+*
+* @module @core
+*/
 
-import CoreManager from './coreManager';
+// ─── External Imports ─────────────────────────────────────────────────────────
+
+import { BaseCallbackHandler } from '@langchain/core/callbacks/base';
+import { CallbackManager } from '@langchain/core/callbacks/manager';
+import { BaseMessage } from '@langchain/core/messages';
+
+// ─── Core Imports ─────────────────────────────────────────────────────────────
+
+import { CoreManager } from './coreManager';
 import { StatusValidator } from './statusValidator';
-import { MetadataFactory } from '../../utils/factories/metadataFactory';
-import { BaseError, IErrorType, IErrorKind } from '../../types/common/commonErrorTypes';
-import { IStatusChangeMetadata, IBaseContextPartial, IStatusChangeContext } from '../../types/common/commonMetadataTypes';
+import { StatusHistoryManager } from './statusHistoryManager';
+import { StatusReportManager } from './statusReportManager';
+import { MetricsManager } from './metricsManager';
 
-import type { 
-    IStatusTransitionContext,
-    IStatusChangeEvent,
-    IStatusChangeCallback,
-    IStatusManagerConfig,
-    IStatusEntity,
-    IStatusType,
-    IStatusError,
-    IStatusErrorType,
-    IErrorContext
-} from '../../types/common/commonStatusTypes';
+// ─── Enum and Utility Imports ─────────────────────────────────────────────────
 
-import type { IStatusValidationResult } from '../../types/common/commonValidationTypes';
-import type { IHandlerResult } from '../../types/common/commonHandlerTypes';
-
-import { 
+import {
+    MANAGER_CATEGORY_enum,
     AGENT_STATUS_enum,
     MESSAGE_STATUS_enum,
     TASK_STATUS_enum,
-    WORKFLOW_STATUS_enum
-} from '../../types/common/commonEnums';
+    WORKFLOW_STATUS_enum,
+    LLM_STATUS_enum,
+    ERROR_SEVERITY_enum
+} from '../../types/common/enumTypes';
+import { createError, ERROR_KINDS, createErrorContext } from '../../types/common/errorTypes';
+import { createBaseMetadata } from '../../types/common/baseTypes';
 
-// Mapping of StatusErrorType to ErrorKind
-const STATUS_ERROR_KIND_MAP: Record<IStatusErrorType, IErrorKind> = {
-    'INVALID_TRANSITION': 'ValidationError',
-    'VALIDATION_FAILED': 'ValidationError',
-    'TIMEOUT': 'SystemError',
-    'CONCURRENT_TRANSITION': 'SystemError',
-    'INVALID_STATE': 'ValidationError'
-};
+// ─── Runtime Imports Declaration ───────────────────────────────────────────
 
-/**
- * Core status management implementation
- */
+declare interface _RuntimeImports {
+    external: {
+        langchain: {
+            callbacks: {
+                base: typeof BaseCallbackHandler;
+                manager: typeof CallbackManager;
+                params: {
+                    llm: Serialized;
+                    prompts: string[];
+                    runId: `${string}-${number}`;
+                    parentRunId: `${string}-${number}` | undefined;
+                    extraParams: Record<string, unknown>;
+                    output: LLMResult;
+                    error: Error;
+                    chain: Serialized;
+                    inputs: ChainValues;
+                    outputs: ChainValues;
+                    tool: Serialized;
+                    input: string;
+                    text: string;
+                    action: AgentAction;
+                    finish: AgentFinish;
+                    retriever: Serialized;
+                    query: string;
+                    tags: string[];
+                    metadata: Record<string, unknown>;
+                    name: string;
+                    documents: DocumentInterface<Record<string, unknown>>[];
+                    messages: BaseMessage[][];
+                };
+                types: {
+                    Serialized: Serialized;
+                    DocumentInterface: DocumentInterface;
+                    AgentAction: AgentAction;
+                    AgentFinish: AgentFinish;
+                    LLMResult: LLMResult;
+                    ChainValues: ChainValues;
+                    Error: Error;
+                    Record: Record<string, unknown>;
+                    BaseMessage: typeof BaseMessage;
+                };
+            };
+        };
+    };
+    managers: {
+        core: {
+            base: typeof CoreManager;
+            status: {
+                validator: typeof StatusValidator;
+                history: typeof StatusHistoryManager;
+                report: typeof StatusReportManager;
+            };
+        };
+    };
+    enums: {
+        manager: typeof MANAGER_CATEGORY_enum;
+        agent: typeof AGENT_STATUS_enum;
+        message: typeof MESSAGE_STATUS_enum;
+        task: typeof TASK_STATUS_enum;
+        workflow: typeof WORKFLOW_STATUS_enum;
+        llm: typeof LLM_STATUS_enum;
+    };
+    utils: {
+        error: typeof createError;
+        metadata: typeof createBaseMetadata;
+    };
+    types: {
+        common: {
+            base: IBaseHandlerMetadata;
+            status: {
+                IStatusEntity: IStatusEntity;
+                IStatusType: IStatusType;
+                IStatusChangeEvent: IStatusChangeEvent;
+                IStatusTransitionContext: IStatusTransitionContext;
+                IStatusManagerConfig: IStatusManagerConfig;
+                IStatusChangeCallback: IStatusChangeCallback;
+                IStatusTrendAnalysis: IStatusTrendAnalysis;
+                IStatusImpactAssessment: IStatusImpactAssessment;
+                IStatusDashboardMetrics: IStatusDashboardMetrics;
+            };
+            validation: {
+                IStatusValidationResult: IStatusValidationResult;
+            };
+        };
+    };
+}
+
+// ─── Type-Only Imports ───────────────────────────────────────────────────────
+
+import type { Serialized } from '@langchain/core/load/serializable';
+import type { DocumentInterface } from '@langchain/core/documents';
+import type { AgentAction, AgentFinish } from '@langchain/core/agents';
+import type { LLMResult } from '@langchain/core/outputs';
+import type { ChainValues } from '@langchain/core/utils/types';
+
+import type { IStatusValidationResult, IValidationResult } from '../../types/common/validationTypes';
+import type {
+    IStatusEntity,
+    IStatusType,
+    IStatusChangeEvent,
+    IStatusTransitionContext,
+    IStatusManagerConfig,
+    IStatusChangeCallback,
+    IStatusTrendAnalysis,
+    IStatusImpactAssessment,
+    IStatusDashboardMetrics
+} from '../../types/common/statusTypes';
+import type { IBaseHandlerMetadata } from '../../types/common/baseTypes';
+import type { IErrorContext } from '../../types/common/errorTypes';
+import type { IStatusChangeMetadata } from '../../types/common/metadataTypes';
+
+// ─── Callback Handler Class ──────────────────────────────────────────────────
+
+class StatusCallbackHandler extends BaseCallbackHandler {
+    private statusManager: StatusManager;
+    override readonly name = "status_callback_handler";
+
+    constructor(statusManager: StatusManager) {
+        super();
+        this.statusManager = statusManager;
+    }
+
+    override get lc_namespace(): ["langchain_core", "callbacks", string] {
+        return ["langchain_core", "callbacks", "status_handler"];
+    }
+
+    override get lc_secrets(): { [key: string]: string } | undefined {
+        return undefined;
+    }
+
+    override get lc_attributes(): { [key: string]: string } | undefined {
+        return undefined;
+    }
+
+    override async handleLLMStart(
+        _llm: Serialized,
+        _prompts: string[],
+        _runId: string,
+        _parentRunId?: string,
+        _extraParams?: Record<string, unknown>
+    ): Promise<any> {
+        await this.statusManager.syncStatus('llm', 'default', LLM_STATUS_enum.ACTIVE);
+    }
+
+    override async handleLLMEnd(
+        _output: LLMResult,
+        _runId: string,
+        _parentRunId?: string
+    ): Promise<any> {
+        await this.statusManager.syncStatus('llm', 'default', LLM_STATUS_enum.READY);
+    }
+
+    override async handleLLMError(
+        error: Error,
+        runId: string,
+        parentRunId?: string
+    ): Promise<any> {
+        const errorContext: IErrorContext = {
+            component: 'LLM',
+            operation: 'execute',
+            error,
+            severity: ERROR_SEVERITY_enum.ERROR,
+            recoverable: true,
+            retryCount: 0,
+            failureReason: error.message,
+            recommendedAction: 'Retry with backoff',
+            timestamp: Date.now()
+        };
+
+        await this.statusManager.syncStatus('llm', 'default', LLM_STATUS_enum.ERROR, errorContext);
+    }
+
+    override async handleChainStart(
+        _chain: Serialized,
+        _inputs: ChainValues,
+        _runId: string,
+        _parentRunId?: string
+    ): Promise<any> {
+        await this.statusManager.syncStatus('workflow', 'default', WORKFLOW_STATUS_enum.RUNNING);
+    }
+
+    override async handleChainEnd(
+        _outputs: ChainValues,
+        _runId: string,
+        _parentRunId?: string
+    ): Promise<any> {
+        await this.statusManager.syncStatus('workflow', 'default', WORKFLOW_STATUS_enum.COMPLETED);
+    }
+
+    override async handleChainError(
+        error: Error,
+        runId: string,
+        parentRunId?: string
+    ): Promise<any> {
+        const errorContext: IErrorContext = {
+            component: 'Workflow',
+            operation: 'execute',
+            error,
+            severity: ERROR_SEVERITY_enum.ERROR,
+            recoverable: true,
+            retryCount: 0,
+            failureReason: error.message,
+            recommendedAction: 'Check workflow configuration',
+            timestamp: Date.now()
+        };
+
+        await this.statusManager.syncStatus('workflow', 'default', WORKFLOW_STATUS_enum.ERRORED, errorContext);
+    }
+
+    override async handleToolStart(
+        _tool: Serialized,
+        _input: string,
+        _runId: string,
+        _parentRunId?: string
+    ): Promise<any> {
+        await this.statusManager.syncStatus('agent', 'default', AGENT_STATUS_enum.USING_TOOL);
+    }
+
+    override async handleToolEnd(
+        _output: string,
+        _runId: string,
+        _parentRunId?: string
+    ): Promise<any> {
+        await this.statusManager.syncStatus('agent', 'default', AGENT_STATUS_enum.USING_TOOL_END);
+    }
+
+    override async handleToolError(
+        error: Error,
+        runId: string,
+        parentRunId?: string
+    ): Promise<any> {
+        const errorContext: IErrorContext = {
+            component: 'Agent',
+            operation: 'useTool',
+            error,
+            severity: ERROR_SEVERITY_enum.ERROR,
+            recoverable: true,
+            retryCount: 0,
+            failureReason: error.message,
+            recommendedAction: 'Check tool availability',
+            timestamp: Date.now()
+        };
+
+        await this.statusManager.syncStatus('agent', 'default', AGENT_STATUS_enum.USING_TOOL_ERROR, errorContext);
+    }
+
+    override async handleText(
+        _text: string,
+        _runId: string,
+        _parentRunId?: string
+    ): Promise<void> {
+        // No status update needed
+    }
+
+    override async handleAgentAction(
+        _action: AgentAction,
+        _runId: string,
+        _parentRunId?: string
+    ): Promise<void> {
+        // No status update needed
+    }
+
+    override async handleAgentEnd(
+        _action: AgentFinish,
+        _runId: string,
+        _parentRunId?: string
+    ): Promise<void> {
+        // No status update needed
+    }
+
+    override async handleRetrieverStart(
+        _retriever: Serialized,
+        _query: string,
+        _runId: string,
+        _parentRunId?: string,
+        _tags?: string[],
+        _metadata?: Record<string, unknown>,
+        _name?: string
+    ): Promise<any> {
+        // No status update needed
+    }
+
+    override async handleRetrieverEnd(
+        _documents: DocumentInterface<Record<string, unknown>>[],
+        _runId: string,
+        _parentRunId?: string,
+        _tags?: string[]
+    ): Promise<any> {
+        // No status update needed
+    }
+
+    override async handleRetrieverError(
+        _error: Error,
+        _runId: string,
+        _parentRunId?: string,
+        _tags?: string[]
+    ): Promise<any> {
+        // No status update needed
+    }
+
+    override async handleChatModelStart(
+        _llm: Serialized,
+        _messages: BaseMessage[][],
+        _runId: string,
+        _parentRunId?: string,
+        _extraParams?: Record<string, unknown>,
+        _tags?: string[],
+        _metadata?: Record<string, unknown>,
+        _runName?: string
+    ): Promise<any> {
+        await this.statusManager.syncStatus('llm', 'default', LLM_STATUS_enum.ACTIVE);
+    }
+}
+
+// ─── Status Manager Class ─────────────────────────────────────────────────────
+
 export class StatusManager extends CoreManager {
-    private static instance: StatusManager;
+    private static instance: StatusManager | null = null;
     private readonly validator: StatusValidator;
     private readonly subscribers: Map<string, Set<IStatusChangeCallback>>;
-    private readonly history: IStatusChangeEvent[];
     private readonly config: Required<IStatusManagerConfig>;
+    private readonly langchainCallbackManager: CallbackManager;
+    private readonly statusSyncMap: Map<string, Map<string, IStatusType>>;
+    private readonly historyManager: StatusHistoryManager;
+    private readonly reportManager: StatusReportManager;
+    protected readonly metricsManager: MetricsManager;
+
+    public readonly category: MANAGER_CATEGORY_enum = MANAGER_CATEGORY_enum.CORE;
 
     private constructor(config: IStatusManagerConfig) {
         super();
         if (!config.entity) {
-            throw new BaseError({
+            const error = createError({
                 message: 'StatusManager requires an entity type',
-                type: 'ValidationError',
+                type: ERROR_KINDS.ValidationError,
                 context: { config }
             });
+            this.handleError(error, 'StatusManager.constructor');
+            throw error;
         }
 
         this.validator = StatusValidator.getInstance();
         this.subscribers = new Map();
-        this.history = [];
+        this.statusSyncMap = new Map();
+        this.langchainCallbackManager = new CallbackManager();
+        this.historyManager = StatusHistoryManager.getInstance();
+        this.reportManager = StatusReportManager.getInstance();
+        this.metricsManager = MetricsManager.getInstance();
         this.config = {
             entity: config.entity,
             initialStatus: config.initialStatus || this.getDefaultInitialStatus(config.entity),
@@ -75,66 +395,122 @@ export class StatusManager extends CoreManager {
             allowConcurrentTransitions: config.allowConcurrentTransitions ?? false
         };
 
-        // Register self as a domain manager
-        this.registerDomainManager('StatusManager', this);
+        this.initializeLangchainCallbacks();
     }
 
     public static getInstance(config?: IStatusManagerConfig): StatusManager {
-        if (!StatusManager.instance) {
-            if (!config) {
-                throw new BaseError({
-                    message: 'Initial configuration is required for StatusManager',
-                    type: 'ConfigurationError'
-                });
-            }
+        if (!StatusManager.instance && !config) {
+            const error = createError({
+                message: 'Initial configuration is required for StatusManager',
+                type: ERROR_KINDS.ConfigurationError,
+                context: { config }
+            });
+            throw error;
+        }
+        if (!StatusManager.instance && config) {
             StatusManager.instance = new StatusManager(config);
         }
-        return StatusManager.instance;
+        return StatusManager.instance!;
+    }
+
+    private initializeLangchainCallbacks(): void {
+        this.langchainCallbackManager.addHandler(new StatusCallbackHandler(this));
+    }
+
+    public async syncStatus(
+        entity: IStatusEntity,
+        entityId: string,
+        status: IStatusType,
+        errorContext?: IErrorContext
+    ): Promise<void> {
+        try {
+            if (!this.statusSyncMap.has(entity)) {
+                this.statusSyncMap.set(entity, new Map());
+            }
+
+            const entityMap = this.statusSyncMap.get(entity)!;
+            const currentStatus = entityMap.get(entityId);
+
+            if (currentStatus !== status) {
+                entityMap.set(entityId, status);
+
+                const context: IStatusTransitionContext = {
+                    entity,
+                    entityId,
+                    currentStatus: currentStatus || this.getDefaultInitialStatus(entity),
+                    targetStatus: status,
+                    operation: 'sync',
+                    phase: 'execution',
+                    startTime: Date.now(),
+                    duration: 0,
+                    resourceMetrics: await this.metricsManager.getInitialResourceMetrics(),
+                    performanceMetrics: await this.metricsManager.getInitialPerformanceMetrics(),
+                    metadata: createBaseMetadata('StatusManager', 'sync'),
+                    errorContext
+                };
+
+                await this.transition(context);
+            }
+        } catch (error) {
+            const errorCtx = createErrorContext({
+                component: 'StatusManager',
+                operation: 'syncStatus',
+                error: error instanceof Error ? error : new Error(String(error)),
+                severity: ERROR_SEVERITY_enum.ERROR,
+                recoverable: true,
+                retryCount: 0,
+                failureReason: 'Failed to sync status',
+                recommendedAction: 'Check status transition rules',
+                details: { entity, entityId, status }
+            });
+
+            this.handleError(
+                createError({
+                    message: 'Status sync failed',
+                    type: ERROR_KINDS.ExecutionError,
+                    severity: ERROR_SEVERITY_enum.ERROR,
+                    context: errorCtx
+                }),
+                'StatusManager.syncStatus'
+            );
+            throw error;
+        }
     }
 
     public async transition(context: IStatusTransitionContext): Promise<boolean> {
-        // Update phase to pre-execution
         context.phase = 'pre-execution';
-        
+
         const result = await this.safeExecute(async () => {
             this.validateTransitionContext(context);
 
             try {
-                // Update phase to execution
                 context.phase = 'execution';
-                
+
                 const validationResult = await this.validateTransition(context);
                 if (!validationResult.isValid) {
-                    // Create error context for validation failure
-                    const errorContext: IErrorContext = {
-                        error: new BaseError({
+                    this.handleError(
+                        createError({
                             message: validationResult.errors?.join(', ') || 'Invalid status transition',
-                            type: 'ValidationError',
+                            type: ERROR_KINDS.ValidationError,
                             context: {
                                 entity: context.entity,
                                 entityId: context.entityId,
                                 transition: `${context.currentStatus} -> ${context.targetStatus}`
                             }
                         }),
-                        recoverable: true,
-                        retryCount: 0,
-                        failureReason: 'Validation failed',
-                        recommendedAction: 'Check transition rules and validation requirements'
-                    };
-
-                    // Update context with error information
-                    context.phase = 'error';
-                    context.errorContext = errorContext;
-                    context.duration = Date.now() - context.startTime;
-
-                    throw errorContext.error;
+                        'StatusManager.transition',
+                        ERROR_KINDS.ValidationError
+                    );
+                    throw new Error(validationResult.errors?.join(', ') || 'Invalid status transition');
                 }
 
-                const defaultMetadata: IStatusChangeMetadata = {
+                const baseMetadata = createBaseMetadata('StatusManager', context.operation);
+                const metadata: Readonly<IStatusChangeMetadata> = {
+                    ...baseMetadata,
                     timestamp: Date.now(),
-                    component: 'StatusManager',
+                    component: this.constructor.name,
                     operation: context.operation,
-                    performance: context.performanceMetrics,
+                    performance: await this.metricsManager.getInitialPerformanceMetrics(),
                     entity: {
                         type: context.entity,
                         id: context.entityId,
@@ -143,11 +519,11 @@ export class StatusManager extends CoreManager {
                     transition: {
                         from: context.currentStatus,
                         to: context.targetStatus,
-                        reason: 'Status transition requested',
-                        triggeredBy: 'StatusManager'
+                        reason: context.errorContext?.failureReason || 'Normal transition',
+                        triggeredBy: this.constructor.name
                     },
                     validation: validationResult,
-                    resources: context.resourceMetrics,
+                    resources: await this.metricsManager.getInitialResourceMetrics(),
                     context: {
                         source: 'StatusManager',
                         target: context.operation,
@@ -164,50 +540,32 @@ export class StatusManager extends CoreManager {
                     }
                 };
 
-                const event: IStatusChangeEvent = {
+                const event: Readonly<IStatusChangeEvent> = {
+                    id: `${context.entity}-${context.entityId}-${Date.now()}`,
+                    type: 'status-change',
                     timestamp: Date.now(),
                     entity: context.entity,
                     entityId: context.entityId,
                     from: context.currentStatus,
                     to: context.targetStatus,
-                    metadata: context.metadata || defaultMetadata
+                    metadata: context.errorContext ? { ...metadata, errorContext: context.errorContext } : metadata,
+                    validationResult
                 };
 
                 if (this.config.enableHistory) {
-                    this.recordHistoryEntry(event);
+                    await this.historyManager.recordTransition(context, event);
                 }
 
-                // Update phase to post-execution
+                await this.reportManager.handleStatusChange(event);
+
                 context.phase = 'post-execution';
                 context.duration = Date.now() - context.startTime;
-
-                // Update performance metrics
-                context.performanceMetrics.executionTime.total = context.duration;
-                context.performanceMetrics.timestamp = Date.now();
 
                 await this.notifySubscribers(context.entity, event);
                 this.config.onChange(event);
 
                 return true;
             } catch (error) {
-                // Handle error case
-                if (!context.errorContext) {
-                    context.errorContext = {
-                        error: error instanceof BaseError ? error : new BaseError({
-                            message: String(error),
-                            type: 'SystemError',
-                            context: {
-                                entity: context.entity,
-                                entityId: context.entityId,
-                                transition: `${context.currentStatus} -> ${context.targetStatus}`
-                            }
-                        }),
-                        recoverable: false,
-                        retryCount: 0,
-                        failureReason: 'Unexpected error during transition',
-                        recommendedAction: 'Check system logs and retry'
-                    };
-                }
                 context.phase = 'error';
                 context.duration = Date.now() - context.startTime;
                 throw error;
@@ -221,9 +579,9 @@ export class StatusManager extends CoreManager {
         const result = await this.safeExecute(async () => {
             const timeoutPromise = new Promise<IStatusValidationResult>((_, reject) => {
                 setTimeout(() => {
-                    reject(new BaseError({
+                    reject(createError({
                         message: 'Validation timeout',
-                        type: 'SystemError',
+                        type: ERROR_KINDS.TimeoutError,
                         context: {
                             entity: context.entity,
                             entityId: context.entityId,
@@ -235,7 +593,21 @@ export class StatusManager extends CoreManager {
             });
 
             const validationPromise = this.validator.validateTransition(context);
-            return await Promise.race([validationPromise, timeoutPromise]);
+            const validationResult = await Promise.race([validationPromise, timeoutPromise]);
+
+            if (this.isErrorState(context.targetStatus)) {
+                if (!context.errorContext) {
+                    validationResult.errors.push('Error state transition without error context');
+                }
+
+                if (context.errorContext) {
+                    const errorContextValidation = await this.validateErrorContext(context.errorContext);
+                    validationResult.errors.push(...errorContextValidation.errors);
+                    validationResult.warnings.push(...errorContextValidation.warnings);
+                }
+            }
+
+            return validationResult;
         }, 'Validate transition');
 
         if (!result.success) {
@@ -263,6 +635,127 @@ export class StatusManager extends CoreManager {
         };
     }
 
+    private isErrorState(status: IStatusType): boolean {
+        return status.includes('ERROR') || 
+               status === TASK_STATUS_enum.ERROR ||
+               status === WORKFLOW_STATUS_enum.ERRORED ||
+               String(status) === String(LLM_STATUS_enum.ERROR);
+    }
+
+    private async validateErrorContext(errorContext: IErrorContext): Promise<IValidationResult> {
+        const errors: string[] = [];
+        const warnings: string[] = [];
+
+        if (!errorContext.error) {
+            errors.push('Error object is required in error context');
+        }
+
+        if (!errorContext.severity) {
+            warnings.push('Error severity not specified');
+        }
+
+        if (!errorContext.failureReason) {
+            warnings.push('Failure reason not specified');
+        }
+
+        if (!errorContext.recommendedAction) {
+            warnings.push('Recommended action not specified');
+        }
+
+        return {
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: {
+                timestamp: Date.now(),
+                duration: 0,
+                validatorName: 'StatusManager'
+            }
+        };
+    }
+
+    private validateTransitionContext(context: IStatusTransitionContext): void {
+        if (!context.entityId) {
+            const error = createError({
+                message: `EntityId is required for ${context.entity} status transition`,
+                type: ERROR_KINDS.ValidationError,
+                context: {
+                    entity: context.entity,
+                    providedContext: context
+                }
+            });
+            this.handleError(error, 'StatusManager.validateTransitionContext');
+            throw error;
+        }
+
+        if (!context.operation) {
+            const error = createError({
+                message: 'Operation is required for status transition',
+                type: ERROR_KINDS.ValidationError,
+                context: { entity: context.entity, entityId: context.entityId }
+            });
+            this.handleError(error, 'StatusManager.validateTransitionContext');
+            throw error;
+        }
+
+        if (!context.startTime) {
+            const error = createError({
+                message: 'Start time is required for status transition',
+                type: ERROR_KINDS.ValidationError,
+                context: { entity: context.entity, entityId: context.entityId }
+            });
+            this.handleError(error, 'StatusManager.validateTransitionContext');
+            throw error;
+        }
+    }
+
+    private getDefaultInitialStatus(entity: IStatusEntity): IStatusType {
+        const defaultStatuses: Record<IStatusEntity, IStatusType> = {
+            'agent': 'INITIAL',
+            'message': 'INITIAL',
+            'task': 'PENDING',
+            'workflow': 'INITIAL',
+            'feedback': 'PENDING',
+            'llm': 'INITIALIZING'
+        };
+        return defaultStatuses[entity];
+    }
+
+    private async notifySubscribers(entity: IStatusEntity, event: IStatusChangeEvent): Promise<void> {
+        const subscribers = this.subscribers.get(entity);
+        if (!subscribers) return;
+
+        const notifications = Array.from(subscribers).map(async callback => {
+            try {
+                await callback(event);
+            } catch (error) {
+                const errorContext = createErrorContext({
+                    component: 'StatusManager',
+                    operation: 'notifySubscribers',
+                    error: error instanceof Error ? error : new Error(String(error)),
+                    severity: ERROR_SEVERITY_enum.ERROR,
+                    recoverable: true,
+                    retryCount: 0,
+                    failureReason: 'Status change callback failed',
+                    recommendedAction: 'Check subscriber implementation',
+                    details: { entity, event }
+                });
+
+                this.handleError(
+                    createError({
+                        message: 'Error in status change callback',
+                        type: ERROR_KINDS.ExecutionError,
+                        severity: ERROR_SEVERITY_enum.ERROR,
+                        context: errorContext
+                    }),
+                    'StatusManager.notifySubscribers'
+                );
+            }
+        });
+
+        await Promise.all(notifications);
+    }
+
     public subscribe(entity: IStatusEntity, callback: IStatusChangeCallback): () => void {
         const subscribers = this.subscribers.get(entity) || new Set();
         subscribers.add(callback);
@@ -279,86 +772,26 @@ export class StatusManager extends CoreManager {
         };
     }
 
-    public getHistory(): IStatusChangeEvent[] {
-        return [...this.history];
+    public async getDashboardMetrics(entity?: IStatusEntity): Promise<IStatusDashboardMetrics | Record<IStatusEntity, IStatusDashboardMetrics>> {
+        return await this.reportManager.getDashboardMetrics(entity);
     }
 
-    public clearHistory(): void {
-        this.history.length = 0;
+    public async analyzeTrends(
+        entity: IStatusEntity,
+        timeRange: { start: number; end: number }
+    ): Promise<IStatusTrendAnalysis> {
+        return await this.reportManager.analyzeTrends(entity, timeRange);
     }
 
-    private validateTransitionContext(context: IStatusTransitionContext): void {
-        if (!context.entityId) {
-            throw new BaseError({
-                message: `EntityId is required for ${context.entity} status transition`,
-                type: 'ValidationError',
-                context: {
-                    entity: context.entity,
-                    providedContext: context
-                }
-            });
-        }
-
-        // Validate new required fields
-        if (!context.operation) {
-            throw new BaseError({
-                message: 'Operation is required for status transition',
-                type: 'ValidationError',
-                context: { entity: context.entity, entityId: context.entityId }
-            });
-        }
-
-        if (!context.startTime) {
-            throw new BaseError({
-                message: 'Start time is required for status transition',
-                type: 'ValidationError',
-                context: { entity: context.entity, entityId: context.entityId }
-            });
-        }
-
-        if (!context.resourceMetrics || !context.performanceMetrics) {
-            throw new BaseError({
-                message: 'Resource and performance metrics are required for status transition',
-                type: 'ValidationError',
-                context: { entity: context.entity, entityId: context.entityId }
-            });
-        }
+    public async assessImpact(entity: IStatusEntity, status: IStatusType): Promise<IStatusImpactAssessment> {
+        return await this.reportManager.assessImpact(entity, status);
     }
 
-    private getDefaultInitialStatus(entity: IStatusEntity): IStatusType {
-        const defaultStatuses: Record<IStatusEntity, IStatusType> = {
-            'agent': 'INITIAL',
-            'message': 'INITIAL',
-            'task': 'PENDING',
-            'workflow': 'INITIAL'
-        };
-        return defaultStatuses[entity];
-    }
-
-    private async notifySubscribers(entity: IStatusEntity, event: IStatusChangeEvent): Promise<void> {
-        const subscribers = this.subscribers.get(entity);
-        if (!subscribers) return;
-
-        const notifications = Array.from(subscribers).map(async callback => {
-            try {
-                await callback(event);
-            } catch (error) {
-                this.handleError(
-                    error instanceof Error ? error : new Error(String(error)),
-                    'Error in status change callback'
-                );
-            }
-        });
-
-        await Promise.all(notifications);
-    }
-
-    private recordHistoryEntry(event: IStatusChangeEvent): void {
-        this.history.push(event);
-        if (this.history.length > this.config.maxHistoryLength) {
-            this.history.shift();
-        }
+    public getLangchainCallbackManager(): CallbackManager {
+        return this.langchainCallbackManager;
     }
 }
+
+// ─── Export Singleton Instance ───────────────────────────────────────────────
 
 export default StatusManager.getInstance();

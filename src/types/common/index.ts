@@ -1,117 +1,53 @@
 /**
  * @file index.ts
- * @description Central export file for common types and interfaces
+ * @description Consolidated type system exports
  */
 
-// Validation exports
-export type {
-    IValidationResult,
-    IValidationOptions,
-    IAgentValidationResult,
-    ITaskValidationResult,
-    IStatusValidationResult,
-    IValidationRule,
-    IValidationSchema,
-    IValidationContext,
-    IValidationFunction
-} from './commonValidationTypes';
-export { ValidationTypeGuards, DEFAULT_VALIDATION_CONFIG } from './commonValidationTypes';
+// ================ Base Types ================
 
-// Status exports
+// Context Types
 export type {
-    IStatusEntity,
-    IStatusType,
-    IStatusUpdateParams,
-    IStatusErrorType,
-    IStatusError,
-    IStatusTransition,
-    IStatusTransitionContext,
-    IStatusTransitionRule,
-    IStatusChangeEvent,
-    IStatusChangeCallback,
-    IStatusManagerConfig
-} from './commonStatusTypes';
-export {
-    isStatusEntity,
-    isStatusTransition,
-    isStatusTransitionContext
-} from './commonStatusTypes';
+    IBaseContextRequired,
+    IBaseContextPartial
+} from './baseTypes';
 
-// Parser exports
+// Memory Types
+export type {
+    IMemoryMetrics
+} from './baseTypes';
+
+// Parser Types
 export type {
     IParsedJSON,
     IParserConfig,
     IParserResult
-} from './commonParserTypes';
+} from './baseTypes';
 
-// Memory exports
-export type { IMemoryMetrics } from './commonMemoryTypes';
-
-// Logging exports
+// Version Types
 export type {
-    ILoggerConfig,
-    ILogFormattingOptions,
-    ILogDestinationConfig,
-    ILogFilterOptions
-} from './commonLoggingTypes';
-export { isLogLevel, isLoggerConfig } from './commonLoggingTypes';
+    ISemanticVersion,
+    VersionOperator,
+    IVersionConstraint,
+    IVersionRange,
+    IDependencySpec,
+    IDependencyResolution,
+    IDependencyNode
+} from './baseTypes';
 
-// Error exports
-export type {
-    IErrorKind,
-    IErrorMetadata,
-    IBaseError,
-    IErrorType,
-    IErrorOptions,
-    ILLMError,
-    IValidationError,
-    IWorkflowError
-} from './commonErrorTypes';
+export { DEPENDENCY_ERROR_TYPE } from './baseTypes';
+
+// Version Utilities
 export {
-    BaseError,
-    ErrorTypeGuards,
-    toBaseError,
-    toErrorType,
-    createError
-} from './commonErrorTypes';
+    parseVersion,
+    compareVersions,
+    parseConstraint,
+    satisfiesConstraint,
+    satisfiesRange,
+    isSemanticVersion,
+    isVersionConstraint
+} from './baseTypes';
 
-// Enum exports
-export {
-    AGENT_STATUS_enum,
-    MESSAGE_STATUS_enum,
-    TASK_STATUS_enum,
-    WORKFLOW_STATUS_enum,
-    FEEDBACK_STATUS_enum,
-    STATUS_LOG_TYPE_enum,
-    MESSAGE_LOG_TYPE_enum,
-    ILogLevel,
-    IEnumUtils,
-    EnumUtils,
-    IEnumTypeGuards,
-    EnumTypeGuards
-} from './commonEnums';
-
-// Handler exports
-export type {
-    IHandlerResult,
-    IBaseHandlerParams,
-    IErrorHandlerParams,
-    IThinkingHandlerParams,
-    IToolHandlerParams,
-    ITaskExecutionParams,
-    ITaskCompletionParams,
-    ITeamInputs,
-    ITeamMessageParams,
-    IValidationHandlerParams,
-    IResourceHandlerParams
-} from './commonHandlerTypes';
-export {
-    IHandlerTypeGuards,
-    createSuccessResult,
-    createErrorResult
-} from './commonHandlerTypes';
-
-// Metrics exports
+// Metrics Types
 export type {
     ITokenCostBreakdown,
     IStandardCostDetails,
@@ -119,6 +55,251 @@ export type {
     ICostTrackingOptions,
     ICostAggregate,
     IResourceMetrics,
-    IUsageMetrics,
-    IPerformanceMetrics
-} from './commonMetricTypes';
+    IUsageMetrics
+} from './baseTypes';
+
+// Handler Types
+export type {
+    IBaseHandlerMetadata,
+    IBaseHandler,
+    IHandlerResult,
+    IBaseHandlerParams,
+    IBaseExecutionOptions
+} from './baseTypes';
+
+// Event Types
+export type {
+    IBaseEvent,
+    IStateChangeEvent,
+    IEventHandler,
+    IEventEmitter,
+    IEventSubscription,
+    IEventBus,
+    IEventRegistry,
+    IEventValidationMetadata,
+    IEventValidationResult
+} from './baseTypes';
+
+// Type Guards and Utilities
+export type {
+    TypeGuardCheck
+} from './baseTypes';
+
+export {
+    createTypeGuard,
+    commonChecks,
+    createSuccessResult,
+    createErrorResult,
+    createBaseMetadata
+} from './baseTypes';
+
+// ================ Logging Types ================
+
+// Core Logging Types
+export type {
+    ILoggerConfig,
+    ILogFormattingOptions,
+    ILogDestinationConfig,
+    ILogFilterOptions
+} from './loggingTypes';
+
+// Log Event Types
+export type {
+    ILogCreatedEvent,
+    ILogUpdatedEvent,
+    ILogClearedEvent,
+    ITaskLogAddedEvent,
+    IWorkflowLogAddedEvent,
+    IAgentLogAddedEvent,
+    LogEvent,
+    ILogEventHandler
+} from './loggingTypes';
+
+// Log Entry Types
+export type {
+    ILogEntry,
+    ILogPattern,
+    ILogAnomaly,
+    ILogCorrelation
+} from './loggingTypes';
+
+// Storage Types
+export type {
+    ILogStorageIndex,
+    ILogStorageSegment,
+    ILogStorageQuery,
+    ILogStorageQueryResult,
+    ILogStorageStats,
+    ILogStorageMaintenance,
+    ILogStorageMaintenanceResult,
+    ILogStorageConfig
+} from './loggingTypes';
+
+// Analysis Types
+export type {
+    ILogAnalysisConfig,
+    ILogAggregationOptions,
+    ILogAggregation
+} from './loggingTypes';
+
+// Default Configurations
+export {
+    DEFAULT_LOG_STORAGE_CONFIG,
+    DEFAULT_LOG_ANALYSIS_CONFIG
+} from './loggingTypes';
+
+// Type Guards
+export {
+    isLogLevel,
+    isLoggerConfig
+} from './loggingTypes';
+
+// ================ Validation Types ================
+
+// Base Validation Types
+export type {
+    ValidationErrorType,
+    ValidationWarningType,
+    IBaseValidation,
+    IValidationResult
+} from './validationTypes';
+
+// Validation Process Types
+export type {
+    IValidationStep,
+    IValidationMetrics,
+    IValidationSchema,
+    IValidationContext,
+    IValidationHandlerMetadata
+} from './validationTypes';
+
+// Status Validation Types
+export type {
+    IStatusValidationResult
+} from './validationTypes';
+
+// Validation Utilities
+export {
+    isValidationMetrics,
+    createValidationResult,
+    createStatusValidationResult,
+    createValidationMetadata,
+    formatValidationMessage,
+    toValidationError,
+    toValidationWarning
+} from './validationTypes';
+
+// ================ Status Types ================
+
+// Core Status Types
+export type {
+    IStatusEntity,
+    IStatusType,
+    IStatusErrorType,
+    IStatusError,
+    IStatusChangeEvent,
+    IStatusTransitionContext,
+    IStatusManagerConfig,
+    IStatusTransitionRule,
+    IStatusChangeCallback
+} from './statusTypes';
+
+// History Types
+export type {
+    IStatusHistoryEntry,
+    StatusDurationRecord,
+    IStatusHistoryAnalysis,
+    IStatusHistoryQuery
+} from './statusTypes';
+
+// Reporting Types
+export type {
+    IStatusTrendAnalysis,
+    IStatusImpactAssessment,
+    IStatusDashboardMetrics
+} from './statusTypes';
+
+// Status Utilities
+export {
+    createEmptyStatusFrequency,
+    DEFAULT_STATUS_RECORDS,
+    isValidStatusEntity
+} from './statusTypes';
+
+// ================ Enum Types ================
+export {
+    MANAGER_CATEGORY_enum,
+    SERVICE_STATUS_enum,
+    HEALTH_STATUS_enum,
+    SERVICE_EVENT_TYPE_enum,
+    AGENT_STATUS_enum,
+    MESSAGE_STATUS_enum,
+    TASK_STATUS_enum,
+    WORKFLOW_STATUS_enum,
+    FEEDBACK_STATUS_enum,
+    LLM_STATUS_enum,
+    ERROR_TYPE_enum,
+    MESSAGE_ERROR_TYPE_enum,
+    LLM_ERROR_KIND_enum,
+    VALIDATION_ERROR_enum,
+    VALIDATION_WARNING_enum,
+    EnumUtils,
+    EnumTypeGuards
+} from './enumTypes';
+
+export type { ILogLevel, IEnumUtils, IEnumTypeGuards } from './enumTypes';
+
+// ================ Metadata Types ================
+export type {
+    IErrorMetadata,
+    IToolExecutionMetadata,
+    IResponseMetadata,
+    IMessageMetadata,
+    ITeamMetadata,
+    IWorkflowMetadata,
+    IAgentMetadata,
+    IAgentCreationMetadata,
+    IAgentExecutionMetadata,
+    ITaskMetadata,
+    IErrorHandlerParams,
+    IThinkingHandlerParams,
+    IToolHandlerParams,
+    ITaskExecutionParams,
+    ITaskCompletionParams,
+    ITeamMessageParams,
+    IResourceHandlerParams,
+    IAgentCreationResult,
+    IAgentExecutionResult
+} from './metadataTypes';
+
+// ================ Error Types ================
+export type {
+    IErrorKind,
+    IBaseError,
+    IErrorType,
+    IErrorContext,
+    IBaseErrorHandlerParams,
+    IRetryConfig,
+    ICircuitBreakerConfig,
+    IErrorRecoveryConfig,
+    IErrorTrendData,
+    IErrorImpact,
+    IErrorRecoveryResult,
+    IErrorAggregation,
+    IErrorRecoveryHandler
+} from './errorTypes';
+
+export {
+    ERROR_KINDS,
+    BaseError,
+    DEFAULT_RETRY_CONFIG,
+    DEFAULT_CIRCUIT_BREAKER_CONFIG,
+    DEFAULT_ERROR_RECOVERY_CONFIG,
+    createError,
+    isErrorType,
+    isBaseError,
+    toErrorType,
+    createErrorMetadata,
+    createErrorContext
+} from './errorTypes';
+

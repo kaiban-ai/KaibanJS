@@ -1,13 +1,17 @@
 /**
  * @file agentMetricTypes.ts
  * @path KaibanJS/src/types/agent/agentMetricTypes.ts
- * @description Agent-specific metrics type definitions and validation
+ * @description Consolidated agent metrics type definitions and validation
  * 
  * @module @types/agent
  */
 
-import { createValidationResult } from '@utils/validation/validationUtils';
-import type { IValidationResult } from '../common/commonValidationTypes';
+import { 
+    createValidationResult,
+    createValidationMetadata,
+    type IValidationResult 
+} from '../common/commonValidationTypes';
+import { VALIDATION_ERROR_enum, VALIDATION_WARNING_enum } from '../common/commonEnums';
 import type { IResourceMetrics } from '../metrics/base/resourceMetrics';
 import type { 
     IPerformanceMetrics,
@@ -16,112 +20,194 @@ import type {
     IErrorMetrics 
 } from '../metrics/base/performanceMetrics';
 import type { IUsageMetrics } from '../metrics/base/usageMetrics';
+import type { IStandardCostDetails } from '../common/commonMetricTypes';
+import { UsageMetricsTypeGuards } from '../metrics/base/usageMetrics';
+
+// ─── Base Metrics Interface ────────────────────────────────────────────────────
+
+/**
+ * Base metrics interface - Foundation for all metric types
+ */
+export interface IBaseMetrics {
+    readonly timestamp: number;
+    readonly component: string;
+    readonly category: string;
+    readonly version: string;
+}
+
+/**
+ * Base resource metrics interface
+ */
+export interface IBaseResourceMetrics extends IBaseMetrics {
+    readonly usage: number;
+    readonly limit: number;
+    readonly available: number;
+}
+
+/**
+ * Base performance metrics interface
+ */
+export interface IBasePerformanceMetrics extends IBaseMetrics {
+    readonly duration: number;
+    readonly success: boolean;
+    readonly errorCount: number;
+}
+
+/**
+ * Base usage metrics interface
+ */
+export interface IBaseUsageMetrics extends IBaseMetrics {
+    readonly count: number;
+    readonly rate: number;
+    readonly total: number;
+}
+
+// ─── Agent Specific Metrics ────────────────────────────────────────────────────
+
+/**
+ * Agent metrics interface - Core metrics container
+ */
+export interface IAgentMetrics extends IBaseMetrics {
+    resources: IAgentResourceMetrics;
+    performance: IAgentPerformanceMetrics;
+    usage: IAgentUsageMetrics;
+}
 
 /**
  * Agent-specific cognitive resource metrics
  */
-export interface ICognitiveResourceMetrics {
-    /** Memory allocation for cognitive processes (in bytes) */
+export interface ICognitiveResourceMetrics extends IBaseResourceMetrics {
     readonly memoryAllocation: number;
-    /** Current cognitive load (0-1) */
     readonly cognitiveLoad: number;
-    /** Available processing capacity (0-1) */
     readonly processingCapacity: number;
-    /** Context window utilization (0-1) */
     readonly contextUtilization: number;
 }
 
 /**
  * Agent-specific thinking operation metrics
  */
-export interface IThinkingOperationMetrics {
-    /** Time spent in reasoning operations */
+export interface IThinkingOperationMetrics extends IBasePerformanceMetrics {
     readonly reasoningTime: ITimeMetrics;
-    /** Time spent in planning operations */
     readonly planningTime: ITimeMetrics;
-    /** Time spent in learning operations */
     readonly learningTime: ITimeMetrics;
-    /** Decision confidence scores (0-1) */
     readonly decisionConfidence: number;
-    /** Learning efficiency rate (0-1) */
     readonly learningEfficiency: number;
 }
 
 /**
  * Agent operation state metrics
  */
-export interface IAgentStateMetrics {
-    /** Current operational state */
+export interface IAgentStateMetrics extends IBaseMetrics {
     readonly currentState: string;
-    /** Time spent in current state */
     readonly stateTime: number;
-    /** State transition count */
     readonly transitionCount: number;
-    /** Failed state transitions */
     readonly failedTransitions: number;
-    /** Number of blocked tasks */
     readonly blockedTaskCount: number;
-    /** Number of history entries */
     readonly historyEntryCount: number;
-    /** Last history update timestamp */
     readonly lastHistoryUpdate: number;
+    readonly taskStats: {
+        completedCount: number;
+        failedCount: number;
+        averageDuration: number;
+        successRate: number;
+        averageIterations: number;
+    };
 }
 
 /**
- * Agent-specific resource metrics extending base resource metrics
+ * Agent-specific resource metrics
  */
-export interface IAgentResourceMetrics extends IResourceMetrics {
-    /** Cognitive resource utilization */
+export interface IAgentResourceMetrics extends IBaseResourceMetrics {
     readonly cognitive: ICognitiveResourceMetrics;
-    /** CPU usage percentage */
     readonly cpuUsage: number;
-    /** Memory usage in bytes */
     readonly memoryUsage: number;
-    /** Disk I/O statistics */
     readonly diskIO: {
         readonly read: number;
         readonly write: number;
     };
-    /** Network usage statistics */
     readonly networkUsage: {
         readonly upload: number;
         readonly download: number;
     };
-    /** Timestamp of metrics collection */
-    readonly timestamp: number;
 }
 
 /**
- * Agent-specific performance metrics extending base performance metrics
+ * Agent-specific performance metrics
  */
-export interface IAgentPerformanceMetrics extends IPerformanceMetrics {
-    /** Thinking operation performance metrics */
+export interface IAgentPerformanceMetrics extends IBasePerformanceMetrics {
     readonly thinking: IThinkingOperationMetrics;
-    /** Task completion success rate (0-1) */
     readonly taskSuccessRate: number;
-    /** Goal achievement rate (0-1) */
     readonly goalAchievementRate: number;
 }
 
 /**
- * Agent-specific usage metrics extending base usage metrics
+ * Agent-specific usage metrics
  */
 export interface IAgentUsageMetrics extends IUsageMetrics {
-    /** Agent operational state metrics */
     readonly state: IAgentStateMetrics;
-    /** Tool usage frequency */
     readonly toolUsageFrequency: Record<string, number>;
-    /** Task completion count */
     readonly taskCompletionCount: number;
-    /** Average task completion time */
     readonly averageTaskTime: number;
+    readonly costs: IStandardCostDetails;
 }
 
-export const AgentMetricsTypeGuards = {
-    isCognitiveResourceMetrics: (value: unknown): value is ICognitiveResourceMetrics => {
-        if (typeof value !== 'object' || value === null) return false;
-        const metrics = value as Partial<ICognitiveResourceMetrics>;
+// ─── Type Guards ────────────────────────────────────────────────────────────
 
+export const MetricsTypeGuards = {
+    isBaseMetrics: (value: unknown): value is IBaseMetrics => {
+        if (typeof value !== 'object' || value === null) return false;
+        const metrics = value as Partial<IBaseMetrics>;
+        return (
+            typeof metrics.timestamp === 'number' &&
+            typeof metrics.component === 'string' &&
+            typeof metrics.category === 'string' &&
+            typeof metrics.version === 'string'
+        );
+    },
+
+    isBaseResourceMetrics: (value: unknown): value is IBaseResourceMetrics => {
+        if (!MetricsTypeGuards.isBaseMetrics(value)) return false;
+        const metrics = value as Partial<IBaseResourceMetrics>;
+        return (
+            typeof metrics.usage === 'number' &&
+            typeof metrics.limit === 'number' &&
+            typeof metrics.available === 'number'
+        );
+    },
+
+    isBasePerformanceMetrics: (value: unknown): value is IBasePerformanceMetrics => {
+        if (!MetricsTypeGuards.isBaseMetrics(value)) return false;
+        const metrics = value as Partial<IBasePerformanceMetrics>;
+        return (
+            typeof metrics.duration === 'number' &&
+            typeof metrics.success === 'boolean' &&
+            typeof metrics.errorCount === 'number'
+        );
+    },
+
+    isBaseUsageMetrics: (value: unknown): value is IBaseUsageMetrics => {
+        if (!MetricsTypeGuards.isBaseMetrics(value)) return false;
+        const metrics = value as Partial<IBaseUsageMetrics>;
+        return (
+            typeof metrics.count === 'number' &&
+            typeof metrics.rate === 'number' &&
+            typeof metrics.total === 'number'
+        );
+    },
+
+    isAgentMetrics: (value: unknown): value is IAgentMetrics => {
+        if (!MetricsTypeGuards.isBaseMetrics(value)) return false;
+        const metrics = value as Partial<IAgentMetrics>;
+        return (
+            MetricsTypeGuards.isAgentResourceMetrics(metrics.resources) &&
+            MetricsTypeGuards.isAgentPerformanceMetrics(metrics.performance) &&
+            MetricsTypeGuards.isAgentUsageMetrics(metrics.usage)
+        );
+    },
+
+    isCognitiveResourceMetrics: (value: unknown): value is ICognitiveResourceMetrics => {
+        if (!MetricsTypeGuards.isBaseResourceMetrics(value)) return false;
+        const metrics = value as Partial<ICognitiveResourceMetrics>;
         return (
             typeof metrics.memoryAllocation === 'number' &&
             typeof metrics.cognitiveLoad === 'number' &&
@@ -131,9 +217,8 @@ export const AgentMetricsTypeGuards = {
     },
 
     isThinkingOperationMetrics: (value: unknown): value is IThinkingOperationMetrics => {
-        if (typeof value !== 'object' || value === null) return false;
+        if (!MetricsTypeGuards.isBasePerformanceMetrics(value)) return false;
         const metrics = value as Partial<IThinkingOperationMetrics>;
-
         return (
             typeof metrics.reasoningTime === 'object' &&
             typeof metrics.planningTime === 'object' &&
@@ -144,9 +229,8 @@ export const AgentMetricsTypeGuards = {
     },
 
     isAgentStateMetrics: (value: unknown): value is IAgentStateMetrics => {
-        if (typeof value !== 'object' || value === null) return false;
+        if (!MetricsTypeGuards.isBaseMetrics(value)) return false;
         const metrics = value as Partial<IAgentStateMetrics>;
-
         return (
             typeof metrics.currentState === 'string' &&
             typeof metrics.stateTime === 'number' &&
@@ -154,228 +238,614 @@ export const AgentMetricsTypeGuards = {
             typeof metrics.failedTransitions === 'number' &&
             typeof metrics.blockedTaskCount === 'number' &&
             typeof metrics.historyEntryCount === 'number' &&
-            typeof metrics.lastHistoryUpdate === 'number'
+            typeof metrics.lastHistoryUpdate === 'number' &&
+            typeof metrics.taskStats === 'object'
         );
     },
 
     isAgentResourceMetrics: (value: unknown): value is IAgentResourceMetrics => {
-        if (typeof value !== 'object' || value === null) return false;
+        if (!MetricsTypeGuards.isBaseResourceMetrics(value)) return false;
         const metrics = value as Partial<IAgentResourceMetrics>;
-
         return (
-            AgentMetricsTypeGuards.isCognitiveResourceMetrics(metrics.cognitive) &&
+            MetricsTypeGuards.isCognitiveResourceMetrics(metrics.cognitive) &&
             typeof metrics.cpuUsage === 'number' &&
             typeof metrics.memoryUsage === 'number' &&
             typeof metrics.diskIO === 'object' &&
-            typeof metrics.diskIO?.read === 'number' &&
-            typeof metrics.diskIO?.write === 'number' &&
-            typeof metrics.networkUsage === 'object' &&
-            typeof metrics.networkUsage?.upload === 'number' &&
-            typeof metrics.networkUsage?.download === 'number' &&
-            typeof metrics.timestamp === 'number'
+            typeof metrics.networkUsage === 'object'
         );
     },
 
     isAgentPerformanceMetrics: (value: unknown): value is IAgentPerformanceMetrics => {
-        if (typeof value !== 'object' || value === null) return false;
+        if (!MetricsTypeGuards.isBasePerformanceMetrics(value)) return false;
         const metrics = value as Partial<IAgentPerformanceMetrics>;
-
         return (
-            AgentMetricsTypeGuards.isThinkingOperationMetrics(metrics.thinking) &&
+            MetricsTypeGuards.isThinkingOperationMetrics(metrics.thinking) &&
             typeof metrics.taskSuccessRate === 'number' &&
             typeof metrics.goalAchievementRate === 'number'
         );
     },
 
     isAgentUsageMetrics: (value: unknown): value is IAgentUsageMetrics => {
-        if (typeof value !== 'object' || value === null) return false;
+        if (!UsageMetricsTypeGuards.isUsageMetrics(value)) return false;
         const metrics = value as Partial<IAgentUsageMetrics>;
-
         return (
-            AgentMetricsTypeGuards.isAgentStateMetrics(metrics.state) &&
+            MetricsTypeGuards.isAgentStateMetrics(metrics.state) &&
             typeof metrics.toolUsageFrequency === 'object' &&
             typeof metrics.taskCompletionCount === 'number' &&
-            typeof metrics.averageTaskTime === 'number'
+            typeof metrics.averageTaskTime === 'number' &&
+            typeof metrics.costs === 'object'
         );
     }
 };
 
-export const AgentMetricsValidation = {
+// ─── Validation Functions ─────────────────────────────────────────────────────
+
+/**
+ * Unified validation utility for all metric types
+ */
+export const MetricsValidation = {
+    validateBaseMetrics(metrics: unknown): IValidationResult {
+        const errors: VALIDATION_ERROR_enum[] = [];
+        const warnings: VALIDATION_WARNING_enum[] = [];
+
+        if (typeof metrics !== 'object' || metrics === null) {
+            errors.push(VALIDATION_ERROR_enum.INVALID_INPUT);
+            return createValidationResult({
+                isValid: false,
+                errors,
+                warnings,
+                metadata: createValidationMetadata({
+                    component: 'MetricsValidation',
+                    validatedFields: ['timestamp', 'component', 'category', 'version']
+                })
+            });
+        }
+
+        const baseMetrics = metrics as Partial<IBaseMetrics>;
+
+        if (typeof baseMetrics.timestamp !== 'number') {
+            errors.push(VALIDATION_ERROR_enum.TYPE_MISMATCH);
+        } else if (baseMetrics.timestamp > Date.now()) {
+            warnings.push(VALIDATION_WARNING_enum.POTENTIAL_ISSUE);
+        }
+
+        if (typeof baseMetrics.component !== 'string') {
+            errors.push(VALIDATION_ERROR_enum.TYPE_MISMATCH);
+        }
+
+        if (typeof baseMetrics.category !== 'string') {
+            errors.push(VALIDATION_ERROR_enum.TYPE_MISMATCH);
+        }
+
+        if (typeof baseMetrics.version !== 'string') {
+            errors.push(VALIDATION_ERROR_enum.TYPE_MISMATCH);
+        }
+
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'MetricsValidation',
+                validatedFields: ['timestamp', 'component', 'category', 'version']
+            })
+        });
+    },
+
+    validateBaseResourceMetrics(metrics: unknown): IValidationResult {
+        const errors: VALIDATION_ERROR_enum[] = [];
+        const warnings: VALIDATION_WARNING_enum[] = [];
+
+        const baseResult = this.validateBaseMetrics(metrics);
+        if (!baseResult.isValid) {
+            return baseResult;
+        }
+
+        if (!MetricsTypeGuards.isBaseResourceMetrics(metrics)) {
+            errors.push(VALIDATION_ERROR_enum.INVALID_INPUT);
+            return createValidationResult({
+                isValid: false,
+                errors,
+                warnings,
+                metadata: createValidationMetadata({
+                    component: 'MetricsValidation',
+                    validatedFields: ['usage', 'limit', 'available']
+                })
+            });
+        }
+
+        const resourceMetrics = metrics as IBaseResourceMetrics;
+
+        if (resourceMetrics.usage < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+        }
+
+        if (resourceMetrics.limit < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+        }
+
+        if (resourceMetrics.usage > resourceMetrics.limit) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+        }
+
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'MetricsValidation',
+                validatedFields: ['usage', 'limit', 'available']
+            })
+        });
+    },
+
+    validateBasePerformanceMetrics(metrics: unknown): IValidationResult {
+        const errors: VALIDATION_ERROR_enum[] = [];
+        const warnings: VALIDATION_WARNING_enum[] = [];
+
+        const baseResult = this.validateBaseMetrics(metrics);
+        if (!baseResult.isValid) {
+            return baseResult;
+        }
+
+        if (!MetricsTypeGuards.isBasePerformanceMetrics(metrics)) {
+            errors.push(VALIDATION_ERROR_enum.INVALID_INPUT);
+            return createValidationResult({
+                isValid: false,
+                errors,
+                warnings,
+                metadata: createValidationMetadata({
+                    component: 'MetricsValidation',
+                    validatedFields: ['duration', 'success', 'errorCount']
+                })
+            });
+        }
+
+        const performanceMetrics = metrics as IBasePerformanceMetrics;
+
+        if (performanceMetrics.duration < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+        }
+
+        if (performanceMetrics.errorCount < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+        }
+
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'MetricsValidation',
+                validatedFields: ['duration', 'success', 'errorCount']
+            })
+        });
+    },
+
+    validateBaseUsageMetrics(metrics: unknown): IValidationResult {
+        const errors: VALIDATION_ERROR_enum[] = [];
+        const warnings: VALIDATION_WARNING_enum[] = [];
+
+        const baseResult = this.validateBaseMetrics(metrics);
+        if (!baseResult.isValid) {
+            return baseResult;
+        }
+
+        if (!MetricsTypeGuards.isBaseUsageMetrics(metrics)) {
+            errors.push(VALIDATION_ERROR_enum.INVALID_INPUT);
+            return createValidationResult({
+                isValid: false,
+                errors,
+                warnings,
+                metadata: createValidationMetadata({
+                    component: 'MetricsValidation',
+                    validatedFields: ['count', 'rate', 'total']
+                })
+            });
+        }
+
+        const usageMetrics = metrics as IBaseUsageMetrics;
+
+        if (usageMetrics.count < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+        }
+
+        if (usageMetrics.rate < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+        }
+
+        if (usageMetrics.total < usageMetrics.count) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+        }
+
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'MetricsValidation',
+                validatedFields: ['count', 'rate', 'total']
+            })
+        });
+    },
+
+    validateAgentMetrics(metrics: unknown): IValidationResult {
+        const errors: VALIDATION_ERROR_enum[] = [];
+        const warnings: VALIDATION_WARNING_enum[] = [];
+
+        const baseResult = this.validateBaseMetrics(metrics);
+        if (!baseResult.isValid) {
+            return baseResult;
+        }
+
+        if (!MetricsTypeGuards.isAgentMetrics(metrics)) {
+            errors.push(VALIDATION_ERROR_enum.INVALID_INPUT);
+            return createValidationResult({
+                isValid: false,
+                errors,
+                warnings,
+                metadata: createValidationMetadata({
+                    component: 'MetricsValidation',
+                    validatedFields: ['resources', 'performance', 'usage']
+                })
+            });
+        }
+
+        const agentMetrics = metrics as IAgentMetrics;
+
+        const resourceResult = this.validateAgentResourceMetrics(agentMetrics.resources);
+        const performanceResult = this.validateAgentPerformanceMetrics(agentMetrics.performance);
+        const usageResult = this.validateAgentUsageMetrics(agentMetrics.usage);
+
+        errors.push(...resourceResult.errors);
+        errors.push(...performanceResult.errors);
+        errors.push(...usageResult.errors);
+
+        warnings.push(...(resourceResult.warnings || []));
+        warnings.push(...(performanceResult.warnings || []));
+        warnings.push(...(usageResult.warnings || []));
+
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'MetricsValidation',
+                validatedFields: ['resources', 'performance', 'usage']
+            })
+        });
+    },
+
     validateCognitiveResourceMetrics(metrics: unknown): IValidationResult {
-        const errors: string[] = [];
-        const warnings: string[] = [];
+        const errors: VALIDATION_ERROR_enum[] = [];
+        const warnings: VALIDATION_WARNING_enum[] = [];
 
-        if (!AgentMetricsTypeGuards.isCognitiveResourceMetrics(metrics)) {
-            errors.push('Invalid cognitive resource metrics structure');
-            return createValidationResult(false, errors);
+        const baseResult = this.validateBaseResourceMetrics(metrics);
+        if (!baseResult.isValid) {
+            return baseResult;
         }
 
-        if (metrics.memoryAllocation < 0) {
-            errors.push('Memory allocation cannot be negative');
+        if (!MetricsTypeGuards.isCognitiveResourceMetrics(metrics)) {
+            errors.push(VALIDATION_ERROR_enum.INVALID_INPUT);
+            return createValidationResult({
+                isValid: false,
+                errors,
+                warnings,
+                metadata: createValidationMetadata({
+                    component: 'MetricsValidation',
+                    validatedFields: ['memoryAllocation', 'cognitiveLoad', 'processingCapacity', 'contextUtilization']
+                })
+            });
         }
 
-        if (metrics.cognitiveLoad < 0 || metrics.cognitiveLoad > 1) {
-            errors.push('Cognitive load must be between 0 and 1');
+        const cognitiveMetrics = metrics as ICognitiveResourceMetrics;
+
+        if (cognitiveMetrics.memoryAllocation < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        if (metrics.processingCapacity < 0 || metrics.processingCapacity > 1) {
-            errors.push('Processing capacity must be between 0 and 1');
+        if (cognitiveMetrics.cognitiveLoad < 0 || cognitiveMetrics.cognitiveLoad > 1) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        if (metrics.contextUtilization < 0 || metrics.contextUtilization > 1) {
-            errors.push('Context utilization must be between 0 and 1');
+        if (cognitiveMetrics.processingCapacity < 0 || cognitiveMetrics.processingCapacity > 1) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        return createValidationResult(errors.length === 0, errors, warnings);
+        if (cognitiveMetrics.contextUtilization < 0 || cognitiveMetrics.contextUtilization > 1) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+        }
+
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'MetricsValidation',
+                validatedFields: ['memoryAllocation', 'cognitiveLoad', 'processingCapacity', 'contextUtilization']
+            })
+        });
     },
 
     validateThinkingOperationMetrics(metrics: unknown): IValidationResult {
-        const errors: string[] = [];
-        const warnings: string[] = [];
+        const errors: VALIDATION_ERROR_enum[] = [];
+        const warnings: VALIDATION_WARNING_enum[] = [];
 
-        if (!AgentMetricsTypeGuards.isThinkingOperationMetrics(metrics)) {
-            errors.push('Invalid thinking operation metrics structure');
-            return createValidationResult(false, errors);
+        const baseResult = this.validateBasePerformanceMetrics(metrics);
+        if (!baseResult.isValid) {
+            return baseResult;
         }
 
-        if (metrics.decisionConfidence < 0 || metrics.decisionConfidence > 1) {
-            errors.push('Decision confidence must be between 0 and 1');
+        if (!MetricsTypeGuards.isThinkingOperationMetrics(metrics)) {
+            errors.push(VALIDATION_ERROR_enum.INVALID_INPUT);
+            return createValidationResult({
+                isValid: false,
+                errors,
+                warnings,
+                metadata: createValidationMetadata({
+                    component: 'MetricsValidation',
+                    validatedFields: ['reasoningTime', 'planningTime', 'learningTime', 'decisionConfidence', 'learningEfficiency']
+                })
+            });
         }
 
-        if (metrics.learningEfficiency < 0 || metrics.learningEfficiency > 1) {
-            errors.push('Learning efficiency must be between 0 and 1');
+        const thinkingMetrics = metrics as IThinkingOperationMetrics;
+
+        if (thinkingMetrics.decisionConfidence < 0 || thinkingMetrics.decisionConfidence > 1) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        return createValidationResult(errors.length === 0, errors, warnings);
+        if (thinkingMetrics.learningEfficiency < 0 || thinkingMetrics.learningEfficiency > 1) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+        }
+
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'MetricsValidation',
+                validatedFields: ['reasoningTime', 'planningTime', 'learningTime', 'decisionConfidence', 'learningEfficiency']
+            })
+        });
     },
 
     validateAgentStateMetrics(metrics: unknown): IValidationResult {
-        const errors: string[] = [];
-        const warnings: string[] = [];
+        const errors: VALIDATION_ERROR_enum[] = [];
+        const warnings: VALIDATION_WARNING_enum[] = [];
 
-        if (!AgentMetricsTypeGuards.isAgentStateMetrics(metrics)) {
-            errors.push('Invalid agent state metrics structure');
-            return createValidationResult(false, errors);
+        const baseResult = this.validateBaseMetrics(metrics);
+        if (!baseResult.isValid) {
+            return baseResult;
         }
 
-        if (metrics.stateTime < 0) {
-            errors.push('State time cannot be negative');
+        if (!MetricsTypeGuards.isAgentStateMetrics(metrics)) {
+            errors.push(VALIDATION_ERROR_enum.INVALID_INPUT);
+            return createValidationResult({
+                isValid: false,
+                errors,
+                warnings,
+                metadata: createValidationMetadata({
+                    component: 'MetricsValidation',
+                    validatedFields: ['currentState', 'stateTime', 'transitionCount', 'failedTransitions', 'blockedTaskCount', 'historyEntryCount', 'lastHistoryUpdate', 'taskStats']
+                })
+            });
         }
 
-        if (metrics.transitionCount < 0) {
-            errors.push('Transition count cannot be negative');
+        const stateMetrics = metrics as IAgentStateMetrics;
+
+        if (stateMetrics.stateTime < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        if (metrics.failedTransitions < 0) {
-            errors.push('Failed transitions cannot be negative');
+        if (stateMetrics.transitionCount < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        if (metrics.failedTransitions > metrics.transitionCount) {
-            errors.push('Failed transitions cannot exceed total transitions');
+        if (stateMetrics.failedTransitions < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        if (metrics.blockedTaskCount < 0) {
-            errors.push('Blocked task count cannot be negative');
+        if (stateMetrics.failedTransitions > stateMetrics.transitionCount) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        if (metrics.historyEntryCount < 0) {
-            errors.push('History entry count cannot be negative');
+        if (stateMetrics.blockedTaskCount < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        if (metrics.lastHistoryUpdate > Date.now()) {
-            warnings.push('Last history update timestamp is in the future');
+        if (stateMetrics.historyEntryCount < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        return createValidationResult(errors.length === 0, errors, warnings);
+        if (stateMetrics.lastHistoryUpdate > Date.now()) {
+            warnings.push(VALIDATION_WARNING_enum.POTENTIAL_ISSUE);
+        }
+
+        const taskStats = stateMetrics.taskStats;
+        if (taskStats.completedCount < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+        }
+
+        if (taskStats.failedCount < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+        }
+
+        if (taskStats.averageDuration < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+        }
+
+        if (taskStats.successRate < 0 || taskStats.successRate > 1) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+        }
+
+        if (taskStats.averageIterations < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+        }
+
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'MetricsValidation',
+                validatedFields: ['currentState', 'stateTime', 'transitionCount', 'failedTransitions', 'blockedTaskCount', 'historyEntryCount', 'lastHistoryUpdate', 'taskStats']
+            })
+        });
     },
 
     validateAgentResourceMetrics(metrics: unknown): IValidationResult {
-        const errors: string[] = [];
-        const warnings: string[] = [];
+        const errors: VALIDATION_ERROR_enum[] = [];
+        const warnings: VALIDATION_WARNING_enum[] = [];
 
-        if (!AgentMetricsTypeGuards.isAgentResourceMetrics(metrics)) {
-            errors.push('Invalid agent resource metrics structure');
-            return createValidationResult(false, errors);
+        const baseResult = this.validateBaseResourceMetrics(metrics);
+        if (!baseResult.isValid) {
+            return baseResult;
         }
 
-        const cognitiveResult = this.validateCognitiveResourceMetrics(metrics.cognitive);
+        if (!MetricsTypeGuards.isAgentResourceMetrics(metrics)) {
+            errors.push(VALIDATION_ERROR_enum.INVALID_INPUT);
+            return createValidationResult({
+                isValid: false,
+                errors,
+                warnings,
+                metadata: createValidationMetadata({
+                    component: 'MetricsValidation',
+                    validatedFields: ['cognitive', 'cpuUsage', 'memoryUsage', 'diskIO', 'networkUsage']
+                })
+            });
+        }
+
+        const resourceMetrics = metrics as IAgentResourceMetrics;
+
+        const cognitiveResult = this.validateCognitiveResourceMetrics(resourceMetrics.cognitive);
         errors.push(...cognitiveResult.errors);
-        warnings.push(...cognitiveResult.warnings);
+        warnings.push(...(cognitiveResult.warnings || []));
 
-        if (metrics.cpuUsage < 0 || metrics.cpuUsage > 100) {
-            errors.push('CPU usage must be between 0 and 100');
+        if (resourceMetrics.cpuUsage < 0 || resourceMetrics.cpuUsage > 100) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        if (metrics.memoryUsage < 0) {
-            errors.push('Memory usage cannot be negative');
+        if (resourceMetrics.memoryUsage < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        if (metrics.diskIO.read < 0 || metrics.diskIO.write < 0) {
-            errors.push('Disk I/O values cannot be negative');
+        if (resourceMetrics.diskIO.read < 0 || resourceMetrics.diskIO.write < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        if (metrics.networkUsage.upload < 0 || metrics.networkUsage.download < 0) {
-            errors.push('Network usage values cannot be negative');
+        if (resourceMetrics.networkUsage.upload < 0 || resourceMetrics.networkUsage.download < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        if (metrics.timestamp > Date.now()) {
-            warnings.push('Timestamp is in the future');
-        }
-
-        return createValidationResult(errors.length === 0, errors, warnings);
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'MetricsValidation',
+                validatedFields: ['cognitive', 'cpuUsage', 'memoryUsage', 'diskIO', 'networkUsage']
+            })
+        });
     },
 
     validateAgentPerformanceMetrics(metrics: unknown): IValidationResult {
-        const errors: string[] = [];
-        const warnings: string[] = [];
+        const errors: VALIDATION_ERROR_enum[] = [];
+        const warnings: VALIDATION_WARNING_enum[] = [];
 
-        if (!AgentMetricsTypeGuards.isAgentPerformanceMetrics(metrics)) {
-            errors.push('Invalid agent performance metrics structure');
-            return createValidationResult(false, errors);
+        const baseResult = this.validateBasePerformanceMetrics(metrics);
+        if (!baseResult.isValid) {
+            return baseResult;
         }
 
-        const thinkingResult = this.validateThinkingOperationMetrics(metrics.thinking);
+        if (!MetricsTypeGuards.isAgentPerformanceMetrics(metrics)) {
+            errors.push(VALIDATION_ERROR_enum.INVALID_INPUT);
+            return createValidationResult({
+                isValid: false,
+                errors,
+                warnings,
+                metadata: createValidationMetadata({
+                    component: 'MetricsValidation',
+                    validatedFields: ['thinking', 'taskSuccessRate', 'goalAchievementRate']
+                })
+            });
+        }
+
+        const performanceMetrics = metrics as IAgentPerformanceMetrics;
+
+        const thinkingResult = this.validateThinkingOperationMetrics(performanceMetrics.thinking);
         errors.push(...thinkingResult.errors);
-        warnings.push(...thinkingResult.warnings);
+        warnings.push(...(thinkingResult.warnings || []));
 
-        if (metrics.taskSuccessRate < 0 || metrics.taskSuccessRate > 1) {
-            errors.push('Task success rate must be between 0 and 1');
+        if (performanceMetrics.taskSuccessRate < 0 || performanceMetrics.taskSuccessRate > 1) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        if (metrics.goalAchievementRate < 0 || metrics.goalAchievementRate > 1) {
-            errors.push('Goal achievement rate must be between 0 and 1');
+        if (performanceMetrics.goalAchievementRate < 0 || performanceMetrics.goalAchievementRate > 1) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        return createValidationResult(errors.length === 0, errors, warnings);
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'MetricsValidation',
+                validatedFields: ['thinking', 'taskSuccessRate', 'goalAchievementRate']
+            })
+        });
     },
 
     validateAgentUsageMetrics(metrics: unknown): IValidationResult {
-        const errors: string[] = [];
-        const warnings: string[] = [];
+        const errors: VALIDATION_ERROR_enum[] = [];
+        const warnings: VALIDATION_WARNING_enum[] = [];
 
-        if (!AgentMetricsTypeGuards.isAgentUsageMetrics(metrics)) {
-            errors.push('Invalid agent usage metrics structure');
-            return createValidationResult(false, errors);
+        const baseResult = this.validateBaseUsageMetrics(metrics);
+        if (!baseResult.isValid) {
+            return baseResult;
         }
 
-        const stateResult = this.validateAgentStateMetrics(metrics.state);
+        if (!MetricsTypeGuards.isAgentUsageMetrics(metrics)) {
+            errors.push(VALIDATION_ERROR_enum.INVALID_INPUT);
+            return createValidationResult({
+                isValid: false,
+                errors,
+                warnings,
+                metadata: createValidationMetadata({
+                    component: 'MetricsValidation',
+                    validatedFields: ['state', 'toolUsageFrequency', 'taskCompletionCount', 'averageTaskTime', 'costs']
+                })
+            });
+        }
+
+        const usageMetrics = metrics as IAgentUsageMetrics;
+
+        const stateResult = this.validateAgentStateMetrics(usageMetrics.state);
         errors.push(...stateResult.errors);
-        warnings.push(...stateResult.warnings);
+        warnings.push(...(stateResult.warnings || []));
 
-        if (metrics.taskCompletionCount < 0) {
-            errors.push('Task completion count cannot be negative');
+        if (usageMetrics.taskCompletionCount < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        if (metrics.averageTaskTime < 0) {
-            errors.push('Average task time cannot be negative');
+        if (usageMetrics.averageTaskTime < 0) {
+            errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
         }
 
-        Object.values(metrics.toolUsageFrequency).forEach((frequency) => {
+        Object.values(usageMetrics.toolUsageFrequency).forEach((frequency) => {
             if (frequency < 0) {
-                errors.push('Tool usage frequency cannot be negative');
+                errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
             }
         });
 
-        return createValidationResult(errors.length === 0, errors, warnings);
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: createValidationMetadata({
+                component: 'MetricsValidation',
+                validatedFields: ['state', 'toolUsageFrequency', 'taskCompletionCount', 'averageTaskTime']
+            })
+        });
     }
 };

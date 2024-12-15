@@ -1,362 +1,371 @@
 /**
  * @file baseLLMManager.ts
- * @path src/utils/managers/domain/llm/baseLLMManager.ts
- * @description Support manager providing core LLM functionality
+ * @path src/managers/domain/llm/baseLLMManager.ts
+ * @description Base LLM manager providing core functionality and Langchain integration
  */
 
-import type { AGENT_STATUS_enum } from '../../../../utils/types/common/enums';
-import type { StatusTransitionContext } from '../../../../utils/types/common/status';
+import { BaseChatModel, type BaseChatModelCallOptions } from '@langchain/core/language_models/chat_models';
+import { BaseMessage, AIMessage, type MessageContent, type MessageContentComplex } from '@langchain/core/messages';
+import { BaseLanguageModelInput } from '@langchain/core/language_models/base';
+import { CallbackManager } from '@langchain/core/callbacks/manager';
+import { Generation, LLMResult } from '@langchain/core/outputs';
 
-import type {
-    LLMInstance,
-    LLMInstanceOptions
-} from '../../../../utils/types/llm/instance';
+import { CoreManager } from '../../core/coreManager';
+import { LLM_PROVIDER_enum, MANAGER_CATEGORY_enum, LLM_STATUS_enum } from '../../../types/common/enumTypes';
+import { ERROR_KINDS } from '../../../types/common/errorTypes';
+import { createBaseMetadata } from '../../../types/common/baseTypes';
+import { convertToBaseMessages } from '../../../utils/llm/messageConverter';
+import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
+import { HarmCategory } from '../../../types/llm/googleTypes';
 
-import type {
-    LLMConfig,
-    ActiveLLMConfig,
-    LLMRuntimeOptions,
-    StreamingChunk
-} from '../../../../utils/types/llm/common';
+import {
+    ILLMProviderTypeGuards,
+    type ILLMProviderConfig,
+    type ILLMProviderMetrics,
+    type ProviderInstance,
+    type IProviderManager,
+    type IGroqMetrics,
+    type IOpenAIMetrics,
+    type IAnthropicMetrics,
+    type IGoogleMetrics,
+    type IMistralMetrics,
+    type IBaseProviderMetrics
+} from '../../../types/llm/llmProviderTypes';
 
-import type {
-    LLMResponse,
-    Output,
-    ParsedOutput,
-    LLMUsageStats,
-    ResponseMetadata
-} from '../../../../utils/types/llm/responses';
+import {
+    type LLMResponse,
+    type ITokenUsage,
+    type IGroqResponse,
+    type IOpenAIResponse,
+    type IAnthropicResponse,
+    type IGoogleResponse,
+    type IMistralResponse,
+    LLMResponseTypeGuards
+} from '../../../types/llm/llmResponseTypes';
 
-import type {
-    StreamingHandlerConfig,
-    EventHandlerConfig
-} from '../../../../utils/types/llm/callbacks';
+import { MessageMetricsManager } from './messageMetricsManager';
+import { ProviderManager } from './providerManager';
+import { LLMInitializationManager } from './llmInitializationManager';
+import type { ILLMMetrics } from '../../../types/llm/llmMetricTypes';
+import type { ILLMResourceMetrics } from '../../../types/llm/llmResourceTypes';
+import { isLLMInstance, type ILLMInstance } from '../../../types/llm/llmInstanceTypes';
+import type { IBaseMessageMetadata } from '../../../types/llm/message';
 
-import MetadataFactory from '../../../../utils/factories/metadataFactory';
+type SupportedProvider = Exclude<LLM_PROVIDER_enum, LLM_PROVIDER_enum.UNKNOWN>;
 
-// Domain manager types
-interface StreamingManager {
-    initializeStream(sessionId: string, config: StreamingHandlerConfig): Promise<void>;
-    processChunk(sessionId: string, chunk: StreamingChunk): Promise<void>;
-    completeStream(sessionId: string): Promise<void>;
-    abortStream(sessionId: string): Promise<void>;
+type ValidInstance = ILLMInstance & {
+    provider: SupportedProvider;
+    metrics: ILLMProviderMetrics;
+};
+
+function isValidInstance(instance: unknown): instance is ValidInstance {
+    if (!isLLMInstance(instance)) return false;
+    return Object.values(LLM_PROVIDER_enum).includes(instance.provider) && 
+           instance.provider !== LLM_PROVIDER_enum.UNKNOWN;
 }
 
-interface ProviderManager {
-    validateProviderConfig(config: ActiveLLMConfig): Promise<void>;
-}
-
-interface DomainManager {
-    initialize?(): Promise<void>;
-    cleanup?(): Promise<void>;
-}
-
-// Custom AsyncIterator for streaming chunks
-class StreamChunkIterator implements AsyncIterator<StreamingChunk> {
-    private generator: AsyncGenerator<StreamingChunk, void, unknown>;
-    private options?: LLMRuntimeOptions;
-
-    constructor(
-        generator: AsyncGenerator<StreamingChunk, void, unknown>, 
-        options?: LLMRuntimeOptions
-    ) {
-        this.generator = generator;
-        this.options = options;
+function extractText(content: MessageContent): string {
+    if (typeof content === 'string') {
+        return content;
     }
-
-    async next(): Promise<IteratorResult<StreamingChunk>> {
-        try {
-            const result = await this.generator.next();
-            
-            if (!result.done && this.options?.onChunk) {
-                this.options.onChunk(result.value);
+    if (Array.isArray(content)) {
+        return content.map(item => {
+            if (typeof item === 'string') {
+                return item;
             }
-
-            if (result.done && this.options?.onComplete) {
-                this.options.onComplete({
-                    content: '',
-                    done: true,
-                    metadata: MetadataFactory.forStreamingOutput({
-                        content: '',
-                        done: true
-                    })
-                });
+            if (typeof item === 'object' && item !== null && 'type' in item) {
+                const complex = item as MessageContentComplex;
+                if (complex.type === 'text' && typeof complex.text === 'string') {
+                    return complex.text;
+                }
             }
-
-            return result;
-        } catch (error) {
-            if (this.options?.onError) {
-                this.options.onError(error instanceof Error ? error : new Error(String(error)));
-            }
-            throw error;
+            return '';
+        }).filter(Boolean).join(' ');
+    }
+    if (typeof content === 'object' && content !== null && 'type' in content) {
+        const complex = content as MessageContentComplex;
+        if (complex.type === 'text' && typeof complex.text === 'string') {
+            return complex.text;
         }
     }
-
-    async return(): Promise<IteratorResult<StreamingChunk>> {
-        return { done: true, value: undefined };
-    }
-
-    async throw(error?: any): Promise<IteratorResult<StreamingChunk>> {
-        if (this.options?.onError) {
-            this.options.onError(error instanceof Error ? error : new Error(String(error)));
-        }
-        throw error;
-    }
-
-    [Symbol.asyncIterator]() {
-        return this;
-    }
+    return '';
 }
 
-/**
- * Support manager providing core LLM functionality
- * Used by LLMManager but not inherited from
- */
-export class BaseLLMManager implements DomainManager {
-    private readonly instances: Map<string, LLMInstance>;
-    private readonly configs: Map<string, LLMConfig>;
-    private readonly metrics: Map<string, LLMUsageStats>;
-    private readonly parentManager: any;
+export class BaseLLMManager extends CoreManager {
+    private static instance: BaseLLMManager;
+    private readonly instances: Map<string, ValidInstance>;
+    private readonly models: Map<string, BaseChatModel>;
+    private readonly configs: Map<string, ILLMProviderConfig>;
+    private readonly callbackManagers: Map<string, CallbackManager>;
+    private readonly providerManager: ProviderManager;
+    private readonly initManager: LLMInitializationManager;
+    public readonly category = MANAGER_CATEGORY_enum.RESOURCE;
 
-    public constructor(parentManager: any) {
-        this.parentManager = parentManager;
+    protected constructor() {
+        super();
         this.instances = new Map();
+        this.models = new Map();
         this.configs = new Map();
-        this.metrics = new Map();
+        this.callbackManagers = new Map();
+        this.providerManager = ProviderManager.getInstance();
+        this.initManager = LLMInitializationManager.getInstance();
+        this.registerDomainManager('BaseLLMManager', this);
     }
 
-    // ─── Core LLM Operations ─────────────────────────────────────────────────────
+    public static getInstance(): BaseLLMManager {
+        if (!BaseLLMManager.instance) {
+            BaseLLMManager.instance = new BaseLLMManager();
+        }
+        return BaseLLMManager.instance;
+    }
 
-    /**
-     * Generate LLM response
-     */
+    private createGoogleSafetyRatingsForResponse() {
+        return Object.values(HarmCategory).map(category => ({
+            category: category.toString(),
+            probability: 0,
+            filtered: false
+        }));
+    }
+
+    private createGoogleSafetyRatingsForMetrics(): Record<HarmCategory, number> {
+        return Object.values(HarmCategory).reduce((acc, category) => ({
+            ...acc,
+            [category]: 0
+        }), {} as Record<HarmCategory, number>);
+    }
+
+    private createProviderResponse(
+        provider: SupportedProvider,
+        baseResponse: {
+            provider: SupportedProvider;
+            model: string;
+            message: AIMessage;
+            metrics: IBaseProviderMetrics;
+            generations: Generation[][];
+            llmOutput: { tokenUsage: ITokenUsage };
+        }
+    ): LLMResponse {
+        const { metrics } = baseResponse;
+
+        switch (provider) {
+            case LLM_PROVIDER_enum.GROQ:
+                return {
+                    ...baseResponse,
+                    provider: LLM_PROVIDER_enum.GROQ,
+                    streamingMetrics: {
+                        firstTokenLatency: 0,
+                        tokensPerSecond: 0,
+                        totalStreamingTime: 0
+                    },
+                    gpuMetrics: {
+                        utilization: metrics.resources.memoryUsage / 100,
+                        memoryUsed: metrics.resources.memoryUsage,
+                        temperature: 0
+                    }
+                };
+
+            case LLM_PROVIDER_enum.ANTHROPIC:
+                return {
+                    ...baseResponse,
+                    provider: LLM_PROVIDER_enum.ANTHROPIC,
+                    stopReason: 'end_turn',
+                    modelVersion: '1.0',
+                    intermediateResponses: []
+                };
+
+            case LLM_PROVIDER_enum.GOOGLE:
+                return {
+                    ...baseResponse,
+                    provider: LLM_PROVIDER_enum.GOOGLE,
+                    safetyRatings: this.createGoogleSafetyRatingsForResponse(),
+                    citationMetadata: {
+                        citations: []
+                    }
+                };
+
+            case LLM_PROVIDER_enum.MISTRAL:
+                return {
+                    ...baseResponse,
+                    provider: LLM_PROVIDER_enum.MISTRAL,
+                    responseQuality: {
+                        coherence: 1,
+                        relevance: 1,
+                        toxicity: 0
+                    }
+                };
+
+            case LLM_PROVIDER_enum.OPENAI:
+            default:
+                // Default to OpenAI-style response for unknown providers
+                return {
+                    ...baseResponse,
+                    provider: LLM_PROVIDER_enum.OPENAI,
+                    finishReason: 'stop',
+                    systemFingerprint: '',
+                    promptFilterResults: {
+                        filtered: false
+                    }
+                };
+        }
+    }
+
     public async generate(
         instanceId: string,
-        input: string,
-        options?: LLMRuntimeOptions
+        input: BaseLanguageModelInput,
+        options?: BaseChatModelCallOptions
     ): Promise<LLMResponse> {
-        const instance = this.getInstance(instanceId);
-        if (!instance) {
-            throw new Error(`No LLM instance found for ID: ${instanceId}`);
-        }
+        const instance = this.instances.get(instanceId);
+        const model = this.models.get(instanceId);
+        const config = this.configs.get(instanceId);
 
-        await this.updateAgentStatus({
-            currentStatus: 'THINKING' as AGENT_STATUS_enum,
-            targetStatus: 'THINKING_END' as AGENT_STATUS_enum,
-            entity: 'agent',
-            entityId: instanceId,
-            metadata: { input, options }
-        });
-
-        const response = await instance.generate(input, options);
-        if (!response) {
-            throw new Error('LLM instance returned null response');
-        }
-        
-        await this.updateMetrics(instanceId, response);
-        return response;
-    }
-
-    /**
-     * Generate streaming response
-     */
-    public async *generateStream(
-        instanceId: string,
-        input: string,
-        config: StreamingHandlerConfig
-    ): AsyncGenerator<StreamingChunk, void, unknown> {
-        const instance = this.getInstance(instanceId);
-        if (!instance) {
-            throw new Error(`No LLM instance found for ID: ${instanceId}`);
-        }
-
-        const streamingManager = await this.getDomainManager<StreamingManager>('StreamingManager');
-        await streamingManager.initializeStream(instanceId, config);
-
-        try {
-            const iterator = instance.generateStream(input);
-            for await (const chunk of iterator) {
-                await streamingManager.processChunk(instanceId, chunk);
-                yield chunk;
-            }
-
-            await streamingManager.completeStream(instanceId);
-
-        } catch (error) {
-            await streamingManager.abortStream(instanceId);
-            throw error;
-        }
-    }
-
-    /**
-     * Create new LLM instance
-     */
-    public async createInstance(config: ActiveLLMConfig, instance: any): Promise<LLMInstance> {
-        const instanceId = this.generateInstanceId(config);
-        
-        if (this.instances.has(instanceId)) {
-            const existingInstance = this.instances.get(instanceId);
-            if (!existingInstance) {
-                throw new Error(`Invalid instance state for ID: ${instanceId}`);
-            }
-            return existingInstance;
-        }
-
-        const wrappedInstance = this.wrapInstance(instance, config);
-        this.instances.set(instanceId, wrappedInstance);
-        this.configs.set(instanceId, config);
-        this.metrics.set(instanceId, this.createDefaultMetrics());
-
-        return wrappedInstance;
-    }
-
-    /**
-     * Clean up resources
-     */
-    public async cleanup(): Promise<void> {
-        for (const instance of this.instances.values()) {
-            await instance.cleanup();
-        }
-        this.instances.clear();
-        this.configs.clear();
-        this.metrics.clear();
-    }
-
-    // ─── Protected Utility Methods ───────────────────────────────────────────────
-
-    /**
-     * Get existing LLM instance
-     */
-    private getInstance(instanceId: string): LLMInstance | undefined {
-        return this.instances.get(instanceId);
-    }
-
-    /**
-     * Update metrics for instance
-     */
-    private async updateMetrics(
-        instanceId: string,
-        response: LLMResponse
-    ): Promise<void> {
-        const metrics = this.metrics.get(instanceId);
-        if (!metrics) return;
-
-        // Update token counts
-        metrics.inputTokens += response.usage.promptTokens;
-        metrics.outputTokens += response.usage.completionTokens;
-        metrics.callsCount++;
-
-        // Update latency
-        const latency = response.metadata.latency;
-        metrics.totalLatency += latency;
-        metrics.averageLatency = metrics.totalLatency / metrics.callsCount;
-
-        // Update memory stats if available
-        const memoryUsage = (response.metadata as ResponseMetadata & { memoryUsage?: number }).memoryUsage;
-        if (memoryUsage !== undefined) {
-            metrics.memoryUtilization.peakMemoryUsage = Math.max(
-                metrics.memoryUtilization.peakMemoryUsage,
-                memoryUsage
+        if (!instance || !model || !config) {
+            await this.handleError(
+                new Error(`Invalid LLM instance state for ID: ${instanceId}`),
+                'generate',
+                ERROR_KINDS.StateError
             );
+            throw new Error(`Invalid LLM instance state for ID: ${instanceId}`);
         }
 
-        this.metrics.set(instanceId, metrics);
-    }
+        if (!isValidInstance(instance)) {
+            await this.handleError(
+                new Error('Invalid LLM instance'),
+                'generate',
+                ERROR_KINDS.ValidationError
+            );
+            throw new Error('Invalid LLM instance');
+        }
 
-    /**
-     * Generate unique instance ID
-     */
-    private generateInstanceId(config: LLMConfig): string {
-        return `${config.provider}-${config.model}-${Date.now()}`;
-    }
+        const messages = convertToBaseMessages(input);
+        const result = await model.invoke(messages, options);
+        const metrics = await instance.getMetrics();
 
-    /**
-     * Create default metrics
-     */
-    private createDefaultMetrics(): LLMUsageStats {
-        return {
-            inputTokens: 0,
-            outputTokens: 0,
-            callsCount: 0,
-            callsErrorCount: 0,
-            parsingErrors: 0,
-            totalLatency: 0,
-            averageLatency: 0,
-            lastUsed: Date.now(),
-            memoryUtilization: {
-                peakMemoryUsage: 0,
-                averageMemoryUsage: 0,
-                cleanupEvents: 0
-            },
-            costBreakdown: {
-                input: 0,
-                output: 0,
-                total: 0,
-                currency: 'USD'
+        const baseResponse = {
+            provider: instance.provider,
+            model: config.model,
+            message: result,
+            metrics,
+            generations: [[{ text: extractText(result.content), generationInfo: {} }]] as Generation[][],
+            llmOutput: {
+                tokenUsage: {
+                    promptTokens: 0,
+                    completionTokens: 0,
+                    totalTokens: 0
+                }
             }
         };
+
+        return this.createProviderResponse(instance.provider, baseResponse);
     }
 
-    /**
-     * Update agent status through parent manager
-     */
-    private async updateAgentStatus(context: StatusTransitionContext): Promise<void> {
-        await this.parentManager.handleStatusTransition(context);
+    private async createProviderMetrics(
+        instanceId: string,
+        config: ILLMProviderConfig
+    ): Promise<ILLMProviderMetrics> {
+        const metrics = await MessageMetricsManager.getInstance().getMetrics(instanceId);
+        if (!metrics) {
+            await this.handleError(
+                new Error(`No metrics found for instance ${instanceId}`),
+                'createProviderMetrics',
+                ERROR_KINDS.StateError
+            );
+            throw new Error(`No metrics found for instance ${instanceId}`);
+        }
+
+        const now = Date.now();
+        const baseMetrics = metrics.performance[metrics.performance.length - 1];
+
+        const commonMetrics = {
+            latency: baseMetrics.latency.average,
+            tokenUsage: metrics.usage[metrics.usage.length - 1].tokenDistribution,
+            cost: {
+                promptCost: 0,
+                completionCost: 0,
+                totalCost: 0,
+                currency: 'USD'
+            },
+            resources: baseMetrics.resourceUtilization as ILLMResourceMetrics,
+            performance: baseMetrics,
+            usage: metrics.usage[metrics.usage.length - 1],
+            timestamp: now
+        };
+
+        switch (config.provider) {
+            case LLM_PROVIDER_enum.GROQ:
+                return {
+                    ...commonMetrics,
+                    provider: LLM_PROVIDER_enum.GROQ,
+                    model: config.model,
+                    contextWindow: config.contextWindow || 0,
+                    streamingLatency: config.streamingLatency || 0,
+                    gpuUtilization: baseMetrics.resourceUtilization.memoryUsage / 100
+                } as IGroqMetrics;
+
+            case LLM_PROVIDER_enum.ANTHROPIC:
+                return {
+                    ...commonMetrics,
+                    provider: LLM_PROVIDER_enum.ANTHROPIC,
+                    model: config.model,
+                    contextUtilization: config.contextUtilization || 0,
+                    responseQuality: baseMetrics.coherenceScore,
+                    modelConfidence: 1 - baseMetrics.errorRate
+                } as IAnthropicMetrics;
+
+            case LLM_PROVIDER_enum.GOOGLE:
+                return {
+                    ...commonMetrics,
+                    provider: LLM_PROVIDER_enum.GOOGLE,
+                    model: config.model,
+                    safetyRatings: this.createGoogleSafetyRatingsForMetrics(),
+                    modelLatency: baseMetrics.executionTime.average,
+                    apiOverhead: baseMetrics.latency.average - baseMetrics.executionTime.average
+                } as IGoogleMetrics;
+
+            case LLM_PROVIDER_enum.MISTRAL:
+                return {
+                    ...commonMetrics,
+                    provider: LLM_PROVIDER_enum.MISTRAL,
+                    model: config.model,
+                    inferenceTime: baseMetrics.executionTime.average,
+                    throughput: baseMetrics.throughput.operationsPerSecond,
+                    gpuMemoryUsage: baseMetrics.resourceUtilization.memoryUsage
+                } as IMistralMetrics;
+
+            case LLM_PROVIDER_enum.OPENAI:
+            default:
+                // Default to OpenAI metrics for unknown providers
+                return {
+                    ...commonMetrics,
+                    provider: LLM_PROVIDER_enum.OPENAI,
+                    model: config.model,
+                    promptTokens: metrics.usage[metrics.usage.length - 1].tokenDistribution.prompt,
+                    completionTokens: metrics.usage[metrics.usage.length - 1].tokenDistribution.completion,
+                    totalTokens: metrics.usage[metrics.usage.length - 1].tokenDistribution.total,
+                    requestOverhead: baseMetrics.latency.average - baseMetrics.executionTime.average
+                } as IOpenAIMetrics;
+        }
     }
 
-    /**
-     * Get domain manager through parent manager
-     */
-    public async getDomainManager<T>(name: string): Promise<T> {
-        return await this.parentManager.getDomainManager(name);
+    private generateInstanceId(config: ILLMProviderConfig): string {
+        return `${LLM_PROVIDER_enum[config.provider]}_${config.model}_${Date.now()}`;
     }
 
-    /**
-     * Wrap raw LLM instance
-     */
-    private wrapInstance(instance: any, config: ActiveLLMConfig): LLMInstance {
-        const instanceId = this.generateInstanceId(config);
+    private generateRunId(prefix: string = 'run'): string {
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substring(2, 15);
+        return `${prefix}_${timestamp}_${random}`;
+    }
 
+    private createLLMResult(
+        content: string | BaseMessage,
+        tokenUsage: ITokenUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 }
+    ): LLMResult {
+        const text = typeof content === 'string' ? content : extractText(content.content);
         return {
-            generate: async (input: string, options?: LLMRuntimeOptions) => {
-                return this.generate(instanceId, input, options);
-            },
-
-            generateStream: (input: string, options?: LLMRuntimeOptions) => {
-                const generator = this.generateStream(instanceId, input, {
-                    content: input,
-                    chunk: (chunk: StreamingChunk) => options?.onChunk?.(chunk),
-                    complete: (chunk: StreamingChunk) => options?.onComplete?.(chunk),
-                    error: (error: Error) => options?.onError?.(error)
-                });
-                
-                return new StreamChunkIterator(generator, options);
-            },
-
-            cleanup: async () => {
-                const instance = this.instances.get(instanceId);
-                if (instance) {
-                    await instance.cleanup();
-                }
-                this.instances.delete(instanceId);
-                this.configs.delete(instanceId);
-                this.metrics.delete(instanceId);
-            },
-
-            validateConfig: async () => {
-                const providerManager = await this.getDomainManager<ProviderManager>('ProviderManager');
-                await providerManager.validateProviderConfig(config);
-            },
-
-            getConfig: () => config,
-            
-            updateConfig: (updates: Partial<ActiveLLMConfig>) => {
-                Object.assign(config, updates);
-            },
-
-            getProvider: () => config.provider
+            generations: [[{ text, generationInfo: {} }]],
+            llmOutput: { tokenUsage },
         };
     }
 }
 
-export default BaseLLMManager;
+export default BaseLLMManager.getInstance();

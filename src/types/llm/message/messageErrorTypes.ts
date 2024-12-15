@@ -6,7 +6,7 @@
  * @module @types/llm/message
  */
 
-import { ERROR_TYPE_enum, MESSAGE_ERROR_TYPE_enum } from '../../common/commonEnums';
+import { ERROR_TYPE_enum, MESSAGE_ERROR_TYPE_enum } from '../../common/enumTypes';
 
 // ─── Error Details ───────────────────────────────────────────────────────────────
 

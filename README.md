@@ -391,7 +391,7 @@ useStore.subscribe(state => state.workflowLogs, (newLogs, previousLogs) => {
                         agentName: agent.name,
                         agentModel: agent.llmConfig.model,
                         duration: metadata.duration,
-                        llmUsageStats: metadata.llmUsageStats,
+                        llmUsageMetrics: metadata.llmUsageMetrics,
                         costDetails: metadata.costDetails,
                     });
                     break;
@@ -412,43 +412,3 @@ useStore.subscribe(state => state.workflowLogs, (newLogs, previousLogs) => {
         }
     }
 });
-```
-
-For more details on how to utilize observability features in KaibanJS, please visit the [documentation](https://github.com/kaiban-ai/KaibanJS).  
-  </details>     
-
-
-
-## Documentation
-
-- [Official Documentation](https://docs.kaibanjs.com/category/get-started)
-- [Join Our Discord](https://www.kaibanjs.com/discord)
-
-### Compatibility
-
-KaibanJS aims to be compatible with major front-end frameworks like React, Vue, Angular, and NextJS, making it a versatile choice for developers. The JavaScript ecosystem is a "bit complex...". If you have any problems, please tell us and we'll help you fix them.
-
-## Why KaibanJS?
-
-There are about 20 million JavaScript developers worldwide, yet most AI frameworks are originally written in Python. Others are mere adaptations for JavaScript. 
-
-This puts all of us **JavaScript developers at a disadvantage in the AI race**. But not anymore...
-
-KaibanJS changes the game by aiming to offer a robust, easy-to-use AI multi-agent framework designed specifically for the JavaScript ecosystem.
-
-```js
-const writtenBy = `Another JS Dev Who Doesn't Want to Learn Python to do meaningful AI Stuff.`;
-console.log(writtenBy);
-```
-
-## Community and Support
-
-Join the [Discord community](https://www.kaibanjs.com/discord) to connect with other developers and get support. [Follow us](https://x.com/dariel_noel) on Twitter for the latest updates.
-
-## Contributing
-
-We welcome contributions from the community. Please read the [contributing guidelines](https://github.com/kaiban-ai/KaibanJS/blob/main/CONTRIBUTING.md) before submitting pull requests.
-
-## License
-
-KaibanJS is MIT licensed.

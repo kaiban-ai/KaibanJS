@@ -1,73 +1,123 @@
 /**
  * @file index.ts
  * @path KaibanJS/src/types/task/index.ts
- * @description Centralized exports for task-related types and interfaces
- *
- * @module types/task
+ * @description Task types barrel file - exports all task-related types
  */
 
-// ─── Base Types ─────────────────────────────────────────────────────────────────
-export type {
-    ITaskType,
-    ITaskResult,
-    ITaskFeedback,
-    ITaskParams
+// Task Base Types
+export type { 
+    ITaskParams,
+    ITaskProgress,
+    ITaskHistoryEntry,
+    ITaskType
 } from './taskBaseTypes';
 export { TaskTypeGuards } from './taskBaseTypes';
 
-// ─── State Types ────────────────────────────────────────────────────────────────
+// Task Event Types
 export type {
-    ITaskExecutionContext,
-    ITaskExecutionMetrics,
-    ITaskExecutionState
-} from './taskStateTypes';
+    ITaskEventMetadata,
+    IBaseTaskEvent,
+    ITaskCreatedEvent,
+    ITaskUpdatedEvent,
+    ITaskDeletedEvent,
+    ITaskStatusChangedEvent,
+    ITaskProgressUpdatedEvent,
+    ITaskCompletedEvent,
+    ITaskFailedEvent,
+    ITaskValidationCompletedEvent,
+    ITaskFeedbackAddedEvent,
+    ITaskMetricsUpdatedEvent,
+    ITaskErrorOccurredEvent,
+    ITaskErrorHandledEvent,
+    ITaskErrorRecoveryStartedEvent,
+    ITaskErrorRecoveryCompletedEvent,
+    ITaskErrorRecoveryFailedEvent,
+    TaskEvent
+} from './taskEventTypes';
 export { 
-    TaskStateTypeGuards,
-    createDefaultExecutionState 
-} from './taskStateTypes';
+    TaskMessageChunk,
+    isTaskCreatedEvent,
+    isTaskUpdatedEvent,
+    isTaskDeletedEvent,
+    isTaskStatusChangedEvent,
+    isTaskProgressUpdatedEvent,
+    isTaskCompletedEvent,
+    isTaskFailedEvent,
+    isTaskValidationCompletedEvent,
+    isTaskFeedbackAddedEvent,
+    isTaskMetricsUpdatedEvent,
+    isTaskErrorOccurredEvent,
+    isTaskErrorHandledEvent,
+    isTaskErrorRecoveryStartedEvent,
+    isTaskErrorRecoveryCompletedEvent,
+    isTaskErrorRecoveryFailedEvent,
+    createTaskEventMetadata
+} from './taskEventTypes';
 
-// ─── Store Types ────────────────────────────────────────────────────────────────
-export type {
-    ITaskState,
-    ITaskStoreConfig,
-    ITaskMetadata,
-    ITaskPerformanceStats,
-    ITaskErrorActions,
-    ITaskExecutionActions,
-    ITaskStoreActions,
-    ITaskStoreMethods
-} from './taskStoreTypes';
-export { TaskStoreTypeGuards } from './taskStoreTypes';
+// Task Event Validation
+export {
+    createTaskValidationResult,
+    validateTaskEvent,
+    validateTaskCreated,
+    validateTaskUpdated,
+    validateTaskDeleted,
+    validateTaskStatusChanged,
+    validateTaskProgressUpdated,
+    validateTaskCompleted,
+    validateTaskFailed
+} from './taskEventValidation';
 
-// ─── Tracking Types ─────────────────────────────────────────────────────────────
+// Task Feedback Types
+export type { ITaskFeedback } from './taskFeedbackTypes';
+export { TaskFeedbackTypeGuards } from './taskFeedbackTypes';
+
+// Task Handler Types
 export type {
+    ITaskValidationResult,
     ITaskMetrics,
-    ITaskResourceMetrics,
-    ITaskPerformanceMetrics,
-    ITaskCostMetrics,
-    ITaskProgress,
-    ITaskHistoryEntry,
-    ITaskDependencyTracking,
-    ITaskAuditRecord
-} from './taskTrackingTypes';
-export { 
-    TaskTrackingUtils,
-    TaskTrackingTypeGuards 
-} from './taskTrackingTypes';
+    ITaskHandlerMetadata,
+    ITaskHandlerResult
+} from './taskHandlerTypes';
+export { createEmptyTaskMetrics } from './taskHandlerTypes';
 
-// ─── Handler Types ──────────────────────────────────────────────────────────────
+// Task Handlers Types
 export type {
     ITaskExecutionParams,
     ITaskCompletionParams,
     ITaskErrorParams,
     ITaskUpdateParams,
     ITaskValidationParams,
-    ITaskValidationResult,
     ITaskHandlerResponse
 } from './taskHandlersTypes';
 export { HandlerTypeGuards } from './taskHandlersTypes';
 
-// ─── Utility Types ──────────────────────────────────────────────────────────────
+// Task Metric Types
+export type {
+    ITaskResourceMetrics,
+    ITaskPerformanceMetrics,
+    ITaskUsageMetrics
+} from './taskMetricTypes';
+export {
+    TaskMetricsTypeGuards,
+    TaskMetricsValidation
+} from './taskMetricTypes';
+
+// Task State Types
+export type {
+    ITaskExecutionContext,
+    ITaskExecutionMetrics,
+    ITaskExecutionState
+} from './taskStateTypes';
+export {
+    TaskStateTypeGuards,
+    createDefaultExecutionState
+} from './taskStateTypes';
+
+// Task Tracking Types
+export type { ITaskTrackingMetrics } from './taskTrackingTypes';
+export { createEmptyTaskTrackingMetrics } from './taskTrackingTypes';
+
+// Task Utils Types
 export type {
     TaskInterpolationOptions,
     TaskDescriptionTemplate

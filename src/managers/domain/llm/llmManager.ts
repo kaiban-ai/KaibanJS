@@ -1,57 +1,58 @@
 /**
  * @file llmManager.ts
  * @path src/managers/domain/llm/llmManager.ts
- * @description Primary LLM domain manager implementing provider-specific functionality
+ * @description Primary LLM orchestration manager coordinating specialized LLM managers
  */
 
 import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { BaseMessage, AIMessage, AIMessageChunk } from '@langchain/core/messages';
-import { LLMResult, Generation } from '@langchain/core/outputs';
-import { ChatGroq } from '@langchain/groq';
-import { ChatOpenAI } from '@langchain/openai';
-import { ChatAnthropic } from '@langchain/anthropic';
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
-import { ChatMistralAI } from '@langchain/mistralai';
+import { ChatResult, ChatGeneration, ChatGenerationChunk } from '@langchain/core/outputs';
+import { CallbackManagerForLLMRun } from '@langchain/core/callbacks/manager';
 
-import CoreManager from '../../core/coreManager';
-import { LLM_PROVIDER_enum } from '../../../types/common/commonEnums';
-import { EnumTypeGuards } from '../../../types/common/commonEnums';
-import { convertToBaseMessage } from '../../../utils/llm/messageUtils';
+import { CoreManager } from '../../../managers/core/coreManager';
+import { convertToBaseMessages } from '../../../utils/llm/messageConverter';
+import { 
+    MANAGER_CATEGORY_enum, 
+    LLM_STATUS_enum
+} from '../../../types/common/enumTypes';
+import { ERROR_KINDS } from '../../../types/common/errorTypes';
+import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
+
+import { MessageManager } from './messageManager';
+import { ProviderManager } from './providerManager';
+import { OutputManager } from './outputManager';
+import { StreamingManager } from './streamingManager';
+import { LLMInitializationManager } from './llmInitializationManager';
 
 import type { 
-    ILLMManager,
-    ILLMInstance,
-    ILLMRequest,
-    IHandlerResult,
-    IValidationResult
-} from '../../../types/llm/llmManagerTypes';
-
-import type {
-    LLMProviderConfig,
-    IBaseProviderMetrics,
-    LLMProviderTypeGuards
+    ILLMProviderConfig,
+    ProviderInstance,
+    ILLMProviderMetrics
 } from '../../../types/llm/llmProviderTypes';
-
-import type {
-    IBaseLLMResponse,
-    LLMResponse,
-    LLMResponseTypeGuards,
-    LLMResponseValidation
-} from '../../../types/llm/llmResponseTypes';
+import type { ILLMInstance } from '../../../types/llm/llmInstanceTypes';
+import type { IHandlerResult } from '../../../types/common/baseTypes';
 
 /**
- * Primary Domain Manager for LLM functionality
- * Implements ILLMManager interface and extends CoreManager
+ * Primary LLM orchestration manager that coordinates specialized managers
  */
-export class LLMManager extends CoreManager implements ILLMManager {
+class LLMManager extends CoreManager {
     private static instance: LLMManager;
-    private readonly instances: Map<string, BaseChatModel>;
-    private readonly metrics: Map<string, IBaseProviderMetrics>;
+    private readonly messageManager: MessageManager;
+    private readonly providerManager: ProviderManager;
+    private readonly outputManager: OutputManager;
+    private readonly streamingManager: StreamingManager;
+    private readonly initManager: LLMInitializationManager;
+    private currentInstance?: ILLMInstance;
+    public readonly category = MANAGER_CATEGORY_enum.RESOURCE;
 
-    private constructor() {
+    protected constructor() {
         super();
-        this.instances = new Map();
-        this.metrics = new Map();
+        this.messageManager = MessageManager.getInstance();
+        this.providerManager = ProviderManager.getInstance();
+        this.outputManager = OutputManager.getInstance();
+        this.streamingManager = StreamingManager.getInstance();
+        this.initManager = LLMInitializationManager.getInstance();
+        this.registerDomainManager('LLMManager', this);
     }
 
     public static getInstance(): LLMManager {
@@ -62,398 +63,231 @@ export class LLMManager extends CoreManager implements ILLMManager {
     }
 
     /**
-     * Create new LLM instance with Langchain integration
+     * Initialize the LLM Manager and required services
      */
-    public async createInstance(config: LLMProviderConfig): Promise<IHandlerResult<ILLMInstance>> {
-        return await this.safeExecute(async () => {
-            const model = await this.createProviderInstance(config);
-            const instanceId = `${config.provider}-${config.model}-${Date.now()}`;
-            
-            this.instances.set(instanceId, model);
-            this.metrics.set(instanceId, this.createDefaultMetrics(config));
+    public async initialize(params?: Record<string, unknown>): Promise<void> {
+        await super.initialize(params);
+
+        const result = await this.safeExecute(async () => {
+            await this.handleStatusTransition({
+                entity: 'llm',
+                entityId: this.constructor.name,
+                currentStatus: LLM_STATUS_enum.INITIALIZING,
+                targetStatus: LLM_STATUS_enum.READY,
+                context: {
+                    component: this.constructor.name,
+                    operation: 'initialize',
+                    params
+                }
+            });
+
+            this.logInfo('LLM Manager initialized successfully');
+        }, 'Failed to initialize LLM manager');
+
+        if (!result.success) {
+            throw result.metadata.error;
+        }
+    }
+
+    /**
+     * Set the provider configuration and initialize an instance
+     */
+    public async setProvider(config: ILLMProviderConfig): Promise<void> {
+        const result = await this.safeExecute(async () => {
+            // Validate config
+            await this.providerManager.validateProviderConfig(config);
+
+            // Initialize instance
+            const instanceResult = await this.initManager.initializeLangchainModel(config);
+            if (!instanceResult.success || !instanceResult.data) {
+                throw new Error('Failed to initialize LLM instance');
+            }
+
+            this.currentInstance = instanceResult.data;
+
+            // Track provider metrics
+            await this.metricsManager.trackMetric({
+                domain: MetricDomain.LLM,
+                type: MetricType.RESOURCE,
+                value: 1,
+                timestamp: Date.now(),
+                metadata: {
+                    provider: config.provider,
+                    model: config.model,
+                    component: this.constructor.name,
+                    operation: 'setProvider'
+                }
+            });
+
+        }, 'Failed to set provider');
+
+        if (!result.success) {
+            throw result.metadata.error;
+        }
+    }
+
+    /**
+     * Generate a response using the current instance
+     */
+    public async _generate(
+        messages: BaseMessage[],
+        options: BaseChatModel['ParsedCallOptions'],
+        runManager?: CallbackManagerForLLMRun
+    ): Promise<ChatResult> {
+        const result = await this.safeExecute(async () => {
+            if (!this.currentInstance) {
+                throw new Error('No LLM instance configured');
+            }
+
+            const result = await this.currentInstance.generate(messages, options);
+            const generation = result.generations[0][0];
+            const messageChunk = new AIMessageChunk({
+                content: generation.text,
+                tool_calls: [],
+                additional_kwargs: {}
+            });
+
+            const generationChunk = new ChatGenerationChunk({
+                text: generation.text,
+                message: messageChunk,
+                generationInfo: generation.generationInfo ?? {}
+            });
+
+            const processedResult = await this.outputManager.processChatGeneration(
+                generationChunk,
+                generation.text
+            );
+
+            if (!processedResult.success) {
+                throw new Error('Failed to process generation result');
+            }
+
+            const message = new AIMessage(processedResult.data);
+            const chatGeneration: ChatGeneration = {
+                text: processedResult.data,
+                message,
+                generationInfo: generation.generationInfo ?? {}
+            };
 
             return {
-                id: instanceId,
-                provider: config.provider,
-                config,
-                metrics: this.metrics.get(instanceId)!,
-                status: 'active',
-                lastUsed: Date.now(),
-                errorCount: 0,
+                generations: [chatGeneration],
+                llmOutput: result.llmOutput ?? {}
+            } satisfies ChatResult;
+        }, 'Failed to generate response');
 
-                generate: async (messages, options, callbacks) => {
-                    const baseMessages = messages.flat().map(convertToBaseMessage);
-                    const result = await model.invoke(baseMessages, { callbacks });
-                    const llmResult = this.createLLMResult(result);
-                    return this.formatProviderResponse(llmResult, config, instanceId);
-                },
+        if (!result.success || !result.data) {
+            throw result.metadata.error;
+        }
 
-                generateStream: async function*(messages, options, callbacks) {
-                    const baseMessages = messages.flat().map(convertToBaseMessage);
-                    const stream = await model.stream(baseMessages, { callbacks });
-                    for await (const chunk of stream) {
-                        yield chunk;
-                    }
-                },
+        return result.data;
+    }
 
-                validateConfig: async (config) => {
-                    return await this.validateConfig(config);
-                },
+    /**
+     * Stream responses using the current instance
+     */
+    public async *_streamResponseChunks(
+        messages: BaseMessage[],
+        options: BaseChatModel['ParsedCallOptions'],
+        runManager?: CallbackManagerForLLMRun
+    ): AsyncGenerator<ChatGenerationChunk> {
+        if (!this.currentInstance) {
+            throw new Error('No LLM instance configured');
+        }
 
-                cleanup: async () => {
-                    await this.terminateInstance(instanceId);
-                },
+        const streamingHandler = this.streamingManager.getCallbackHandler();
+        const streamOptions = {
+            ...options,
+            callbacks: [streamingHandler]
+        };
 
-                getMetrics: async () => {
-                    return this.metrics.get(instanceId)!;
-                },
+        try {
+            const stream = await this.currentInstance.generateStream(messages, streamOptions);
+            for await (const chunk of stream) {
+                const content = typeof chunk.content === 'string' ? chunk.content : JSON.stringify(chunk.content);
+                const messageChunk = new AIMessageChunk({
+                    content,
+                    tool_calls: [],
+                    additional_kwargs: {}
+                });
 
-                getStatus: async () => {
-                    return 'active';
-                },
+                yield new ChatGenerationChunk({
+                    text: content,
+                    message: messageChunk,
+                    generationInfo: {}
+                });
+            }
+        } catch (error) {
+            // Let CoreManager's error handling handle this
+            throw error;
+        }
+    }
 
-                reset: async () => {
-                    // Reset instance state if needed
+    /**
+     * Get the identifying string for this LLM type
+     */
+    _llmType(): string {
+        return 'kaiban';
+    }
+
+    /**
+     * Combine multiple LLM outputs into a single output
+     */
+    _combineLLMOutput(...llmOutputs: Record<string, unknown>[]): Record<string, unknown> {
+        return llmOutputs.reduce((acc, output) => {
+            const tokenUsage = output.tokenUsage as Record<string, number> | undefined;
+            const accTokenUsage = acc.tokenUsage as Record<string, number> | undefined;
+            
+            return {
+                ...acc,
+                ...output,
+                tokenUsage: {
+                    totalTokens: (accTokenUsage?.totalTokens || 0) + (tokenUsage?.totalTokens || 0),
+                    promptTokens: (accTokenUsage?.promptTokens || 0) + (tokenUsage?.promptTokens || 0),
+                    completionTokens: (accTokenUsage?.completionTokens || 0) + (tokenUsage?.completionTokens || 0)
                 }
             };
-        }, 'Failed to create LLM instance');
+        }, {});
     }
 
     /**
-     * Get an existing LLM instance
+     * Get metrics for the current instance
      */
-    public async getInstance(instanceId: string): Promise<IHandlerResult<ILLMInstance>> {
-        return await this.safeExecute(async () => {
-            const model = this.instances.get(instanceId);
-            if (!model) {
-                throw new Error(`No LLM instance found for ID: ${instanceId}`);
+    public async getMetrics(): Promise<ILLMProviderMetrics> {
+        const result = await this.safeExecute(async () => {
+            if (!this.currentInstance) {
+                throw new Error('No LLM instance configured');
             }
-
-            const metrics = this.metrics.get(instanceId)!;
-            const config = model.invocationParams() as LLMProviderConfig;
-
-            return {
-                id: instanceId,
-                provider: metrics.provider,
-                config,
-                metrics,
-                status: 'active',
-                lastUsed: Date.now(),
-                errorCount: 0,
-                generate: async (messages, options, callbacks) => {
-                    const baseMessages = messages.flat().map(convertToBaseMessage);
-                    const result = await model.invoke(baseMessages, { callbacks });
-                    const llmResult = this.createLLMResult(result);
-                    return this.formatProviderResponse(llmResult, config, instanceId);
-                },
-                generateStream: async function*(messages, options, callbacks) {
-                    const baseMessages = messages.flat().map(convertToBaseMessage);
-                    const stream = await model.stream(baseMessages, { callbacks });
-                    for await (const chunk of stream) {
-                        yield chunk;
-                    }
-                },
-                validateConfig: this.validateConfig.bind(this),
-                cleanup: async () => {
-                    await this.terminateInstance(instanceId);
-                },
-                getMetrics: async () => metrics,
-                getStatus: async () => 'active',
-                reset: async () => {}
-            };
-        }, 'Failed to get LLM instance');
-    }
-
-    /**
-     * Send a request to an LLM instance
-     */
-    public async sendRequest(request: ILLMRequest): Promise<IHandlerResult<LLMResponse>> {
-        return await this.safeExecute(async () => {
-            const instanceResult = await this.getInstance(request.instanceId);
-            if (!instanceResult.success || !instanceResult.data) {
-                throw new Error(`Invalid instance result for ID: ${request.instanceId}`);
-            }
-            return await instanceResult.data.generate(request.messages, request.options, request.callbacks);
-        }, 'Failed to send LLM request');
-    }
-
-    /**
-     * Validate an LLM configuration
-     */
-    public async validateConfig(config: LLMProviderConfig): Promise<IValidationResult> {
-        if (!EnumTypeGuards.isLLMProvider(config.provider)) {
-            return {
-                isValid: false,
-                errors: ['Invalid provider'],
-                warnings: []
-            };
-        }
-
-        if (!EnumTypeGuards.isValidModelForProvider(config.model, config.provider)) {
-            return {
-                isValid: false,
-                errors: [`Invalid model for provider ${config.provider}`],
-                warnings: []
-            };
-        }
-
-        return {
-            isValid: true,
-            errors: [],
-            warnings: []
-        };
-    }
-
-    /**
-     * Get metrics for an LLM instance
-     */
-    public async getMetrics(instanceId: string): Promise<IHandlerResult<IBaseProviderMetrics>> {
-        return await this.safeExecute(async () => {
-            const metrics = this.metrics.get(instanceId);
+            const metrics = await this.currentInstance.getMetrics();
             if (!metrics) {
-                throw new Error(`No metrics found for instance ID: ${instanceId}`);
+                throw new Error('Failed to get metrics');
             }
             return metrics;
-        }, 'Failed to get LLM metrics');
+        }, 'Failed to get metrics');
+
+        if (!result.success || !result.data) {
+            throw result.metadata.error;
+        }
+
+        return result.data;
     }
 
     /**
-     * Terminate an LLM instance
-     */
-    public async terminateInstance(instanceId: string): Promise<IHandlerResult<void>> {
-        return await this.safeExecute(async () => {
-            this.instances.delete(instanceId);
-            this.metrics.delete(instanceId);
-        }, 'Failed to terminate LLM instance');
-    }
-
-    /**
-     * Initialize LLM manager
-     */
-    public async initialize(): Promise<void> {
-        this.logManager.info('LLMManager initialized');
-    }
-
-    /**
-     * Clean up all resources
+     * Clean up resources for the current instance
      */
     public async cleanup(): Promise<void> {
-        await this.safeExecute(async () => {
-            this.instances.clear();
-            this.metrics.clear();
-            this.logManager.info('LLMManager cleaned up');
-        }, 'LLM cleanup failed');
-    }
-
-    // ─── Private Helper Methods ──────────────────────────────────────────────────
-
-    /**
-     * Create provider-specific instance using Langchain
-     */
-    private async createProviderInstance(config: LLMProviderConfig): Promise<BaseChatModel> {
-        const baseConfig = {
-            modelName: config.model,
-            temperature: config.temperature,
-            maxTokens: config.maxTokens,
-            topP: config.topP,
-            apiKey: config.apiKey,
-            maxRetries: config.maxRetries
-        };
-
-        const provider = config.provider as LLM_PROVIDER_enum;
-        switch (provider) {
-            case LLM_PROVIDER_enum.GROQ:
-                return new ChatGroq(baseConfig);
-            case LLM_PROVIDER_enum.OPENAI:
-                return new ChatOpenAI(baseConfig);
-            case LLM_PROVIDER_enum.ANTHROPIC:
-                return new ChatAnthropic(baseConfig) as unknown as BaseChatModel;
-            case LLM_PROVIDER_enum.GOOGLE:
-                return new ChatGoogleGenerativeAI(baseConfig) as unknown as BaseChatModel;
-            case LLM_PROVIDER_enum.MISTRAL:
-                return new ChatMistralAI(baseConfig) as unknown as BaseChatModel;
-            default:
-                throw new Error(`Unsupported provider: ${config.provider}`);
-        }
-    }
-
-    /**
-     * Create LLMResult from AIMessage
-     */
-    private createLLMResult(message: AIMessage | AIMessageChunk): LLMResult {
-        const generation: Generation = {
-            text: message.content as string,
-            generationInfo: {
-                ...message.additional_kwargs
+        const result = await this.safeExecute(async () => {
+            if (this.currentInstance) {
+                await this.currentInstance.cleanup();
+                this.currentInstance = undefined;
             }
-        };
-        return {
-            generations: [[generation]],
-            llmOutput: {
-                tokenUsage: {
-                    promptTokens: 0,
-                    completionTokens: 0,
-                    totalTokens: 0
-                }
-            }
-        };
-    }
+        }, 'Failed to cleanup instance');
 
-    /**
-     * Format provider-specific response
-     */
-    private formatProviderResponse(result: LLMResult, config: LLMProviderConfig, instanceId: string): LLMResponse {
-        const metrics = this.metrics.get(instanceId)!;
-        const baseResponse: IBaseLLMResponse = {
-            ...result,
-            provider: config.provider,
-            model: config.model,
-            metrics: {
-                resource: metrics.resource,
-                performance: metrics.performance,
-                usage: metrics.usage,
-                timestamp: metrics.timestamp
-            },
-            message: new AIMessage(result.generations[0][0].text)
-        };
-
-        const provider = config.provider as LLM_PROVIDER_enum;
-        switch (provider) {
-            case LLM_PROVIDER_enum.GROQ:
-                return {
-                    ...baseResponse,
-                    provider: LLM_PROVIDER_enum.GROQ,
-                    streamingMetrics: {
-                        firstTokenLatency: result.llmOutput?.firstTokenLatency || 0,
-                        tokensPerSecond: result.llmOutput?.tokensPerSecond || 0,
-                        totalStreamingTime: result.llmOutput?.totalStreamingTime || 0
-                    }
-                };
-
-            case LLM_PROVIDER_enum.OPENAI:
-                return {
-                    ...baseResponse,
-                    provider: LLM_PROVIDER_enum.OPENAI,
-                    finishReason: result.generations[0][0].generationInfo?.finishReason || null,
-                    systemFingerprint: result.llmOutput?.systemFingerprint
-                };
-
-            case LLM_PROVIDER_enum.ANTHROPIC:
-                return {
-                    ...baseResponse,
-                    provider: LLM_PROVIDER_enum.ANTHROPIC,
-                    stopReason: result.generations[0][0].generationInfo?.stopReason || 'end_turn',
-                    modelVersion: result.llmOutput?.modelVersion || config.model
-                };
-
-            case LLM_PROVIDER_enum.GOOGLE:
-                return {
-                    ...baseResponse,
-                    provider: LLM_PROVIDER_enum.GOOGLE,
-                    safetyRatings: result.llmOutput?.safetyRatings || []
-                };
-
-            case LLM_PROVIDER_enum.MISTRAL:
-                return {
-                    ...baseResponse,
-                    provider: LLM_PROVIDER_enum.MISTRAL,
-                    responseQuality: {
-                        coherence: result.llmOutput?.quality?.coherence || 1,
-                        relevance: result.llmOutput?.quality?.relevance || 1,
-                        toxicity: result.llmOutput?.quality?.toxicity || 0
-                    }
-                };
-
-            default:
-                throw new Error(`Unsupported provider: ${config.provider}`);
+        if (!result.success) {
+            throw result.metadata.error;
         }
-    }
-
-    /**
-     * Create default metrics
-     */
-    private createDefaultMetrics(config: LLMProviderConfig): IBaseProviderMetrics {
-        const now = Date.now();
-        const resourceMetrics = {
-            cpuUsage: 0,
-            memoryUsage: process.memoryUsage().heapUsed,
-            diskIO: { read: 0, write: 0 },
-            networkUsage: { upload: 0, download: 0 },
-            timestamp: now
-        };
-
-        const performance = {
-            executionTime: {
-                total: 0,
-                average: 0,
-                min: 0,
-                max: 0
-            },
-            latency: {
-                total: 0,
-                average: 0,
-                min: 0,
-                max: 0
-            },
-            throughput: {
-                operationsPerSecond: 0,
-                dataProcessedPerSecond: 0
-            },
-            responseTime: {
-                total: 0,
-                average: 0,
-                min: 0,
-                max: 0
-            },
-            queueLength: 0,
-            errorRate: 0,
-            successRate: 1,
-            errorMetrics: {
-                totalErrors: 0,
-                errorRate: 0
-            },
-            resourceUtilization: resourceMetrics,
-            timestamp: now
-        };
-
-        const usage = {
-            totalRequests: 0,
-            activeUsers: 0,
-            requestsPerSecond: 0,
-            averageResponseSize: 0,
-            peakMemoryUsage: 0,
-            uptime: 0,
-            rateLimit: {
-                current: 0,
-                limit: 0,
-                remaining: 0,
-                resetTime: now
-            },
-            timestamp: now
-        };
-
-        return {
-            provider: config.provider,
-            model: config.model,
-            latency: 0,
-            tokenUsage: {
-                prompt: 0,
-                completion: 0,
-                total: 0
-            },
-            cost: {
-                promptCost: 0,
-                completionCost: 0,
-                totalCost: 0,
-                currency: 'USD'
-            },
-            resource: resourceMetrics,
-            resources: resourceMetrics,
-            performance,
-            usage,
-            timestamp: now
-        };
     }
 }
 
-export default LLMManager.getInstance();
+// Export singleton instance
+const llmManager = LLMManager.getInstance();
+export { llmManager as LLMManager };

@@ -1,16 +1,15 @@
 /**
  * @file toolTypes.ts
  * @path KaibanJS/src/types/tool/toolTypes.ts
- * @description Tool type definitions and type guards for langchain tools
+ * @description Tool type definitions and type guards for Langchain tools integration
  *
  * @module types/tool
  */
 
-import { StructuredTool } from "@langchain/core/tools";
-import { z } from "zod";
+import { Tool } from "@langchain/core/tools";
 import { IErrorType } from "../common/commonErrorTypes";
-import { IValidationResult } from "../common/commonValidationTypes";
-import { createValidationResult } from "@utils/validation/validationUtils";
+import { IValidationResult } from "@types/common";
+import { VALIDATION_ERROR_enum, VALIDATION_WARNING_enum } from "../common/enumTypes";
 
 /**
  * Standard tool names supported by the system
@@ -34,14 +33,69 @@ export const TOOL_NAMES = {
 export type ToolName = (typeof TOOL_NAMES)[keyof typeof TOOL_NAMES];
 
 /**
- * Base tool schema that all tools must implement
+ * Tool dependency configuration
  */
-export const BaseToolSchema = z.object({
-    name: z.string(),
-    description: z.string(),
-    returnDirect: z.boolean().optional(),
-    verbose: z.boolean().optional()
-});
+export interface IToolDependency {
+    toolName: ToolName;
+    required: boolean;
+    version?: string;
+    configOverrides?: Record<string, unknown>;
+}
+
+/**
+ * Tool versioning information
+ */
+export interface IToolVersion {
+    major: number;
+    minor: number;
+    patch: number;
+    toString(): string;
+}
+
+/**
+ * Tool registration options with enhanced type safety and dependency support
+ */
+export interface IToolRegistrationOptions {
+    priority?: number;
+    timeout?: number;
+    maxRetries?: number;
+    retryDelay?: number;
+    version?: IToolVersion;
+    dependencies?: IToolDependency[];
+    configValidation?: (config: unknown) => IToolValidationResult;
+    dependencyValidation?: (dependencies: IToolDependency[]) => IToolValidationResult;
+}
+
+/**
+ * Tool registration metadata with enhanced tracking
+ */
+export interface IToolRegistrationMetadata {
+    registeredAt: number;
+    lastUsed?: number;
+    usageCount: number;
+    priority: number;
+    status: 'active' | 'inactive' | 'error';
+    error?: string;
+    version?: IToolVersion;
+    dependencies?: {
+        resolved: boolean;
+        items: Array<{
+            dependency: IToolDependency;
+            status: 'resolved' | 'missing' | 'error';
+            error?: string;
+        }>;
+    };
+}
+
+/**
+ * Tool validation result interface
+ */
+export interface IToolValidationResult extends Omit<IValidationResult, 'errors' | 'warnings'> {
+    errors: VALIDATION_ERROR_enum[];
+    warnings?: VALIDATION_WARNING_enum[];
+    toolSpecificErrors?: string[];
+    toolSpecificWarnings?: string[];
+}
 
 /**
  * Tool execution result
@@ -54,62 +108,29 @@ export interface IToolExecutionResult {
         duration: number;
         startTime: number;
         endTime: number;
-    };
-}
-
-/**
- * Tool configuration
- */
-export interface IToolConfig {
-    name: ToolName;
-    description: string;
-    returnDirect?: boolean;
-    verbose?: boolean;
-    schema: z.ZodObject<any>;
-}
-
-/**
- * Tool validation schema
- */
-export interface IToolValidationSchema {
-    required: string[];
-    constraints: {
-        name?: {
-            minLength?: number;
-            maxLength?: number;
-            pattern?: RegExp;
-        };
-        description?: {
-            minLength?: number;
-            maxLength?: number;
+        dependencies?: {
+            used: ToolName[];
+            failed?: Array<{
+                name: ToolName;
+                error: string;
+            }>;
         };
     };
-    customValidation?: (config: Record<string, unknown>) => boolean;
 }
 
-// Re-export the StructuredTool type from langchain for convenience
-export { StructuredTool };
+// Re-export the Tool type from langchain for convenience
+export { Tool };
 
-// Type guard for Tool instances
-export const isLangchainTool = (value: unknown): value is StructuredTool => {
+/**
+ * Type guard for Tool instances
+ */
+export const isLangchainTool = (value: unknown): value is Tool => {
     if (typeof value !== 'object' || value === null) return false;
-    const tool = value as Partial<StructuredTool>;
+    const tool = value as Partial<Tool>;
     return (
         typeof tool.name === 'string' &&
         typeof tool.description === 'string' &&
-        typeof tool.invoke === 'function' &&
-        typeof tool.schema === 'object'
-    );
-};
-
-// Type guard for tool configuration
-export const isToolConfig = (value: unknown): value is IToolConfig => {
-    if (typeof value !== 'object' || value === null) return false;
-    const config = value as Partial<IToolConfig>;
-    return (
-        typeof config.name === 'string' &&
-        typeof config.description === 'string' &&
-        config.schema instanceof z.ZodObject
+        typeof tool.invoke === 'function'
     );
 };
 
@@ -120,59 +141,159 @@ export function isValidToolName(name: string): name is ToolName {
     return Object.values(TOOL_NAMES).includes(name as ToolName);
 }
 
-// Validation functions
-export const validateTool = (tool: unknown): IValidationResult => {
-    const errors: string[] = [];
-    const warnings: string[] = [];
+/**
+ * Validate tool dependencies
+ */
+export const validateToolDependencies = (dependencies: IToolDependency[]): IToolValidationResult => {
+    const errors: VALIDATION_ERROR_enum[] = [];
+    const warnings: VALIDATION_WARNING_enum[] = [];
+    const toolSpecificErrors: string[] = [];
+    const toolSpecificWarnings: string[] = [];
 
-    if (!isLangchainTool(tool)) {
-        errors.push('Invalid tool: must be a valid Langchain StructuredTool instance');
-        return createValidationResult(false, errors);
+    for (const dep of dependencies) {
+        if (!isValidToolName(dep.toolName)) {
+            errors.push(VALIDATION_ERROR_enum.FIELD_TYPE_MISMATCH);
+            toolSpecificErrors.push(`Invalid dependency tool name: ${dep.toolName}`);
+        }
+
+        if (typeof dep.required !== 'boolean') {
+            errors.push(VALIDATION_ERROR_enum.FIELD_TYPE_MISMATCH);
+            toolSpecificErrors.push(`Required flag must be boolean for dependency: ${dep.toolName}`);
+        }
+
+        if (dep.version && typeof dep.version !== 'string') {
+            errors.push(VALIDATION_ERROR_enum.FIELD_TYPE_MISMATCH);
+            toolSpecificErrors.push(`Version must be string for dependency: ${dep.toolName}`);
+        }
     }
 
-    if (!tool.name) {
-        errors.push('Tool must have a name');
-    } else if (tool.name.length < 2) {
-        warnings.push('Tool name is very short');
-    }
-
-    if (!tool.description) {
-        errors.push('Tool must have a description');
-    } else if (tool.description.length < 10) {
-        warnings.push('Tool description is very short');
-    }
-
-    if (!tool.schema) {
-        errors.push('Tool must have a schema defined');
-    }
-
-    return createValidationResult(errors.length === 0, errors, warnings);
+    return {
+        isValid: errors.length === 0,
+        errors,
+        warnings,
+        toolSpecificErrors,
+        toolSpecificWarnings
+    };
 };
 
-export const validateToolConfig = (config: unknown): IValidationResult => {
-    const errors: string[] = [];
-    const warnings: string[] = [];
+/**
+ * Enhanced tool validation function
+ */
+export const validateTool = (tool: unknown): IToolValidationResult => {
+    const errors: VALIDATION_ERROR_enum[] = [];
+    const warnings: VALIDATION_WARNING_enum[] = [];
+    const toolSpecificErrors: string[] = [];
+    const toolSpecificWarnings: string[] = [];
 
-    if (!isToolConfig(config)) {
-        errors.push('Invalid tool configuration');
-        return createValidationResult(false, errors);
+    if (!isLangchainTool(tool)) {
+        errors.push(VALIDATION_ERROR_enum.TYPE_NOT_SUPPORTED);
+        toolSpecificErrors.push('Must be a valid Langchain Tool instance');
+        return {
+            isValid: false,
+            errors,
+            warnings,
+            toolSpecificErrors,
+            toolSpecificWarnings
+        };
     }
 
-    if (!config.name) {
-        errors.push('Tool configuration must have a name');
-    } else if (config.name.length < 2) {
-        warnings.push('Tool name is very short');
+    // Name validation
+    if (!tool.name) {
+        errors.push(VALIDATION_ERROR_enum.FIELD_MISSING);
+        toolSpecificErrors.push('Tool must have a name');
+    } else if (typeof tool.name !== 'string') {
+        errors.push(VALIDATION_ERROR_enum.FIELD_TYPE_MISMATCH);
+        toolSpecificErrors.push('Tool name must be a string');
+    } else if (tool.name.length < 2) {
+        warnings.push(VALIDATION_WARNING_enum.FIELD_LENGTH_SUBOPTIMAL);
+        toolSpecificWarnings.push('Tool name is very short');
     }
 
-    if (!config.description) {
-        errors.push('Tool configuration must have a description');
-    } else if (config.description.length < 10) {
-        warnings.push('Tool description is very short');
+    // Description validation
+    if (!tool.description) {
+        errors.push(VALIDATION_ERROR_enum.FIELD_MISSING);
+        toolSpecificErrors.push('Tool must have a description');
+    } else if (typeof tool.description !== 'string') {
+        errors.push(VALIDATION_ERROR_enum.FIELD_TYPE_MISMATCH);
+        toolSpecificErrors.push('Tool description must be a string');
+    } else if (tool.description.length < 10) {
+        warnings.push(VALIDATION_WARNING_enum.FIELD_LENGTH_SUBOPTIMAL);
+        toolSpecificWarnings.push('Tool description is very short');
     }
 
-    if (!config.schema) {
-        errors.push('Tool configuration must have a schema defined');
+    // Invoke method validation
+    if (typeof tool.invoke !== 'function') {
+        errors.push(VALIDATION_ERROR_enum.FIELD_TYPE_MISMATCH);
+        toolSpecificErrors.push('Tool must have an invoke method');
     }
 
-    return createValidationResult(errors.length === 0, errors, warnings);
+    return {
+        isValid: errors.length === 0,
+        errors,
+        warnings,
+        toolSpecificErrors,
+        toolSpecificWarnings
+    };
+};
+
+/**
+ * Enhanced tool configuration validation
+ */
+export const validateToolConfig = (config: unknown): IToolValidationResult => {
+    const errors: VALIDATION_ERROR_enum[] = [];
+    const warnings: VALIDATION_WARNING_enum[] = [];
+    const toolSpecificErrors: string[] = [];
+    const toolSpecificWarnings: string[] = [];
+
+    if (!config || typeof config !== 'object') {
+        errors.push(VALIDATION_ERROR_enum.CONFIG_TYPE_MISMATCH);
+        toolSpecificErrors.push('Invalid tool configuration type');
+        return {
+            isValid: false,
+            errors,
+            warnings,
+            toolSpecificErrors,
+            toolSpecificWarnings
+        };
+    }
+
+    const options = config as IToolRegistrationOptions;
+
+    // Validate optional fields if present
+    if (options.priority !== undefined && typeof options.priority !== 'number') {
+        errors.push(VALIDATION_ERROR_enum.FIELD_TYPE_MISMATCH);
+        toolSpecificErrors.push('Priority must be a number');
+    }
+
+    if (options.timeout !== undefined && typeof options.timeout !== 'number') {
+        errors.push(VALIDATION_ERROR_enum.FIELD_TYPE_MISMATCH);
+        toolSpecificErrors.push('Timeout must be a number');
+    }
+
+    if (options.maxRetries !== undefined && typeof options.maxRetries !== 'number') {
+        errors.push(VALIDATION_ERROR_enum.FIELD_TYPE_MISMATCH);
+        toolSpecificErrors.push('MaxRetries must be a number');
+    }
+
+    if (options.retryDelay !== undefined && typeof options.retryDelay !== 'number') {
+        errors.push(VALIDATION_ERROR_enum.FIELD_TYPE_MISMATCH);
+        toolSpecificErrors.push('RetryDelay must be a number');
+    }
+
+    // Validate dependencies if present
+    if (options.dependencies) {
+        const depValidation = validateToolDependencies(options.dependencies);
+        if (!depValidation.isValid) {
+            errors.push(...depValidation.errors);
+            toolSpecificErrors.push(...(depValidation.toolSpecificErrors || []));
+        }
+    }
+
+    return {
+        isValid: errors.length === 0,
+        errors,
+        warnings,
+        toolSpecificErrors,
+        toolSpecificWarnings
+    };
 };

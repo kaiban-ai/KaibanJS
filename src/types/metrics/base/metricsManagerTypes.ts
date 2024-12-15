@@ -1,16 +1,19 @@
 /**
  * @file metricsManagerTypes.ts
- * @path KaibanJS/src/types/metrics/base/metricsManagerTypes.ts
+ * @path src/types/metrics/base/metricsManagerTypes.ts
  * @description Core interfaces for the centralized metrics management system
+ *
+ * @module @types/metrics/base
  */
 
 import type { ITimeMetrics } from './performanceMetrics';
-import type { IHandlerResult } from '../../common/commonHandlerTypes';
-import type { IBaseHandlerMetadata } from '../../common/commonMetadataTypes';
+import type { IHandlerResult } from '../../common/baseTypes';
+import type { IBaseHandlerMetadata } from '../../common/baseTypes';
+import type { IResourceMetrics } from './resourceMetrics';
+import type { IPerformanceMetrics } from './performanceMetrics';
 
-/**
- * Supported metric domains
- */
+// ─── Metric Enums ────────────────────────────────────────────────────────────
+
 export enum MetricDomain {
     AGENT = 'agent',
     TASK = 'task',
@@ -20,30 +23,14 @@ export enum MetricDomain {
     TOOL = 'tool'
 }
 
-/**
- * Supported metric types
- */
 export enum MetricType {
     RESOURCE = 'resource',
     PERFORMANCE = 'performance',
     USAGE = 'usage',
-    COST = 'cost'
+    COST = 'cost',
+    SYSTEM_HEALTH = 'system_health'
 }
 
-/**
- * Base metric event interface
- */
-export interface IMetricEvent {
-    readonly timestamp: number;
-    readonly domain: MetricDomain;
-    readonly type: MetricType;
-    readonly value: number | string;
-    readonly metadata: Record<string, any>;
-}
-
-/**
- * Metric aggregation strategy
- */
 export enum AggregationStrategy {
     SUM = 'sum',
     AVERAGE = 'average',
@@ -52,17 +39,33 @@ export enum AggregationStrategy {
     LATEST = 'latest'
 }
 
-/**
- * Time frame for metric queries and aggregation
- */
+// ─── Base Types ─────────────────────────────────────────────────────────────
+
+export interface IMetricEvent {
+    readonly timestamp: number;
+    readonly domain: MetricDomain;
+    readonly type: MetricType;
+    readonly value: number | string;
+    readonly metadata: Record<string, unknown>;
+}
+
 export interface ITimeFrame {
     readonly start: number;
     readonly end: number;
 }
 
-/**
- * Aggregated metric result
- */
+// ─── Utility Types ────────────────────────────────────────────────────────────
+
+export type MutableMetrics<T> = {
+    -readonly [K in keyof T]: T[K] extends ReadonlyArray<infer U>
+        ? U[]
+        : T[K] extends Record<string, unknown>
+        ? { -readonly [P in keyof T[K]]: MutableMetrics<T[K][P]> }
+        : T[K];
+};
+
+// ─── Aggregation Types ────────────────────────────────────────────────────────
+
 export interface IAggregatedMetric {
     readonly domain: MetricDomain;
     readonly type: MetricType;
@@ -70,30 +73,21 @@ export interface IAggregatedMetric {
     readonly count: number;
     readonly value: number;
     readonly strategy: AggregationStrategy;
-    readonly metadata: Record<string, any>;
+    readonly metadata: Record<string, unknown>;
 }
 
-/**
- * Metric query filter
- */
 export interface IMetricFilter {
     readonly domain?: MetricDomain;
     readonly type?: MetricType;
     readonly timeFrame?: ITimeFrame;
-    readonly metadata?: Record<string, any>;
+    readonly metadata?: Record<string, unknown>;
 }
 
-/**
- * Metric query for aggregation
- */
 export interface IAggregationQuery extends IMetricFilter {
     readonly strategy: AggregationStrategy;
     readonly groupBy?: string[];
 }
 
-/**
- * Rolled up metrics across time periods
- */
 export interface IRolledUpMetrics {
     readonly domain: MetricDomain;
     readonly type: MetricType;
@@ -101,12 +95,11 @@ export interface IRolledUpMetrics {
         readonly timeFrame: ITimeFrame;
         readonly value: number;
     }[];
-    readonly metadata: Record<string, any>;
+    readonly metadata: Record<string, unknown>;
 }
 
-/**
- * Metrics manager handler metadata
- */
+// ─── Handler Types ───────────────────────────────────────────────────────────
+
 export interface IMetricsHandlerMetadata extends IBaseHandlerMetadata {
     readonly domain: MetricDomain;
     readonly type: MetricType;
@@ -114,72 +107,27 @@ export interface IMetricsHandlerMetadata extends IBaseHandlerMetadata {
     readonly processingTime: ITimeMetrics;
 }
 
-/**
- * Metrics manager handler result
- */
 export type IMetricsHandlerResult<T = unknown> = IHandlerResult<T, IMetricsHandlerMetadata>;
 
-/**
- * Core metrics manager interface
- */
+// ─── Manager Interfaces ───────────────────────────────────────────────────────
+
 export interface IMetricsManager {
-    /**
-     * Track a new metric
-     */
     trackMetric(event: IMetricEvent): Promise<IMetricsHandlerResult<void>>;
-
-    /**
-     * Get metrics based on filter
-     */
     getMetrics(filter: IMetricFilter): Promise<IMetricsHandlerResult<IMetricEvent[]>>;
-
-    /**
-     * Aggregate metrics based on query
-     */
     aggregateMetrics(query: IAggregationQuery): Promise<IMetricsHandlerResult<IAggregatedMetric>>;
-
-    /**
-     * Roll up metrics across time periods
-     */
     rollupMetrics(query: IAggregationQuery): Promise<IMetricsHandlerResult<IRolledUpMetrics>>;
+    getInitialResourceMetrics(): Promise<IResourceMetrics>;
+    getInitialPerformanceMetrics(): Promise<IPerformanceMetrics>;
 }
 
-/**
- * Metrics storage interface
- */
 export interface IMetricStorage {
-    /**
-     * Store a metric event
-     */
     store(event: IMetricEvent): Promise<void>;
-
-    /**
-     * Query metrics based on filter
-     */
     query(filter: IMetricFilter): Promise<IMetricEvent[]>;
-
-    /**
-     * Aggregate metrics based on query
-     */
     aggregate(query: IAggregationQuery): Promise<IAggregatedMetric>;
-
-    /**
-     * Clean up old metrics
-     */
     cleanup(before: number): Promise<void>;
 }
 
-/**
- * Metrics aggregator interface
- */
 export interface IMetricAggregator {
-    /**
-     * Aggregate metrics using specified strategy
-     */
     aggregate(metrics: IMetricEvent[], strategy: AggregationStrategy): IAggregatedMetric;
-
-    /**
-     * Roll up metrics across time periods
-     */
     rollup(metrics: IMetricEvent[], query: IAggregationQuery): IRolledUpMetrics;
 }

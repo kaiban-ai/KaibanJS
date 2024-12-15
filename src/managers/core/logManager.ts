@@ -1,35 +1,63 @@
 /**
- * @file logManager.ts
- * @path src/managers/core/logManager.ts
- * @description Core logging functionality implementation with centralized logging, validation, and metadata management
- */
+* @file logManager.ts
+* @path src/managers/core/logManager.ts
+* @description Core logging functionality implementation with centralized logging,
+* storage, analysis, and correlation capabilities
+*
+* @module @core
+*/
 
-import { createError } from '../../types/common/commonErrorTypes';
-import { createValidationResult, createValidationMetadata } from '../../types/common/commonValidationTypes';
-import { createBaseMetadata } from '../../types/common/commonMetadataTypes';
-import { ILogLevel } from '../../types/common/commonEnums';
+// ─── External Imports ─────────────────────────────────────────────────────────
 
-import type { IBaseHandlerMetadata } from '../../types/common/commonMetadataTypes';
-import type { IValidationResult } from '../../types/common/commonValidationTypes';
+import { CoreManager } from './coreManager';
+import { LogStorageManager } from './logStorageManager';
+import { LogAnalyzer } from './logAnalyzer';
+import { LogEventEmitter } from './logEventEmitter';
+import { MANAGER_CATEGORY_enum } from '../../types/common/enumTypes';
+import { createError } from '../../types/common/errorTypes';
+import { createBaseMetadata } from '../../types/common/baseTypes';
 
-/**
- * Centralized logging manager that handles log creation, validation, and storage
- * Implements the Singleton pattern to ensure a single logging instance
- */
-export class LogManager {
+// ─── Type Imports ─────────────────────────────────────────────────────────────
+
+import type { ILogLevel } from '../../types/common/enumTypes';
+import type { 
+    ILogEntry,
+    ILogPattern,
+    ILogAnomaly,
+    ILogCorrelation,
+    ILogAggregation,
+    ILogAggregationOptions,
+    ILogStorageQuery,
+    ILogStorageQueryResult,
+    ILogStorageStats,
+    IErrorPattern,
+    IErrorTrend,
+    IErrorImpact,
+    IRecoveryEffectiveness
+} from '../../types/common/loggingTypes';
+
+// ─── Log Manager Class ─────────────────────────────────────────────────────────
+
+export class LogManager extends CoreManager {
     private static instance: LogManager;
-    private readonly logs: Map<string, IBaseHandlerMetadata[]>;
+    private readonly inMemoryLogs: Map<string, ILogEntry[]>;
+    private readonly storageManager: LogStorageManager;
+    private readonly analyzer: LogAnalyzer;
+    private readonly eventEmitter: LogEventEmitter;
     private logLevel: ILogLevel;
 
+    public readonly category: MANAGER_CATEGORY_enum = MANAGER_CATEGORY_enum.CORE;
+
     private constructor() {
-        this.logs = new Map();
-        this.logLevel = 'info'; // Default log level
+        super();
+        this.inMemoryLogs = new Map();
+        this.storageManager = LogStorageManager.getInstance();
+        this.analyzer = LogAnalyzer.getInstance();
+        this.eventEmitter = LogEventEmitter.getInstance();
+        this.logLevel = 'info';
+        this.registerDomainManager('LogManager', this);
     }
 
-    /**
-     * Gets the singleton instance of LogManager
-     * @returns The LogManager instance
-     */
     public static getInstance(): LogManager {
         if (!LogManager.instance) {
             LogManager.instance = new LogManager();
@@ -37,63 +65,216 @@ export class LogManager {
         return LogManager.instance;
     }
 
-    /**
-     * Sets the logging level
-     * @param level - The log level to set
-     */
+    // ─── Core Logging Methods ────────────────────────────────────────────────
+
     public setLogLevel(level: ILogLevel): void {
         this.logLevel = level;
     }
 
-    /**
-     * Logs a debug message
-     * @param message - The message to log
-     * @param args - Additional arguments to log
-     */
-    public debug(message: string, ...args: any[]): void {
+    public log(message: string, level: ILogLevel = 'info', context?: Record<string, unknown>): void {
+        if (this.shouldLog(level)) {
+            this.storeAndEmitLog(this.constructor.name, level, message, context);
+        }
+    }
+
+    public debug(message: string, context?: Record<string, unknown>): void {
         if (this.shouldLog('debug')) {
-            console.debug(`🔍 [DEBUG] ${message}`, ...args);
+            this.log(message, 'debug', context);
         }
     }
 
-    /**
-     * Logs an informational message
-     * @param message - The message to log
-     * @param args - Additional arguments to log
-     */
-    public info(message: string, ...args: any[]): void {
+    public info(message: string, context?: Record<string, unknown>): void {
         if (this.shouldLog('info')) {
-            console.log(`ℹ️ [INFO] ${message}`, ...args);
+            this.log(message, 'info', context);
         }
     }
 
-    /**
-     * Logs a warning message
-     * @param message - The warning message
-     * @param args - Additional arguments to log
-     */
-    public warn(message: string, ...args: any[]): void {
+    public warn(message: string, context?: Record<string, unknown>): void {
         if (this.shouldLog('warn')) {
-            console.warn(`⚠️ [WARN] ${message}`, ...args);
+            this.log(message, 'warn', context);
         }
     }
 
-    /**
-     * Logs an error message
-     * @param message - The error message
-     * @param error - Optional error object
-     */
-    public error(message: string, error?: any): void {
+    public error(message: string, error?: Error, context?: Record<string, unknown>): void {
         if (this.shouldLog('error')) {
-            console.error(`🔴 [ERROR] ${message}`, error);
+            this.log(message, 'error', {
+                ...context,
+                error: error ? {
+                    type: error.name,
+                    message: error.message,
+                    stack: error.stack
+                } : undefined
+            });
         }
     }
 
-    /**
-     * Determines if a message at the given level should be logged
-     * @param level - The log level to check
-     * @returns Whether the message should be logged
-     */
+    // ─── Query and Analysis Methods ─────────────────────────────────────────
+
+    public async queryLogs(query: ILogStorageQuery): Promise<ILogStorageQueryResult> {
+        try {
+            return await this.storageManager.query(query);
+        } catch (err) {
+            throw createError({
+                message: 'Failed to query logs',
+                type: 'StorageError',
+                context: {
+                    component: this.constructor.name,
+                    operation: 'queryLogs',
+                    error: this.normalizeError(err)
+                }
+            });
+        }
+    }
+
+    public async analyzeLogs(entries: ILogEntry[]): Promise<{
+        patterns: ILogPattern[];
+        anomalies: ILogAnomaly[];
+        correlations: ILogCorrelation[];
+    }> {
+        try {
+            return await this.analyzer.analyzeLogs(entries);
+        } catch (err) {
+            throw createError({
+                message: 'Failed to analyze logs',
+                type: 'ExecutionError',
+                context: {
+                    component: this.constructor.name,
+                    operation: 'analyzeLogs',
+                    error: this.normalizeError(err)
+                }
+            });
+        }
+    }
+
+    public async aggregateLogs(entries: ILogEntry[], options: ILogAggregationOptions): Promise<ILogAggregation> {
+        try {
+            return await this.analyzer.aggregateLogs(entries, options);
+        } catch (err) {
+            throw createError({
+                message: 'Failed to aggregate logs',
+                type: 'ExecutionError',
+                context: {
+                    component: this.constructor.name,
+                    operation: 'aggregateLogs',
+                    error: this.normalizeError(err)
+                }
+            });
+        }
+    }
+
+    public async getStorageStats(): Promise<ILogStorageStats> {
+        try {
+            return await this.storageManager.getStats();
+        } catch (err) {
+            throw createError({
+                message: 'Failed to get storage statistics',
+                type: 'StorageError',
+                context: {
+                    component: this.constructor.name,
+                    operation: 'getStorageStats',
+                    error: this.normalizeError(err)
+                }
+            });
+        }
+    }
+
+    // ─── Error Analysis Methods ──────────────────────────────────────────────
+
+    public async analyzeErrorPatterns(timeRange: { start: number; end: number }): Promise<IErrorPattern[]> {
+        try {
+            const query: ILogStorageQuery = {
+                timeRange,
+                levels: ['error'],
+                orderBy: {
+                    field: 'timestamp',
+                    direction: 'asc'
+                }
+            };
+
+            const errorLogs = await this.queryLogs(query);
+            const analysis = await this.analyzer.analyzeLogs(errorLogs.entries);
+            return this.analyzer.convertToErrorPatterns(analysis.patterns, errorLogs.entries);
+        } catch (err) {
+            throw createError({
+                message: 'Failed to analyze error patterns',
+                type: 'ExecutionError',
+                context: {
+                    component: this.constructor.name,
+                    operation: 'analyzeErrorPatterns',
+                    error: this.normalizeError(err)
+                }
+            });
+        }
+    }
+
+    public async analyzeErrorTrends(timeRange: { start: number; end: number }): Promise<IErrorTrend[]> {
+        try {
+            const query: ILogStorageQuery = {
+                timeRange,
+                levels: ['error']
+            };
+
+            const errorLogs = await this.queryLogs(query);
+            return this.analyzer.analyzeErrorTrends(errorLogs.entries);
+        } catch (err) {
+            throw createError({
+                message: 'Failed to analyze error trends',
+                type: 'ExecutionError',
+                context: {
+                    component: this.constructor.name,
+                    operation: 'analyzeErrorTrends',
+                    error: this.normalizeError(err)
+                }
+            });
+        }
+    }
+
+    public async assessErrorImpact(errorPattern: string): Promise<IErrorImpact> {
+        try {
+            const query: ILogStorageQuery = {
+                levels: ['error'],
+                patterns: [errorPattern]
+            };
+
+            const errorLogs = await this.queryLogs(query);
+            return this.analyzer.assessErrorImpact(errorPattern, errorLogs.entries);
+        } catch (err) {
+            throw createError({
+                message: 'Failed to assess error impact',
+                type: 'ExecutionError',
+                context: {
+                    component: this.constructor.name,
+                    operation: 'assessErrorImpact',
+                    error: this.normalizeError(err)
+                }
+            });
+        }
+    }
+
+    public async trackRecoveryEffectiveness(timeRange: { start: number; end: number }): Promise<IRecoveryEffectiveness> {
+        try {
+            const query: ILogStorageQuery = {
+                timeRange,
+                levels: ['error']
+            };
+
+            const errorLogs = await this.queryLogs(query);
+            return this.analyzer.trackRecoveryEffectiveness(errorLogs.entries);
+        } catch (err) {
+            throw createError({
+                message: 'Failed to track recovery effectiveness',
+                type: 'ExecutionError',
+                context: {
+                    component: this.constructor.name,
+                    operation: 'trackRecoveryEffectiveness',
+                    error: this.normalizeError(err)
+                }
+            });
+        }
+    }
+
+    // ─── Private Helper Methods ─────────────────────────────────────────────
+
     private shouldLog(level: ILogLevel): boolean {
         const levels: ILogLevel[] = ['error', 'warn', 'info', 'debug'];
         const currentLevelIndex = levels.indexOf(this.logLevel);
@@ -101,176 +282,119 @@ export class LogManager {
         return messageLevelIndex <= currentLevelIndex;
     }
 
-    /**
-     * Creates a log entry with metadata
-     * @param params - Log creation parameters
-     * @returns A log entry with metadata
-     */
-    private createLog(params: {
+    private createLogEntry(params: {
         component: string;
-        operation: string;
+        level: ILogLevel;
         message: string;
-        metadata?: Record<string, unknown>;
-    }): IBaseHandlerMetadata {
+        context?: Record<string, unknown>;
+    }): ILogEntry {
+        const baseMetadata = createBaseMetadata(params.component, 'log');
         return {
-            ...createBaseMetadata(params.component, params.operation),
+            ...baseMetadata,
+            level: params.level,
             message: params.message,
-            metadata: {
-                ...params.metadata,
-                timestamp: Date.now()
-            }
+            correlationId: params.context?.correlationId as string,
+            traceId: params.context?.traceId as string,
+            spanId: params.context?.spanId as string,
+            parentSpanId: params.context?.parentSpanId as string,
+            tags: (params.context?.tags as string[]) || [],
+            source: {
+                file: params.context?.file as string,
+                line: params.context?.line as number,
+                function: params.context?.function as string
+            },
+            context: params.context || {}
         };
     }
 
-    /**
-     * Logs a message with component, operation, and optional metadata
-     * @param component - The component generating the log
-     * @param operation - The operation being performed
-     * @param message - The log message
-     * @param metadata - Optional metadata to attach to the log
-     */
-    public async log(
+    private async storeAndEmitLog(
         component: string,
-        operation: string,
+        level: ILogLevel,
         message: string,
-        metadata?: Record<string, unknown>
+        context?: Record<string, unknown>
     ): Promise<void> {
         try {
-            const logEntry = this.createLog({
+            const logEntry = this.createLogEntry({
                 component,
-                operation,
+                level,
                 message,
-                metadata
+                context
             });
 
-            const componentLogs = this.logs.get(component) || [];
+            // Store in memory
+            const componentLogs = this.inMemoryLogs.get(component) || [];
             componentLogs.push(logEntry);
-            this.logs.set(component, componentLogs);
+            this.inMemoryLogs.set(component, componentLogs);
 
-            this.info(`[${component}] ${operation}: ${message}`);
-        } catch (error) {
-            this.error('Error logging message:', error);
-            throw error;
-        }
-    }
+            // Store persistently
+            await this.storageManager.store([logEntry]);
 
-    /**
-     * Validates log metadata
-     * @param component - The component to validate
-     * @param operation - The operation to validate
-     * @param metadata - The metadata to validate
-     * @returns Validation result
-     */
-    public async validateLog(
-        component: string,
-        operation: string,
-        metadata: IBaseHandlerMetadata
-    ): Promise<IValidationResult> {
-        try {
-            const validationMetadata = createValidationMetadata({
-                component,
-                operation,
-                validatedFields: ['component', 'operation', 'message', 'metadata']
+            // Emit event
+            await this.eventEmitter.emitLogCreated({
+                id: logEntry.id,
+                timestamp: logEntry.timestamp,
+                level: logEntry.level,
+                message: logEntry.message,
+                agentName: component,
+                taskId: context?.taskId as string || 'unknown',
+                meta: context
             });
 
-            const isValid = this.isValidMetadata(metadata);
-
-            if (!isValid) {
-                throw createError({
-                    message: 'Invalid log metadata',
-                    type: 'ValidationError',
-                    context: {
-                        component,
-                        operation,
-                        metadata
-                    }
-                });
-            }
-
-            return createValidationResult({
-                isValid: true,
-                errors: [],
-                warnings: [],
-                metadata: validationMetadata
+            // Console output
+            this.consoleLog(level, `[${component}] ${message}`, context);
+        } catch (err) {
+            throw createError({
+                message: 'Failed to store and emit log',
+                type: 'StorageError',
+                context: {
+                    component: this.constructor.name,
+                    operation: 'storeAndEmitLog',
+                    error: this.normalizeError(err)
+                }
             });
-        } catch (error) {
-            this.error('Error validating log:', error);
-            throw error;
         }
     }
 
-    /**
-     * Gets all logs for a component
-     * @param component - The component to get logs for
-     * @returns Array of logs for the component
-     */
-    public getLogs(component: string): IBaseHandlerMetadata[] {
-        return this.logs.get(component) || [];
-    }
-
-    /**
-     * Clears logs for a component or all logs if no component specified
-     * @param component - Optional component to clear logs for
-     */
-    public clearLogs(component?: string): void {
-        if (component) {
-            this.logs.delete(component);
-        } else {
-            this.logs.clear();
+    private consoleLog(level: ILogLevel, message: string, context?: Record<string, unknown>): void {
+        const timestamp = new Date().toISOString();
+        const contextStr = context ? ` ${JSON.stringify(context)}` : '';
+        const emoji = this.getLogLevelEmoji(level);
+        
+        switch (level) {
+            case 'debug':
+                console.debug(`${timestamp} ${emoji} [${level.toUpperCase()}] ${message}${contextStr}`);
+                break;
+            case 'info':
+                console.log(`${timestamp} ${emoji} [${level.toUpperCase()}] ${message}${contextStr}`);
+                break;
+            case 'warn':
+                console.warn(`${timestamp} ${emoji} [${level.toUpperCase()}] ${message}${contextStr}`);
+                break;
+            case 'error':
+                console.error(`${timestamp} ${emoji} [${level.toUpperCase()}] ${message}${contextStr}`);
+                break;
         }
     }
 
-    /**
-     * Type guard for validating metadata structure
-     * @param metadata - The metadata to validate
-     * @returns True if metadata is valid
-     */
-    private isValidMetadata(metadata: unknown): metadata is IBaseHandlerMetadata {
-        if (!metadata || typeof metadata !== 'object') return false;
-        const m = metadata as Partial<IBaseHandlerMetadata>;
-        return (
-            typeof m.timestamp === 'number' &&
-            typeof m.component === 'string' &&
-            typeof m.operation === 'string' &&
-            typeof m.message === 'string' &&
-            m.performance !== undefined &&
-            typeof m.performance === 'object' &&
-            m.validation !== undefined &&
-            typeof m.validation === 'object'
-        );
+    private getLogLevelEmoji(level: ILogLevel): string {
+        switch (level) {
+            case 'debug':
+                return '🔍';
+            case 'info':
+                return 'ℹ️';
+            case 'warn':
+                return '⚠️';
+            case 'error':
+                return '🔴';
+        }
     }
 
-    /**
-     * Type guard for validating task metadata
-     * @param metadata - The metadata to validate
-     * @returns True if metadata is valid task metadata
-     */
-    private isValidTaskMetadata(metadata: unknown): boolean {
-        if (!this.isValidMetadata(metadata)) return false;
-        const m = metadata as any;
-        return (
-            'llmUsageMetrics' in m &&
-            'iterationCount' in m &&
-            'duration' in m &&
-            typeof m.iterationCount === 'number' &&
-            typeof m.duration === 'number'
-        );
-    }
-
-    /**
-     * Type guard for validating workflow metadata
-     * @param metadata - The metadata to validate
-     * @returns True if metadata is valid workflow metadata
-     */
-    private isValidWorkflowMetadata(metadata: unknown): boolean {
-        if (!this.isValidMetadata(metadata)) return false;
-        const m = metadata as any;
-        return (
-            'llmUsageMetrics' in m &&
-            'iterationCount' in m &&
-            m.output !== null &&
-            typeof m.output === 'object' &&
-            'llmUsageMetrics' in m.output
-        );
+    private normalizeError(error: unknown): Error {
+        if (error instanceof Error) {
+            return error;
+        }
+        return new Error(typeof error === 'string' ? error : 'Unknown error occurred');
     }
 }
+
+export default LogManager.getInstance();

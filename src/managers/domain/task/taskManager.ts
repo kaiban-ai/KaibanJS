@@ -5,29 +5,22 @@
  */
 
 import { CoreManager } from '../../core/coreManager';
-import { createError } from '../../../types/common/commonErrorTypes';
-import { TASK_STATUS_enum } from '../../../types/common/commonEnums';
-import { createBaseMetadata } from '../../../types/common/commonMetadataTypes';
+import { MANAGER_CATEGORY_enum, TASK_STATUS_enum, BATCH_PRIORITY_enum } from '../../../types/common/enumTypes';
+import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
+import { createBaseMetadata } from '../../../types/common/baseTypes';
 import { TaskExecutor } from './taskExecutor';
 import { TaskValidator } from './taskValidator';
-import { TaskMetricsManager } from './taskMetricsManager';
 import { TaskEventEmitter } from './taskEventEmitter';
 import { taskEventHandlers } from './taskEventHandlers';
-import { 
-    createValidationError,
-    createValidationWarning,
-    ValidationErrorType,
-    ValidationWarningType
-} from '../../../types/common/commonValidationTypes';
 
-import type { ITaskType } from '../../../types/task/taskBaseTypes';
 import type { 
+    ITaskType,
+    ITaskFeedback,
     ITaskHandlerResult,
+    ITaskExecutionParams,
     ITaskHandlerMetadata,
-    ITaskValidationResult
-} from '../../../types/task/taskHandlerTypes';
-import type { ITaskExecutionParams } from '../../../types/task/taskHandlersTypes';
-import type { IStatusTransitionContext } from '../../../types/common/commonStatusTypes';
+    ITaskProgress
+} from '../../../types/task';
 
 /**
  * Task Manager
@@ -39,8 +32,8 @@ export class TaskManager extends CoreManager {
     private readonly taskTimeouts: Map<string, NodeJS.Timeout>;
     private readonly executor: TaskExecutor;
     private readonly validator: TaskValidator;
-    private readonly metricsManager: TaskMetricsManager;
-    private readonly eventEmitter: TaskEventEmitter;
+    private readonly taskEventEmitter: TaskEventEmitter;
+    public readonly category = MANAGER_CATEGORY_enum.EXECUTION;
 
     private constructor() {
         super();
@@ -48,8 +41,7 @@ export class TaskManager extends CoreManager {
         this.taskTimeouts = new Map();
         this.executor = new TaskExecutor();
         this.validator = new TaskValidator();
-        this.metricsManager = new TaskMetricsManager();
-        this.eventEmitter = TaskEventEmitter.getInstance();
+        this.taskEventEmitter = TaskEventEmitter.getInstance();
         this.registerDomainManager('TaskManager', this);
         this.registerEventHandlers();
     }
@@ -67,128 +59,162 @@ export class TaskManager extends CoreManager {
         });
     }
 
+    private createTaskMetadata(task: ITaskType): ITaskHandlerMetadata {
+        const taskProgress: ITaskProgress = task.progress || {
+            status: task.status,
+            progress: 0,
+            timeElapsed: 0
+        };
+
+        const baseMetadata = createBaseMetadata(this.constructor.name, 'executeTask');
+
+        return {
+            ...baseMetadata,
+            taskId: task.id,
+            taskName: task.title,
+            status: task.status,
+            priority: task.priority,
+            assignedAgent: task.agent?.id || '',
+            progress: taskProgress.progress,
+            metrics: {
+                resources: task.metrics.resources,
+                usage: task.metrics.usage,
+                performance: task.metrics.performance
+            },
+            dependencies: {
+                completed: [],
+                pending: [],
+                blocked: []
+            }
+        };
+    }
+
     public async executeTask(params: ITaskExecutionParams): Promise<ITaskHandlerResult<unknown>> {
         const { task, agent, input, metadata = {}, options = {} } = params;
 
-        const validationResult = await this.validator.validateTask(task);
-        if (!validationResult.isValid) {
-            await this.eventEmitter.emitTaskValidationCompleted({
+        const result = await this.safeExecute(async () => {
+            const validationResult = await this.validator.validateTask(task);
+            if (!validationResult.isValid) {
+                await this.taskEventEmitter.emitTaskValidationCompleted({
+                    taskId: task.id,
+                    validationResult
+                });
+                throw new Error(validationResult.errors.join(', '));
+            }
+
+            await this.initializeTask(task);
+
+            // Track task metrics
+            await this.metricsManager.trackMetric({
+                domain: MetricDomain.TASK,
+                type: MetricType.PERFORMANCE,
+                value: 1,
+                timestamp: Date.now(),
+                metadata: {
+                    taskId: task.id,
+                    agentId: agent.id,
+                    operation: 'executeTask',
+                    priority: task.priority.toString()
+                }
+            });
+
+            if (options.timeout) {
+                this.setupTaskTimeout(task.id, options.timeout);
+            }
+
+            const executionResult = await this.executor.executeTask(task, input);
+
+            await this.taskEventEmitter.emitTaskCompleted({
                 taskId: task.id,
-                validationResult
-            });
-
-            throw createError({
-                message: validationResult.errors.map((e: ValidationErrorType | string) => 
-                    typeof e === 'string' ? e : e.message
-                ).join(', '),
-                type: 'ValidationError',
-                context: validationResult.context
-            });
-        }
-
-        await this.initializeTask(task);
-        this.metricsManager.initializeMetrics(task.id);
-
-        if (options.timeout) {
-            this.setupTaskTimeout(task.id, options.timeout);
-        }
-
-        try {
-            const result = await this.executor.executeTask(task, input);
-            const metrics = await this.metricsManager.updateMetrics(task.id, {
-                startTime: task.metrics.startTime,
-                endTime: task.metrics.endTime,
-                duration: task.metrics.duration,
-                iterationCount: task.metrics.iterationCount,
-                resources: task.metrics.resources,
-                performance: task.metrics.performance,
-                costs: task.metrics.costs,
-                llmUsageMetrics: task.metrics.llmUsageMetrics
-            });
-
-            await this.eventEmitter.emitTaskCompleted({
-                taskId: task.id,
-                outputs: { result },
-                duration: metrics.duration
+                outputs: { result: executionResult },
+                duration: Date.now() - task.metrics.startTime
             });
 
             return {
                 success: true,
-                data: result.data,
-                metadata: result.metadata
+                data: executionResult.data,
+                metadata: this.createTaskMetadata(task)
             };
 
-        } catch (error) {
-            await this.handleTaskError(task, error as Error);
-            throw error;
-        } finally {
-            this.clearTaskTimeout(task.id);
-            await this.cleanupTask(task.id);
+        }, 'Failed to execute task');
+
+        // Ensure we never return undefined
+        if (!result.success || !result.data) {
+            return {
+                success: false,
+                metadata: this.createTaskMetadata(task)
+            };
         }
+
+        return result.data;
     }
 
     private async initializeTask(task: ITaskType): Promise<void> {
-        const metrics = this.metricsManager.getMetrics(task.id);
-        if (!metrics) {
-            throw createError({
-                message: `No metrics found for task ${task.id}`,
-                type: 'SystemError'
+        const result = await this.safeExecute(async () => {
+            await this.taskEventEmitter.emitTaskCreated({
+                taskId: task.id,
+                task: {
+                    title: task.title,
+                    description: task.description,
+                    priority: task.priority
+                }
             });
+
+            const previousStatus = task.status;
+            const newStatus = TASK_STATUS_enum.TODO;
+
+            await this.handleStatusTransition({
+                entity: 'task',
+                entityId: task.id,
+                currentStatus: previousStatus,
+                targetStatus: newStatus,
+                context: {
+                    component: this.constructor.name,
+                    operation: 'initializeTask',
+                    metadata: {
+                        task,
+                        agent: task.agent
+                    }
+                }
+            });
+
+            this.activeTasks.set(task.id, task);
+
+            await this.taskEventEmitter.emitTaskStatusChanged({
+                taskId: task.id,
+                previousStatus,
+                newStatus,
+                reason: 'Task initialization'
+            });
+        }, 'Failed to initialize task');
+
+        if (!result.success) {
+            throw result.metadata.error;
         }
-
-        await this.eventEmitter.emitTaskCreated({
-            taskId: task.id,
-            task: {
-                title: task.title,
-                description: task.description,
-                priority: 0
-            }
-        });
-
-        const previousStatus = task.status;
-        const newStatus = TASK_STATUS_enum.TODO;
-
-        const transitionContext: IStatusTransitionContext = {
-            entity: 'task',
-            entityId: task.id,
-            currentStatus: previousStatus,
-            targetStatus: newStatus,
-            operation: 'initializeTask',
-            phase: 'pre-execution',
-            startTime: Date.now(),
-            resourceMetrics: metrics.resources,
-            performanceMetrics: metrics.performance,
-            task,
-            agent: task.agent
-        };
-
-        await this.statusManager.transition(transitionContext);
-        this.activeTasks.set(task.id, task);
-
-        await this.eventEmitter.emitTaskStatusChanged({
-            taskId: task.id,
-            previousStatus,
-            newStatus,
-            reason: 'Task initialization'
-        });
     }
 
     private async cleanupTask(taskId: string): Promise<void> {
-        const task = this.activeTasks.get(taskId);
-        if (task) {
-            await this.eventEmitter.emitTaskDeleted({
-                taskId,
-                finalState: {
-                    id: task.id,
-                    title: task.title,
-                    description: task.description,
-                    status: task.status,
-                    metrics: task.metrics
-                }
-            });
+        const result = await this.safeExecute(async () => {
+            const task = this.activeTasks.get(taskId);
+            if (task) {
+                await this.taskEventEmitter.emitTaskDeleted({
+                    taskId,
+                    finalState: {
+                        id: task.id,
+                        title: task.title,
+                        description: task.description,
+                        status: task.status,
+                        metrics: task.metrics
+                    }
+                });
+            }
+            this.activeTasks.delete(taskId);
+            this.clearTaskTimeout(taskId);
+        }, 'Failed to cleanup task');
+
+        if (!result.success) {
+            throw result.metadata.error;
         }
-        this.activeTasks.delete(taskId);
-        this.clearTaskTimeout(taskId);
     }
 
     private setupTaskTimeout(taskId: string, timeout: number): void {
@@ -210,88 +236,42 @@ export class TaskManager extends CoreManager {
         const task = this.activeTasks.get(taskId);
         if (!task) return;
 
-        const error = createError({
-            message: 'Task execution timeout',
-            type: 'TaskError',
-            context: { taskId, taskTitle: task.title }
-        });
+        await this.safeExecute(async () => {
+            await this.handleStatusTransition({
+                entity: 'task',
+                entityId: taskId,
+                currentStatus: task.status,
+                targetStatus: TASK_STATUS_enum.ERROR,
+                context: {
+                    component: this.constructor.name,
+                    operation: 'handleTaskTimeout',
+                    metadata: {
+                        task,
+                        error: 'Task execution timeout'
+                    }
+                }
+            });
 
-        await this.handleTaskError(task, error);
+            await this.taskEventEmitter.emitTaskErrorOccurred({
+                taskId: task.id,
+                error: new Error('Task execution timeout'),
+                context: {
+                    operation: 'executeTask',
+                    state: {
+                        id: task.id,
+                        status: task.status,
+                        metrics: task.metrics
+                    }
+                }
+            });
+        }, 'Failed to handle task timeout');
     }
 
-    private async handleTaskError(task: ITaskType, error: Error): Promise<void> {
-        await this.eventEmitter.emitTaskErrorOccurred({
-            taskId: task.id,
-            error,
-            context: {
-                operation: 'executeTask',
-                state: {
-                    id: task.id,
-                    status: task.status,
-                    metrics: task.metrics
-                }
-            }
-        });
-
-        task.error = new Error(error.message);
-        const previousStatus = task.status;
-        task.status = TASK_STATUS_enum.ERROR;
-        task.metrics.endTime = Date.now();
-        task.metrics.duration = task.metrics.endTime - task.metrics.startTime;
-
-        const metrics = this.metricsManager.getMetrics(task.id);
-        if (!metrics) {
-            throw createError({
-                message: `No metrics found for task ${task.id}`,
-                type: 'SystemError'
-            });
-        }
-
-        const transitionContext: IStatusTransitionContext = {
-            entity: 'task',
-            entityId: task.id,
-            currentStatus: previousStatus,
-            targetStatus: TASK_STATUS_enum.ERROR,
-            operation: 'handleTaskError',
-            phase: 'error',
-            startTime: Date.now(),
-            resourceMetrics: metrics.resources,
-            performanceMetrics: metrics.performance,
-            task,
-            agent: task.agent,
-            errorContext: {
-                error: createError({
-                    message: error.message,
-                    type: 'TaskError',
-                    context: { taskId: task.id }
-                }),
-                recoverable: false,
-                retryCount: 0,
-                failureReason: error.message
-            }
-        };
-
-        await this.statusManager.transition(transitionContext);
-
-        await this.eventEmitter.emitTaskStatusChanged({
-            taskId: task.id,
-            previousStatus,
-            newStatus: TASK_STATUS_enum.ERROR,
-            reason: error.message
-        });
-
-        await this.eventEmitter.emitTaskFailed({
-            taskId: task.id,
-            error,
-            context: {
-                operation: 'executeTask',
-                state: {
-                    id: task.id,
-                    status: TASK_STATUS_enum.ERROR,
-                    metrics: task.metrics
-                }
-            }
-        });
+    /**
+     * Emit task feedback added event
+     */
+    public async emitTaskFeedbackAdded(params: { taskId: string; feedback: ITaskFeedback }): Promise<void> {
+        await this.taskEventEmitter.emitTaskFeedbackAdded(params);
     }
 
     public getTask(taskId: string): ITaskType | undefined {
@@ -306,8 +286,7 @@ export class TaskManager extends CoreManager {
         this.activeTasks.clear();
         this.taskTimeouts.forEach(clearTimeout);
         this.taskTimeouts.clear();
-        this.metricsManager.cleanup();
-        this.eventEmitter.cleanup();
+        this.taskEventEmitter.cleanup();
     }
 }
 

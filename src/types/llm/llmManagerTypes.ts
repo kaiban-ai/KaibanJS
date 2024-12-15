@@ -1,15 +1,15 @@
 /**
  * @file llmManagerTypes.ts
- * @path src/types/llm/llmManagerTypes.ts
  * @description LLM manager type definitions using Langchain
  */
 
 import { BaseChatModel, BaseChatModelCallOptions } from '@langchain/core/language_models/chat_models';
-import { BaseMessageLike, AIMessageChunk } from '@langchain/core/messages';
+import { BaseMessage, AIMessageChunk } from '@langchain/core/messages';
 import { Callbacks } from '@langchain/core/callbacks/manager';
-import { LLM_PROVIDER_enum } from '../common/commonEnums';
+import { BaseLanguageModelInput } from '@langchain/core/language_models/base';
+import { LLM_PROVIDER_enum, LLM_STATUS_enum } from '../common/enumTypes';
 import type { 
-    LLMProviderConfig,
+    ILLMProviderConfig,
     IGroqConfig,
     IOpenAIConfig,
     IAnthropicConfig,
@@ -17,11 +17,14 @@ import type {
     IMistralConfig,
     IBaseProviderMetrics
 } from './llmProviderTypes';
-
+import type { 
+    ILLMValidationResult, 
+    ILLMValidationOptions 
+} from './llmValidationTypes';
 import type { IRuntimeLLMConfig } from './llmCommonTypes';
 import type { LLMResponse } from './llmResponseTypes';
 import type { IBaseMetrics } from '../metrics/base/baseMetrics';
-import type { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
+import type { IBaseHandlerMetadata } from '../common/baseTypes';
 
 // ─── Handler Result Types ────────────────────────────────────────────────────
 
@@ -32,39 +35,19 @@ export interface IHandlerResult<T = unknown, M extends IBaseHandlerMetadata = IB
     metadata: M;
 }
 
-/**
- * LLM-specific validation result interface.
- * 
- * This differs from the common IValidationResult because LLM provider validation:
- * 1. Uses simple string errors/warnings for provider-specific messages
- * 2. Has optional metadata specific to LLM handlers
- * 3. Focuses on external provider validation rather than internal system validation
- */
-export interface ILLMValidationResult<T = unknown> {
-    isValid: boolean;
-    errors: string[];
-    warnings: string[];
-    data?: T;
-    metadata?: IBaseHandlerMetadata;
-}
-
 // ─── Manager Configuration ────────────────────────────────────────────────────
 
 export interface ILLMManagerConfig {
     defaultProvider: LLM_PROVIDER_enum;
     providers: {
-        [key in LLM_PROVIDER_enum]?: LLMProviderConfig;
+        [key in LLM_PROVIDER_enum]?: ILLMProviderConfig;
     };
     metrics: {
         enabled: boolean;
         detailed: boolean;
         samplingRate: number;
     };
-    validation: {
-        strict: boolean;
-        timeout: number;
-        retryCount: number;
-    };
+    validation: ILLMValidationOptions;
 }
 
 // ─── Instance Types ──────────────────────────────────────────────────────────
@@ -72,29 +55,19 @@ export interface ILLMManagerConfig {
 export interface ILLMInstance {
     id: string;
     provider: LLM_PROVIDER_enum;
-    config: LLMProviderConfig;
+    config: ILLMProviderConfig;
     metrics: IBaseProviderMetrics;
-    status: 'active' | 'error' | 'terminated';
+    status: LLM_STATUS_enum;
     lastUsed: number;
     errorCount: number;
 
     // Instance methods
-    generate(
-        messages: BaseMessageLike[][],
-        options?: BaseChatModelCallOptions | string[],
-        callbacks?: Callbacks
-    ): Promise<LLMResponse>;
-
-    generateStream(
-        messages: BaseMessageLike[][],
-        options?: BaseChatModelCallOptions | string[],
-        callbacks?: Callbacks
-    ): AsyncGenerator<AIMessageChunk>;
-
-    validateConfig(config: LLMProviderConfig): Promise<ILLMValidationResult>;
+    generate(messages: BaseLanguageModelInput, options?: BaseChatModelCallOptions): Promise<LLMResponse>;
+    generateStream(messages: BaseLanguageModelInput, options?: BaseChatModelCallOptions): AsyncGenerator<AIMessageChunk, void, unknown>;
+    validateConfig(config: ILLMProviderConfig): Promise<ILLMValidationResult>;
     cleanup(): Promise<void>;
     getMetrics(): Promise<IBaseProviderMetrics>;
-    getStatus(): Promise<string>;
+    getStatus(): Promise<LLM_STATUS_enum>;
     reset(): Promise<void>;
 }
 
@@ -110,7 +83,7 @@ export interface IProviderInstance {
 
 export interface ILLMRequest {
     instanceId: string;
-    messages: BaseMessageLike[][];
+    messages: BaseLanguageModelInput;
     options?: BaseChatModelCallOptions;
     callbacks?: Callbacks;
 }
@@ -156,7 +129,7 @@ export interface ILLMManager {
     /**
      * Create a new LLM instance with the specified configuration
      */
-    createInstance(config: LLMProviderConfig): Promise<IHandlerResult<ILLMInstance>>;
+    createInstance(config: ILLMProviderConfig): Promise<IHandlerResult<ILLMInstance>>;
 
     /**
      * Get an existing LLM instance by ID
@@ -171,7 +144,7 @@ export interface ILLMManager {
     /**
      * Validate an LLM configuration
      */
-    validateConfig(config: LLMProviderConfig): Promise<ILLMValidationResult>;
+    validateConfig(config: ILLMProviderConfig): Promise<ILLMValidationResult>;
 
     /**
      * Get metrics for an LLM instance
@@ -187,9 +160,9 @@ export interface ILLMManager {
 // ─── Factory Types ───────────────────────────────────────────────────────────
 
 export interface ILLMFactory {
-    createHandler(provider: LLM_PROVIDER_enum, config: LLMProviderConfig): Promise<ILLMHandler>;
-    createProviderInstance(config: LLMProviderConfig): Promise<BaseChatModel>;
-    validateProviderConfig(config: LLMProviderConfig): Promise<ILLMValidationResult>;
+    createHandler(provider: LLM_PROVIDER_enum, config: ILLMProviderConfig): Promise<ILLMHandler>;
+    createProviderInstance(config: ILLMProviderConfig): Promise<BaseChatModel>;
+    validateProviderConfig(config: ILLMProviderConfig): Promise<ILLMValidationResult>;
 }
 
 // ─── Utility Types ───────────────────────────────────────────────────────────

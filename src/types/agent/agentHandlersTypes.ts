@@ -1,20 +1,15 @@
 /**
  * @file agentHandlersTypes.ts
  * @path src/types/agent/agentHandlersTypes.ts
- * @description Type definitions for agent handlers and their parameters
+ * @description Type definitions for agent handlers with categorization and enhanced type safety
  *
  * @module @types/agent
  */
 
-import { BaseMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
+import { BaseMessage } from '@langchain/core/messages';
 import { LLMResult } from '@langchain/core/outputs';
 import type { IAgentType } from './agentBaseTypes';
 import type { ITaskType } from '../task/taskBaseTypes';
-import type { 
-    IOutput, 
-    IParsedOutput, 
-    ILLMEventMetadata 
-} from '../llm/llmResponseTypes';
 import type { ILLMMetrics } from '../llm/llmMetricTypes';
 import type { IHandlerResult } from '../common/commonHandlerTypes';
 import type { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
@@ -24,51 +19,131 @@ import type {
     IAgentPerformanceMetrics,
     IAgentUsageMetrics
 } from './agentMetricTypes';
+import type { AGENT_EVENT_CATEGORY } from './agentEventTypes';
 
-// ─── Handler Parameters ─────────────────────────────────────────────────────────
+// ─── Base Handler Types ────────────────────────────────────────────────────────
 
-export interface IErrorHandlerParams {
-    /** The agent instance that encountered the error */
+/**
+ * Base handler metadata interface
+ */
+export interface IBaseAgentHandlerMetadata {
+    category: AGENT_EVENT_CATEGORY;
+    agent: {
+        id: string;
+        name: string;
+        metrics: {
+            iterations: number;
+            executionTime: number;
+            llmMetrics: ILLMMetrics;
+        };
+    };
+    task?: {
+        id: string;
+        title: string;
+        metrics: {
+            iterations: number;
+            executionTime: number;
+            llmMetrics: ILLMMetrics;
+        };
+    };
+}
+
+/**
+ * Base handler parameters interface
+ */
+export interface IBaseHandlerParams {
     agent: IAgentType;
-    /** The task being executed when the error occurred */
-    task: ITaskType;
-    /** The error that was encountered */
-    error: Error;
-    /** Additional context about the error */
+    task?: ITaskType;
     context?: Record<string, unknown>;
 }
 
-export interface IThinkingHandlerParams {
-    /** The agent instance that is thinking */
-    agent: IAgentType;
-    /** The task being processed */
-    task: ITaskType;
-    /** The messages being processed */
-    messages: BaseMessage[];
-    /** The output from processing */
-    output?: LLMResult;
-}
-
-export interface IToolHandlerParams {
-    /** The agent instance using the tool */
-    agent: IAgentType;
-    /** The task being executed */
-    task: ITaskType;
-    /** The tool being used */
-    tool?: unknown;
-    /** Any error that occurred */
-    error: Error;
-    /** The name of the tool */
-    toolName: string;
-}
-
-// ─── Thinking Types ───────────────────────────────────────────────────────────
+// ─── Handler Categories ────────────────────────────────────────────────────────
 
 /**
- * Thinking-specific metadata interface
+ * Lifecycle handler parameters
  */
-export interface IThinkingMetadata extends IBaseHandlerMetadata {
-    [key: string]: unknown;
+export interface ILifecycleHandlerParams extends IBaseHandlerParams {
+    category: AGENT_EVENT_CATEGORY.LIFECYCLE;
+    operation: 'create' | 'update' | 'delete';
+    previousState?: IAgentType;
+    newState?: IAgentType;
+}
+
+/**
+ * State handler parameters
+ */
+export interface IStateHandlerParams extends IBaseHandlerParams {
+    category: AGENT_EVENT_CATEGORY.STATE;
+    previousStatus?: string;
+    newStatus?: string;
+    reason?: string;
+}
+
+/**
+ * Error handler parameters
+ */
+export interface IErrorHandlerParams extends IBaseHandlerParams {
+    category: AGENT_EVENT_CATEGORY.ERROR;
+    error: Error;
+    operation: string;
+    recoveryStrategy?: string;
+    recoveryAttempts?: number;
+}
+
+/**
+ * Thinking handler parameters
+ */
+export interface IThinkingHandlerParams extends IBaseHandlerParams {
+    category: AGENT_EVENT_CATEGORY.ITERATION;
+    messages: BaseMessage[];
+    output?: LLMResult;
+    metrics?: ILLMMetrics;
+}
+
+/**
+ * Tool handler parameters
+ */
+export interface IToolHandlerParams extends IBaseHandlerParams {
+    category: AGENT_EVENT_CATEGORY.ITERATION;
+    tool?: unknown;
+    error?: Error;
+    toolName: string;
+    metrics?: {
+        executionTime: number;
+        resourceUsage: IAgentResourceMetrics;
+    };
+}
+
+// ─── Handler Metadata Types ─────────────────────────────────────────────────────
+
+/**
+ * Lifecycle handler metadata
+ */
+export interface ILifecycleHandlerMetadata extends IBaseAgentHandlerMetadata {
+    category: AGENT_EVENT_CATEGORY.LIFECYCLE;
+    operation: string;
+    duration: number;
+    changes?: Record<string, unknown>;
+}
+
+/**
+ * State handler metadata
+ */
+export interface IStateHandlerMetadata extends IBaseAgentHandlerMetadata {
+    category: AGENT_EVENT_CATEGORY.STATE;
+    transition: {
+        from: string;
+        to: string;
+        reason: string;
+        duration: number;
+    };
+}
+
+/**
+ * Thinking handler metadata
+ */
+export interface IThinkingMetadata extends IBaseAgentHandlerMetadata {
+    category: AGENT_EVENT_CATEGORY.ITERATION;
     thinking: {
         messageCount: number;
         processingTime: number;
@@ -84,39 +159,36 @@ export interface IThinkingMetadata extends IBaseHandlerMetadata {
         usage: IAgentUsageMetrics;
         costs: IStandardCostDetails;
     };
-    agent: {
-        id: string;
-        name: string;
-        metrics: {
-            iterations: number;
-            executionTime: number;
-            llmMetrics: ILLMMetrics;
-        };
-    };
-    task: {
-        id: string;
-        title: string;
-        metrics: {
-            iterations: number;
-            executionTime: number;
-            llmMetrics: ILLMMetrics;
-        };
-    };
-    /** @deprecated Use LLMResult.llmOutput.modelConfig instead */
-    llm: ILLMEventMetadata['llm'];
 }
+
+/**
+ * Error handler metadata
+ */
+export interface IErrorHandlerMetadata extends IBaseAgentHandlerMetadata {
+    category: AGENT_EVENT_CATEGORY.ERROR;
+    error: {
+        type: string;
+        message: string;
+        stack?: string;
+        context: Record<string, unknown>;
+    };
+    recovery?: {
+        strategy: string;
+        attempts: number;
+        duration: number;
+        success: boolean;
+    };
+}
+
+// ─── Handler Result Types ──────────────────────────────────────────────────────
 
 /**
  * Thinking execution parameters
  */
 export interface IThinkingExecutionParams {
-    /** The agent instance that is thinking */
     agent: IAgentType;
-    /** The task being processed */
     task: ITaskType;
-    /** The executable agent instance */
     ExecutableAgent: any;
-    /** Optional feedback message */
     feedbackMessage?: string;
 }
 
@@ -124,33 +196,63 @@ export interface IThinkingExecutionParams {
  * Thinking result interface
  */
 export interface IThinkingResult {
-    /** @deprecated Use messages instead */
-    parsedLLMOutput: IParsedOutput | null;
-    /** @deprecated Use LLMResult.generations[0][0].text instead */
-    llmOutput: string;
-    /** LLM metrics */
     metrics: ILLMMetrics;
-    /** The messages processed */
     messages: BaseMessage[];
-    /** The final output */
     output: LLMResult;
 }
 
 /**
- * Domain-specific handler result type
+ * Domain-specific handler result types
  */
+export type ILifecycleHandlerResult<T = unknown> = IHandlerResult<T, ILifecycleHandlerMetadata>;
+export type IStateHandlerResult<T = unknown> = IHandlerResult<T, IStateHandlerMetadata>;
 export type IThinkingHandlerResult<T = unknown> = IHandlerResult<T, IThinkingMetadata>;
+export type IErrorHandlerResult<T = unknown> = IHandlerResult<T, IErrorHandlerMetadata>;
 
-// ─── Manager Interfaces ────────────────────────────────────────────────────────
+// ─── Handler Interfaces ────────────────────────────────────────────────────────
 
 /**
- * Thinking manager interface
+ * Base agent handler interface
  */
-export interface IThinkingManager {
-    /**
-     * Execute thinking process
-     * @param params Thinking execution parameters
-     * @returns Handler result containing thinking output
-     */
-    executeThinking(params: IThinkingExecutionParams): Promise<IHandlerResult<IThinkingResult>>;
+export interface IBaseAgentHandler<P extends IBaseHandlerParams, R extends IHandlerResult> {
+    handle(params: P): Promise<R>;
+    validate?(params: P): Promise<boolean>;
+    cleanup?(): Promise<void>;
+}
+
+/**
+ * Lifecycle handler interface
+ */
+export interface ILifecycleHandler extends IBaseAgentHandler<ILifecycleHandlerParams, ILifecycleHandlerResult> {
+    onCreated?(params: ILifecycleHandlerParams): Promise<void>;
+    onUpdated?(params: ILifecycleHandlerParams): Promise<void>;
+    onDeleted?(params: ILifecycleHandlerParams): Promise<void>;
+}
+
+/**
+ * State handler interface
+ */
+export interface IStateHandler extends IBaseAgentHandler<IStateHandlerParams, IStateHandlerResult> {
+    onStatusChanged?(params: IStateHandlerParams): Promise<void>;
+    validateTransition?(from: string, to: string): Promise<boolean>;
+}
+
+/**
+ * Thinking handler interface
+ */
+export interface IThinkingHandler extends IBaseAgentHandler<IThinkingHandlerParams, IThinkingHandlerResult> {
+    onThinkingStarted?(params: IThinkingHandlerParams): Promise<void>;
+    onThinkingCompleted?(params: IThinkingHandlerParams): Promise<void>;
+    onThinkingError?(params: IThinkingHandlerParams & { error: Error }): Promise<void>;
+}
+
+/**
+ * Error handler interface
+ */
+export interface IErrorHandler extends IBaseAgentHandler<IErrorHandlerParams, IErrorHandlerResult> {
+    onErrorOccurred?(params: IErrorHandlerParams): Promise<void>;
+    onErrorHandled?(params: IErrorHandlerParams): Promise<void>;
+    onRecoveryStarted?(params: IErrorHandlerParams): Promise<void>;
+    onRecoveryCompleted?(params: IErrorHandlerParams): Promise<void>;
+    onRecoveryFailed?(params: IErrorHandlerParams): Promise<void>;
 }

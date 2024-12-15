@@ -1,155 +1,21 @@
 /**
  * @file agentLoopTypes.ts
  * @path KaibanJS/src/types/agent/agentLoopTypes.ts
- * @description Types for agentic loop handling and control flow
+ * @description Type guards for agentic loop handling
+ * @deprecated Use types and type guards from executionFlow.ts instead. This file is maintained for backward compatibility.
  */
 
-import { LLMResult } from '@langchain/core/outputs';
-import type { IHandlerResult } from '../common/commonHandlerTypes';
-import type { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
-import type { IAgentType } from './agentBaseTypes';
-import type { ITaskType } from '../task/taskBaseTypes';
-import type { ILLMUsageMetrics } from '../llm/llmMetricTypes';
-import type { IErrorType } from '../common/commonErrorTypes';
-import type { 
-    IPerformanceMetrics,
-    IResourceMetrics,
-    IUsageMetrics,
-    IStandardCostDetails
-} from '../common/commonMetricTypes';
+import type {
+    ILoopContext,
+    ILoopHandlerMetadata,
+    ILoopResult,
+    ILoopControl
+} from './executionFlow';
 
-// ─── Loop Parameters ────────────────────────────────────────────────────────
-
-export interface ILoopExecutionParams {
-    agent: IAgentType;
-    task: ITaskType;
-    feedbackMessage?: string;
-    options?: {
-        maxRetries?: number;
-        retryDelay?: number;
-        timeout?: number;
-        validateOutput?: boolean;
-    };
-}
-
-// ─── Loop Context & Control ────────────────────────────────────────────────
-
-export interface ILoopContext {
-    startTime: number;
-    endTime?: number;
-    iterations: number;
-    maxIterations: number;
-    lastUpdateTime: number;
-    status: 'running' | 'completed' | 'error';
-    error?: IErrorType;
-    performance: IPerformanceMetrics;
-    resources: IResourceMetrics;
-    usage: IUsageMetrics;
-    costs: IStandardCostDetails;
-    lastOutput?: LLMResult;
-}
-
-export interface ILoopControl {
-    shouldContinue: boolean;
-    feedbackMessage?: string;
-    metrics?: {
-        confidence: number;
-        progress: number;
-        remainingIterations: number;
-        executionTime: number;
-    };
-}
-
-// ─── Loop Metadata & Results ────────────────────────────────────────────────
-
-export interface ILoopHandlerMetadata extends IBaseHandlerMetadata {
-    loop: {
-        iterations: number;
-        maxIterations: number;
-        status: 'running' | 'completed' | 'error';
-        performance: IPerformanceMetrics;
-        context: {
-            startTime: number;
-            endTime?: number;
-            totalTokens: number;
-            confidence: number;
-            reasoningChain: string[];
-        };
-        resources: IResourceMetrics;
-        usage: IUsageMetrics;
-        costs: IStandardCostDetails;
-        llmUsageMetrics: ILLMUsageMetrics;
-    };
-    agent: {
-        id: string;
-        name: string;
-        metrics: {
-            iterations: number;
-            executionTime: number;
-            llmUsageMetrics: ILLMUsageMetrics;
-            performance: IPerformanceMetrics;
-        };
-    };
-    task: {
-        id: string;
-        title: string;
-        metrics: {
-            iterations: number;
-            executionTime: number;
-            llmUsageMetrics: ILLMUsageMetrics;
-            performance: IPerformanceMetrics;
-        };
-    };
-    [key: string]: unknown;
-}
-
-export interface ILoopResult {
-    success: boolean;
-    result?: LLMResult;
-    error?: IErrorType;
-    metadata: {
-        iterations: number;
-        maxAgentIterations: number;
-        metrics?: {
-            performance: IPerformanceMetrics;
-            resources: IResourceMetrics;
-            usage: IUsageMetrics;
-            costs: IStandardCostDetails;
-        };
-        [key: string]: unknown;
-    };
-}
-
-export type ILoopHandlerResult<T = unknown> = IHandlerResult<T, ILoopHandlerMetadata>;
-
-/** Utility function to create a loop handler result */
-export const createLoopHandlerResult = (
-    success: boolean,
-    metadata: ILoopHandlerMetadata,
-    data: {
-        success: boolean;
-        result?: LLMResult;
-        error?: IErrorType;
-        metadata: {
-            iterations: number;
-            maxAgentIterations: number;
-            metrics?: {
-                performance: IPerformanceMetrics;
-                resources: IResourceMetrics;
-                usage: IUsageMetrics;
-                costs: IStandardCostDetails;
-            };
-            [key: string]: unknown;
-        };
-    }
-): ILoopHandlerResult<ILoopResult> => ({
-    success,
-    data,
-    metadata
-});
-
-// ─── Type Guards ────────────────────────────────────────────────────────────
-
+/**
+ * Type guards for loop-related types
+ * @deprecated Use ExecutionFlowTypeGuards from executionFlow.ts instead
+ */
 export const ILoopTypeGuards = {
     isLoopContext: (value: unknown): value is ILoopContext => {
         if (typeof value !== 'object' || value === null) return false;

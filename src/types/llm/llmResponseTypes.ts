@@ -2,12 +2,10 @@
  * @file llmResponseTypes.ts
  * @path src/types/llm/llmResponseTypes.ts
  * @description LLM response type definitions using Langchain
- *
- * @module @types/llm
  */
 
 import { BaseMessage, AIMessage } from '@langchain/core/messages';
-import { LLMResult } from '@langchain/core/outputs';
+import { LLMResult, Generation } from '@langchain/core/outputs';
 import { LLM_PROVIDER_enum } from '../common/commonEnums';
 import type { IBaseMetrics } from '../metrics/base/baseMetrics';
 import type { IValidationResult } from '../common/commonValidationTypes';
@@ -31,11 +29,15 @@ export interface ITokenUsage {
 /**
  * Base LLM response extending Langchain's LLMResult with KaibanJS-specific fields
  */
-export interface IBaseLLMResponse extends LLMResult {
+export interface IBaseLLMResponse extends Omit<LLMResult, 'generations'> {
     provider: LLM_PROVIDER_enum;
     model: string;
     metrics: IBaseMetrics;
     message: AIMessage;
+    generations: Generation[][];
+    llmOutput: {
+        tokenUsage: ITokenUsage;
+    };
     performance?: {
         inferenceTime: number;
         throughput: number;
@@ -57,6 +59,14 @@ export interface IGroqResponse extends IBaseLLMResponse {
         memoryUsed: number;
         temperature: number;
     };
+    generations: Generation[][];
+    llmOutput: {
+        tokenUsage: ITokenUsage;
+        modelOutput?: {
+            contextWindow: number;
+            streamingLatency: number;
+        };
+    };
 }
 
 export interface IOpenAIResponse extends IBaseLLMResponse {
@@ -66,6 +76,16 @@ export interface IOpenAIResponse extends IBaseLLMResponse {
     promptFilterResults?: {
         filtered: boolean;
         reason?: string;
+    };
+    generations: Generation[][];
+    llmOutput: {
+        tokenUsage: ITokenUsage;
+        modelOutput?: {
+            completionTokens: number;
+            promptTokens: number;
+            totalTokens: number;
+            finishReason: string;
+        };
     };
 }
 
@@ -80,6 +100,15 @@ export interface IAnthropicResponse extends IBaseLLMResponse {
             outputTokens: number;
         };
     }[];
+    generations: Generation[][];
+    llmOutput: {
+        tokenUsage: ITokenUsage;
+        modelOutput?: {
+            stopReason: string;
+            modelVersion: string;
+            contextUtilization: number;
+        };
+    };
 }
 
 export interface IGoogleResponse extends IBaseLLMResponse {
@@ -97,6 +126,25 @@ export interface IGoogleResponse extends IBaseLLMResponse {
             title?: string;
         }>;
     };
+    generations: Generation[][];
+    llmOutput: {
+        tokenUsage: ITokenUsage;
+        modelOutput?: {
+            safetyRatings: Array<{
+                category: string;
+                probability: number;
+                filtered: boolean;
+            }>;
+            citationMetadata?: {
+                citations: Array<{
+                    startIndex: number;
+                    endIndex: number;
+                    url: string;
+                    title?: string;
+                }>;
+            };
+        };
+    };
 }
 
 export interface IMistralResponse extends IBaseLLMResponse {
@@ -105,6 +153,21 @@ export interface IMistralResponse extends IBaseLLMResponse {
         coherence: number;
         relevance: number;
         toxicity: number;
+    };
+    generations: Generation[][];
+    llmOutput: {
+        tokenUsage: ITokenUsage;
+        modelOutput?: {
+            responseQuality: {
+                coherence: number;
+                relevance: number;
+                toxicity: number;
+            };
+            inferenceStats: {
+                tokensPerSecond: number;
+                gpuMemoryUsage: number;
+            };
+        };
     };
 }
 

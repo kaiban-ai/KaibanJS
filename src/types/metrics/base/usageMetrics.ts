@@ -7,20 +7,16 @@
  */
 
 import { createValidationResult } from '@utils/validation/validationUtils';
-import type { IValidationResult } from '../../common/commonValidationTypes';
-import type { IStandardCostDetails } from '../../common/commonMetricTypes';
+import type { IValidationResult } from '../../common/validationTypes';
+import type { IStandardCostDetails } from '../../common/baseTypes';
 
 /**
  * Rate limit tracking
  */
 export interface IRateLimitMetrics {
-  /** Current rate limit usage */
   current: number;
-  /** Total rate limit allowed */
   limit: number;
-  /** Remaining rate limit */
   remaining: number;
-  /** Timestamp when the rate limit resets */
   resetTime: number;
 }
 
@@ -28,21 +24,13 @@ export interface IRateLimitMetrics {
  * Comprehensive usage metrics for system monitoring
  */
 export interface IUsageMetrics {
-  /** Total number of requests made */
   readonly totalRequests: number;
-  /** Number of active users */
   readonly activeUsers: number;
-  /** Requests processed per second */
   readonly requestsPerSecond: number;
-  /** Average size of responses */
   readonly averageResponseSize: number;
-  /** Peak memory usage in bytes */
   readonly peakMemoryUsage: number;
-  /** System uptime in seconds */
   readonly uptime: number;
-  /** Rate limit information */
   readonly rateLimit: IRateLimitMetrics;
-  /** Timestamp of metrics collection */
   readonly timestamp: number;
 }
 

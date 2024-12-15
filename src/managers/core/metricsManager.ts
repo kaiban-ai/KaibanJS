@@ -1,48 +1,55 @@
 /**
  * @file metricsManager.ts
- * @path KaibanJS/src/managers/core/metricsManager.ts
- * @description Core metrics management implementation providing centralized metrics collection and aggregation
+ * @description Core metrics management with delegated responsibilities to specialized managers
  */
 
 import { CoreManager } from './coreManager';
-import { createValidationResult } from '../../utils/validation/validationUtils';
-import { createBaseMetadata } from '../../types/common/commonMetadataTypes';
-import { createError } from '../../types/common/commonErrorTypes';
-import type { IValidationResult } from '../../types/common/commonValidationTypes';
+import { MetricsAdapter } from '../../metrics/MetricsAdapter';
+import { LLMMetricsCollector } from '../../metrics/LLMMetricsCollector';
+import { MANAGER_CATEGORY_enum } from '../../types/common/enumTypes';
+import { ERROR_KINDS, createError } from '../../types/common/errorTypes';
+import { createBaseMetadata } from '../../types/common/baseTypes';
 import { 
     MetricDomain,
     MetricType,
-    AggregationStrategy
-} from '../../types/metrics/base/metricsManagerTypes';
-import type {
     IMetricsManager,
     IMetricEvent,
     IMetricFilter,
     IAggregationQuery,
-    IAggregatedMetric,
-    IRolledUpMetrics,
     IMetricsHandlerResult,
     IMetricsHandlerMetadata
 } from '../../types/metrics/base/metricsManagerTypes';
 import type { IResourceMetrics } from '../../types/metrics/base/resourceMetrics';
 import type { IPerformanceMetrics } from '../../types/metrics/base/performanceMetrics';
-import type { IIterationContext } from '../../types/agent/agentIterationTypes';
-import type { ICostDetails } from '../../types/workflow/workflowCostsTypes';
+import type { IEnhancedErrorMetrics } from '../../types/metrics/base/errorMetrics';
 
-/**
- * Core metrics manager implementation
- */
+import { ErrorMetricsManager } from './metrics/errorMetricsManager';
+import { ResourceMetricsManager } from './metrics/resourceMetricsManager';
+import { PerformanceMetricsManager } from './metrics/performanceMetricsManager';
+import { SystemHealthManager } from './metrics/systemHealthManager';
+import { AggregationManager } from './metrics/aggregationManager';
+import { validateMetricEvent } from './metrics/utils/metricValidation';
+
 export class MetricsManager extends CoreManager implements IMetricsManager {
     private static instance: MetricsManager | null = null;
-    private metrics: Map<string, IMetricEvent[]>;
-    private readonly CLEANUP_INTERVAL = 3600000; // 1 hour
-    private readonly RETENTION_PERIOD = 86400000; // 24 hours
+    private readonly metricsCollector: LLMMetricsCollector;
+    private readonly errorMetricsManager: ErrorMetricsManager;
+    private readonly resourceMetricsManager: ResourceMetricsManager;
+    private readonly performanceMetricsManager: PerformanceMetricsManager;
+    private readonly systemHealthManager: SystemHealthManager;
+    private readonly aggregationManager: AggregationManager;
+
+    public readonly category = MANAGER_CATEGORY_enum.CORE;
 
     private constructor() {
         super();
-        this.metrics = new Map();
+        this.metricsCollector = new LLMMetricsCollector();
+        this.errorMetricsManager = ErrorMetricsManager.getInstance();
+        this.resourceMetricsManager = ResourceMetricsManager.getInstance();
+        this.performanceMetricsManager = PerformanceMetricsManager.getInstance();
+        this.systemHealthManager = SystemHealthManager.getInstance();
+        this.aggregationManager = AggregationManager.getInstance();
         this.registerDomainManager('MetricsManager', this);
-        this.setupCleanupInterval();
     }
 
     public static getInstance(): MetricsManager {
@@ -52,197 +59,34 @@ export class MetricsManager extends CoreManager implements IMetricsManager {
         return MetricsManager.instance;
     }
 
-    /**
-     * Create base time metrics structure
-     */
-    private createBaseTimeMetrics() {
-        return {
-            total: 0,
-            average: 0,
-            min: 0,
-            max: 0
-        };
-    }
-
-    /**
-     * Create base cost details structure
-     */
-    public createCostDetails(): ICostDetails {
-        return {
-            inputCost: 0,
-            outputCost: 0,
-            totalCost: 0,
-            currency: 'USD',
-            breakdown: {
-                promptTokens: { count: 0, cost: 0 },
-                completionTokens: { count: 0, cost: 0 }
-            }
-        };
-    }
-
-    /**
-     * Create iteration context with default metrics
-     */
-    public createIterationContext(): IIterationContext {
-        const defaultTimeMetrics = this.createBaseTimeMetrics();
-
-        return {
-            startTime: Date.now(),
-            iterations: 0,
-            maxIterations: 0,
-            lastUpdateTime: Date.now(),
-            status: 'running',
-            performance: {
-                executionTime: defaultTimeMetrics,
-                throughput: {
-                    operationsPerSecond: 0,
-                    dataProcessedPerSecond: 0
-                },
-                errorMetrics: {
-                    totalErrors: 0,
-                    errorRate: 0
-                },
-                resourceUtilization: {
-                    cpuUsage: 0,
-                    memoryUsage: process.memoryUsage().heapUsed,
-                    diskIO: { read: 0, write: 0 },
-                    networkUsage: { upload: 0, download: 0 },
-                    timestamp: Date.now()
-                },
-                timestamp: Date.now(),
-                thinking: {
-                    reasoningTime: defaultTimeMetrics,
-                    planningTime: defaultTimeMetrics,
-                    learningTime: defaultTimeMetrics,
-                    decisionConfidence: 0,
-                    learningEfficiency: 0
-                },
-                taskSuccessRate: 0,
-                goalAchievementRate: 0,
-                latency: defaultTimeMetrics,
-                responseTime: defaultTimeMetrics,
-                queueLength: 0,
-                errorRate: 0,
-                successRate: 0
-            },
-            resources: {
-                cpuUsage: 0,
-                memoryUsage: process.memoryUsage().heapUsed,
-                diskIO: { read: 0, write: 0 },
-                networkUsage: { upload: 0, download: 0 },
-                timestamp: Date.now(),
-                cognitive: {
-                    memoryAllocation: 0,
-                    cognitiveLoad: 0,
-                    processingCapacity: 1,
-                    contextUtilization: 0
-                }
-            },
-            usage: {
-                // Base IUsageMetrics properties
-                totalRequests: 0,
-                activeUsers: 0,
-                requestsPerSecond: 0,
-                averageResponseSize: 0,
-                peakMemoryUsage: 0,
-                uptime: 0,
-                rateLimit: {
-                    current: 0,
-                    limit: 0,
-                    remaining: 0,
-                    resetTime: Date.now()
-                },
-                timestamp: Date.now(),
-                // Additional IAgentUsageMetrics properties
-                state: {
-                    currentState: 'initialized',
-                    stateTime: 0,
-                    transitionCount: 0,
-                    failedTransitions: 0,
-                    blockedTaskCount: 0,
-                    historyEntryCount: 0,
-                    lastHistoryUpdate: Date.now()
-                },
-                toolUsageFrequency: {},
-                taskCompletionCount: 0,
-                averageTaskTime: 0
-            },
-            costs: this.createCostDetails()
-        };
-    }
-
-    /**
-     * Get initial resource metrics
-     */
-    public async getInitialResourceMetrics(): Promise<IResourceMetrics> {
-        return {
-            cpuUsage: 0,
-            memoryUsage: process.memoryUsage().heapUsed,
-            diskIO: { read: 0, write: 0 },
-            networkUsage: { upload: 0, download: 0 },
-            timestamp: Date.now()
-        };
-    }
-
-    /**
-     * Get initial performance metrics
-     */
-    public async getInitialPerformanceMetrics(): Promise<IPerformanceMetrics> {
-        return {
-            executionTime: { total: 0, average: 0, max: 0, min: 0 },
-            latency: { total: 0, average: 0, max: 0, min: 0 },
-            throughput: {
-                operationsPerSecond: 0,
-                dataProcessedPerSecond: 0
-            },
-            responseTime: { total: 0, average: 0, max: 0, min: 0 },
-            queueLength: 0,
-            errorRate: 0,
-            successRate: 0,
-            errorMetrics: {
-                totalErrors: 0,
-                errorRate: 0
-            },
-            resourceUtilization: await this.getInitialResourceMetrics(),
-            timestamp: Date.now()
-        };
-    }
-
-    /**
-     * Create metrics metadata
-     */
     private createMetricsMetadata(
         domain: MetricDomain,
         type: MetricType,
         startTime: number
     ): IMetricsHandlerMetadata {
-        const baseMetadata = createBaseMetadata(this.constructor.name, 'metrics');
-        const endTime = Date.now();
-        
         return {
-            ...baseMetadata,
+            ...createBaseMetadata(this.constructor.name, 'metrics'),
             domain,
             type,
             processingTime: {
-                total: endTime - startTime,
-                average: endTime - startTime,
-                min: endTime - startTime,
-                max: endTime - startTime
+                total: Date.now() - startTime,
+                average: Date.now() - startTime,
+                min: Date.now() - startTime,
+                max: Date.now() - startTime
             }
         };
     }
 
-    /**
-     * Track a new metric event
-     */
     public async trackMetric(event: IMetricEvent): Promise<IMetricsHandlerResult<void>> {
         const startTime = Date.now();
+        const metadata = this.createMetricsMetadata(event.domain, event.type, startTime);
+
         try {
-            const validation = this.validateMetricEvent(event);
+            const validation = validateMetricEvent(event);
             if (!validation.isValid) {
                 throw createError({
                     message: `Invalid metric event: ${validation.errors.join(', ')}`,
-                    type: 'ValidationError',
+                    type: ERROR_KINDS.ValidationError,
                     context: {
                         component: this.constructor.name,
                         operation: 'trackMetric',
@@ -251,375 +95,66 @@ export class MetricsManager extends CoreManager implements IMetricsManager {
                 });
             }
 
-            const key = this.getMetricKey(event.domain, event.type);
-            if (!this.metrics.has(key)) {
-                this.metrics.set(key, []);
-            }
-            this.metrics.get(key)?.push(event);
-
-            this.logDebug('Tracked metric', this.constructor.name);
-
-            return {
-                success: true,
-                data: undefined,
-                metadata: this.createMetricsMetadata(event.domain, event.type, startTime)
-            };
-        } catch (error) {
-            const kaibanError = createError({
-                message: error instanceof Error ? error.message : String(error),
-                type: 'SystemError',
-                context: {
-                    component: this.constructor.name,
-                    operation: 'trackMetric',
-                    event
-                }
-            });
-            this.handleError(kaibanError, 'Failed to track metric');
-            return {
-                success: false,
-                error: kaibanError,
-                metadata: this.createMetricsMetadata(event.domain, event.type, startTime)
-            };
-        }
-    }
-
-    /**
-     * Get metrics based on filter
-     */
-    public async getMetrics(filter: IMetricFilter): Promise<IMetricsHandlerResult<IMetricEvent[]>> {
-        const startTime = Date.now();
-        try {
-            const results: IMetricEvent[] = [];
-            
-            for (const [key, metrics] of this.metrics.entries()) {
-                const [domain, type] = this.parseMetricKey(key);
-                
-                if (filter.domain && domain !== filter.domain) continue;
-                if (filter.type && type !== filter.type) continue;
-                
-                const filtered = metrics.filter(metric => {
-                    if (filter.timeFrame) {
-                        if (metric.timestamp < filter.timeFrame.start || metric.timestamp > filter.timeFrame.end) {
-                            return false;
-                        }
-                    }
-                    
-                    if (filter.metadata) {
-                        return Object.entries(filter.metadata).every(([key, value]) => 
-                            metric.metadata[key] === value
-                        );
-                    }
-                    return true;
-                });
-                
-                results.push(...filtered);
-            }
-
-            this.logDebug('Retrieved metrics', this.constructor.name);
-
-            return {
-                success: true,
-                data: results,
-                metadata: this.createMetricsMetadata(
-                    filter.domain ?? MetricDomain.WORKFLOW,
-                    filter.type ?? MetricType.PERFORMANCE,
-                    startTime
-                )
-            };
-        } catch (error) {
-            const kaibanError = createError({
-                message: error instanceof Error ? error.message : String(error),
-                type: 'SystemError',
-                context: {
-                    component: this.constructor.name,
-                    operation: 'getMetrics',
-                    filter
-                }
-            });
-            this.handleError(kaibanError, 'Failed to get metrics');
-            return {
-                success: false,
-                error: kaibanError,
-                metadata: this.createMetricsMetadata(
-                    filter.domain ?? MetricDomain.WORKFLOW,
-                    filter.type ?? MetricType.PERFORMANCE,
-                    startTime
-                )
-            };
-        }
-    }
-
-    /**
-     * Aggregate metrics based on query
-     */
-    public async aggregateMetrics(query: IAggregationQuery): Promise<IMetricsHandlerResult<IAggregatedMetric>> {
-        const startTime = Date.now();
-        try {
-            const metricsResult = await this.getMetrics(query);
-            const metrics = metricsResult.data || [];
-            
-            if (!metrics.length) {
-                throw createError({
-                    message: 'No metrics found for aggregation',
-                    type: 'ValidationError',
-                    context: {
-                        component: this.constructor.name,
-                        operation: 'aggregateMetrics',
-                        query
-                    }
-                });
-            }
-
-            const numericMetrics = metrics.filter(m => typeof m.value === 'number');
-            if (!numericMetrics.length) {
-                throw createError({
-                    message: 'No numeric metrics found for aggregation',
-                    type: 'ValidationError',
-                    context: {
-                        component: this.constructor.name,
-                        operation: 'aggregateMetrics',
-                        query
-                    }
-                });
-            }
-
-            const values = numericMetrics.map(m => m.value as number);
-            let aggregatedValue: number;
-
-            switch (query.strategy) {
-                case AggregationStrategy.SUM:
-                    aggregatedValue = values.reduce((a, b) => a + b, 0);
+            // Delegate to appropriate manager based on metric type
+            switch (event.type) {
+                case MetricType.RESOURCE:
+                    await this.resourceMetricsManager.trackMetric(event);
                     break;
-                case AggregationStrategy.AVERAGE:
-                    aggregatedValue = values.reduce((a, b) => a + b, 0) / values.length;
-                    break;
-                case AggregationStrategy.MAX:
-                    aggregatedValue = Math.max(...values);
-                    break;
-                case AggregationStrategy.MIN:
-                    aggregatedValue = Math.min(...values);
-                    break;
-                case AggregationStrategy.LATEST:
-                    aggregatedValue = values[values.length - 1];
+                case MetricType.PERFORMANCE:
+                    await this.performanceMetricsManager.trackMetric(event);
                     break;
                 default:
-                    throw createError({
-                        message: `Unsupported aggregation strategy: ${query.strategy}`,
-                        type: 'ValidationError',
-                        context: {
-                            component: this.constructor.name,
-                            operation: 'aggregateMetrics',
-                            query
-                        }
-                    });
+                    await this.aggregationManager.trackMetric(event);
             }
 
-            const result: IAggregatedMetric = {
-                domain: query.domain!,
-                type: query.type!,
-                timeFrame: query.timeFrame!,
-                count: values.length,
-                value: aggregatedValue,
-                strategy: query.strategy,
-                metadata: {
-                    groupBy: query.groupBy
-                }
-            };
+            // Special handling for LLM metrics
+            if (event.domain === MetricDomain.LLM) {
+                this.metricsCollector.trackMetrics(event.type, event.metadata);
+            }
 
-            this.logDebug('Aggregated metrics', this.constructor.name);
-
+            this.logDebug('Tracked metric');
             return {
                 success: true,
-                data: result,
-                metadata: this.createMetricsMetadata(query.domain!, query.type!, startTime)
+                metadata
             };
         } catch (error) {
-            const kaibanError = createError({
-                message: error instanceof Error ? error.message : String(error),
-                type: 'SystemError',
-                context: {
-                    component: this.constructor.name,
-                    operation: 'aggregateMetrics',
-                    query
-                }
-            });
-            this.handleError(kaibanError, 'Failed to aggregate metrics');
             return {
                 success: false,
-                error: kaibanError,
-                metadata: this.createMetricsMetadata(query.domain!, query.type!, startTime)
-            };
-        }
-    }
-
-    /**
-     * Roll up metrics across time periods
-     */
-    public async rollupMetrics(query: IAggregationQuery): Promise<IMetricsHandlerResult<IRolledUpMetrics>> {
-        const startTime = Date.now();
-        try {
-            const metricsResult = await this.getMetrics(query);
-            const metrics = metricsResult.data || [];
-            
-            if (!metrics.length) {
-                throw createError({
-                    message: 'No metrics found for rollup',
-                    type: 'ValidationError',
+                error: createError({
+                    message: error instanceof Error ? error.message : String(error),
+                    type: ERROR_KINDS.SystemError,
                     context: {
                         component: this.constructor.name,
-                        operation: 'rollupMetrics',
-                        query
+                        operation: 'trackMetric'
                     }
-                });
-            }
-
-            const periodSize = this.calculatePeriodSize(query.timeFrame!.start, query.timeFrame!.end);
-            const periods = new Map<number, number[]>();
-
-            for (const metric of metrics) {
-                const periodStart = Math.floor(metric.timestamp / periodSize) * periodSize;
-                if (!periods.has(periodStart)) {
-                    periods.set(periodStart, []);
-                }
-                if (typeof metric.value === 'number') {
-                    periods.get(periodStart)!.push(metric.value);
-                }
-            }
-
-            const rolledUp: IRolledUpMetrics = {
-                domain: query.domain!,
-                type: query.type!,
-                periods: Array.from(periods.entries()).map(([periodStart, values]) => ({
-                    timeFrame: {
-                        start: periodStart,
-                        end: periodStart + periodSize
-                    },
-                    value: this.calculateAggregatedValue(values, query.strategy)
-                })),
-                metadata: {
-                    periodSize,
-                    totalPeriods: periods.size
-                }
-            };
-
-            this.logDebug('Rolled up metrics', this.constructor.name);
-
-            return {
-                success: true,
-                data: rolledUp,
-                metadata: this.createMetricsMetadata(query.domain!, query.type!, startTime)
-            };
-        } catch (error) {
-            const kaibanError = createError({
-                message: error instanceof Error ? error.message : String(error),
-                type: 'SystemError',
-                context: {
-                    component: this.constructor.name,
-                    operation: 'rollupMetrics',
-                    query
-                }
-            });
-            this.handleError(kaibanError, 'Failed to roll up metrics');
-            return {
-                success: false,
-                error: kaibanError,
-                metadata: this.createMetricsMetadata(query.domain!, query.type!, startTime)
+                }),
+                metadata
             };
         }
     }
 
-    /**
-     * Clean up old metrics
-     */
-    private async cleanup(): Promise<void> {
-        const cutoff = Date.now() - this.RETENTION_PERIOD;
-        
-        for (const [key, metrics] of this.metrics.entries()) {
-            const filtered = metrics.filter(m => m.timestamp >= cutoff);
-            if (filtered.length !== metrics.length) {
-                this.metrics.set(key, filtered);
-                this.logDebug('Cleaned up metrics', this.constructor.name);
-            }
-        }
+    public async getMetrics(filter: IMetricFilter): Promise<IMetricsHandlerResult<IMetricEvent[]>> {
+        return this.aggregationManager.getMetrics(filter);
     }
 
-    private setupCleanupInterval(): void {
-        setInterval(() => {
-            this.cleanup().catch(error => {
-                this.logError('Failed to clean up metrics', this.constructor.name);
-            });
-        }, this.CLEANUP_INTERVAL);
+    public async aggregateMetrics(query: IAggregationQuery): Promise<IMetricsHandlerResult<any>> {
+        return this.aggregationManager.aggregateMetrics(query);
     }
 
-    private getMetricKey(domain: MetricDomain, type: MetricType): string {
-        return `${domain}_${type}`;
+    public async rollupMetrics(query: IAggregationQuery): Promise<IMetricsHandlerResult<any>> {
+        return this.aggregationManager.rollupMetrics(query);
     }
 
-    private parseMetricKey(key: string): [MetricDomain, MetricType] {
-        const [domain, type] = key.split('_') as [MetricDomain, MetricType];
-        return [domain, type];
+    public async getInitialResourceMetrics(): Promise<IResourceMetrics> {
+        return this.resourceMetricsManager.getInitialMetrics();
     }
 
-    private calculatePeriodSize(start: number, end: number): number {
-        const duration = end - start;
-        const targetPeriods = 24; // Aim for 24 periods
-        return Math.ceil(duration / targetPeriods);
+    public async getInitialPerformanceMetrics(): Promise<IPerformanceMetrics> {
+        return this.performanceMetricsManager.getInitialMetrics();
     }
 
-    private calculateAggregatedValue(values: number[], strategy: AggregationStrategy): number {
-        switch (strategy) {
-            case AggregationStrategy.SUM:
-                return values.reduce((a, b) => a + b, 0);
-            case AggregationStrategy.AVERAGE:
-                return values.reduce((a, b) => a + b, 0) / values.length;
-            case AggregationStrategy.MAX:
-                return Math.max(...values);
-            case AggregationStrategy.MIN:
-                return Math.min(...values);
-            case AggregationStrategy.LATEST:
-                return values[values.length - 1];
-            default:
-                throw createError({
-                    message: `Unsupported aggregation strategy: ${strategy}`,
-                    type: 'ValidationError',
-                    context: {
-                        component: this.constructor.name,
-                        operation: 'calculateAggregatedValue',
-                        strategy
-                    }
-                });
-        }
-    }
-
-    private validateMetricEvent(event: IMetricEvent): IValidationResult {
-        const errors: string[] = [];
-        const warnings: string[] = [];
-
-        if (!Object.values(MetricDomain).includes(event.domain)) {
-            errors.push(`Invalid metric domain: ${event.domain}`);
-        }
-
-        if (!Object.values(MetricType).includes(event.type)) {
-            errors.push(`Invalid metric type: ${event.type}`);
-        }
-
-        if (typeof event.value !== 'number' && typeof event.value !== 'string') {
-            errors.push('Metric value must be number or string');
-        }
-
-        if (typeof event.timestamp !== 'number') {
-            errors.push('Timestamp must be a number');
-        }
-
-        if (event.timestamp > Date.now()) {
-            warnings.push('Timestamp is in the future');
-        }
-
-        if (typeof event.metadata !== 'object' || event.metadata === null) {
-            errors.push('Metadata must be an object');
-        }
-
-        return createValidationResult(errors.length === 0, errors, warnings);
+    public getErrorMetrics(): IEnhancedErrorMetrics {
+        return this.errorMetricsManager.getMetrics();
     }
 }
 

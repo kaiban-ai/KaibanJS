@@ -9,9 +9,9 @@
 import { IResourceMetrics } from '../metrics/base/resourceMetrics';
 import { IPerformanceMetrics, ITimeMetrics, IThroughputMetrics, IErrorMetrics } from '../metrics/base/performanceMetrics';
 import { IUsageMetrics } from '../metrics/base/usageMetrics';
-import { METRIC_TYPE_enum, RESOURCE_STATUS_enum, ERROR_TYPE_enum } from '../common/commonEnums';
+import { METRIC_TYPE_enum, RESOURCE_STATUS_enum} from '../common/enumTypes';
 import { createValidationResult } from '@utils/validation/validationUtils';
-import type { IValidationResult } from '../common/commonValidationTypes';
+import type { IValidationResult } from '../common/validationTypes';
 
 // ─── Resource Metrics ────────────────────────────────────────────────────────────
 

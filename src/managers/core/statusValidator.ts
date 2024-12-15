@@ -9,6 +9,7 @@
 import CoreManager from './coreManager';
 import { TransitionRules } from './transitionRules';
 import { createValidationResult } from '../../types/common/commonValidationTypes';
+import { createBaseMetadata } from '../../types/common/commonMetadataTypes';
 
 // Import types from canonical locations
 import type {
@@ -28,8 +29,11 @@ import {
     MESSAGE_STATUS_enum,
     TASK_STATUS_enum,
     WORKFLOW_STATUS_enum,
+    MANAGER_CATEGORY_enum,
     EnumTypeGuards
 } from '../../types/common/commonEnums';
+
+import type { IBaseManagerMetadata } from '../../types/agent/agentManagerTypes';
 
 type Phase = 'pre-execution' | 'execution' | 'post-execution' | 'error';
 const VALID_PHASE_TRANSITIONS: Record<Phase, Phase[]> = {
@@ -45,6 +49,8 @@ const VALID_PHASE_TRANSITIONS: Record<Phase, Phase[]> = {
 export class StatusValidator extends CoreManager {
     private static instance: StatusValidator;
 
+    public readonly category: MANAGER_CATEGORY_enum = MANAGER_CATEGORY_enum.CORE;
+
     private constructor() {
         super();
     }
@@ -54,6 +60,41 @@ export class StatusValidator extends CoreManager {
             StatusValidator.instance = new StatusValidator();
         }
         return StatusValidator.instance;
+    }
+
+    /**
+     * Initialize the validator
+     */
+    public async initialize(params?: Record<string, unknown>): Promise<void> {
+        const metadata = createBaseMetadata('StatusValidator', 'initialize');
+        this.logInfo('Initializing status validator', { params, metadata });
+    }
+
+    /**
+     * Validate manager parameters
+     */
+    public async validate(params: unknown): Promise<boolean> {
+        return true;
+    }
+
+    /**
+     * Get manager metadata
+     */
+    public getMetadata(): IBaseManagerMetadata {
+        return {
+            category: this.category,
+            operation: 'validate',
+            duration: 0,
+            status: 'success',
+            agent: {
+                id: '',
+                name: '',
+                role: '',
+                status: ''
+            },
+            timestamp: Date.now(),
+            component: 'StatusValidator'
+        };
     }
 
     /**
@@ -191,7 +232,7 @@ export class StatusValidator extends CoreManager {
             };
 
         } catch (error) {
-            this.log(`Validation error: ${error}`, undefined, undefined, 'error');
+            this.logError(`Validation error: ${error}`, error as Error);
             return {
                 ...createValidationResult(false, 'StatusValidator'),
                 errors: [(error as Error).message],

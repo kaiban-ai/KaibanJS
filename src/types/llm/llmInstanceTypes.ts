@@ -1,143 +1,73 @@
 /**
  * @file llmInstanceTypes.ts
- * @path KaibanJS/src/types/llm/llmInstanceTypes.ts
- * @description LLM instance interfaces and runtime behavior types using Langchain
+ * @path src/types/llm/llmInstanceTypes.ts
+ * @description LLM instance type definitions and type guards
  *
- * @module types/llm
+ * @module @types/llm
  */
 
-import { BaseChatModel, BaseChatModelParams, BaseChatModelCallOptions } from '@langchain/core/language_models/chat_models';
-import { BaseMessage, BaseMessageLike, AIMessage, AIMessageChunk, MessageType } from '@langchain/core/messages';
-import { BaseLanguageModelInput } from '@langchain/core/language_models/base';
-import { LLMResult } from '@langchain/core/outputs';
+import { BaseChatModel, BaseChatModelCallOptions } from '@langchain/core/language_models/chat_models';
+import { BaseMessage, AIMessageChunk } from '@langchain/core/messages';
 import { Callbacks } from '@langchain/core/callbacks/manager';
-import { LLM_PROVIDER_enum } from '../common/commonEnums';
-import { 
-    type LLMProviderConfig,
-    type IGroqConfig,
-    type IOpenAIConfig,
-    type IAnthropicConfig,
-    type IGoogleConfig,
-    type IMistralConfig
-} from './llmProviderTypes';
-
+import { BaseLanguageModelInput } from '@langchain/core/language_models/base';
+import { LLM_PROVIDER_enum, LLM_STATUS_enum } from '../common/enumTypes';
+import type { ILLMProviderConfig, ILLMProviderMetrics } from './llmProviderTypes';
+import type { IValidationResult } from '../common/validationTypes';
 import type { LLMResponse } from './llmResponseTypes';
-import type { IValidationResult } from '../common/commonValidationTypes';
 
-// ─── Core Instance Interface ─────────────────────────────────────────────────────
+// ─── Instance Types ──────────────────────────────────────────────────────────────
+
+export interface ILLMInstanceOptions extends BaseChatModelCallOptions {
+    callbacks?: Callbacks;
+    parentRunId?: string;
+    tags?: string[];
+}
 
 export interface ILLMInstance {
     id: string;
-    generate(
-        messages: BaseLanguageModelInput,
-        options?: BaseChatModelCallOptions,
-        callbacks?: Callbacks
-    ): Promise<LLMResponse>;
-
-    generateStream(
-        messages: BaseLanguageModelInput,
-        options?: BaseChatModelCallOptions,
-        callbacks?: Callbacks
-    ): AsyncGenerator<AIMessageChunk>;
-
-    validateConfig(config: LLMProviderConfig): Promise<IValidationResult>;
+    provider: LLM_PROVIDER_enum;
+    config: ILLMProviderConfig;
+    metrics: ILLMProviderMetrics;
+    status: LLM_STATUS_enum;
+    lastUsed: number;
+    errorCount: number;
+    
+    // Required methods matching Langchain's types
+    generate(messages: BaseLanguageModelInput, options?: BaseChatModelCallOptions): Promise<LLMResponse>;
+    generateStream(messages: BaseLanguageModelInput, options?: BaseChatModelCallOptions): AsyncGenerator<AIMessageChunk, void, unknown>;
+    validateConfig(config: ILLMProviderConfig): Promise<IValidationResult>;
     cleanup(): Promise<void>;
-    getConfig(): LLMProviderConfig;
-    updateConfig(updates: Partial<BaseChatModelCallOptions>): void;
-    getProvider(): LLM_PROVIDER_enum;
+    getMetrics(): Promise<ILLMProviderMetrics>;
+    getStatus(): Promise<LLM_STATUS_enum>;
+    reset(): Promise<void>;
 }
 
 export interface IAgenticLoopResult {
-    error?: string;
-    result?: LLMResult | null;
-    metadata: {
-        iterations: number;
-        maxAgentIterations: number;
-    };
+    success: boolean;
+    output: string;
+    error?: Error;
+    metrics?: ILLMProviderMetrics;
 }
 
-// ─── Provider-Specific Types ─────────────────────────────────────────────────────
+// ─── Type Guards ────────────────────────────────────────────────────────────────
 
-export interface IProviderConfig extends BaseChatModelParams {
-    provider: LLM_PROVIDER_enum;
-    apiKey: string;
-}
-
-export interface IProviderInstance<T extends LLMProviderConfig> extends ILLMInstance {
-    config: T;
-}
-
-export type IGroqInstance = IProviderInstance<IGroqConfig>;
-export type IOpenAIInstance = IProviderInstance<IOpenAIConfig>;
-export type IAnthropicInstance = IProviderInstance<IAnthropicConfig>;
-export type IGoogleInstance = IProviderInstance<IGoogleConfig>;
-export type IMistralInstance = IProviderInstance<IMistralConfig>;
-
-// ─── Type Guards ─────────────────────────────────────────────────────────────────
-
-export const LLMInstanceGuards = {
-    isLLMInstance: (instance: unknown): instance is ILLMInstance => {
-        return instance !== null &&
-               typeof instance === 'object' &&
-               'id' in instance &&
-               'generate' in instance &&
-               'generateStream' in instance &&
-               'getProvider' in instance;
-    },
-
-    isProviderConfig: (config: unknown): config is IProviderConfig => {
-        return config !== null &&
-               typeof config === 'object' &&
-               'provider' in config &&
-               'apiKey' in config;
-    },
-
-    isProviderInstance: <T extends LLMProviderConfig>(
-        instance: ILLMInstance,
-        provider: LLM_PROVIDER_enum
-    ): instance is IProviderInstance<T> => {
-        return instance.getProvider() === provider;
-    }
+export const isLLMInstance = (value: unknown): value is ILLMInstance => {
+    if (typeof value !== 'object' || value === null) return false;
+    const instance = value as Partial<ILLMInstance>;
+    return (
+        typeof instance.id === 'string' &&
+        typeof instance.provider === 'string' &&
+        typeof instance.config === 'object' &&
+        typeof instance.metrics === 'object' &&
+        typeof instance.status === 'string' &&
+        typeof instance.lastUsed === 'number' &&
+        typeof instance.errorCount === 'number' &&
+        typeof instance.generate === 'function' &&
+        typeof instance.generateStream === 'function' &&
+        typeof instance.validateConfig === 'function' &&
+        typeof instance.cleanup === 'function' &&
+        typeof instance.getMetrics === 'function' &&
+        typeof instance.getStatus === 'function' &&
+        typeof instance.reset === 'function'
+    );
 };
-
-// ─── Instance Factory Types ─────────────────────────────────────────────────────
-
-export interface ILLMInstanceFactory {
-    createInstance(config: LLMProviderConfig): Promise<ILLMInstance>;
-}
-
-export interface ILLMInstanceOptions extends BaseChatModelCallOptions {
-    maxConcurrentRequests?: number;
-    retry?: {
-        maxRetries: number;
-        backoffFactor: number;
-    };
-    cache?: {
-        enabled: boolean;
-        maxSize?: number;
-        ttl?: number;
-    };
-}
-
-// ─── Message Conversion Utilities ────────────────────────────────────────────────
-
-export function convertToBaseMessages(input: BaseLanguageModelInput): BaseMessage[] {
-    if (Array.isArray(input)) {
-        return input.map(msg => {
-            if (msg instanceof BaseMessage) {
-                return msg;
-            }
-            if (typeof msg === 'object' && msg !== null && 'content' in msg && 'type' in msg) {
-                return new AIMessage({ content: String(msg.content) });
-            }
-            return new AIMessage({ content: String(msg) });
-        });
-    }
-    if (typeof input === 'string') {
-        return [new AIMessage({ content: input })];
-    }
-    if (input instanceof BaseMessage) {
-        return [input];
-    }
-    throw new Error('Invalid message format');
-}

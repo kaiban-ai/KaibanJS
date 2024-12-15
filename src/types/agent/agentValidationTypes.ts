@@ -9,7 +9,7 @@
 import { z } from 'zod';
 import type { IValidationResult } from '../common/commonValidationTypes';
 import type { IBaseAgent, IAgentCapabilities, IAgentMetadata } from './agentBaseTypes';
-import { LLM_PROVIDER_enum } from '../common/commonEnums';
+import { LLM_PROVIDER_enum, VALIDATION_ERROR_enum, VALIDATION_WARNING_enum } from '../common/commonEnums';
 import { ToolName } from '../tool/toolTypes';
 
 /**
@@ -102,7 +102,10 @@ export type IAgentValidationSchema = z.infer<typeof AgentValidationSchema>;
 /**
  * Agent validation result interface
  */
-export interface IAgentValidationResult extends Omit<IValidationResult, 'metadata'> {
+export interface IAgentValidationResult {
+    isValid: boolean;
+    errors: VALIDATION_ERROR_enum[];
+    warnings: VALIDATION_WARNING_enum[];
     agent?: IBaseAgent;
     metadata: {
         timestamp: number;

@@ -1,16 +1,45 @@
 /**
  * @file messagingBaseTypes.ts
  * @path src/types/llm/message/messagingBaseTypes.ts
- * @description Base types for LLM messaging and communication
- *
- * @module @types/llm/message
+ * @description Custom metadata and history types for LLM messaging
+ * 
+ * Note: Base message types are now handled by Langchain:
+ * - Use BaseMessage from @langchain/core/messages
+ * - Use AIMessage from @langchain/core/messages
+ * - Use HumanMessage from @langchain/core/messages
+ * - Use SystemMessage from @langchain/core/messages
  */
 
 import { BaseMessage } from '@langchain/core/messages';
 import type { ILLMUsageMetrics } from '../llmMetricTypes';
-import type { IStandardCostDetails } from '../../common/commonMetricTypes';
 
-// ─── Base Message Types ────────────────────────────────────────────────────────
+/**
+ * Standard cost details for message operations
+ */
+export interface IStandardCostDetails {
+    /** Total cost in USD */
+    totalCost: number;
+    /** Cost breakdown by component */
+    breakdown: {
+        /** Input tokens cost */
+        inputCost: number;
+        /** Output tokens cost */
+        outputCost: number;
+        /** Additional costs (e.g., API fees) */
+        additionalCosts: number;
+    };
+    /** Cost per token */
+    ratePerToken: {
+        /** Input token rate */
+        input: number;
+        /** Output token rate */
+        output: number;
+    };
+    /** Timestamp of cost calculation */
+    timestamp: number;
+}
+
+// ─── Message Metadata Types ────────────────────────────────────────────────────
 
 /**
  * Base message metadata fields
@@ -36,34 +65,13 @@ export interface IBaseMessageMetadata {
     costDetails?: IStandardCostDetails;
 }
 
-/**
- * Base message properties
- */
-export interface IBaseMessageProps {
-    content: string;
-    metadata?: IBaseMessageMetadata;
-    role?: string;
-    name?: string;
-    additional_kwargs?: Record<string, unknown>;
-}
-
-/**
- * Base message interface extending Langchain's BaseMessage
- */
-export interface IBaseMessage extends BaseMessage {
-    metadata?: IBaseMessageMetadata;
-    role: string;
-    name?: string;
-    additional_kwargs: Record<string, unknown>;
-}
-
 // ─── Message History Types ─────────────────────────────────────────────────────
 
 /**
  * Message history entry
  */
 export interface IMessageHistoryEntry {
-    message: IBaseMessage;
+    message: BaseMessage;
     timestamp: number;
     metadata?: IBaseMessageMetadata;
 }
@@ -102,6 +110,25 @@ export interface IMessageValidationResult {
 
 export const MessageTypeGuards = {
     /**
+     * Check if value is standard cost details
+     */
+    isStandardCostDetails: (value: unknown): value is IStandardCostDetails => {
+        if (typeof value !== 'object' || value === null) return false;
+        const cost = value as Partial<IStandardCostDetails>;
+        return (
+            typeof cost.totalCost === 'number' &&
+            typeof cost.breakdown === 'object' &&
+            typeof cost.breakdown.inputCost === 'number' &&
+            typeof cost.breakdown.outputCost === 'number' &&
+            typeof cost.breakdown.additionalCosts === 'number' &&
+            typeof cost.ratePerToken === 'object' &&
+            typeof cost.ratePerToken.input === 'number' &&
+            typeof cost.ratePerToken.output === 'number' &&
+            typeof cost.timestamp === 'number'
+        );
+    },
+
+    /**
      * Check if value is base message metadata
      */
     isBaseMessageMetadata: (value: unknown): value is IBaseMessageMetadata => {
@@ -115,20 +142,6 @@ export const MessageTypeGuards = {
     },
 
     /**
-     * Check if value is base message
-     */
-    isBaseMessage: (value: unknown): value is IBaseMessage => {
-        if (typeof value !== 'object' || value === null) return false;
-        const message = value as Partial<IBaseMessage>;
-        return (
-            typeof message.content === 'string' &&
-            typeof message.role === 'string' &&
-            typeof message.additional_kwargs === 'object' &&
-            message.additional_kwargs !== null
-        );
-    },
-
-    /**
      * Check if value is message history entry
      */
     isMessageHistoryEntry: (value: unknown): value is IMessageHistoryEntry => {
@@ -136,7 +149,7 @@ export const MessageTypeGuards = {
         const entry = value as Partial<IMessageHistoryEntry>;
         return (
             typeof entry.timestamp === 'number' &&
-            MessageTypeGuards.isBaseMessage(entry.message as unknown)
+            entry.message instanceof BaseMessage
         );
     }
 };
