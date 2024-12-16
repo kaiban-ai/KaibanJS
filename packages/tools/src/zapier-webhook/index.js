@@ -62,10 +62,7 @@ export class ZapierWebhook extends Tool {
     try {
       const jsonData = await this.httpClient
         .post(this.url, {
-          json: input,
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          body: JSON.stringify(input),
         })
         .json();
 
