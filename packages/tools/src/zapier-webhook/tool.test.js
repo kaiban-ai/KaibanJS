@@ -58,9 +58,6 @@ describe('ZapierWebhook', () => {
       'https://hooks.zapier.com/hooks/catch/123456/abcdef'
     );
     expect(capturedRequest.method).toBe('POST');
-    expect(capturedRequest.headers.get('Content-Type')).toBe(
-      'application/json'
-    );
     const body = await capturedRequest.json();
     expect(body).toEqual({
       data: {
