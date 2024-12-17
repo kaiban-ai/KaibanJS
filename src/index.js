@@ -101,6 +101,7 @@ class Task {
     agent,
     isDeliverable = false,
     externalValidationRequired = false,
+    outputSchema = null,
   }) {
     this.id = uuidv4();
     this.title = title; // Title is now optional with a default empty string
@@ -116,6 +117,20 @@ class Task {
     this.interpolatedTaskDescription = null;
     this.feedbackHistory = []; // Initialize feedbackHistory as an empty array
     this.externalValidationRequired = externalValidationRequired;
+    this.outputSchema = outputSchema; // Zod Schema
+    this.structuredOutput = null;
+  }
+  //W.I.P can't used from reactChampionAgent functions, used direct property assignation instead example: task.structuredOutput = parsedLLMOutput.finalAnswer
+  setStructureOutput(finalAnswer) {
+    if (this.outputSchema) {
+      try {
+        this.structuredOutput = this.outputSchema.parse(finalAnswer); // Validar y asignar
+      } catch (e) {
+        throw new Error(`Invalid task output: ${e.message}`);
+      }
+    } else {
+      this.structuredOutput = finalAnswer; // Si no hay esquema, asignar directamente
+    }
   }
 
   setStore(store) {
