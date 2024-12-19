@@ -580,11 +580,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         "outputTokens": 505,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
       "startTime": "[REDACTED]",
       "stats": null,
       "status": "DONE",
       "store": [Function],
+      "structuredOutput": {
+        "additionalTraining": [
+          {
+            "course": "JavaScript bootcamp",
+            "year": 2018,
+          },
+        ],
+        "education": [
+          {
+            "degree": "Bachelor of Science in Computer Science",
+            "institution": "FIU",
+            "year": 2018,
+          },
+        ],
+        "personalInfo": {
+          "name": "David Llaca",
+        },
+        "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+        "skills": [
+          "JavaScript",
+          "React",
+          "NextJS",
+          "Redux",
+          "Vue",
+          "Tailwind",
+        ],
+        "workExperience": [
+          {
+            "company": "Disney",
+            "duration": "3 years",
+            "position": "JavaScript Developer",
+            "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+          },
+          {
+            "company": "American Airlines",
+            "position": "Junior Front-End Developer",
+            "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+          },
+        ],
+      },
       "title": "",
     },
     {
@@ -802,6 +843,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
         "outputTokens": 905,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "# David Llaca
 **JavaScript Developer**
 
@@ -870,6 +912,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
       "stats": null,
       "status": "DONE",
       "store": [Function],
+      "structuredOutput": {
+        "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+      },
       "title": "",
     },
   ],
@@ -1279,11 +1387,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -1665,11 +1814,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -2142,11 +2332,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -2544,11 +2775,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -2935,11 +3207,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -3321,11 +3634,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -3707,11 +4061,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -4196,11 +4591,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -4610,11 +5046,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -5006,11 +5483,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -5392,11 +5910,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -5778,11 +6337,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -6286,11 +6886,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -6721,11 +7362,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -7108,11 +7790,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -7494,11 +8217,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -7881,11 +8645,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -8279,11 +9084,52 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"personalInfo":{"name":"David Llaca"},"professionalSummary":"Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.","workExperience":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for primary landing pages using React, NextJS, and Redux."},{"company":"American Airlines","position":"Junior Front-End Developer","responsibilities":"Worked with Vue and Tailwind for front-end development."}],"skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"education":[{"degree":"Bachelor of Science in Computer Science","institution":"FIU","year":2018}],"additionalTraining":[{"course":"JavaScript bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "additionalTraining": [
+            {
+              "course": "JavaScript bootcamp",
+              "year": 2018,
+            },
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Science in Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+          ],
+          "personalInfo": {
+            "name": "David Llaca",
+          },
+          "professionalSummary": "Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications.",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+          "workExperience": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "position": "JavaScript Developer",
+              "responsibilities": "Developed user interfaces for primary landing pages using React, NextJS, and Redux.",
+            },
+            {
+              "company": "American Airlines",
+              "position": "Junior Front-End Developer",
+              "responsibilities": "Worked with Vue and Tailwind for front-end development.",
+            },
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DONE",
@@ -8686,6 +9532,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -8754,6 +9601,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -9144,6 +10057,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -9212,6 +10126,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -9695,6 +10675,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -9763,6 +10744,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -10169,6 +11216,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -10237,6 +11285,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -10632,6 +11746,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -10700,6 +11815,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -11090,6 +12271,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -11158,6 +12340,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -11548,6 +12796,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -11616,6 +12865,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -12111,6 +13426,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -12179,6 +13495,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -12615,6 +13997,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -12683,6 +14066,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -13092,6 +14541,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -13160,6 +14610,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -13550,6 +15066,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -13618,6 +15135,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -14008,6 +15591,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -14076,6 +15660,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -14599,6 +16249,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -14667,6 +16318,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -15193,6 +16910,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -15261,6 +16979,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -15715,6 +17499,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -15783,6 +17568,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -16173,6 +18024,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -16241,6 +18093,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -16695,6 +18613,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -16763,6 +18682,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -17228,6 +19213,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 **JavaScript Developer**
 
@@ -17296,6 +19282,72 @@ Experienced JavaScript Developer with 5 years of expertise in developing user in
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+**JavaScript Developer**
+
+## Contact Information
+[Insert Email] | [Insert Phone Number] | [Insert Location]
+
+## Professional Summary
+Experienced JavaScript Developer with 5 years of expertise in developing user interfaces and front-end applications. Skilled in modern JavaScript frameworks and libraries, with a proven track record of delivering high-quality, responsive web applications for major corporations.
+
+## Work Experience
+
+### JavaScript Developer
+**Disney** | 2020 - Present (3 years)
+
+- Spearheaded the development of user interfaces for primary landing pages using React, NextJS, and Redux, enhancing user engagement and site performance.
+- Collaborated with cross-functional teams to implement responsive designs, ensuring seamless user experiences across various devices and platforms.
+- Optimized application performance, resulting in a 30% improvement in load times and user satisfaction.
+- Mentored junior developers, fostering a culture of code quality and best practices.
+
+### Junior Front-End Developer
+**American Airlines** | 2018 - 2020
+
+- Contributed to the development and maintenance of the company's customer-facing web applications using Vue.js and Tailwind CSS.
+- Implemented responsive designs, ensuring consistent user experience across desktop and mobile platforms.
+- Participated in code reviews and agile development processes, continuously improving code quality and team efficiency.
+- Assisted in the migration of legacy code to modern JavaScript frameworks, improving maintainability and performance.
+
+## Skills
+
+- **Programming Languages:** JavaScript (ES6+)
+- **Front-end Frameworks/Libraries:** React, Vue.js, NextJS
+- **State Management:** Redux
+- **CSS Frameworks:** Tailwind CSS
+- **Version Control:** Git
+- **Build Tools:** Webpack, Babel
+- **Testing:** Jest, React Testing Library
+- **Agile Methodologies:** Scrum, Kanban
+
+## Education
+
+### Bachelor of Science in Computer Science
+**Florida International University (FIU)** | Graduated 2018
+
+- Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems
+- Capstone Project: Developed a full-stack web application for student resource management
+
+## Additional Training
+
+### JavaScript Bootcamp | 2018
+- Intensive 12-week program focusing on modern JavaScript development practices
+- Built several full-stack applications using MERN stack (MongoDB, Express, React, Node.js)
+
+## Certifications
+- AWS Certified Developer - Associate (Inferred based on industry trends)
+- React Developer Certification (Inferred based on expertise)
+
+## Languages
+- English (Fluent)
+- Spanish (Inferred based on name, add if applicable)
+
+## Interests
+- Contributing to open-source JavaScript projects
+- Attending tech meetups and conferences
+- Exploring new web technologies and frameworks",
+        },
         "title": "",
       },
       "taskStatus": "DONE",
@@ -17993,11 +20045,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         "outputTokens": 2217,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": null,
       "startTime": "[REDACTED]",
       "stats": null,
       "status": "BLOCKED",
       "store": [Function],
+      "structuredOutput": null,
       "title": "",
     },
     {
@@ -18105,11 +20159,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "id": "[REDACTED]",
       "interpolatedTaskDescription": null,
       "isDeliverable": false,
+      "outputSchema": null,
       "result": null,
       "startTime": "[REDACTED]",
       "stats": null,
       "status": "TODO",
       "store": [Function],
+      "structuredOutput": null,
       "title": "",
     },
   ],
@@ -18493,11 +20549,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -18855,11 +20913,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -19308,11 +21368,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -19692,11 +21754,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -20057,11 +22121,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -20419,11 +22485,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -20781,11 +22849,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -21254,11 +23324,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -21649,11 +23721,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -22014,11 +24088,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -22376,11 +24452,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -22738,11 +24816,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -23242,11 +25322,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -23658,11 +25740,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -24023,11 +26107,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -24385,11 +26471,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -24747,11 +26835,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -25303,11 +27393,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -25720,11 +27812,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -26081,11 +28175,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -26443,11 +28539,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -26805,11 +28903,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -27414,11 +29514,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -27795,11 +29897,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -28162,11 +30266,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -28524,11 +30630,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -28886,11 +30994,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -29510,11 +31620,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -29928,11 +32040,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -30289,11 +32403,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -30651,11 +32767,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -31013,11 +33131,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -31691,11 +33811,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -32106,11 +34228,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -32467,11 +34591,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -32829,11 +34955,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -33191,11 +35319,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -33920,11 +36050,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -34328,11 +36460,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -34689,11 +36823,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -35051,11 +37187,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -35413,11 +37551,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -36190,11 +38330,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -36597,11 +38739,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -36958,11 +39102,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -37320,11 +39466,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -37682,11 +39830,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -38506,11 +40656,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -38884,11 +41036,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -39245,11 +41399,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -39607,11 +41763,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -39970,11 +42128,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "DOING",
@@ -40356,11 +42516,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "taskStatus": "BLOCKED",
@@ -40743,11 +42905,13 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": null,
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "BLOCKED",
         "store": [Function],
+        "structuredOutput": null,
         "title": "",
       },
       "timestamp": "[REDACTED]",
@@ -41317,11 +43481,50 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         "outputTokens": 223,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"title":"JavaScript Developer","company":"Disney","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages"},{"title":"Junior Front-End Developer","company":"American Airlines","duration":"Duration not specified","responsibilities":"Worked with Vue and Tailwind"}],"education":[{"degree":"Bachelor of Science","field":"Computer Science","institution":"FIU","year":2018},{"program":"JavaScript Bootcamp","year":2018}]}",
       "startTime": "[REDACTED]",
       "stats": null,
       "status": "DONE",
       "store": [Function],
+      "structuredOutput": {
+        "education": [
+          {
+            "degree": "Bachelor of Science",
+            "field": "Computer Science",
+            "institution": "FIU",
+            "year": 2018,
+          },
+          {
+            "program": "JavaScript Bootcamp",
+            "year": 2018,
+          },
+        ],
+        "experience": "5 years",
+        "jobHistory": [
+          {
+            "company": "Disney",
+            "duration": "3 years",
+            "responsibilities": "Developed user interfaces for their primary landing pages",
+            "title": "JavaScript Developer",
+          },
+          {
+            "company": "American Airlines",
+            "duration": "Duration not specified",
+            "responsibilities": "Worked with Vue and Tailwind",
+            "title": "Junior Front-End Developer",
+          },
+        ],
+        "name": "David Llaca",
+        "skills": [
+          "JavaScript",
+          "React",
+          "NextJS",
+          "Redux",
+          "Vue",
+          "Tailwind",
+        ],
+      },
       "title": "",
     },
     {
@@ -41532,6 +43735,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
         "outputTokens": 373,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "# David Llaca
 
 ## Personal Summary
@@ -41572,6 +43776,44 @@ Dynamic and detail-oriented JavaScript Developer with 5 years of experience in b
       "stats": null,
       "status": "DONE",
       "store": [Function],
+      "structuredOutput": {
+        "finalAnswer": "# David Llaca
+
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with 5 years of experience in building interactive user interfaces and web applications. Proficient in a variety of front-end technologies, including React, NextJS, and Vue. Adept at collaborating with cross-functional teams to deliver high-quality digital products that enhance user experience.
+
+## Work Experience
+### JavaScript Developer  
+**Disney**  
+*Duration: 3 years*  
+- Developed user interfaces for Disney’s primary landing pages, ensuring an aesthetic and user-friendly design.  
+- Collaborated with designers and backend developers to create responsive and efficient web applications.  
+- Utilized JavaScript frameworks including React and NextJS to enhance functionality and improve performance.  
+
+### Junior Front-End Developer  
+**American Airlines**  
+*Duration: [Insert duration here]*  
+- Worked with Vue and Tailwind CSS to build and maintain dynamic web applications.  
+- Assisted in optimizing front-end performance and ensuring cross-browser compatibility.  
+- Participated in agile sprints, contributing to project planning and development discussions.  
+
+## Skills  
+- **Languages:** JavaScript  
+- **Frameworks/Libraries:** React, NextJS, Redux, Vue  
+- **Styling:** Tailwind CSS  
+- **Tools:** Git, Webpack, npm  
+- **Methodologies:** Agile, Scrum  
+
+## Education  
+### Bachelor of Science in Computer Science  
+**FIU**  
+*Year: 2018*  
+
+### JavaScript Bootcamp  
+*Year: 2018*  
+
+---",
+      },
       "title": "",
     },
   ],
@@ -41967,11 +44209,50 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"title":"JavaScript Developer","company":"Disney","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages"},{"title":"Junior Front-End Developer","company":"American Airlines","duration":"Duration not specified","responsibilities":"Worked with Vue and Tailwind"}],"education":[{"degree":"Bachelor of Science","field":"Computer Science","institution":"FIU","year":2018},{"program":"JavaScript Bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "education": [
+            {
+              "degree": "Bachelor of Science",
+              "field": "Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+            {
+              "program": "JavaScript Bootcamp",
+              "year": 2018,
+            },
+          ],
+          "experience": "5 years",
+          "jobHistory": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "responsibilities": "Developed user interfaces for their primary landing pages",
+              "title": "JavaScript Developer",
+            },
+            {
+              "company": "American Airlines",
+              "duration": "Duration not specified",
+              "responsibilities": "Worked with Vue and Tailwind",
+              "title": "Junior Front-End Developer",
+            },
+          ],
+          "name": "David Llaca",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -42339,11 +44620,50 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"title":"JavaScript Developer","company":"Disney","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages"},{"title":"Junior Front-End Developer","company":"American Airlines","duration":"Duration not specified","responsibilities":"Worked with Vue and Tailwind"}],"education":[{"degree":"Bachelor of Science","field":"Computer Science","institution":"FIU","year":2018},{"program":"JavaScript Bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "education": [
+            {
+              "degree": "Bachelor of Science",
+              "field": "Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+            {
+              "program": "JavaScript Bootcamp",
+              "year": 2018,
+            },
+          ],
+          "experience": "5 years",
+          "jobHistory": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "responsibilities": "Developed user interfaces for their primary landing pages",
+              "title": "JavaScript Developer",
+            },
+            {
+              "company": "American Airlines",
+              "duration": "Duration not specified",
+              "responsibilities": "Worked with Vue and Tailwind",
+              "title": "Junior Front-End Developer",
+            },
+          ],
+          "name": "David Llaca",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -42802,11 +45122,50 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"title":"JavaScript Developer","company":"Disney","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages"},{"title":"Junior Front-End Developer","company":"American Airlines","duration":"Duration not specified","responsibilities":"Worked with Vue and Tailwind"}],"education":[{"degree":"Bachelor of Science","field":"Computer Science","institution":"FIU","year":2018},{"program":"JavaScript Bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "education": [
+            {
+              "degree": "Bachelor of Science",
+              "field": "Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+            {
+              "program": "JavaScript Bootcamp",
+              "year": 2018,
+            },
+          ],
+          "experience": "5 years",
+          "jobHistory": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "responsibilities": "Developed user interfaces for their primary landing pages",
+              "title": "JavaScript Developer",
+            },
+            {
+              "company": "American Airlines",
+              "duration": "Duration not specified",
+              "responsibilities": "Worked with Vue and Tailwind",
+              "title": "Junior Front-End Developer",
+            },
+          ],
+          "name": "David Llaca",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -43221,11 +45580,50 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"title":"JavaScript Developer","company":"Disney","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages"},{"title":"Junior Front-End Developer","company":"American Airlines","duration":"Duration not specified","responsibilities":"Worked with Vue and Tailwind"}],"education":[{"degree":"Bachelor of Science","field":"Computer Science","institution":"FIU","year":2018},{"program":"JavaScript Bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "education": [
+            {
+              "degree": "Bachelor of Science",
+              "field": "Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+            {
+              "program": "JavaScript Bootcamp",
+              "year": 2018,
+            },
+          ],
+          "experience": "5 years",
+          "jobHistory": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "responsibilities": "Developed user interfaces for their primary landing pages",
+              "title": "JavaScript Developer",
+            },
+            {
+              "company": "American Airlines",
+              "duration": "Duration not specified",
+              "responsibilities": "Worked with Vue and Tailwind",
+              "title": "Junior Front-End Developer",
+            },
+          ],
+          "name": "David Llaca",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -43594,11 +45992,50 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"title":"JavaScript Developer","company":"Disney","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages"},{"title":"Junior Front-End Developer","company":"American Airlines","duration":"Duration not specified","responsibilities":"Worked with Vue and Tailwind"}],"education":[{"degree":"Bachelor of Science","field":"Computer Science","institution":"FIU","year":2018},{"program":"JavaScript Bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "education": [
+            {
+              "degree": "Bachelor of Science",
+              "field": "Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+            {
+              "program": "JavaScript Bootcamp",
+              "year": 2018,
+            },
+          ],
+          "experience": "5 years",
+          "jobHistory": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "responsibilities": "Developed user interfaces for their primary landing pages",
+              "title": "JavaScript Developer",
+            },
+            {
+              "company": "American Airlines",
+              "duration": "Duration not specified",
+              "responsibilities": "Worked with Vue and Tailwind",
+              "title": "Junior Front-End Developer",
+            },
+          ],
+          "name": "David Llaca",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -43966,11 +46403,50 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"title":"JavaScript Developer","company":"Disney","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages"},{"title":"Junior Front-End Developer","company":"American Airlines","duration":"Duration not specified","responsibilities":"Worked with Vue and Tailwind"}],"education":[{"degree":"Bachelor of Science","field":"Computer Science","institution":"FIU","year":2018},{"program":"JavaScript Bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "education": [
+            {
+              "degree": "Bachelor of Science",
+              "field": "Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+            {
+              "program": "JavaScript Bootcamp",
+              "year": 2018,
+            },
+          ],
+          "experience": "5 years",
+          "jobHistory": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "responsibilities": "Developed user interfaces for their primary landing pages",
+              "title": "JavaScript Developer",
+            },
+            {
+              "company": "American Airlines",
+              "duration": "Duration not specified",
+              "responsibilities": "Worked with Vue and Tailwind",
+              "title": "Junior Front-End Developer",
+            },
+          ],
+          "name": "David Llaca",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -44339,11 +46815,50 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"title":"JavaScript Developer","company":"Disney","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages"},{"title":"Junior Front-End Developer","company":"American Airlines","duration":"Duration not specified","responsibilities":"Worked with Vue and Tailwind"}],"education":[{"degree":"Bachelor of Science","field":"Computer Science","institution":"FIU","year":2018},{"program":"JavaScript Bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "education": [
+            {
+              "degree": "Bachelor of Science",
+              "field": "Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+            {
+              "program": "JavaScript Bootcamp",
+              "year": 2018,
+            },
+          ],
+          "experience": "5 years",
+          "jobHistory": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "responsibilities": "Developed user interfaces for their primary landing pages",
+              "title": "JavaScript Developer",
+            },
+            {
+              "company": "American Airlines",
+              "duration": "Duration not specified",
+              "responsibilities": "Worked with Vue and Tailwind",
+              "title": "Junior Front-End Developer",
+            },
+          ],
+          "name": "David Llaca",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -44723,11 +47238,50 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"title":"JavaScript Developer","company":"Disney","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages"},{"title":"Junior Front-End Developer","company":"American Airlines","duration":"Duration not specified","responsibilities":"Worked with Vue and Tailwind"}],"education":[{"degree":"Bachelor of Science","field":"Computer Science","institution":"FIU","year":2018},{"program":"JavaScript Bootcamp","year":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "education": [
+            {
+              "degree": "Bachelor of Science",
+              "field": "Computer Science",
+              "institution": "FIU",
+              "year": 2018,
+            },
+            {
+              "program": "JavaScript Bootcamp",
+              "year": 2018,
+            },
+          ],
+          "experience": "5 years",
+          "jobHistory": [
+            {
+              "company": "Disney",
+              "duration": "3 years",
+              "responsibilities": "Developed user interfaces for their primary landing pages",
+              "title": "JavaScript Developer",
+            },
+            {
+              "company": "American Airlines",
+              "duration": "Duration not specified",
+              "responsibilities": "Worked with Vue and Tailwind",
+              "title": "Junior Front-End Developer",
+            },
+          ],
+          "name": "David Llaca",
+          "skills": [
+            "JavaScript",
+            "React",
+            "NextJS",
+            "Redux",
+            "Vue",
+            "Tailwind",
+          ],
+        },
         "title": "",
       },
       "taskStatus": "DONE",
@@ -45116,6 +47670,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary
@@ -45156,6 +47711,44 @@ Dynamic and detail-oriented JavaScript Developer with 5 years of experience in b
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with 5 years of experience in building interactive user interfaces and web applications. Proficient in a variety of front-end technologies, including React, NextJS, and Vue. Adept at collaborating with cross-functional teams to deliver high-quality digital products that enhance user experience.
+
+## Work Experience
+### JavaScript Developer  
+**Disney**  
+*Duration: 3 years*  
+- Developed user interfaces for Disney’s primary landing pages, ensuring an aesthetic and user-friendly design.  
+- Collaborated with designers and backend developers to create responsive and efficient web applications.  
+- Utilized JavaScript frameworks including React and NextJS to enhance functionality and improve performance.  
+
+### Junior Front-End Developer  
+**American Airlines**  
+*Duration: [Insert duration here]*  
+- Worked with Vue and Tailwind CSS to build and maintain dynamic web applications.  
+- Assisted in optimizing front-end performance and ensuring cross-browser compatibility.  
+- Participated in agile sprints, contributing to project planning and development discussions.  
+
+## Skills  
+- **Languages:** JavaScript  
+- **Frameworks/Libraries:** React, NextJS, Redux, Vue  
+- **Styling:** Tailwind CSS  
+- **Tools:** Git, Webpack, npm  
+- **Methodologies:** Agile, Scrum  
+
+## Education  
+### Bachelor of Science in Computer Science  
+**FIU**  
+*Year: 2018*  
+
+### JavaScript Bootcamp  
+*Year: 2018*  
+
+---",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -45532,6 +48125,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary
@@ -45572,6 +48166,44 @@ Dynamic and detail-oriented JavaScript Developer with 5 years of experience in b
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with 5 years of experience in building interactive user interfaces and web applications. Proficient in a variety of front-end technologies, including React, NextJS, and Vue. Adept at collaborating with cross-functional teams to deliver high-quality digital products that enhance user experience.
+
+## Work Experience
+### JavaScript Developer  
+**Disney**  
+*Duration: 3 years*  
+- Developed user interfaces for Disney’s primary landing pages, ensuring an aesthetic and user-friendly design.  
+- Collaborated with designers and backend developers to create responsive and efficient web applications.  
+- Utilized JavaScript frameworks including React and NextJS to enhance functionality and improve performance.  
+
+### Junior Front-End Developer  
+**American Airlines**  
+*Duration: [Insert duration here]*  
+- Worked with Vue and Tailwind CSS to build and maintain dynamic web applications.  
+- Assisted in optimizing front-end performance and ensuring cross-browser compatibility.  
+- Participated in agile sprints, contributing to project planning and development discussions.  
+
+## Skills  
+- **Languages:** JavaScript  
+- **Frameworks/Libraries:** React, NextJS, Redux, Vue  
+- **Styling:** Tailwind CSS  
+- **Tools:** Git, Webpack, npm  
+- **Methodologies:** Agile, Scrum  
+
+## Education  
+### Bachelor of Science in Computer Science  
+**FIU**  
+*Year: 2018*  
+
+### JavaScript Bootcamp  
+*Year: 2018*  
+
+---",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -46041,6 +48673,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary
@@ -46081,6 +48714,44 @@ Dynamic and detail-oriented JavaScript Developer with 5 years of experience in b
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with 5 years of experience in building interactive user interfaces and web applications. Proficient in a variety of front-end technologies, including React, NextJS, and Vue. Adept at collaborating with cross-functional teams to deliver high-quality digital products that enhance user experience.
+
+## Work Experience
+### JavaScript Developer  
+**Disney**  
+*Duration: 3 years*  
+- Developed user interfaces for Disney’s primary landing pages, ensuring an aesthetic and user-friendly design.  
+- Collaborated with designers and backend developers to create responsive and efficient web applications.  
+- Utilized JavaScript frameworks including React and NextJS to enhance functionality and improve performance.  
+
+### Junior Front-End Developer  
+**American Airlines**  
+*Duration: [Insert duration here]*  
+- Worked with Vue and Tailwind CSS to build and maintain dynamic web applications.  
+- Assisted in optimizing front-end performance and ensuring cross-browser compatibility.  
+- Participated in agile sprints, contributing to project planning and development discussions.  
+
+## Skills  
+- **Languages:** JavaScript  
+- **Frameworks/Libraries:** React, NextJS, Redux, Vue  
+- **Styling:** Tailwind CSS  
+- **Tools:** Git, Webpack, npm  
+- **Methodologies:** Agile, Scrum  
+
+## Education  
+### Bachelor of Science in Computer Science  
+**FIU**  
+*Year: 2018*  
+
+### JavaScript Bootcamp  
+*Year: 2018*  
+
+---",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -46502,6 +49173,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary
@@ -46542,6 +49214,44 @@ Dynamic and detail-oriented JavaScript Developer with 5 years of experience in b
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with 5 years of experience in building interactive user interfaces and web applications. Proficient in a variety of front-end technologies, including React, NextJS, and Vue. Adept at collaborating with cross-functional teams to deliver high-quality digital products that enhance user experience.
+
+## Work Experience
+### JavaScript Developer  
+**Disney**  
+*Duration: 3 years*  
+- Developed user interfaces for Disney’s primary landing pages, ensuring an aesthetic and user-friendly design.  
+- Collaborated with designers and backend developers to create responsive and efficient web applications.  
+- Utilized JavaScript frameworks including React and NextJS to enhance functionality and improve performance.  
+
+### Junior Front-End Developer  
+**American Airlines**  
+*Duration: [Insert duration here]*  
+- Worked with Vue and Tailwind CSS to build and maintain dynamic web applications.  
+- Assisted in optimizing front-end performance and ensuring cross-browser compatibility.  
+- Participated in agile sprints, contributing to project planning and development discussions.  
+
+## Skills  
+- **Languages:** JavaScript  
+- **Frameworks/Libraries:** React, NextJS, Redux, Vue  
+- **Styling:** Tailwind CSS  
+- **Tools:** Git, Webpack, npm  
+- **Methodologies:** Agile, Scrum  
+
+## Education  
+### Bachelor of Science in Computer Science  
+**FIU**  
+*Year: 2018*  
+
+### JavaScript Bootcamp  
+*Year: 2018*  
+
+---",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -46954,6 +49664,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary
@@ -46994,6 +49705,44 @@ Dynamic and detail-oriented JavaScript Developer with 5 years of experience in b
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with 5 years of experience in building interactive user interfaces and web applications. Proficient in a variety of front-end technologies, including React, NextJS, and Vue. Adept at collaborating with cross-functional teams to deliver high-quality digital products that enhance user experience.
+
+## Work Experience
+### JavaScript Developer  
+**Disney**  
+*Duration: 3 years*  
+- Developed user interfaces for Disney’s primary landing pages, ensuring an aesthetic and user-friendly design.  
+- Collaborated with designers and backend developers to create responsive and efficient web applications.  
+- Utilized JavaScript frameworks including React and NextJS to enhance functionality and improve performance.  
+
+### Junior Front-End Developer  
+**American Airlines**  
+*Duration: [Insert duration here]*  
+- Worked with Vue and Tailwind CSS to build and maintain dynamic web applications.  
+- Assisted in optimizing front-end performance and ensuring cross-browser compatibility.  
+- Participated in agile sprints, contributing to project planning and development discussions.  
+
+## Skills  
+- **Languages:** JavaScript  
+- **Frameworks/Libraries:** React, NextJS, Redux, Vue  
+- **Styling:** Tailwind CSS  
+- **Tools:** Git, Webpack, npm  
+- **Methodologies:** Agile, Scrum  
+
+## Education  
+### Bachelor of Science in Computer Science  
+**FIU**  
+*Year: 2018*  
+
+### JavaScript Bootcamp  
+*Year: 2018*  
+
+---",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -47370,6 +50119,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary
@@ -47410,6 +50160,44 @@ Dynamic and detail-oriented JavaScript Developer with 5 years of experience in b
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with 5 years of experience in building interactive user interfaces and web applications. Proficient in a variety of front-end technologies, including React, NextJS, and Vue. Adept at collaborating with cross-functional teams to deliver high-quality digital products that enhance user experience.
+
+## Work Experience
+### JavaScript Developer  
+**Disney**  
+*Duration: 3 years*  
+- Developed user interfaces for Disney’s primary landing pages, ensuring an aesthetic and user-friendly design.  
+- Collaborated with designers and backend developers to create responsive and efficient web applications.  
+- Utilized JavaScript frameworks including React and NextJS to enhance functionality and improve performance.  
+
+### Junior Front-End Developer  
+**American Airlines**  
+*Duration: [Insert duration here]*  
+- Worked with Vue and Tailwind CSS to build and maintain dynamic web applications.  
+- Assisted in optimizing front-end performance and ensuring cross-browser compatibility.  
+- Participated in agile sprints, contributing to project planning and development discussions.  
+
+## Skills  
+- **Languages:** JavaScript  
+- **Frameworks/Libraries:** React, NextJS, Redux, Vue  
+- **Styling:** Tailwind CSS  
+- **Tools:** Git, Webpack, npm  
+- **Methodologies:** Agile, Scrum  
+
+## Education  
+### Bachelor of Science in Computer Science  
+**FIU**  
+*Year: 2018*  
+
+### JavaScript Bootcamp  
+*Year: 2018*  
+
+---",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -47822,6 +50610,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary
@@ -47862,6 +50651,44 @@ Dynamic and detail-oriented JavaScript Developer with 5 years of experience in b
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with 5 years of experience in building interactive user interfaces and web applications. Proficient in a variety of front-end technologies, including React, NextJS, and Vue. Adept at collaborating with cross-functional teams to deliver high-quality digital products that enhance user experience.
+
+## Work Experience
+### JavaScript Developer  
+**Disney**  
+*Duration: 3 years*  
+- Developed user interfaces for Disney’s primary landing pages, ensuring an aesthetic and user-friendly design.  
+- Collaborated with designers and backend developers to create responsive and efficient web applications.  
+- Utilized JavaScript frameworks including React and NextJS to enhance functionality and improve performance.  
+
+### Junior Front-End Developer  
+**American Airlines**  
+*Duration: [Insert duration here]*  
+- Worked with Vue and Tailwind CSS to build and maintain dynamic web applications.  
+- Assisted in optimizing front-end performance and ensuring cross-browser compatibility.  
+- Participated in agile sprints, contributing to project planning and development discussions.  
+
+## Skills  
+- **Languages:** JavaScript  
+- **Frameworks/Libraries:** React, NextJS, Redux, Vue  
+- **Styling:** Tailwind CSS  
+- **Tools:** Git, Webpack, npm  
+- **Methodologies:** Agile, Scrum  
+
+## Education  
+### Bachelor of Science in Computer Science  
+**FIU**  
+*Year: 2018*  
+
+### JavaScript Bootcamp  
+*Year: 2018*  
+
+---",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -48285,6 +51112,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary
@@ -48325,6 +51153,44 @@ Dynamic and detail-oriented JavaScript Developer with 5 years of experience in b
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# David Llaca
+
+## Personal Summary
+Dynamic and detail-oriented JavaScript Developer with 5 years of experience in building interactive user interfaces and web applications. Proficient in a variety of front-end technologies, including React, NextJS, and Vue. Adept at collaborating with cross-functional teams to deliver high-quality digital products that enhance user experience.
+
+## Work Experience
+### JavaScript Developer  
+**Disney**  
+*Duration: 3 years*  
+- Developed user interfaces for Disney’s primary landing pages, ensuring an aesthetic and user-friendly design.  
+- Collaborated with designers and backend developers to create responsive and efficient web applications.  
+- Utilized JavaScript frameworks including React and NextJS to enhance functionality and improve performance.  
+
+### Junior Front-End Developer  
+**American Airlines**  
+*Duration: [Insert duration here]*  
+- Worked with Vue and Tailwind CSS to build and maintain dynamic web applications.  
+- Assisted in optimizing front-end performance and ensuring cross-browser compatibility.  
+- Participated in agile sprints, contributing to project planning and development discussions.  
+
+## Skills  
+- **Languages:** JavaScript  
+- **Frameworks/Libraries:** React, NextJS, Redux, Vue  
+- **Styling:** Tailwind CSS  
+- **Tools:** Git, Webpack, npm  
+- **Methodologies:** Agile, Scrum  
+
+## Education  
+### Bachelor of Science in Computer Science  
+**FIU**  
+*Year: 2018*  
+
+### JavaScript Bootcamp  
+*Year: 2018*  
+
+---",
+        },
         "title": "",
       },
       "taskStatus": "DONE",

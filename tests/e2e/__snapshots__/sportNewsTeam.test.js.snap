@@ -508,11 +508,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         "outputTokens": 435,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
       "startTime": "[REDACTED]",
       "stats": null,
       "status": "DONE",
       "store": [Function],
+      "structuredOutput": {
+        "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+      },
       "title": "",
     },
     {
@@ -689,6 +693,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "outputTokens": 437,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
 
 The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
@@ -703,6 +708,18 @@ This victory marks Argentina's 16th Copa América title, further solidifying the
       "stats": null,
       "status": "DONE",
       "store": [Function],
+      "structuredOutput": {
+        "finalAnswer": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
+
+The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
+
+The match was a tight and cagey affair for much of the 90 minutes. Both sides showed attacking intent but struggled to break down the opposing defense.  Argentina, missing the creative spark of Messi, who was sidelined due to injury, looked to Angel Di Maria and Lautaro Martinez to lead the line. Colombia, spearheaded by the dangerous Luis Diaz, sought to exploit any potential vulnerability in the Argentine backline.  However, clear-cut chances were scarce as the game remained goalless at the end of regulation time.
+
+Extra time saw Argentina increase the pressure, their desire for victory palpable.  Finally, in the 112th minute, the breakthrough came. A well-worked move saw the ball fall to Lautaro Martinez inside the box, and the Inter Milan striker made no mistake, firing the ball past the Colombian goalkeeper to send the Argentine fans into raptures. 
+
+This victory marks Argentina's 16th Copa América title, further solidifying their position as the most successful team in the tournament's history. It was a hard-fought and well-deserved win, showcasing the team's resilience and ability to perform under pressure. The absence of Messi, undoubtedly a huge blow, seemed to galvanize the team, with players stepping up and taking responsibility in his absence. Lautaro Martinez, in particular, rose to the occasion, proving himself a worthy successor to Messi as Argentina's attacking spearhead. This Copa América will be remembered as a testament to the collective strength and unwavering spirit of Argentine football. 
+",
+      },
       "title": "",
     },
   ],
@@ -1074,11 +1091,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -1426,11 +1447,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -1859,11 +1884,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -2229,11 +2258,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -2591,11 +2624,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -2942,11 +2979,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -3294,11 +3335,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -3646,11 +3691,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -4093,11 +4142,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -4459,11 +4512,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -4813,11 +4870,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -5165,11 +5226,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -5517,11 +5582,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -5977,11 +6046,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -6347,11 +6420,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -6704,11 +6781,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -7056,11 +7137,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -7408,11 +7493,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -7882,11 +7971,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -8248,11 +8341,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -8601,11 +8698,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -8953,11 +9054,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -9306,11 +9411,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -9670,11 +9779,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.",
+        },
         "title": "",
       },
       "taskStatus": "DONE",
@@ -10010,6 +10123,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
 
 The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
@@ -10024,6 +10138,18 @@ This victory marks Argentina's 16th Copa América title, further solidifying the
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
+
+The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
+
+The match was a tight and cagey affair for much of the 90 minutes. Both sides showed attacking intent but struggled to break down the opposing defense.  Argentina, missing the creative spark of Messi, who was sidelined due to injury, looked to Angel Di Maria and Lautaro Martinez to lead the line. Colombia, spearheaded by the dangerous Luis Diaz, sought to exploit any potential vulnerability in the Argentine backline.  However, clear-cut chances were scarce as the game remained goalless at the end of regulation time.
+
+Extra time saw Argentina increase the pressure, their desire for victory palpable.  Finally, in the 112th minute, the breakthrough came. A well-worked move saw the ball fall to Lautaro Martinez inside the box, and the Inter Milan striker made no mistake, firing the ball past the Colombian goalkeeper to send the Argentine fans into raptures. 
+
+This victory marks Argentina's 16th Copa América title, further solidifying their position as the most successful team in the tournament's history. It was a hard-fought and well-deserved win, showcasing the team's resilience and ability to perform under pressure. The absence of Messi, undoubtedly a huge blow, seemed to galvanize the team, with players stepping up and taking responsibility in his absence. Lautaro Martinez, in particular, rose to the occasion, proving himself a worthy successor to Messi as Argentina's attacking spearhead. This Copa América will be remembered as a testament to the collective strength and unwavering spirit of Argentine football. 
+",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -10351,6 +10477,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
 
 The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
@@ -10365,6 +10492,18 @@ This victory marks Argentina's 16th Copa América title, further solidifying the
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
+
+The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
+
+The match was a tight and cagey affair for much of the 90 minutes. Both sides showed attacking intent but struggled to break down the opposing defense.  Argentina, missing the creative spark of Messi, who was sidelined due to injury, looked to Angel Di Maria and Lautaro Martinez to lead the line. Colombia, spearheaded by the dangerous Luis Diaz, sought to exploit any potential vulnerability in the Argentine backline.  However, clear-cut chances were scarce as the game remained goalless at the end of regulation time.
+
+Extra time saw Argentina increase the pressure, their desire for victory palpable.  Finally, in the 112th minute, the breakthrough came. A well-worked move saw the ball fall to Lautaro Martinez inside the box, and the Inter Milan striker made no mistake, firing the ball past the Colombian goalkeeper to send the Argentine fans into raptures. 
+
+This victory marks Argentina's 16th Copa América title, further solidifying their position as the most successful team in the tournament's history. It was a hard-fought and well-deserved win, showcasing the team's resilience and ability to perform under pressure. The absence of Messi, undoubtedly a huge blow, seemed to galvanize the team, with players stepping up and taking responsibility in his absence. Lautaro Martinez, in particular, rose to the occasion, proving himself a worthy successor to Messi as Argentina's attacking spearhead. This Copa América will be remembered as a testament to the collective strength and unwavering spirit of Argentine football. 
+",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -10775,6 +10914,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
 
 The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
@@ -10789,6 +10929,18 @@ This victory marks Argentina's 16th Copa América title, further solidifying the
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
+
+The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
+
+The match was a tight and cagey affair for much of the 90 minutes. Both sides showed attacking intent but struggled to break down the opposing defense.  Argentina, missing the creative spark of Messi, who was sidelined due to injury, looked to Angel Di Maria and Lautaro Martinez to lead the line. Colombia, spearheaded by the dangerous Luis Diaz, sought to exploit any potential vulnerability in the Argentine backline.  However, clear-cut chances were scarce as the game remained goalless at the end of regulation time.
+
+Extra time saw Argentina increase the pressure, their desire for victory palpable.  Finally, in the 112th minute, the breakthrough came. A well-worked move saw the ball fall to Lautaro Martinez inside the box, and the Inter Milan striker made no mistake, firing the ball past the Colombian goalkeeper to send the Argentine fans into raptures. 
+
+This victory marks Argentina's 16th Copa América title, further solidifying their position as the most successful team in the tournament's history. It was a hard-fought and well-deserved win, showcasing the team's resilience and ability to perform under pressure. The absence of Messi, undoubtedly a huge blow, seemed to galvanize the team, with players stepping up and taking responsibility in his absence. Lautaro Martinez, in particular, rose to the occasion, proving himself a worthy successor to Messi as Argentina's attacking spearhead. This Copa América will be remembered as a testament to the collective strength and unwavering spirit of Argentine football. 
+",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -11146,6 +11298,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
 
 The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
@@ -11160,6 +11313,18 @@ This victory marks Argentina's 16th Copa América title, further solidifying the
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
+
+The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
+
+The match was a tight and cagey affair for much of the 90 minutes. Both sides showed attacking intent but struggled to break down the opposing defense.  Argentina, missing the creative spark of Messi, who was sidelined due to injury, looked to Angel Di Maria and Lautaro Martinez to lead the line. Colombia, spearheaded by the dangerous Luis Diaz, sought to exploit any potential vulnerability in the Argentine backline.  However, clear-cut chances were scarce as the game remained goalless at the end of regulation time.
+
+Extra time saw Argentina increase the pressure, their desire for victory palpable.  Finally, in the 112th minute, the breakthrough came. A well-worked move saw the ball fall to Lautaro Martinez inside the box, and the Inter Milan striker made no mistake, firing the ball past the Colombian goalkeeper to send the Argentine fans into raptures. 
+
+This victory marks Argentina's 16th Copa América title, further solidifying their position as the most successful team in the tournament's history. It was a hard-fought and well-deserved win, showcasing the team's resilience and ability to perform under pressure. The absence of Messi, undoubtedly a huge blow, seemed to galvanize the team, with players stepping up and taking responsibility in his absence. Lautaro Martinez, in particular, rose to the occasion, proving himself a worthy successor to Messi as Argentina's attacking spearhead. This Copa América will be remembered as a testament to the collective strength and unwavering spirit of Argentine football. 
+",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -11497,6 +11662,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
 
 The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
@@ -11511,6 +11677,18 @@ This victory marks Argentina's 16th Copa América title, further solidifying the
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
+
+The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
+
+The match was a tight and cagey affair for much of the 90 minutes. Both sides showed attacking intent but struggled to break down the opposing defense.  Argentina, missing the creative spark of Messi, who was sidelined due to injury, looked to Angel Di Maria and Lautaro Martinez to lead the line. Colombia, spearheaded by the dangerous Luis Diaz, sought to exploit any potential vulnerability in the Argentine backline.  However, clear-cut chances were scarce as the game remained goalless at the end of regulation time.
+
+Extra time saw Argentina increase the pressure, their desire for victory palpable.  Finally, in the 112th minute, the breakthrough came. A well-worked move saw the ball fall to Lautaro Martinez inside the box, and the Inter Milan striker made no mistake, firing the ball past the Colombian goalkeeper to send the Argentine fans into raptures. 
+
+This victory marks Argentina's 16th Copa América title, further solidifying their position as the most successful team in the tournament's history. It was a hard-fought and well-deserved win, showcasing the team's resilience and ability to perform under pressure. The absence of Messi, undoubtedly a huge blow, seemed to galvanize the team, with players stepping up and taking responsibility in his absence. Lautaro Martinez, in particular, rose to the occasion, proving himself a worthy successor to Messi as Argentina's attacking spearhead. This Copa América will be remembered as a testament to the collective strength and unwavering spirit of Argentine football. 
+",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -11838,6 +12016,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
 
 The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
@@ -11852,6 +12031,18 @@ This victory marks Argentina's 16th Copa América title, further solidifying the
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
+
+The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
+
+The match was a tight and cagey affair for much of the 90 minutes. Both sides showed attacking intent but struggled to break down the opposing defense.  Argentina, missing the creative spark of Messi, who was sidelined due to injury, looked to Angel Di Maria and Lautaro Martinez to lead the line. Colombia, spearheaded by the dangerous Luis Diaz, sought to exploit any potential vulnerability in the Argentine backline.  However, clear-cut chances were scarce as the game remained goalless at the end of regulation time.
+
+Extra time saw Argentina increase the pressure, their desire for victory palpable.  Finally, in the 112th minute, the breakthrough came. A well-worked move saw the ball fall to Lautaro Martinez inside the box, and the Inter Milan striker made no mistake, firing the ball past the Colombian goalkeeper to send the Argentine fans into raptures. 
+
+This victory marks Argentina's 16th Copa América title, further solidifying their position as the most successful team in the tournament's history. It was a hard-fought and well-deserved win, showcasing the team's resilience and ability to perform under pressure. The absence of Messi, undoubtedly a huge blow, seemed to galvanize the team, with players stepping up and taking responsibility in his absence. Lautaro Martinez, in particular, rose to the occasion, proving himself a worthy successor to Messi as Argentina's attacking spearhead. This Copa América will be remembered as a testament to the collective strength and unwavering spirit of Argentine football. 
+",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -12189,6 +12380,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
 
 The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
@@ -12203,6 +12395,18 @@ This victory marks Argentina's 16th Copa América title, further solidifying the
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
+
+The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
+
+The match was a tight and cagey affair for much of the 90 minutes. Both sides showed attacking intent but struggled to break down the opposing defense.  Argentina, missing the creative spark of Messi, who was sidelined due to injury, looked to Angel Di Maria and Lautaro Martinez to lead the line. Colombia, spearheaded by the dangerous Luis Diaz, sought to exploit any potential vulnerability in the Argentine backline.  However, clear-cut chances were scarce as the game remained goalless at the end of regulation time.
+
+Extra time saw Argentina increase the pressure, their desire for victory palpable.  Finally, in the 112th minute, the breakthrough came. A well-worked move saw the ball fall to Lautaro Martinez inside the box, and the Inter Milan striker made no mistake, firing the ball past the Colombian goalkeeper to send the Argentine fans into raptures. 
+
+This victory marks Argentina's 16th Copa América title, further solidifying their position as the most successful team in the tournament's history. It was a hard-fought and well-deserved win, showcasing the team's resilience and ability to perform under pressure. The absence of Messi, undoubtedly a huge blow, seemed to galvanize the team, with players stepping up and taking responsibility in his absence. Lautaro Martinez, in particular, rose to the occasion, proving himself a worthy successor to Messi as Argentina's attacking spearhead. This Copa América will be remembered as a testament to the collective strength and unwavering spirit of Argentine football. 
+",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -12551,6 +12755,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
 
 The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
@@ -12565,6 +12770,18 @@ This victory marks Argentina's 16th Copa América title, further solidifying the
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "# Argentina Conquers Copa América Once Again: A Triumph of Resilience
+
+The 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. 
+
+The match was a tight and cagey affair for much of the 90 minutes. Both sides showed attacking intent but struggled to break down the opposing defense.  Argentina, missing the creative spark of Messi, who was sidelined due to injury, looked to Angel Di Maria and Lautaro Martinez to lead the line. Colombia, spearheaded by the dangerous Luis Diaz, sought to exploit any potential vulnerability in the Argentine backline.  However, clear-cut chances were scarce as the game remained goalless at the end of regulation time.
+
+Extra time saw Argentina increase the pressure, their desire for victory palpable.  Finally, in the 112th minute, the breakthrough came. A well-worked move saw the ball fall to Lautaro Martinez inside the box, and the Inter Milan striker made no mistake, firing the ball past the Colombian goalkeeper to send the Argentine fans into raptures. 
+
+This victory marks Argentina's 16th Copa América title, further solidifying their position as the most successful team in the tournament's history. It was a hard-fought and well-deserved win, showcasing the team's resilience and ability to perform under pressure. The absence of Messi, undoubtedly a huge blow, seemed to galvanize the team, with players stepping up and taking responsibility in his absence. Lautaro Martinez, in particular, rose to the occasion, proving himself a worthy successor to Messi as Argentina's attacking spearhead. This Copa América will be remembered as a testament to the collective strength and unwavering spirit of Argentine football. 
+",
+        },
         "title": "",
       },
       "taskStatus": "DONE",
@@ -13142,11 +13359,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         "outputTokens": 288,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
       "startTime": "[REDACTED]",
       "stats": null,
       "status": "DONE",
       "store": [Function],
+      "structuredOutput": {
+        "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+      },
       "title": "",
     },
     {
@@ -13323,6 +13544,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "outputTokens": 420,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
 
 On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
@@ -13336,6 +13558,17 @@ As the final whistle blew, it marked a historic achievement for Argentina, furth
       "stats": null,
       "status": "DONE",
       "store": [Function],
+      "structuredOutput": {
+        "finalAnswer": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
+
+On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
+
+Argentina, aiming to solidify their position as a dominant force in South American football, entered the match with high expectations. The game proved to be fiercely contested, as Colombia sought to dethrone the defending champions. Both teams exhibited commendable tactics and showcased their talents, but it was Argentina that would eventually snatch victory from the jaws of defeat in the dying moments of extra time.
+
+The decisive moment came in the 112th minute when a superb build-up play led to a phenomenal goal, leaving fans erupting in joy. This goal not only sealed the win but also emphasized the sheer determination and skill that has characterized Argentina's journey throughout this tournament. Despite the absence of their star player, Messi, for a significant portion of the match due to injury, Argentina maintained their poise and executed their game plan effectively.
+
+As the final whistle blew, it marked a historic achievement for Argentina, further embedding their legacy in Copa América history. Winning this championship for the 16th time signifies their unmatched pedigree in the tournament and adds to their success story. Fans celebrated in unison, embracing their nation’s ability to triumph against the odds, making this Copa América final a memorable chapter in the annals of Argentine football. The victory reflects Argentina's rich football heritage, reminding the world of the skill, passion, and grit that have defined their national team for generations.",
+      },
       "title": "",
     },
   ],
@@ -13707,11 +13940,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -14059,11 +14296,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -14492,11 +14733,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -14860,11 +15105,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -15222,11 +15471,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -15573,11 +15826,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -15925,11 +16182,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -16277,11 +16538,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -16722,11 +16987,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -17086,11 +17355,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -17440,11 +17713,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -17792,11 +18069,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -18144,11 +18425,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -18600,11 +18885,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -18962,11 +19251,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -19315,11 +19608,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -19667,11 +19964,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -20020,11 +20321,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -20384,11 +20689,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         },
         "interpolatedTaskDescription": "Search for detailed information about the sports query: Who won the Copa America in 2024?.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
         "startTime": "[REDACTED]",
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "Argentina won the 2024 Copa América title by defeating Colombia 1-0 in the final match held on July 14, 2024, at Hard Rock Stadium in Miami Gardens, Florida. The decisive goal came in the 112th minute of extra time, securing Argentina's record-breaking 16th Copa América championship. The match experienced a delay of over an hour due to overcrowding before kickoff. Notably, Argentina captain Lionel Messi had to leave the match early due to an injury, adding to the drama of the encounter. Overall, this victory continued Argentina's rich history in the tournament, despite the absence of their star player for part of the match.",
+        },
         "title": "",
       },
       "taskStatus": "DONE",
@@ -20724,6 +21033,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
 
 On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
@@ -20737,6 +21047,17 @@ As the final whistle blew, it marked a historic achievement for Argentina, furth
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
+
+On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
+
+Argentina, aiming to solidify their position as a dominant force in South American football, entered the match with high expectations. The game proved to be fiercely contested, as Colombia sought to dethrone the defending champions. Both teams exhibited commendable tactics and showcased their talents, but it was Argentina that would eventually snatch victory from the jaws of defeat in the dying moments of extra time.
+
+The decisive moment came in the 112th minute when a superb build-up play led to a phenomenal goal, leaving fans erupting in joy. This goal not only sealed the win but also emphasized the sheer determination and skill that has characterized Argentina's journey throughout this tournament. Despite the absence of their star player, Messi, for a significant portion of the match due to injury, Argentina maintained their poise and executed their game plan effectively.
+
+As the final whistle blew, it marked a historic achievement for Argentina, further embedding their legacy in Copa América history. Winning this championship for the 16th time signifies their unmatched pedigree in the tournament and adds to their success story. Fans celebrated in unison, embracing their nation’s ability to triumph against the odds, making this Copa América final a memorable chapter in the annals of Argentine football. The victory reflects Argentina's rich football heritage, reminding the world of the skill, passion, and grit that have defined their national team for generations.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -21064,6 +21385,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
 
 On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
@@ -21077,6 +21399,17 @@ As the final whistle blew, it marked a historic achievement for Argentina, furth
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
+
+On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
+
+Argentina, aiming to solidify their position as a dominant force in South American football, entered the match with high expectations. The game proved to be fiercely contested, as Colombia sought to dethrone the defending champions. Both teams exhibited commendable tactics and showcased their talents, but it was Argentina that would eventually snatch victory from the jaws of defeat in the dying moments of extra time.
+
+The decisive moment came in the 112th minute when a superb build-up play led to a phenomenal goal, leaving fans erupting in joy. This goal not only sealed the win but also emphasized the sheer determination and skill that has characterized Argentina's journey throughout this tournament. Despite the absence of their star player, Messi, for a significant portion of the match due to injury, Argentina maintained their poise and executed their game plan effectively.
+
+As the final whistle blew, it marked a historic achievement for Argentina, further embedding their legacy in Copa América history. Winning this championship for the 16th time signifies their unmatched pedigree in the tournament and adds to their success story. Fans celebrated in unison, embracing their nation’s ability to triumph against the odds, making this Copa América final a memorable chapter in the annals of Argentine football. The victory reflects Argentina's rich football heritage, reminding the world of the skill, passion, and grit that have defined their national team for generations.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -21487,6 +21820,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
 
 On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
@@ -21500,6 +21834,17 @@ As the final whistle blew, it marked a historic achievement for Argentina, furth
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
+
+On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
+
+Argentina, aiming to solidify their position as a dominant force in South American football, entered the match with high expectations. The game proved to be fiercely contested, as Colombia sought to dethrone the defending champions. Both teams exhibited commendable tactics and showcased their talents, but it was Argentina that would eventually snatch victory from the jaws of defeat in the dying moments of extra time.
+
+The decisive moment came in the 112th minute when a superb build-up play led to a phenomenal goal, leaving fans erupting in joy. This goal not only sealed the win but also emphasized the sheer determination and skill that has characterized Argentina's journey throughout this tournament. Despite the absence of their star player, Messi, for a significant portion of the match due to injury, Argentina maintained their poise and executed their game plan effectively.
+
+As the final whistle blew, it marked a historic achievement for Argentina, further embedding their legacy in Copa América history. Winning this championship for the 16th time signifies their unmatched pedigree in the tournament and adds to their success story. Fans celebrated in unison, embracing their nation’s ability to triumph against the odds, making this Copa América final a memorable chapter in the annals of Argentine football. The victory reflects Argentina's rich football heritage, reminding the world of the skill, passion, and grit that have defined their national team for generations.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -21845,6 +22190,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
 
 On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
@@ -21858,6 +22204,17 @@ As the final whistle blew, it marked a historic achievement for Argentina, furth
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
+
+On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
+
+Argentina, aiming to solidify their position as a dominant force in South American football, entered the match with high expectations. The game proved to be fiercely contested, as Colombia sought to dethrone the defending champions. Both teams exhibited commendable tactics and showcased their talents, but it was Argentina that would eventually snatch victory from the jaws of defeat in the dying moments of extra time.
+
+The decisive moment came in the 112th minute when a superb build-up play led to a phenomenal goal, leaving fans erupting in joy. This goal not only sealed the win but also emphasized the sheer determination and skill that has characterized Argentina's journey throughout this tournament. Despite the absence of their star player, Messi, for a significant portion of the match due to injury, Argentina maintained their poise and executed their game plan effectively.
+
+As the final whistle blew, it marked a historic achievement for Argentina, further embedding their legacy in Copa América history. Winning this championship for the 16th time signifies their unmatched pedigree in the tournament and adds to their success story. Fans celebrated in unison, embracing their nation’s ability to triumph against the odds, making this Copa América final a memorable chapter in the annals of Argentine football. The victory reflects Argentina's rich football heritage, reminding the world of the skill, passion, and grit that have defined their national team for generations.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -22194,6 +22551,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
 
 On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
@@ -22207,6 +22565,17 @@ As the final whistle blew, it marked a historic achievement for Argentina, furth
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
+
+On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
+
+Argentina, aiming to solidify their position as a dominant force in South American football, entered the match with high expectations. The game proved to be fiercely contested, as Colombia sought to dethrone the defending champions. Both teams exhibited commendable tactics and showcased their talents, but it was Argentina that would eventually snatch victory from the jaws of defeat in the dying moments of extra time.
+
+The decisive moment came in the 112th minute when a superb build-up play led to a phenomenal goal, leaving fans erupting in joy. This goal not only sealed the win but also emphasized the sheer determination and skill that has characterized Argentina's journey throughout this tournament. Despite the absence of their star player, Messi, for a significant portion of the match due to injury, Argentina maintained their poise and executed their game plan effectively.
+
+As the final whistle blew, it marked a historic achievement for Argentina, further embedding their legacy in Copa América history. Winning this championship for the 16th time signifies their unmatched pedigree in the tournament and adds to their success story. Fans celebrated in unison, embracing their nation’s ability to triumph against the odds, making this Copa América final a memorable chapter in the annals of Argentine football. The victory reflects Argentina's rich football heritage, reminding the world of the skill, passion, and grit that have defined their national team for generations.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -22534,6 +22903,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
 
 On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
@@ -22547,6 +22917,17 @@ As the final whistle blew, it marked a historic achievement for Argentina, furth
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
+
+On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
+
+Argentina, aiming to solidify their position as a dominant force in South American football, entered the match with high expectations. The game proved to be fiercely contested, as Colombia sought to dethrone the defending champions. Both teams exhibited commendable tactics and showcased their talents, but it was Argentina that would eventually snatch victory from the jaws of defeat in the dying moments of extra time.
+
+The decisive moment came in the 112th minute when a superb build-up play led to a phenomenal goal, leaving fans erupting in joy. This goal not only sealed the win but also emphasized the sheer determination and skill that has characterized Argentina's journey throughout this tournament. Despite the absence of their star player, Messi, for a significant portion of the match due to injury, Argentina maintained their poise and executed their game plan effectively.
+
+As the final whistle blew, it marked a historic achievement for Argentina, further embedding their legacy in Copa América history. Winning this championship for the 16th time signifies their unmatched pedigree in the tournament and adds to their success story. Fans celebrated in unison, embracing their nation’s ability to triumph against the odds, making this Copa América final a memorable chapter in the annals of Argentine football. The victory reflects Argentina's rich football heritage, reminding the world of the skill, passion, and grit that have defined their national team for generations.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -22883,6 +23264,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
 
 On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
@@ -22896,6 +23278,17 @@ As the final whistle blew, it marked a historic achievement for Argentina, furth
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
+
+On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
+
+Argentina, aiming to solidify their position as a dominant force in South American football, entered the match with high expectations. The game proved to be fiercely contested, as Colombia sought to dethrone the defending champions. Both teams exhibited commendable tactics and showcased their talents, but it was Argentina that would eventually snatch victory from the jaws of defeat in the dying moments of extra time.
+
+The decisive moment came in the 112th minute when a superb build-up play led to a phenomenal goal, leaving fans erupting in joy. This goal not only sealed the win but also emphasized the sheer determination and skill that has characterized Argentina's journey throughout this tournament. Despite the absence of their star player, Messi, for a significant portion of the match due to injury, Argentina maintained their poise and executed their game plan effectively.
+
+As the final whistle blew, it marked a historic achievement for Argentina, further embedding their legacy in Copa América history. Winning this championship for the 16th time signifies their unmatched pedigree in the tournament and adds to their success story. Fans celebrated in unison, embracing their nation’s ability to triumph against the odds, making this Copa América final a memorable chapter in the annals of Argentine football. The victory reflects Argentina's rich football heritage, reminding the world of the skill, passion, and grit that have defined their national team for generations.",
+        },
         "title": "",
       },
       "taskStatus": "DOING",
@@ -23243,6 +23636,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         },
         "interpolatedTaskDescription": "Using the gathered information, write a detailed article about the sport event.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
 
 On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
@@ -23256,6 +23650,17 @@ As the final whistle blew, it marked a historic achievement for Argentina, furth
         "stats": null,
         "status": "DONE",
         "store": [Function],
+        "structuredOutput": {
+          "finalAnswer": "### Argentina Claims 2024 Copa América Title in Dramatic Fashion
+
+On July 14, 2024, the grand finale of the Copa América unfolded at the iconic Hard Rock Stadium in Miami Gardens, Florida, where Argentina triumphed over Colombia with a narrow 1-0 victory, securing their historic 16th title. The match was a test of endurance and skill, highlighted by a tense atmosphere that included an unexpected delay of over an hour before kickoff due to overcrowding. This upheaval, coupled with Argentina's legendary captain Lionel Messi leaving the field early due to an injury, made for a gripping spectacle that kept fans on the edge of their seats.
+
+Argentina, aiming to solidify their position as a dominant force in South American football, entered the match with high expectations. The game proved to be fiercely contested, as Colombia sought to dethrone the defending champions. Both teams exhibited commendable tactics and showcased their talents, but it was Argentina that would eventually snatch victory from the jaws of defeat in the dying moments of extra time.
+
+The decisive moment came in the 112th minute when a superb build-up play led to a phenomenal goal, leaving fans erupting in joy. This goal not only sealed the win but also emphasized the sheer determination and skill that has characterized Argentina's journey throughout this tournament. Despite the absence of their star player, Messi, for a significant portion of the match due to injury, Argentina maintained their poise and executed their game plan effectively.
+
+As the final whistle blew, it marked a historic achievement for Argentina, further embedding their legacy in Copa América history. Winning this championship for the 16th time signifies their unmatched pedigree in the tournament and adds to their success story. Fans celebrated in unison, embracing their nation’s ability to triumph against the odds, making this Copa América final a memorable chapter in the annals of Argentine football. The victory reflects Argentina's rich football heritage, reminding the world of the skill, passion, and grit that have defined their national team for generations.",
+        },
         "title": "",
       },
       "taskStatus": "DONE",

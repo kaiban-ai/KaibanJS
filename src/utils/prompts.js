@@ -104,11 +104,6 @@ other
 
 IMPORTANT: (Please respect the expected output requirements from the user): ${
       task.expectedOutput
-    } ${
-      task.outputSchema
-        ? ', adhere to this JSON schema:' +
-          JSON.stringify(zodToJsonSchema(task.outputSchema))
-        : ''
     }
 
 {
@@ -132,12 +127,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${
     const prompt = `Hi ${agent.name}, please complete the following task: ${
       task.description
     }. 
-        Your expected output should be: "${task.expectedOutput}" ${
-      task.outputSchema
-        ? ', adhere to this JSON schema:' +
-          JSON.stringify(zodToJsonSchema(task.outputSchema))
-        : ''
-    }. 
+        Your expected output should be: "${task.expectedOutput}". 
         ${
           context
             ? `Incorporate the following findings and insights from previous tasks: "${context}"`
@@ -157,6 +147,29 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${
   INVALID_JSON_FEEDBACK: ({ _agent, _task, _llmOutput }) => {
     // eslint-disable-next-line no-useless-escape
     const prompt = `You returned an invalid JSON object. Please format your answer as a valid JSON object. Just the JSON object not comments or anything else. E.g: {\"finalAnswer\": \"The final answer\"}`;
+    return prompt;
+  },
+  /**
+   * Generates feedback when the agent's response is not in valid JSON format.
+   * This prompt asks the agent to correct its output format.
+   * @param {Object} params - The parameters for generating the invalid JSON feedback.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @param {string} params.llmOutput - The invalid output that was received.
+   * @param {Object} params.outputSchema - The expected output schema for the task.
+   * @param {Object} params.outputSchemaError - The error object for the output schema validation.
+   * @returns {string} The formatted feedback message.
+   */
+  INVALID_JSON_FOR_OUTPUT_SCHEMA_FEEDBACK: ({
+    _agent,
+    _task,
+    _llmOutput,
+    outputSchema,
+    outputSchemaError,
+  }) => {
+    const prompt = `You returned an invalid JSON object with following error ${outputSchemaError.toString()}. Please format your answer adhere to this JSON schema ${JSON.stringify(
+      zodToJsonSchema(outputSchema)
+    )}.`;
     return prompt;
   },
   /**

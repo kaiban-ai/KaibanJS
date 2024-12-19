@@ -20,6 +20,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { createTeamStore } from './stores';
 import { ReactChampionAgent } from './agents';
 import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from './utils/enums';
+import { zodToJsonSchema } from 'zod-to-json-schema';
 
 class Agent {
   constructor({ type, ...config }) {
@@ -106,7 +107,6 @@ class Task {
     this.id = uuidv4();
     this.title = title; // Title is now optional with a default empty string
     this.description = description;
-    this.expectedOutput = expectedOutput;
     this.isDeliverable = isDeliverable;
     this.agent = agent;
     this.status = TASK_STATUS_enum.TODO;
@@ -118,19 +118,11 @@ class Task {
     this.feedbackHistory = []; // Initialize feedbackHistory as an empty array
     this.externalValidationRequired = externalValidationRequired;
     this.outputSchema = outputSchema; // Zod Schema
-    this.structuredOutput = null;
-  }
-  //W.I.P can't used from reactChampionAgent functions, used direct property assignation instead example: task.structuredOutput = parsedLLMOutput.finalAnswer
-  setStructureOutput(finalAnswer) {
-    if (this.outputSchema) {
-      try {
-        this.structuredOutput = this.outputSchema.parse(finalAnswer); // Validar y asignar
-      } catch (e) {
-        throw new Error(`Invalid task output: ${e.message}`);
-      }
-    } else {
-      this.structuredOutput = finalAnswer; // Si no hay esquema, asignar directamente
-    }
+    this.expectedOutput = outputSchema
+      ? `${expectedOutput}, adhere to this JSON schema: ${JSON.stringify(
+          zodToJsonSchema(outputSchema)
+        )}`
+      : expectedOutput;
   }
 
   setStore(store) {
