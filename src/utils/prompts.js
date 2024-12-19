@@ -150,6 +150,29 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${
     return prompt;
   },
   /**
+   * Generates feedback when the agent's response is not in valid JSON format.
+   * This prompt asks the agent to correct its output format.
+   * @param {Object} params - The parameters for generating the invalid JSON feedback.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @param {string} params.llmOutput - The invalid output that was received.
+   * @param {Object} params.outputSchema - The expected output schema for the task.
+   * @param {Object} params.outputSchemaError - The error object for the output schema validation.
+   * @returns {string} The formatted feedback message.
+   */
+  INVALID_JSON_FOR_OUTPUT_SCHEMA_FEEDBACK: ({
+    _agent,
+    _task,
+    _llmOutput,
+    outputSchema,
+    outputSchemaError,
+  }) => {
+    const prompt = `You returned an invalid JSON object with following error ${outputSchemaError.toString()}. Please format your answer adhere to this JSON schema ${JSON.stringify(
+      zodToJsonSchema(outputSchema)
+    )}.`;
+    return prompt;
+  },
+  /**
    * Generates feedback for a thought that includes a self-question.
    * This prompt encourages the agent to answer its own question.
    * @param {Object} params - The parameters for generating the thought with self-question feedback.
