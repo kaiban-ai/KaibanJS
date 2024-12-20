@@ -1,0 +1,59 @@
+[
+  {
+    "url": "https://api.openai.com/v1/chat/completions",
+    "method": "POST",
+    "body": {
+      "model": "gpt-4o-mini",
+      "temperature": 1,
+      "top_p": 1,
+      "frequency_penalty": 0,
+      "presence_penalty": 0,
+      "n": 1,
+      "stream": false,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are Clark Kent.\n\nYour role is: Write history fact summary.\nYour background is: Writer.\nYour main goal is: Write a summary about any given historical fact.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\nNo tools available. You must reply using your internal knowledge.\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\" // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words\", adhere to this JSON schema: {\"finalAnswer\":{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\",\"description\":\"The title for historical fact summary\"},\"summary\":{\"type\":\"string\",\"description\":\"The historical fact summary\"},\"time_range\":{\"type\":\"string\",\"description\":\"Range of years in which the historical fact occurs. example: \\\"1815-1816\\\" \"},\"figures\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"List of historical figures involved in the historical fact\"},\"countries\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"List of countries involved in the historical fact\"},\"words\":{\"type\":\"number\",\"description\":\"Number of words in the summary\"}},\"required\":[\"title\",\"summary\",\"time_range\",\"figures\",\"countries\",\"words\"],\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"}}.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
+        },
+        {
+          "role": "user",
+          "content": "Hi Clark Kent, please complete the following task: Write detailed summaries about a given historical fact, giving dates, historical figures involved, motives, and repercussions of the fact.. \n        Your expected output should be: \"A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words\", adhere to this JSON schema: {\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\",\"description\":\"The title for historical fact summary\"},\"summary\":{\"type\":\"string\",\"description\":\"The historical fact summary\"},\"time_range\":{\"type\":\"string\",\"description\":\"Range of years in which the historical fact occurs. example: \\\"1815-1816\\\" \"},\"figures\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"List of historical figures involved in the historical fact\"},\"countries\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"List of countries involved in the historical fact\"},\"words\":{\"type\":\"number\",\"description\":\"Number of words in the summary\"}},\"required\":[\"title\",\"summary\",\"time_range\",\"figures\",\"countries\",\"words\"],\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"}.\". \n        "
+        }
+      ]
+    },
+    "response": {
+      "id": "chatcmpl-AgbsQlK8JX7yPkvUOcp8NNVsxeUot",
+      "object": "chat.completion",
+      "created": 1734718738,
+      "model": "gpt-4o-mini-2024-07-18",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n   \"finalAnswer\": {\n      \"title\": \"The Fall of the Berlin Wall\",\n      \"summary\": \"The fall of the Berlin Wall on November 9, 1989, marked a pivotal moment in history, symbolizing the end of the Cold War and the division between East and West Germany. The wall had been erected in 1961 to stop the mass emigration from East to West Berlin. Key figures involved include Egon Krenz, the last leader of East Germany, and West German Chancellor Helmut Kohl. The collapse was driven by mounting pressures for reform in East Germany, public protests, and the broader wave of change occurring in Eastern Europe, including the liberalization movements in Poland and Hungary. The repercussions included the reunification of Germany in 1990 and the acceleration of the dissolution of communist regimes in Eastern Europe, fundamentally reshaping the geopolitical landscape of the continent.\",\n      \"time_range\": \"1989\",\n      \"figures\": [\"Egon Krenz\", \"Helmut Kohl\"],\n      \"countries\": [\"Germany\", \"United States\", \"Russia\"],\n      \"words\": 139\n   }\n}",
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1007,
+        "completion_tokens": 232,
+        "total_tokens": 1239,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "system_fingerprint": "fp_0aa8d3e20b"
+    }
+  }
+]

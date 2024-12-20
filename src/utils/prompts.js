@@ -103,7 +103,13 @@ other
 ### Final Answer
 
 IMPORTANT: (Please respect the expected output requirements from the user): ${
-      task.expectedOutput
+      task.outputSchema
+        ? `${
+            task.expectedOutput
+          }", adhere to this JSON schema: ${JSON.stringify({
+            finalAnswer: { ...zodToJsonSchema(task.outputSchema) },
+          })}.`
+        : task.expectedOutput
     }
 
 {
@@ -127,7 +133,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${
     const prompt = `Hi ${agent.name}, please complete the following task: ${
       task.description
     }. 
-        Your expected output should be: "${task.expectedOutput}". 
+        Your expected output should be: "${
+          task.outputSchema
+            ? `${
+                task.expectedOutput
+              }", adhere to this JSON schema: ${JSON.stringify(
+                zodToJsonSchema(task.outputSchema)
+              )}.`
+            : task.expectedOutput
+        }". 
         ${
           context
             ? `Incorporate the following findings and insights from previous tasks: "${context}"`

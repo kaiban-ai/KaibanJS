@@ -20,7 +20,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { createTeamStore } from './stores';
 import { ReactChampionAgent } from './agents';
 import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from './utils/enums';
-import { zodToJsonSchema } from 'zod-to-json-schema';
 
 class Agent {
   constructor({ type, ...config }) {
@@ -118,11 +117,7 @@ class Task {
     this.feedbackHistory = []; // Initialize feedbackHistory as an empty array
     this.externalValidationRequired = externalValidationRequired;
     this.outputSchema = outputSchema; // Zod Schema
-    this.expectedOutput = outputSchema
-      ? `${expectedOutput}, adhere to this JSON schema: ${JSON.stringify(
-          zodToJsonSchema(outputSchema)
-        )}`
-      : expectedOutput;
+    this.expectedOutput = expectedOutput;
   }
 
   setStore(store) {
