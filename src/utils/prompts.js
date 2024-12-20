@@ -160,7 +160,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${
    * @param {Object} params.outputSchemaError - The error object for the output schema validation.
    * @returns {string} The formatted feedback message.
    */
-  INVALID_JSON_FOR_OUTPUT_SCHEMA_FEEDBACK: ({
+  INVALID_OUTPUT_SCHEMA_FEEDBACK: ({
     _agent,
     _task,
     _llmOutput,
