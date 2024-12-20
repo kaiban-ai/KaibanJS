@@ -29,7 +29,7 @@ const schemaSummary = z.object({
 
 // Define tasks
 const writeTask = new Task({
-  description: `Write detailed summaries about a given historical fact, giving dates, historical figures involved, motives, and repercussions of the fact.`,
+  description: `Write detailed summaries about {fact}, giving dates, historical figures involved, motives, and repercussions of the fact.`,
   expectedOutput:
     'A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words',
   outputSchema: schemaSummary,
@@ -41,7 +41,7 @@ const team = new Team({
   name: 'History fact summary Team',
   agents: [writerAgent],
   tasks: [writeTask],
-  inputs: { fact: 'battle of waterloo' }, // Placeholder for dynamic input
+  inputs: { fact: 'Normandy landings' }, // Placeholder for dynamic input
   env: { OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY }, // Environment variables for the team,
   logLevel: 'error',
 });
