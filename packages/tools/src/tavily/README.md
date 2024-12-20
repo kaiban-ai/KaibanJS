@@ -35,11 +35,11 @@ The output is a JSON-formatted string containing an array of search results from
 ```javascript
 const tool = new TavilySearchResults({
   apiKey: 'your-api-key',
-  maxResults: 5  // Optional, defaults to 5
+  maxResults: 5, // Optional, defaults to 5
 });
 
-const result = await tool._call({ 
-  searchQuery: 'What are the latest developments in AI?' 
+const result = await tool._call({
+  searchQuery: 'What are the latest developments in AI?',
 });
 ```
 
@@ -48,17 +48,17 @@ const result = await tool._call({
 ```javascript
 const tool = new TavilySearchResults({
   apiKey: process.env.TAVILY_API_KEY,
-  maxResults: 10
+  maxResults: 10,
 });
 
 try {
-  const result = await tool._call({ 
-    searchQuery: 'recent breakthroughs in quantum computing' 
+  const result = await tool._call({
+    searchQuery: 'recent breakthroughs in quantum computing',
   });
-  
+
   // Parse the JSON string back to an object
   const searchResults = JSON.parse(result);
-  
+
   // Process the results
   searchResults.forEach((item, index) => {
     console.log(`Result ${index + 1}:`, item);
@@ -70,4 +70,4 @@ try {
 
 ### Disclaimer
 
-Ensure you have proper API credentials and respect Tavily's usage terms and rate limits. The search results are optimized for current events and may vary based on the time of the query. 
+Ensure you have proper API credentials and respect Tavily's usage terms and rate limits. The search results are optimized for current events and may vary based on the time of the query.

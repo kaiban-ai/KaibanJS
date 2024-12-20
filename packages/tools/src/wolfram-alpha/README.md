@@ -39,11 +39,11 @@ The output is the response from WolframAlpha's computational engine, providing d
 
 ```javascript
 const tool = new WolframAlphaTool({
-  appId: 'your-app-id'
+  appId: 'your-app-id',
 });
 
-const result = await tool._call({ 
-  query: 'solve x^2 + 2x + 1 = 0' 
+const result = await tool._call({
+  query: 'solve x^2 + 2x + 1 = 0',
 });
 ```
 
@@ -56,12 +56,12 @@ const result = await tool._call({
 
 ```javascript
 const tool = new WolframAlphaTool({
-  appId: process.env.WOLFRAM_APP_ID
+  appId: process.env.WOLFRAM_APP_ID,
 });
 
 try {
-  const result = await tool._call({ 
-    query: 'calculate the orbital period of Mars' 
+  const result = await tool._call({
+    query: 'calculate the orbital period of Mars',
   });
   console.log(result);
 } catch (error) {
@@ -71,4 +71,4 @@ try {
 
 ### Disclaimer
 
-Ensure you have proper API credentials and respect WolframAlpha's usage terms and rate limits. 
+Ensure you have proper API credentials and respect WolframAlpha's usage terms and rate limits.

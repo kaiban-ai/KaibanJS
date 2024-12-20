@@ -56,11 +56,11 @@ const tool = new ExaSearch({
   type: 'neural',
   useAutoprompt: false,
   numResults: 10,
-  category: 'company'
+  category: 'company',
 });
 
-const result = await tool._call({ 
-  query: 'AI companies focusing on natural language processing' 
+const result = await tool._call({
+  query: 'AI companies focusing on natural language processing',
 });
 ```
 
@@ -75,13 +75,13 @@ const tool = new ExaSearch({
   startPublishedDate: '2023-01-01',
   contents: {
     text: { maxCharacters: 1000, includeHtmlTags: false },
-    highlights: { numSentences: 3, highlightsPerUrl: 2 }
-  }
+    highlights: { numSentences: 3, highlightsPerUrl: 2 },
+  },
 });
 
 try {
-  const result = await tool._call({ 
-    query: 'recent developments in quantum computing' 
+  const result = await tool._call({
+    query: 'recent developments in quantum computing',
   });
   console.log(result);
 } catch (error) {
@@ -91,4 +91,4 @@ try {
 
 ### Disclaimer
 
-Ensure you have proper API credentials and respect Exa's usage terms and rate limits. Some features may require specific subscription tiers. 
+Ensure you have proper API credentials and respect Exa's usage terms and rate limits. Some features may require specific subscription tiers.

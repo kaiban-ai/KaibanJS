@@ -44,11 +44,11 @@ The output is the scraped content from the specified URL, formatted according to
 ```javascript
 const tool = new Firecrawl({
   apiKey: 'your-api-key',
-  format: 'markdown'
+  format: 'markdown',
 });
 
-const result = await tool._call({ 
-  url: 'https://example.com' 
+const result = await tool._call({
+  url: 'https://example.com',
 });
 ```
 
@@ -57,17 +57,17 @@ const result = await tool._call({
 ```javascript
 const tool = new Firecrawl({
   apiKey: process.env.FIRECRAWL_API_KEY,
-  format: 'markdown'
+  format: 'markdown',
 });
 
 try {
-  const result = await tool._call({ 
-    url: 'https://example.com/blog/article' 
+  const result = await tool._call({
+    url: 'https://example.com/blog/article',
   });
-  
+
   // Process the scraped content
   console.log('Scraped content:', result);
-  
+
   // Use the content with an LLM or other processing
   // ...
 } catch (error) {
@@ -77,4 +77,4 @@ try {
 
 ### Disclaimer
 
-Ensure you have proper API credentials and respect Firecrawl's usage terms and rate limits. The service offers flexible pricing plans, including a free tier for small-scale use. When scraping websites, make sure to comply with the target website's terms of service and robots.txt directives. 
+Ensure you have proper API credentials and respect Firecrawl's usage terms and rate limits. The service offers flexible pricing plans, including a free tier for small-scale use. When scraping websites, make sure to comply with the target website's terms of service and robots.txt directives.
