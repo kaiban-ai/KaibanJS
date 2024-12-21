@@ -144,6 +144,7 @@ export class Agent {
  * @property {string} expectedOutput - The expected output of the task.
  * @property {BaseAgent} agent - The agent to execute the task.
  * @property {boolean} [isDeliverable] - Indicates whether the task is deliverable.
+ * @property {object} [outputSchema] - The schema for validating the task output.
  */
 export interface ITaskParams {
   title?: string;
@@ -151,6 +152,7 @@ export interface ITaskParams {
   expectedOutput: string;
   agent: Agent;
   isDeliverable?: boolean;
+  outputSchema?: object;
 }
 
 /**
@@ -170,6 +172,7 @@ export interface ITaskParams {
  * @property {Task[]} dependencies - The dependencies of the task.
  * @property {string | null} interpolatedTaskDescription - The interpolated task description.
  * @property {TStore} store - The store.
+ * @property {object | null} outputSchema - The schema for validating the task output.
  */
 export class Task {
   id: string;
@@ -185,6 +188,7 @@ export class Task {
   dependencies: Task[];
   interpolatedTaskDescription: string | null;
   store: TStore;
+  outputSchema: object | null;
 
   /**
    * Creates an instance of a Task.

@@ -10,6 +10,7 @@
  * @property {string} OBSERVATION - The agent analyzes the results from the tools to update its understanding and plan.
  * @property {string} FINAL_ANSWER - The agent concludes the task with a final decision based on all collected and processed information.
  * @property {string} IDLE - The agent is idle, waiting for new instructions or tasks.
+ * @property {string} OUTPUT_SCHEMA_VALIDATION_ERROR - The agent's output failed to match the required schema structure and needs correction.
  */
 export declare enum AGENT_STATUS_enum {
   INITIAL = 'INITIAL',
@@ -32,6 +33,7 @@ export declare enum AGENT_STATUS_enum {
   ITERATION_END = 'ITERATION_END',
   AGENTIC_LOOP_ERROR = 'AGENTIC_LOOP_ERROR',
   WEIRD_LLM_OUTPUT = 'WEIRD_LLM_OUTPUT',
+  OUTPUT_SCHEMA_VALIDATION_ERROR = 'OUTPUT_SCHEMA_VALIDATION_ERROR',
 }
 
 /**
