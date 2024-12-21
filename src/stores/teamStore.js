@@ -360,7 +360,9 @@ const createTeamStore = (initialState = {}) => {
               .sort((a, b) => a.index - b.index)
               .map(
                 ({ taskDescription, result }) =>
-                  `Task: ${taskDescription}\nResult: ${result}\n`
+                  `Task: ${taskDescription}\nResult: ${
+                    typeof result === 'object' ? JSON.stringify(result) : result
+                  }\n`
               )
               .join('\n');
           },

@@ -16,6 +16,7 @@ The tool uses the following components:
 ## Search Types
 
 The tool supports multiple search types:
+
 - "search" (default): For general search queries
 - "images": For image search
 - "videos": For video search
@@ -39,6 +40,7 @@ The tool supports multiple search types:
 ## Input
 
 The input depends on the search type:
+
 - For webpage scraping: A JSON object with a "url" field
 - For all other search types: A JSON object with a "query" field
 
@@ -52,21 +54,21 @@ The output is a structured JSON response from Serper containing search results b
 // Basic search
 const tool = new Serper({
   apiKey: 'your-api-key',
-  type: 'search'  // Optional, defaults to 'search'
+  type: 'search', // Optional, defaults to 'search'
 });
 
-const result = await tool._call({ 
-  query: 'latest AI developments' 
+const result = await tool._call({
+  query: 'latest AI developments',
 });
 
 // Webpage scraping
 const webScraperTool = new Serper({
   apiKey: 'your-api-key',
-  type: 'webpage'
+  type: 'webpage',
 });
 
-const scrapingResult = await webScraperTool._call({ 
-  url: 'https://example.com' 
+const scrapingResult = await webScraperTool._call({
+  url: 'https://example.com',
 });
 ```
 
@@ -77,14 +79,14 @@ const tool = new Serper({
   apiKey: process.env.SERPER_API_KEY,
   type: 'news',
   params: {
-    num: 10,  // Number of results
-    gl: 'us'  // Geographic location
-  }
+    num: 10, // Number of results
+    gl: 'us', // Geographic location
+  },
 });
 
 try {
-  const result = await tool._call({ 
-    query: 'artificial intelligence breakthroughs' 
+  const result = await tool._call({
+    query: 'artificial intelligence breakthroughs',
   });
   console.log(result);
 } catch (error) {
@@ -94,4 +96,4 @@ try {
 
 ### Disclaimer
 
-Ensure you have proper API credentials and respect Serper's usage terms and rate limits. The webpage scraping feature is in Beta and may be subject to changes. 
+Ensure you have proper API credentials and respect Serper's usage terms and rate limits. The webpage scraping feature is in Beta and may be subject to changes.

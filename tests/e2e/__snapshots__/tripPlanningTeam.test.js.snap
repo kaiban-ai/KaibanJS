@@ -131,6 +131,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -294,6 +295,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -456,6 +458,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -635,6 +638,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -711,6 +715,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
         "outputTokens": 776,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -861,6 +866,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -930,6 +936,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
         "outputTokens": 722,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Overview
@@ -1091,6 +1098,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -1161,6 +1169,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
         "outputTokens": 1071,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -1381,6 +1390,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -1556,6 +1566,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -1624,6 +1635,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -1779,6 +1791,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -1946,6 +1959,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -2014,6 +2028,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -2169,6 +2184,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -2426,6 +2442,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -2494,6 +2511,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -2649,6 +2667,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -2832,6 +2851,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -2900,6 +2920,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -3055,6 +3076,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -3227,6 +3249,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -3295,6 +3318,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -3450,6 +3474,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -3617,6 +3642,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -3685,6 +3711,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -3840,6 +3867,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -4007,6 +4035,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -4075,6 +4104,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -4230,6 +4260,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -4499,6 +4530,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -4567,6 +4599,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -4722,6 +4755,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -4905,6 +4939,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -4973,6 +5008,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -5128,6 +5164,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -5305,6 +5342,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -5373,6 +5411,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -5528,6 +5567,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -5694,6 +5734,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -5762,6 +5803,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -5917,6 +5959,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -6084,6 +6127,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -6152,6 +6196,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -6307,6 +6352,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -6474,6 +6520,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -6542,6 +6589,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -6697,6 +6745,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -6978,6 +7027,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -7046,6 +7096,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -7201,6 +7252,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -7380,6 +7432,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -7448,6 +7501,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -7603,6 +7657,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -7772,6 +7827,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -7840,6 +7896,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -7995,6 +8052,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -8162,6 +8220,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -8230,6 +8289,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -8385,6 +8445,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -8552,6 +8613,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -8620,6 +8682,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -8775,6 +8838,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -9067,6 +9131,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -9135,6 +9200,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -9290,6 +9356,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -9473,6 +9540,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -9541,6 +9609,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -9696,6 +9765,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -9873,6 +9943,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -9941,6 +10012,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -10096,6 +10168,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -10262,6 +10335,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -10330,6 +10404,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -10485,6 +10560,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -10652,6 +10728,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -10720,6 +10797,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -10875,6 +10953,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -11042,6 +11121,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -11110,6 +11190,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -11265,6 +11346,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -11569,6 +11651,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -11637,6 +11720,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -11792,6 +11876,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -11984,6 +12069,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -12052,6 +12138,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -12207,6 +12294,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -12390,6 +12478,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -12458,6 +12547,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -12613,6 +12703,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -12780,6 +12871,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -12848,6 +12940,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -13003,6 +13096,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -13186,6 +13280,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -13254,6 +13349,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -13409,6 +13505,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -13603,6 +13700,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -13671,6 +13769,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Deta
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing flight costs, weather forecasts, and cultural attractions, Berlin emerges as a favorable destination for the trip from New York, given the travel dates from December 1 to December 15, 2024.
 
 ### Flight Costs:
@@ -13825,6 +13924,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -13999,6 +14099,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -14060,6 +14161,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Overview
@@ -14226,6 +14328,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -14392,6 +14495,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -14453,6 +14557,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Overview
@@ -14619,6 +14724,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -14892,6 +14998,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -14953,6 +15060,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Overview
@@ -15119,6 +15227,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -15322,6 +15431,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -15383,6 +15493,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Overview
@@ -15549,6 +15660,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -15743,6 +15855,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -15804,6 +15917,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Overview
@@ -15970,6 +16084,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -16136,6 +16251,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -16197,6 +16313,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Overview
@@ -16363,6 +16480,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -16557,6 +16675,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -16618,6 +16737,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Overview
@@ -16784,6 +16904,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -16989,6 +17110,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -17050,6 +17172,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Overview
@@ -17215,6 +17338,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -17388,6 +17512,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -17450,6 +17575,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -17652,6 +17778,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -17817,6 +17944,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -17879,6 +18007,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -18081,6 +18210,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -18384,6 +18514,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -18446,6 +18577,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -18648,6 +18780,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -18887,6 +19020,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -18949,6 +19083,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -19151,6 +19286,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -19381,6 +19517,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -19443,6 +19580,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -19645,6 +19783,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -19810,6 +19949,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -19872,6 +20012,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -20074,6 +20215,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -20304,6 +20446,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -20366,6 +20509,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -20568,6 +20712,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -20809,6 +20954,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -20871,6 +21017,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -21305,6 +21452,7 @@ exports[`Trip Planning Team Workflows Using OpenAI Agents with Custom Prompts co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -21468,6 +21616,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -21630,6 +21779,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -21809,6 +21959,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -21885,6 +22036,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
         "outputTokens": 748,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -22037,6 +22189,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -22106,6 +22259,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
         "outputTokens": 632,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Key Attractions
@@ -22266,6 +22420,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -22336,6 +22491,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
         "outputTokens": 962,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -22564,6 +22720,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -22739,6 +22896,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -22807,6 +22965,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -22964,6 +23123,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -23131,6 +23291,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -23199,6 +23360,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -23356,6 +23518,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -23613,6 +23776,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -23681,6 +23845,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -23838,6 +24003,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -24021,6 +24187,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -24089,6 +24256,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -24246,6 +24414,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -24418,6 +24587,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -24486,6 +24656,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -24643,6 +24814,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -24810,6 +24982,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -24878,6 +25051,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -25035,6 +25209,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -25202,6 +25377,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -25270,6 +25446,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -25427,6 +25604,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -25696,6 +25874,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -25764,6 +25943,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -25921,6 +26101,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -26104,6 +26285,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -26172,6 +26354,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -26329,6 +26512,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -26506,6 +26690,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -26574,6 +26759,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -26731,6 +26917,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -26897,6 +27084,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -26965,6 +27153,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -27122,6 +27311,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -27289,6 +27479,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -27357,6 +27548,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -27514,6 +27706,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -27681,6 +27874,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -27749,6 +27943,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -27906,6 +28101,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -28187,6 +28383,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -28255,6 +28452,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -28412,6 +28610,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -28591,6 +28790,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -28659,6 +28859,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -28816,6 +29017,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -28985,6 +29187,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -29053,6 +29256,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -29210,6 +29414,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -29377,6 +29582,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -29445,6 +29651,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -29602,6 +29809,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -29769,6 +29977,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -29837,6 +30046,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -29994,6 +30204,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -30286,6 +30497,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -30354,6 +30566,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -30511,6 +30724,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -30694,6 +30908,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -30762,6 +30977,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -30919,6 +31135,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -31096,6 +31313,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -31164,6 +31382,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -31321,6 +31540,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -31487,6 +31707,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -31555,6 +31776,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -31712,6 +31934,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -31879,6 +32102,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -31947,6 +32171,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -32104,6 +32329,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -32271,6 +32497,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -32339,6 +32566,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -32496,6 +32724,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -32800,6 +33029,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -32868,6 +33098,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -33025,6 +33256,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -33219,6 +33451,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -33287,6 +33520,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -33444,6 +33678,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -33629,6 +33864,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -33697,6 +33933,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -33854,6 +34091,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -34021,6 +34259,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -34089,6 +34328,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -34246,6 +34486,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -34431,6 +34672,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -34499,6 +34741,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -34656,6 +34899,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -34852,6 +35096,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -34920,6 +35165,7 @@ Enjoy the best of Berlin with this well-rounded itinerary that captures its rich
     Trip Date: 2024-12-01 to 2024-12-15, 
     Traveler Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "After analyzing Tokyo, Paris, and Berlin for the trip from December 1 to December 15, 2024, considering weather, travel costs, and art and culture events, here are the findings:
 
 1. **Tokyo**: 
@@ -35076,6 +35322,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -35250,6 +35497,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -35311,6 +35559,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Key Attractions
@@ -35476,6 +35725,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -35642,6 +35892,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -35703,6 +35954,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Key Attractions
@@ -35868,6 +36120,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -36143,6 +36396,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -36204,6 +36458,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Key Attractions
@@ -36369,6 +36624,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -36571,6 +36827,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -36632,6 +36889,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Key Attractions
@@ -36797,6 +37055,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -36990,6 +37249,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -37051,6 +37311,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Key Attractions
@@ -37216,6 +37477,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -37382,6 +37644,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -37443,6 +37706,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Key Attractions
@@ -37608,6 +37872,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -37801,6 +38066,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -37862,6 +38128,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Key Attractions
@@ -38027,6 +38294,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -38231,6 +38499,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -38292,6 +38561,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     considering key attractions, local customs, and special events.
      ... Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "### Comprehensive City Guide: Berlin (December 1 - December 15, 2024)
 
 #### Key Attractions
@@ -38456,6 +38726,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -38629,6 +38900,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -38691,6 +38963,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -38901,6 +39174,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -39066,6 +39340,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -39128,6 +39403,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -39338,6 +39614,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -39642,6 +39919,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -39704,6 +39982,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -39914,6 +40193,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -40161,6 +40441,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -40223,6 +40504,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -40433,6 +40715,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -40671,6 +40954,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -40733,6 +41017,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -40943,6 +41228,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -41108,6 +41394,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -41170,6 +41457,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -41380,6 +41668,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -41618,6 +41907,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -41680,6 +41970,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview
@@ -41890,6 +42181,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -42139,6 +42431,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -42201,6 +42494,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A co
     packing suggestions, and a budget breakdown. ... 
     Trip Date: 2024-12-01 to 2024-12-15, Origin: New York, Interests: Art and Culture",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# 7-Day Travel Itinerary for Berlin (December 1 - December 15, 2024)
 
 ## Overview

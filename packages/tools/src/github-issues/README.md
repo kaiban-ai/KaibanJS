@@ -26,6 +26,7 @@ The tool uses the following components:
 ## Authentication
 
 The tool supports two authentication modes:
+
 - Unauthenticated: Works with public repositories (60 requests/hour limit)
 - Authenticated: Uses GitHub Personal Access Token (5,000 requests/hour limit)
 
@@ -36,6 +37,7 @@ The input should be a JSON object with a "repoUrl" field containing the GitHub r
 ## Output
 
 The output is a structured JSON object containing:
+
 - Repository information (name, URL, owner)
 - Metadata (total issues, last updated date, limit)
 - Array of issues with details (number, title, URL, labels, description)
@@ -46,11 +48,11 @@ The output is a structured JSON object containing:
 // Basic usage
 const tool = new GithubIssues({
   token: 'github_pat_...', // Optional: GitHub personal access token
-  limit: 20 // Optional: number of issues to fetch (default: 10)
+  limit: 20, // Optional: number of issues to fetch (default: 10)
 });
 
-const result = await tool._call({ 
-  repoUrl: 'https://github.com/owner/repo' 
+const result = await tool._call({
+  repoUrl: 'https://github.com/owner/repo',
 });
 ```
 
@@ -59,20 +61,20 @@ const result = await tool._call({
 ```javascript
 const tool = new GithubIssues({
   token: process.env.GITHUB_TOKEN,
-  limit: 50
+  limit: 50,
 });
 
 try {
-  const result = await tool._call({ 
-    repoUrl: 'https://github.com/facebook/react' 
+  const result = await tool._call({
+    repoUrl: 'https://github.com/facebook/react',
   });
-  
+
   // Access structured data
   console.log('Repository:', result.repository.name);
   console.log('Total Issues:', result.metadata.totalIssues);
-  
+
   // Process issues
-  result.issues.forEach(issue => {
+  result.issues.forEach((issue) => {
     console.log(`#${issue.number}: ${issue.title}`);
     console.log(`Labels: ${issue.labels.join(', ')}`);
     console.log(`URL: ${issue.url}\n`);
@@ -89,4 +91,4 @@ try {
 
 ### Disclaimer
 
-Ensure you have proper API credentials if needed and respect GitHub's API rate limits and terms of service. For private repositories, authentication is required. 
+Ensure you have proper API credentials if needed and respect GitHub's API rate limits and terms of service. For private repositories, authentication is required.

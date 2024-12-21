@@ -248,7 +248,13 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
                   <strong className="subtitle">Result:</strong>
                 </p>
 
-                <p>{task.result ? task.result : 'Not yet available'}</p>
+                <p>
+                  {task.result
+                    ? typeof task.result == 'object'
+                      ? JSON.stringify(task.result, null, 2)
+                      : task.result
+                    : 'Not yet available'}
+                </p>
               </div>
             </li>
           ))}
@@ -259,7 +265,11 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
         <h2 className="sectionTitle">Workflow Result</h2>
         <div>
           {workflowResult ? (
-            workflowResult
+            typeof workflowResult == 'object' ? (
+              JSON.stringify(workflowResult, null, 2)
+            ) : (
+              workflowResult
+            )
           ) : (
             <div className="noAvailableData">
               <span>Not yet available</span>
