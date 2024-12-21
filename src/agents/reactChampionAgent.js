@@ -201,6 +201,13 @@ class ReactChampionAgent extends BaseAgent {
               output: thinkingResult,
             });
             break;
+          case AGENT_STATUS_enum.OUTPUT_SCHEMA_VALIDATION_ERROR:
+            feedbackMessage = this.handleIssuesParsingSchemaOutput({
+              agent: agent,
+              task,
+              output: thinkingResult,
+            });
+            break;
           case AGENT_STATUS_enum.FINAL_ANSWER:
             parsedResultWithFinalAnswer = this.handleFinalAnswer({
               agent: agent,
@@ -368,6 +375,12 @@ class ReactChampionAgent extends BaseAgent {
   determineActionType(parsedResult) {
     if (parsedResult === null) {
       return AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT;
+    } else if (
+      parsedResult.finalAnswer &&
+      parsedResult.outputSchema &&
+      !parsedResult.isValidOutput
+    ) {
+      return AGENT_STATUS_enum.OUTPUT_SCHEMA_VALIDATION_ERROR;
     } else if (parsedResult.finalAnswer) {
       return AGENT_STATUS_enum.FINAL_ANSWER;
     } else if (parsedResult.action === 'self_question') {
@@ -434,6 +447,19 @@ class ReactChampionAgent extends BaseAgent {
       const { message } = output.generations[0][0];
       const parsedResult = await agentResultParser.invoke(message);
       const parsedLLMOutput = getParsedJSON(parsedResult);
+
+      if (task.outputSchema && parsedLLMOutput.finalAnswer) {
+        parsedLLMOutput.outputSchema = task.outputSchema;
+        const parsedSchema = task.outputSchema.safeParse(
+          parsedLLMOutput.finalAnswer
+        );
+
+        parsedLLMOutput.isValidOutput = parsedSchema.success;
+        parsedLLMOutput.outputSchemaErrors = parsedSchema.error;
+        parsedLLMOutput.finalAnswer = parsedSchema.success
+          ? parsedSchema.data
+          : parsedLLMOutput.finalAnswer;
+      }
       const thinkingResult = {
         parsedLLMOutput: parsedLLMOutput,
         llmOutput: parsedResult,
@@ -518,13 +544,35 @@ class ReactChampionAgent extends BaseAgent {
     });
     return feedbackMessage;
   }
+  handleIssuesParsingSchemaOutput({ agent, task, output }) {
+    const jSONPArsingError = new Error(
+      'The output does not match the expected schema structure',
+      output.parsedLLMOutput.outputSchemaErrors
+    );
+    agent.store.getState().handleAgentIssuesParsingSchemaOutput({
+      agent,
+      task,
+      output,
+      error: jSONPArsingError,
+    });
+    const feedbackMessage = this.promptTemplates.INVALID_OUTPUT_SCHEMA_FEEDBACK(
+      {
+        agent,
+        task,
+        llmOutput: output.llmOutput,
+        outputSchema: task.outputSchema,
+        outputSchemaError: output.parsedLLMOutput.outputSchemaErrors,
+      }
+    );
+    return feedbackMessage;
+  }
 
   handleFinalAnswer({ agent, task, parsedLLMOutput }) {
-    // console.log(parsedJSON.finalAnswer);
     if (parsedLLMOutput.finalAnswer) {
       if (
         typeof parsedLLMOutput.finalAnswer === 'object' &&
-        parsedLLMOutput.finalAnswer !== null
+        parsedLLMOutput.finalAnswer !== null &&
+        !task.outputSchema
       ) {
         parsedLLMOutput.finalAnswer = JSON.stringify(
           parsedLLMOutput.finalAnswer

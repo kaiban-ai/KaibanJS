@@ -129,6 +129,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -288,6 +289,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -456,6 +458,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -523,6 +526,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         "outputTokens": 215,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}",
       "startTime": "[REDACTED]",
       "stats": null,
@@ -664,6 +668,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -726,6 +731,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
         "outputTokens": 405,
         "parsingErrors": 0,
       },
+      "outputSchema": null,
       "result": "# David Llaca
 
 ## Personal Summary
@@ -918,6 +924,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -1081,6 +1088,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -1140,6 +1148,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
@@ -1278,6 +1287,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -1433,6 +1443,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -1492,6 +1503,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
@@ -1630,6 +1642,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -1876,6 +1889,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -1935,6 +1949,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
@@ -2073,6 +2088,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -2267,6 +2283,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -2326,6 +2343,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
@@ -2464,6 +2482,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -2620,6 +2639,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -2679,6 +2699,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
@@ -2817,6 +2838,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -2972,6 +2994,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -3031,6 +3054,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
@@ -3169,6 +3193,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -3325,6 +3350,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -3384,6 +3410,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
@@ -3522,6 +3549,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -3689,6 +3717,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -3748,6 +3777,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
      I earned a Bachelor of Science in Computer Science from FIU in 2018, 
      and I completed a JavaScript bootcamp that same year.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "{"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}",
         "startTime": "[REDACTED]",
         "stats": null,
@@ -3893,6 +3923,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
             "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
             "INITIAL_MESSAGE": [Function],
             "INVALID_JSON_FEEDBACK": [Function],
+            "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
             "OBSERVATION_FEEDBACK": [Function],
             "SELF_QUESTION_FEEDBACK": [Function],
             "SYSTEM_MESSAGE": [Function],
@@ -4063,6 +4094,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -4117,6 +4149,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary
@@ -4300,6 +4333,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -4462,6 +4496,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -4516,6 +4551,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary
@@ -4699,6 +4735,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -4954,6 +4991,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -5008,6 +5046,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary
@@ -5191,6 +5230,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -5401,6 +5441,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -5455,6 +5496,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary
@@ -5638,6 +5680,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -5839,6 +5882,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -5893,6 +5937,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary
@@ -6076,6 +6121,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -6238,6 +6284,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -6292,6 +6339,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary
@@ -6475,6 +6523,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -6676,6 +6725,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -6730,6 +6780,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary
@@ -6913,6 +6964,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
           "INITIAL_MESSAGE": [Function],
           "INVALID_JSON_FEEDBACK": [Function],
+          "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
           "OBSERVATION_FEEDBACK": [Function],
           "SELF_QUESTION_FEEDBACK": [Function],
           "SYSTEM_MESSAGE": [Function],
@@ -7125,6 +7177,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
               "FORCE_FINAL_ANSWER_FEEDBACK": [Function],
               "INITIAL_MESSAGE": [Function],
               "INVALID_JSON_FEEDBACK": [Function],
+              "INVALID_OUTPUT_SCHEMA_FEEDBACK": [Function],
               "OBSERVATION_FEEDBACK": [Function],
               "SELF_QUESTION_FEEDBACK": [Function],
               "SYSTEM_MESSAGE": [Function],
@@ -7179,6 +7232,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
     Enrich the resume content by inferring additional details from the provided information.
     Include sections such as a personal summary, detailed work experience, skills, and educational background.",
         "isDeliverable": false,
+        "outputSchema": null,
         "result": "# David Llaca
 
 ## Personal Summary

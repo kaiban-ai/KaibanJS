@@ -136,6 +136,21 @@ const useAgentStore = (set, get) => ({
     );
     set((state) => ({ workflowLogs: [...state.workflowLogs, newLog] }));
   },
+  handleAgentIssuesParsingSchemaOutput: ({ agent, task, output, error }) => {
+    agent.status = AGENT_STATUS_enum.ISSUES_PARSING_SCHEMA_OUTPUT;
+    const newLog = get().prepareNewLog({
+      agent,
+      task,
+      logDescription: `😡 Agent ${agent.name} found some ${AGENT_STATUS_enum.ISSUES_PARSING_SCHEMA_OUTPUT}. ${error.message}`,
+      metadata: { output, error },
+      logType: 'AgentStatusUpdate',
+      agentStatus: agent.status,
+    });
+    logger.debug(
+      `😡 ${AGENT_STATUS_enum.ISSUES_PARSING_SCHEMA_OUTPUT}: Agent ${agent.name} found issues parsing the Schema output. ${error.message}`
+    );
+    set((state) => ({ workflowLogs: [...state.workflowLogs, newLog] }));
+  },
 
   handleAgentActionStart: ({ agent, task, action, runId }) => {
     agent.status = AGENT_STATUS_enum.EXECUTING_ACTION;
