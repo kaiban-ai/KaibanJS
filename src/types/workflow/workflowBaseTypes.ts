@@ -6,21 +6,16 @@
  * @module types/workflow
  */
 
-import { WORKFLOW_STATUS_enum } from '../common/commonEnums';
-import { IErrorType } from '../common/commonErrorTypes';
+import { WORKFLOW_STATUS_enum } from '../common/enumTypes';
+import { IBaseError } from '../common/errorTypes';
 import { IWorkflowStats } from './workflowStatsTypes';
-import { ICostDetails } from './workflowCostsTypes';
 
 // ─── Workflow Error Types ─────────────────────────────────────────────────────
 
 /**
  * Workflow error state
  */
-export interface IWorkflowError {
-    message: string;
-    type: string;
-    context?: Record<string, unknown>;
-    timestamp: number;
+export interface IWorkflowError extends IBaseError {
     taskId?: string;
 }
 

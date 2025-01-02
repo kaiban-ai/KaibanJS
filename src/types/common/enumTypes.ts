@@ -13,6 +13,8 @@ export enum MANAGER_CATEGORY_enum {
     RESOURCE = 'resource',   // Resource management
     STATE = 'state',         // State management
     METRICS = 'metrics',     // Metrics management
+    VALIDATION = 'validation', // Validation management
+    AGENT = 'agent',         // Agent management
 
     // Service Categories
     SERVICE = 'service',     // Service management
@@ -191,10 +193,7 @@ export enum TASK_EVENT_TYPE_enum {
     TASK_FEEDBACK_ADDED = 'task.feedback.added',
     TASK_METRICS_UPDATED = 'task.metrics.updated',
     TASK_ERROR_OCCURRED = 'task.error.occurred',
-    TASK_ERROR_HANDLED = 'task.error.handled',
-    TASK_ERROR_RECOVERY_STARTED = 'task.error.recovery.started',
-    TASK_ERROR_RECOVERY_COMPLETED = 'task.error.recovery.completed',
-    TASK_ERROR_RECOVERY_FAILED = 'task.error.recovery.failed'
+    TASK_ERROR_HANDLED = 'task.error.handled'
 }
 
 export enum WORKFLOW_EVENT_TYPE_enum {
@@ -216,10 +215,7 @@ export enum WORKFLOW_EVENT_TYPE_enum {
     WORKFLOW_TASK_COMPLETED = 'workflow.task.completed',
     WORKFLOW_TASK_FAILED = 'workflow.task.failed',
     WORKFLOW_ERROR_OCCURRED = 'workflow.error.occurred',
-    WORKFLOW_ERROR_HANDLED = 'workflow.error.handled',
-    WORKFLOW_ERROR_RECOVERY_STARTED = 'workflow.error.recovery.started',
-    WORKFLOW_ERROR_RECOVERY_COMPLETED = 'workflow.error.recovery.completed',
-    WORKFLOW_ERROR_RECOVERY_FAILED = 'workflow.error.recovery.failed'
+    WORKFLOW_ERROR_HANDLED = 'workflow.error.handled'
 }
 
 // ─── Log Type Enums ──────────────────────────────────────────────────────────
@@ -375,6 +371,13 @@ export enum LLM_ERROR_KIND_enum {
 
 // ─── Validation Enums ────────────────────────────────────────────────────────
 
+export enum VALIDATION_SEVERITY_enum {
+    INFO = 'INFO',
+    WARNING = 'WARNING',
+    ERROR = 'ERROR',
+    CRITICAL = 'CRITICAL'
+}
+
 export enum VALIDATION_ERROR_enum {
     INVALID_INPUT = 'INVALID_INPUT',
     INVALID_FORMAT = 'INVALID_FORMAT',
@@ -421,6 +424,14 @@ export enum VALIDATION_ERROR_enum {
     TOOL_VERSION_MISMATCH = 'TOOL_VERSION_MISMATCH',
     TOOL_VERSION_CONSTRAINT_VIOLATION = 'TOOL_VERSION_CONSTRAINT_VIOLATION',
     TOOL_DEPENDENCY_UNAVAILABLE = 'TOOL_DEPENDENCY_UNAVAILABLE'
+}
+
+export enum VALIDATION_SCOPE_enum {
+    EXECUTION = 'EXECUTION',
+    VALIDATION = 'VALIDATION',
+    STATE = 'STATE',
+    RESOURCE = 'RESOURCE',
+    CONFIG = 'CONFIG'
 }
 
 export enum VALIDATION_WARNING_enum {

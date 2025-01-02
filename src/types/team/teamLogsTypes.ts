@@ -1,200 +1,128 @@
 /**
  * @file teamLogsTypes.ts
- * @path KaibanJS/src/types/team/teamLogsTypes.ts
- * @description Log type definitions for team operations
+ * @path src/types/team/teamLogsTypes.ts
+ * @description Team logging type definitions
  *
- * @module types/team
+ * @module @team
  */
 
-import { ILogLevel } from '../common';
-import { MESSAGE_LOG_TYPE_enum, STATUS_LOG_TYPE_enum } from '../common';
+import { 
+    MESSAGE_STATUS_enum,
+    STATUS_LOG_TYPE_enum
+} from '../common/enumTypes';
+
+import type {
+    ITaskMetadata,
+    IWorkflowMetadata,
+    IAgentMetadata,
+    IMessageMetadata
+} from '../common/metadataTypes';
+
+import type { IBaseHandlerMetadata } from '../common/baseTypes';
+import type { IPerformanceMetrics } from '../metrics/base/performanceMetrics';
 import type { ILLMUsageMetrics } from '../llm/llmMetricTypes';
 import type { ICostDetails } from '../workflow/workflowCostsTypes';
-import type { 
-    IBaseHandlerMetadata,
-    IWorkflowMetadata,
-    IToolExecutionMetadata,
-    IErrorMetadata 
-} from '../common/commonMetadataTypes';
 
 // ─── Base Log Types ─────────────────────────────────────────────────────────────
 
-export interface ILog {
-    id: string;
-    level: ILogLevel;
-    message: string;
-    timestamp: number;
-    agentName: string;
-    taskId: string;
-    meta?: Record<string, unknown>;
-}
-
-// ─── Log Type Interfaces ────────────────────────────────────────────────────────
-
-export interface IStatusLog extends ILog {
-    type: STATUS_LOG_TYPE_enum;
-    status: string;
-    entity: string;
-}
-
-export interface IMessageLog extends ILog {
-    type: MESSAGE_LOG_TYPE_enum;
-    role: string;
-    content: string;
-}
-
-// ─── Metadata Types ───────────────────────────────────────────────────────────
-
-export interface IToolExecutionMetadataPayload {
-    tool: string;
-    input: unknown;
-    output?: unknown;
-    error?: {
-        message: string;
-        name: string;
-        stack?: string;
-    };
-    metadata?: IToolExecutionMetadata;
-}
-
-export interface IErrorMetadataPayload {
-    error: {
-        message: string;
-        name: string;
-        stack?: string;
-    } | Record<string, unknown>;
-    errorMetadata?: IErrorMetadata;
-}
-
-export type ILogMetadataPayload = {
-    toolExecution?: IToolExecutionMetadataPayload;
-    error?: IErrorMetadataPayload;
-    workflow?: IWorkflowMetadata;
-}
-
-// ─── Metadata Interfaces ─────────────────────────────────────────────────────────
-
 export interface IBaseLogMetadata extends IBaseHandlerMetadata {
-    llmUsageMetrics?: ILLMUsageMetrics;
-    meta?: ILogMetadataPayload;
+    readonly timestamp: number;
+    readonly component: string;
+    readonly operation: string;
+    readonly performance: IPerformanceMetrics;
 }
+
+// ─── Task Log Types ──────────────────────────────────────────────────────────
 
 export interface ITaskLogMetadata extends IBaseLogMetadata {
-    task: {
-        llmUsageMetrics: ILLMUsageMetrics;
-        iterationCount: number;
-        duration: number;
-        costDetails: ICostDetails;
-        result?: unknown;
+    readonly task: ITaskMetadata['task'] & {
+        readonly iterationCount: number;
+        readonly duration: number;
+        readonly llmUsageMetrics: ILLMUsageMetrics;
+        readonly costDetails: ICostDetails;
     };
 }
+
+export interface ITaskLogEntry {
+    readonly id: string;
+    readonly type: STATUS_LOG_TYPE_enum.TASK_STATUS;
+    readonly message: string;
+    readonly metadata: ITaskLogMetadata;
+}
+
+// ─── Workflow Log Types ──────────────────────────────────────────────────────
 
 export interface IWorkflowLogMetadata extends IBaseLogMetadata {
-    workflow: {
-        result?: string;
-        duration: number;
-        llmUsageMetrics: ILLMUsageMetrics;
-        iterationCount: number;
-        costDetails: ICostDetails;
-        teamName: string;
-        taskCount: number;
-        agentCount: number;
+    readonly workflow: IWorkflowMetadata['workflow'] & {
+        readonly duration: number;
+        readonly llmUsageMetrics: ILLMUsageMetrics;
+        readonly costDetails: ICostDetails;
+        readonly iterationCount: number;
     };
 }
+
+export interface IWorkflowLogEntry {
+    readonly id: string;
+    readonly type: STATUS_LOG_TYPE_enum.WORKFLOW_STATUS;
+    readonly message: string;
+    readonly metadata: IWorkflowLogMetadata;
+}
+
+// ─── Agent Log Types ───────────────────────────────────────────────────────────
 
 export interface IAgentLogMetadata extends IBaseLogMetadata {
-    agent: {
-        output: {
-            llmUsageMetrics: ILLMUsageMetrics;
-            [key: string]: unknown;
-        };
+    readonly agent: IAgentMetadata['agent'];
+}
+
+export interface IAgentLogEntry {
+    readonly id: string;
+    readonly type: STATUS_LOG_TYPE_enum.AGENT_STATUS;
+    readonly message: string;
+    readonly metadata: IAgentLogMetadata;
+}
+
+// ─── Message Log Types ──────────────────────────────────────────────────────
+
+export interface IMessageLogMetadata extends Omit<IBaseLogMetadata, 'message'> {
+    readonly message: Omit<IMessageMetadata['message'], 'type'> & {
+        readonly content: string;
+        readonly type: MESSAGE_STATUS_enum;
     };
 }
 
-// ─── Type Guards ─────────────────────────────────────────────────────────────────
+export interface IMessageLogEntry {
+    readonly id: string;
+    readonly type: MESSAGE_STATUS_enum;
+    readonly message: string;
+    readonly metadata: IMessageLogMetadata;
+}
 
-export const LogTypeGuards = {
-    isLog: (value: unknown): value is ILog => {
-        if (!value || typeof value !== 'object') return false;
-        const log = value as Partial<ILog>;
-        return !!(
-            typeof log.id === 'string' &&
-            typeof log.level === 'string' &&
-            typeof log.message === 'string' &&
-            typeof log.timestamp === 'number' &&
-            typeof log.taskId === 'string'
-        );
-    },
+// ─── Team Log Types ───────────────────────────────────────────────────────────
 
-    isStatusLog: (value: unknown): value is IStatusLog => {
-        if (!LogTypeGuards.isLog(value)) return false;
-        const statusLog = value as Partial<IStatusLog>;
-        return !!(
-            statusLog.type && 
-            Object.values(STATUS_LOG_TYPE_enum).includes(statusLog.type) &&
-            typeof statusLog.status === 'string' &&
-            typeof statusLog.entity === 'string'
-        );
-    },
+export type TeamLogEntry = 
+    | ITaskLogEntry
+    | IWorkflowLogEntry
+    | IAgentLogEntry
+    | IMessageLogEntry;
 
-    isMessageLog: (value: unknown): value is IMessageLog => {
-        if (!LogTypeGuards.isLog(value)) return false;
-        const messageLog = value as Partial<IMessageLog>;
-        return !!(
-            messageLog.type &&
-            Object.values(MESSAGE_LOG_TYPE_enum).includes(messageLog.type) &&
-            typeof messageLog.role === 'string' &&
-            typeof messageLog.content === 'string'
-        );
-    },
+export interface ITeamLogHistory {
+    readonly entries: ReadonlyArray<TeamLogEntry>;
+    readonly lastUpdated: number;
+    readonly totalEntries: number;
+}
 
-    isTaskLogMetadata: (value: unknown): value is ITaskLogMetadata => {
-        if (!value || typeof value !== 'object') return false;
-        const metadata = value as Partial<ITaskLogMetadata>;
-        return !!(
-            typeof metadata.timestamp === 'number' &&
-            metadata.component &&
-            metadata.operation &&
-            metadata.performance &&
-            metadata.task &&
-            metadata.task.llmUsageMetrics &&
-            typeof metadata.task.iterationCount === 'number' &&
-            typeof metadata.task.duration === 'number' &&
-            metadata.task.costDetails
-        );
-    },
+// ─── Base Log Interface ────────────────────────────────────────────────────────
 
-    isWorkflowLogMetadata: (value: unknown): value is IWorkflowLogMetadata => {
-        if (!value || typeof value !== 'object') return false;
-        const metadata = value as Partial<IWorkflowLogMetadata>;
-        return !!(
-            typeof metadata.timestamp === 'number' &&
-            metadata.component &&
-            metadata.operation &&
-            metadata.performance &&
-            metadata.workflow &&
-            typeof metadata.workflow.duration === 'number' &&
-            metadata.workflow.llmUsageMetrics &&
-            typeof metadata.workflow.iterationCount === 'number' &&
-            metadata.workflow.costDetails &&
-            typeof metadata.workflow.teamName === 'string' &&
-            typeof metadata.workflow.taskCount === 'number' &&
-            typeof metadata.workflow.agentCount === 'number'
-        );
-    },
-
-    isAgentLogMetadata: (value: unknown): value is IAgentLogMetadata => {
-        if (!value || typeof value !== 'object') return false;
-        const metadata = value as Partial<IAgentLogMetadata>;
-        return !!(
-            typeof metadata.timestamp === 'number' &&
-            metadata.component &&
-            metadata.operation &&
-            metadata.performance &&
-            metadata.agent &&
-            metadata.agent.output &&
-            typeof metadata.agent.output === 'object' &&
-            'llmUsageMetrics' in metadata.agent.output
-        );
-    }
-};
+export interface ILog {
+    readonly id: string;
+    readonly timestamp: number;
+    readonly level: string;
+    readonly message: string;
+    readonly metadata: IBaseLogMetadata;
+    readonly context?: Record<string, unknown>;
+    readonly correlationId?: string;
+    readonly traceId?: string;
+    readonly spanId?: string;
+    readonly parentSpanId?: string;
+    readonly tags?: ReadonlyArray<string>;
+}

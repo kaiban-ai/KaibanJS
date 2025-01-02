@@ -19,7 +19,7 @@ import {
     IValidationSchema,
     createValidationResult
 } from '../common/validationTypes';
-import type { IAgentType, IAgentMetadata } from './agentBaseTypes';
+import type { IAgentType } from './agentBaseTypes';
 import type { 
     IAgentResourceMetrics,
     IAgentPerformanceMetrics,
@@ -80,10 +80,7 @@ export enum AGENT_EVENT_TYPE {
 
     // Error Events
     AGENT_ERROR_OCCURRED = 'agent.error.occurred',
-    AGENT_ERROR_HANDLED = 'agent.error.handled',
-    AGENT_ERROR_RECOVERY_STARTED = 'agent.error.recovery.started',
-    AGENT_ERROR_RECOVERY_COMPLETED = 'agent.error.recovery.completed',
-    AGENT_ERROR_RECOVERY_FAILED = 'agent.error.recovery.failed'
+    AGENT_ERROR_HANDLED = 'agent.error.handled'
 }
 
 // ─── Base Event Types ─────────────────────────────────────────────────────────
@@ -244,44 +241,6 @@ export interface IAgentErrorHandledEvent extends IBaseAgentEvent {
     };
 }
 
-export interface IAgentErrorRecoveryStartedEvent extends IBaseAgentEvent {
-    type: AGENT_EVENT_TYPE.AGENT_ERROR_RECOVERY_STARTED;
-    error: IBaseError;
-    context: {
-        operation: string;
-        recoveryStrategy: string;
-    };
-    metadata: IAgentEventMetadata & {
-        category: AGENT_EVENT_CATEGORY.ERROR;
-    };
-}
-
-export interface IAgentErrorRecoveryCompletedEvent extends IBaseAgentEvent {
-    type: AGENT_EVENT_TYPE.AGENT_ERROR_RECOVERY_COMPLETED;
-    error: IBaseError;
-    context: {
-        operation: string;
-        recoveryStrategy: string;
-        recoveryDuration: number;
-    };
-    metadata: IAgentEventMetadata & {
-        category: AGENT_EVENT_CATEGORY.ERROR;
-    };
-}
-
-export interface IAgentErrorRecoveryFailedEvent extends IBaseAgentEvent {
-    type: AGENT_EVENT_TYPE.AGENT_ERROR_RECOVERY_FAILED;
-    error: IBaseError;
-    context: {
-        operation: string;
-        recoveryStrategy: string;
-        recoveryAttempts: number;
-        failureReason: string;
-    };
-    metadata: IAgentEventMetadata & {
-        category: AGENT_EVENT_CATEGORY.ERROR;
-    };
-}
 
 // ─── Event Union Types ────────────────────────────────────────────────────────
 
@@ -330,10 +289,7 @@ export type AgentValidationEvent =
  */
 export type AgentErrorEvent =
     | IAgentErrorOccurredEvent
-    | IAgentErrorHandledEvent
-    | IAgentErrorRecoveryStartedEvent
-    | IAgentErrorRecoveryCompletedEvent
-    | IAgentErrorRecoveryFailedEvent;
+    | IAgentErrorHandledEvent;
 
 /**
  * Complete agent event union type
@@ -516,41 +472,6 @@ export const AgentEventTypeGuards = {
         }
     ]),
 
-    isAgentErrorRecoveryStartedEvent: createTypeGuard<IAgentErrorRecoveryStartedEvent>([
-        hasBaseAgentEventProperties,
-        commonChecks.isType('type', 'string'),
-        (value: unknown): boolean => (value as IAgentErrorRecoveryStartedEvent).type === AGENT_EVENT_TYPE.AGENT_ERROR_RECOVERY_STARTED,
-        commonChecks.hasProperty('error'),
-        commonChecks.hasProperty('context'),
-        (value: unknown): boolean => {
-            const event = value as IAgentErrorRecoveryStartedEvent;
-            return commonChecks.isObject(event.error) && commonChecks.isObject(event.context);
-        }
-    ]),
-
-    isAgentErrorRecoveryCompletedEvent: createTypeGuard<IAgentErrorRecoveryCompletedEvent>([
-        hasBaseAgentEventProperties,
-        commonChecks.isType('type', 'string'),
-        (value: unknown): boolean => (value as IAgentErrorRecoveryCompletedEvent).type === AGENT_EVENT_TYPE.AGENT_ERROR_RECOVERY_COMPLETED,
-        commonChecks.hasProperty('error'),
-        commonChecks.hasProperty('context'),
-        (value: unknown): boolean => {
-            const event = value as IAgentErrorRecoveryCompletedEvent;
-            return commonChecks.isObject(event.error) && commonChecks.isObject(event.context);
-        }
-    ]),
-
-    isAgentErrorRecoveryFailedEvent: createTypeGuard<IAgentErrorRecoveryFailedEvent>([
-        hasBaseAgentEventProperties,
-        commonChecks.isType('type', 'string'),
-        (value: unknown): boolean => (value as IAgentErrorRecoveryFailedEvent).type === AGENT_EVENT_TYPE.AGENT_ERROR_RECOVERY_FAILED,
-        commonChecks.hasProperty('error'),
-        commonChecks.hasProperty('context'),
-        (value: unknown): boolean => {
-            const event = value as IAgentErrorRecoveryFailedEvent;
-            return commonChecks.isObject(event.error) && commonChecks.isObject(event.context);
-        }
-    ])
 };
 
 // ─── Validation Result Factory ───────────────────────────────────────────────────
@@ -571,7 +492,9 @@ export const createAgentEventValidationResult = (
         metadata: {
             validatorName,
             timestamp: Date.now(),
-            duration: 0
+            duration: 0,
+            component: 'agent',
+            operation: 'validate'
         }
     }),
     eventType,
@@ -614,9 +537,6 @@ export interface IAgentEventHandler {
     // Error Events
     onAgentErrorOccurred(event: IAgentErrorOccurredEvent): Promise<void>;
     onAgentErrorHandled(event: IAgentErrorHandledEvent): Promise<void>;
-    onAgentErrorRecoveryStarted(event: IAgentErrorRecoveryStartedEvent): Promise<void>;
-    onAgentErrorRecoveryCompleted(event: IAgentErrorRecoveryCompletedEvent): Promise<void>;
-    onAgentErrorRecoveryFailed(event: IAgentErrorRecoveryFailedEvent): Promise<void>;
 }
 
 /**
@@ -643,12 +563,7 @@ export interface IAgentEventHandler {
  *       - AGENT_ERROR_OCCURRED: Initial error detection
  * 
  *    b. Error Processing
- *       - AGENT_ERROR_HANDLED: Error processed
- * 
- *    c. Recovery Attempt
- *       - AGENT_ERROR_RECOVERY_STARTED: Recovery begins
- *       - AGENT_ERROR_RECOVERY_COMPLETED: Recovery succeeds
- *       - AGENT_ERROR_RECOVERY_FAILED: Recovery fails
+ *       - AGENT_ERROR_HANDLED: Error processed and metrics tracked
  * 
  * 4. Agent Deletion
  *    - AGENT_DELETED: Agent removed from system

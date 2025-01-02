@@ -1,303 +1,254 @@
 /**
  * @file toolMetricTypes.ts
  * @path KaibanJS/src/types/tool/toolMetricTypes.ts
- * @description Tool metrics type definitions and validation for tool performance tracking
- * 
- * @module @types/tool
+ * @description Tool metric type definitions and validation
  */
 
-import { IResourceMetrics } from '../metrics/base/resourceMetrics';
-import { IPerformanceMetrics, ITimeMetrics, IThroughputMetrics, IErrorMetrics } from '../metrics/base/performanceMetrics';
-import { IUsageMetrics } from '../metrics/base/usageMetrics';
-import { METRIC_TYPE_enum, RESOURCE_STATUS_enum} from '../common/enumTypes';
-import { createValidationResult } from '@utils/validation/validationUtils';
+import type { ITimeMetrics, IThroughputMetrics } from '../metrics/base/performanceMetrics';
+import type { IResourceMetrics } from '../metrics/base/resourceMetrics';
+import type { IUsageMetrics } from '../metrics/base/usageMetrics';
+import { createValidationResult } from '../common/validationTypes';
 import type { IValidationResult } from '../common/validationTypes';
 
-// ─── Resource Metrics ────────────────────────────────────────────────────────────
-
+/**
+ * Tool resource metrics interface
+ */
 export interface IToolResourceMetrics extends IResourceMetrics {
-  apiRateLimits: {
-    current: number;
-    limit: number;
-    resetIn: number;
-  };
-  serviceQuotas: {
-    usagePercent: number;
-    remaining: number;
-    total: number;
-  };
-  connectionPool: {
-    active: number;
-    idle: number;
-    maxSize: number;
-  };
-  integrationHealth: {
-    availability: number;
-    responseTime: number;
-    connectionStatus: number;
-  };
-  healthStatus: {
-    status: RESOURCE_STATUS_enum;
-    lastHealthCheck: Date;
-    issues: string[];
-  };
-  recoveryState: {
-    inRecovery: boolean;
-    lastRecoveryTime: Date;
-    recoveryAttempts: number;
-  };
+    /** Memory usage by tool */
+    readonly toolMemoryUsage: number;
+    /** CPU usage by tool */
+    readonly toolCpuUsage: number;
+    /** Network usage by tool */
+    readonly toolNetworkUsage: {
+        readonly sent: number;
+        readonly received: number;
+    };
+    /** Storage usage by tool */
+    readonly toolStorageUsage: {
+        readonly read: number;
+        readonly write: number;
+    };
 }
 
-// ─── Performance Metrics ─────────────────────────────────────────────────────────
-
-export interface IToolPerformanceMetrics extends IPerformanceMetrics {
-  executionMetrics: {
-    latency: ITimeMetrics;
-    successRate: number;
-    throughput: IThroughputMetrics;
-  };
-  reliabilityMetrics: {
-    errors: IErrorMetrics;
-    recoveryTime: ITimeMetrics;
-    failurePatterns: {
-      types: { [key: string]: number };
-      frequency: number;
-      mtbf: number;
-    };
-  };
-  responseMetrics: {
-    time: ITimeMetrics;
-    dataVolume: {
-      total: number;
-      average: number;
-      peak: number;
-    };
-    processingRate: IThroughputMetrics;
-  };
+/**
+ * Tool performance metrics interface
+ */
+export interface IToolPerformanceMetrics {
+    /** Execution time metrics */
+    readonly executionTime: ITimeMetrics;
+    /** Throughput metrics */
+    readonly throughput: IThroughputMetrics;
+    /** Success rate percentage */
+    readonly successRate: number;
+    /** Error rate percentage */
+    readonly errorRate: number;
+    /** Average response time */
+    readonly avgResponseTime: number;
+    /** Tool-specific latency */
+    readonly toolLatency: number;
 }
 
-// ─── Usage Metrics ───────────────────────────────────────────────────────────────
-
+/**
+ * Tool usage metrics interface
+ */
 export interface IToolUsageMetrics extends IUsageMetrics {
-  totalRequests: number;
-  activeUsers: number;
-  requestsPerSecond: number;
-  averageResponseSize: number;
-  peakMemoryUsage: number;
-  uptime: number;
-  rateLimit: {
-    current: number;
-    limit: number;
-    remaining: number;
-    resetTime: number;
-  };
-  utilizationMetrics: {
-    callFrequency: number;
-    resourceConsumption: {
-      cpu: number;
-      memory: number;
-      bandwidth: number;
-    };
-    peakUsage: {
-      times: number[];
-      values: number[];
-      duration: number[];
-    };
-  };
-  accessPatterns: {
-    distribution: { [key: string]: number };
-    frequency: { [key: string]: number };
-    operationTypes: { [key: string]: number };
-  };
-  dependencies: {
-    services: string[];
-    resources: string[];
-    versions: { [key: string]: string };
-  };
+    /** Total number of tool executions */
+    readonly totalExecutions: number;
+    /** Number of successful executions */
+    readonly successfulExecutions: number;
+    /** Number of failed executions */
+    readonly failedExecutions: number;
+    /** Average execution duration */
+    readonly avgExecutionDuration: number;
+    /** Tool-specific usage stats */
+    readonly toolSpecificStats?: Record<string, unknown>;
 }
 
-// ─── Combined Metrics ─────────────────────────────────────────────────────────────
+// ─── Type Guards ────────────────────────────────────────────────────────────
 
-export interface IToolMetrics {
-  resourceMetrics: IToolResourceMetrics;
-  performanceMetrics: IToolPerformanceMetrics;
-  usageMetrics: IToolUsageMetrics;
-  timestamp: number;
-}
-
-// ─── Default Values ──────────────────────────────────────────────────────────────
-
-export const DefaultToolMetrics = {
-  createDefaultHealthStatus: (status: RESOURCE_STATUS_enum = RESOURCE_STATUS_enum.AVAILABLE): IToolResourceMetrics['healthStatus'] => ({
-    status,
-    lastHealthCheck: new Date(),
-    issues: []
-  }),
-
-  createDefaultRecoveryState: (): IToolResourceMetrics['recoveryState'] => ({
-    inRecovery: false,
-    lastRecoveryTime: new Date(),
-    recoveryAttempts: 0
-  }),
-
-  createDefaultTimeMetrics: (value: number = 0): ITimeMetrics => ({
-    total: value,
-    average: value,
-    min: value,
-    max: value
-  }),
-
-  createDefaultThroughputMetrics: (value: number = 0): IThroughputMetrics => ({
-    operationsPerSecond: value,
-    dataProcessedPerSecond: value
-  })
-};
-
-// ─── Type Guards ────────────────────────────────────────────────────────────────
-
-export const ToolMetricsTypeGuards = {
-  isToolResourceMetrics: (value: unknown): value is IToolResourceMetrics => {
+/**
+ * Type guard for tool resource metrics
+ */
+export const isToolResourceMetrics = (value: unknown): value is IToolResourceMetrics => {
     if (typeof value !== 'object' || value === null) return false;
     const metrics = value as Partial<IToolResourceMetrics>;
-    
-    return (
-      typeof metrics.apiRateLimits === 'object' &&
-      typeof metrics.serviceQuotas === 'object' &&
-      typeof metrics.connectionPool === 'object' &&
-      typeof metrics.integrationHealth === 'object' &&
-      typeof metrics.healthStatus === 'object' &&
-      typeof metrics.recoveryState === 'object'
-    );
-  },
 
-  isToolPerformanceMetrics: (value: unknown): value is IToolPerformanceMetrics => {
-    if (typeof value !== 'object' || value === null) return false;
-    const metrics = value as Partial<IToolPerformanceMetrics>;
-    
     return (
-      typeof metrics.executionMetrics === 'object' &&
-      typeof metrics.reliabilityMetrics === 'object' &&
-      typeof metrics.responseMetrics === 'object'
+        typeof metrics.toolMemoryUsage === 'number' &&
+        typeof metrics.toolCpuUsage === 'number' &&
+        typeof metrics.toolNetworkUsage === 'object' &&
+        metrics.toolNetworkUsage !== null &&
+        typeof metrics.toolNetworkUsage.sent === 'number' &&
+        typeof metrics.toolNetworkUsage.received === 'number' &&
+        typeof metrics.toolStorageUsage === 'object' &&
+        metrics.toolStorageUsage !== null &&
+        typeof metrics.toolStorageUsage.read === 'number' &&
+        typeof metrics.toolStorageUsage.write === 'number'
     );
-  },
-
-  isToolUsageMetrics: (value: unknown): value is IToolUsageMetrics => {
-    if (typeof value !== 'object' || value === null) return false;
-    const metrics = value as Partial<IToolUsageMetrics>;
-    
-    return (
-      typeof metrics.totalRequests === 'number' &&
-      typeof metrics.utilizationMetrics === 'object' &&
-      typeof metrics.accessPatterns === 'object' &&
-      typeof metrics.dependencies === 'object'
-    );
-  },
-
-  isToolMetrics: (value: unknown): value is IToolMetrics => {
-    if (typeof value !== 'object' || value === null) return false;
-    const metrics = value as Partial<IToolMetrics>;
-    
-    return (
-      ToolMetricsTypeGuards.isToolResourceMetrics(metrics.resourceMetrics) &&
-      ToolMetricsTypeGuards.isToolPerformanceMetrics(metrics.performanceMetrics) &&
-      ToolMetricsTypeGuards.isToolUsageMetrics(metrics.usageMetrics) &&
-      typeof metrics.timestamp === 'number'
-    );
-  }
 };
 
-// ─── Validation ─────────────────────────────────────────────────────────────────
+/**
+ * Type guard for tool performance metrics
+ */
+export const isToolPerformanceMetrics = (value: unknown): value is IToolPerformanceMetrics => {
+    if (typeof value !== 'object' || value === null) return false;
+    const metrics = value as Partial<IToolPerformanceMetrics>;
 
-export const ToolMetricsValidation = {
-  validateToolResourceMetrics(metrics: unknown): IValidationResult {
+    return (
+        typeof metrics.executionTime === 'object' &&
+        metrics.executionTime !== null &&
+        typeof metrics.throughput === 'object' &&
+        metrics.throughput !== null &&
+        typeof metrics.successRate === 'number' &&
+        typeof metrics.errorRate === 'number' &&
+        typeof metrics.avgResponseTime === 'number' &&
+        typeof metrics.toolLatency === 'number'
+    );
+};
+
+/**
+ * Type guard for tool usage metrics
+ */
+export const isToolUsageMetrics = (value: unknown): value is IToolUsageMetrics => {
+    if (typeof value !== 'object' || value === null) return false;
+    const metrics = value as Partial<IToolUsageMetrics>;
+
+    return (
+        typeof metrics.totalExecutions === 'number' &&
+        typeof metrics.successfulExecutions === 'number' &&
+        typeof metrics.failedExecutions === 'number' &&
+        typeof metrics.avgExecutionDuration === 'number' &&
+        (metrics.toolSpecificStats === undefined || typeof metrics.toolSpecificStats === 'object')
+    );
+};
+
+// ─── Validation Functions ────────────────────────────────────────────────────
+
+/**
+ * Validate tool resource metrics
+ */
+export const validateToolResourceMetrics = (metrics: unknown): IValidationResult => {
+    if (!isToolResourceMetrics(metrics)) {
+        return createValidationResult({
+            isValid: false,
+            errors: ['Invalid tool resource metrics structure'],
+            metadata: { validatorName: 'ToolResourceMetricsValidator' }
+        });
+    }
+
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    if (!ToolMetricsTypeGuards.isToolResourceMetrics(metrics)) {
-      errors.push('Invalid tool resource metrics structure');
-      return createValidationResult(false, errors);
+    if (metrics.toolMemoryUsage < 0) {
+        errors.push('Tool memory usage cannot be negative');
     }
 
-    if (metrics.apiRateLimits.current > metrics.apiRateLimits.limit) {
-      errors.push('API rate limit exceeded');
+    if (metrics.toolCpuUsage < 0 || metrics.toolCpuUsage > 100) {
+        errors.push('Tool CPU usage must be between 0 and 100');
     }
 
-    if (metrics.connectionPool.active > metrics.connectionPool.maxSize) {
-      errors.push('Connection pool size exceeded');
+    if (metrics.toolNetworkUsage.sent < 0) {
+        errors.push('Network sent bytes cannot be negative');
     }
 
-    if (metrics.healthStatus.status === RESOURCE_STATUS_enum.FAILED) {
-      errors.push('Resource health check failed');
+    if (metrics.toolNetworkUsage.received < 0) {
+        errors.push('Network received bytes cannot be negative');
     }
 
-    if (metrics.recoveryState.recoveryAttempts > 0) {
-      warnings.push(`Resource has undergone ${metrics.recoveryState.recoveryAttempts} recovery attempts`);
+    if (metrics.toolStorageUsage.read < 0) {
+        errors.push('Storage read bytes cannot be negative');
     }
 
-    return createValidationResult(errors.length === 0, errors, warnings);
-  },
+    if (metrics.toolStorageUsage.write < 0) {
+        errors.push('Storage write bytes cannot be negative');
+    }
 
-  validateToolPerformanceMetrics(metrics: unknown): IValidationResult {
+    return createValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        warnings,
+        metadata: { validatorName: 'ToolResourceMetricsValidator' }
+    });
+};
+
+/**
+ * Validate tool performance metrics
+ */
+export const validateToolPerformanceMetrics = (metrics: unknown): IValidationResult => {
+    if (!isToolPerformanceMetrics(metrics)) {
+        return createValidationResult({
+            isValid: false,
+            errors: ['Invalid tool performance metrics structure'],
+            metadata: { validatorName: 'ToolPerformanceMetricsValidator' }
+        });
+    }
+
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    if (!ToolMetricsTypeGuards.isToolPerformanceMetrics(metrics)) {
-      errors.push('Invalid tool performance metrics structure');
-      return createValidationResult(false, errors);
+    if (metrics.successRate < 0 || metrics.successRate > 100) {
+        errors.push('Success rate must be between 0 and 100');
     }
 
-    if (metrics.executionMetrics.successRate < 0.95) {
-      warnings.push('Success rate below 95%');
+    if (metrics.errorRate < 0 || metrics.errorRate > 100) {
+        errors.push('Error rate must be between 0 and 100');
     }
 
-    if (metrics.reliabilityMetrics.failurePatterns.frequency > 0.1) {
-      errors.push('High failure frequency detected');
+    if (metrics.avgResponseTime < 0) {
+        errors.push('Average response time cannot be negative');
     }
 
-    return createValidationResult(errors.length === 0, errors, warnings);
-  },
+    if (metrics.toolLatency < 0) {
+        errors.push('Tool latency cannot be negative');
+    }
 
-  validateToolUsageMetrics(metrics: unknown): IValidationResult {
+    return createValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        warnings,
+        metadata: { validatorName: 'ToolPerformanceMetricsValidator' }
+    });
+};
+
+/**
+ * Validate tool usage metrics
+ */
+export const validateToolUsageMetrics = (metrics: unknown): IValidationResult => {
+    if (!isToolUsageMetrics(metrics)) {
+        return createValidationResult({
+            isValid: false,
+            errors: ['Invalid tool usage metrics structure'],
+            metadata: { validatorName: 'ToolUsageMetricsValidator' }
+        });
+    }
+
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    if (!ToolMetricsTypeGuards.isToolUsageMetrics(metrics)) {
-      errors.push('Invalid tool usage metrics structure');
-      return createValidationResult(false, errors);
+    if (metrics.totalExecutions < 0) {
+        errors.push('Total executions cannot be negative');
     }
 
-    if (metrics.utilizationMetrics.resourceConsumption.cpu > 90 || 
-        metrics.utilizationMetrics.resourceConsumption.memory > 90) {
-      warnings.push('High resource consumption');
+    if (metrics.successfulExecutions < 0) {
+        errors.push('Successful executions cannot be negative');
     }
 
-    return createValidationResult(errors.length === 0, errors, warnings);
-  },
-
-  validateToolMetrics(metrics: unknown): IValidationResult {
-    const errors: string[] = [];
-    const warnings: string[] = [];
-
-    if (!ToolMetricsTypeGuards.isToolMetrics(metrics)) {
-      errors.push('Invalid tool metrics structure');
-      return createValidationResult(false, errors);
+    if (metrics.failedExecutions < 0) {
+        errors.push('Failed executions cannot be negative');
     }
 
-    const resourceValidation = this.validateToolResourceMetrics(metrics.resourceMetrics);
-    const performanceValidation = this.validateToolPerformanceMetrics(metrics.performanceMetrics);
-    const usageValidation = this.validateToolUsageMetrics(metrics.usageMetrics);
-
-    errors.push(...resourceValidation.errors);
-    errors.push(...performanceValidation.errors);
-    errors.push(...usageValidation.errors);
-    warnings.push(...resourceValidation.warnings);
-    warnings.push(...performanceValidation.warnings);
-    warnings.push(...usageValidation.warnings);
-
-    if (metrics.timestamp > Date.now()) {
-      warnings.push('Timestamp is in the future');
+    if (metrics.avgExecutionDuration < 0) {
+        errors.push('Average execution duration cannot be negative');
     }
 
-    return createValidationResult(errors.length === 0, errors, warnings);
-  }
+    if (metrics.successfulExecutions + metrics.failedExecutions > metrics.totalExecutions) {
+        errors.push('Sum of successful and failed executions cannot exceed total executions');
+    }
+
+    return createValidationResult({
+        isValid: errors.length === 0,
+        errors,
+        warnings,
+        metadata: { validatorName: 'ToolUsageMetricsValidator' }
+    });
 };

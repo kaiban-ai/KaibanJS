@@ -1,267 +1,169 @@
 /**
  * @file agentStateTypes.ts
- * @path KaibanJS/src/types/agent/agentStateTypes.ts
- * @description Agent state types and interfaces
+ * @path src/types/agent/agentStateTypes.ts
+ * @description Agent state type definitions
  */
 
+import type { IBaseMetrics } from '../metrics/base/baseMetrics';
+import type { AGENT_STATUS_enum } from '../common/enumTypes';
+import type { ITaskType } from '../task';
 import type { IAgentType } from './agentBaseTypes';
-import type { ITaskType } from '../task/taskBaseTypes';
-import type { ILLMMetrics } from '../llm/llmMetricTypes';
-import type { IAgentStateMetrics } from './agentMetricTypes';
-import type { IBaseError } from '../common/errorTypes';
-import type { IAgentResourceMetrics } from './agentMetricTypes';
-
-// ─── State Categories ─────────────────────────────────────────────────────────
+import type { IAgentMetrics } from './agentMetricTypes';
 
 /**
- * Agent state categories for better organization and validation
+ * State category enum
  */
 export enum STATE_CATEGORY {
-    CORE = 'core',           // Core state properties
-    TIMING = 'timing',       // Time-related state
-    ERROR = 'error',         // Error handling state
-    ASSIGNMENT = 'assignment', // Task assignment state
-    METRICS = 'metrics',     // Metrics and measurements
-    HISTORY = 'history'      // Historical state data
+    CORE = 'core',
+    ERROR = 'error',
+    METRICS = 'metrics',
+    VALIDATION = 'validation'
 }
-
-// ─── Core State Types ─────────────────────────────────────────────────────────
-
-/**
- * Core state properties interface
- */
-export interface ICoreState {
-    status: string;
-    thinking: boolean;
-    busy: boolean;
-    currentTask?: ITaskType;
-    lastOutput?: string;
-}
-
-/**
- * Timing state properties interface
- */
-export interface ITimingState {
-    startTime?: Date;
-    endTime?: Date;
-    duration?: number;
-    lastActiveTime?: Date;
-    timeouts: {
-        thinking: number;
-        execution: number;
-        idle: number;
-    };
-}
-
-/**
- * Error handling state properties interface
- */
-export interface IErrorState {
-    lastError?: IBaseError;
-    errorCount: number;
-    retryCount: number;
-    maxRetries: number;
-    errorHistory: Array<{
-        timestamp: Date;
-        error: IBaseError;
-        context: Record<string, unknown>;
-    }>;
-}
-
-/**
- * Task assignment state properties interface
- */
-export interface IAssignmentState {
-    assignedTasks: ITaskType[];
-    completedTasks: ITaskType[];
-    failedTasks: ITaskType[];
-    blockedTasks: ITaskType[];
-    iterations: number;
-    maxIterations: number;
-    taskCapacity: number;
-}
-
-// ─── History and Transitions ────────────────────────────────────────────────────
 
 /**
  * State history entry interface
  */
 export interface IStateHistoryEntry {
-    timestamp: Date;
-    action: string;
-    category: STATE_CATEGORY;
-    details: Record<string, unknown>;
-    taskId?: string;
-    result?: unknown;
-    metadata?: {
-        duration?: number;
-        success?: boolean;
-        error?: IBaseError;
+    readonly timestamp: Date;
+    readonly action: string;
+    readonly category: STATE_CATEGORY;
+    readonly details: Record<string, unknown>;
+}
+
+/**
+ * Agent task state interface
+ */
+export interface IAgentTaskState {
+    readonly assignedTasks: ITaskType[];
+    readonly completedTasks: ITaskType[];
+    readonly failedTasks: ITaskType[];
+    readonly blockedTasks: ITaskType[];
+    readonly history: IStateHistoryEntry[];
+}
+
+/**
+ * Agent state interface
+ */
+export interface IAgentState {
+    readonly id: string;
+    readonly status: AGENT_STATUS_enum;
+    readonly timestamp: number;
+    readonly metrics: IBaseMetrics;
+    readonly history?: IStateHistoryEntry[];
+    readonly lastOperation?: {
+        readonly name: string;
+        readonly timestamp: number;
+        readonly duration: number;
+        readonly success: boolean;
+    };
+    readonly errors?: Array<{
+        readonly message: string;
+        readonly timestamp: number;
+        readonly type: string;
+    }>;
+}
+
+/**
+ * Agent state validation interface
+ */
+export interface IAgentStateValidation {
+    readonly isValid: boolean;
+    readonly errors: string[];
+    readonly warnings: string[];
+    readonly metadata: {
+        readonly timestamp: number;
+        readonly validatedFields: string[];
     };
 }
 
 /**
- * State transition interface
+ * Agent state factory interface
  */
-export interface IStateTransition {
-    from: string;
-    to: string;
-    timestamp: Date;
-    reason: string;
-    metadata?: Record<string, unknown>;
-}
-
-// ─── Unified Agent State ───────────────────────────────────────────────────────
-
-/**
- * Unified agent execution state interface
- */
-export interface IAgentExecutionState {
-    // Core State
-    readonly core: ICoreState;
-    
-    // Timing State
-    readonly timing: ITimingState;
-    
-    // Error Handling State
-    readonly error: IErrorState;
-    
-    // Assignment State
-    readonly assignment: IAssignmentState;
-    
-    // Metrics and State
-    readonly stateMetrics: IAgentStateMetrics;
-    readonly llmMetrics: ILLMMetrics;
-
-    // History
-    readonly history: IStateHistoryEntry[];
-    readonly transitions: IStateTransition[];
-}
-
-// ─── State Validation Types ─────────────────────────────────────────────────────
-
-/**
- * State validation rules interface
- */
-export interface IStateValidationRules {
-    allowedTransitions: Map<string, string[]>;
-    requiredFields: Record<STATE_CATEGORY, string[]>;
-    constraints: Record<string, {
-        type: string;
-        validator?: (value: unknown) => boolean;
-        message?: string;
-    }>;
+export interface IAgentStateFactory {
+    createState(params: Record<string, unknown>): IAgentState;
+    validateState(state: IAgentState): IAgentStateValidation;
 }
 
 /**
- * State validation result interface
+ * Agent state transition interface
  */
-export interface IStateValidationResult {
-    isValid: boolean;
-    errors: Array<{
-        field: string;
-        message: string;
-        category: STATE_CATEGORY;
-    }>;
-    warnings: Array<{
-        field: string;
-        message: string;
-        category: STATE_CATEGORY;
-    }>;
+export interface IAgentStateTransition {
+    readonly fromState: AGENT_STATUS_enum;
+    readonly toState: AGENT_STATUS_enum;
+    readonly timestamp: number;
+    readonly reason?: string;
 }
 
-// ─── Type Guards ────────────────────────────────────────────────────────────
+/**
+ * Agent state history interface
+ */
+export interface IAgentStateHistory {
+    readonly states: IAgentState[];
+    readonly transitions: IAgentStateTransition[];
+}
 
-export const AgentStateTypeGuards = {
-    isAgentExecutionState: (value: unknown): value is IAgentExecutionState => {
-        if (typeof value !== 'object' || value === null) return false;
-        const state = value as Partial<IAgentExecutionState>;
-        
-        return (
-            typeof state.core === 'object' &&
-            typeof state.timing === 'object' &&
-            typeof state.error === 'object' &&
-            typeof state.assignment === 'object' &&
-            typeof state.stateMetrics === 'object' &&
-            typeof state.llmMetrics === 'object' &&
-            Array.isArray(state.history) &&
-            Array.isArray(state.transitions) &&
-            state.core !== null &&
-            state.timing !== null &&
-            state.error !== null &&
-            state.assignment !== null &&
-            state.stateMetrics !== null &&
-            state.llmMetrics !== null
-        );
-    },
+/**
+ * Agent execution context interface
+ */
+export interface IAgentExecutionContext {
+    readonly operation: string;
+    readonly state: IAgentState;
+    readonly taskState: IAgentTaskState;
+    readonly validationResult?: IAgentStateValidation;
+}
 
-    isCoreState: (value: unknown): value is ICoreState => {
-        if (typeof value !== 'object' || value === null) return false;
-        const state = value as Partial<ICoreState>;
-        return (
-            typeof state.status === 'string' &&
-            typeof state.thinking === 'boolean' &&
-            typeof state.busy === 'boolean'
-        );
-    },
+/**
+ * Agent state snapshot interface for versioned state management
+ */
+export interface IAgentStateSnapshot {
+    readonly timestamp: number;
+    readonly agents: Map<string, IAgentType>;
+    readonly activeAgents: Set<string>;
+    readonly taskState: Map<string, IAgentTaskState>;
+    readonly metrics: Map<string, IAgentMetrics>;
+    readonly metadata: Record<string, unknown>;
+}
 
-    isTimingState: (value: unknown): value is ITimingState => {
-        if (typeof value !== 'object' || value === null) return false;
-        const state = value as Partial<ITimingState>;
-        return (
-            typeof state.timeouts === 'object' &&
-            state.timeouts !== null &&
-            typeof state.timeouts.thinking === 'number' &&
-            typeof state.timeouts.execution === 'number' &&
-            typeof state.timeouts.idle === 'number'
-        );
-    },
+/**
+ * Agent state validation result interface
+ */
+export interface IAgentStateValidationResult extends IAgentStateValidation {
+    readonly context?: {
+        readonly taskId: string;
+        readonly taskStatus: string;
+        readonly validationTime: number;
+    };
+}
 
-    isErrorState: (value: unknown): value is IErrorState => {
-        if (typeof value !== 'object' || value === null) return false;
-        const state = value as Partial<IErrorState>;
-        return (
-            typeof state.errorCount === 'number' &&
-            typeof state.retryCount === 'number' &&
-            typeof state.maxRetries === 'number' &&
-            Array.isArray(state.errorHistory)
-        );
-    },
-
-    isAssignmentState: (value: unknown): value is IAssignmentState => {
-        if (typeof value !== 'object' || value === null) return false;
-        const state = value as Partial<IAssignmentState>;
-        return (
-            Array.isArray(state.assignedTasks) &&
-            Array.isArray(state.completedTasks) &&
-            Array.isArray(state.failedTasks) &&
-            Array.isArray(state.blockedTasks) &&
-            typeof state.iterations === 'number' &&
-            typeof state.maxIterations === 'number' &&
-            typeof state.taskCapacity === 'number'
-        );
-    },
-
-    isStateHistoryEntry: (value: unknown): value is IStateHistoryEntry => {
-        if (typeof value !== 'object' || value === null) return false;
-        const entry = value as Partial<IStateHistoryEntry>;
-        return (
-            entry.timestamp instanceof Date &&
-            typeof entry.action === 'string' &&
-            typeof entry.category === 'string' &&
-            typeof entry.details === 'object' &&
-            entry.details !== null
-        );
-    },
-
-    isStateTransition: (value: unknown): value is IStateTransition => {
-        if (typeof value !== 'object' || value === null) return false;
-        const transition = value as Partial<IStateTransition>;
-        return (
-            typeof transition.from === 'string' &&
-            typeof transition.to === 'string' &&
-            transition.timestamp instanceof Date &&
-            typeof transition.reason === 'string'
-        );
-    }
-};
+/**
+ * Agent state metrics interface combining state and metrics information
+ */
+export interface IAgentStateMetrics extends IAgentState {
+    readonly component: string;
+    readonly category: string;
+    readonly version: string;
+    readonly currentState: AGENT_STATUS_enum;
+    readonly stateTime: number;
+    readonly transitionCount: number;
+    readonly failedTransitions: number;
+    readonly successfulTransitions: number;
+    readonly averageStateDuration: number;
+    readonly maxStateDuration: number;
+    readonly minStateDuration: number;
+    readonly stateHistory: IAgentStateTransition[];
+    readonly errorRate: number;
+    readonly successRate: number;
+    readonly blockedTaskCount: number;
+    readonly historyEntryCount: number;
+    readonly lastHistoryUpdate: number;
+    readonly taskStats: {
+        completedCount: number;
+        failedCount: number;
+        averageDuration: number;
+        successRate: number;
+        averageIterations: number;
+    };
+    readonly averageTaskDuration: number;
+    readonly maxTaskDuration: number;
+    readonly minTaskDuration: number;
+}

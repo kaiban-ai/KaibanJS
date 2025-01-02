@@ -113,6 +113,8 @@ export interface IIterationHandlerMetadata extends IBaseHandlerMetadata {
     agent: {
         id: string;
         name: string;
+        role: string;
+        status: string;
         metrics: {
             iterations: number;
             executionTime: number;
@@ -225,6 +227,8 @@ export interface ILoopHandlerMetadata extends IBaseHandlerMetadata {
     agent: {
         id: string;
         name: string;
+        role: string;
+        status: string;
         metrics: {
             iterations: number;
             executionTime: number;

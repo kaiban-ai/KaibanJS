@@ -11,7 +11,7 @@ import { ITaskType } from '../task/taskBaseTypes';
 import { Tool } from '@langchain/core/tools';
 import { BaseMessage } from '@langchain/core/messages';
 import { IToolResourceMetrics, IToolPerformanceMetrics, IToolUsageMetrics } from './toolMetricTypes';
-import { IStandardCostDetails } from '../common/commonMetricTypes';
+import { IStandardCostDetails, IBaseHandlerMetadata } from '../common/baseTypes';
 
 /**
  * Tool handler parameters
@@ -20,8 +20,8 @@ export interface IToolHandlerParams {
     agent: IAgentType;
     task: ITaskType;
     tool: Tool;
-    input?: unknown;
-    messages?: BaseMessage[];
+    input: Record<string, unknown>;
+    messages: BaseMessage[];
 }
 
 /**
@@ -46,7 +46,7 @@ export interface IToolHandlerResult {
 /**
  * Tool handler metadata
  */
-export interface IToolHandlerMetadata {
+export interface IToolHandlerMetadata extends IBaseHandlerMetadata {
     tool: {
         name: string;
         executionTime: number;
@@ -70,6 +70,10 @@ export interface IToolHandlerMetadata {
         resources: IToolResourceMetrics;
         usage: IToolUsageMetrics;
         performance: IToolPerformanceMetrics;
+        timestamp: number;
+        component: string;
+        category: string;
+        version: string;
     };
     costDetails: IStandardCostDetails;
     usageStats?: Record<string, unknown>;
@@ -89,7 +93,8 @@ export function isToolHandlerParams(value: unknown): value is IToolHandlerParams
         typeof params.task === 'object' && params.task !== null &&
         typeof params.tool === 'object' && params.tool !== null &&
         'name' in params.tool && 'description' in params.tool && 'invoke' in params.tool &&
-        (params.messages === undefined || Array.isArray(params.messages))
+        typeof params.input === 'object' && params.input !== null &&
+        Array.isArray(params.messages)
     );
 }
 

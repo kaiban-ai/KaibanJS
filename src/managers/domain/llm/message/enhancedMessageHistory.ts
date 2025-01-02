@@ -26,12 +26,16 @@ export class EnhancedMessageHistory extends CoreManager implements IMessageHisto
     private state: IMessageHistoryState;
     private metrics: IMessageHistoryMetrics;
 
+    // Implement IMessageHistory interface
+    public messages: BaseMessage[];
+
     constructor(config?: IMessageHistoryConfig) {
         super();
         this.history = new ChatMessageHistory();
         this.config = this.normalizeConfig(config);
         this.state = this.initializeState();
         this.metrics = this.initializeMetrics();
+        this.messages = [];
     }
 
     /**
@@ -90,6 +94,7 @@ export class EnhancedMessageHistory extends CoreManager implements IMessageHisto
 
             // Update our state and metrics
             this.state.messages.push(message);
+            this.messages.push(message); // Update IMessageHistory messages
             this.state.metadata.totalMessages++;
             this.updateMetrics(message, startTime);
 
@@ -139,6 +144,7 @@ export class EnhancedMessageHistory extends CoreManager implements IMessageHisto
         const result = await this.safeExecute(async () => {
             await this.history.clear();
             this.state = this.initializeState();
+            this.messages = []; // Clear IMessageHistory messages
             this.metrics = this.initializeMetrics();
             if (this.config.persistenceEnabled) {
                 await this.persist();
@@ -277,6 +283,7 @@ export class EnhancedMessageHistory extends CoreManager implements IMessageHisto
             }
 
             this.state.messages = prunedMessages;
+            this.messages = prunedMessages; // Update IMessageHistory messages
             this.state.metadata.totalMessages = prunedMessages.length;
             this.state.metadata.lastPruneTime = startTime;
             this.metrics.pruneCount++;

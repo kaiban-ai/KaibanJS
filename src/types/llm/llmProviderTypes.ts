@@ -4,16 +4,15 @@
  * @description LLM provider-specific type definitions using Langchain
  */
 
-import { BaseChatModel, BaseChatModelCallOptions, BaseChatModelParams } from '@langchain/core/language_models/chat_models';
+import { BaseChatModelCallOptions, BaseChatModelParams } from '@langchain/core/language_models/chat_models';
 import { CallbackManagerForLLMRun } from '@langchain/core/callbacks/manager';
-import { AIMessageChunk } from '@langchain/core/messages';
 import { ChatGroq } from '@langchain/groq';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatAnthropic } from '@langchain/anthropic';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { ChatMistralAI } from '@langchain/mistralai';
 import { OpenAICoreRequestOptions } from '@langchain/openai';
-import { BaseLanguageModelCallOptions, type FunctionDefinition } from '@langchain/core/language_models/base';
+import { type FunctionDefinition } from '@langchain/core/language_models/base';
 
 import { 
     LLM_PROVIDER_enum,
@@ -23,11 +22,10 @@ import {
     GOOGLE_MODEL_enum,
     MISTRAL_MODEL_enum,
     MANAGER_CATEGORY_enum,
-    ERROR_SEVERITY_enum,
     EnumTypeGuards
 } from '../common/enumTypes';
 import { HarmCategory, HarmBlockThreshold, SafetySetting } from './googleTypes';
-import { ERROR_KINDS, type IBaseError, type IErrorContext, type IErrorType } from '../common/errorTypes';
+import type { IErrorContext } from '../common/errorTypes';
 import type { IBaseMetrics } from '../metrics/base/baseMetrics';
 import type { IResourceMetrics } from '../metrics/base/resourceMetrics';
 import type { IPerformanceMetrics } from '../metrics/base/performanceMetrics';
@@ -40,6 +38,9 @@ import type { ILLMValidationResult } from './llmValidationTypes';
 // Re-export Google types
 export { HarmCategory, HarmBlockThreshold, SafetySetting };
 
+// Re-export imported types
+export type { IRuntimeLLMConfig };
+
 // ─── Provider Instance Types ────────────────────────────────────────────────────
 
 export type ProviderMap = {
@@ -50,14 +51,14 @@ export type ProviderMap = {
     [LLM_PROVIDER_enum.MISTRAL]: ChatMistralAI;
 };
 
-export type ProviderInstance = ProviderMap[keyof ProviderMap];
+export type IProviderInstance = ProviderMap[keyof ProviderMap];
 
 // ─── Provider Call Options ────────────────────────────────────────────────────
 
 /**
  * Named tool choice format matching Langchain's structure
  */
-export interface ChatCompletionNamedToolChoice {
+export interface IChatCompletionNamedToolChoice {
     type: "function";
     function: {
         name: string;
@@ -67,13 +68,13 @@ export interface ChatCompletionNamedToolChoice {
 /**
  * Tool choice type matching Langchain's format
  */
-export type ProviderToolChoice = string | ChatCompletionNamedToolChoice | "auto" | "none";
+export type IProviderToolChoice = string | IChatCompletionNamedToolChoice | "auto" | "none";
 
 /**
  * Base call options extending Langchain's BaseLanguageModelCallOptions
  */
 export interface IBaseProviderCallOptions extends Omit<BaseChatModelCallOptions, 'tool_choice'> {
-    tool_choice?: ProviderToolChoice;
+    tool_choice?: IProviderToolChoice;
     functions?: FunctionDefinition[];
 }
 
@@ -105,7 +106,7 @@ export interface IMistralCallOptions extends IBaseProviderCallOptions {
     safeMode?: boolean;
 }
 
-export type ProviderCallOptions = IBaseProviderCallOptions & (
+export type IProviderCallOptions = IBaseProviderCallOptions & (
     | IGroqCallOptions 
     | IOpenAICallOptions 
     | IAnthropicCallOptions 
@@ -181,8 +182,9 @@ export interface IMistralConfig extends Omit<IBaseLLMConfig, 'model' | 'provider
 export interface IProviderManager extends IBaseManager {
     readonly category: MANAGER_CATEGORY_enum.RESOURCE;
     validateProviderConfig(config: ILLMProviderConfig): Promise<void>;
-    getProviderInstance<T extends ILLMProviderConfig>(config: T): Promise<IHandlerResult<ProviderInstance>>;
+    getProviderInstance<T extends ILLMProviderConfig>(config: T): Promise<IHandlerResult<IProviderInstance>>;
     validateConfig(config: ILLMProviderConfig): Promise<ILLMValidationResult>;
+    normalizeConfig(config: IRuntimeLLMConfig): ILLMProviderConfig;
     validate(params: unknown): Promise<boolean>;
     getMetadata(): IBaseManagerMetadata;
 }

@@ -5,7 +5,6 @@
  */
 
 import { 
-    ERROR_TYPE_enum,
     AGENT_STATUS_enum,
     MESSAGE_STATUS_enum,
     TASK_STATUS_enum,
@@ -13,8 +12,8 @@ import {
     FEEDBACK_STATUS_enum,
     LLM_STATUS_enum 
 } from './enumTypes';
+import { ERROR_KINDS } from './errorTypes';
 import type { IValidationResult } from './validationTypes';
-import type { IBaseMetrics } from '../metrics/base/baseMetrics';
 import type { IBaseEvent } from './baseTypes';
 import type { IPerformanceMetrics } from '../metrics/base/performanceMetrics';
 import type { IResourceMetrics } from '../metrics/base/resourceMetrics';
@@ -33,7 +32,28 @@ export type IStatusType =
     | keyof typeof FEEDBACK_STATUS_enum
     | keyof typeof LLM_STATUS_enum;
 
-export type IStatusErrorType = keyof typeof ERROR_TYPE_enum;
+export type IStatusErrorType = keyof typeof ERROR_KINDS;
+
+export interface IEntityMetrics {
+    currentStatus: Record<string, IStatusType>;
+    errorRate: number;
+    transitionRate: number;
+    averageDuration: number;
+    resourceUtilization: number;
+}
+
+export interface IStatusTransitionPattern {
+    from: IStatusType;
+    to: IStatusType;
+    count: number;
+    averageDuration: number;
+}
+
+export interface IStatusMetricsAnalysis {
+    statusFrequency: Record<IStatusType, number>;
+    transitionPatterns: IStatusTransitionPattern[];
+    errorsByStatus: Record<IStatusType, number>;
+}
 
 export interface IStatusError {
     type: IStatusErrorType;
@@ -90,10 +110,10 @@ export interface IStatusTransitionContext {
     phase: string;
     startTime: number;
     duration: number;
-    resourceMetrics: any;
-    performanceMetrics: any;
     metadata: any;
     errorContext?: IErrorContext;
+    resourceMetrics?: IResourceMetrics;
+    performanceMetrics?: IPerformanceMetrics;
     context?: {
         component?: string;
         phase?: string;
@@ -179,11 +199,7 @@ export interface IStatusHistoryAnalysis {
         uniqueStatuses: IStatusType[];
         averageDuration: number;
         errorRate: number;
-        mostCommonTransitions: Array<{
-            from: IStatusType;
-            to: IStatusType;
-            count: number;
-        }>;
+        mostCommonTransitions: IStatusTransitionPattern[];
         statusDurations: StatusDurationRecord;
     };
     performance: {
@@ -242,23 +258,14 @@ export interface IStatusTrendAnalysis {
     };
     trends: {
         statusFrequency: Record<IStatusType, number>;
-        transitionPatterns: Array<{
-            from: IStatusType;
-            to: IStatusType;
-            count: number;
-            averageDuration: number;
-        }>;
+        transitionPatterns: IStatusTransitionPattern[];
         errorRates: {
             overall: number;
             byStatus: Record<IStatusType, number>;
         };
         performance: {
             averageTransitionTime: number;
-            slowestTransitions: Array<{
-                from: IStatusType;
-                to: IStatusType;
-                duration: number;
-            }>;
+            slowestTransitions: IStatusTransitionPattern[];
             resourceUtilization: {
                 cpu: number;
                 memory: number;
@@ -322,13 +329,7 @@ export interface IStatusDashboardMetrics {
         errorCount: number;
         healthScore: number;
     };
-    byEntity: Record<IStatusEntity, {
-        currentStatus: Record<string, IStatusType>;
-        errorRate: number;
-        transitionRate: number;
-        averageDuration: number;
-        resourceUtilization: number;
-    }>;
+    byEntity: Record<IStatusEntity, IEntityMetrics>;
     alerts: Array<{
         level: 'info' | 'warning' | 'error';
         message: string;
@@ -342,6 +343,13 @@ export interface IStatusDashboardMetrics {
         throughput: number;
     };
 }
+
+// ================ Type Guards ================
+
+export const isValidStatusEntity = (value: unknown): value is IStatusEntity => {
+    if (typeof value !== 'string') return false;
+    return ['agent', 'message', 'task', 'workflow', 'feedback', 'llm'].includes(value);
+};
 
 // ================ Utility Functions ================
 
@@ -427,11 +435,5 @@ export const DEFAULT_STATUS_RECORDS = {
             averageDuration: 0,
             resourceUtilization: 0
         }
-    } as Record<IStatusEntity, {
-        currentStatus: Record<string, IStatusType>;
-        errorRate: number;
-        transitionRate: number;
-        averageDuration: number;
-        resourceUtilization: number;
-    }>
+    } as Record<IStatusEntity, IEntityMetrics>
 };

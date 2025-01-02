@@ -7,7 +7,6 @@
  */
 
 import type { IAgentType } from '../agent/agentBaseTypes';
-import type { ITeamStoreMethods } from '../team/teamBaseTypes';
 import { TASK_STATUS_enum, BATCH_PRIORITY_enum } from '../common/enumTypes';
 import type { ITaskMetrics, ITaskHandlerResult, ITaskHandlerMetadata } from './taskHandlerTypes';
 import type { ITaskFeedback } from './taskFeedbackTypes';
@@ -86,7 +85,6 @@ export interface ITaskType {
     feedback: ITaskFeedback[];
     
     // Methods
-    setStore: (store: ITeamStoreMethods) => void;
     execute: (data: unknown) => Promise<ITaskHandlerResult>;
 }
 

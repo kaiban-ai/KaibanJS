@@ -5,10 +5,10 @@
  */
 
 import { z } from 'zod';
-import { LLM_PROVIDER_enum } from '../../../../types/common/commonEnums';
+import { LLM_PROVIDER_enum } from '../../../../types/common/enumTypes';
 import { IAgentType } from '../../../../types/agent/agentBaseTypes';
 import { IAgentValidationSchema } from '../../../../types/agent/agentValidationTypes';
-import { IAgentExecutionState } from '../../../../types/agent/agentStateTypes';
+import { IAgentExecutionContext } from '../../../../types/agent/agentStateTypes';
 
 /**
  * Base validation rule interface
@@ -26,7 +26,7 @@ export interface IValidationRule {
  * Validation context for context-aware validation
  */
 export interface ValidationContext {
-    currentState?: IAgentExecutionState;
+    currentState?: IAgentExecutionContext;
     environmentVariables?: Record<string, unknown>;
     systemResources?: {
         availableMemory: number;
@@ -107,7 +107,8 @@ export const BaseValidationRules: IValidationRule[] = [
                 canUseTools: z.boolean(),
                 canLearn: z.boolean(),
                 supportedToolTypes: z.array(z.string()),
-                maxConcurrentTasks: z.number().min(1)
+                maxConcurrentTasks: z.number().min(1),
+                memoryCapacity: z.number().optional()
             })
         }),
         async validate(agent: IAgentType): Promise<ValidationRuleResult> {
@@ -168,8 +169,7 @@ export const ContextAwareRules: IValidationRule[] = [
 
             const { availableMemory, cpuUsage, networkLatency } = context.systemResources;
 
-            // Check memory requirements
-            if (agent.capabilities.memoryCapacity > availableMemory) {
+            if (agent.capabilities.memoryCapacity && agent.capabilities.memoryCapacity > availableMemory) {
                 errors.push(`Agent memory requirement (${agent.capabilities.memoryCapacity}) exceeds available memory (${availableMemory})`);
             }
 
@@ -229,7 +229,7 @@ export const ContextAwareRules: IValidationRule[] = [
 
             // Check workload distribution
             const tasksPerAgent = totalTasks / (activeAgents + 1);
-            if (tasksPerAgent > agent.capabilities.maxConcurrentTasks) {
+            if (agent.capabilities.maxConcurrentTasks !== undefined && tasksPerAgent > agent.capabilities.maxConcurrentTasks) {
                 warnings.push('High workload per agent detected');
             }
 

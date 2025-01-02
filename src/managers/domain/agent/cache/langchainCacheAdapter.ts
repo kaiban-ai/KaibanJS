@@ -6,7 +6,7 @@
 
 import { BaseCache } from '@langchain/core/caches';
 import { Generation } from '@langchain/core/outputs';
-import { createError, ERROR_KINDS } from '../../../../types/common/commonErrorTypes';
+import { createError, ERROR_KINDS } from '../../../../types/common/errorTypes';
 
 /**
  * In-memory cache implementation for Langchain
@@ -52,14 +52,14 @@ export class LangchainCacheAdapter extends InMemoryCache<Generation[]> {
         try {
             const cacheKey = this.createCacheKey(prompt, llmKey);
             return await super.lookup(cacheKey, llmKey);
-        } catch (error) {
+        } catch (error: unknown) {
             throw createError({
                 message: 'Cache lookup failed',
                 type: ERROR_KINDS.ResourceError,
                 context: {
                     prompt,
                     llmKey,
-                    error
+                    error: error instanceof Error ? error : new Error(String(error))
                 }
             });
         }
@@ -72,14 +72,14 @@ export class LangchainCacheAdapter extends InMemoryCache<Generation[]> {
         try {
             const cacheKey = this.createCacheKey(prompt, llmKey);
             await super.update(cacheKey, llmKey, value);
-        } catch (error) {
+        } catch (error: unknown) {
             throw createError({
                 message: 'Cache update failed',
                 type: ERROR_KINDS.ResourceError,
                 context: {
                     prompt,
                     llmKey,
-                    error
+                    error: error instanceof Error ? error : new Error(String(error))
                 }
             });
         }

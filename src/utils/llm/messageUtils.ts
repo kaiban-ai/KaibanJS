@@ -4,9 +4,18 @@
  * @description Utility functions for handling LLM messages
  */
 
-import { BaseMessage, AIMessage, HumanMessage, SystemMessage, FunctionMessage, BaseMessageLike } from '@langchain/core/messages';
-import { MessageRole, IMessageContent, IMessageContext } from '../../types/llm/message/messageTypes';
-import { MESSAGE_STATUS_enum } from '../../types/common/commonEnums';
+import { 
+    BaseMessage, 
+    AIMessage, 
+    HumanMessage, 
+    SystemMessage, 
+    FunctionMessage, 
+    BaseMessageLike 
+} from '@langchain/core/messages';
+import { 
+    IBaseMessageMetadata,
+    IMessageHistory
+} from '../../types/llm/message/messagingBaseTypes';
 
 /**
  * Convert a message array to Langchain BaseMessage format
@@ -15,17 +24,17 @@ export function convertToBaseMessages(messages: BaseMessageLike[][]): BaseMessag
     // If messages is already flattened, wrap it in an array
     const messageArrays = Array.isArray(messages[0]) ? messages : [messages];
     
-    return messageArrays.flat().map(msg => {
-        if (msg instanceof BaseMessage) {
-            return msg;
+    return messageArrays.flat().map(message => {
+        if (message instanceof BaseMessage) {
+            return message;
         }
 
-        if (typeof msg === 'string') {
-            return new HumanMessage({ content: msg });
+        if (typeof message === 'string') {
+            return new HumanMessage({ content: message });
         }
 
-        if (Array.isArray(msg)) {
-            const [type, content] = msg;
+        if (Array.isArray(message)) {
+            const [type, content] = message;
             switch (type) {
                 case 'system':
                     return new SystemMessage({ content: String(content) });
@@ -42,9 +51,9 @@ export function convertToBaseMessages(messages: BaseMessageLike[][]): BaseMessag
             }
         }
 
-        if (typeof msg === 'object' && msg !== null && 'content' in msg) {
-            const content = String(msg.content);
-            const type = msg.type || 'user';
+        if (typeof message === 'object' && message !== null && 'content' in message) {
+            const content = String(message.content);
+            const type = message.type || 'user';
             
             switch (type) {
                 case 'system':
@@ -54,7 +63,7 @@ export function convertToBaseMessages(messages: BaseMessageLike[][]): BaseMessag
                 case 'function':
                     return new FunctionMessage({
                         content,
-                        name: msg.name || 'function'
+                        name: message.name || 'function'
                     });
                 case 'user':
                 default:
@@ -63,69 +72,68 @@ export function convertToBaseMessages(messages: BaseMessageLike[][]): BaseMessag
         }
 
         // Default to HumanMessage if type cannot be determined
-        return new HumanMessage({ content: String(msg) });
+        return new HumanMessage({ content: String(message) });
     });
 }
 
 /**
- * Convert a BaseMessage to message context
+ * Convert a BaseMessage to message with metadata
  */
-export function convertToMessageContext(message: BaseMessage): IMessageContext {
+export function convertToMessageWithMetadata(message: BaseMessage): { message: BaseMessage; metadata: IBaseMessageMetadata } {
     return {
-        role: getRoleFromMessage(message),
-        content: message.content as string,
-        timestamp: Date.now(),
+        message,
         metadata: {
-            id: message.id || Date.now().toString(),
             timestamp: Date.now(),
-            status: MESSAGE_STATUS_enum.INITIAL,
-            retryCount: 0,
-            priority: 1,
-            ttl: 3600,
-            tags: []
+            component: 'MessageConverter',
+            operation: 'convertToMessageWithMetadata',
+            importance: 1,
+            llmUsageMetrics: {
+                totalRequests: 1,
+                activeUsers: 1,
+                activeInstances: 1,
+                requestsPerSecond: 1,
+                averageResponseSize: message.content.length,
+                peakMemoryUsage: 0,
+                uptime: 0,
+                rateLimit: {
+                    current: 0,
+                    limit: 0,
+                    remaining: 0,
+                    resetTime: 0
+                },
+                tokenDistribution: {
+                    prompt: 0,
+                    completion: 0,
+                    total: 0
+                },
+                modelDistribution: {
+                    gpt4: 0,
+                    gpt35: 0,
+                    other: 0
+                },
+                timestamp: Date.now(),
+                component: '',
+                category: '',
+                version: ''
+            }
         }
     };
 }
 
 /**
- * Get message role from BaseMessage
+ * Create a message history entry
  */
-function getRoleFromMessage(message: BaseMessage): MessageRole {
-    if (message instanceof SystemMessage) return 'system';
-    if (message instanceof AIMessage) return 'assistant';
-    if (message instanceof FunctionMessage) return 'function';
-    return 'user';
-}
-
-/**
- * Convert message content to string
- */
-export function getMessageContent(content: IMessageContent | string): string {
-    if (typeof content === 'string') return content;
-    return content.text;
-}
-
-/**
- * Create a message context
- */
-export function createMessageContext(
-    role: MessageRole,
-    content: string | IMessageContent,
-    metadata?: Record<string, unknown>
-): IMessageContext {
+export function createMessageHistoryEntry(
+    message: BaseMessage,
+    metadata?: IBaseMessageMetadata
+): IMessageHistory['messages'][0] {
     return {
-        role,
-        content: typeof content === 'string' ? content : content.text,
+        message,
         timestamp: Date.now(),
-        metadata: {
-            id: Date.now().toString(),
+        metadata: metadata || {
             timestamp: Date.now(),
-            status: MESSAGE_STATUS_enum.INITIAL,
-            retryCount: 0,
-            priority: 1,
-            ttl: 3600,
-            tags: [],
-            ...metadata
+            component: 'MessageHistory',
+            operation: 'createEntry'
         }
     };
 }

@@ -1,15 +1,15 @@
 /**
- * @file llmCommonTypes.ts
- * @path src/types/llm/llmCommonTypes.ts
- * @description Common LLM runtime type definitions using Langchain
- *
- * @module @types/llm
- */
+* @file llmCommonTypes.ts
+* @path src/types/llm/llmCommonTypes.ts
+* @description Common LLM runtime type definitions using Langchain
+*
+* @module @types/llm
+*/
 
 import { BaseChatModelCallOptions } from '@langchain/core/language_models/chat_models';
 import { Callbacks } from '@langchain/core/callbacks/manager';
-import { LLM_PROVIDER_enum } from '../common/commonEnums';
-import { IBaseLLMConfig, createProviderConfig } from './llmProviderTypes';
+import { LLM_PROVIDER_enum } from '../common/enumTypes';
+import { IBaseLLMConfig } from './llmProviderTypes';
 
 // Provider display names mapping
 export const LLMProviders: Record<LLM_PROVIDER_enum, string> = {
@@ -74,4 +74,3 @@ export const isRuntimeConfig = (config: unknown): config is IRuntimeLLMConfig =>
 
 // Re-export types from llmProviderTypes
 export type { IBaseLLMConfig };
-export { createProviderConfig };

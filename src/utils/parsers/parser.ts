@@ -4,8 +4,14 @@
  * @description JSON parsing and recovery utilities
  */
 
-import { logger } from "../core/logger";
-import { IParsedJSON, IParserConfig, IParserResult } from '../../types/common';
+import LogManager from '../../managers/core/logManager';
+import { createError } from '../../types/common/errorTypes';
+import { ERROR_KINDS } from '../../types/common/errorTypes';
+import type { 
+    IParsedJSON, 
+    IParserConfig, 
+    IParserResult 
+} from '../../types/common/baseTypes';
 
 /**
  * Default parser configuration
@@ -63,7 +69,8 @@ function recoverJson(str: string): string | null {
         }
 
         return sanitizeJsonString(jsonPart);
-    } catch {
+    } catch (error) {
+        LogManager.debug('JSON recovery failed:', { error });
         return null;
     }
 }
@@ -75,11 +82,22 @@ function recoverJson(str: string): string | null {
  * @returns Parser result with parsed data or error
  */
 export function parseJSON<T = any>(str: string, config: IParserConfig = {}): IParserResult<T> {
+    const startTime = Date.now();
     const finalConfig = { ...DEFAULT_CONFIG, ...config };
     
     try {
         // Direct parse attempt
         const result = JSON.parse(str) as T;
+
+        // Log successful parse
+        LogManager.info('JSON parsed successfully', {
+            duration: Date.now() - startTime,
+            component: 'Parser',
+            operation: 'parseJSON',
+            success: true,
+            recoveryAttempted: false
+        });
+
         return {
             success: true,
             data: result,
@@ -92,6 +110,16 @@ export function parseJSON<T = any>(str: string, config: IParserConfig = {}): IPa
                 const recovered = recoverJson(str);
                 if (recovered) {
                     const result = JSON.parse(recovered) as T;
+
+                    // Log successful recovery
+                    LogManager.info('JSON recovered and parsed successfully', {
+                        duration: Date.now() - startTime,
+                        component: 'Parser',
+                        operation: 'parseJSON',
+                        success: true,
+                        recoveryAttempted: true
+                    });
+
                     return {
                         success: true,
                         data: result,
@@ -100,9 +128,19 @@ export function parseJSON<T = any>(str: string, config: IParserConfig = {}): IPa
                     };
                 }
             } catch (recoveryError) {
-                logger.debug('Recovery attempt failed:', { error: recoveryError });
+                LogManager.debug('Recovery attempt failed:', { error: recoveryError });
             }
         }
+
+        // Log failed parse
+        LogManager.warn('JSON parsing failed', {
+            duration: Date.now() - startTime,
+            component: 'Parser',
+            operation: 'parseJSON',
+            success: false,
+            recoveryAttempted: finalConfig.attemptRecovery,
+            error: initialError instanceof Error ? initialError.message : 'Unknown parsing error'
+        });
 
         // Return error result with flexible context
         return {
@@ -126,13 +164,38 @@ export function parseJSON<T = any>(str: string, config: IParserConfig = {}): IPa
  * @returns Parsed JSON object or null if parsing fails
  */
 export function getParsedJSON(str: string): IParsedJSON | null {
-    const result = parseJSON<IParsedJSON>(str);
-    
-    if (!result.success) {
-        logger.error("Failed to parse JSON", { error: result.error?.message });
-        logger.debug("Original input", { input: result.originalInput });
+    const startTime = Date.now();
+    try {
+        const result = parseJSON<IParsedJSON>(str);
+        
+        if (!result.success) {
+            throw createError({
+                message: result.error?.message || 'Failed to parse JSON',
+                type: ERROR_KINDS.ValidationError,
+                context: {
+                    component: 'Parser',
+                    operation: 'getParsedJSON',
+                    originalInput: result.originalInput,
+                    recoveryAttempted: result.recoveryAttempted
+                }
+            });
+        }
+
+        return result.data || null;
+    } catch (error) {
+        const normalizedError = error instanceof Error ? error : new Error(String(error));
+        LogManager.error('Failed to parse JSON:', normalizedError);
+        LogManager.debug('Original input:', { input: str });
+
+        // Log parse failure
+        LogManager.warn('JSON parsing failed in getParsedJSON', {
+            duration: Date.now() - startTime,
+            component: 'Parser',
+            operation: 'getParsedJSON',
+            success: false,
+            error: normalizedError.message
+        });
+
         return null;
     }
-
-    return result.data || null;
 }

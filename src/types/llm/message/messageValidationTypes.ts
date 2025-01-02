@@ -6,21 +6,17 @@
  * @module @types/llm/message
  */
 
-import { MESSAGE_STATUS_enum } from '../../common/commonEnums';
-import type { IValidationResult } from '../../common/commonValidationTypes';
-import type { 
-  IMessageMetadata, 
-  IMessageContent, 
-  IMessageConfig,
-  IMessageRules 
-} from './messageTypes';
+import { BaseMessage } from '@langchain/core/messages';
+import { MESSAGE_STATUS_enum } from '../../common/enumTypes';
+import type { IValidationResult } from '../../common/validationTypes';
+import type { IBaseMessageMetadata } from './messagingBaseTypes';
 
 // ─── Content Validation Types ────────────────────────────────────────────────────
 
 export interface IMessageContentValidator {
-  validateMessageSize(size: number): IValidationResult;
-  validateMessageFormat(content: unknown): IValidationResult;
-  validateMessageContent(content: IMessageContent, config?: IMessageConfig): IValidationResult;
+  validateMessageSize(message: BaseMessage): IValidationResult;
+  validateMessageFormat(message: BaseMessage): IValidationResult;
+  validateMessageContent(message: BaseMessage): IValidationResult;
 }
 
 // ─── Metadata Validation Types ────────────────────────────────────────────────────
@@ -43,16 +39,15 @@ export interface IMessageStateValidator {
 
 export interface IMessageValidator {
   validateMessage(
-    content: IMessageContent,
-    metadata: IMessageMetadata,
-    config?: IMessageConfig,
+    message: BaseMessage,
+    metadata: IBaseMessageMetadata,
     queueSize?: number
   ): IValidationResult;
 }
 
 // ─── Validation Rule Types ──────────────────────────────────────────────────────
 
-export interface IMessageValidationRules extends IMessageRules {
+export interface IMessageValidationRules {
   contentValidation: {
     maxSize: number;
     minSize: number;
@@ -60,7 +55,7 @@ export interface IMessageValidationRules extends IMessageRules {
     requiredFields: string[];
   };
   metadataValidation: {
-    requiredFields: (keyof IMessageMetadata)[];
+    requiredFields: (keyof IBaseMessageMetadata)[];
     maxRetryAttempts: number;
   };
   queueValidation: {
@@ -73,7 +68,6 @@ export interface IMessageValidationRules extends IMessageRules {
 
 export interface IMessageValidationContext {
   rules: IMessageValidationRules;
-  config?: IMessageConfig;
   queueSize?: number;
   currentStatus?: MESSAGE_STATUS_enum;
 }

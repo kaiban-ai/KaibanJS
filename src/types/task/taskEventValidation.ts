@@ -1,18 +1,18 @@
 /**
- * @file taskEventValidation.ts
- * @path src/types/task/taskEventValidation.ts
- * @description Task event validation type definitions
- *
- * @module @types/task
- */
+* @file taskEventValidation.ts
+* @path src/types/task/taskEventValidation.ts
+* @description Task event validation type definitions
+*
+* @module @types/task
+*/
 
 import { 
     type IValidationResult,
     type ValidationErrorType,
     createValidationMetadata,
     createValidationResult,
-    createValidationError
-} from '../common/';
+    toValidationError
+} from '../common/validationTypes';
 import { TASK_EVENT_TYPE_enum } from '../common/enumTypes';
 import type { TaskEvent } from './taskEventTypes';
 
@@ -33,9 +33,11 @@ export const createTaskValidationResult = (params: {
         warnings: params.warnings || [],
         metadata: createValidationMetadata({
             component: params.component || 'task',
-            validatorName: params.validatorName,
-            validationDuration: params.duration,
-            validatedFields: params.validatedFields || ['task']
+            validatedFields: params.validatedFields || ['task'],
+            operation: params.validatorName,
+            details: {
+                duration: params.duration
+            }
         })
     });
 };
@@ -50,14 +52,14 @@ export const validateTaskEvent = (params: {
     const errors: ValidationErrorType[] = [];
     
     if (!params.event.type || !Object.values(TASK_EVENT_TYPE_enum).includes(params.event.type)) {
-        errors.push(createValidationError({
+        errors.push(toValidationError({
             code: 'INVALID_EVENT_TYPE',
             message: 'Invalid task event type'
         }));
     }
 
     if (!params.event.taskId) {
-        errors.push(createValidationError({
+        errors.push(toValidationError({
             code: 'INVALID_TASK_ID',
             message: 'Task ID is required'
         }));
@@ -80,7 +82,7 @@ export const validateTaskCreated = (params: {
 }): IValidationResult => {
     const errors: ValidationErrorType[] = [];
     if (!params.taskId) {
-        errors.push(createValidationError({
+        errors.push(toValidationError({
             code: 'INVALID_TASK_ID',
             message: 'Task ID is required'
         }));
@@ -103,7 +105,7 @@ export const validateTaskUpdated = (params: {
 }): IValidationResult => {
     const errors: ValidationErrorType[] = [];
     if (!params.taskId) {
-        errors.push(createValidationError({
+        errors.push(toValidationError({
             code: 'INVALID_TASK_ID',
             message: 'Task ID is required'
         }));
@@ -126,7 +128,7 @@ export const validateTaskDeleted = (params: {
 }): IValidationResult => {
     const errors: ValidationErrorType[] = [];
     if (!params.taskId) {
-        errors.push(createValidationError({
+        errors.push(toValidationError({
             code: 'INVALID_TASK_ID',
             message: 'Task ID is required'
         }));
@@ -150,13 +152,13 @@ export const validateTaskStatusChanged = (params: {
 }): IValidationResult => {
     const errors: ValidationErrorType[] = [];
     if (!params.taskId) {
-        errors.push(createValidationError({
+        errors.push(toValidationError({
             code: 'INVALID_TASK_ID',
             message: 'Task ID is required'
         }));
     }
     if (!params.status) {
-        errors.push(createValidationError({
+        errors.push(toValidationError({
             code: 'INVALID_STATUS',
             message: 'Status is required'
         }));
@@ -180,13 +182,13 @@ export const validateTaskProgressUpdated = (params: {
 }): IValidationResult => {
     const errors: ValidationErrorType[] = [];
     if (!params.taskId) {
-        errors.push(createValidationError({
+        errors.push(toValidationError({
             code: 'INVALID_TASK_ID',
             message: 'Task ID is required'
         }));
     }
     if (typeof params.progress !== 'number' || params.progress < 0 || params.progress > 100) {
-        errors.push(createValidationError({
+        errors.push(toValidationError({
             code: 'INVALID_PROGRESS',
             message: 'Progress must be a number between 0 and 100'
         }));
@@ -209,7 +211,7 @@ export const validateTaskCompleted = (params: {
 }): IValidationResult => {
     const errors: ValidationErrorType[] = [];
     if (!params.taskId) {
-        errors.push(createValidationError({
+        errors.push(toValidationError({
             code: 'INVALID_TASK_ID',
             message: 'Task ID is required'
         }));
@@ -233,13 +235,13 @@ export const validateTaskFailed = (params: {
 }): IValidationResult => {
     const errors: ValidationErrorType[] = [];
     if (!params.taskId) {
-        errors.push(createValidationError({
+        errors.push(toValidationError({
             code: 'INVALID_TASK_ID',
             message: 'Task ID is required'
         }));
     }
     if (!params.error) {
-        errors.push(createValidationError({
+        errors.push(toValidationError({
             code: 'INVALID_ERROR',
             message: 'Error is required'
         }));

@@ -7,71 +7,17 @@
 /**
  * Core Utilities
  */
-export { logger, setLogLevel } from './core/logger';
+export { LogManager as logger } from '../managers/core/logManager';
 export { 
-    PrettyError, 
-    LLMInvocationError, 
-    LLMConfigurationError,
-    isPrettyError, 
-    isLLMError,
-    wrapError,
-    createUserError
-} from './core/errors';
-
-/**
- * Factory Implementations
- */
-export { DefaultFactory } from './factories/defaultFactory';
-export { LogCreator } from './factories/logCreator';
-export { MetadataFactory } from './factories/metadataFactory';
-
-/**
- * Handler Implementations
- */
-export {
-    errorHandler,
-    messageHandler,
-    storeHandler,
-    taskHandler,
-    teamHandler
-} from './handlers';
-
-/**
- * Helper Functions
- */
-// Cost calculation
-export {
-    calculateTaskCost,
-    calculateTotalWorkflowCost,
-    formatCost
-} from './helpers/llm/llmCostCalculator';
-
-// Agent utils
-export {
-    getApiKey,
-    replaceAgentAttributes,
-    validateAgentAttributes
-} from './helpers/agent/agentUtils';
-
-// Log formatting
-export {
-    logPrettyTaskCompletion,
-    logPrettyTaskStatus,
-    logPrettyWorkflowStatus,
-    logPrettyWorkflowResult
-} from './helpers/formatting/prettyLogs';
-
-// Statistics calculation
-export {
-    calculateTaskStats,
-    calculateAverageCostPerToken,
-    calculateTokenRate
-} from './helpers/tasks/stats';
-
-/**
- * Manager Implementations
- */
-export { MessageHistoryManager } from './managers/messageHistoryManager';
+    BaseError,
+    createError,
+    isErrorType,
+    isBaseError,
+    toErrorType,
+    createErrorMetadata,
+    createErrorContext,
+    ERROR_KINDS
+} from '../types/common/errorTypes';
 
 /**
  * Parser Implementations
@@ -82,109 +28,79 @@ export {
 } from './parsers/parser';
 
 /**
- * Type Guard Exports
- */
-// Common type guards
-export { EnumTypeGuards } from './types';
-export { LogTypeGuards } from '../types/team/teamLogsTypes';
-export { MessageTypeUtils } from '../types/messaging/messagingBaseTypes';
-export { AgentTypeGuards } from './types/agent/base';
-export { TaskTypeGuards } from '../types/task/taskBase';
-export { TeamTypeGuards } from '../types/team/teamBaseTypes';
-export { WorkflowStoreTypeGuards } from './types';
-
-/**
  * Type Exports
  */
+// Agent types
 export type {
-    // Agent types
     IBaseAgent,
     IReactChampionAgent,
-    AgentType,
-    SystemAgent,
-    BaseAgentConfig,
-    IAgentParams
-} from './types/agent';
+    IAgentType,
+    IAgentMetadata,
+    IAgentCapabilities
+} from '../types/agent/agentBaseTypes';
 
 // Common types
 export type {
-    ErrorType,
-    PrettyErrorType,
-    ConfigurationError,
-    RateLimitError,
-    TokenLimitError,
-    ErrorConfig,
-    ParsedJSON,
-    ParserConfig,
-    ParserResult
-} from './types/common';
+    IErrorType,
+    IBaseError,
+    IErrorContext,
+    IErrorKind,
+    IErrorSeverity,
+    IErrorRecoveryConfig,
+    IErrorRecoveryResult
+} from '../types/common/errorTypes';
+
+export type {
+    IParsedJSON,
+    IParserConfig,
+    IParserResult,
+    IBaseHandlerMetadata
+} from '../types/common/baseTypes';
 
 // LLM types
 export type {
-    LLMProvider,
-    LLMConfig,
-    BaseLLMConfig,
-    GroqConfig,
-    OpenAIConfig,
-    AnthropicConfig,
-    GoogleConfig,
-    MistralConfig,
-    Output,
-    LLMResponse,
-    CompletionResponse,
-    LLMUsageStats,
-    TokenUsage,
-    ResponseMetadata,
-    ParsedOutput
-} from './types/llm';
+    ILLMConfig,
+    ILLMResponse,
+    ILLMResult,
+    IStreamingOptions
+} from '../types/llm/llmBaseTypes';
 
 // Messaging types
 export type {
-    MessageRole,
-    FunctionCall,
-    ToolCall,
-    AdditionalKwargs,
-    MessageMetadataFields,
-    InternalChatMessage,
-    ChatMessage,
-    MessageContext,
-    IMessageHistory
-} from '../types/messaging';
+    IMessageHistory,
+    IBaseMessageMetadata,
+    IMessageHistoryEntry,
+    IMessageValidationResult
+} from '../types/llm/message/messagingBaseTypes';
 
 // Task types
 export type {
-    TaskType,
-    TaskResult,
-    TaskStats,
-    FeedbackObject,
-    ITaskParams
-} from '../types/task';
+    ITaskType,
+    ITaskParams,
+    ITaskProgress,
+    ITaskHistoryEntry
+} from '../types/task/taskBaseTypes';
+
+export type {
+    ITaskHandlerResult,
+    ITaskHandlerMetadata,
+    ITaskMetrics,
+    ITaskValidationResult
+} from '../types/task/taskHandlerTypes';
+
+export type { ITaskFeedback } from '../types/task/taskFeedbackTypes';
 
 // Team types
 export type {
-    TeamState,
-    TeamStore,
-    TeamEnvironment,
-    TeamInputs,
-    Log,
-    LogType,
-    LogMetadata,
-    AgentLogMetadata,
-    TaskLogMetadata,
-    WorkflowLogMetadata,
-    MessageLogMetadata,
-    PrepareNewLogParams
-} from '../types/team';
+    ITeamState,
+    ITeamStoreMethods
+} from '../types/team/teamBaseTypes';
 
 // Workflow types
 export type {
-    WorkflowResult,
-    WorkflowError,
-    WorkflowStats,
-    CostDetails
-} from '../types/workflow';
-
-
+    IWorkflowResult,
+    IWorkflowError
+} from '../types/workflow/workflowBaseTypes';
 
 /**
  * Enum Exports
@@ -193,18 +109,20 @@ export {
     AGENT_STATUS_enum,
     TASK_STATUS_enum,
     WORKFLOW_STATUS_enum,
-    FEEDBACK_STATUS_enum
-} from './types/common/enums';
+    ERROR_SEVERITY_enum,
+    BATCH_PRIORITY_enum
+} from '../types/common/enumTypes';
 
 /**
  * Constants
  */
 export {
-    TOKEN_LIMITS,
-    LLMProviders
-} from './types/llm/common';
+    DEFAULT_ERROR_RECOVERY_CONFIG,
+    DEFAULT_RETRY_CONFIG,
+    DEFAULT_CIRCUIT_BREAKER_CONFIG
+} from '../types/common/errorTypes';
 
 /**
  * Default Configurations
  */
-export { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from './helpers/prompts/prompts';
+export { default as REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from './helpers/prompts/prompts';

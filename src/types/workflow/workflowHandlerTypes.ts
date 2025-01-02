@@ -7,7 +7,6 @@
 import type { ILLMUsageMetrics } from '../llm/llmMetricTypes';
 import type { IPerformanceMetrics } from '../metrics/base/performanceMetrics';
 import type { ICostDetails } from './workflowCostsTypes';
-import type { IWorkflowResult } from './workflowBaseTypes';
 
 export interface IWorkflowHandlerMetrics {
     readonly performance: IPerformanceMetrics;
@@ -17,49 +16,19 @@ export interface IWorkflowHandlerMetrics {
 
 export const createEmptyHandlerMetrics = (): IWorkflowHandlerMetrics => ({
     performance: {
-        executionTime: {
-            total: 0,
-            average: 0,
-            min: 0,
-            max: 0
-        },
-        latency: {
-            total: 0,
+        responseTime: {
             average: 0,
             min: 0,
             max: 0
         },
         throughput: {
-            operationsPerSecond: 0,
-            dataProcessedPerSecond: 0
+            requestsPerSecond: 0,
+            bytesPerSecond: 0
         },
-        responseTime: {
-            total: 0,
-            average: 0,
-            min: 0,
-            max: 0
-        },
-        queueLength: 0,
-        errorRate: 0,
-        successRate: 1,
-        errorMetrics: {
-            totalErrors: 0,
-            errorRate: 0
-        },
-        resourceUtilization: {
-            cpuUsage: 0,
-            memoryUsage: 0,
-            diskIO: {
-                read: 0,
-                write: 0
-            },
-            networkUsage: {
-                upload: 0,
-                download: 0
-            },
-            timestamp: Date.now()
-        },
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        component: '',
+        category: '',
+        version: ''
     },
     costDetails: {
         inputCost: 0,
@@ -73,9 +42,10 @@ export const createEmptyHandlerMetrics = (): IWorkflowHandlerMetrics => ({
     },
     llmUsageMetrics: {
         totalRequests: 0,
+        activeUsers: 0,
         activeInstances: 0,
         requestsPerSecond: 0,
-        averageResponseLength: 0,
+        averageResponseSize: 0,
         peakMemoryUsage: 0,
         uptime: 0,
         rateLimit: {
@@ -94,6 +64,9 @@ export const createEmptyHandlerMetrics = (): IWorkflowHandlerMetrics => ({
             gpt35: 0,
             other: 0
         },
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        component: '',
+        category: '',
+        version: ''
     }
 });

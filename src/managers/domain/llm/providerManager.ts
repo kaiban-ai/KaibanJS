@@ -15,15 +15,21 @@ import {
     LLM_PROVIDER_enum,
     VALIDATION_ERROR_enum,
     VALIDATION_WARNING_enum,
-    MANAGER_CATEGORY_enum
+    MANAGER_CATEGORY_enum,
+    GROQ_MODEL_enum,
+    OPENAI_MODEL_enum,
+    ANTHROPIC_MODEL_enum,
+    GOOGLE_MODEL_enum,
+    MISTRAL_MODEL_enum
 } from '../../../types/common/enumTypes';
 import { createError } from '../../../types/common/errorTypes';
 import { MetadataFactory } from '../../../utils/factories/metadataFactory';
 import { ILLMProviderTypeGuards } from '../../../types/llm/llmProviderTypes';
 import { HarmBlockThreshold, HarmCategory } from '../../../types/llm/googleTypes';
-import { LLMMetricsCollector } from '../../../metrics/LLMMetricsCollector';
+import { MessageMetricsManager } from '../message/messageMetricsManager';
+import { IRuntimeLLMConfig, isRuntimeConfig } from '../../../types/llm/llmCommonTypes';
+import { ILLMValidationResult } from '../../../types/llm/llmValidationTypes';
 
-import type { ILLMValidationResult } from '../../../types/llm/llmManagerTypes';
 import type { 
     ILLMProviderConfig,
     IGroqConfig,
@@ -663,6 +669,100 @@ export class ProviderManager extends CoreManager implements IProviderManager {
         }
         if (!config.endpoint) {
             warnings.push(VALIDATION_WARNING_enum.OPTIONAL_FIELD_MISSING);
+        }
+    }
+
+    // ─── Normalize Config Method ───────────────────────────────────────────────
+
+    public normalizeConfig(config: IRuntimeLLMConfig): ILLMProviderConfig {
+        // Validate basic structure
+        if (!isRuntimeConfig(config)) {
+            throw createError({
+                message: 'Invalid runtime LLM configuration structure',
+                type: 'ValidationError',
+                context: {
+                    component: this.constructor.name
+                }
+            });
+        }
+
+        // Create base config with common properties
+        const baseConfig = {
+            provider: config.provider,
+            model: config.model,
+            apiKey: config.apiKey,
+            apiBaseUrl: config.apiBaseUrl,
+            maxRetries: config.maxRetries,
+            timeout: config.timeout,
+            temperature: config.temperature,
+            maxTokens: config.maxTokens,
+            topP: config.topP,
+            topK: config.topK,
+            contextWindow: config.contextWindow,
+            streamingLatency: config.streamingLatency,
+            streaming: config.streaming,
+            stop: config.stop,
+            presencePenalty: config.presencePenalty,
+            frequencyPenalty: config.frequencyPenalty,
+            repetitionPenalty: config.repetitionPenalty
+        };
+
+        // Create provider-specific config
+        switch (config.provider) {
+            case LLM_PROVIDER_enum.GROQ:
+                return {
+                    ...baseConfig,
+                    provider: LLM_PROVIDER_enum.GROQ,
+                    model: config.model as GROQ_MODEL_enum,
+                    contextWindow: config.contextWindow,
+                    streamingLatency: config.streamingLatency
+                };
+
+            case LLM_PROVIDER_enum.OPENAI:
+                return {
+                    ...baseConfig,
+                    provider: LLM_PROVIDER_enum.OPENAI,
+                    model: config.model as OPENAI_MODEL_enum,
+                    frequencyPenalty: config.frequencyPenalty,
+                    presencePenalty: config.presencePenalty
+                };
+
+            case LLM_PROVIDER_enum.ANTHROPIC:
+                return {
+                    ...baseConfig,
+                    provider: LLM_PROVIDER_enum.ANTHROPIC,
+                    model: config.model as ANTHROPIC_MODEL_enum,
+                    anthropicApiUrl: config.apiBaseUrl
+                };
+
+            case LLM_PROVIDER_enum.GOOGLE:
+                return {
+                    ...baseConfig,
+                    provider: LLM_PROVIDER_enum.GOOGLE,
+                    model: config.model as GOOGLE_MODEL_enum,
+                    baseUrl: config.apiBaseUrl
+                };
+
+            case LLM_PROVIDER_enum.MISTRAL:
+                return {
+                    ...baseConfig,
+                    provider: LLM_PROVIDER_enum.MISTRAL,
+                    model: config.model as MISTRAL_MODEL_enum,
+                    endpoint: config.apiBaseUrl,
+                    inferenceOptions: {
+                        useGpu: true
+                    }
+                };
+
+            default:
+                throw createError({
+                    message: 'Unsupported LLM provider',
+                    type: 'ValidationError',
+                    context: {
+                        component: this.constructor.name,
+                        provider: config.provider
+                    }
+                });
         }
     }
 }

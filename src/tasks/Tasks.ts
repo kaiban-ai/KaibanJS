@@ -7,23 +7,25 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { BaseError } from '../types/common/commonErrorTypes';
+import { BaseError } from '../types/common/errorTypes';
+import { TASK_STATUS_enum, BATCH_PRIORITY_enum } from '../types/common/enumTypes';
+import { ERROR_KINDS, createErrorContext } from '../types/common/errorTypes';
 
 // Import types from canonical locations
 import type { 
     ITaskType,
     ITaskParams,
-    ITaskMetrics,
     ITaskProgress,
-    ITaskHistoryEntry,
-    ITaskFeedback
+    ITaskHistoryEntry
 } from '../types/task/taskBaseTypes';
-
+import { 
+    ITaskMetrics, 
+    ITaskHandlerResult,
+    ITaskHandlerMetadata,
+    createEmptyTaskMetrics 
+} from '../types/task/taskHandlerTypes';
+import type { ITaskFeedback } from '../types/task/taskFeedbackTypes';
 import type { IAgentType } from '../types/agent/agentBaseTypes';
-import type { ILLMUsageStats } from '../types/llm/llmResponseTypes';
-import type { ILoopResult } from '../types/agent/agentLoopTypes';
-import { TASK_STATUS_enum } from '../types/common/commonEnums';
-import type { ITeamStoreMethods } from '../types/team/teamBaseTypes';
 
 /**
  * Core Task entity implementation
@@ -35,7 +37,9 @@ export class Task implements ITaskType {
     public description: string;
     public expectedOutput: string;
     public agent: IAgentType;
-    public status: keyof typeof TASK_STATUS_enum;
+    public metadata?: ITaskHandlerMetadata;
+    public status: TASK_STATUS_enum;
+    public priority: BATCH_PRIORITY_enum;
     public stepId: string;
 
     // Configuration
@@ -44,8 +48,8 @@ export class Task implements ITaskType {
     public inputs: Record<string, unknown>;
 
     // Results and state
-    public result?: string | Record<string, unknown> | null;
-    public error?: string;
+    public result?: ITaskHandlerResult;
+    public error?: Error;
     public interpolatedTaskDescription?: string;
 
     // Tracking and metrics
@@ -54,19 +58,15 @@ export class Task implements ITaskType {
     public history: ITaskHistoryEntry[];
     public feedback: ITaskFeedback[];
 
-    // Store reference
-    private store?: ITeamStoreMethods;
-
     constructor(params: ITaskParams) {
-        this.validateParams(params);
-
         // Initialize core properties
         this.id = uuidv4();
         this.title = params.title || params.description.substring(0, 50);
         this.description = params.description;
         this.expectedOutput = params.expectedOutput;
         this.agent = params.agent;
-        this.status = 'TODO';
+        this.status = TASK_STATUS_enum.TODO;
+        this.priority = params.priority ?? BATCH_PRIORITY_enum.MEDIUM;
         this.stepId = uuidv4();
 
         // Initialize configuration
@@ -75,141 +75,95 @@ export class Task implements ITaskType {
         this.inputs = {};
 
         // Initialize tracking and metrics
-        this.metrics = {
-            startTime: 0,
-            endTime: 0,
-            duration: 0,
-            iterationCount: 0,
-            resources: {
-                cpuUsage: 0,
-                memoryUsage: 0,
-                diskIO: { read: 0, write: 0 },
-                networkUsage: { upload: 0, download: 0 },
-                timestamp: Date.now()
-            },
-            performance: {
-                executionTime: {
-                    total: 0,
-                    average: 0,
-                    min: 0,
-                    max: 0
-                },
-                latency: {
-                    total: 0,
-                    average: 0,
-                    min: 0,
-                    max: 0
-                },
-                throughput: {
-                    operationsPerSecond: 0,
-                    dataProcessedPerSecond: 0
-                },
-                responseTime: {
-                    total: 0,
-                    average: 0,
-                    min: 0,
-                    max: 0
-                },
-                queueLength: 0,
-                errorRate: 0,
-                successRate: 1,
-                errorMetrics: {
-                    totalErrors: 0,
-                    errorRate: 0
-                },
-                resourceUtilization: {
-                    cpuUsage: 0,
-                    memoryUsage: 0,
-                    diskIO: { read: 0, write: 0 },
-                    networkUsage: { upload: 0, download: 0 },
-                    timestamp: Date.now()
-                },
-                timestamp: Date.now()
-            },
-            costs: {
-                inputCost: 0,
-                outputCost: 0,
-                totalCost: 0,
-                currency: 'USD',
-                breakdown: {
-                    promptTokens: { count: 0, cost: 0 },
-                    completionTokens: { count: 0, cost: 0 }
-                }
-            },
-            llmUsage: {
-                inputTokens: 0,
-                outputTokens: 0,
-                callsCount: 0,
-                callsErrorCount: 0,
-                parsingErrors: 0,
-                totalLatency: 0,
-                averageLatency: 0,
-                lastUsed: 0,
-                memoryUtilization: {
-                    peakMemoryUsage: 0,
-                    averageMemoryUsage: 0,
-                    cleanupEvents: 0
-                },
-                costBreakdown: {
-                    input: 0,
-                    output: 0,
-                    total: 0,
-                    currency: 'USD'
-                }
-            }
-        };
-
+        this.metrics = createEmptyTaskMetrics();
         this.progress = {
-            status: 'TODO',
+            status: TASK_STATUS_enum.TODO,
             progress: 0,
             timeElapsed: 0
         };
-
         this.history = [];
         this.feedback = [];
 
-        // Validate agent
+        // Validate parameters and agent
+        this.validateParams(params);
         this.validateAgent();
-    }
-
-    /**
-     * Set team store reference
-     */
-    public setStore(store: ITeamStoreMethods): void {
-        this.store = store;
     }
 
     /**
      * Execute task with provided data
      */
-    public async execute(data: unknown): Promise<unknown> {
+    public async execute(data: unknown): Promise<ITaskHandlerResult> {
         try {
             this.metrics.startTime = Date.now();
-            this.status = 'DOING';
-            this.progress.status = 'DOING';
+            this.status = TASK_STATUS_enum.DOING;
+            this.progress.status = TASK_STATUS_enum.DOING;
 
             // Add history entry
             this.history.push({
                 timestamp: Date.now(),
                 eventType: 'EXECUTION_STARTED',
                 statusChange: {
-                    from: 'TODO',
-                    to: 'DOING'
+                    from: TASK_STATUS_enum.TODO,
+                    to: TASK_STATUS_enum.DOING
                 },
                 agent: this.agent.id
             });
 
-            // Execute task using agent's workOnTask method
-            const loopResult = await this.agent.workOnTask(this) as ILoopResult;
+            // Execute task
+            if (!('workOnTask' in this.agent)) {
+                throw new Error('Agent does not support task execution');
+            }
+            const taskResult = await (this.agent as any).workOnTask(this);
             
             this.metrics.endTime = Date.now();
             this.metrics.duration = this.metrics.endTime - this.metrics.startTime;
             
-            // Extract finalAnswer from the result if available
-            this.result = loopResult.result?.finalAnswer ?? null;
-            
-            this.status = 'DONE';
-            this.progress.status = 'DONE';
+            // Merge task result metadata with our metadata
+            const metadata: ITaskHandlerMetadata = {
+                ...taskResult.metadata,
+                timestamp: Date.now(),
+                component: 'Task',
+                operation: 'execute',
+                performance: this.metrics.performance,
+                context: {
+                    ...taskResult.metadata?.context,
+                    taskId: this.id,
+                    agentId: this.agent.id
+                },
+                validation: {
+                    isValid: true,
+                    errors: [],
+                    warnings: []
+                },
+                taskId: this.id,
+                taskName: this.title,
+                status: this.status,
+                priority: this.priority,
+                assignedAgent: this.agent.id,
+                progress: this.progress.progress,
+                metrics: {
+                    resources: this.metrics.resources,
+                    usage: this.metrics.usage,
+                    performance: this.metrics.performance
+                },
+                dependencies: {
+                    completed: [],
+                    pending: [],
+                    blocked: []
+                }
+            };
+
+            const result: ITaskHandlerResult = {
+                success: taskResult.success ?? true,
+                data: taskResult.data ?? data,
+                metadata
+            };
+
+            // Update task metadata and state
+            this.metadata = metadata;
+            this.result = result;
+            this.status = TASK_STATUS_enum.DONE;
+            this.progress.status = TASK_STATUS_enum.DONE;
             this.progress.progress = 100;
 
             // Add history entry
@@ -217,14 +171,14 @@ export class Task implements ITaskType {
                 timestamp: Date.now(),
                 eventType: 'EXECUTION_COMPLETED',
                 statusChange: {
-                    from: 'DOING',
-                    to: 'DONE'
+                    from: TASK_STATUS_enum.DOING,
+                    to: TASK_STATUS_enum.DONE
                 },
                 agent: this.agent.id,
-                details: { result: loopResult }
+                details: { result }
             });
 
-            return loopResult;
+            return result;
         } catch (error) {
             this.setError(error as Error);
             throw error;
@@ -242,11 +196,19 @@ export class Task implements ITaskType {
         if (!params.agent) errors.push('Agent is required');
 
         if (errors.length > 0) {
+            const context = createErrorContext({
+                component: 'Task',
+                operation: 'validateParams',
+                error: new Error('Invalid task parameters'),
+                details: { params, errors },
+                failureReason: 'Missing required parameters',
+                recoverable: false
+            });
+
             throw new BaseError({
                 message: 'Invalid task parameters',
-                type: 'ValidationError',
-                context: { params, errors },
-                recommendedAction: 'Provide all required task parameters'
+                type: ERROR_KINDS.ValidationError,
+                context
             });
         }
     }
@@ -256,11 +218,19 @@ export class Task implements ITaskType {
      */
     private validateAgent(): void {
         if (!this.agent) {
+            const context = createErrorContext({
+                component: 'Task',
+                operation: 'validateAgent',
+                error: new Error('Task must have an assigned agent'),
+                details: { taskId: this.id },
+                failureReason: 'Missing agent assignment',
+                recoverable: false
+            });
+
             throw new BaseError({
                 message: 'Task must have an assigned agent',
-                type: 'ValidationError',
-                context: { taskId: this.id },
-                recommendedAction: 'Assign an agent to the task'
+                type: ERROR_KINDS.ValidationError,
+                context
             });
         }
     }
@@ -268,10 +238,10 @@ export class Task implements ITaskType {
     /**
      * Set error state
      */
-    private setError(error: Error | string): void {
-        this.error = error instanceof Error ? error.message : error;
-        this.status = 'ERROR';
-        this.progress.status = 'ERROR';
+    private setError(error: Error): void {
+        this.error = error;
+        this.status = TASK_STATUS_enum.ERROR;
+        this.progress.status = TASK_STATUS_enum.ERROR;
         
         // Add history entry
         this.history.push({
@@ -279,7 +249,7 @@ export class Task implements ITaskType {
             eventType: 'ERROR',
             statusChange: {
                 from: this.status,
-                to: 'ERROR'
+                to: TASK_STATUS_enum.ERROR
             },
             agent: this.agent.id,
             details: { error: this.error }

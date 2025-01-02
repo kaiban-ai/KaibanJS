@@ -6,8 +6,9 @@
  * @module types/tool
  */
 
-import { BaseError, ERROR_KINDS, IErrorMetadata } from '../common/commonErrorTypes';
-import { VALIDATION_ERROR_enum, VALIDATION_WARNING_enum } from '../common/commonEnums';
+import { BaseError, ERROR_KINDS } from '../common/errorTypes';
+import { IErrorMetadata } from '../common/metadataTypes';
+import { VALIDATION_ERROR_enum, VALIDATION_WARNING_enum } from '../common/enumTypes';
 import { IToolDependency } from './toolTypes';
 
 type ToolPhase = 'pre' | 'execute' | 'post';
@@ -80,6 +81,7 @@ export interface IToolValidationErrorContext extends Partial<IBaseToolErrorConte
 }
 
 export class ToolError extends BaseError {
+    public override readonly name: string = 'ToolError';
     public readonly toolName: string;
     public readonly executionId?: string;
     public readonly phase?: ToolPhase;
@@ -105,12 +107,12 @@ export class ToolError extends BaseError {
     }) {
         super({
             message: params.message,
+            name: 'ToolError',
             type: ERROR_KINDS[params.type],
             metadata: params.metadata,
             context: params.context as Record<string, unknown>
         });
 
-        this.name = 'ToolError';
         this.toolName = params.toolName;
         this.executionId = params.executionId;
         this.phase = params.phase;
@@ -126,6 +128,7 @@ export const ErrorTypeGuards = {
     isToolError: (error: unknown): error is ToolError => {
         if (!(error instanceof ToolError)) return false;
         return (
+            error.name === 'ToolError' &&
             typeof error.toolName === 'string' &&
             (error.executionId === undefined || typeof error.executionId === 'string') &&
             (error.phase === undefined || ['pre', 'execute', 'post'].includes(error.phase)) &&

@@ -1,52 +1,65 @@
+/**
+ * @file workflowEventTypes.ts
+ * @description Workflow event type definitions
+ */
+
 import { IAgentType } from '../agent/agentBaseTypes';
 import { ITaskType } from '../task/taskBaseTypes';
-import { TASK_STATUS_enum } from '../common/commonEnums';
-import { IBaseEvent } from '../common/commonEventTypes';
-import { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
+import { TASK_STATUS_enum } from '../common/enumTypes';
+import { IBaseEvent, IBaseHandlerMetadata } from '../common/baseTypes';
+import { IBaseError } from '../common/errorTypes';
+
+/**
+ * Base workflow event interface
+ */
+export interface IWorkflowEventBase extends IBaseEvent {
+    id: string;
+    workflowId: string;
+    timestamp: number;
+    metadata: IBaseHandlerMetadata;
+}
 
 /**
  * Workflow step event types
  */
-export interface IWorkflowStepEvent extends IBaseEvent {
+export interface IWorkflowStepEvent extends IWorkflowEventBase {
     type: 'start' | 'complete' | 'fail' | 'skip';
     stepId: string;
     agent?: IAgentType;
     result?: unknown;
     error?: Error;
-    metadata: IBaseHandlerMetadata;
 }
 
 /**
  * Workflow control event types
  */
-export interface IWorkflowControlEvent extends IBaseEvent {
-    type: 'start' | 'pause' | 'resume' | 'stop' | 'reset';
-    metadata: IBaseHandlerMetadata;
+export interface IWorkflowControlEvent extends IWorkflowEventBase {
+    type: 'start' | 'pause' | 'resume' | 'stop' | 'reset' | 'workflow_control' | 'workflow_error';
+    error?: IBaseError;
 }
 
 /**
  * Workflow agent event types
  */
-export interface IWorkflowAgentEvent extends IBaseEvent {
+export interface IWorkflowAgentEvent extends IWorkflowEventBase {
     type: 'assign' | 'unassign';
     stepId: string;
     agent?: IAgentType;
-    metadata: IBaseHandlerMetadata;
 }
 
 /**
  * Workflow task event types
  */
-export interface IWorkflowTaskEvent extends IBaseEvent {
+export interface IWorkflowTaskEvent extends IWorkflowEventBase {
     type: 'add' | 'remove' | 'update';
     task: ITaskType;
     status?: keyof typeof TASK_STATUS_enum;
-    metadata: IBaseHandlerMetadata;
 }
 
 /**
  * Combined workflow events interface
  */
+/** @deprecated Use error metrics instead of recovery events */
 export interface IWorkflowEvents {
     'workflow:step': IWorkflowStepEvent;
     'workflow:control': IWorkflowControlEvent;
@@ -62,3 +75,36 @@ export type WorkflowEventType =
     | IWorkflowControlEvent
     | IWorkflowAgentEvent
     | IWorkflowTaskEvent;
+
+/**
+ * Event emission parameter types
+ * These types match what the emitter expects in its emit methods
+ */
+export type WorkflowControlEventParams = {
+    type: IWorkflowControlEvent['type'];
+    workflowId: string;
+    error?: IBaseError;
+};
+
+export type WorkflowStepEventParams = {
+    type: IWorkflowStepEvent['type'];
+    workflowId: string;
+    stepId: string;
+    agent?: IAgentType;
+    result?: unknown;
+    error?: Error;
+};
+
+export type WorkflowAgentEventParams = {
+    type: IWorkflowAgentEvent['type'];
+    workflowId: string;
+    stepId: string;
+    agent?: IAgentType;
+};
+
+export type WorkflowTaskEventParams = {
+    type: IWorkflowTaskEvent['type'];
+    workflowId: string;
+    task: ITaskType;
+    status?: keyof typeof TASK_STATUS_enum;
+};

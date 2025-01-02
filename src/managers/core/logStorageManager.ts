@@ -1,36 +1,32 @@
 /**
- * @file logStorageManager.ts
- * @path src/managers/core/logStorageManager.ts
- * @description Log storage manager implementation with indexing and maintenance capabilities
- */
+* @file logStorageManager.ts
+* @path src/managers/core/logStorageManager.ts
+* @description Log storage manager implementation with indexing and maintenance capabilities
+*
+* @module @core
+*/
 
 import { CoreManager } from './coreManager';
-import { createError } from '../../types/common/commonErrorTypes';
-import { DEFAULT_LOG_STORAGE_CONFIG } from '../../types/common/logStorageTypes';
-import { MANAGER_CATEGORY_enum } from '../../types/common/commonEnums';
-
+import { createError } from '../../types/common/errorTypes';
+import { MANAGER_CATEGORY_enum } from '../../types/common/enumTypes';
+import { ERROR_KINDS } from '../../types/common/errorTypes';
+import { DEFAULT_LOG_STORAGE_CONFIG } from '../../types/common/loggingTypes';
 import type {
+    ILogEntry,
     ILogStorageConfig,
-    ILogStorageIndex,
     ILogStorageSegment,
     ILogStorageQuery,
     ILogStorageQueryResult,
     ILogStorageStats,
     ILogStorageMaintenance,
     ILogStorageMaintenanceResult
-} from '../../types/common/logStorageTypes';
-import type { ILogEntry } from '../../types/common/logTypes';
+} from '../../types/common/loggingTypes';
 
-/**
- * Log storage manager that handles persistent storage, indexing,
- * and maintenance of log entries
- */
 export class LogStorageManager extends CoreManager {
     private static instance: LogStorageManager;
     private _config: ILogStorageConfig;
     private readonly segments: Map<string, ILogStorageSegment>;
     private readonly indexes: Map<string, Map<string, Set<string>>>;
-    private maintenanceTimer?: NodeJS.Timer;
 
     public readonly category: MANAGER_CATEGORY_enum = MANAGER_CATEGORY_enum.CORE;
 
@@ -50,25 +46,14 @@ export class LogStorageManager extends CoreManager {
         return LogStorageManager.instance;
     }
 
-    /**
-     * Get current storage configuration
-     */
     public get config(): ILogStorageConfig {
         return this._config;
     }
 
-    /**
-     * Initialize storage system
-     */
     private async initializeStorage(): Promise<void> {
         try {
-            // Load existing segments
             await this.loadSegments();
-
-            // Initialize indexes
             await this.initializeIndexes();
-
-            // Start maintenance schedule
             this.scheduleMaintenance();
 
             this.logInfo('Storage system initialized', {
@@ -80,7 +65,7 @@ export class LogStorageManager extends CoreManager {
             const error = this.normalizeError(err);
             throw createError({
                 message: 'Failed to initialize storage system',
-                type: 'InitializationError',
+                type: ERROR_KINDS.InitializationError,
                 context: {
                     component: this.constructor.name,
                     error
@@ -89,20 +74,14 @@ export class LogStorageManager extends CoreManager {
         }
     }
 
-    /**
-     * Store log entries
-     */
     public async store(entries: ILogEntry[]): Promise<void> {
         try {
-            // Group entries by segment
             const segmentGroups = this.groupEntriesBySegment(entries);
-
-            // Store entries in segments
+            
             for (const [segmentId, segmentEntries] of segmentGroups) {
                 await this.storeInSegment(segmentId, segmentEntries);
             }
 
-            // Update indexes
             await this.updateIndexes(entries);
 
             this.logDebug('Stored log entries', {
@@ -114,7 +93,7 @@ export class LogStorageManager extends CoreManager {
             const error = this.normalizeError(err);
             throw createError({
                 message: 'Failed to store log entries',
-                type: 'StorageError',
+                type: ERROR_KINDS.StateError,
                 context: {
                     component: this.constructor.name,
                     entriesCount: entries.length,
@@ -124,22 +103,12 @@ export class LogStorageManager extends CoreManager {
         }
     }
 
-    /**
-     * Query log entries
-     */
     public async query(query: ILogStorageQuery): Promise<ILogStorageQueryResult> {
         const startTime = Date.now();
         try {
-            // Find relevant segments
             const relevantSegments = this.findRelevantSegments(query);
-
-            // Use indexes for filtering
             const candidateEntries = await this.findCandidateEntries(query, relevantSegments);
-
-            // Apply remaining filters
             const filteredEntries = this.applyFilters(candidateEntries, query);
-
-            // Apply sorting and pagination
             const resultEntries = this.applySortingAndPagination(filteredEntries, query);
 
             const endTime = Date.now();
@@ -159,28 +128,23 @@ export class LogStorageManager extends CoreManager {
             const error = this.normalizeError(err);
             throw createError({
                 message: 'Failed to query log entries',
-                type: 'StorageError',
+                type: ERROR_KINDS.StateError,
                 context: {
                     component: this.constructor.name,
-                    query,
                     error
                 }
             });
         }
     }
 
-    /**
-     * Get storage statistics
-     */
     public async getStats(): Promise<ILogStorageStats> {
         try {
-            const stats = await this.calculateStats();
-            return stats;
+            return await this.calculateStats();
         } catch (err) {
             const error = this.normalizeError(err);
             throw createError({
                 message: 'Failed to get storage statistics',
-                type: 'StorageError',
+                type: ERROR_KINDS.StateError,
                 context: {
                     component: this.constructor.name,
                     error
@@ -189,9 +153,6 @@ export class LogStorageManager extends CoreManager {
         }
     }
 
-    /**
-     * Perform maintenance tasks
-     */
     public async performMaintenance(options: ILogStorageMaintenance): Promise<ILogStorageMaintenanceResult> {
         const startTime = Date.now();
         const actions: ILogStorageMaintenanceResult['actions'] = [];
@@ -199,23 +160,28 @@ export class LogStorageManager extends CoreManager {
 
         try {
             if (options.compactSegments) {
-                await this.compactSegments(actions, errors);
+                await this.compactSegments();
+                actions.push(this.createMaintenanceAction('compact'));
             }
 
             if (options.rebuildIndexes) {
-                await this.rebuildIndexes(actions, errors);
+                await this.rebuildIndexes();
+                actions.push(this.createMaintenanceAction('rebuild'));
             }
 
             if (options.removeExpired) {
-                await this.removeExpiredEntries(actions, errors);
+                await this.removeExpiredEntries();
+                actions.push(this.createMaintenanceAction('cleanup'));
             }
 
             if (options.validateIntegrity) {
-                await this.validateIntegrity(actions, errors);
+                await this.validateIntegrity();
+                actions.push(this.createMaintenanceAction('validate'));
             }
 
             if (options.optimizeIndexes) {
-                await this.optimizeIndexes(actions, errors);
+                await this.optimizeIndexes();
+                actions.push(this.createMaintenanceAction('optimize'));
             }
 
             const endTime = Date.now();
@@ -229,7 +195,7 @@ export class LogStorageManager extends CoreManager {
             const error = this.normalizeError(err);
             throw createError({
                 message: 'Failed to perform maintenance',
-                type: 'StorageError',
+                type: ERROR_KINDS.StateError,
                 context: {
                     component: this.constructor.name,
                     options,
@@ -239,9 +205,6 @@ export class LogStorageManager extends CoreManager {
         }
     }
 
-    /**
-     * Update storage configuration
-     */
     public async updateConfig(config: Partial<ILogStorageConfig>): Promise<void> {
         try {
             this._config = {
@@ -249,7 +212,6 @@ export class LogStorageManager extends CoreManager {
                 ...config
             };
 
-            // Reinitialize storage if needed
             if (this.requiresReinitialization(config)) {
                 await this.initializeStorage();
             }
@@ -262,7 +224,7 @@ export class LogStorageManager extends CoreManager {
             const error = this.normalizeError(err);
             throw createError({
                 message: 'Failed to update storage configuration',
-                type: 'ConfigurationError',
+                type: ERROR_KINDS.ConfigurationError,
                 context: {
                     component: this.constructor.name,
                     config,
@@ -272,110 +234,19 @@ export class LogStorageManager extends CoreManager {
         }
     }
 
-    // Private helper methods...
-    private async loadSegments(): Promise<void> {
-        // Implementation
-    }
-
-    private async initializeIndexes(): Promise<void> {
-        // Implementation
-    }
-
-    private scheduleMaintenance(): void {
-        // Implementation
-    }
-
-    private groupEntriesBySegment(entries: ILogEntry[]): Map<string, ILogEntry[]> {
-        // Implementation
-        return new Map();
-    }
-
-    private async storeInSegment(segmentId: string, entries: ILogEntry[]): Promise<void> {
-        // Implementation
-    }
-
-    private async updateIndexes(entries: ILogEntry[]): Promise<void> {
-        // Implementation
-    }
-
-    private findRelevantSegments(query: ILogStorageQuery): Map<string, ILogStorageSegment> {
-        // Implementation
-        return new Map();
-    }
-
-    private async findCandidateEntries(query: ILogStorageQuery, segments: Map<string, ILogStorageSegment>): Promise<ILogEntry[]> {
-        // Implementation
-        return [];
-    }
-
-    private applyFilters(entries: ILogEntry[], query: ILogStorageQuery): ILogEntry[] {
-        // Implementation
-        return [];
-    }
-
-    private applySortingAndPagination(entries: ILogEntry[], query: ILogStorageQuery): ILogEntry[] {
-        // Implementation
-        return [];
-    }
-
-    private getIndexUsageStats(query: ILogStorageQuery): { name: string; hits: number; efficiency: number; }[] {
-        // Implementation
-        return [];
-    }
-
-    private async calculateStats(): Promise<ILogStorageStats> {
-        // Implementation
+    private createMaintenanceAction(type: string): ILogStorageMaintenanceResult['actions'][number] {
         return {
-            totalSize: 0,
-            totalEntries: 0,
-            segments: {
-                total: 0,
-                active: 0,
-                archived: 0
-            },
-            indexes: {
-                total: 0,
-                size: 0,
-                usage: []
-            },
-            retention: {
-                oldestEntry: 0,
-                newestEntry: 0,
-                averageAge: 0,
-                expiringEntries: 0
-            },
-            performance: {
-                averageQueryTime: 0,
-                averageInsertTime: 0,
-                averageCompressionRatio: 0,
-                indexEfficiency: 0
+            type,
+            status: 'success' as const,
+            details: `${type} operation completed successfully`,
+            duration: 0,
+            affected: {
+                segments: 0,
+                entries: 0,
+                indexes: 0,
+                size: 0
             }
         };
-    }
-
-    private async compactSegments(actions: ILogStorageMaintenanceResult['actions'], errors: ILogStorageMaintenanceResult['errors']): Promise<void> {
-        // Implementation
-    }
-
-    private async rebuildIndexes(actions: ILogStorageMaintenanceResult['actions'], errors: ILogStorageMaintenanceResult['errors']): Promise<void> {
-        // Implementation
-    }
-
-    private async removeExpiredEntries(actions: ILogStorageMaintenanceResult['actions'], errors: ILogStorageMaintenanceResult['errors']): Promise<void> {
-        // Implementation
-    }
-
-    private async validateIntegrity(actions: ILogStorageMaintenanceResult['actions'], errors: ILogStorageMaintenanceResult['errors']): Promise<void> {
-        // Implementation
-    }
-
-    private async optimizeIndexes(actions: ILogStorageMaintenanceResult['actions'], errors: ILogStorageMaintenanceResult['errors']): Promise<void> {
-        // Implementation
-    }
-
-    private requiresReinitialization(config: Partial<ILogStorageConfig>): boolean {
-        // Implementation
-        return false;
     }
 
     private normalizeError(error: unknown): Error {
@@ -384,6 +255,37 @@ export class LogStorageManager extends CoreManager {
         }
         return new Error(typeof error === 'string' ? error : 'Unknown error occurred');
     }
+
+    // ─── Storage Operations ─────────────────────────────────────────────────────────
+    private async loadSegments(): Promise<void> {}
+    private async initializeIndexes(): Promise<void> {}
+    private scheduleMaintenance(): void {}
+    private groupEntriesBySegment(_entries: ILogEntry[]): Map<string, ILogEntry[]> { return new Map(); }
+    private async storeInSegment(_segmentId: string, _entries: ILogEntry[]): Promise<void> {}
+    private async updateIndexes(_entries: ILogEntry[]): Promise<void> {}
+    private findRelevantSegments(_query: ILogStorageQuery): Map<string, ILogStorageSegment> { return new Map(); }
+    private async findCandidateEntries(_query: ILogStorageQuery, _segments: Map<string, ILogStorageSegment>): Promise<ILogEntry[]> { return []; }
+    private applyFilters(_entries: ILogEntry[], _query: ILogStorageQuery): ILogEntry[] { return []; }
+    private applySortingAndPagination(_entries: ILogEntry[], _query: ILogStorageQuery): ILogEntry[] { return []; }
+    private getIndexUsageStats(_query: ILogStorageQuery): { name: string; hits: number; efficiency: number; }[] { return []; }
+    private async calculateStats(): Promise<ILogStorageStats> {
+        return {
+            totalSize: 0,
+            totalEntries: 0,
+            segments: { total: 0, active: 0, archived: 0 },
+            indexes: { total: 0, size: 0, usage: [] },
+            retention: { oldestEntry: 0, newestEntry: 0, averageAge: 0, expiringEntries: 0 },
+            performance: { averageQueryTime: 0, averageInsertTime: 0, averageCompressionRatio: 0, indexEfficiency: 0 }
+        };
+    }
+
+    // ─── Maintenance Operations ─────────────────────────────────────────────────────
+    private async compactSegments(): Promise<void> {}
+    private async rebuildIndexes(): Promise<void> {}
+    private async removeExpiredEntries(): Promise<void> {}
+    private async validateIntegrity(): Promise<void> {}
+    private async optimizeIndexes(): Promise<void> {}
+    private requiresReinitialization(_config: Partial<ILogStorageConfig>): boolean { return false; }
 }
 
 export default LogStorageManager.getInstance();

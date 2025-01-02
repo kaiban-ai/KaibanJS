@@ -54,9 +54,14 @@ export type {
     IModelPricingConfig,
     ICostTrackingOptions,
     ICostAggregate,
+} from './baseTypes';
+
+// Resource and Usage Metrics Types
+// Resource and Usage Metrics Types are now imported from metrics/index.ts
+export type {
     IResourceMetrics,
     IUsageMetrics
-} from './baseTypes';
+} from '../metrics';
 
 // Handler Types
 export type {
@@ -180,7 +185,6 @@ export type {
 
 // Validation Utilities
 export {
-    isValidationMetrics,
     createValidationResult,
     createStatusValidationResult,
     createValidationMetadata,
@@ -219,7 +223,7 @@ export type {
     IStatusDashboardMetrics
 } from './statusTypes';
 
-// Status Utilities
+// Status Utilities and Type Guards
 export {
     createEmptyStatusFrequency,
     DEFAULT_STATUS_RECORDS,
@@ -278,28 +282,11 @@ export type {
     IBaseError,
     IErrorType,
     IErrorContext,
-    IBaseErrorHandlerParams,
-    IRetryConfig,
-    ICircuitBreakerConfig,
-    IErrorRecoveryConfig,
-    IErrorTrendData,
-    IErrorImpact,
-    IErrorRecoveryResult,
-    IErrorAggregation,
-    IErrorRecoveryHandler
 } from './errorTypes';
 
 export {
     ERROR_KINDS,
     BaseError,
-    DEFAULT_RETRY_CONFIG,
-    DEFAULT_CIRCUIT_BREAKER_CONFIG,
-    DEFAULT_ERROR_RECOVERY_CONFIG,
     createError,
-    isErrorType,
-    isBaseError,
-    toErrorType,
-    createErrorMetadata,
-    createErrorContext
+    createErrorMetadata
 } from './errorTypes';
-

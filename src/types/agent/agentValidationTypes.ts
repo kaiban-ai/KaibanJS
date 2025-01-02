@@ -7,10 +7,10 @@
  */
 
 import { z } from 'zod';
-import type { IValidationResult } from '../common/commonValidationTypes';
-import type { IBaseAgent, IAgentCapabilities, IAgentMetadata } from './agentBaseTypes';
-import { LLM_PROVIDER_enum, VALIDATION_ERROR_enum, VALIDATION_WARNING_enum } from '../common/commonEnums';
+import type { IBaseAgent } from './agentBaseTypes';
+import { LLM_PROVIDER_enum, VALIDATION_ERROR_enum, VALIDATION_WARNING_enum } from '../common/enumTypes';
 import { ToolName } from '../tool/toolTypes';
+import type { IValidationResult } from '../common/validationTypes';
 
 /**
  * Agent validation schema using Zod
@@ -104,8 +104,8 @@ export type IAgentValidationSchema = z.infer<typeof AgentValidationSchema>;
  */
 export interface IAgentValidationResult {
     isValid: boolean;
-    errors: VALIDATION_ERROR_enum[];
-    warnings: VALIDATION_WARNING_enum[];
+    readonly errors: readonly VALIDATION_ERROR_enum[];
+    readonly warnings: readonly VALIDATION_WARNING_enum[];
     agent?: IBaseAgent;
     metadata: {
         timestamp: number;
@@ -146,4 +146,33 @@ export interface IAgentCreationResult {
         validationDuration?: number;
         initializationDuration?: number;
     };
+}
+
+/**
+ * Agent validation rule interface
+ */
+export interface IAgentValidationRule {
+    id: string;
+    validate: (agent: IBaseAgent, context?: IAgentValidationContext) => Promise<IValidationResult>;
+    priority: number;
+}
+
+/**
+ * Agent validation context interface
+ */
+export interface IAgentValidationContext {
+    environment?: Record<string, unknown>;
+    runtime?: Record<string, unknown>;
+    capabilities?: string[];
+    tools?: string[];
+}
+
+/**
+ * Agent validation cache interface
+ */
+export interface IAgentValidationCache {
+    result: IValidationResult;
+    timestamp: number;
+    context: IAgentValidationContext;
+    hash: string;
 }

@@ -6,7 +6,7 @@
  * @module @managers/domain/llm
  */
 
-import CoreManager from '../../core/coreManager';
+import { CoreManager } from '../../core/coreManager';
 import { 
     BaseMessage, 
     HumanMessage, 
@@ -20,21 +20,14 @@ import {
 } from "@langchain/core/messages";
 import { MessageTypeGuards } from '../../../types/llm/message/messagingBaseTypes';
 import type { 
-    IBaseMessage,
     IBaseMessageMetadata,
-    IBaseMessageProps,
-    IMessageHistory,
-    IMessageHistoryEntry,
     IMessageValidationResult
 } from '../../../types/llm/message/messagingBaseTypes';
 import type {
-    IMessageHandlerConfig,
     IMessageStreamConfig,
-    IMessageValidationConfig,
-    IMessageBuildParams,
-    IMessageProcessResult,
-    IMessageTransformOptions
+    IMessageProcessResult
 } from '../../../types/llm/message/messagingHandlersTypes';
+import { MANAGER_CATEGORY_enum } from '../../../types/common/enumTypes';
 
 type ExtendedBaseMessage = BaseMessage & {
     metadata?: IBaseMessageMetadata;
@@ -44,6 +37,7 @@ type ExtendedBaseMessage = BaseMessage & {
  * Message management implementation with CoreManager and Langchain integration
  */
 export class MessageManager extends CoreManager {
+    public readonly category = MANAGER_CATEGORY_enum.RESOURCE;
     private static instance: MessageManager;
     private readonly messages: ExtendedBaseMessage[];
     private readonly messageMetadata: Map<string, IBaseMessageMetadata>;
@@ -138,7 +132,7 @@ export class MessageManager extends CoreManager {
         role: string = 'assistant',
         metadata?: IBaseMessageMetadata
     ): Promise<IMessageProcessResult> {
-        return await this.safeExecute(async () => {
+        const result = await this.safeExecute(async () => {
             const validationResult = await this.validateMessageContent(content, role);
             if (!validationResult.isValid) {
                 throw new Error(`Invalid message content or role: ${validationResult.errors.join(', ')}`);
@@ -173,6 +167,12 @@ export class MessageManager extends CoreManager {
                 }
             };
         }, 'Message processing failed');
+
+        if (!result.success || !result.data) {
+            throw new Error(result.error?.message || 'Message processing failed');
+        }
+
+        return result.data;
     }
 
     public async processStream(
@@ -183,9 +183,6 @@ export class MessageManager extends CoreManager {
         let buffer = '';
 
         const result = await this.safeExecute(async () => {
-            // Use Langchain's streaming capabilities
-            const streamingManager = this.getDomainManager('StreamingManager');
-            
             for (const chunk of content) {
                 buffer += chunk;
 

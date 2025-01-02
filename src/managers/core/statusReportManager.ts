@@ -5,24 +5,34 @@
  */
 
 import { CoreManager } from './coreManager';
-import { createError } from '../../types/common/commonErrorTypes';
-import { MANAGER_CATEGORY_enum } from '../../types/common/commonEnums';
-import { StatusHistoryManager } from './statusHistoryManager';
+import { createError } from '../../types/common/errorTypes';
+import { MANAGER_CATEGORY_enum } from '../../types/common/enumTypes';
+import { StatusEventEmitter } from './status/statusEventEmitter';
+import { MetricDomain, MetricType } from '../../types/metrics';
+import { TransitionUtils } from './transitionRules';
+import { DEFAULT_STATUS_RECORDS } from '../../types/common/statusTypes';
 
 import type {
     IStatusEntity,
     IStatusType,
-    IStatusChangeEvent
-} from '../../types/common/commonStatusTypes';
-
-import type { IStatusHistoryEntry } from '../../types/common/statusHistoryTypes';
-
-import {
+    IStatusChangeEvent,
     IStatusTrendAnalysis,
     IStatusImpactAssessment,
     IStatusDashboardMetrics,
-    DEFAULT_STATUS_RECORDS
-} from '../../types/common/statusReportTypes';
+    IEntityMetrics,
+    IStatusTransitionPattern,
+    IStatusMetricsAnalysis
+} from '../../types/common/statusTypes';
+
+import type { 
+    IMetricEvent,
+    IPerformanceMetrics
+} from '../../types/metrics';
+
+import type { IAgentMetrics } from '../../types/metrics/base/metricsManagerTypes';
+import type { IErrorContext } from '../../types/common/errorTypes';
+import type { ICoreSystemHealthMetrics } from '../../types/metrics';
+
 
 /**
  * Status report manager that handles real-time monitoring, trend analysis,
@@ -30,20 +40,20 @@ import {
  */
 export class StatusReportManager extends CoreManager {
     private static instance: StatusReportManager;
-    private readonly historyManager: StatusHistoryManager;
+    private readonly statusEventEmitter: StatusEventEmitter;
     private readonly dashboardMetrics: Map<IStatusEntity, IStatusDashboardMetrics>;
     private readonly updateInterval: number;
-    private updateTimer?: NodeJS.Timer;
+    private readonly updateTimer: ReturnType<typeof setInterval>;
 
     public readonly category: MANAGER_CATEGORY_enum = MANAGER_CATEGORY_enum.CORE;
 
     private constructor() {
         super();
-        this.historyManager = StatusHistoryManager.getInstance();
+        this.statusEventEmitter = StatusEventEmitter.getInstance();
         this.dashboardMetrics = new Map();
         this.updateInterval = 5000; // 5 seconds
         this.registerDomainManager('StatusReportManager', this);
-        this.startMetricsUpdate();
+        this.updateTimer = this.startMetricsUpdate();
     }
 
     public static getInstance(): StatusReportManager {
@@ -51,6 +61,10 @@ export class StatusReportManager extends CoreManager {
             StatusReportManager.instance = new StatusReportManager();
         }
         return StatusReportManager.instance;
+    }
+
+    public async cleanup(): Promise<void> {
+        clearInterval(this.updateTimer);
     }
 
     /**
@@ -93,63 +107,39 @@ export class StatusReportManager extends CoreManager {
         timeRange: { start: number; end: number }
     ): Promise<IStatusTrendAnalysis> {
         try {
-            const history = await this.historyManager.queryHistory({
-                entity,
-                timeRange,
-                includeMetrics: true
+            // Get metrics from MetricsManager for the time range
+            const metrics = await this.getMetricsManager().get({
+                timeRange: 'all',
+                domain: MetricDomain.SYSTEM,
+                type: MetricType.PERFORMANCE,
+                timeFrame: timeRange,
+                metadata: { entity }
             });
 
-            if (history.length === 0) {
-                throw new Error(`No history data available for entity ${entity}`);
+            if (!metrics.success || !metrics.data) {
+                throw new Error('Failed to retrieve metrics data');
             }
 
-            // Calculate status frequency
-            const statusFrequency = DEFAULT_STATUS_RECORDS.createEmptyStatusFrequency(entity);
-            const transitionCounts = new Map<string, { count: number; totalDuration: number }>();
-            const errorsByStatus = DEFAULT_STATUS_RECORDS.createEmptyStatusFrequency(entity);
-            let totalErrors = 0;
+            const performanceMetrics = metrics.data.performance;
+            // Get initial status for frequency tracking
+            const statusFrequency = TransitionUtils.getAvailableTransitions(entity, 'INITIAL' as IStatusType).reduce((acc, status) => {
+                acc[status] = 0;
+                return acc;
+            }, {} as Record<IStatusType, number>);
+            const errorsByStatus = { ...statusFrequency };
 
-            for (const entry of history) {
-                // Status frequency
-                statusFrequency[entry.from] = (statusFrequency[entry.from] || 0) + 1;
+            // Calculate transition patterns from metrics
+            const transitionPatterns = this.calculateTransitionPatterns(metrics.data);
 
-                // Transition patterns
-                const transitionKey = `${entry.from}->${entry.to}`;
-                const existing = transitionCounts.get(transitionKey) || { count: 0, totalDuration: 0 };
-                transitionCounts.set(transitionKey, {
-                    count: existing.count + 1,
-                    totalDuration: existing.totalDuration + entry.duration
-                });
-
-                // Error rates
-                if (entry.errorCount > 0) {
-                    errorsByStatus[entry.from] = (errorsByStatus[entry.from] || 0) + 1;
-                    totalErrors++;
-                }
-            }
-
-            // Calculate transition patterns
-            const transitionPatterns = Array.from(transitionCounts.entries())
-                .map(([key, data]) => {
-                    const [from, to] = key.split('->') as [IStatusType, IStatusType];
-                    return {
-                        from,
-                        to,
-                        count: data.count,
-                        averageDuration: data.totalDuration / data.count
-                    };
-                })
-                .sort((a, b) => b.count - a.count);
-
-            // Calculate performance metrics
-            const performanceMetrics = this.calculatePerformanceMetrics(history);
-
-            // Detect anomalies
-            const anomalies = this.detectTrendAnomalies(history, {
+            // Create metrics analysis object
+            const metricsAnalysis: IStatusMetricsAnalysis = {
                 statusFrequency,
                 transitionPatterns,
                 errorsByStatus
-            });
+            };
+
+            // Detect anomalies
+            const anomalies = this.detectTrendAnomalies(metricsAnalysis);
 
             // Generate recommendations
             const recommendations = this.generateRecommendations(anomalies, performanceMetrics);
@@ -161,10 +151,18 @@ export class StatusReportManager extends CoreManager {
                     statusFrequency,
                     transitionPatterns,
                     errorRates: {
-                        overall: totalErrors / history.length,
+                        overall: metrics.data.errors.count / transitionPatterns.length,
                         byStatus: errorsByStatus
                     },
-                    performance: performanceMetrics
+                    performance: {
+                        averageTransitionTime: performanceMetrics.responseTime.average,
+                        slowestTransitions: [],
+                        resourceUtilization: {
+                            cpu: 0,
+                            memory: 0,
+                            overall: 0
+                        }
+                    }
                 },
                 anomalies,
                 recommendations
@@ -188,23 +186,40 @@ export class StatusReportManager extends CoreManager {
      */
     public async assessImpact(entity: IStatusEntity, status: IStatusType): Promise<IStatusImpactAssessment> {
         try {
-            const history = await this.historyManager.queryHistory({
-                entity,
-                statuses: [status],
-                includeMetrics: true
+            // Get system metrics
+            const metrics = await this.getMetricsManager().get({
+                timeRange: 'hour',
+                domain: MetricDomain.SYSTEM,
+                type: MetricType.PERFORMANCE
             });
+
+            if (!metrics.success || !metrics.data) {
+                throw new Error('Failed to retrieve metrics data');
+            }
+
+            const performanceMetrics = metrics.data.performance;
+            const errorContext = await this.createErrorContext('assessImpact') as IErrorContext & { systemHealth: ICoreSystemHealthMetrics };
 
             // Analyze direct impact
             const directImpact = this.analyzeDependencies(entity, status);
 
             // Analyze cascading effects
-            const cascadingEffects = this.analyzeCascadingEffects(entity, status, history);
+            const cascadingEffects = this.analyzeCascadingEffects(entity, status, metrics.data);
 
-            // Calculate resource impact
-            const resourceImpact = this.calculateResourceImpact(history);
+            // Calculate resource impact using system health metrics
+            const resourceImpact = {
+                cpu: errorContext.systemHealth.metrics.cpu.usage,
+                memory: errorContext.systemHealth.metrics.memory.used / errorContext.systemHealth.metrics.memory.total,
+                network: errorContext.systemHealth.metrics.network.upload + errorContext.systemHealth.metrics.network.download,
+                storage: (errorContext.systemHealth.metrics.disk.total - errorContext.systemHealth.metrics.disk.free) / errorContext.systemHealth.metrics.disk.total
+            };
 
-            // Calculate performance impact
-            const performanceImpact = this.calculatePerformanceImpact(history);
+            // Calculate performance impact using performance metrics
+            const performanceImpact = {
+                latency: performanceMetrics.responseTime.average,
+                throughput: performanceMetrics.throughput.requestsPerSecond,
+                errorRate: metrics.data.errors.count / metrics.data.usage.totalRequests
+            };
 
             // Generate recommendations
             const recommendations = this.generateImpactRecommendations(
@@ -244,6 +259,43 @@ export class StatusReportManager extends CoreManager {
     public async handleStatusChange(event: IStatusChangeEvent): Promise<void> {
         try {
             await this.updateDashboardMetrics(event);
+
+            // Log status change
+            this.logInfo(`Status changed from ${event.from} to ${event.to}`, {
+                entityId: event.entityId,
+                entity: event.entity
+            });
+
+            // Track status change metric
+            const metricEvent: IMetricEvent = {
+                timestamp: Date.now(),
+                domain: MetricDomain.SYSTEM,
+                type: MetricType.PERFORMANCE,
+                value: 1,
+                metadata: {
+                    component: 'StatusReportManager',
+                    operation: 'statusChange',
+                    entity: event.entity,
+                    from: event.from,
+                    to: event.to
+                }
+            };
+
+            await this.getMetricsManager().trackMetric(metricEvent);
+
+            // Emit status change event
+            await this.statusEventEmitter.emitTransition({
+                entity: event.entity,
+                entityId: event.entityId,
+                currentStatus: event.from,
+                targetStatus: event.to,
+                operation: 'status_change',
+                phase: 'execution',
+                startTime: Date.now(),
+                duration: 0,
+                metadata: event.metadata,
+                context: {}
+            });
         } catch (err) {
             const error = this.normalizeError(err);
             throw createError({
@@ -260,8 +312,8 @@ export class StatusReportManager extends CoreManager {
 
     // Private helper methods
 
-    private startMetricsUpdate(): void {
-        this.updateTimer = setInterval(() => {
+    private startMetricsUpdate(): ReturnType<typeof setInterval> {
+        return setInterval(() => {
             this.updateAllMetrics().catch(error => {
                 this.logError('Failed to update metrics', error);
             });
@@ -275,24 +327,28 @@ export class StatusReportManager extends CoreManager {
     }
 
     private async updateEntityMetrics(entity: IStatusEntity): Promise<void> {
-        const history = await this.historyManager.queryHistory({
-            entity,
-            includeMetrics: true,
-            limit: 100 // Last 100 entries for real-time metrics
+        const metrics = await this.getMetricsManager().get({
+            timeRange: 'hour',
+            domain: MetricDomain.SYSTEM,
+            type: MetricType.PERFORMANCE,
+            metadata: { entity }
         });
 
-        const metrics = this.calculateDashboardMetrics(entity, history);
-        this.dashboardMetrics.set(entity, metrics);
+        if (metrics.success && metrics.data) {
+            const dashboardMetrics = this.calculateDashboardMetrics(entity, metrics.data);
+            this.dashboardMetrics.set(entity, dashboardMetrics);
+        }
     }
 
     private async updateDashboardMetrics(event: IStatusChangeEvent): Promise<void> {
         const currentMetrics = this.dashboardMetrics.get(event.entity) || this.createEmptyDashboardMetrics(event.entity);
+        const entityMetrics = currentMetrics.byEntity[event.entity];
         
         // Update current status
-        currentMetrics.byEntity[event.entity].currentStatus[event.entityId] = event.to;
+        entityMetrics.currentStatus[event.entityId] = event.to;
 
         // Update transition rate
-        currentMetrics.byEntity[event.entity].transitionRate++;
+        entityMetrics.transitionRate++;
 
         // Update timestamp
         currentMetrics.timestamp = Date.now();
@@ -300,7 +356,16 @@ export class StatusReportManager extends CoreManager {
         this.dashboardMetrics.set(event.entity, currentMetrics);
     }
 
-    private createEmptyDashboardMetrics(entity: IStatusEntity): IStatusDashboardMetrics {
+    private createEmptyDashboardMetrics(_entity: IStatusEntity): IStatusDashboardMetrics {
+        // Create a deep copy of the default metrics with proper type casting
+        const byEntity = Object.entries(DEFAULT_STATUS_RECORDS.metrics).reduce<Record<IStatusEntity, IEntityMetrics>>((acc, [key, value]) => ({
+            ...acc,
+            [key]: {
+                ...value,
+                currentStatus: { ...value.currentStatus }
+            }
+        }), {} as Record<IStatusEntity, IEntityMetrics>);
+
         return {
             timestamp: Date.now(),
             overview: {
@@ -309,9 +374,7 @@ export class StatusReportManager extends CoreManager {
                 errorCount: 0,
                 healthScore: 100
             },
-            byEntity: {
-                ...DEFAULT_STATUS_RECORDS.metrics
-            },
+            byEntity,
             alerts: [],
             performance: {
                 systemLoad: 0,
@@ -322,84 +385,147 @@ export class StatusReportManager extends CoreManager {
         };
     }
 
-    private calculateDashboardMetrics(entity: IStatusEntity, history: IStatusHistoryEntry[]): IStatusDashboardMetrics {
-        // Implementation
-        return this.createEmptyDashboardMetrics(entity);
-    }
-
-    private calculatePerformanceMetrics(history: IStatusHistoryEntry[]): IStatusTrendAnalysis['trends']['performance'] {
-        // Implementation
-        return {
-            averageTransitionTime: 0,
-            slowestTransitions: [],
-            resourceUtilization: {
-                cpu: 0,
-                memory: 0,
-                overall: 0
-            }
+    private calculateDashboardMetrics(entity: IStatusEntity, metrics: IAgentMetrics): IStatusDashboardMetrics {
+        const dashboard = this.createEmptyDashboardMetrics(entity);
+        
+        // Update performance metrics
+        dashboard.performance = {
+            systemLoad: metrics.performance.responseTime.average,
+            memoryUsage: metrics.usage.peakMemoryUsage,
+            responseTime: metrics.performance.responseTime.average,
+            throughput: metrics.performance.throughput.requestsPerSecond
         };
+
+        // Update overview
+        dashboard.overview = {
+            totalEntities: metrics.usage.activeUsers,
+            activeTransitions: metrics.usage.requestsPerSecond,
+            errorCount: metrics.errors.count,
+            healthScore: this.calculateHealthScore(metrics)
+        };
+
+        return dashboard;
     }
 
-    private detectTrendAnomalies(
-        history: IStatusHistoryEntry[],
-        metrics: {
-            statusFrequency: Record<IStatusType, number>;
-            transitionPatterns: Array<{
-                from: IStatusType;
-                to: IStatusType;
-                count: number;
-                averageDuration: number;
-            }>;
-            errorsByStatus: Record<IStatusType, number>;
-        }
-    ): IStatusTrendAnalysis['anomalies'] {
-        // Implementation
-        return [];
+    private calculateHealthScore(metrics: IAgentMetrics): number {
+        const errorPenalty = metrics.errors.count * 5;
+        const performancePenalty = Math.max(0, metrics.performance.responseTime.average - 1000) / 100;
+        const resourcePenalty = Math.max(0, metrics.usage.peakMemoryUsage - 80) / 2;
+
+        return Math.max(0, 100 - errorPenalty - performancePenalty - resourcePenalty);
+    }
+
+    private calculateTransitionPatterns(metrics: IAgentMetrics): IStatusTransitionPattern[] {
+        // Extract transitions from metrics
+        const transitions: IStatusTransitionPattern[] = metrics.performance.responseTime.average > 0 ? [{
+            from: 'INITIAL' as IStatusType,
+            to: 'RUNNING' as IStatusType,
+            count: 1,
+            averageDuration: metrics.performance.responseTime.average
+        }] : [];
+        return transitions;
+    }
+
+    private detectTrendAnomalies(metrics: {
+        statusFrequency: Record<IStatusType, number>;
+        transitionPatterns: IStatusTransitionPattern[];
+        errorsByStatus: Record<IStatusType, number>;
+    }): IStatusTrendAnalysis['anomalies'] {
+        // Detect anomalies based on metrics
+        const anomalies: IStatusTrendAnalysis['anomalies'] = [];
+        
+        // Check for high error rates
+        Object.entries(metrics.errorsByStatus).forEach(([status, count]) => {
+            if (count > 0) {
+                anomalies.push({
+                    type: 'error',
+                    status: status as IStatusType,
+                    description: `High error rate detected for status ${status}`,
+                    severity: 'high',
+                    timestamp: Date.now()
+                });
+            }
+        });
+
+        return anomalies;
     }
 
     private generateRecommendations(
         anomalies: IStatusTrendAnalysis['anomalies'],
-        performance: IStatusTrendAnalysis['trends']['performance']
+        performance: IPerformanceMetrics
     ): IStatusTrendAnalysis['recommendations'] {
-        // Implementation
-        return [];
+        // Generate recommendations based on anomalies and performance
+        const recommendations: IStatusTrendAnalysis['recommendations'] = [];
+
+        // Check for performance issues
+        if (performance.responseTime.average > 1000) {
+            recommendations.push({
+                type: 'optimization',
+                description: 'High response times detected. Consider optimizing performance.',
+                priority: 'high',
+                context: {
+                    metric: 'responseTime',
+                    value: performance.responseTime.average,
+                    threshold: 1000
+                }
+            });
+        }
+
+        // Add recommendations based on anomalies
+        anomalies.forEach(anomaly => {
+            if (anomaly.severity === 'high') {
+                recommendations.push({
+                    type: 'alert',
+                    description: `Critical anomaly detected: ${anomaly.description}`,
+                    priority: 'high',
+                    context: {
+                        anomalyType: anomaly.type,
+                        status: anomaly.status,
+                        timestamp: anomaly.timestamp
+                    }
+                });
+            }
+        });
+
+        return recommendations;
     }
 
     private analyzeDependencies(entity: IStatusEntity, status: IStatusType): IStatusImpactAssessment['directImpact'] {
-        // Implementation
+        // Analyze dependencies based on entity and status
         return {
-            affectedComponents: [],
-            severity: 'low',
-            scope: 'isolated'
+            affectedComponents: [`${entity}_${status}`],
+            severity: status.includes('ERROR') ? 'high' : 'low',
+            scope: status.includes('ERROR') ? 'system-wide' : 'isolated'
         };
     }
 
     private analyzeCascadingEffects(
         entity: IStatusEntity,
         status: IStatusType,
-        history: IStatusHistoryEntry[]
+        metrics: IAgentMetrics
     ): IStatusImpactAssessment['cascadingEffects'] {
-        // Implementation
-        return [];
-    }
+        // Analyze cascading effects based on entity, status, and metrics
+        const effects: IStatusImpactAssessment['cascadingEffects'] = [];
 
-    private calculateResourceImpact(history: IStatusHistoryEntry[]): IStatusImpactAssessment['resourceImpact'] {
-        // Implementation
-        return {
-            cpu: 0,
-            memory: 0,
-            network: 0,
-            storage: 0
-        };
-    }
+        if (metrics.errors.count > 0) {
+            effects.push({
+                component: entity,
+                effect: `Error propagation from ${status}`,
+                probability: 0.8,
+                mitigation: 'Implement error recovery strategy'
+            });
+        }
 
-    private calculatePerformanceImpact(history: IStatusHistoryEntry[]): IStatusImpactAssessment['performanceImpact'] {
-        // Implementation
-        return {
-            latency: 0,
-            throughput: 0,
-            errorRate: 0
-        };
+        if (metrics.performance.responseTime.average > 1000) {
+            effects.push({
+                component: 'system',
+                effect: 'Performance degradation',
+                probability: 0.6,
+                mitigation: 'Scale resources'
+            });
+        }
+
+        return effects;
     }
 
     private generateImpactRecommendations(
@@ -408,8 +534,46 @@ export class StatusReportManager extends CoreManager {
         resourceImpact: IStatusImpactAssessment['resourceImpact'],
         performanceImpact: IStatusImpactAssessment['performanceImpact']
     ): IStatusImpactAssessment['recommendations'] {
-        // Implementation
-        return [];
+        // Generate recommendations based on impacts
+        const recommendations: IStatusImpactAssessment['recommendations'] = [];
+
+        // Check direct impact
+        if (directImpact.severity === 'high') {
+            recommendations.push({
+                action: 'Mitigate high severity impact',
+                priority: 'high',
+                expectedOutcome: 'Reduced system impact'
+            });
+        }
+
+        // Check cascading effects
+        if (cascadingEffects.length > 0) {
+            recommendations.push({
+                action: 'Implement mitigation strategies',
+                priority: 'medium',
+                expectedOutcome: 'Prevent effect propagation'
+            });
+        }
+
+        // Check resource impact
+        if (resourceImpact.cpu > 0.8 || resourceImpact.memory > 0.8) {
+            recommendations.push({
+                action: 'Scale resources',
+                priority: 'high',
+                expectedOutcome: 'Improved resource utilization'
+            });
+        }
+
+        // Check performance impact
+        if (performanceImpact.errorRate > 0.1) {
+            recommendations.push({
+                action: 'Implement error handling',
+                priority: 'high',
+                expectedOutcome: 'Reduced error rate'
+            });
+        }
+
+        return recommendations;
     }
 
     private normalizeError(error: unknown): Error {

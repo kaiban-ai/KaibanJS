@@ -8,10 +8,10 @@
 
 import type { IAgentType, IReactChampionAgent } from './agentBaseTypes';
 import type { ITaskType } from '../task/taskBaseTypes';
-import type { IOutput, IParsedOutput } from '../llm/llmResponseTypes';
-import type { AGENT_STATUS_enum } from '../common/commonEnums';
-import type { IErrorType } from '../common/commonErrorTypes';
-import type { IHandlerResult } from '../common/commonHandlerTypes';
+import type { LLMResponse, IParsedOutput } from '../llm/llmResponseTypes';
+import type { AGENT_STATUS_enum } from '../common/enumTypes';
+import type { IErrorType } from '../common/errorTypes';
+import type { IHandlerResult } from '../common/baseTypes';
 
 // ─── Core Action Types ──────────────────────────────────────────────────────────
 
@@ -35,13 +35,13 @@ export interface IAgentThinkingActions {
         agent: IAgentType;
         task: ITaskType;
         messages: unknown[];
-        output?: IOutput;
+        output?: LLMResponse;
     }) => Promise<IHandlerResult>;
 
     handleAgentOutput: (params: {
         agent: IAgentType;
         task: ITaskType;
-        output: IOutput;
+        output: LLMResponse;
         type: 'thought' | 'observation' | 'finalAnswer' | 'selfQuestion' | 'weird';
     }) => Promise<IHandlerResult>;
 }
@@ -116,7 +116,7 @@ export interface IAgentStoreActions extends
 
 // ─── Type Guards ────────────────────────────────────────────────────────────
 
-export const IAgentActionTypeGuards = {
+export const AgentActionTypeGuards = {
     /**
      * Check if value has error actions
      */
@@ -155,9 +155,9 @@ export const IAgentActionTypeGuards = {
     hasStoreActions: (value: unknown): value is IAgentStoreActions => {
         if (typeof value !== 'object' || value === null) return false;
         return (
-            IAgentActionTypeGuards.hasErrorActions(value) &&
-            IAgentActionTypeGuards.hasThinkingActions(value) &&
-            IAgentActionTypeGuards.hasToolActions(value) &&
+            AgentActionTypeGuards.hasErrorActions(value) &&
+            AgentActionTypeGuards.hasThinkingActions(value) &&
+            AgentActionTypeGuards.hasToolActions(value) &&
             typeof (value as IAgentStoreActions).ensureReactChampionAgent === 'function'
         );
     }

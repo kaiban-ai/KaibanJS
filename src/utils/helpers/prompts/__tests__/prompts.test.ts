@@ -4,10 +4,9 @@
  * @description Tests for prompt system functionality
  */
 
-import type { IAgentType, IReactChampionAgent } from '../../../../types/agent';
+import type { IReactChampionAgent } from '../../../../types/agent';
 import type { ITaskType } from '../../../../types/task';
-import type { IAgenticLoopResult } from '../../../../types/llm';
-import { AGENT_STATUS_enum, TASK_STATUS_enum } from '../../../../types/common';
+import { AGENT_STATUS_enum, TASK_STATUS_enum, BATCH_PRIORITY_enum } from '../../../../types/common/enumTypes';
 
 import {
     defaultPrompts,
@@ -19,166 +18,281 @@ import {
     selectPrompts,
     formatTemplate
 } from '../';
+import { ChatGroq } from '@langchain/groq';
 
-// Jest type declarations
-declare global {
-    namespace jest {
-        interface Expect {
-            <T = any>(actual: T): jest.Matchers<T>;
+const mockAgent: IReactChampionAgent = {
+    // IBaseAgent properties
+    id: 'test-agent',
+    name: 'Test Agent',
+    role: 'Test Role',
+    goal: 'Test Goal',
+    background: 'Test Background',
+    version: '1.0.0',
+    capabilities: {
+        canThink: true,
+        canUseTools: true,
+        canLearn: true,
+        canTeach: true,
+        canDelegate: true,
+        canCollaborate: true,
+        supportedProviders: ['openai'],
+        supportedModels: ['gpt-4'],
+        supportedToolTypes: ['basic'],
+        maxContextSize: 4096,
+        maxConcurrentTasks: 1,
+        memoryCapacity: 1000,
+        features: {
+            streaming: true,
+            batching: true,
+            caching: true,
+            recovery: true,
+            metrics: true
         }
-        interface Matchers<R> {
-            toBe(expected: any): R;
-            toContain(expected: string): R;
-            toBeDefined(): R;
-            toHaveLength(expected: number): R;
-            toThrow(expected?: string | Error): R;
-            not: Matchers<R>;
-        }
-    }
-
-    const describe: (name: string, fn: () => void) => void;
-    const it: (name: string, fn: () => void | Promise<void>) => void;
-    const expect: jest.Expect;
-}
-
-describe('Prompt System', () => {
-    // Test data
-    const mockAgent: IReactChampionAgent = {
+    },
+    tools: [],
+    maxIterations: 10,
+    status: AGENT_STATUS_enum.INITIAL,
+    env: null,
+    llmInstance: null,
+    llmSystemMessage: null,
+    forceFinalAnswer: false,
+    promptTemplates: {} as any,
+    messageHistory: {} as any,
+    metadata: {
         id: 'test-agent',
         name: 'Test Agent',
-        role: 'Test Role',
-        goal: 'Test Goal',
-        background: 'Test Background',
         version: '1.0.0',
+        type: 'react-champion',
+        description: 'Test Description',
         capabilities: {
             canThink: true,
             canUseTools: true,
             canLearn: true,
+            canTeach: true,
+            canDelegate: true,
+            canCollaborate: true,
+            supportedProviders: ['openai'],
+            supportedModels: ['gpt-4'],
             supportedToolTypes: ['basic'],
-            supportedTools: [],
+            maxContextSize: 4096,
             maxConcurrentTasks: 1,
-            memoryCapacity: 1000
-        },
-        validationSchema: {
-            required: [],
-            constraints: {
-                name: {
-                    minLength: 1,
-                    maxLength: 100
-                }
+            memoryCapacity: 1000,
+            features: {
+                streaming: true,
+                batching: true,
+                caching: true,
+                recovery: true,
+                metrics: true
             }
         },
-        tools: [],
-        status: AGENT_STATUS_enum.INITIAL,
-        env: null,
-        llmConfig: { provider: 'none' },
-        llmInstance: null,
-        llmSystemMessage: null,
-        forceFinalAnswer: false,
-        maxIterations: 10,
-        promptTemplates: {} as any,
-        messageHistory: {} as any,
-        store: {} as any,
-        metadata: {
-            id: 'test-agent',
-            name: 'Test Agent',
-            capabilities: [],
-            skills: [],
-            created: new Date()
-        },
-        executionState: {} as any,
-        executableAgent: {} as any,
-        initialize: () => {},
-        setStore: () => {},
-        setStatus: () => {},
-        setEnv: () => {},
-        workOnTask: async () => ({
-            success: true,
-            metadata: {
-                iterations: 0,
-                maxAgentIterations: 10,
-                startTime: Date.now(),
-                endTime: Date.now()
-            }
-        }),
-        workOnFeedback: async () => {},
-        normalizeLlmConfig: (config: any) => config,
-        createLLMInstance: () => {},
-        handleIterationStart: () => {},
-        handleIterationEnd: () => {},
-        handleThinkingError: () => {},
-        handleMaxIterationsError: () => {},
-        handleAgenticLoopError: () => {},
-        handleTaskCompleted: () => {},
-        handleFinalAnswer: () => {},
-        handleIssuesParsingLLMOutput: () => ''
-    };
+        created: new Date(),
+        modified: new Date(),
+        status: AGENT_STATUS_enum.INITIAL
+    },
+    executionState: {
+        currentStep: 0,
+        totalSteps: 0,
+        startTime: new Date(),
+        lastUpdate: new Date(),
+        status: AGENT_STATUS_enum.INITIAL
+    },
 
-    const mockTask: ITaskType = {
-        id: 'test-task',
-        title: 'Test Task',
-        description: 'Test Description',
-        expectedOutput: 'Test Output',
-        status: TASK_STATUS_enum.PENDING,
-        agent: mockAgent,
-        stepId: '1',
-        isDeliverable: false,
-        externalValidationRequired: false,
-        inputs: {},
-        metrics: {
-            startTime: Date.now(),
-            endTime: Date.now(),
-            duration: 0,
-            iterationCount: 0,
-            resources: {
-                memory: 0,
-                cpu: 0,
-                tokens: 0
+    // IAgentType properties
+    type: 'react-champion',
+    description: 'Test Description',
+    supportedModels: ['gpt-4'],
+    supportedProviders: ['openai'],
+    maxContextSize: 4096,
+    features: {
+        streaming: true,
+        batching: true,
+        caching: true
+    },
+
+    // IReactChampionAgent properties
+    messages: [],
+    context: '',
+    history: {} as any,
+    executableAgent: {
+        runnable: new ChatGroq
+    },
+    execute: function (): Promise<void> {
+        throw new Error('Function not implemented.');
+    },
+    pause: function (): Promise<void> {
+        throw new Error('Function not implemented.');
+    },
+    resume: function (): Promise<void> {
+        throw new Error('Function not implemented.');
+    },
+    stop: function (): Promise<void> {
+        throw new Error('Function not implemented.');
+    },
+    reset: function (): Promise<void> {
+        throw new Error('Function not implemented.');
+    },
+    validate: function (): Promise<boolean> {
+        throw new Error('Function not implemented.');
+    }
+};
+
+const mockTask: ITaskType = {
+    id: 'test-task',
+    title: 'Test Task',
+    description: 'Test Description',
+    expectedOutput: 'Test Output',
+    status: TASK_STATUS_enum.PENDING,
+    priority: BATCH_PRIORITY_enum.MEDIUM,
+    agent: mockAgent,
+    stepId: '1',
+    isDeliverable: false,
+    externalValidationRequired: false,
+    inputs: {},
+    metrics: {
+        startTime: Date.now(),
+        endTime: Date.now(),
+        duration: 0,
+        iterationCount: 0,
+        resources: {
+            cpuUsage: 0,
+            memoryUsage: 0,
+            diskIO: {
+                read: 0,
+                write: 0
             },
-            performance: {
-                averageIterationTime: 0,
-                averageTokensPerSecond: 0,
-                peakMemoryUsage: 0
+            networkUsage: {
+                upload: 0,
+                download: 0
             },
-            costs: {
-                input: 0,
-                output: 0,
+            timestamp: Date.now()
+        },
+        performance: {
+            executionTime: {
                 total: 0,
-                currency: 'USD'
+                average: 0,
+                min: 0,
+                max: 0
             },
-            llmUsage: {
-                inputTokens: 0,
-                outputTokens: 0,
-                callsCount: 0,
-                callsErrorCount: 0,
-                parsingErrors: 0,
-                totalLatency: 0,
-                averageLatency: 0,
-                lastUsed: Date.now(),
-                memoryUtilization: {
-                    peakMemoryUsage: 0,
-                    averageMemoryUsage: 0,
-                    cleanupEvents: 0
-                },
-                costBreakdown: {
-                    input: 0,
-                    output: 0,
-                    total: 0,
-                    currency: 'USD'
-                }
+            latency: {
+                total: 0,
+                average: 0,
+                min: 0,
+                max: 0
+            },
+            throughput: {
+                operationsPerSecond: 0,
+                dataProcessedPerSecond: 0,
+                requestsPerSecond: 0,
+                bytesPerSecond: 0
+            },
+            responseTime: {
+                total: 0,
+                average: 0,
+                min: 0,
+                max: 0
+            },
+            queueLength: 0,
+            errorRate: 0,
+            successRate: 1,
+            resourceUtilization: {} as any,
+            timestamp: Date.now()
+        },
+        costs: {
+            inputCost: 0,
+            outputCost: 0,
+            totalCost: 0,
+            currency: 'USD',
+            breakdown: {
+                promptTokens: { count: 0, cost: 0 },
+                completionTokens: { count: 0, cost: 0 }
             }
         },
-        progress: {
-            status: TASK_STATUS_enum.PENDING,
-            progress: 0,
-            timeElapsed: 0
+        usage: {
+            totalRequests: 0,
+            activeUsers: 0,
+            requestsPerSecond: 0,
+            averageResponseSize: 0,
+            peakMemoryUsage: 0,
+            uptime: 0,
+            rateLimit: {
+                current: 0,
+                limit: 0,
+                remaining: 0,
+                resetTime: 0
+            },
+            timestamp: Date.now()
         },
-        history: [],
-        feedback: [],
-        setStore: () => {},
-        execute: async () => ({})
-    };
+        llmUsageMetrics: {
+            totalRequests: 0,
+            activeUsers: 0,
+            activeInstances: 0,
+            requestsPerSecond: 0,
+            averageResponseSize: 0,
+            peakMemoryUsage: 0,
+            uptime: 0,
+            rateLimit: {
+                current: 0,
+                limit: 0,
+                remaining: 0,
+                resetTime: 0
+            },
+            tokenDistribution: {
+                prompt: 0,
+                completion: 0,
+                total: 0
+            },
+            modelDistribution: {
+                gpt4: 0,
+                gpt35: 0,
+                other: 0
+            },
+            timestamp: Date.now(),
+            component: '',
+            category: '',
+            version: ''
+        }
+    },
+    progress: {
+        status: TASK_STATUS_enum.PENDING,
+        progress: 0,
+        timeElapsed: 0
+    },
+    history: [],
+    feedback: [],
+    execute: async () => ({
+        success: true,
+        metadata: {
+            taskId: 'test-task',
+            taskName: 'Test Task',
+            status: TASK_STATUS_enum.PENDING,
+            priority: BATCH_PRIORITY_enum.MEDIUM,
+            assignedAgent: 'test-agent',
+            progress: 0,
+            metrics: {
+                resources: {} as any,
+                usage: {} as any,
+                performance: {} as any,
+                timestamp: Date.now(),
+                component: 'test',
+                category: 'test',
+                version: '1.0.0'
+            },
+            dependencies: {
+                completed: [],
+                pending: [],
+                blocked: []
+            },
+            timestamp: Date.now(),
+            performance: {} as any,
+            context: {} as any,
+            validation: {} as any,
+            component: 'test',
+            operation: 'test'
+        }
+    })
+};
 
+describe('Prompt System', () => {
     describe('Default Prompts', () => {
         it('should provide valid system message template', () => {
             const result = defaultPrompts.SYSTEM_MESSAGE({ agent: mockAgent, task: mockTask });

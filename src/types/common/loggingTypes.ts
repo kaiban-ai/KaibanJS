@@ -24,11 +24,17 @@ export interface ILogErrorContext {
     stack?: string;
 }
 
+/** @deprecated Use error metrics instead */
 export interface ILogRecoveryContext {
+    /** @deprecated Use error metrics count instead */
     attempts: number;
+    /** @deprecated Use error metrics success rate instead */
     successful: boolean;
+    /** @deprecated Use error metrics duration instead */
     duration: number;
+    /** @deprecated Use error metrics type instead */
     strategy: string;
+    /** @deprecated Use resource metrics instead */
     resourceUsage: Record<string, number>;
 }
 
@@ -206,8 +212,13 @@ export interface ILogCorrelation {
 
 export interface IErrorPattern extends ILogPattern {
     errorType: string;
-    recoveryAttempts: number;
-    recoverySuccess: number;
+    errorMetrics: {
+        count: number;
+        type: string;
+        severity: 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL';
+        timestamp: number;
+        message: string;
+    };
     impactMetrics: {
         severity: 'low' | 'medium' | 'high';
         scope: 'isolated' | 'moderate' | 'widespread';
@@ -225,10 +236,12 @@ export interface IErrorTrend {
     endTime: number;
     errorCount: number;
     errorTypes: Map<string, number>;
-    recoveryMetrics: {
-        attempts: number;
-        successful: number;
-        averageTime: number;
+    errorMetrics: {
+        count: number;
+        type: string;
+        severity: 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL';
+        timestamp: number;
+        message: string;
     };
     performanceImpact: {
         responseTime: number;
@@ -241,6 +254,13 @@ export interface IErrorImpact {
     pattern: string;
     occurrences: number;
     affectedComponents: Set<string>;
+    errorMetrics: {
+        count: number;
+        type: string;
+        severity: 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL';
+        timestamp: number;
+        message: string;
+    };
     resourceImpact: {
         cpuUsage: number;
         memoryUsage: number;
@@ -251,28 +271,11 @@ export interface IErrorImpact {
         throughput: number;
         errorRate: number;
     };
-    recoveryMetrics: {
-        attempts: number;
-        successful: number;
-        averageTime: number;
-    };
     userImpact: {
         severity: 'low' | 'medium' | 'high';
         userCount: number;
         duration: number;
     };
-}
-
-export interface IRecoveryEffectiveness {
-    totalAttempts: number;
-    successfulAttempts: number;
-    averageRecoveryTime: number;
-    resourceEfficiency: number;
-    strategyEffectiveness: Map<string, {
-        attempts: number;
-        successes: number;
-        averageTime: number;
-    }>;
 }
 
 // ─── Storage Types ───────────────────────────────────────────────────────

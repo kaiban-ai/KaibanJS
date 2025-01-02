@@ -3,8 +3,8 @@
  * @path src/types/agent/pool/poolTypes.ts
  */
 
-import type { IResourceMetrics } from '../../common/commonMetricTypes';
-import { POOL_RESOURCE_TYPE_enum, POOL_RESOURCE_STATUS_enum } from '../../common/commonEnums'
+import type { IResourceMetrics } from '../../metrics/base/resourceMetrics';
+import { POOL_RESOURCE_TYPE_enum, POOL_RESOURCE_STATUS_enum } from '../../common/enumTypes';
 
 
 export interface IHealthCheckResult {

@@ -1,3 +1,8 @@
+/**
+ * @file workflowStateManager.ts
+ * @description Workflow state management and initialization
+ */
+
 import { CoreManager } from '../../core/coreManager';
 import { 
     IWorkflowState,
@@ -5,12 +10,20 @@ import {
     IWorkflowStateUpdate,
     IWorkflowStateValidation,
     IWorkflowStateRecoveryOptions,
-    IWorkflowStateRecoveryResult
+    IWorkflowStateRecoveryResult,
+    IStepConfig
 } from '../../../types/workflow/workflowStateTypes';
-import { createBaseMetadata } from '../../../types/common/commonMetadataTypes';
 import { WorkflowMetricsValidation } from '../../../types/workflow/workflowMetricTypes';
 import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
-import { IHandlerResult } from '../../../types/common/commonHandlerTypes';
+import { IHandlerResult } from '../../../types/common/baseTypes';
+import { ERROR_KINDS, createError, createErrorMetadata } from '../../../types/common/errorTypes';
+import { MANAGER_CATEGORY_enum, ERROR_SEVERITY_enum } from '../../../types/common/enumTypes';
+import { IErrorMetrics } from '../../../types/metrics/base/performanceMetrics';
+import { 
+    IWorkflowPerformanceMetrics,
+    IWorkflowResourceMetrics
+} from '../../../types/workflow/workflowMetricTypes';
+import { RecoveryStrategyType } from '../../../types/common/recoveryTypes';
 
 /**
  * Workflow State Manager
@@ -20,6 +33,8 @@ export class WorkflowStateManager extends CoreManager {
     private static instance: WorkflowStateManager;
     private states: Map<string, IWorkflowState>;
     private snapshots: Map<string, IWorkflowStateSnapshot[]>;
+
+    public readonly category = MANAGER_CATEGORY_enum.STATE;
 
     private constructor() {
         super();
@@ -33,6 +48,207 @@ export class WorkflowStateManager extends CoreManager {
             WorkflowStateManager.instance = new WorkflowStateManager();
         }
         return WorkflowStateManager.instance;
+    }
+
+    /**
+     * Initialize workflow state
+     */
+    public async initializeState(
+        workflowId: string,
+        steps: IStepConfig[],
+        initialState?: Partial<IWorkflowState>
+    ): Promise<IHandlerResult<IWorkflowState>> {
+        return this.safeExecute(async () => {
+            const now = Date.now();
+
+            // Get initial metrics from MetricsManager
+            const metricsManager = this.getMetricsManager();
+            const baseResourceMetrics = await metricsManager.getInitialResourceMetrics();
+            const performanceMetrics = await metricsManager.getInitialPerformanceMetrics();
+
+            // Create workflow resource metrics
+            const resourceMetrics: IWorkflowResourceMetrics = {
+                ...baseResourceMetrics,
+                concurrentWorkflows: 0,
+                resourceAllocation: {
+                    cpu: 0,
+                    memory: 0
+                }
+            };
+
+            // Initialize error distribution
+            const errorDistribution = Object.values(ERROR_KINDS).reduce(
+                (acc, kind) => ({ ...acc, [kind]: 0 }),
+                {} as Record<keyof typeof ERROR_KINDS, number>
+            );
+
+            // Initialize severity distribution
+            const severityDistribution = Object.values(ERROR_SEVERITY_enum).reduce(
+                (acc, severity) => ({ ...acc, [severity]: 0 }),
+                {} as Record<keyof typeof ERROR_SEVERITY_enum, number>
+            );
+
+            // Initialize strategy distribution
+            const strategyDistribution = Object.values(RecoveryStrategyType).reduce(
+                (acc, strategy) => ({ ...acc, [strategy]: 0 }),
+                {} as Record<RecoveryStrategyType, number>
+            );
+
+            // Initialize error metrics
+            const errorMetrics: IErrorMetrics = {
+                totalErrors: 0,
+                errorRate: 0,
+                errorDistribution,
+                severityDistribution,
+                patterns: [],
+                impact: {
+                    severity: ERROR_SEVERITY_enum.ERROR,
+                    businessImpact: 0,
+                    userExperienceImpact: 0,
+                    systemStabilityImpact: 0,
+                    resourceImpact: {
+                        cpu: 0,
+                        memory: 0,
+                        io: 0
+                    }
+                },
+                recovery: {
+                    meanTimeToRecover: 0,
+                    recoverySuccessRate: 0,
+                    strategyDistribution,
+                    failedRecoveries: 0
+                },
+                prevention: {
+                    preventedCount: 0,
+                    preventionRate: 0,
+                    earlyWarnings: 0
+                },
+                trends: {
+                    dailyRates: [],
+                    weeklyRates: [],
+                    monthlyRates: []
+                }
+            };
+
+            // Create workflow performance metrics
+            const workflowPerformanceMetrics: IWorkflowPerformanceMetrics = {
+                ...performanceMetrics,
+                completionRate: 0,
+                averageStepsPerWorkflow: 0,
+                errorMetrics,
+                resourceUtilization: {
+                    cpuUsage: 0,
+                    memoryUsage: 0,
+                    diskIO: { read: 0, write: 0 },
+                    networkUsage: { upload: 0, download: 0 },
+                    concurrentWorkflows: 0,
+                    resourceAllocation: {
+                        cpu: 0,
+                        memory: 0
+                    },
+                    timestamp: now
+                },
+                timestamp: now
+            };
+
+            // Create initial state
+            const state: IWorkflowState = {
+                id: workflowId,
+                name: initialState?.name || workflowId,
+                workflowId,
+                status: 'pending',
+                steps,
+                currentStepIndex: 0,
+                stepResults: {},
+                assignedAgents: {},
+                pendingTasks: [],
+                activeTasks: [],
+                completedTasks: [],
+                errors: [],
+                agents: [],
+                tasks: [],
+                workflowLogs: [],
+                costDetails: {
+                    inputCost: 0,
+                    outputCost: 0,
+                    totalCost: 0,
+                    currency: 'USD',
+                    breakdown: {
+                        promptTokens: { count: 0, cost: 0 },
+                        completionTokens: { count: 0, cost: 0 }
+                    }
+                },
+                metadata: {
+                    ...initialState?.metadata,
+                    createdAt: now,
+                    updatedAt: now
+                },
+                metrics: {
+                    performance: workflowPerformanceMetrics,
+                    resources: resourceMetrics,
+                    usage: {
+                        totalRequests: 0,
+                        activeUsers: 0,
+                        requestsPerSecond: 0,
+                        averageResponseSize: 0,
+                        peakMemoryUsage: 0,
+                        uptime: 0,
+                        rateLimit: {
+                            current: 0,
+                            limit: 100,
+                            remaining: 100,
+                            resetTime: now + 3600000
+                        },
+                        totalExecutions: 0,
+                        activeWorkflows: 0,
+                        workflowsPerSecond: 0,
+                        averageComplexity: 0,
+                        workflowDistribution: {
+                            sequential: 0,
+                            parallel: 0,
+                            conditional: 0
+                        },
+                        timestamp: now
+                    },
+                    timestamp: now
+                }
+            };
+
+            // Validate state
+            const validation = await this.validateState(state);
+            if (!validation.isValid) {
+                throw createError({
+                    message: `Invalid initial state: ${validation.errors.join(', ')}`,
+                    type: ERROR_KINDS.ValidationError,
+                    metadata: createErrorMetadata({
+                        component: this.constructor.name,
+                        operation: 'initializeState',
+                        details: {
+                            workflowId,
+                            errors: validation.errors
+                        }
+                    })
+                });
+            }
+
+            // Store state
+            this.states.set(workflowId, state);
+
+            // Track initialization
+            await metricsManager.trackMetric({
+                domain: MetricDomain.WORKFLOW,
+                type: MetricType.PERFORMANCE,
+                value: Date.now() - now,
+                timestamp: now,
+                metadata: {
+                    workflowId,
+                    operation: 'initialize_state',
+                    status: 'success'
+                }
+            });
+
+            return state;
+        }, 'Initialize workflow state');
     }
 
     /**
@@ -76,7 +292,7 @@ export class WorkflowStateManager extends CoreManager {
             this.states.set(workflowId, newState);
 
             // Log update
-            this.logInfo(`Updated workflow state: ${workflowId}`, null, workflowId);
+            this.logInfo(`Updated workflow state: ${workflowId}`);
 
             // Track metrics
             const metricsManager = this.getMetricsManager();
@@ -122,7 +338,7 @@ export class WorkflowStateManager extends CoreManager {
             snapshots.push(snapshot);
             this.snapshots.set(workflowId, snapshots);
 
-            this.logInfo(`Created workflow state snapshot: ${snapshot.metadata.snapshotId}`, null, workflowId);
+            this.logInfo(`Created workflow state snapshot: ${snapshot.metadata.snapshotId}`);
 
             return snapshot;
         }, 'Create workflow state snapshot');
@@ -179,7 +395,7 @@ export class WorkflowStateManager extends CoreManager {
             // Update state
             this.states.set(workflowId, state);
 
-            this.logInfo(`Restored workflow state from snapshot: ${snapshot.metadata.snapshotId}`, null, workflowId);
+            this.logInfo(`Restored workflow state from snapshot: ${snapshot.metadata.snapshotId}`);
 
             return {
                 success: true,
@@ -202,6 +418,7 @@ export class WorkflowStateManager extends CoreManager {
      * Validate workflow state
      */
     private async validateState(state: IWorkflowState): Promise<IWorkflowStateValidation> {
+        const startTime = Date.now();
         const errors: string[] = [];
         const warnings: string[] = [];
 
@@ -234,13 +451,17 @@ export class WorkflowStateManager extends CoreManager {
             warnings.push(...usageValidation.warnings);
         }
 
+        const endTime = Date.now();
+        const duration = endTime - startTime;
+
+        // Return IWorkflowStateValidation directly
         return {
             isValid: errors.length === 0,
             errors,
             warnings,
             metadata: {
-                timestamp: Date.now(),
-                duration: 0,
+                timestamp: endTime,
+                duration,
                 validatorName: 'WorkflowStateValidator'
             }
         };
@@ -266,13 +487,13 @@ export class WorkflowStateManager extends CoreManager {
                 if (!options.timestamp) {
                     throw new Error('Timestamp required for timestamp strategy');
                 }
-                return snapshots.reverse().find(s => s.timestamp <= options.timestamp!);
+                return [...snapshots].reverse().find(s => s.timestamp <= options.timestamp!);
 
             case 'version':
                 if (!options.version) {
                     throw new Error('Version required for version strategy');
                 }
-                return snapshots.reverse().find(s => s.version === options.version);
+                return [...snapshots].reverse().find(s => s.version === options.version);
 
             default:
                 throw new Error(`Unknown recovery strategy: ${options.strategy}`);

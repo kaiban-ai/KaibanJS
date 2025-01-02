@@ -7,14 +7,28 @@
  */
 
 import { CoreManager } from '../../core/coreManager';
-import { createError } from '../../../types/common/commonErrorTypes';
-import { AGENT_STATUS_enum, MANAGER_CATEGORY_enum } from '../../../types/common/commonEnums';
+import { createError } from '../../../types/common/errorTypes';
+import { AGENT_STATUS_enum, MANAGER_CATEGORY_enum } from '../../../types/common/enumTypes';
 import type { 
     IStateTransaction,
     ILoopContext,
-    IStateManager
-} from '../../../types/agent/agentLoopTypes';
+    IStateManager,
+    ExecutionStatus
+} from '../../../types/agent/agentExecutionFlow';
 import type { IBaseManagerMetadata } from '../../../types/agent/agentManagerTypes';
+
+const mapExecutionStatusToAgentStatus = (status: ExecutionStatus): AGENT_STATUS_enum => {
+    switch (status) {
+        case 'running':
+            return AGENT_STATUS_enum.EXECUTING_ACTION;
+        case 'completed':
+            return AGENT_STATUS_enum.TASK_COMPLETED;
+        case 'error':
+            return AGENT_STATUS_enum.AGENTIC_LOOP_ERROR;
+        default:
+            return AGENT_STATUS_enum.IDLE;
+    }
+};
 
 // ─── State Manager ───────────────────────────────────────────────────────────
 
@@ -56,7 +70,7 @@ export class AgenticLoopStateManager extends CoreManager implements IStateManage
             throw createError({
                 message: 'Failed to initialize state manager',
                 type: 'InitializationError',
-                context: { error }
+                context: { error: error as Error }
             });
         }
     }
@@ -64,7 +78,7 @@ export class AgenticLoopStateManager extends CoreManager implements IStateManage
     /**
      * Validate state parameters
      */
-    public async validate(params: unknown): Promise<boolean> {
+    public async validate(): Promise<boolean> {
         try {
             if (!this.isInitialized) {
                 return false;
@@ -82,6 +96,7 @@ export class AgenticLoopStateManager extends CoreManager implements IStateManage
      * Get manager metadata
      */
     public getMetadata(): IBaseManagerMetadata {
+        const latestState = Array.from(this.stateHistory.values())[0]?.[0];
         return {
             category: this.category,
             operation: 'state_management',
@@ -91,7 +106,7 @@ export class AgenticLoopStateManager extends CoreManager implements IStateManage
                 id: '',
                 name: '',
                 role: '',
-                status: ''
+                status: latestState ? mapExecutionStatusToAgentStatus(latestState.status) : AGENT_STATUS_enum.IDLE
             },
             timestamp: Date.now(),
             component: this.constructor.name
@@ -173,17 +188,6 @@ export class AgenticLoopStateManager extends CoreManager implements IStateManage
             }
         }
         this.stateHistory.delete(loopKey);
-    }
-
-    // ─── State Validation ─────────────────────────────────────────────────────
-
-    private validateStateTransition(
-        currentStatus: AGENT_STATUS_enum,
-        targetStatus: AGENT_STATUS_enum
-    ): boolean {
-        // Add state transition validation logic here
-        // For now, return true to allow all transitions
-        return true;
     }
 }
 

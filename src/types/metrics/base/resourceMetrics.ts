@@ -1,77 +1,50 @@
 /**
  * @file resourceMetrics.ts
- * @path KaibanJS\src\types\metrics\base\resourceMetrics.ts
- * @description Resource metrics type definitions and validation for system resource usage tracking
+ * @deprecated This module is deprecated and will be removed in a future version.
+ * Use BaseMetricsManager's resource metrics functionality instead:
+ * ```typescript
+ * // Before
+ * const resourceMetrics = await domainManager.getResourceMetrics();
  * 
- * @module @types/metrics/base
+ * // After
+ * const baseMetrics = await baseMetricsManager.collectBaseMetrics();
+ * const resources = baseMetrics.resources;
+ * ```
+ * 
+ * Resource metrics are now centrally managed through BaseMetricsManager to:
+ * - Avoid redundant resource tracking
+ * - Ensure consistent collection methods
+ * - Reduce overhead
+ * - Provide unified validation
  */
 
-import { createValidationResult } from '@utils/validation/validationUtils';
-import type { IValidationResult } from '../../common/commonValidationTypes';
+/** @deprecated Use BaseMetricsManager instead */
+import { IBaseMetrics } from './baseMetrics';
 
-export interface IResourceMetrics {
-  readonly cpuUsage: number;
-  readonly memoryUsage: number;
-  readonly diskIO: {
-    readonly read: number;
-    readonly write: number;
-  };
-  readonly networkUsage: {
-    readonly upload: number;
-    readonly download: number;
-  };
-  readonly timestamp: number;
+export interface IResourceMetrics extends IBaseMetrics {
+    cpuUsage: number;
+    memoryUsage: number;
+    diskIO: {
+        read: number;
+        write: number;
+    };
+    networkUsage: {
+        upload: number;
+        download: number;
+    };
+    timestamp: number;
 }
 
-export const ResourceMetricsTypeGuards = {
-  isResourceMetrics: (value: unknown): value is IResourceMetrics => {
-    if (typeof value !== 'object' || value === null) return false;
-    const metrics = value as Partial<IResourceMetrics>;
-    
-    return (
-      typeof metrics.cpuUsage === 'number' &&
-      typeof metrics.memoryUsage === 'number' &&
-      typeof metrics.diskIO === 'object' &&
-      typeof metrics.diskIO?.read === 'number' &&
-      typeof metrics.diskIO?.write === 'number' &&
-      typeof metrics.networkUsage === 'object' &&
-      typeof metrics.networkUsage?.upload === 'number' &&
-      typeof metrics.networkUsage?.download === 'number' &&
-      typeof metrics.timestamp === 'number'
-    );
-  }
+/** @deprecated Use BaseMetricsManager's validation instead */
+export const ResourceMetricsValidation = {
+    validateResourceMetrics: () => {
+        throw new Error('ResourceMetricsValidation is deprecated. Use BaseMetricsManager instead.');
+    }
 };
 
-export const ResourceMetricsValidation = {
-  validateResourceMetrics(metrics: unknown): IValidationResult {
-    const errors: string[] = [];
-    const warnings: string[] = [];
-
-    if (!ResourceMetricsTypeGuards.isResourceMetrics(metrics)) {
-      errors.push('Invalid resource metrics structure');
-      return createValidationResult(false, errors);
+/** @deprecated Use BaseMetricsManager's type guards instead */
+export const ResourceMetricsTypeGuards = {
+    isResourceMetrics: () => {
+        throw new Error('ResourceMetricsTypeGuards is deprecated. Use BaseMetricsManager instead.');
     }
-
-    if (metrics.cpuUsage < 0 || metrics.cpuUsage > 100) {
-      errors.push('CPU usage must be between 0 and 100');
-    }
-
-    if (metrics.memoryUsage < 0) {
-      errors.push('Memory usage cannot be negative');
-    }
-
-    if (metrics.diskIO.read < 0 || metrics.diskIO.write < 0) {
-      errors.push('Disk I/O values cannot be negative');
-    }
-
-    if (metrics.networkUsage.upload < 0 || metrics.networkUsage.download < 0) {
-      errors.push('Network usage values cannot be negative');
-    }
-
-    if (metrics.timestamp > Date.now()) {
-      warnings.push('Timestamp is in the future');
-    }
-
-    return createValidationResult(errors.length === 0, errors, warnings);
-  }
 };

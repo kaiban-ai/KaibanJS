@@ -9,66 +9,10 @@ import { CoreManager } from '../../core/coreManager';
 import { BaseEventEmitter } from '../../core/eventEmitter';
 import { v4 as uuidv4 } from 'uuid';
 import { createBaseMetadata } from '../../../types/common/baseTypes';
-import { MANAGER_CATEGORY_enum } from '../../../types/common/enumTypes';
-import { AGENT_EVENT_TYPE, AGENT_EVENT_CATEGORY } from '../../../types/agent/agentEventTypes';
-import { AGENT_STATUS_enum } from '../../../types/common/enumTypes';
-
-// Single declaration for all runtime-needed imports and types
-declare interface _RuntimeImports {
-    core: {
-        managers: {
-            CoreManager: typeof CoreManager;
-            BaseEventEmitter: typeof BaseEventEmitter;
-        };
-    };
-    external: {
-        uuid: typeof uuidv4;
-    };
-    utils: {
-        metadata: typeof createBaseMetadata;
-    };
-    enums: {
-        manager: typeof MANAGER_CATEGORY_enum;
-        agent: {
-            event: typeof AGENT_EVENT_TYPE & typeof AGENT_EVENT_CATEGORY;
-            status: typeof AGENT_STATUS_enum;
-        };
-    };
-    types: {
-        common: {
-            IEventEmitter: IEventEmitter;
-            IEventHandler: IEventHandler<IBaseEvent>;
-            IBaseEvent: IBaseEvent;
-        };
-        agent: {
-            events: {
-                IAgentCreatedEvent: IAgentCreatedEvent;
-                IAgentUpdatedEvent: IAgentUpdatedEvent;
-                IAgentDeletedEvent: IAgentDeletedEvent;
-                IAgentStatusChangedEvent: IAgentStatusChangedEvent;
-                IAgentIterationStartedEvent: IAgentIterationStartedEvent;
-                IAgentIterationCompletedEvent: IAgentIterationCompletedEvent;
-                IAgentIterationFailedEvent: IAgentIterationFailedEvent;
-                IAgentMetricsUpdatedEvent: IAgentMetricsUpdatedEvent;
-                IAgentConfigUpdatedEvent: IAgentConfigUpdatedEvent;
-                IAgentValidationCompletedEvent: IAgentValidationCompletedEvent;
-                IAgentErrorOccurredEvent: IAgentErrorOccurredEvent;
-                IAgentErrorHandledEvent: IAgentErrorHandledEvent;
-                IAgentErrorRecoveryStartedEvent: IAgentErrorRecoveryStartedEvent;
-                IAgentErrorRecoveryCompletedEvent: IAgentErrorRecoveryCompletedEvent;
-                IAgentErrorRecoveryFailedEvent: IAgentErrorRecoveryFailedEvent;
-                IAgentEventMetadata: IAgentEventMetadata;
-            };
-            managers: {
-                IBaseManager: IBaseManager;
-                IBaseManagerMetadata: IBaseManagerMetadata;
-            };
-            metrics: {
-                AgentMetricsManager: typeof AgentMetricsManager;
-            };
-        };
-    };
-}
+import { MANAGER_CATEGORY_enum, AGENT_STATUS_enum } from '../../../types/common/enumTypes';
+import { ERROR_KINDS } from '../../../types/common/errorTypes';
+import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
+import { AGENT_EVENT_TYPE } from '../../../types/agent/agentEventTypes';
 
 // Type-only imports from common domain
 import type {
@@ -77,36 +21,50 @@ import type {
     IBaseEvent
 } from '../../../types/common/baseTypes';
 
-// Type-only imports from agent domain
-import type { IBaseManager, IBaseManagerMetadata } from '../../../types/agent/agentManagerTypes';
-import type { AgentMetricsManager } from './agentMetricsManager';
+// Runtime imports from agent domain
+import { IBaseManagerMetadata } from '../../../types/agent/agentManagerTypes';
+import { AgentMetricsManager } from './agentMetricsManager';
+import { ErrorManager } from '../../core/errorManager';
+import { MetricsManager } from '../../core/metricsManager';
 import type {
     IAgentCreatedEvent,
     IAgentUpdatedEvent,
     IAgentDeletedEvent,
-    IAgentStatusChangedEvent,
+    IAgentStatusChangeEvent,
+    IAgentErrorEvent,
+    IAgentExecutionEvent,
+    IAgentValidationEvent,
+    IAgentValidationCompletedEvent,
+    IAgentErrorOccurredEvent,
+    IAgentErrorHandledEvent,
     IAgentIterationStartedEvent,
     IAgentIterationCompletedEvent,
     IAgentIterationFailedEvent,
     IAgentMetricsUpdatedEvent,
     IAgentConfigUpdatedEvent,
-    IAgentValidationCompletedEvent,
-    IAgentErrorOccurredEvent,
-    IAgentErrorHandledEvent,
-    IAgentErrorRecoveryStartedEvent,
-    IAgentErrorRecoveryCompletedEvent,
-    IAgentErrorRecoveryFailedEvent,
     IAgentEventMetadata
 } from '../../../types/agent/agentEventTypes';
+
+// Metric types needed for implementation
+import type { 
+    IAgentPerformanceMetrics,
+    IAgentUsageMetrics
+} from '../../../types/agent/agentMetricTypes';
 
 export class AgentEventEmitter extends CoreManager implements IEventEmitter {
     protected static _instance: AgentEventEmitter;
     protected override readonly eventEmitter: BaseEventEmitter;
+    protected readonly metricsManager: MetricsManager;
+    protected readonly agentMetricsManager: AgentMetricsManager;
+    protected readonly errorManager: ErrorManager;
     public readonly category: MANAGER_CATEGORY_enum = MANAGER_CATEGORY_enum.SERVICE;
 
     protected constructor() {
         super();
         this.eventEmitter = BaseEventEmitter.getInstance();
+        this.metricsManager = MetricsManager.getInstance();
+        this.agentMetricsManager = AgentMetricsManager.getInstance();
+        this.errorManager = ErrorManager.getInstance();
         this.registerDomainManager('AgentEventEmitter', this);
     }
 
@@ -133,35 +91,203 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
 
     // ─── Agent-specific Event Methods ──────────────────────────────────────────────
 
-    protected async createAgentMetadata<T extends AGENT_EVENT_CATEGORY>(
-        operation: string,
-        agentId: string,
-        category: T
-    ): Promise<IAgentEventMetadata & { category: T }> {
-        const baseMetadata = createBaseMetadata('AgentEventEmitter', operation);
-        const metricsManager = this.getDomainManager<AgentMetricsManager & IBaseManager<unknown>>('AgentMetricsManager');
-        const metrics = await metricsManager.getCurrentMetrics(agentId);
-
+    private createDefaultPerformanceMetrics(): IAgentPerformanceMetrics {
         return {
-            ...baseMetadata,
-            category,
-            source: this.constructor.name,
-            correlationId: uuidv4(),
-            agent: {
-                name: '', // Will be populated by agent manager
-                role: '', // Will be populated by agent manager
-                status: AGENT_STATUS_enum.INITIAL,
-                metrics: {
-                    performance: metrics.performance,
-                    resources: metrics.resources,
-                    usage: metrics.usage
-                }
-            }
+            thinking: {
+                reasoningTime: { average: 0, min: 0, max: 0 },
+                planningTime: { average: 0, min: 0, max: 0 },
+                learningTime: { average: 0, min: 0, max: 0 },
+                decisionConfidence: 0,
+                learningEfficiency: 0,
+                duration: 0,
+                success: true,
+                errorCount: 0,
+                timestamp: Date.now(),
+                component: this.constructor.name,
+                category: 'THINKING',
+                version: '1.0.0'
+            },
+            taskSuccessRate: 0,
+            goalAchievementRate: 0,
+            responseTime: { average: 0, min: 0, max: 0 },
+            throughput: { requestsPerSecond: 0, bytesPerSecond: 0 },
+            duration: 0,
+            success: true,
+            errorCount: 0,
+            component: this.constructor.name,
+            category: 'PERFORMANCE',
+            version: '1.0.0',
+            timestamp: Date.now()
         };
     }
 
+    private createDefaultUsageMetrics(): IAgentUsageMetrics {
+        return {
+            state: {
+                currentState: 'INITIAL',
+                stateTime: 0,
+                transitionCount: 0,
+                failedTransitions: 0,
+                blockedTaskCount: 0,
+                historyEntryCount: 0,
+                lastHistoryUpdate: Date.now(),
+                taskStats: {
+                    completedCount: 0,
+                    failedCount: 0,
+                    averageDuration: 0,
+                    successRate: 0,
+                    averageIterations: 0
+                },
+                timestamp: Date.now(),
+                component: this.constructor.name,
+                category: 'STATE',
+                version: '1.0.0'
+            },
+            toolUsageFrequency: {},
+            taskCompletionCount: 0,
+            averageTaskTime: 0,
+            costs: {
+                totalCost: 0,
+                inputCost: 0,
+                outputCost: 0,
+                currency: 'USD',
+                breakdown: {
+                    promptTokens: { count: 0, cost: 0 },
+                    completionTokens: { count: 0, cost: 0 }
+                }
+            },
+            totalRequests: 0,
+            activeUsers: 0,
+            requestsPerSecond: 0,
+            averageResponseSize: 0,
+            peakMemoryUsage: process.memoryUsage().heapUsed,
+            uptime: process.uptime(),
+            rateLimit: {
+                current: 0,
+                limit: 1000,
+                remaining: 1000,
+                resetTime: Date.now() + 3600000
+            },
+            timestamp: Date.now(),
+            component: this.constructor.name,
+            category: 'USAGE',
+            version: '1.0.0'
+        };
+    }
+
+    protected async createAgentMetadata(
+        operation: string,
+        agentId: string,
+        category: string
+    ): Promise<IAgentEventMetadata> {
+        const startTime = Date.now();
+        
+        try {
+            // Get base metadata from CoreManager
+            const baseMetadata = createBaseMetadata(this.constructor.name, operation);
+            
+            // Get metrics from MetricsManager
+            const initialMetrics = await this.metricsManager.getInitialPerformanceMetrics();
+            
+            // Get agent metrics
+            const metricsResult = await this.agentMetricsManager.get({
+                timeRange: 'hour',
+                metadata: {
+                    agentId: agentId
+                }
+            });
+
+            // Convert base metrics to agent-specific metrics
+            const agentMetrics = metricsResult.success && metricsResult.data ? {
+                performance: {
+                    ...this.createDefaultPerformanceMetrics(),
+                    ...metricsResult.data.performance,
+                },
+                usage: {
+                    ...this.createDefaultUsageMetrics(),
+                    ...metricsResult.data.usage,
+                }
+            } : null;
+
+            // Track metric creation
+            await this.metricsManager.trackMetric({
+                domain: MetricDomain.WORKFLOW,
+                type: MetricType.PERFORMANCE,
+                value: Date.now() - startTime,
+                timestamp: startTime,
+                metadata: {
+                    operation: 'create_agent_metadata',
+                    component: this.constructor.name,
+                    initialMetrics
+                }
+            });
+
+            this.logDebug('Created agent metadata', { 
+                operation, 
+                agentId, 
+                category 
+            });
+
+            return {
+                ...baseMetadata,
+                category,
+                source: this.constructor.name,
+                correlationId: uuidv4(),
+                agent: {
+                    id: agentId,
+                    name: '', // Will be populated by agent manager
+                    role: '', // Will be populated by agent manager
+                    status: AGENT_STATUS_enum.INITIAL.toString(),
+                    metrics: {
+                        performance: agentMetrics?.performance || this.createDefaultPerformanceMetrics(),
+                        resources: {
+                            cognitive: {
+                                usage: 0,
+                                limit: 100,
+                                available: 100,
+                                memoryAllocation: 0,
+                                cognitiveLoad: 0,
+                                processingCapacity: 1,
+                                contextUtilization: 0,
+                                timestamp: Date.now(),
+                                component: this.constructor.name,
+                                category: 'COGNITIVE',
+                                version: '1.0.0'
+                            },
+                            cpuUsage: 0,
+                            memoryUsage: process.memoryUsage().heapUsed,
+                            diskIO: {
+                                read: 0,
+                                write: 0
+                            },
+                            networkUsage: {
+                                upload: 0,
+                                download: 0
+                            },
+                            usage: 0,
+                            limit: 100,
+                            available: 100,
+                            timestamp: Date.now(),
+                            component: this.constructor.name,
+                            category: 'RESOURCE',
+                            version: '1.0.0'
+                        },
+                        usage: agentMetrics?.usage || this.createDefaultUsageMetrics()
+                    }
+                }
+            };
+        } catch (error) {
+            await this.errorManager.handleError(
+                error,
+                `Failed to create agent metadata: ${operation}`,
+                ERROR_KINDS.ValidationError
+            );
+            throw error;
+        }
+    }
+
     public async emitAgentCreated(params: Omit<IAgentCreatedEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
-        const metadata = await this.createAgentMetadata('agent_created', params.agentId, AGENT_EVENT_CATEGORY.LIFECYCLE);
+        const metadata = await this.createAgentMetadata('agent_created', params.agentId, 'LIFECYCLE');
         const event: IAgentCreatedEvent = {
             id: uuidv4(),
             timestamp: Date.now(),
@@ -173,7 +299,7 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
     }
 
     public async emitAgentUpdated(params: Omit<IAgentUpdatedEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
-        const metadata = await this.createAgentMetadata('agent_updated', params.agentId, AGENT_EVENT_CATEGORY.LIFECYCLE);
+        const metadata = await this.createAgentMetadata('agent_updated', params.agentId, 'LIFECYCLE');
         const event: IAgentUpdatedEvent = {
             id: uuidv4(),
             timestamp: Date.now(),
@@ -185,7 +311,7 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
     }
 
     public async emitAgentDeleted(params: Omit<IAgentDeletedEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
-        const metadata = await this.createAgentMetadata('agent_deleted', params.agentId, AGENT_EVENT_CATEGORY.LIFECYCLE);
+        const metadata = await this.createAgentMetadata('agent_deleted', params.agentId, 'LIFECYCLE');
         const event: IAgentDeletedEvent = {
             id: uuidv4(),
             timestamp: Date.now(),
@@ -196,9 +322,9 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
         await this.emit(event);
     }
 
-    public async emitAgentStatusChanged(params: Omit<IAgentStatusChangedEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
-        const metadata = await this.createAgentMetadata('agent_status_changed', params.agentId, AGENT_EVENT_CATEGORY.STATE);
-        const event: IAgentStatusChangedEvent = {
+    public async emitAgentStatusChanged(params: Omit<IAgentStatusChangeEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
+        const metadata = await this.createAgentMetadata('agent_status_changed', params.agentId, 'STATE');
+        const event: IAgentStatusChangeEvent = {
             id: uuidv4(),
             timestamp: Date.now(),
             type: AGENT_EVENT_TYPE.AGENT_STATUS_CHANGED,
@@ -209,7 +335,7 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
     }
 
     public async emitAgentIterationStarted(params: Omit<IAgentIterationStartedEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
-        const metadata = await this.createAgentMetadata('agent_iteration_started', params.agentId, AGENT_EVENT_CATEGORY.ITERATION);
+        const metadata = await this.createAgentMetadata('agent_iteration_started', params.agentId, 'ITERATION');
         const event: IAgentIterationStartedEvent = {
             id: uuidv4(),
             timestamp: Date.now(),
@@ -221,7 +347,7 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
     }
 
     public async emitAgentIterationCompleted(params: Omit<IAgentIterationCompletedEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
-        const metadata = await this.createAgentMetadata('agent_iteration_completed', params.agentId, AGENT_EVENT_CATEGORY.ITERATION);
+        const metadata = await this.createAgentMetadata('agent_iteration_completed', params.agentId, 'ITERATION');
         const event: IAgentIterationCompletedEvent = {
             id: uuidv4(),
             timestamp: Date.now(),
@@ -233,7 +359,7 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
     }
 
     public async emitAgentIterationFailed(params: Omit<IAgentIterationFailedEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
-        const metadata = await this.createAgentMetadata('agent_iteration_failed', params.agentId, AGENT_EVENT_CATEGORY.ITERATION);
+        const metadata = await this.createAgentMetadata('agent_iteration_failed', params.agentId, 'ITERATION');
         const event: IAgentIterationFailedEvent = {
             id: uuidv4(),
             timestamp: Date.now(),
@@ -245,7 +371,7 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
     }
 
     public async emitAgentMetricsUpdated(params: Omit<IAgentMetricsUpdatedEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
-        const metadata = await this.createAgentMetadata('agent_metrics_updated', params.agentId, AGENT_EVENT_CATEGORY.METRICS);
+        const metadata = await this.createAgentMetadata('agent_metrics_updated', params.agentId, 'METRICS');
         const event: IAgentMetricsUpdatedEvent = {
             id: uuidv4(),
             timestamp: Date.now(),
@@ -257,7 +383,7 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
     }
 
     public async emitAgentConfigUpdated(params: Omit<IAgentConfigUpdatedEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
-        const metadata = await this.createAgentMetadata('agent_config_updated', params.agentId, AGENT_EVENT_CATEGORY.CONFIG);
+        const metadata = await this.createAgentMetadata('agent_config_updated', params.agentId, 'CONFIG');
         const event: IAgentConfigUpdatedEvent = {
             id: uuidv4(),
             timestamp: Date.now(),
@@ -269,7 +395,7 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
     }
 
     public async emitAgentValidationCompleted(params: Omit<IAgentValidationCompletedEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
-        const metadata = await this.createAgentMetadata('agent_validation_completed', params.agentId, AGENT_EVENT_CATEGORY.VALIDATION);
+        const metadata = await this.createAgentMetadata('agent_validation_completed', params.agentId, 'VALIDATION');
         const event: IAgentValidationCompletedEvent = {
             id: uuidv4(),
             timestamp: Date.now(),
@@ -281,7 +407,7 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
     }
 
     public async emitAgentErrorOccurred(params: Omit<IAgentErrorOccurredEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
-        const metadata = await this.createAgentMetadata('agent_error_occurred', params.agentId, AGENT_EVENT_CATEGORY.ERROR);
+        const metadata = await this.createAgentMetadata('agent_error_occurred', params.agentId, 'ERROR');
         const event: IAgentErrorOccurredEvent = {
             id: uuidv4(),
             timestamp: Date.now(),
@@ -293,7 +419,7 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
     }
 
     public async emitAgentErrorHandled(params: Omit<IAgentErrorHandledEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
-        const metadata = await this.createAgentMetadata('agent_error_handled', params.agentId, AGENT_EVENT_CATEGORY.ERROR);
+        const metadata = await this.createAgentMetadata('agent_error_handled', params.agentId, 'ERROR');
         const event: IAgentErrorHandledEvent = {
             id: uuidv4(),
             timestamp: Date.now(),
@@ -304,36 +430,36 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
         await this.emit(event);
     }
 
-    public async emitAgentErrorRecoveryStarted(params: Omit<IAgentErrorRecoveryStartedEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
-        const metadata = await this.createAgentMetadata('agent_error_recovery_started', params.agentId, AGENT_EVENT_CATEGORY.ERROR);
-        const event: IAgentErrorRecoveryStartedEvent = {
+    public async emitAgentError(params: Omit<IAgentErrorEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
+        const metadata = await this.createAgentMetadata('agent_error', params.agentId, 'ERROR');
+        const event: IAgentErrorEvent = {
             id: uuidv4(),
             timestamp: Date.now(),
-            type: AGENT_EVENT_TYPE.AGENT_ERROR_RECOVERY_STARTED,
+            type: AGENT_EVENT_TYPE.AGENT_ERROR,
             ...params,
             metadata
         };
         await this.emit(event);
     }
 
-    public async emitAgentErrorRecoveryCompleted(params: Omit<IAgentErrorRecoveryCompletedEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
-        const metadata = await this.createAgentMetadata('agent_error_recovery_completed', params.agentId, AGENT_EVENT_CATEGORY.ERROR);
-        const event: IAgentErrorRecoveryCompletedEvent = {
+    public async emitAgentExecution(params: Omit<IAgentExecutionEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
+        const metadata = await this.createAgentMetadata('agent_execution', params.agentId, 'EXECUTION');
+        const event: IAgentExecutionEvent = {
             id: uuidv4(),
             timestamp: Date.now(),
-            type: AGENT_EVENT_TYPE.AGENT_ERROR_RECOVERY_COMPLETED,
+            type: AGENT_EVENT_TYPE.AGENT_EXECUTION,
             ...params,
             metadata
         };
         await this.emit(event);
     }
 
-    public async emitAgentErrorRecoveryFailed(params: Omit<IAgentErrorRecoveryFailedEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
-        const metadata = await this.createAgentMetadata('agent_error_recovery_failed', params.agentId, AGENT_EVENT_CATEGORY.ERROR);
-        const event: IAgentErrorRecoveryFailedEvent = {
+    public async emitAgentValidation(params: Omit<IAgentValidationEvent, 'id' | 'type' | 'timestamp' | 'metadata'>): Promise<void> {
+        const metadata = await this.createAgentMetadata('agent_validation', params.agentId, 'VALIDATION');
+        const event: IAgentValidationEvent = {
             id: uuidv4(),
             timestamp: Date.now(),
-            type: AGENT_EVENT_TYPE.AGENT_ERROR_RECOVERY_FAILED,
+            type: AGENT_EVENT_TYPE.AGENT_VALIDATION,
             ...params,
             metadata
         };
@@ -364,7 +490,7 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
                 id: '',
                 name: '',
                 role: '',
-                status: ''
+                status: AGENT_STATUS_enum.INITIAL
             },
             timestamp: Date.now(),
             component: this.constructor.name

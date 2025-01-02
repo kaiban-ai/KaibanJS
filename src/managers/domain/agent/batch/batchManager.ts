@@ -4,29 +4,35 @@
  * @description Manages batch processing operations for loop execution
  */
 
-import { MetricsManager } from '../../../core/metricsManager';
-import { createError, ERROR_KINDS, BATCH_PRIORITY_enum,BATCH_STATUS_enum  } from '../../../../types/common/commonErrorTypes';
-import {
+import { createError, ERROR_KINDS } from '../../../../types/common/errorTypes';
+import { 
+    BATCH_STATUS_enum,
+    BATCH_PRIORITY_enum,
+    MANAGER_CATEGORY_enum,
+    AGENT_STATUS_enum
+} from '../../../../types/common/enumTypes';
+import { CoreManager } from '../../../core/coreManager';
+import type { IBaseManager, IBaseManagerMetadata } from '../../../../types/agent/agentManagerTypes';
+import { DEFAULT_BATCH_CONFIG } from '../../../../types/agent';
+import type {
     IBatchOperation,
     IBatchMetrics,
-    IBatchConfig,
-    DEFAULT_BATCH_CONFIG
+    IBatchConfig
 } from '../../../../types/agent';
-import type { ILoopContext } from '../../../../types/agent/agentLoopTypes';
+import type { ILoopContext } from '../../../../types/agent/agentExecutionFlow';
 
-/**
- * Manages batch processing operations
- */
-export class BatchManager {
-    private static instance: BatchManager;
-    private readonly metricsManager: MetricsManager;
+export class BatchManager extends CoreManager implements IBaseManager {
+    protected static _instance: BatchManager;
     private readonly operationQueues: Map<BATCH_PRIORITY_enum, IBatchOperation[]>;
     private readonly metrics: IBatchMetrics;
     private readonly config: IBatchConfig;
     private processingBatch: boolean;
+    private isInitialized = false;
+    public readonly category = MANAGER_CATEGORY_enum.SERVICE;
 
-    private constructor() {
-        this.metricsManager = MetricsManager.getInstance();
+    protected constructor() {
+        super();
+        this.registerDomainManager('BatchManager', this);
         this.operationQueues = new Map();
         this.config = { ...DEFAULT_BATCH_CONFIG };
         this.metrics = this.createInitialMetrics();
@@ -42,10 +48,10 @@ export class BatchManager {
     }
 
     public static getInstance(): BatchManager {
-        if (!BatchManager.instance) {
-            BatchManager.instance = new BatchManager();
+        if (!BatchManager._instance) {
+            BatchManager._instance = new BatchManager();
         }
-        return BatchManager.instance;
+        return BatchManager._instance;
     }
 
     /**
@@ -136,6 +142,9 @@ export class BatchManager {
             averageProcessingTime: 0,
             queueLength: 0,
             resourceUsage: {
+                component: 'BatchManager',
+                category: 'System',
+                version: '1.0',
                 cpuUsage: 0,
                 memoryUsage: process.memoryUsage().heapUsed,
                 diskIO: { read: 0, write: 0 },
@@ -153,6 +162,9 @@ export class BatchManager {
         const now = Date.now();
         this.metrics.queueLength = this.getTotalQueueSize();
         this.metrics.resourceUsage = {
+            component: 'BatchManager',
+            category: 'System',
+            version: '1.0',
             cpuUsage: process.cpuUsage().user / 1000000,
             memoryUsage: process.memoryUsage().heapUsed,
             diskIO: { read: 0, write: 0 },
@@ -175,7 +187,7 @@ export class BatchManager {
                 this.processingBatch = true;
                 await this.processBatch();
             } catch (error) {
-                this.logError('Batch processing error', error);
+                this.logError('Batch processing error', error instanceof Error ? error : new Error(String(error)));
             } finally {
                 this.processingBatch = false;
             }
@@ -224,7 +236,7 @@ export class BatchManager {
                     operation.status = BATCH_STATUS_enum.PENDING;
                     operation.timeout = Date.now() + this.config.processingTimeout;
                 }
-                this.logError(`Operation ${operation.id} failed`, error);
+                this.logError(`Operation ${operation.id} failed`, error instanceof Error ? error : new Error(String(error)));
             }
         }
 
@@ -248,12 +260,45 @@ export class BatchManager {
     private async processOperation(operation: IBatchOperation): Promise<void> {
         // Implementation would depend on specific use cases
         // This is a placeholder for the actual implementation
+        console.log(`Processing operation with ID: ${operation.id}`);
         await new Promise(resolve => setTimeout(resolve, 100));
     }
 
-    private logError(message: string, error?: unknown): void {
-        console.error(`BatchManager Error: ${message}`, error);
+    public async initialize(): Promise<void> {
+        if (this.isInitialized) return;
+
+        try {
+            // Start batch processing loop
+            this.startProcessingLoop();
+            this.isInitialized = true;
+            this.logInfo('BatchManager initialized successfully');
+        } catch (error) {
+            await this.handleError(error, 'Failed to initialize batch manager', ERROR_KINDS.InitializationError);
+            throw error;
+        }
     }
+
+    public async validate(): Promise<boolean> {
+        return this.isInitialized;
+    }
+
+    public getMetadata(): IBaseManagerMetadata {
+        return {
+            category: this.category,
+            operation: 'batch-processing',
+            duration: 0,
+            status: 'success',
+            agent: {
+                id: 'system',
+                name: 'BatchManager',
+                role: 'system',
+                status: AGENT_STATUS_enum.IDLE
+            },
+            timestamp: Date.now(),
+            component: this.constructor.name
+        };
+    }
+
 }
 
 export default BatchManager.getInstance();

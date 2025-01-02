@@ -5,18 +5,22 @@
  */
 
 import { CoreManager } from '../../core/coreManager';
+import { MetricsValidator } from '../../validation/metricsValidator';
 import type { ITeamHandlerMetadata } from '../../../types/team/teamBaseTypes';
-import type { ITeamMetrics } from '../../../types/team/teamMetricTypes';
-import { WORKFLOW_STATUS_enum, AGENT_STATUS_enum, TASK_STATUS_enum } from '../../../types/common/commonEnums';
+import type { ITeamMetrics, ITeamThroughputMetrics } from '../../../types/team/teamMetricTypes';
+import { MANAGER_CATEGORY_enum } from '../../../types/common/enumTypes';
+import { createBaseMetadata } from '../../../types/common/baseTypes';
 
 export class TeamMetricsManager extends CoreManager {
     private static instance: TeamMetricsManager | null = null;
     private readonly metrics: Map<string, ITeamMetrics>;
+    private readonly metricsValidator: MetricsValidator;
 
     private constructor() {
         super();
         this.registerDomainManager('TeamMetricsManager', this);
         this.metrics = new Map();
+        this.metricsValidator = MetricsValidator.getInstance();
     }
 
     public static getInstance(): TeamMetricsManager {
@@ -26,13 +30,23 @@ export class TeamMetricsManager extends CoreManager {
         return TeamMetricsManager.instance;
     }
 
+    public readonly category = MANAGER_CATEGORY_enum.METRICS;
+
     public getMetrics(teamId: string): ITeamMetrics | undefined {
         return this.metrics.get(teamId);
     }
 
-    public setMetrics(teamId: string, metrics: ITeamMetrics): void {
+    public async setMetrics(teamId: string, metrics: ITeamMetrics): Promise<void> {
+        // Validate metrics before setting
+        const validationResult = await this.metricsValidator.validateErrorMetrics(metrics.errors);
+        if (!validationResult.isValid) {
+            throw new Error(`Invalid team metrics: ${validationResult.errors.join(', ')}`);
+        }
+
         this.metrics.set(teamId, metrics);
-        this.logInfo(`Updated metrics for team ${teamId}`);
+        this.logInfo(`Updated metrics for team ${teamId}`, {
+            warnings: validationResult.warnings
+        });
     }
 
     public clearMetrics(teamId: string): void {
@@ -40,41 +54,54 @@ export class TeamMetricsManager extends CoreManager {
         this.logInfo(`Cleared metrics for team ${teamId}`);
     }
 
-    public getTeamPerformance(teamId: string): ITeamHandlerMetadata['performance'] | undefined {
+    public getTeamPerformance(teamId: string): ITeamHandlerMetadata {
         const metrics = this.getMetrics(teamId);
-        if (!metrics) return undefined;
+        const baseMetadata = createBaseMetadata(this.constructor.name, 'getTeamPerformance');
+        
+        if (!metrics) {
+            return {
+                ...baseMetadata,
+                teamId,
+                teamName: '',
+                agentCount: 0,
+                taskCount: 0,
+                workflowStatus: '',
+                performance: {
+                    responseTime: {
+                        average: 0,
+                        min: 0,
+                        max: 0
+                    },
+                    throughput: {
+                        requestsPerSecond: 0,
+                        bytesPerSecond: 0
+                    },
+                    timestamp: Date.now(),
+                    agentUtilization: 0,
+                    taskCompletion: 0
+                }
+            };
+        }
+
+        const throughput: ITeamThroughputMetrics = metrics.performance.throughput;
 
         return {
-            executionTime: {
-                total: metrics.performance.thinking.reasoningTime.total || 0,
-                average: metrics.performance.thinking.reasoningTime.average || 0,
-                min: metrics.performance.thinking.reasoningTime.min || 0,
-                max: metrics.performance.thinking.reasoningTime.max || 0
-            },
-            throughput: {
-                operationsPerSecond: metrics.performance.executionTime.total / metrics.timestamp || 0,
-                dataProcessedPerSecond: metrics.performance.throughput.operationsPerSecond || 0
-            },
-            errorMetrics: {
-                totalErrors: metrics.performance.errorMetrics.totalErrors || 0,
-                errorRate: metrics.performance.errorMetrics.errorRate || 0
-            },
-            resourceUtilization: {
-                cpuUsage: metrics.resource.agentAllocation.efficiency || 0,
-                memoryUsage: metrics.resource.cognitive.memoryAllocation || 0,
-                diskIO: {
-                    read: metrics.resource.agents['system']?.diskIO?.read || 0,
-                    write: metrics.resource.agents['system']?.diskIO?.write || 0
+            ...baseMetadata,
+            teamId,
+            teamName: teamId,
+            agentCount: metrics.resources.agentCount,
+            taskCount: metrics.resources.taskCount,
+            workflowStatus: 'RUNNING',
+            performance: {
+                responseTime: metrics.performance.responseTime,
+                throughput: {
+                    requestsPerSecond: throughput.requestsPerSecond,
+                    bytesPerSecond: throughput.bytesPerSecond
                 },
-                networkUsage: {
-                    upload: metrics.resource.agents['system']?.networkUsage?.upload || 0,
-                    download: metrics.resource.agents['system']?.networkUsage?.download || 0
-                },
-                timestamp: metrics.timestamp
-            },
-            timestamp: metrics.timestamp,
-            agentUtilization: metrics.usage.utilizationMetrics.agentUtilization.rate || 0,
-            taskCompletion: metrics.performance.efficiencyMetrics.taskCompletion.rate || 0
+                timestamp: metrics.timestamp,
+                agentUtilization: metrics.usage.resourceUtilization,
+                taskCompletion: throughput.taskCompletionRate
+            }
         };
     }
 }

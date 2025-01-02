@@ -4,55 +4,29 @@
  * @description Centralized iteration management with integrated handler functionality
  */
 
-import { CoreManager } from '../../core/coreManager';
-import { ERROR_KINDS, createError, toErrorType } from '../../../types/common/commonErrorTypes';
-import { MetadataFactory } from '../../../utils/factories/metadataFactory';
-import { createBaseMetadata } from '../../../types/common/commonMetadataTypes';
-import { AGENT_STATUS_enum } from '../../../types/common/commonEnums';
 import { performance } from 'perf_hooks';
-import AgentMetricsManager from './agentMetricsManager';
-import { LLMResult } from '@langchain/core/outputs';
-import { createDefaultCostDetails } from '../../../utils/helpers/llm/llmCostCalculator';
+import { CoreManager } from '../../core/coreManager';
 import { MetricsManager } from '../../core/metricsManager';
+import { ERROR_KINDS, createError } from '../../../types/common/errorTypes';
+import { createBaseMetadata } from '../../../types/common/baseTypes';
+import { MANAGER_CATEGORY_enum, AGENT_STATUS_enum } from '../../../types/common/enumTypes';
+import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
+import { createDefaultCostDetails } from '../../../utils/helpers/llm/llmCostCalculator';
 
-// Import types from canonical locations
+// Import types
 import type { 
     IIterationStartParams,
     IIterationEndParams,
     IIterationContext,
-    IIterationControl,
     IIterationHandlerResult,
-    IIterationHandlerMetadata,
-    IIterationTypeGuards
+    IIterationHandlerMetadata
 } from '../../../types/agent/agentIterationTypes';
+import type { IAgentType } from '../../../types/agent/agentBaseTypes';
+import type { ITaskType } from '../../../types/task/taskBaseTypes';
+import type { IAgentMetrics } from '../../../types/agent/agentMetricTypes';
 
-import type { 
-    IAgentType
-} from '../../../types/agent/agentBaseTypes';
-
-import type { 
-    ITaskType 
-} from '../../../types/task/taskBaseTypes';
-
-import type {
-    IAgentResourceMetrics,
-    IAgentPerformanceMetrics,
-    IAgentUsageMetrics
-} from '../../../types/agent/agentMetricTypes';
-
-import type { ILLMUsageMetrics } from '../../../types/llm/llmMetricTypes';
-import type { IStandardCostDetails } from '../../../types/common/commonMetricTypes';
-
+// Operation phase type
 type OperationPhase = 'pre-execution' | 'execution' | 'post-execution' | 'error';
-
-interface OperationContext {
-    operation: string;
-    phase: OperationPhase;
-    startTime: number;
-    resourceMetrics: IAgentResourceMetrics;
-    performanceMetrics: IAgentPerformanceMetrics;
-    errorContext?: any;
-}
 
 /**
  * Manages iteration control and tracking for agent operations
@@ -61,15 +35,14 @@ export class IterationManager extends CoreManager {
     private static instance: IterationManager;
     private readonly activeIterations: Map<string, IIterationContext>;
     private readonly iterationTimes: Map<string, number[]>;
-    private readonly metricsManager: typeof AgentMetricsManager;
-    private readonly coreMetricsManager: MetricsManager;
+    public readonly category = MANAGER_CATEGORY_enum.EXECUTION;
+    protected readonly metricsManager: MetricsManager;
 
     private constructor() {
         super();
         this.activeIterations = new Map();
         this.iterationTimes = new Map();
-        this.metricsManager = AgentMetricsManager;
-        this.coreMetricsManager = MetricsManager.getInstance();
+        this.metricsManager = MetricsManager.getInstance();
         this.registerDomainManager('IterationManager', this);
     }
 
@@ -81,126 +54,99 @@ export class IterationManager extends CoreManager {
     }
 
     /**
-     * Handle iteration start
+     * Handle start of an iteration
      */
-    public async handleIterationStart(params: IIterationStartParams): Promise<IIterationHandlerResult<IIterationContext>> {
+    public async handleIterationStart(
+        params: IIterationStartParams
+    ): Promise<IIterationHandlerResult<IIterationContext>> {
         const { agent, task, iterations, maxAgentIterations } = params;
         const iterationKey = this.generateIterationKey(agent.id, task.id);
-        const metadata = await this.createIterationMetadata(agent, task, iterations, maxAgentIterations);
-        const defaultCosts = createDefaultCostDetails('USD');
+        const startTime = Date.now();
 
-        return this.handleIterationOperation(
-            async () => {
-                await this.handleStatusTransition({
-                    entity: 'agent',
-                    entityId: agent.id,
-                    currentStatus: agent.status,
-                    targetStatus: AGENT_STATUS_enum.ITERATION_START,
-                    context: {
-                        iterations,
-                        maxAgentIterations,
-                        timestamp: Date.now()
-                    }
-                });
+        try {
+            // Initialize iteration context
+            const context = await this.initializeIterationContext(
+                agent.id, 
+                iterations,
+                maxAgentIterations, 
+                startTime
+            );
 
-                const startTime = Date.now();
-                const currentMetrics = await this.metricsManager.getCurrentMetrics(agent.id);
+            // Update agent status
+            await this.handleStatusTransition({
+                entity: 'agent',
+                entityId: agent.id,
+                currentStatus: agent.status,
+                targetStatus: AGENT_STATUS_enum.ITERATION_START,
+                context: { iterations, maxAgentIterations, timestamp: startTime }
+            });
 
-                // Create iteration context focused on state and metrics
-                const context: IIterationContext = {
-                    startTime,
-                    iterations: iterations + 1,
-                    maxIterations: maxAgentIterations,
-                    lastUpdateTime: startTime,
-                    status: 'running',
-                    performance: currentMetrics.performance,
-                    resources: currentMetrics.resources,
-                    usage: currentMetrics.usage,
-                    costs: defaultCosts
-                };
+            // Store context
+            this.activeIterations.set(iterationKey, context);
 
-                // Store the iteration context with its key
-                this.activeIterations.set(iterationKey, context);
+            // Track iteration start
+            await this.trackIterationMetric('start', agent.id, iterations, maxAgentIterations);
 
-                this.log(
-                    `Starting iteration ${iterations + 1}/${maxAgentIterations} for agent ${agent.name}`,
-                    'IterationManager',
-                    'handleIterationStart'
-                );
-
-                return {
-                    success: true,
-                    data: context,
-                    metadata
-                };
-            },
-            agent,
-            task,
-            metadata
-        );
+            // Return success result
+            return {
+                success: true,
+                data: context,
+                metadata: await this.createIterationMetadata(agent, task, iterations, maxAgentIterations)
+            };
+        } catch (error) {
+            return this.handleIterationError(error, agent, task, iterations, maxAgentIterations);
+        }
     }
 
     /**
-     * Handle iteration end
+     * Handle end of an iteration
      */
-    public async handleIterationEnd(params: IIterationEndParams): Promise<IIterationHandlerResult<IIterationContext>> {
+    public async handleIterationEnd(
+        params: IIterationEndParams
+    ): Promise<IIterationHandlerResult<IIterationContext>> {
         const { agent, task, iterations, maxAgentIterations } = params;
         const iterationKey = this.generateIterationKey(agent.id, task.id);
-        const metadata = await this.createIterationMetadata(agent, task, iterations, maxAgentIterations);
+        const endTime = Date.now();
 
-        return this.handleIterationOperation(
-            async () => {
-                await this.handleStatusTransition({
-                    entity: 'agent',
-                    entityId: agent.id,
-                    currentStatus: agent.status,
-                    targetStatus: AGENT_STATUS_enum.ITERATION_END,
-                    context: {
-                        iterations,
-                        maxAgentIterations,
-                        timestamp: Date.now()
-                    }
-                });
+        try {
+            // Get and validate context
+            const context = this.getIterationContext(iterationKey);
+            
+            // Update context
+            context.endTime = endTime;
+            context.status = 'completed';
+            
+            // Update timing metrics
+            this.updateIterationTiming(iterationKey, context.startTime, endTime);
 
-                const context = this.getIterationContext(iterationKey);
-                const endTime = Date.now();
-                context.endTime = endTime;
-                context.status = 'completed';
+            // Update agent status
+            await this.handleStatusTransition({
+                entity: 'agent',
+                entityId: agent.id,
+                currentStatus: agent.status,
+                targetStatus: AGENT_STATUS_enum.ITERATION_END,
+                context: { iterations, maxAgentIterations, timestamp: endTime }
+            });
 
-                // Update iteration times
-                const times = this.iterationTimes.get(iterationKey) || [];
-                times.push(endTime - context.startTime);
-                this.iterationTimes.set(iterationKey, times);
+            // Update metrics
+            await this.trackIterationMetric('end', agent.id, iterations, maxAgentIterations);
 
-                // Update metrics
-                const currentMetrics = await this.metricsManager.getCurrentMetrics(agent.id);
-                context.performance = currentMetrics.performance;
-                context.resources = currentMetrics.resources;
-                context.usage = currentMetrics.usage;
+            // Cleanup
+            this.cleanupIteration(iterationKey);
 
-                this.log(
-                    `Completed iteration ${iterations + 1}/${maxAgentIterations} for agent ${agent.name}`,
-                    'IterationManager',
-                    'handleIterationEnd'
-                );
-
-                const result = context;
-                this.cleanupIteration(iterationKey);
-
-                return {
-                    success: true,
-                    data: result,
-                    metadata
-                };
-            },
-            agent,
-            task,
-            metadata
-        );
+            // Return success result
+            return {
+                success: true,
+                data: context,
+                metadata: await this.createIterationMetadata(agent, task, iterations, maxAgentIterations)
+            };
+        } catch (error) {
+            return this.handleIterationError(error, agent, task, iterations, maxAgentIterations);
+        }
     }
 
     /**
-     * Handle maximum iterations error
+     * Handle max iterations error
      */
     public async handleMaxIterationsError(params: {
         agent: IAgentType;
@@ -211,62 +157,122 @@ export class IterationManager extends CoreManager {
     }): Promise<IIterationHandlerResult<IIterationContext>> {
         const { agent, task, iterations, maxIterations, error } = params;
         const iterationKey = this.generateIterationKey(agent.id, task.id);
-        const metadata = await this.createIterationMetadata(agent, task, iterations, maxIterations);
 
-        return this.handleIterationOperation(
-            async () => {
-                await this.handleStatusTransition({
-                    entity: 'agent',
-                    entityId: agent.id,
-                    currentStatus: agent.status,
-                    targetStatus: AGENT_STATUS_enum.MAX_ITERATIONS_ERROR,
-                    context: {
-                        iterations,
-                        maxIterations,
-                        error: error.message,
-                        timestamp: Date.now()
-                    }
-                });
+        try {
+            // Get and validate context
+            const context = this.getIterationContext(iterationKey);
+            
+            // Update context
+            context.status = 'error';
+            context.error = createError({
+                message: error.message,
+                type: ERROR_KINDS.ExecutionError,
+                context: { agentId: agent.id, taskId: task.id, iterations, maxIterations }
+            });
 
-                const context = this.getIterationContext(iterationKey);
-                context.status = 'error';
-                context.error = toErrorType(error);
+            // Update agent status
+            await this.handleStatusTransition({
+                entity: 'agent',
+                entityId: agent.id,
+                currentStatus: agent.status,
+                targetStatus: AGENT_STATUS_enum.MAX_ITERATIONS_ERROR,
+                context: { iterations, maxIterations, error: error.message, timestamp: Date.now() }
+            });
 
-                // Update metrics with error
-                const currentMetrics = await this.metricsManager.getCurrentMetrics(agent.id);
-                currentMetrics.performance.errorMetrics.totalErrors++;
-                currentMetrics.performance.errorMetrics.errorRate = 
-                    currentMetrics.performance.errorMetrics.totalErrors / context.iterations;
-                
-                context.performance = currentMetrics.performance;
-                context.resources = currentMetrics.resources;
-                context.usage = currentMetrics.usage;
+            // Track error metrics
+            await this.trackIterationMetric('error', agent.id, iterations, maxIterations);
 
-                const result = context;
-                this.cleanupIteration(iterationKey);
+            // Cleanup
+            this.cleanupIteration(iterationKey);
 
-                return {
-                    success: false,
-                    data: result,
-                    metadata,
-                    error: toErrorType(error)
-                };
-            },
-            agent,
-            task,
-            metadata
-        );
+            // Return error result
+            return {
+                success: false,
+                data: context,
+                error: context.error,
+                metadata: await this.createIterationMetadata(agent, task, iterations, maxIterations)
+            };
+        } catch (innerError) {
+            return this.handleIterationError(innerError, agent, task, iterations, maxIterations);
+        }
+    }
+
+    // ─── Private Helper Methods ────────────────────────────────────────────────────
+
+    /**
+     * Initialize iteration context
+     */
+    private async initializeIterationContext(
+        agentId: string,
+        iterations: number,
+        maxIterations: number,
+        startTime: number
+    ): Promise<IIterationContext> {
+        const metrics = await this.metricsManager.get({
+            domain: MetricDomain.AGENT,
+            timeRange: 'hour',
+            metadata: { agentId }
+        });
+
+        return {
+            startTime,
+            iterations: iterations + 1,
+            maxIterations,
+            lastUpdateTime: startTime,
+            status: 'running',
+            performance: metrics.data?.performance || {},
+            resources: metrics.data?.resources || {},
+            usage: metrics.data?.usage || {},
+            costs: createDefaultCostDetails('USD')
+        };
     }
 
     /**
-     * Generate a unique key for iteration tracking
+     * Track iteration metrics
+     */
+    private async trackIterationMetric(
+        phase: 'start' | 'end' | 'error',
+        agentId: string,
+        iterations: number,
+        maxIterations: number
+    ): Promise<void> {
+        await this.metricsManager.trackMetric({
+            domain: MetricDomain.AGENT,
+            type: MetricType.PERFORMANCE,
+            value: iterations,
+            timestamp: Date.now(),
+            metadata: {
+                phase,
+                agentId,
+                iterations,
+                maxIterations,
+                component: this.constructor.name
+            }
+        });
+    }
+
+    /**
+     * Update iteration timing
+     */
+    private updateIterationTiming(
+        iterationKey: string,
+        startTime: number,
+        endTime: number
+    ): void {
+        const times = this.iterationTimes.get(iterationKey) || [];
+        times.push(endTime - startTime);
+        this.iterationTimes.set(iterationKey, times);
+    }
+
+    /**
+     * Generate iteration key
      */
     private generateIterationKey(agentId: string, taskId: string): string {
         return `${agentId}-${taskId}`;
     }
 
     /**
-     * Get iteration context by key
+     * Get iteration context
      */
     private getIterationContext(key: string): IIterationContext {
         const context = this.activeIterations.get(key);
@@ -281,7 +287,7 @@ export class IterationManager extends CoreManager {
     }
 
     /**
-     * Clean up iteration resources
+     * Clean up iteration
      */
     private cleanupIteration(key: string): void {
         this.activeIterations.delete(key);
@@ -289,38 +295,7 @@ export class IterationManager extends CoreManager {
     }
 
     /**
-     * Handle iteration operation with error handling
-     */
-    private async handleIterationOperation<T>(
-        operation: () => Promise<T>,
-        agent: IAgentType,
-        task: ITaskType,
-        metadata: IIterationHandlerMetadata
-    ): Promise<T> {
-        const defaultContext = this.coreMetricsManager.createIterationContext();
-        const context: OperationContext = {
-            operation: 'handleIteration',
-            phase: 'pre-execution',
-            startTime: performance.now(),
-            resourceMetrics: defaultContext.resources,
-            performanceMetrics: defaultContext.performance,
-        };
-
-        try {
-            context.phase = 'execution';
-            const result = await operation();
-            context.phase = 'post-execution';
-            return result;
-        } catch (error) {
-            context.phase = 'error';
-            context.errorContext = error;
-            await this.handleIterationError(agent, task, error as Error, context);
-            throw error;
-        }
-    }
-
-    /**
-     * Create iteration metadata with proper LLM metrics
+     * Create iteration metadata
      */
     private async createIterationMetadata(
         agent: IAgentType,
@@ -328,75 +303,40 @@ export class IterationManager extends CoreManager {
         iterations: number,
         maxIterations: number
     ): Promise<IIterationHandlerMetadata> {
-        const currentMetrics = await this.metricsManager.getCurrentMetrics(agent.id);
-        const defaultCosts = createDefaultCostDetails('USD');
-        
-        // Create base result for metrics initialization
-        const baseResult = MetadataFactory.createSuccessResult({});
-        const { metrics: baseMetrics } = baseResult.metadata.details;
-
-        // Create LLM usage metrics with all required properties
-        const llmUsageMetrics: ILLMUsageMetrics = {
-            // Base metrics from IUsageMetrics
-            totalRequests: currentMetrics.usage.totalRequests,
-            activeUsers: currentMetrics.usage.activeUsers,
-            requestsPerSecond: currentMetrics.usage.requestsPerSecond,
-            averageResponseSize: currentMetrics.usage.averageResponseSize,
-            peakMemoryUsage: currentMetrics.usage.peakMemoryUsage,
-            uptime: currentMetrics.usage.uptime,
-            rateLimit: currentMetrics.usage.rateLimit,
-            timestamp: currentMetrics.usage.timestamp,
-            // Additional LLM-specific metrics
-            activeInstances: 1,
-            averageResponseLength: 0,
-            tokenDistribution: {
-                prompt: 0,
-                completion: 0,
-                total: 0
-            },
-            modelDistribution: {
-                gpt4: 0,
-                gpt35: 0,
-                other: 1
-            }
-        };
+        const metrics = await this.metricsManager.get({
+            domain: MetricDomain.AGENT,
+            timeRange: 'hour',
+            metadata: { agentId: agent.id }
+        });
 
         return {
-            ...createBaseMetadata('IterationManager', 'handleIteration'),
+            ...createBaseMetadata(this.constructor.name, 'iteration'),
             iteration: {
                 current: iterations,
                 max: maxIterations,
                 status: 'running',
-                performance: currentMetrics.performance,
+                performance: metrics.data?.performance || {},
                 context: {
                     startTime: Date.now(),
                     totalTokens: 0,
                     confidence: 0,
                     reasoningChain: []
                 },
-                resources: currentMetrics.resources,
-                usage: currentMetrics.usage,
-                costs: defaultCosts
+                resources: metrics.data?.resources || {},
+                usage: metrics.data?.usage || {},
+                costs: createDefaultCostDetails('USD')
             },
             agent: {
                 id: agent.id,
                 name: agent.name,
-                metrics: {
-                    iterations: 0,
-                    executionTime: 0,
-                    llmUsageMetrics,
-                    performance: currentMetrics.performance
-                }
+                role: agent.role,
+                status: agent.status,
+                metrics: { iterations: 0, executionTime: 0 }
             },
             task: {
                 id: task.id,
                 title: task.title,
-                metrics: {
-                    iterations: 0,
-                    executionTime: 0,
-                    llmUsageMetrics,
-                    performance: currentMetrics.performance
-                }
+                metrics: { iterations: 0, executionTime: 0 }
             }
         };
     }
@@ -405,37 +345,29 @@ export class IterationManager extends CoreManager {
      * Handle iteration error
      */
     private async handleIterationError(
+        error: unknown,
         agent: IAgentType,
         task: ITaskType,
-        error: Error,
-        context: OperationContext
-    ): Promise<void> {
-        const errorMetadata = MetadataFactory.createErrorMetadata(error);
-
-        await this.handleStatusTransition({
-            entity: 'agent',
-            entityId: agent.id,
-            currentStatus: agent.status,
-            targetStatus: AGENT_STATUS_enum.ITERATION_COMPLETE,
-            context: {
-                agentId: agent.id,
-                taskId: task.id,
-                error: errorMetadata,
-                operation: context.operation,
-                phase: context.phase,
-                startTime: context.startTime,
-                resourceMetrics: context.resourceMetrics,
-                performanceMetrics: context.performanceMetrics
-            }
+        iterations: number,
+        maxIterations: number
+    ): Promise<IIterationHandlerResult<IIterationContext>> {
+        const formattedError = createError({
+            message: error instanceof Error ? error.message : String(error),
+            type: ERROR_KINDS.ExecutionError,
+            context: { agentId: agent.id, taskId: task.id, iterations, maxIterations }
         });
 
-        this.log(
-            `Iteration error: ${error.message}`,
-            agent.name,
-            task.id,
-            'error',
-            error
+        this.logError(
+            `Iteration error: ${formattedError.message}`,
+            formattedError,
+            { agentId: agent.id, taskId: task.id }
         );
+
+        return {
+            success: false,
+            error: formattedError,
+            metadata: await this.createIterationMetadata(agent, task, iterations, maxIterations)
+        };
     }
 }
 

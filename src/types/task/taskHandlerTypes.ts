@@ -1,70 +1,172 @@
 /**
- * @file taskHandlerTypes.ts
- * @path KaibanJS/src/types/task/taskHandlerTypes.ts
- * @description Task handler type definitions and interfaces
- */
+* @file taskHandlerTypes.ts
+* @path src/types/task/taskHandlerTypes.ts
+* @description Task handler type definitions and interfaces
+*
+* @module @types/task
+*/
 
 import type { ILLMUsageMetrics } from '../llm/llmMetricTypes';
 import type { IStandardCostDetails } from '../common/baseTypes';
 import type { ITaskType } from './taskBaseTypes';
-import type { IHandlerResult } from '../common/baseTypes';
-import type { IBaseHandlerMetadata } from '../common/baseTypes';
+import type { IHandlerResult, IBaseHandlerMetadata } from '../common/baseTypes';
 import type { ITaskResourceMetrics, ITaskPerformanceMetrics, ITaskUsageMetrics } from './taskMetricTypes';
 import type { ValidationErrorType, ValidationWarningType } from '../common/validationTypes';
-import type { IErrorMetrics } from '../metrics/base/performanceMetrics';
-import { BATCH_PRIORITY_enum, ERROR_SEVERITY_enum } from '../common/enumTypes';
-import { ERROR_KINDS } from '../common/errorTypes';
-import { RecoveryStrategyType } from '../common/recoveryTypes';
+import type { IAgentType } from '../agent/agentBaseTypes';
+import type { IErrorType } from '../common/errorTypes';
+import type { LLMResponse } from '../llm/llmResponseTypes';
+import { BATCH_PRIORITY_enum, TASK_STATUS_enum } from '../common/enumTypes';
 
-// ─── Task Validation Types ────────────────────────────────────────────────────
+// ─── Handler Parameter Types ──────────────────────────────────────────────────
+
+export interface ITaskExecutionParams {
+    task: ITaskType;
+    agent: IAgentType;
+    input?: unknown;
+    metadata?: Record<string, unknown>;
+    options?: {
+        timeout?: number;
+        retries?: number;
+        signal?: AbortSignal;
+    };
+}
+
+export interface ITaskCompletionParams {
+    task: ITaskType;
+    agent: IAgentType;
+    result: LLMResponse | null;
+    store: {
+        get: <T>(key: string) => Promise<T | undefined>;
+        set: <T>(key: string, value: T) => Promise<void>;
+        delete: (key: string) => Promise<void>;
+        clear: () => Promise<void>;
+    };
+}
+
+export interface ITaskErrorParams {
+    task: ITaskType;
+    error: IErrorType;
+    context?: Record<string, unknown>;
+    store?: {
+        get: <T>(key: string) => Promise<T | undefined>;
+        set: <T>(key: string, value: T) => Promise<void>;
+        delete: (key: string) => Promise<void>;
+        clear: () => Promise<void>;
+    };
+}
+
+export interface ITaskUpdateParams {
+    task: ITaskType;
+    updates: Partial<ITaskType>;
+    metadata?: Record<string, unknown>;
+}
+
+export interface ITaskValidationParams {
+    task: ITaskType;
+    validatorId?: string;
+    context?: Record<string, unknown>;
+}
+
+// ─── Handler Result Types ───────────────────────────────────────────────────────
 
 export interface ITaskValidationResult {
-    isValid: boolean;                 // Validation status
-    errors: ValidationErrorType[];    // List of validation errors
-    warnings: ValidationWarningType[]; // List of validation warnings
-    context?: Record<string, unknown>; // Optional validation context
+    isValid: boolean;
+    errors: ValidationErrorType[];
+    warnings: ValidationWarningType[];
+    context?: {
+        taskId: string;
+        taskStatus: keyof typeof TASK_STATUS_enum;
+        validationTime: number;
+    };
+    metadata?: Record<string, unknown>;
+}
+
+export interface ITaskHandlerResponse {
+    success: boolean;
+    taskId: string;
+    status: keyof typeof TASK_STATUS_enum;
+    timestamp: number;
+    metadata: IBaseHandlerMetadata;
 }
 
 // ─── Task Metrics Types ──────────────────────────────────────────────────────
 
 export interface ITaskMetrics {
-    costs: IStandardCostDetails;            // Cost-related metrics
-    llmUsageMetrics: ILLMUsageMetrics;      // LLM usage metrics
-    resources: ITaskResourceMetrics;        // Resource utilization metrics
-    performance: ITaskPerformanceMetrics;   // Performance metrics
-    usage: ITaskUsageMetrics;               // Usage metrics
-    startTime: number;                      // Execution start timestamp
-    endTime: number;                        // Execution end timestamp
-    duration: number;                       // Total execution duration
-    iterationCount: number;                 // Number of iterations
+    costs: IStandardCostDetails;
+    llmUsageMetrics: ILLMUsageMetrics;
+    resources: ITaskResourceMetrics;
+    performance: ITaskPerformanceMetrics;
+    usage: ITaskUsageMetrics;
+    startTime: number;
+    endTime: number;
+    duration: number;
+    iterationCount: number;
 }
 
 // ─── Task Handler Types ──────────────────────────────────────────────────────
 
 export interface ITaskHandlerMetadata extends IBaseHandlerMetadata {
-    taskId: string;           // Task ID
-    taskName: string;         // Task name
-    status: string;           // Task status
-    priority: BATCH_PRIORITY_enum; // Task priority using batch priority enum
-    assignedAgent: string;    // Assigned agent ID
-    progress: number;         // Task progress
-    metrics: {                // Task metrics
-        resources: ITaskResourceMetrics;    // Resource metrics
-        usage: ITaskUsageMetrics;           // Usage metrics
-        performance: ITaskPerformanceMetrics; // Performance metrics
+    taskId: string;
+    taskName: string;
+    status: string;
+    priority: BATCH_PRIORITY_enum;
+    assignedAgent: string;
+    progress: number;
+    metrics: {
+        resources: ITaskResourceMetrics;
+        usage: ITaskUsageMetrics;
+        performance: ITaskPerformanceMetrics;
+        timestamp: number;
+        component: string;
+        category: string;
+        version: string;
     };
-    dependencies: {           // Task dependencies
-        completed: string[];  // Completed dependencies
-        pending: string[];    // Pending dependencies
-        blocked: string[];    // Blocked dependencies
+    dependencies: {
+        completed: string[];
+        pending: string[];
+        blocked: string[];
     };
 }
 
 export interface ITaskHandlerResult<T = unknown> extends IHandlerResult<T, ITaskHandlerMetadata> {
-    success: boolean;         // Operation success status
-    data?: T;                 // Optional task output data
-    metadata: ITaskHandlerMetadata;  // Task metadata
+    success: boolean;
+    data?: T;
+    metadata: ITaskHandlerMetadata;
 }
+
+// ─── Type Guards ────────────────────────────────────────────────────────────
+
+export const TaskHandlerTypeGuards = {
+    isTaskCompletionParams: (value: unknown): value is ITaskCompletionParams => {
+        if (typeof value !== 'object' || value === null) return false;
+        const params = value as Partial<ITaskCompletionParams>;
+        return !!(params.task && params.agent && params.store);
+    },
+
+    isTaskErrorParams: (value: unknown): value is ITaskErrorParams => {
+        if (typeof value !== 'object' || value === null) return false;
+        const params = value as Partial<ITaskErrorParams>;
+        return !!(params.task && params.error);
+    },
+
+    isTaskValidationResult: (value: unknown): value is ITaskValidationResult => {
+        if (typeof value !== 'object' || value === null) return false;
+        const result = value as Partial<ITaskValidationResult>;
+        return (typeof result.isValid === 'boolean' && Array.isArray(result.errors));
+    },
+
+    isTaskHandlerResponse: (value: unknown): value is ITaskHandlerResponse => {
+        if (typeof value !== 'object' || value === null) return false;
+        const response = value as Partial<ITaskHandlerResponse>;
+        return (
+            typeof response.taskId === 'string' &&
+            typeof response.status === 'string' &&
+            typeof response.timestamp === 'number' &&
+            'success' in response &&
+            !!response.metadata
+        );
+    }
+};
 
 // ─── Factory Functions ───────────────────────────────────────────────────────
 
@@ -93,24 +195,11 @@ export const createEmptyTaskMetrics = (): ITaskMetrics => {
             gpt35: 0,
             other: 0
         },
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        component: '',
+        category: '',
+        version: ''
     };
-
-    // Initialize error distribution records with all enum values
-    const errorDistribution = Object.values(ERROR_KINDS).reduce(
-        (acc, key) => ({ ...acc, [key]: 0 }),
-        {} as Record<string, number>
-    );
-
-    const severityDistribution = Object.values(ERROR_SEVERITY_enum).reduce(
-        (acc, key) => ({ ...acc, [key]: 0 }),
-        {} as Record<string, number>
-    );
-
-    const strategyDistribution = Object.values(RecoveryStrategyType).reduce(
-        (acc, key) => ({ ...acc, [key]: 0 }),
-        {} as Record<string, number>
-    );
 
     return {
         costs: {
@@ -127,35 +216,26 @@ export const createEmptyTaskMetrics = (): ITaskMetrics => {
         resources: {
             cpuUsage: 0,
             memoryUsage: 0,
-            diskIO: {
-                read: 0,
-                write: 0
-            },
-            networkUsage: {
-                upload: 0,
-                download: 0
-            },
+            diskIO: { read: 0, write: 0 },
+            networkUsage: { upload: 0, download: 0 },
             timestamp: Date.now()
         },
         performance: {
             executionTime: {
-                total: 0,
                 average: 0,
                 min: 0,
                 max: 0
             },
             latency: {
-                total: 0,
                 average: 0,
                 min: 0,
                 max: 0
             },
             throughput: {
-                operationsPerSecond: 0,
-                dataProcessedPerSecond: 0
+                requestsPerSecond: 0,
+                bytesPerSecond: 0
             },
             responseTime: {
-                total: 0,
                 average: 0,
                 min: 0,
                 max: 0
@@ -163,41 +243,8 @@ export const createEmptyTaskMetrics = (): ITaskMetrics => {
             queueLength: 0,
             errorRate: 0,
             successRate: 1,
-            errorMetrics: {
-                totalErrors: 0,
-                errorRate: 0,
-                errorDistribution,
-                severityDistribution,
-                patterns: [],
-                impact: {
-                    severity: ERROR_SEVERITY_enum.ERROR,
-                    businessImpact: 0,
-                    userExperienceImpact: 0,
-                    systemStabilityImpact: 0,
-                    resourceImpact: {
-                        cpu: 0,
-                        memory: 0,
-                        io: 0
-                    }
-                },
-                recovery: {
-                    meanTimeToRecover: 0,
-                    recoverySuccessRate: 0,
-                    strategyDistribution,
-                    failedRecoveries: 0
-                },
-                prevention: {
-                    preventedCount: 0,
-                    preventionRate: 0,
-                    earlyWarnings: 0
-                },
-                trends: {
-                    dailyRates: [],
-                    weeklyRates: [],
-                    monthlyRates: []
-                }
-            },
             resourceUtilization: {
+                timestamp: Date.now(),
                 cpuUsage: 0,
                 memoryUsage: 0,
                 diskIO: {
@@ -207,8 +254,7 @@ export const createEmptyTaskMetrics = (): ITaskMetrics => {
                 networkUsage: {
                     upload: 0,
                     download: 0
-                },
-                timestamp: Date.now()
+                }
             },
             timestamp: Date.now()
         },
@@ -232,4 +278,4 @@ export const createEmptyTaskMetrics = (): ITaskMetrics => {
         duration: 0,
         iterationCount: 0
     };
-}
+};

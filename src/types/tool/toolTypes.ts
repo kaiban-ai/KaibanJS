@@ -7,8 +7,8 @@
  */
 
 import { Tool } from "@langchain/core/tools";
-import { IErrorType } from "../common/commonErrorTypes";
-import { IValidationResult } from "@types/common";
+import { IBaseError } from "../common/errorTypes";
+import { IValidationResult } from "../common/validationTypes";
 import { VALIDATION_ERROR_enum, VALIDATION_WARNING_enum } from "../common/enumTypes";
 
 /**
@@ -50,6 +50,17 @@ export interface IToolVersion {
     minor: number;
     patch: number;
     toString(): string;
+}
+
+/**
+ * Tool initialization state tracking
+ */
+export interface IToolInitializationState {
+    isInitializing: boolean;
+    dependencies: Set<string>;
+    dependents: Set<string>;
+    initializationPromise?: Promise<void>;
+    error?: Error;
 }
 
 /**
@@ -103,7 +114,7 @@ export interface IToolValidationResult extends Omit<IValidationResult, 'errors' 
 export interface IToolExecutionResult {
     success: boolean;
     output?: string;
-    error?: IErrorType;
+    error?: IBaseError;
     metadata?: {
         duration: number;
         startTime: number;
@@ -297,3 +308,4 @@ export const validateToolConfig = (config: unknown): IToolValidationResult => {
         toolSpecificWarnings
     };
 };
+

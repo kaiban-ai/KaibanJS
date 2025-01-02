@@ -6,15 +6,13 @@
 
 // Core utilities
 import ansis from "ansis";
-import { logger } from "../../core/logger";
+import logger from "../../../managers/core/logManager";
 
 // Import types from canonical locations
 import type { 
-    TaskCompletionProps, 
-    TaskStatusProps,
-    WorkflowStatusProps, 
-    WorkflowResultProps 
-} from '../../../types/common/loggingTypes';
+    ITaskLogMetadata,
+    IWorkflowLogMetadata
+} from '../../../types/team/teamLogsTypes';
 
 // ─── Format Constants ────────────────────────────────────────────────────────────
 
@@ -33,7 +31,13 @@ export function logPrettyTaskCompletion({
     currentTaskNumber,
     totalTasks,
     costDetails,
-}: TaskCompletionProps): void {
+}: ITaskLogMetadata['task'] & { 
+    agentName: string;
+    agentModel: string;
+    taskTitle: string;
+    currentTaskNumber: number;
+    totalTasks: number;
+}): void {
     const message = [
         ansis.black("\n" + SEPARATOR),
         ansis.bold(`| Task (${currentTaskNumber}/${totalTasks}) - status changed to ${ansis.green('DONE')}     |`),
@@ -70,7 +74,13 @@ export function logPrettyTaskStatus({
     taskTitle,
     taskStatus,
     agentName,
-}: TaskStatusProps): void {
+}: {
+    currentTaskNumber: number;
+    totalTasks: number;
+    taskTitle: string;
+    taskStatus: string;
+    agentName: string;
+}): void {
     const header = ansis.bold.black("||===========================================||");
     const taskInfo = ansis.bold.black(
         `|| Task (${currentTaskNumber}/${totalTasks}) - status changed to ${
@@ -97,7 +107,10 @@ export function logPrettyTaskStatus({
 export function logPrettyWorkflowStatus({ 
     status, 
     message 
-}: WorkflowStatusProps): void {
+}: {
+    status: string;
+    message: string;
+}): void {
     const formattedStatus = formatWorkflowStatus(status);
     logger.info(`[Workflow Status: ${formattedStatus}] ${message}`);
 }
@@ -105,10 +118,9 @@ export function logPrettyWorkflowStatus({
 // ─── Workflow Result Logging ───────────────────────────────────────────────────
 
 export function logPrettyWorkflowResult({ 
-    metadata 
-}: WorkflowResultProps): void {
+    workflow 
+}: IWorkflowLogMetadata): void {
     const { 
-        result, 
         duration, 
         llmUsageMetrics, 
         iterationCount, 
@@ -116,7 +128,7 @@ export function logPrettyWorkflowResult({
         teamName, 
         taskCount, 
         agentCount 
-    } = metadata;
+    } = workflow;
 
     const message = [
         ansis.black("\n" + SEPARATOR),
@@ -164,11 +176,4 @@ function formatWorkflowStatus(status: string): string {
         default:
             return status;
     }
-}
-
-/**
- * Format costs with consistent decimal places
- */
-function formatCost(value: number): string {
-    return value.toFixed(4);
 }

@@ -1,46 +1,81 @@
 /**
- * @file index.ts
- * @path KaibanJS/src/types/llm/message/index.ts
- * @description Message type exports for LLM domain
- * 
- * @module @types/llm/message
- */
+* @file index.ts
+* @path src/types/llm/message/index.ts
+* @description Message type exports for LLM domain
+*
+* @module @types/llm/message
+*/
 
 // Core Message Types from Langchain
-export {
+export type {
     BaseMessage,
     SystemMessage,
     HumanMessage,
     AIMessage,
-    AIMessageChunk
+    FunctionMessage,
+    AIMessageChunk,
+    BaseMessageChunk
 } from '@langchain/core/messages';
 
-// Custom Message Types
-export type {
-    IBaseMessageMetadataFields,
-    IBaseMessageMetadata,
-    IMessageHistoryEntry,
-    IMessageHistory,
-    IMessageValidationResult,
-    IStandardCostDetails
-} from './messagingBaseTypes';
+// Type Guards from Langchain
+export {
+    isAIMessage,
+    isHumanMessage,
+    isSystemMessage,
+    isFunctionMessage,
+    isBaseMessage,
+    isAIMessageChunk
+} from '@langchain/core/messages';
 
 // Error Types
 export type {
     IMessageErrorDetails,
     IMessageErrorContext,
-    IMessageErrorResourceMetrics,
     IMessageErrorFactory,
     IMessageErrorHandler,
-    IMessageErrorMetrics,
-    IMessageErrorRecoveryStrategy
+    IMessageErrorMetrics
 } from './messageErrorTypes';
 export { MessageErrorFactory } from './messageErrorTypes';
 
-// Type Guards
+// Base Message Types
+export type {
+    IBaseMessageMetadata,
+    IBaseMessageMetadataFields,
+    IMessageHistory,
+    IMessageHistoryEntry
+} from './messagingBaseTypes';
 export { MessageTypeGuards } from './messagingBaseTypes';
 
-// Re-export commonly used types from other modules
-export type { ITimeMetrics, IThroughputMetrics, IErrorMetrics } from '../../metrics/base/performanceMetrics';
-export type { IRateLimitMetrics } from '../../metrics/base/usageMetrics';
-export { MESSAGE_STATUS_enum, ERROR_TYPE_enum } from '../../common/enumTypes';
+// Metric Types
+/** @deprecated Use BaseMetricsManager for resource metrics */
+export type {
+    IMessagePerformanceMetrics,
+    IMessageUsageMetrics
+} from './messageMetricTypes';
+export { MessageMetricTypeGuards } from './messageMetricTypes';
+
+// Handler Types
+export type {
+    IMessageHandlerConfig,
+    IMessageStreamConfig,
+    IMessageValidationConfig,
+    IMessageBuildParams,
+    IMessageProcessResult,
+    IMessageTransformOptions,
+    IMessageResult
+} from './messagingHandlersTypes';
+export { MessageHandlerTypeGuards } from './messagingHandlersTypes';
+
+// Validation Types
+export type {
+    IMessageContentValidator,
+    IMessageMetadataValidator,
+    IMessageStateValidator,
+    IMessageValidator,
+    IMessageValidationRules,
+    IMessageValidationContext,
+    IMessageValidationResult
+} from './messageValidationTypes';
+
+// Note: Enums are imported from common/enumTypes:
+// import { LLM_PROVIDER_enum, MESSAGE_STATUS_enum } from '../../common/enumTypes';

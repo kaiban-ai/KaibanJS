@@ -8,7 +8,7 @@
 import { CoreManager } from './coreManager';
 import { v4 as uuidv4 } from 'uuid';
 import { createBaseMetadata } from '../../types/common/baseTypes';
-import { createError } from '../../types/common/errorTypes';
+import { createError, ERROR_KINDS } from '../../types/common/errorTypes';
 import { createValidationResult } from '../../types/common/validationTypes';
 
 // Single declaration for all runtime-needed imports
@@ -25,12 +25,12 @@ import type {
     IEventHandler,
     IEventRegistry
 } from '../../types/common/baseTypes';
-import type { IValidationResult } from '../../types/common/validationTypes';
+import type { IEventValidationResult } from '../../types/common/validationTypes';
 
 // ─── Event Registry Implementation ──────────────────────────────────────────────
 
 class EventRegistry implements IEventRegistry {
-    private handlers: Map<string, Set<IEventHandler<any>>> = new Map();
+    private handlers: Map<string, Set<IEventHandler<IBaseEvent>>> = new Map();
 
     registerHandler<T extends IBaseEvent>(
         eventType: string,
@@ -56,7 +56,7 @@ class EventRegistry implements IEventRegistry {
     }
 
     getHandlers<T extends IBaseEvent>(eventType: string): IEventHandler<T>[] {
-        return Array.from(this.handlers.get(eventType) || []);
+        return Array.from(this.handlers.get(eventType) || []) as IEventHandler<T>[];
     }
 }
 
@@ -87,7 +87,7 @@ export abstract class BaseEventEmitterManager extends CoreManager implements IEv
             if (!validationResult.isValid) {
                 throw createError({
                     message: `Event validation failed: ${validationResult.errors.join(', ')}`,
-                    type: 'ValidationError',
+                    type: ERROR_KINDS.ValidationError,
                     context: {
                         eventType: event.type,
                         eventId: event.id,
@@ -153,7 +153,7 @@ export abstract class BaseEventEmitterManager extends CoreManager implements IEv
     protected async validateEvent<T extends IBaseEvent>(
         event: T,
         handlers: IEventHandler<T>[]
-    ): Promise<IValidationResult> {
+    ): Promise<IEventValidationResult> {
         const startTime = Date.now();
         const validationResults = await Promise.all(
             handlers.map(handler => handler.validate(event))
@@ -167,7 +167,7 @@ export abstract class BaseEventEmitterManager extends CoreManager implements IEv
         const warnings = validationResults
             .flatMap(result => [...(result.warnings || [])]);
 
-        return createValidationResult({
+        return {
             isValid,
             errors,
             warnings,
@@ -176,6 +176,6 @@ export abstract class BaseEventEmitterManager extends CoreManager implements IEv
                 duration: Date.now() - startTime,
                 validatorName: 'EventEmitter'
             }
-        });
+        };
     }
 }

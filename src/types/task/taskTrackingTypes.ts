@@ -1,44 +1,34 @@
 /**
- * @file taskTrackingTypes.ts
- * @path KaibanJS/src/types/task/taskTrackingTypes.ts
- * @description Task tracking type definitions
- */
+* @file taskTrackingTypes.ts
+* @path src/types/task/taskTrackingTypes.ts
+* @description Task tracking and metrics type definitions
+*
+* @module @types/task
+*/
 
 import type { ILLMUsageMetrics } from '../llm/llmMetricTypes';
-import type { TASK_STATUS_enum } from '../common/commonEnums';
-import type { IStandardCostDetails } from '../common/commonMetricTypes';
+import type { TASK_STATUS_enum } from '../common/enumTypes';
+import type { IStandardCostDetails } from '../common/baseTypes';
 import type { ITaskType } from './taskBaseTypes';
 
-/**
- * Task tracking metrics interface
- */
+// ─── Task Tracking Types ────────────────────────────────────────────────────────
+
 export interface ITaskTrackingMetrics {
-    /** Task reference */
     task: ITaskType;
-    /** Task status */
     status: keyof typeof TASK_STATUS_enum;
-    /** Cost-related metrics */
     costs: IStandardCostDetails;
-    /** LLM usage metrics */
     llmUsageMetrics: ILLMUsageMetrics;
-    /** Progress tracking */
     progress: {
-        /** Current progress percentage (0-100) */
         percentage: number;
-        /** Time elapsed in milliseconds */
         timeElapsed: number;
-        /** Estimated time remaining in milliseconds */
         estimatedTimeRemaining?: number;
-        /** Current execution step */
         currentStep?: string;
-        /** Reason for blocking if status is BLOCKED */
         blockingReason?: string;
     };
 }
 
-/**
- * Create empty task tracking metrics
- */
+// ─── Factory Functions ─────────────────────────────────────────────────────────
+
 export const createEmptyTaskTrackingMetrics = (task: ITaskType): ITaskTrackingMetrics => ({
     task,
     status: 'PENDING',
@@ -54,9 +44,10 @@ export const createEmptyTaskTrackingMetrics = (task: ITaskType): ITaskTrackingMe
     },
     llmUsageMetrics: {
         totalRequests: 0,
+        activeUsers: 0,
         activeInstances: 0,
         requestsPerSecond: 0,
-        averageResponseLength: 0,
+        averageResponseSize: 0,
         peakMemoryUsage: 0,
         uptime: 0,
         rateLimit: {
@@ -75,7 +66,10 @@ export const createEmptyTaskTrackingMetrics = (task: ITaskType): ITaskTrackingMe
             gpt35: 0,
             other: 0
         },
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        component: '',
+        category: '',
+        version: ''
     },
     progress: {
         percentage: 0,

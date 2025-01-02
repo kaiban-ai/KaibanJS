@@ -5,9 +5,9 @@
  */
 
 import { CoreManager } from '../../../core/coreManager';
-import { createError, ERROR_KINDS } from '../../../../types/common/commonErrorTypes';
+import { createError, ERROR_KINDS } from '../../../../types/common/errorTypes';
 import { createLangchainCache } from './langchainCacheAdapter';
-import { MANAGER_CATEGORY_enum } from '../../../../types/common/commonEnums';
+import { MANAGER_CATEGORY_enum, AGENT_STATUS_enum } from '../../../../types/common/enumTypes';
 import type { IBaseManagerMetadata } from '../../../../types/agent/agentManagerTypes';
 
 /**
@@ -39,11 +39,13 @@ export class CacheInitManager extends CoreManager {
         try {
             this.isInitialized = true;
             this.logInfo('Cache system initialized');
-        } catch (error) {
+        } catch (error: unknown) {
             throw createError({
                 message: 'Failed to initialize cache system',
                 type: ERROR_KINDS.InitializationError,
-                context: { error }
+                context: { 
+                    error: error instanceof Error ? error : new Error(String(error))
+                }
             });
         }
     }
@@ -51,12 +53,12 @@ export class CacheInitManager extends CoreManager {
     /**
      * Validate cache parameters
      */
-    public async validate(params: unknown): Promise<boolean> {
+    public async validate(): Promise<boolean> {
         try {
             // Basic validation - can be enhanced based on needs
             return true;
-        } catch (error) {
-            this.logError('Cache validation failed', error as Error);
+        } catch (error: unknown) {
+            this.logError('Cache validation failed', error instanceof Error ? error : new Error(String(error)));
             return false;
         }
     }
@@ -74,7 +76,7 @@ export class CacheInitManager extends CoreManager {
                 id: '',
                 name: '',
                 role: '',
-                status: ''
+                status: AGENT_STATUS_enum.IDLE
             },
             timestamp: Date.now(),
             component: this.constructor.name
@@ -94,14 +96,14 @@ export class CacheInitManager extends CoreManager {
 
         try {
             return createLangchainCache(agentId, taskId);
-        } catch (error) {
+        } catch (error: unknown) {
             throw createError({
                 message: 'Failed to create Langchain cache adapter',
                 type: ERROR_KINDS.ResourceError,
                 context: {
                     agentId,
                     taskId,
-                    error
+                    error: error instanceof Error ? error : new Error(String(error))
                 }
             });
         }

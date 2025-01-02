@@ -8,9 +8,9 @@
 
 import { z } from 'zod';
 import { TeamEventType } from './teamEventTypes';
-import { ITeamHandlerMetadata } from './teamStoreTypes';
+import { ITeamHandlerMetadata } from './teamBaseTypes';
 import { IWorkflowResult } from '../workflow/workflowBaseTypes';
-import { IErrorMetadata } from '../common/commonMetadataTypes';
+import { IErrorMetadata } from '../common/metadataTypes';
 
 // ─── Base Event Validation ────────────────────────────────────────────────────
 

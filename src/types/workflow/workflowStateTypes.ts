@@ -1,11 +1,21 @@
+/**
+ * @file workflowStateTypes.ts
+ * @path src/types/workflow/workflowStateTypes.ts
+ * @description Type definitions for workflow state management and state transitions
+ *
+ * @module @types/workflow
+ */
+
 import { IAgentType } from '../agent/agentBaseTypes';
 import { ITaskType } from '../task/taskBaseTypes';
-import { IStandardCostDetails } from '../common/commonMetricTypes';
+import { IStandardCostDetails } from '../common/baseTypes';
 import { 
     IWorkflowPerformanceMetrics,
     IWorkflowResourceMetrics,
     IWorkflowUsageMetrics 
 } from './workflowMetricTypes';
+
+// ─── Step Types ──────────────────────────────────────────────────────────────────
 
 /**
  * Workflow step configuration
@@ -42,6 +52,8 @@ export interface IStepResult {
     };
 }
 
+// ─── Metrics Types ───────────────────────────────────────────────────────────────
+
 /**
  * Combined workflow metrics
  */
@@ -51,6 +63,8 @@ export interface IWorkflowMetrics {
     usage: IWorkflowUsageMetrics;
     timestamp: number;
 }
+
+// ─── State Types ─────────────────────────────────────────────────────────────────
 
 /**
  * Workflow state
@@ -116,6 +130,8 @@ export interface IWorkflowStateUpdate {
     metrics?: IWorkflowMetrics;
 }
 
+// ─── Validation Types ─────────────────────────────────────────────────────────────
+
 /**
  * Workflow state validation result
  */
@@ -129,6 +145,8 @@ export interface IWorkflowStateValidation {
         validatorName: string;
     };
 }
+
+// ─── Recovery Types ──────────────────────────────────────────────────────────────
 
 /**
  * Workflow state recovery options

@@ -1,13 +1,15 @@
 /**
- * @file llmManagerTypes.ts
- * @description LLM manager type definitions using Langchain
- */
+* @file llmManagerTypes.ts
+* @path src/types/llm/llmManagerTypes.ts
+* @description LLM manager type definitions and interfaces for Langchain integration
+*
+* @module @llm
+*/
 
 import { BaseChatModel, BaseChatModelCallOptions } from '@langchain/core/language_models/chat_models';
-import { BaseMessage, AIMessageChunk } from '@langchain/core/messages';
 import { Callbacks } from '@langchain/core/callbacks/manager';
 import { BaseLanguageModelInput } from '@langchain/core/language_models/base';
-import { LLM_PROVIDER_enum, LLM_STATUS_enum } from '../common/enumTypes';
+import { LLM_PROVIDER_enum } from '../common/enumTypes';
 import type { 
     ILLMProviderConfig,
     IGroqConfig,
@@ -21,10 +23,9 @@ import type {
     ILLMValidationResult, 
     ILLMValidationOptions 
 } from './llmValidationTypes';
-import type { IRuntimeLLMConfig } from './llmCommonTypes';
 import type { LLMResponse } from './llmResponseTypes';
-import type { IBaseMetrics } from '../metrics/base/baseMetrics';
 import type { IBaseHandlerMetadata } from '../common/baseTypes';
+import type { ILLMInstance } from './llmInstanceTypes';
 
 // ─── Handler Result Types ────────────────────────────────────────────────────
 
@@ -51,25 +52,6 @@ export interface ILLMManagerConfig {
 }
 
 // ─── Instance Types ──────────────────────────────────────────────────────────
-
-export interface ILLMInstance {
-    id: string;
-    provider: LLM_PROVIDER_enum;
-    config: ILLMProviderConfig;
-    metrics: IBaseProviderMetrics;
-    status: LLM_STATUS_enum;
-    lastUsed: number;
-    errorCount: number;
-
-    // Instance methods
-    generate(messages: BaseLanguageModelInput, options?: BaseChatModelCallOptions): Promise<LLMResponse>;
-    generateStream(messages: BaseLanguageModelInput, options?: BaseChatModelCallOptions): AsyncGenerator<AIMessageChunk, void, unknown>;
-    validateConfig(config: ILLMProviderConfig): Promise<ILLMValidationResult>;
-    cleanup(): Promise<void>;
-    getMetrics(): Promise<IBaseProviderMetrics>;
-    getStatus(): Promise<LLM_STATUS_enum>;
-    reset(): Promise<void>;
-}
 
 export interface IProviderInstance {
     groq?: BaseChatModel;    // ChatGroq instance

@@ -7,8 +7,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import type { ITeamHandlerMetadata } from './teamBaseTypes';
 import type { IWorkflowResult } from '../workflow/workflowBaseTypes';
-import type { IErrorMetadata } from '../common/commonMetadataTypes';
-import type { IBaseEvent } from '../common/commonEventTypes';
+import type { IErrorMetadata } from '../common/metadataTypes';
+import type { IBaseEvent } from '../common/baseTypes';
 
 // Event type enum
 export enum TeamEventType {
@@ -37,8 +37,8 @@ function createBaseEvent<T extends TeamEventType>(
 ): Omit<TeamEvent & { type: T }, 'payload'> {
     return {
         id: uuidv4(),
-        timestamp: Date.now(),
         type,
+        timestamp: Date.now(),
         metadata
     };
 }

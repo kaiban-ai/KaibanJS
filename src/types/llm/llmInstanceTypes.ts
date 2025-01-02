@@ -6,8 +6,8 @@
  * @module @types/llm
  */
 
-import { BaseChatModel, BaseChatModelCallOptions } from '@langchain/core/language_models/chat_models';
-import { BaseMessage, AIMessageChunk } from '@langchain/core/messages';
+import { BaseChatModelCallOptions } from '@langchain/core/language_models/chat_models';
+import { AIMessageChunk } from '@langchain/core/messages';
 import { Callbacks } from '@langchain/core/callbacks/manager';
 import { BaseLanguageModelInput } from '@langchain/core/language_models/base';
 import { LLM_PROVIDER_enum, LLM_STATUS_enum } from '../common/enumTypes';
@@ -17,12 +17,18 @@ import type { LLMResponse } from './llmResponseTypes';
 
 // ─── Instance Types ──────────────────────────────────────────────────────────────
 
+/**
+ * Options for LLM instance configuration extending Langchain's base options
+ */
 export interface ILLMInstanceOptions extends BaseChatModelCallOptions {
     callbacks?: Callbacks;
     parentRunId?: string;
     tags?: string[];
 }
 
+/**
+ * Core LLM instance interface integrating with Langchain's base models
+ */
 export interface ILLMInstance {
     id: string;
     provider: LLM_PROVIDER_enum;
@@ -31,8 +37,9 @@ export interface ILLMInstance {
     status: LLM_STATUS_enum;
     lastUsed: number;
     errorCount: number;
+    model?: any;  // Underlying Langchain model instance
     
-    // Required methods matching Langchain's types
+    // Core methods using Langchain's types
     generate(messages: BaseLanguageModelInput, options?: BaseChatModelCallOptions): Promise<LLMResponse>;
     generateStream(messages: BaseLanguageModelInput, options?: BaseChatModelCallOptions): AsyncGenerator<AIMessageChunk, void, unknown>;
     validateConfig(config: ILLMProviderConfig): Promise<IValidationResult>;
@@ -42,6 +49,9 @@ export interface ILLMInstance {
     reset(): Promise<void>;
 }
 
+/**
+ * Result type for agentic loop operations
+ */
 export interface IAgenticLoopResult {
     success: boolean;
     output: string;

@@ -1,17 +1,18 @@
 /**
- * @file llmCallbacksTypes.ts
- * @description LLM callback type definitions using Langchain
- */
+* @file llmCallbacksTypes.ts
+* @path src/types/llm/llmCallbacksTypes.ts
+* @description LLM callback type definitions and interfaces for Langchain integration
+*
+* @module @types/llm
+*/
 
 import { CallbackHandlerMethods, NewTokenIndices, HandleLLMNewTokenCallbackFields } from '@langchain/core/callbacks/base';
 import { LLMResult } from '@langchain/core/outputs';
-import { BaseMessage } from '@langchain/core/messages';
 import { Serialized } from '@langchain/core/load/serializable';
-import { LLM_PROVIDER_enum } from '../common/commonEnums';
-import { LLMProviders } from './llmCommonTypes';
-import { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
+import { LLM_PROVIDER_enum } from '../common/enumTypes';
+import { IBaseHandlerMetadata } from '../common/baseTypes';
 import { IBaseMetrics } from '../metrics/base/baseMetrics';
-import { ValidationErrorType, ValidationWarningType } from '../common/commonValidationTypes';
+import { ValidationErrorType, ValidationWarningType } from '../common/validationTypes';
 import { IPerformanceMetrics } from '../metrics/base/performanceMetrics';
 
 // ─── Event Metadata Types ────────────────────────────────────────────────────

@@ -3,8 +3,8 @@
  * @path src/types/agent/batch/batchTypes.ts
  */
 
-import type { ILoopContext } from '../executionFlow';
-import type { IResourceMetrics } from '../../common/baseTypes';
+import type { ILoopContext } from '../agentExecutionFlow';
+import type { IResourceMetrics } from '../../metrics/base/resourceMetrics';
 import { BATCH_PRIORITY_enum, BATCH_STATUS_enum } from '../../common/enumTypes';
 
 export interface IBatchOperation {

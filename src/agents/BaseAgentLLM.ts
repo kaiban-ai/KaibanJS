@@ -2,109 +2,151 @@
  * @file BaseAgentLLM.ts
  * @path src/agents/BaseAgentLLM.ts
  * @description LLM functionality for base agent implementation
- *
- * @module @agents
  */
 
-import { ChatGroq, ChatGroqCallOptions } from '@langchain/groq';
-import { ChatOpenAI, ChatOpenAICallOptions } from '@langchain/openai';
-import { BaseMessage } from '@langchain/core/messages';
-import { AIMessageChunk } from '@langchain/core/messages';
-import { BaseLanguageModelInput } from '@langchain/core/language_models/base';
-import { BaseChatModelCallOptions } from '@langchain/core/language_models/chat_models';
-import { Callbacks } from '@langchain/core/callbacks/manager';
-import { LLM_PROVIDER_enum, LLM_STATUS_enum } from '../types/common/commonEnums';
+import { CoreManager } from '../managers/core/coreManager';
+import { MetricsManager } from '../managers/core/metricsManager';
+import { MessageMetricsManager } from '../managers/domain/llm/messageMetricsManager';
+import { createError } from '../types/common/errorTypes';
+import { LLM_PROVIDER_enum, MANAGER_CATEGORY_enum } from '../types/common/enumTypes';
+import { type IRuntimeLLMConfig, isRuntimeConfig } from '../types/llm/llmCommonTypes';
+import { type ILLMInstance } from '../types/llm/llmInstanceTypes';
+import { type IMessageHistory } from '../types/llm/message/messagingBaseTypes';
 import { 
-    LLMProviderTypeGuards,
-    type LLMProviderConfig,
+    type ILLMProviderConfig,
     type IGroqConfig,
-    type IOpenAIConfig
+    type IOpenAIConfig,
+    type IAnthropicConfig,
+    type IGoogleConfig,
+    type IMistralConfig,
+    type IProviderManager,
+    type IGroqCallOptions,
+    type IOpenAICallOptions,
+    type IAnthropicCallOptions,
+    type IGoogleCallOptions,
+    type IMistralCallOptions,
+    ILLMProviderTypeGuards
 } from '../types/llm/llmProviderTypes';
-import { ILLMInstance, convertToBaseMessages } from '../types/llm/llmInstanceTypes';
-import { LLMResponse, IGroqResponse, IOpenAIResponse } from '../types/llm/llmResponseTypes';
-import { IMessageHistory } from '../types/llm/message/messagingHistoryTypes';
-import { ILLMConfig, IRuntimeLLMConfig, createProviderConfig, isRuntimeConfig } from '../types/llm/llmCommonTypes';
-import { createError } from '../types/common/commonErrorTypes';
-import { LLMMetricsCollector } from '../metrics/LLMMetricsCollector';
 
-// ─── LLM Agent Base ─────────────────────────────────────────────────────────────
-
-export abstract class BaseAgentLLM {
+/**
+ * Abstract class representing the base LLM agent.
+ */
+export abstract class BaseAgentLLM extends CoreManager {
+    public readonly category = MANAGER_CATEGORY_enum.RESOURCE;
     public llmInstance: ILLMInstance | null = null;
     public llmConfig: IRuntimeLLMConfig;
     public llmSystemMessage: string | null = null;
     public forceFinalAnswer: boolean = false;
     public messageHistory: IMessageHistory;
-    protected readonly metricsCollector: LLMMetricsCollector;
+    protected readonly metricsManager: MetricsManager;
+    protected readonly messageMetricsManager: MessageMetricsManager;
+    protected readonly providerManager: IProviderManager;
 
     constructor(
         config: {
             llmConfig: IRuntimeLLMConfig;
             messageHistory: IMessageHistory;
-            metricsCollector: LLMMetricsCollector;
         }
     ) {
+        super();
         this.llmConfig = config.llmConfig;
         this.messageHistory = config.messageHistory;
-        this.metricsCollector = config.metricsCollector;
+        this.metricsManager = MetricsManager.getInstance();
+        this.messageMetricsManager = MessageMetricsManager.getInstance();
+        this.providerManager = this.getDomainManager<IProviderManager>('ProviderManager');
     }
+
+    // ─── Abstract Methods ────────────────────────────────────────────────────────
+
+    protected abstract createGroqInstance(config: IGroqConfig, options: IGroqCallOptions): void;
+    protected abstract createOpenAIInstance(config: IOpenAIConfig, options: IOpenAICallOptions): void;
+    protected abstract createAnthropicInstance(config: IAnthropicConfig, options: IAnthropicCallOptions): void;
+    protected abstract createGoogleInstance(config: IGoogleConfig, options: IGoogleCallOptions): void;
+    protected abstract createMistralInstance(config: IMistralConfig, options: IMistralCallOptions): void;
 
     // ─── LLM Configuration ──────────────────────────────────────────────────────
 
-    protected normalizeLlmConfig(llmConfig: IRuntimeLLMConfig): ILLMConfig {
+    /**
+     * Normalizes the LLM configuration.
+     * @param llmConfig The runtime LLM configuration.
+     * @returns The normalized provider configuration.
+     */
+    protected normalizeLlmConfig(llmConfig: IRuntimeLLMConfig): ILLMProviderConfig {
         if (!isRuntimeConfig(llmConfig)) {
-            const runId = `error_${Date.now()}`;
             const error = createError({
                 message: 'Invalid runtime LLM configuration structure',
                 type: 'ValidationError',
-                context: {
-                    component: this.constructor.name
-                }
+                context: { component: this.constructor.name }
             });
-            this.metricsCollector.handleLLMError(error, runId);
+            this.handleError(error, 'normalizeLlmConfig');
             throw error;
         }
 
-        return createProviderConfig(llmConfig);
+        const config = this.providerManager.normalizeConfig(llmConfig);
+
+        // Validate the normalized config using the same pattern as isRuntimeConfig
+        if (
+            !config ||
+            typeof config !== 'object' ||
+            !('provider' in config) ||
+            !('model' in config) ||
+            typeof config.provider !== 'string' ||
+            typeof config.model !== 'string' ||
+            !Object.values(LLM_PROVIDER_enum).includes(config.provider as LLM_PROVIDER_enum)
+        ) {
+            throw createError({
+                message: 'Invalid provider configuration',
+                type: 'ValidationError',
+                context: { component: this.constructor.name }
+            });
+        }
+
+        // At this point TypeScript knows this is a valid provider config
+        return config as ILLMProviderConfig;
     }
 
     // ─── LLM Instance Creation ───────────────────────────────────────────────────
 
+    /**
+     * Creates the LLM instance based on the provider.
+     */
     protected createLLMInstance(): void {
         try {
-            const normalizedConfig = this.normalizeLlmConfig(this.llmConfig);
-            const instanceOptions = {
-                ...normalizedConfig,
-                callbacks: this.metricsCollector,
-                maxConcurrentRequests: 1,
-                retry: {
-                    maxRetries: 3,
-                    backoffFactor: 1.5
-                },
-                cache: false
+            const config = this.normalizeLlmConfig(this.llmConfig);
+            const baseCallOptions = {
+                callbacks: undefined,
+                signal: undefined,
+                timeout: config.timeout,
+                tool_choice: undefined,
+                functions: undefined
             };
 
-            switch (normalizedConfig.provider) {
-                case LLM_PROVIDER_enum.GROQ:
-                    this.createGroqInstance(normalizedConfig as IGroqConfig, instanceOptions);
-                    break;
-                case LLM_PROVIDER_enum.OPENAI:
-                    this.createOpenAIInstance(normalizedConfig as IOpenAIConfig, instanceOptions);
-                    break;
-                default:
-                    throw createError({
-                        message: `Unsupported LLM provider: ${normalizedConfig.provider}`,
-                        type: 'ValidationError',
-                        context: {
-                            component: this.constructor.name,
-                            provider: normalizedConfig.provider
-                        }
-                    });
+            if (ILLMProviderTypeGuards.isGroqConfig(config)) {
+                this.createGroqInstance(config, baseCallOptions as IGroqCallOptions);
+            } else if (ILLMProviderTypeGuards.isOpenAIConfig(config)) {
+                this.createOpenAIInstance(config, baseCallOptions as IOpenAICallOptions);
+            } else if (ILLMProviderTypeGuards.isAnthropicConfig(config)) {
+                this.createAnthropicInstance(config, baseCallOptions as IAnthropicCallOptions);
+            } else if (ILLMProviderTypeGuards.isGoogleConfig(config)) {
+                this.createGoogleInstance(config, {
+                    ...baseCallOptions,
+                    safetySettings: config.safetySettings
+                } as IGoogleCallOptions);
+            } else if (ILLMProviderTypeGuards.isMistralConfig(config)) {
+                this.createMistralInstance(config, {
+                    ...baseCallOptions,
+                    safeMode: false
+                } as IMistralCallOptions);
+            } else {
+                throw createError({
+                    message: 'Unsupported LLM provider',
+                    type: 'ValidationError',
+                    context: { component: this.constructor.name }
+                });
             }
         } catch (err) {
             const error = err instanceof Error ? err : new Error('Unknown error during LLM instance creation');
-            const runId = `error_${Date.now()}`;
-            this.metricsCollector.handleLLMError(error, runId);
+            this.handleError(error, 'createLLMInstance');
             throw createError({
                 message: `Failed to create LLM instance: ${error.message}`,
                 type: 'ValidationError',
@@ -115,337 +157,5 @@ export abstract class BaseAgentLLM {
                 }
             });
         }
-    }
-
-    private createGroqInstance(config: IGroqConfig, options: any): void {
-        if (!LLMProviderTypeGuards.isGroqConfig(config)) {
-            throw createError({
-                message: 'Invalid Groq configuration',
-                type: 'ValidationError',
-                context: { component: this.constructor.name }
-            });
-        }
-
-        const model = new ChatGroq(options);
-        this.llmInstance = {
-            id: 'groq-instance',
-            provider: LLM_PROVIDER_enum.GROQ,
-            config,
-            metrics: {
-                resources: {
-                    cpuUsage: 0,
-                    memoryUsage: 0,
-                    diskIO: { read: 0, write: 0 },
-                    networkUsage: { upload: 0, download: 0 },
-                    timestamp: Date.now()
-                },
-                performance: {
-                    executionTime: { total: 0, average: 0, min: 0, max: 0 },
-                    latency: { total: 0, average: 0, min: 0, max: 0 },
-                    throughput: { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
-                    responseTime: { total: 0, average: 0, min: 0, max: 0 },
-                    queueLength: 0,
-                    errorRate: 0,
-                    successRate: 1,
-                    errorMetrics: { totalErrors: 0, errorRate: 0 },
-                    resourceUtilization: {
-                        cpuUsage: 0,
-                        memoryUsage: 0,
-                        diskIO: { read: 0, write: 0 },
-                        networkUsage: { upload: 0, download: 0 },
-                        timestamp: Date.now()
-                    },
-                    timestamp: Date.now()
-                },
-                usage: {
-                    totalRequests: 0,
-                    activeUsers: 0,
-                    requestsPerSecond: 0,
-                    averageResponseSize: 0,
-                    peakMemoryUsage: 0,
-                    uptime: 0,
-                    rateLimit: {
-                        current: 0,
-                        limit: 0,
-                        remaining: 0,
-                        resetTime: 0
-                    },
-                    timestamp: Date.now()
-                },
-                timestamp: Date.now()
-            },
-            status: LLM_STATUS_enum.ACTIVE,
-            lastUsed: Date.now(),
-            errorCount: 0,
-            async generate(
-                messages: BaseLanguageModelInput,
-                options?: ChatGroqCallOptions
-            ): Promise<LLMResponse> {
-                const baseMessages = convertToBaseMessages(messages);
-                const result = await model.invoke(baseMessages, options);
-                const response: IGroqResponse = {
-                    provider: LLM_PROVIDER_enum.GROQ,
-                    model: config.model,
-                    message: result,
-                    generations: [[{ text: String(result.content), generationInfo: {} }]],
-                    llmOutput: {
-                        tokenUsage: {
-                            promptTokens: 0,
-                            completionTokens: 0,
-                            totalTokens: 0
-                        },
-                        modelOutput: {
-                            contextWindow: config.contextWindow || 0,
-                            streamingLatency: config.streamingLatency || 0
-                        }
-                    },
-                    metrics: {
-                        resources: {
-                            cpuUsage: 0,
-                            memoryUsage: 0,
-                            diskIO: { read: 0, write: 0 },
-                            networkUsage: { upload: 0, download: 0 },
-                            timestamp: Date.now()
-                        },
-                        performance: {
-                            executionTime: { total: 0, average: 0, min: 0, max: 0 },
-                            latency: { total: 0, average: 0, min: 0, max: 0 },
-                            throughput: { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
-                            responseTime: { total: 0, average: 0, min: 0, max: 0 },
-                            queueLength: 0,
-                            errorRate: 0,
-                            successRate: 1,
-                            errorMetrics: { totalErrors: 0, errorRate: 0 },
-                            resourceUtilization: {
-                                cpuUsage: 0,
-                                memoryUsage: 0,
-                                diskIO: { read: 0, write: 0 },
-                                networkUsage: { upload: 0, download: 0 },
-                                timestamp: Date.now()
-                            },
-                            timestamp: Date.now()
-                        },
-                        usage: {
-                            totalRequests: 0,
-                            activeUsers: 0,
-                            requestsPerSecond: 0,
-                            averageResponseSize: 0,
-                            peakMemoryUsage: 0,
-                            uptime: 0,
-                            rateLimit: {
-                                current: 0,
-                                limit: 0,
-                                remaining: 0,
-                                resetTime: 0
-                            },
-                            timestamp: Date.now()
-                        },
-                        timestamp: Date.now()
-                    },
-                    streamingMetrics: {
-                        firstTokenLatency: 0,
-                        tokensPerSecond: 0,
-                        totalStreamingTime: 0
-                    }
-                };
-                return response;
-            },
-            async *generateStream(
-                messages: BaseLanguageModelInput,
-                options?: ChatGroqCallOptions
-            ): AsyncGenerator<AIMessageChunk> {
-                const baseMessages = convertToBaseMessages(messages);
-                const stream = await model.stream(baseMessages, options);
-                for await (const chunk of stream) {
-                    yield chunk;
-                }
-            },
-            async validateConfig(config: LLMProviderConfig) {
-                return {
-                    isValid: LLMProviderTypeGuards.isGroqConfig(config),
-                    errors: [],
-                    warnings: [],
-                    metadata: {
-                        timestamp: Date.now(),
-                        component: 'LLMValidation',
-                        operation: 'validateConfig',
-                        validatedFields: ['provider', 'model', 'config']
-                    }
-                };
-            },
-            async cleanup(): Promise<void> {},
-            async getMetrics() {
-                return this.metrics;
-            },
-            async getStatus() {
-                return LLM_STATUS_enum.ACTIVE;
-            },
-            async reset(): Promise<void> {}
-        };
-    }
-
-    private createOpenAIInstance(config: IOpenAIConfig, options: any): void {
-        if (!LLMProviderTypeGuards.isOpenAIConfig(config)) {
-            throw createError({
-                message: 'Invalid OpenAI configuration',
-                type: 'ValidationError',
-                context: { component: this.constructor.name }
-            });
-        }
-
-        const model = new ChatOpenAI(options);
-        this.llmInstance = {
-            id: 'openai-instance',
-            provider: LLM_PROVIDER_enum.OPENAI,
-            config,
-            metrics: {
-                resources: {
-                    cpuUsage: 0,
-                    memoryUsage: 0,
-                    diskIO: { read: 0, write: 0 },
-                    networkUsage: { upload: 0, download: 0 },
-                    timestamp: Date.now()
-                },
-                performance: {
-                    executionTime: { total: 0, average: 0, min: 0, max: 0 },
-                    latency: { total: 0, average: 0, min: 0, max: 0 },
-                    throughput: { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
-                    responseTime: { total: 0, average: 0, min: 0, max: 0 },
-                    queueLength: 0,
-                    errorRate: 0,
-                    successRate: 1,
-                    errorMetrics: { totalErrors: 0, errorRate: 0 },
-                    resourceUtilization: {
-                        cpuUsage: 0,
-                        memoryUsage: 0,
-                        diskIO: { read: 0, write: 0 },
-                        networkUsage: { upload: 0, download: 0 },
-                        timestamp: Date.now()
-                    },
-                    timestamp: Date.now()
-                },
-                usage: {
-                    totalRequests: 0,
-                    activeUsers: 0,
-                    requestsPerSecond: 0,
-                    averageResponseSize: 0,
-                    peakMemoryUsage: 0,
-                    uptime: 0,
-                    rateLimit: {
-                        current: 0,
-                        limit: 0,
-                        remaining: 0,
-                        resetTime: 0
-                    },
-                    timestamp: Date.now()
-                },
-                timestamp: Date.now()
-            },
-            status: LLM_STATUS_enum.ACTIVE,
-            lastUsed: Date.now(),
-            errorCount: 0,
-            async generate(
-                messages: BaseLanguageModelInput,
-                options?: ChatOpenAICallOptions
-            ): Promise<LLMResponse> {
-                const baseMessages = convertToBaseMessages(messages);
-                const result = await model.invoke(baseMessages, options);
-                const response: IOpenAIResponse = {
-                    provider: LLM_PROVIDER_enum.OPENAI,
-                    model: config.model,
-                    message: result,
-                    generations: [[{ text: String(result.content), generationInfo: {} }]],
-                    llmOutput: {
-                        tokenUsage: {
-                            promptTokens: 0,
-                            completionTokens: 0,
-                            totalTokens: 0
-                        },
-                        modelOutput: {
-                            completionTokens: 0,
-                            promptTokens: 0,
-                            totalTokens: 0,
-                            finishReason: 'stop'
-                        }
-                    },
-                    metrics: {
-                        resources: {
-                            cpuUsage: 0,
-                            memoryUsage: 0,
-                            diskIO: { read: 0, write: 0 },
-                            networkUsage: { upload: 0, download: 0 },
-                            timestamp: Date.now()
-                        },
-                        performance: {
-                            executionTime: { total: 0, average: 0, min: 0, max: 0 },
-                            latency: { total: 0, average: 0, min: 0, max: 0 },
-                            throughput: { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
-                            responseTime: { total: 0, average: 0, min: 0, max: 0 },
-                            queueLength: 0,
-                            errorRate: 0,
-                            successRate: 1,
-                            errorMetrics: { totalErrors: 0, errorRate: 0 },
-                            resourceUtilization: {
-                                cpuUsage: 0,
-                                memoryUsage: 0,
-                                diskIO: { read: 0, write: 0 },
-                                networkUsage: { upload: 0, download: 0 },
-                                timestamp: Date.now()
-                            },
-                            timestamp: Date.now()
-                        },
-                        usage: {
-                            totalRequests: 0,
-                            activeUsers: 0,
-                            requestsPerSecond: 0,
-                            averageResponseSize: 0,
-                            peakMemoryUsage: 0,
-                            uptime: 0,
-                            rateLimit: {
-                                current: 0,
-                                limit: 0,
-                                remaining: 0,
-                                resetTime: 0
-                            },
-                            timestamp: Date.now()
-                        },
-                        timestamp: Date.now()
-                    },
-                    finishReason: 'stop'
-                };
-                return response;
-            },
-            async *generateStream(
-                messages: BaseLanguageModelInput,
-                options?: ChatOpenAICallOptions
-            ): AsyncGenerator<AIMessageChunk> {
-                const baseMessages = convertToBaseMessages(messages);
-                const stream = await model.stream(baseMessages, options);
-                for await (const chunk of stream) {
-                    yield chunk;
-                }
-            },
-            async validateConfig(config: LLMProviderConfig) {
-                return {
-                    isValid: LLMProviderTypeGuards.isOpenAIConfig(config),
-                    errors: [],
-                    warnings: [],
-                    metadata: {
-                        timestamp: Date.now(),
-                        component: 'LLMValidation',
-                        operation: 'validateConfig',
-                        validatedFields: ['provider', 'model', 'config']
-                    }
-                };
-            },
-            async cleanup(): Promise<void> {},
-            async getMetrics() {
-                return this.metrics;
-            },
-            async getStatus() {
-                return LLM_STATUS_enum.ACTIVE;
-            },
-            async reset(): Promise<void> {}
-        };
     }
 }

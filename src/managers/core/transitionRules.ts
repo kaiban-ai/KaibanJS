@@ -10,7 +10,7 @@ import type {
     IStatusEntity, 
     IStatusTransitionRule, 
     IStatusType 
-} from '../../types/common/commonStatusTypes';
+} from '../../types/common/statusTypes';
 
 import {
     AGENT_STATUS_enum,
@@ -18,7 +18,7 @@ import {
     TASK_STATUS_enum,
     WORKFLOW_STATUS_enum,
     EnumTypeGuards
-} from '../../types/common/commonEnums';
+} from '../../types/common/enumTypes';
 
 // ─── Transition Rule Maps ───────────────────────────────────────────────────────
 

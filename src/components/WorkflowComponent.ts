@@ -1,23 +1,15 @@
 import { WorkflowManager } from '../managers/domain/workflow/workflowManager';
 import { WorkflowEventEmitter } from '../managers/domain/workflow/workflowEventEmitter';
+import { IWorkflowState } from '../types/workflow/workflowStateTypes';
 import { 
-    IWorkflowState,
-    IWorkflowStateSnapshot,
-    IWorkflowStateRecoveryOptions,
-    IWorkflowStateRecoveryResult
-} from '../types/workflow/workflowStateTypes';
-import {
     IWorkflowStepEvent,
     IWorkflowControlEvent,
     IWorkflowAgentEvent,
-    IWorkflowTaskEvent,
-    WorkflowEventType
+    IWorkflowTaskEvent
 } from '../types/workflow/workflowEventTypes';
 import { IAgentType } from '../types/agent/agentBaseTypes';
 import { ITaskType } from '../types/task/taskBaseTypes';
-import { IHandlerResult } from '../types/common/commonHandlerTypes';
-import { IEventValidationResult } from '../types/common/commonEventTypes';
-import { createBaseMetadata } from '../types/common/commonMetadataTypes';
+import { IHandlerResult, IBaseContextRequired } from '../types/common/baseTypes';
 
 /**
  * WorkflowComponent
@@ -95,19 +87,6 @@ export class WorkflowComponent {
         return this.workflowManager.addTask(this.workflowId, task);
     }
 
-    /**
-     * Create workflow state snapshot
-     */
-    public async createSnapshot(reason: string): Promise<IHandlerResult<IWorkflowStateSnapshot>> {
-        return this.workflowManager.createSnapshot(this.workflowId, reason);
-    }
-
-    /**
-     * Restore workflow state from snapshot
-     */
-    public async restoreState(options: IWorkflowStateRecoveryOptions): Promise<IHandlerResult<IWorkflowStateRecoveryResult>> {
-        return this.workflowManager.restoreState(this.workflowId, options);
-    }
 
     /**
      * Subscribe to workflow events
@@ -115,7 +94,8 @@ export class WorkflowComponent {
     private subscribeToEvents(): void {
         // Subscribe to step events
         const stepHandler = async (event: IWorkflowStepEvent) => {
-            if (event.metadata.context?.correlationId === this.workflowId) {
+            const context = event.metadata.context as IBaseContextRequired;
+            if (context?.correlationId === this.workflowId) {
                 switch (event.type) {
                     case 'start':
                         await this.handleStepStart(event);
@@ -133,11 +113,12 @@ export class WorkflowComponent {
             }
         };
         this.eventHandlers.set('workflow:step', stepHandler);
-        this.eventEmitter.subscribe('workflow:step', stepHandler);
+        this.eventEmitter.onStepEvent(stepHandler);
 
         // Subscribe to control events
         const controlHandler = async (event: IWorkflowControlEvent) => {
-            if (event.metadata.context?.correlationId === this.workflowId) {
+            const context = event.metadata.context as IBaseContextRequired;
+            if (context?.correlationId === this.workflowId) {
                 switch (event.type) {
                     case 'start':
                         await this.handleWorkflowStart(event);
@@ -155,11 +136,12 @@ export class WorkflowComponent {
             }
         };
         this.eventHandlers.set('workflow:control', controlHandler);
-        this.eventEmitter.subscribe('workflow:control', controlHandler);
+        this.eventEmitter.onControlEvent(controlHandler);
 
         // Subscribe to agent events
         const agentHandler = async (event: IWorkflowAgentEvent) => {
-            if (event.metadata.context?.correlationId === this.workflowId) {
+            const context = event.metadata.context as IBaseContextRequired;
+            if (context?.correlationId === this.workflowId) {
                 switch (event.type) {
                     case 'assign':
                         await this.handleAgentAssign(event);
@@ -171,11 +153,12 @@ export class WorkflowComponent {
             }
         };
         this.eventHandlers.set('workflow:agent', agentHandler);
-        this.eventEmitter.subscribe('workflow:agent', agentHandler);
+        this.eventEmitter.onAgentEvent(agentHandler);
 
         // Subscribe to task events
         const taskHandler = async (event: IWorkflowTaskEvent) => {
-            if (event.metadata.context?.correlationId === this.workflowId) {
+            const context = event.metadata.context as IBaseContextRequired;
+            if (context?.correlationId === this.workflowId) {
                 switch (event.type) {
                     case 'add':
                         await this.handleTaskAdd(event);
@@ -190,62 +173,62 @@ export class WorkflowComponent {
             }
         };
         this.eventHandlers.set('workflow:task', taskHandler);
-        this.eventEmitter.subscribe('workflow:task', taskHandler);
+        this.eventEmitter.onTaskEvent(taskHandler);
     }
 
     /**
      * Event handlers
      */
-    private async handleStepStart(event: IWorkflowStepEvent): Promise<void> {
-        console.log(`Step ${event.stepId} started`);
+    private async handleStepStart({ stepId }: IWorkflowStepEvent): Promise<void> {
+        console.log(`Step ${stepId} started`);
     }
 
-    private async handleStepComplete(event: IWorkflowStepEvent): Promise<void> {
-        console.log(`Step ${event.stepId} completed`);
+    private async handleStepComplete({ stepId }: IWorkflowStepEvent): Promise<void> {
+        console.log(`Step ${stepId} completed`);
     }
 
-    private async handleStepFail(event: IWorkflowStepEvent): Promise<void> {
-        console.error(`Step ${event.stepId} failed:`, event.error);
+    private async handleStepFail({ stepId, error }: IWorkflowStepEvent): Promise<void> {
+        console.error(`Step ${stepId} failed:`, error);
     }
 
-    private async handleStepSkip(event: IWorkflowStepEvent): Promise<void> {
-        console.log(`Step ${event.stepId} skipped`);
+    private async handleStepSkip({ stepId }: IWorkflowStepEvent): Promise<void> {
+        console.log(`Step ${stepId} skipped`);
     }
 
-    private async handleWorkflowStart(event: IWorkflowControlEvent): Promise<void> {
+    private async handleWorkflowStart(_event: IWorkflowControlEvent): Promise<void> {
         console.log('Workflow started');
     }
 
-    private async handleWorkflowPause(event: IWorkflowControlEvent): Promise<void> {
+    private async handleWorkflowPause(_event: IWorkflowControlEvent): Promise<void> {
         console.log('Workflow paused');
     }
 
-    private async handleWorkflowResume(event: IWorkflowControlEvent): Promise<void> {
+    private async handleWorkflowResume(_event: IWorkflowControlEvent): Promise<void> {
         console.log('Workflow resumed');
     }
 
-    private async handleWorkflowStop(event: IWorkflowControlEvent): Promise<void> {
+    private async handleWorkflowStop(_event: IWorkflowControlEvent): Promise<void> {
         console.log('Workflow stopped');
     }
 
-    private async handleAgentAssign(event: IWorkflowAgentEvent): Promise<void> {
-        console.log(`Agent assigned to step ${event.stepId}`);
+    private async handleAgentAssign({ stepId }: IWorkflowAgentEvent): Promise<void> {
+        console.log(`Agent assigned to step ${stepId}`);
     }
 
-    private async handleAgentUnassign(event: IWorkflowAgentEvent): Promise<void> {
-        console.log(`Agent unassigned from step ${event.stepId}`);
+    private async handleAgentUnassign({ stepId }: IWorkflowAgentEvent): Promise<void> {
+        console.log(`Agent unassigned from step ${stepId}`);
     }
 
-    private async handleTaskAdd(event: IWorkflowTaskEvent): Promise<void> {
-        console.log('Task added:', event.task.id);
+    private async handleTaskAdd({ task }: IWorkflowTaskEvent): Promise<void> {
+        console.log('Task added:', task.id);
     }
 
-    private async handleTaskRemove(event: IWorkflowTaskEvent): Promise<void> {
-        console.log('Task removed:', event.task.id);
+    private async handleTaskRemove({ task }: IWorkflowTaskEvent): Promise<void> {
+        console.log('Task removed:', task.id);
     }
 
-    private async handleTaskUpdate(event: IWorkflowTaskEvent): Promise<void> {
-        console.log('Task updated:', event.task.id);
+    private async handleTaskUpdate({ task }: IWorkflowTaskEvent): Promise<void> {
+        console.log('Task updated:', task.id);
     }
 
     /**
@@ -254,7 +237,20 @@ export class WorkflowComponent {
     public dispose(): void {
         // Unsubscribe from all events
         for (const [eventType, handler] of this.eventHandlers) {
-            this.eventEmitter.unsubscribe(eventType, handler);
+            switch (eventType) {
+                case 'workflow:step':
+                    this.eventEmitter.offStepEvent(handler as (event: IWorkflowStepEvent) => Promise<void>);
+                    break;
+                case 'workflow:control':
+                    this.eventEmitter.offControlEvent(handler as (event: IWorkflowControlEvent) => Promise<void>);
+                    break;
+                case 'workflow:agent':
+                    this.eventEmitter.offAgentEvent(handler as (event: IWorkflowAgentEvent) => Promise<void>);
+                    break;
+                case 'workflow:task':
+                    this.eventEmitter.offTaskEvent(handler as (event: IWorkflowTaskEvent) => Promise<void>);
+                    break;
+            }
         }
         this.eventHandlers.clear();
     }

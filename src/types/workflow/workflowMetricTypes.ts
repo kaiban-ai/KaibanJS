@@ -1,13 +1,17 @@
 /**
  * @file workflowMetricTypes.ts
- * @path KaibanJS/src/types/workflow/workflowMetricTypes.ts
+ * @path src/types/workflow/workflowMetricTypes.ts
  * @description Workflow-specific metric type definitions
+ *
+ * @module @types/workflow
  */
 
-import type { IRateLimitMetrics, IUsageMetrics } from '../metrics/base/usageMetrics';
-import type { ITimeMetrics, IThroughputMetrics, IErrorMetrics } from '../metrics/base/performanceMetrics';
-import { createValidationResult } from '@utils/validation/validationUtils';
-import type { IValidationResult } from '../common/commonValidationTypes';
+import type { IUsageMetrics } from '../metrics/base/usageMetrics';
+import type { ITimeMetrics, IThroughputMetrics } from '../metrics/base/performanceMetrics';
+import type { IValidationResult } from '../common/validationTypes';
+import { createValidationResult } from '../common/validationTypes';
+
+// ─── Resource Metrics ─────────────────────────────────────────────────────────
 
 /**
  * Workflow-specific resource metrics
@@ -38,6 +42,8 @@ export interface IWorkflowResourceMetrics {
     readonly timestamp: number;
 }
 
+// ─── Performance Metrics ───────────────────────────────────────────────────────
+
 /**
  * Workflow-specific performance metrics
  */
@@ -56,8 +62,6 @@ export interface IWorkflowPerformanceMetrics {
     readonly errorRate: number;
     /** Success rate percentage */
     readonly successRate: number;
-    /** Error-related metrics */
-    readonly errorMetrics: IErrorMetrics;
     /** Resource utilization metrics */
     readonly resourceUtilization: IWorkflowResourceMetrics;
     /** Workflow completion rate */
@@ -67,6 +71,8 @@ export interface IWorkflowPerformanceMetrics {
     /** Timestamp of metrics collection */
     readonly timestamp: number;
 }
+
+// ─── Usage Metrics ────────────────────────────────────────────────────────────
 
 /**
  * Workflow-specific usage metrics
@@ -88,6 +94,8 @@ export interface IWorkflowUsageMetrics extends IUsageMetrics {
         readonly conditional: number;
     };
 }
+
+// ─── Type Guards ────────────────────────────────────────────────────────────
 
 /**
  * Type guards for workflow metrics
@@ -133,8 +141,6 @@ export const WorkflowMetricsTypeGuards = {
             typeof metrics.queueLength === 'number' &&
             typeof metrics.errorRate === 'number' &&
             typeof metrics.successRate === 'number' &&
-            typeof metrics.errorMetrics === 'object' &&
-            metrics.errorMetrics !== null &&
             typeof metrics.resourceUtilization === 'object' &&
             metrics.resourceUtilization !== null &&
             typeof metrics.completionRate === 'number' &&
@@ -172,6 +178,8 @@ export const WorkflowMetricsTypeGuards = {
     }
 } as const;
 
+// ─── Validation Functions ────────────────────────────────────────────────────
+
 /**
  * Validation utilities for workflow metrics
  */
@@ -182,7 +190,11 @@ export const WorkflowMetricsValidation = {
 
         if (!WorkflowMetricsTypeGuards.isWorkflowResourceMetrics(metrics)) {
             errors.push('Invalid workflow resource metrics structure');
-            return createValidationResult(false, errors);
+            return createValidationResult({
+                isValid: false,
+                errors,
+                metadata: { validatorName: 'WorkflowResourceMetricsValidator' }
+            });
         }
 
         if (metrics.cpuUsage < 0 || metrics.cpuUsage > 100) {
@@ -225,7 +237,12 @@ export const WorkflowMetricsValidation = {
             warnings.push('Timestamp is in the future');
         }
 
-        return createValidationResult(errors.length === 0, errors, warnings);
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: { validatorName: 'WorkflowResourceMetricsValidator' }
+        });
     },
 
     validateWorkflowPerformanceMetrics(metrics: unknown): IValidationResult {
@@ -234,7 +251,11 @@ export const WorkflowMetricsValidation = {
 
         if (!WorkflowMetricsTypeGuards.isWorkflowPerformanceMetrics(metrics)) {
             errors.push('Invalid workflow performance metrics structure');
-            return createValidationResult(false, errors);
+            return createValidationResult({
+                isValid: false,
+                errors,
+                metadata: { validatorName: 'WorkflowPerformanceMetricsValidator' }
+            });
         }
 
         if (metrics.queueLength < 0) {
@@ -261,7 +282,12 @@ export const WorkflowMetricsValidation = {
             warnings.push('Timestamp is in the future');
         }
 
-        return createValidationResult(errors.length === 0, errors, warnings);
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: { validatorName: 'WorkflowPerformanceMetricsValidator' }
+        });
     },
 
     validateWorkflowUsageMetrics(metrics: unknown): IValidationResult {
@@ -270,7 +296,11 @@ export const WorkflowMetricsValidation = {
 
         if (!WorkflowMetricsTypeGuards.isWorkflowUsageMetrics(metrics)) {
             errors.push('Invalid workflow usage metrics structure');
-            return createValidationResult(false, errors);
+            return createValidationResult({
+                isValid: false,
+                errors,
+                metadata: { validatorName: 'WorkflowUsageMetricsValidator' }
+            });
         }
 
         // Validate base IUsageMetrics properties
@@ -331,6 +361,11 @@ export const WorkflowMetricsValidation = {
             warnings.push('Timestamp is in the future');
         }
 
-        return createValidationResult(errors.length === 0, errors, warnings);
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            metadata: { validatorName: 'WorkflowUsageMetricsValidator' }
+        });
     }
 } as const;

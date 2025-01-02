@@ -6,74 +6,56 @@
 
 // Core imports
 import { CoreManager } from '../../core/coreManager';
+import { BaseEventEmitter } from '../../core/eventEmitter';
 
 // Internal domain managers
 import { AgentStateManager } from './agentStateManager';
 import { AgentEventEmitter } from './agentEventEmitter';
 
 // Common imports
-import { createError, ERROR_KINDS } from '../../../types/common/errorTypes';
-import { MANAGER_CATEGORY_enum } from '../../../types/common/enumTypes';
+import { ERROR_KINDS } from '../../../types/common/errorTypes';
+import { MANAGER_CATEGORY_enum, AGENT_STATUS_enum, ERROR_SEVERITY_enum } from '../../../types/common/enumTypes';
 
 // Agent domain imports
 import { AGENT_EVENT_TYPE } from '../../../types/agent/agentEventTypes';
-import { STATE_CATEGORY } from '../../../types/agent/agentStateTypes';
 
 // Type imports from common domain
 import type { IBaseError } from '../../../types/common/errorTypes';
+import type { IErrorMetrics } from '../../../types/metrics/base/errorMetrics';
 
 // Type imports from agent domain
 import type { IBaseManager, IBaseManagerMetadata } from '../../../types/agent/agentManagerTypes';
+import type { IAgentExecutionState, IAgentError } from '../../../types/agent/agentBaseTypes';
 import type { 
     IAgentEventHandler,
     IAgentCreatedEvent,
     IAgentUpdatedEvent,
     IAgentDeletedEvent,
-    IAgentStatusChangedEvent,
+    IAgentStatusChangeEvent,
     IAgentIterationStartedEvent,
     IAgentIterationCompletedEvent,
     IAgentIterationFailedEvent,
     IAgentMetricsUpdatedEvent,
     IAgentConfigUpdatedEvent,
-    IAgentValidationCompletedEvent,
-    IAgentErrorOccurredEvent,
-    IAgentErrorHandledEvent,
-    IAgentErrorRecoveryStartedEvent,
-    IAgentErrorRecoveryCompletedEvent,
-    IAgentErrorRecoveryFailedEvent
+    IAgentValidationEvent,
+    IAgentErrorEvent,
+    IAgentExecutionEvent,
+    AgentEvent,
+    IAgentEventMetrics
 } from '../../../types/agent/agentEventTypes';
-import type { IStateHistoryEntry } from '../../../types/agent/agentStateTypes';
-import type { IAgentExecutionErrorContext } from '../../../types/agent/agentExecutionTypes';
+import type { IAgentPerformanceMetrics } from '../../../types/agent/agentMetricTypes';
 
 export class AgentEventHandler extends CoreManager implements IAgentEventHandler, IBaseManager {
     protected static _instance: AgentEventHandler;
     private readonly stateManager: AgentStateManager;
-    protected override readonly eventEmitter: AgentEventEmitter;
+    protected override readonly eventEmitter: BaseEventEmitter;
     public readonly category: MANAGER_CATEGORY_enum = MANAGER_CATEGORY_enum.SERVICE;
 
     protected constructor() {
         super();
         this.stateManager = AgentStateManager.getInstance();
-        this.eventEmitter = AgentEventEmitter.getInstance();
+        this.eventEmitter = AgentEventEmitter.getInstance() as unknown as BaseEventEmitter;
         this.registerDomainManager('AgentEventHandler', this);
-    }
-
-    private createBaseError(message: string, type: keyof typeof ERROR_KINDS = 'StateError'): IBaseError {
-        return createError({
-            message,
-            type: ERROR_KINDS[type],
-            context: {
-                component: this.constructor.name,
-                timestamp: Date.now()
-            }
-        });
-    }
-
-    private convertToBaseError(error: Error | IBaseError): IBaseError {
-        if ('type' in error) {
-            return error as IBaseError;
-        }
-        return this.createBaseError(error.message, 'ExecutionError');
     }
 
     public static override getInstance(): AgentEventHandler {
@@ -93,7 +75,7 @@ export class AgentEventHandler extends CoreManager implements IAgentEventHandler
                 id: '',
                 name: '',
                 role: '',
-                status: ''
+                status: AGENT_STATUS_enum.INITIAL
             },
             timestamp: Date.now(),
             component: this.constructor.name
@@ -103,178 +85,337 @@ export class AgentEventHandler extends CoreManager implements IAgentEventHandler
     public async initialize(): Promise<void> {
         await this.safeExecute(async () => {
             this.logInfo('Initializing AgentEventHandler');
-            // Additional initialization if needed
         }, 'initialize');
     }
 
-    public async validate(params: unknown): Promise<boolean> {
+    public async validate(_params: unknown): Promise<boolean> {
         return true;
     }
 
-    // ─── Event Handler Methods ─────────────────────────────────────────────────
-
-    public async onAgentCreated(event: IAgentCreatedEvent): Promise<void> {
-        await this.safeExecute(async () => {
-            this.logInfo('Agent created', { agentId: event.agentId });
-            await this.stateManager.addAgent(event.agentType);
-
-            const historyEntry: IStateHistoryEntry = {
+    private createErrorHistory(
+        existingHistory: { readonly timestamp: Date; readonly error: Error; readonly context?: Record<string, unknown> }[] | undefined,
+        newError: Error,
+        context: Record<string, unknown>
+    ): { readonly timestamp: Date; readonly error: Error; readonly context?: Record<string, unknown> }[] {
+        return [
+            ...(existingHistory || []),
+            {
                 timestamp: new Date(),
-                action: 'AGENT_CREATED',
-                category: STATE_CATEGORY.CORE,
-                details: {
-                    agentId: event.agentId,
-                    agentType: event.agentType.name
-                }
-            };
+                error: newError,
+                context
+            }
+        ];
+    }
 
-            const executionState = {
-                // Initialize executionState with default values or as per your logic
-                core: {
-                    status: event.agentType.status || 'INITIAL',
-                    thinking: false,
-                    busy: false
+    public createBaseError(
+        message: string, 
+        type: keyof typeof ERROR_KINDS = 'StateError'
+    ): IAgentError {
+        const baseError = new Error(message);
+        const timestamp = Date.now();
+        const errorContext = {
+            component: this.constructor.name,
+            timestamp
+        } as const;
+
+        return {
+            name: type,
+            message: baseError.message,
+            stack: baseError.stack,
+            type: ERROR_KINDS[type],
+            errorCount: 1,
+            errorHistory: [{
+                timestamp: new Date(),
+                error: baseError,
+                context: errorContext
+            }],
+            context: errorContext
+        } satisfies IAgentError;
+    }
+
+    public createErrorMetrics(error: Error | IBaseError, type: keyof typeof ERROR_KINDS): IErrorMetrics {
+        return {
+            count: 1,
+            type,
+            severity: ERROR_SEVERITY_enum.ERROR,
+            timestamp: Date.now(),
+            message: error.message
+        };
+    }
+
+    protected override createAgentEventMetrics(): IAgentEventMetrics {
+        const now = Date.now();
+        return {
+            timestamp: now,
+            component: this.constructor.name,
+            category: 'agent',
+            version: '1.0.0',
+            errors: {
+                count: 0,
+                type: ERROR_KINDS.SystemError,
+                severity: ERROR_SEVERITY_enum.ERROR,
+                timestamp: now,
+                message: ''
+            },
+            warnings: [],
+            info: [],
+            resources: {
+                timestamp: now,
+                component: this.constructor.name,
+                category: 'resources',
+                version: '1.0.0',
+                usage: 0,
+                limit: 100,
+                available: 100,
+                cognitive: {
+                    timestamp: now,
+                    component: this.constructor.name,
+                    category: 'cognitive',
+                    version: '1.0.0',
+                    usage: 0,
+                    limit: 100,
+                    available: 100,
+                    memoryAllocation: 0,
+                    cognitiveLoad: 0,
+                    processingCapacity: 1,
+                    contextUtilization: 0
                 },
-                timing: {
-                    startTime: new Date(),
-                    lastActiveTime: new Date(),
-                    timeouts: {
-                        thinking: 30000,
-                        execution: 300000,
-                        idle: 60000
-                    }
-                },
-                error: {
+                cpuUsage: 0,
+                memoryUsage: 0,
+                diskIO: { read: 0, write: 0 },
+                networkUsage: { upload: 0, download: 0 }
+            },
+            performance: {
+                timestamp: now,
+                component: this.constructor.name,
+                category: 'performance',
+                version: '1.0.0',
+                duration: 0,
+                success: true,
+                errorCount: 0,
+                thinking: {
+                    timestamp: now,
+                    component: this.constructor.name,
+                    category: 'thinking',
+                    version: '1.0.0',
+                    duration: 0,
+                    success: true,
                     errorCount: 0,
-                    retryCount: 0,
-                    maxRetries: 3,
-                    errorHistory: []
+                    reasoningTime: { total: 0, average: 0, min: 0, max: 0 },
+                    planningTime: { total: 0, average: 0, min: 0, max: 0 },
+                    learningTime: { total: 0, average: 0, min: 0, max: 0 },
+                    decisionConfidence: 1,
+                    learningEfficiency: 1
                 },
-                assignment: {
-                    assignedTasks: [],
-                    completedTasks: [],
-                    failedTasks: [],
-                    blockedTasks: [],
-                    iterations: 0,
-                    maxIterations: 10,
-                    taskCapacity: 5
+                taskSuccessRate: 1,
+                goalAchievementRate: 1,
+                responseTime: { total: 0, average: 0, min: 0, max: 0 },
+                throughput: {
+                    requestsPerSecond: 0,
+                    bytesPerSecond: 0,
+                    operationsPerSecond: 0,
+                    dataProcessedPerSecond: 0
+                }
+            },
+            usage: {
+                totalRequests: 0,
+                activeUsers: 0,
+                requestsPerSecond: 0,
+                averageResponseSize: 0,
+                peakMemoryUsage: 0,
+                uptime: 0,
+                rateLimit: {
+                    current: 0,
+                    limit: 100,
+                    remaining: 100,
+                    resetTime: now + 3600000
                 },
-                stateMetrics: {
-                    currentState: 'active',
+                timestamp: now,
+                component: this.constructor.name,
+                category: 'usage',
+                version: '1.0.0',
+                state: {
+                    timestamp: now,
+                    component: this.constructor.name,
+                    category: 'state',
+                    version: '1.0.0',
+                    currentState: 'initial',
                     stateTime: 0,
                     transitionCount: 0,
                     failedTransitions: 0,
                     blockedTaskCount: 0,
                     historyEntryCount: 0,
-                    lastHistoryUpdate: Date.now(),
+                    lastHistoryUpdate: now,
                     taskStats: {
                         completedCount: 0,
                         failedCount: 0,
                         averageDuration: 0,
                         successRate: 1,
                         averageIterations: 0
-                    },
-                    timestamp: Date.now(),
-                    component: 'AgentMetricsManager',
-                    category: 'metrics',
-                    version: '1.0.0'
+                    }
                 },
-                llmMetrics: {
-                    resources: {
-                        cpuUsage: 0,
-                        memoryUsage: 0,
-                        diskIO: { read: 0, write: 0 },
-                        networkUsage: { upload: 0, download: 0 },
-                        gpuMemoryUsage: 0,
-                        modelMemoryAllocation: {
-                            weights: 0,
-                            cache: 0,
-                            workspace: 0
-                        },
-                        timestamp: Date.now()
-                    },
-                    performance: {
-                        executionTime: { total: 0, average: 0, min: 0, max: 0 },
-                        latency: { total: 0, average: 0, min: 0, max: 0 },
-                        throughput: { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
-                        responseTime: { total: 0, average: 0, min: 0, max: 0 },
-                        queueLength: 0,
-                        errorRate: 0,
-                        successRate: 1,
-                        errorMetrics: { totalErrors: 0, errorRate: 0 },
-                        resourceUtilization: {
-                            cpuUsage: 0,
-                            memoryUsage: 0,
-                            diskIO: { read: 0, write: 0 },
-                            networkUsage: { upload: 0, download: 0 },
-                            gpuMemoryUsage: 0,
-                            modelMemoryAllocation: {
-                                weights: 0,
-                                cache: 0,
-                                workspace: 0
-                            },
-                            timestamp: Date.now()
-                        },
-                        tokensPerSecond: 0,
-                        coherenceScore: 1,
-                        temperatureImpact: 0,
-                        timestamp: Date.now()
-                    },
-                    usage: {
-                        totalRequests: 0,
-                        activeInstances: 0,
-                        activeUsers: 0,
-                        requestsPerSecond: 0,
-                        averageResponseLength: 0,
-                        averageResponseSize: 0,
-                        peakMemoryUsage: 0,
-                        uptime: 0,
-                        rateLimit: {
-                            current: 0,
-                            limit: 100,
-                            remaining: 100,
-                            resetTime: Date.now() + 3600000
-                        },
-                        tokenDistribution: {
-                            prompt: 0,
-                            completion: 0,
-                            total: 0
-                        },
-                        modelDistribution: {
-                            gpt4: 0,
-                            gpt35: 0,
-                            other: 0
-                        },
-                        timestamp: Date.now()
-                    },
-                    timestamp: Date.now()
-                },
-                history: [historyEntry],
-                transitions: []
+                toolUsageFrequency: {},
+                taskCompletionCount: 0,
+                averageTaskTime: 0,
+                costs: {
+                    totalCost: 0,
+                    inputCost: 0,
+                    outputCost: 0,
+                    currency: 'USD',
+                    breakdown: {
+                        promptTokens: { count: 0, cost: 0 },
+                        completionTokens: { count: 0, cost: 0 }
+                    }
+                }
+            },
+            iterations: 0,
+            executionTime: 0,
+            llmMetrics: {},
+            thinkingMetrics: {
+                reasoningTime: 0,
+                planningTime: 0,
+                learningTime: 0,
+                decisionConfidence: 0,
+                learningEfficiency: 0,
+                startTime: now
+            }
+        };
+    }
+
+    // ─── IAgentEventHandler Implementation ─────────────────────────────────────
+
+    public async handleEvent(event: AgentEvent): Promise<void> {
+        await this.safeExecute(async () => {
+            if (!await this.validateEvent(event)) {
+                throw this.createBaseError(`Invalid event: ${event.type}`);
+            }
+
+            switch (event.type) {
+                case AGENT_EVENT_TYPE.AGENT_CREATED:
+                    await this.onAgentCreated(event as IAgentCreatedEvent);
+                    break;
+                case AGENT_EVENT_TYPE.AGENT_UPDATED:
+                    await this.onAgentUpdated(event as IAgentUpdatedEvent);
+                    break;
+                case AGENT_EVENT_TYPE.AGENT_DELETED:
+                    await this.onAgentDeleted(event as IAgentDeletedEvent);
+                    break;
+                case AGENT_EVENT_TYPE.AGENT_STATUS_CHANGED:
+                    await this.onAgentStatusChanged(event as IAgentStatusChangeEvent);
+                    break;
+                case AGENT_EVENT_TYPE.AGENT_ITERATION_STARTED:
+                    await this.onAgentIterationStarted(event as IAgentIterationStartedEvent);
+                    break;
+                case AGENT_EVENT_TYPE.AGENT_ITERATION_COMPLETED:
+                    await this.onAgentIterationCompleted(event as IAgentIterationCompletedEvent);
+                    break;
+                case AGENT_EVENT_TYPE.AGENT_ITERATION_FAILED:
+                    await this.onAgentIterationFailed(event as IAgentIterationFailedEvent);
+                    break;
+                case AGENT_EVENT_TYPE.AGENT_METRICS_UPDATED:
+                    await this.onAgentMetricsUpdated(event as IAgentMetricsUpdatedEvent);
+                    break;
+                case AGENT_EVENT_TYPE.AGENT_CONFIG_UPDATED:
+                    await this.onAgentConfigUpdated(event as IAgentConfigUpdatedEvent);
+                    break;
+                case AGENT_EVENT_TYPE.AGENT_ERROR:
+                    await this.onAgentError(event as IAgentErrorEvent);
+                    break;
+                case AGENT_EVENT_TYPE.AGENT_EXECUTION:
+                    await this.onAgentExecution(event as IAgentExecutionEvent);
+                    break;
+                case AGENT_EVENT_TYPE.AGENT_VALIDATION:
+                    await this.onAgentValidation(event as IAgentValidationEvent);
+                    break;
+                default: {
+                    const eventType = (event as { type: string }).type;
+                    throw this.createBaseError(`Unhandled event type: ${eventType}`);
+                }
+            }
+        }, 'handleEvent');
+    }
+
+    public async validateEvent(event: AgentEvent): Promise<boolean> {
+        if (!event.agentId || !event.type) {
+            return false;
+        }
+
+        const agent = this.stateManager.getAgent(event.agentId);
+        if (!agent) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // ─── Event Handler Methods ─────────────────────────────────────────────────
+
+    private async onAgentCreated(event: IAgentCreatedEvent): Promise<void> {
+        await this.safeExecute(async () => {
+            this.logInfo('Agent created', { agentId: event.agentId });
+            await this.stateManager.addAgent(event.agentType);
+
+            const now = new Date();
+            const executionState: IAgentExecutionState = {
+                currentStep: 0,
+                totalSteps: 0,
+                startTime: now,
+                lastUpdate: now,
+                status: AGENT_STATUS_enum.INITIAL
             };
 
+            const baseMetrics = this.createAgentEventMetrics();
             await this.stateManager.updateAgent(event.agentId, {
                 ...event.agentType,
-                executionState
+                executionState,
+                metrics: baseMetrics
             });
         }, 'onAgentCreated');
     }
 
-    public async onAgentUpdated(event: IAgentUpdatedEvent): Promise<void> {
+    private async onAgentUpdated(event: IAgentUpdatedEvent): Promise<void> {
         await this.safeExecute(async () => {
             this.logInfo('Agent updated', { agentId: event.agentId });
-            await this.stateManager.updateAgent(event.agentId, event.newState);
+            const agent = this.stateManager.getAgent(event.agentId);
+            if (!agent) {
+                throw this.createBaseError(`Agent not found: ${event.agentId}`);
+            }
+
+            const updatedState: IAgentExecutionState = {
+                ...agent.executionState,
+                ...event.newState,
+                currentStep: agent.executionState.currentStep,
+                totalSteps: agent.executionState.totalSteps,
+                startTime: agent.executionState.startTime,
+                status: agent.executionState.status,
+                lastUpdate: new Date()
+            };
+
+            const currentMetrics: IAgentEventMetrics = agent.metrics as IAgentEventMetrics || this.createAgentEventMetrics();
+            const updatedMetrics: IAgentEventMetrics = {
+                ...currentMetrics,
+                timestamp: Date.now(),
+                component: this.constructor.name,
+                category: 'agent',
+                version: '1.0.0'
+            };
+
+            await this.stateManager.updateAgent(event.agentId, {
+                ...agent,
+                executionState: updatedState,
+                metrics: updatedMetrics
+            });
         }, 'onAgentUpdated');
     }
 
-    public async onAgentDeleted(event: IAgentDeletedEvent): Promise<void> {
+    private async onAgentDeleted(event: IAgentDeletedEvent): Promise<void> {
         await this.safeExecute(async () => {
             this.logInfo('Agent deleted', { agentId: event.agentId });
             await this.stateManager.removeAgent(event.agentId);
         }, 'onAgentDeleted');
     }
 
-    public async onAgentStatusChanged(event: IAgentStatusChangedEvent): Promise<void> {
+    private async onAgentStatusChanged(event: IAgentStatusChangeEvent): Promise<void> {
         await this.safeExecute(async () => {
             this.logInfo(`Status changed: ${event.previousStatus} -> ${event.newStatus}`, { agentId: event.agentId });
             const agent = this.stateManager.getAgent(event.agentId);
@@ -282,26 +423,33 @@ export class AgentEventHandler extends CoreManager implements IAgentEventHandler
                 throw this.createBaseError(`Agent not found: ${event.agentId}`);
             }
 
-            if (agent.executionState) {
-                const historyEntry: IStateHistoryEntry = {
-                    timestamp: new Date(),
-                    action: 'STATUS_CHANGED',
-                    category: STATE_CATEGORY.CORE,
-                    details: {
-                        previousStatus: event.previousStatus,
-                        newStatus: event.newStatus,
-                        reason: event.reason
-                    }
-                };
-                agent.executionState.history.push(historyEntry);
-                agent.executionState.core.status = event.newStatus;
-            }
+            const updatedState: IAgentExecutionState = {
+                ...agent.executionState,
+                currentStep: agent.executionState.currentStep,
+                totalSteps: agent.executionState.totalSteps,
+                startTime: agent.executionState.startTime,
+                status: event.newStatus,
+                lastUpdate: new Date()
+            };
 
-            await this.stateManager.updateAgent(event.agentId, agent);
+            const currentMetrics: IAgentEventMetrics = agent.metrics as IAgentEventMetrics || this.createAgentEventMetrics();
+            const updatedMetrics: IAgentEventMetrics = {
+                ...currentMetrics,
+                timestamp: Date.now(),
+                component: this.constructor.name,
+                category: 'agent',
+                version: '1.0.0'
+            };
+
+            await this.stateManager.updateAgent(event.agentId, {
+                ...agent,
+                executionState: updatedState,
+                metrics: updatedMetrics
+            });
         }, 'onAgentStatusChanged');
     }
 
-    public async onAgentIterationStarted(event: IAgentIterationStartedEvent): Promise<void> {
+    private async onAgentIterationStarted(event: IAgentIterationStartedEvent): Promise<void> {
         await this.safeExecute(async () => {
             this.logInfo(`Iteration started: ${event.iterationId}`, { agentId: event.agentId });
             const agent = this.stateManager.getAgent(event.agentId);
@@ -309,28 +457,33 @@ export class AgentEventHandler extends CoreManager implements IAgentEventHandler
                 throw this.createBaseError(`Agent not found: ${event.agentId}`);
             }
 
-            if (agent.executionState) {
-                agent.executionState.assignment.iterations++;
-                agent.executionState.timing.lastActiveTime = new Date();
-                agent.executionState.core.thinking = true;
+            const updatedState: IAgentExecutionState = {
+                ...agent.executionState,
+                currentStep: agent.executionState.currentStep + 1,
+                totalSteps: agent.executionState.totalSteps,
+                startTime: agent.executionState.startTime,
+                status: agent.executionState.status,
+                lastUpdate: new Date()
+            };
 
-                const historyEntry: IStateHistoryEntry = {
-                    timestamp: new Date(),
-                    action: 'ITERATION_STARTED',
-                    category: STATE_CATEGORY.CORE,
-                    details: {
-                        iterationId: event.iterationId,
-                        iterationCount: agent.executionState.assignment.iterations
-                    }
-                };
-                agent.executionState.history.push(historyEntry);
+            const currentMetrics: IAgentEventMetrics = agent.metrics as IAgentEventMetrics || this.createAgentEventMetrics();
+            const updatedMetrics: IAgentEventMetrics = {
+                ...currentMetrics,
+                timestamp: Date.now(),
+                component: this.constructor.name,
+                category: 'agent',
+                version: '1.0.0'
+            };
 
-                await this.stateManager.updateAgent(event.agentId, agent);
-            }
+            await this.stateManager.updateAgent(event.agentId, {
+                ...agent,
+                executionState: updatedState,
+                metrics: updatedMetrics
+            });
         }, 'onAgentIterationStarted');
     }
 
-    public async onAgentIterationCompleted(event: IAgentIterationCompletedEvent): Promise<void> {
+    private async onAgentIterationCompleted(event: IAgentIterationCompletedEvent): Promise<void> {
         await this.safeExecute(async () => {
             this.logInfo(`Iteration completed: ${event.iterationId}`, { agentId: event.agentId });
             const agent = this.stateManager.getAgent(event.agentId);
@@ -338,27 +491,41 @@ export class AgentEventHandler extends CoreManager implements IAgentEventHandler
                 throw this.createBaseError(`Agent not found: ${event.agentId}`);
             }
 
-            if (agent.executionState) {
-                agent.executionState.timing.lastActiveTime = new Date();
-                agent.executionState.core.thinking = false;
+            const updatedState: IAgentExecutionState = {
+                ...agent.executionState,
+                currentStep: agent.executionState.currentStep,
+                totalSteps: agent.executionState.totalSteps,
+                startTime: agent.executionState.startTime,
+                status: agent.executionState.status,
+                lastUpdate: new Date()
+            };
 
-                const historyEntry: IStateHistoryEntry = {
-                    timestamp: new Date(),
-                    action: 'ITERATION_COMPLETED',
-                    category: STATE_CATEGORY.CORE,
-                    details: {
-                        iterationId: event.iterationId,
-                        result: event.result
-                    }
-                };
-                agent.executionState.history.push(historyEntry);
+            const currentMetrics: IAgentEventMetrics = agent.metrics as IAgentEventMetrics || this.createAgentEventMetrics();
+            const updatedMetrics: IAgentEventMetrics = {
+                ...currentMetrics,
+                performance: {
+                    ...currentMetrics.performance as IAgentPerformanceMetrics,
+                    success: true,
+                    timestamp: Date.now(),
+                    component: this.constructor.name,
+                    category: 'performance',
+                    version: '1.0.0'
+                } as IAgentPerformanceMetrics,
+                timestamp: Date.now(),
+                component: this.constructor.name,
+                category: 'agent',
+                version: '1.0.0'
+            };
 
-                await this.stateManager.updateAgent(event.agentId, agent);
-            }
+            await this.stateManager.updateAgent(event.agentId, {
+                ...agent,
+                executionState: updatedState,
+                metrics: updatedMetrics
+            });
         }, 'onAgentIterationCompleted');
     }
 
-    public async onAgentIterationFailed(event: IAgentIterationFailedEvent): Promise<void> {
+    private async onAgentIterationFailed(event: IAgentIterationFailedEvent): Promise<void> {
         await this.safeExecute(async () => {
             this.logError(`Iteration failed: ${event.iterationId}`, event.error);
             const agent = this.stateManager.getAgent(event.agentId);
@@ -366,40 +533,66 @@ export class AgentEventHandler extends CoreManager implements IAgentEventHandler
                 throw this.createBaseError(`Agent not found: ${event.agentId}`);
             }
 
-            if (agent.executionState) {
-                agent.executionState.timing.lastActiveTime = new Date();
-                agent.executionState.core.thinking = false;
-                agent.executionState.error.errorCount++;
-                agent.executionState.error.lastError = this.convertToBaseError(event.error);
+            const errorMetric = this.createErrorMetrics(event.error, 'ExecutionError');
 
-                const historyEntry: IStateHistoryEntry = {
-                    timestamp: new Date(),
-                    action: 'ITERATION_FAILED',
-                    category: STATE_CATEGORY.ERROR,
-                    details: {
-                        iterationId: event.iterationId,
-                        error: event.error.message
+            const updatedState: IAgentExecutionState = {
+                ...agent.executionState,
+                error: {
+                    name: 'ExecutionError',
+                    message: event.error.message,
+                    stack: event.error.stack,
+                    type: ERROR_KINDS.ExecutionError,
+                    errorCount: (agent.executionState.error?.errorCount || 0) + 1,
+                    errorHistory: this.createErrorHistory(
+                        agent.executionState.error?.errorHistory,
+                        event.error,
+                        {
+                            component: this.constructor.name,
+                            timestamp: Date.now(),
+                            iterationId: event.iterationId
+                        }
+                    ),
+                    context: {
+                        component: this.constructor.name,
+                        timestamp: Date.now(),
+                        iterationId: event.iterationId
                     }
-                };
-                agent.executionState.history.push(historyEntry);
+                } satisfies IAgentError,
+                lastUpdate: new Date()
+            };
 
-                await this.stateManager.updateAgent(event.agentId, agent);
+            const currentMetrics: IAgentEventMetrics = agent.metrics as IAgentEventMetrics || this.createAgentEventMetrics();
+            const updatedMetrics: IAgentEventMetrics = {
+                ...currentMetrics,
+                errors: errorMetric,
+                warnings: [...(currentMetrics.warnings || [])],
+                info: [...(currentMetrics.info || [])],
+                resources: currentMetrics.resources,
+                performance: {
+                    ...currentMetrics.performance as IAgentPerformanceMetrics,
+                    success: false,
+                    errorCount: ((currentMetrics.performance as IAgentPerformanceMetrics).errorCount || 0) + 1,
+                    timestamp: Date.now(),
+                    component: this.constructor.name,
+                    category: 'performance',
+                    version: '1.0.0'
+                } as IAgentPerformanceMetrics,
+                usage: currentMetrics.usage,
+                timestamp: Date.now(),
+                component: this.constructor.name,
+                category: 'agent',
+                version: '1.0.0'
+            };
 
-                const errorContext: IAgentExecutionErrorContext = {
-                    operation: 'iteration',
-                    state: agent
-                };
-
-                await this.eventEmitter.emitAgentErrorOccurred({
-                    agentId: event.agentId,
-                    error: this.createBaseError(event.error.message, 'ExecutionError'),
-                    context: errorContext
-                });
-            }
+            await this.stateManager.updateAgent(event.agentId, {
+                ...agent,
+                executionState: updatedState,
+                metrics: updatedMetrics
+            });
         }, 'onAgentIterationFailed');
     }
 
-    public async onAgentMetricsUpdated(event: IAgentMetricsUpdatedEvent): Promise<void> {
+    private async onAgentMetricsUpdated(event: IAgentMetricsUpdatedEvent): Promise<void> {
         await this.safeExecute(async () => {
             this.logInfo('Metrics updated', { agentId: event.agentId });
             const agent = this.stateManager.getAgent(event.agentId);
@@ -407,86 +600,40 @@ export class AgentEventHandler extends CoreManager implements IAgentEventHandler
                 throw this.createBaseError(`Agent not found: ${event.agentId}`);
             }
 
-            if (agent.executionState) {
-                const now = Date.now();
-                const newMetrics = {
-                    resources: {
-                        cpuUsage: event.newMetrics.resources.cpuUsage,
-                        memoryUsage: event.newMetrics.resources.memoryUsage,
-                        diskIO: event.newMetrics.resources.diskIO,
-                        networkUsage: event.newMetrics.resources.networkUsage,
-                        gpuMemoryUsage: 0,
-                        modelMemoryAllocation: {
-                            weights: 0,
-                            cache: 0,
-                            workspace: 0
-                        },
-                        timestamp: now
-                    },
-                    performance: {
-                        ...event.newMetrics.performance,
-                        resourceUtilization: {
-                            cpuUsage: event.newMetrics.resources.cpuUsage,
-                            memoryUsage: event.newMetrics.resources.memoryUsage,
-                            diskIO: event.newMetrics.resources.diskIO,
-                            networkUsage: event.newMetrics.resources.networkUsage,
-                            gpuMemoryUsage: 0,
-                            modelMemoryAllocation: {
-                                weights: 0,
-                                cache: 0,
-                                workspace: 0
-                            },
-                            timestamp: now
-                        },
-                        tokensPerSecond: 0,
-                        coherenceScore: 1,
-                        temperatureImpact: 0,
-                        timestamp: now
-                    },
-                    usage: {
-                        totalRequests: event.newMetrics.usage.totalRequests,
-                        requestsPerSecond: event.newMetrics.usage.requestsPerSecond,
-                        peakMemoryUsage: event.newMetrics.usage.peakMemoryUsage,
-                        uptime: event.newMetrics.usage.uptime,
-                        rateLimit: event.newMetrics.usage.rateLimit,
-                        activeInstances: 0,
-                        activeUsers: 0,
-                        averageResponseLength: 0,
-                        averageResponseSize: 0,
-                        tokenDistribution: {
-                            prompt: 0,
-                            completion: 0,
-                            total: 0
-                        },
-                        modelDistribution: {
-                            gpt4: 0,
-                            gpt35: 0,
-                            other: 0
-                        },
-                        timestamp: now
-                    },
-                    timestamp: now
-                };
+            const updatedState: IAgentExecutionState = {
+                ...agent.executionState,
+                currentStep: agent.executionState.currentStep,
+                totalSteps: agent.executionState.totalSteps,
+                startTime: agent.executionState.startTime,
+                status: agent.executionState.status,
+                lastUpdate: new Date()
+            };
 
-                // Use Object.assign to update read-only property
-                Object.assign(agent.executionState.llmMetrics, newMetrics);
+            const currentMetrics: IAgentEventMetrics = agent.metrics as IAgentEventMetrics || this.createAgentEventMetrics();
+            const updatedMetrics: IAgentEventMetrics = {
+                ...currentMetrics,
+                ...event.newMetrics,
+                errors: currentMetrics.errors,
+                warnings: [...(currentMetrics.warnings || [])],
+                info: [...(currentMetrics.info || [])],
+                resources: currentMetrics.resources,
+                performance: currentMetrics.performance,
+                usage: currentMetrics.usage,
+                timestamp: Date.now(),
+                component: this.constructor.name,
+                category: 'agent',
+                version: '1.0.0'
+            };
 
-                const historyEntry: IStateHistoryEntry = {
-                    timestamp: new Date(),
-                    action: 'METRICS_UPDATED',
-                    category: STATE_CATEGORY.METRICS,
-                    details: {
-                        metrics: agent.executionState.llmMetrics
-                    }
-                };
-                agent.executionState.history.push(historyEntry);
-
-                await this.stateManager.updateAgent(event.agentId, agent);
-            }
+            await this.stateManager.updateAgent(event.agentId, {
+                ...agent,
+                executionState: updatedState,
+                metrics: updatedMetrics
+            });
         }, 'onAgentMetricsUpdated');
     }
 
-    public async onAgentConfigUpdated(event: IAgentConfigUpdatedEvent): Promise<void> {
+    private async onAgentConfigUpdated(event: IAgentConfigUpdatedEvent): Promise<void> {
         await this.safeExecute(async () => {
             this.logInfo('Config updated', { agentId: event.agentId });
             const agent = this.stateManager.getAgent(event.agentId);
@@ -494,220 +641,196 @@ export class AgentEventHandler extends CoreManager implements IAgentEventHandler
                 throw this.createBaseError(`Agent not found: ${event.agentId}`);
             }
 
-            if (agent.executionState) {
-                agent.executionState.timing.lastActiveTime = new Date();
+            const updatedState: IAgentExecutionState = {
+                ...agent.executionState,
+                currentStep: agent.executionState.currentStep,
+                totalSteps: agent.executionState.totalSteps,
+                startTime: agent.executionState.startTime,
+                status: agent.executionState.status,
+                lastUpdate: new Date()
+            };
 
-                const historyEntry: IStateHistoryEntry = {
-                    timestamp: new Date(),
-                    action: 'CONFIG_UPDATED',
-                    category: STATE_CATEGORY.CORE,
-                    details: {
-                        previousConfig: event.previousConfig,
-                        newConfig: event.newConfig
-                    }
-                };
-                agent.executionState.history.push(historyEntry);
+            const currentMetrics: IAgentEventMetrics = agent.metrics as IAgentEventMetrics || this.createAgentEventMetrics();
+            const updatedMetrics: IAgentEventMetrics = {
+                ...currentMetrics,
+                timestamp: Date.now(),
+                component: this.constructor.name,
+                category: 'agent',
+                version: '1.0.0'
+            };
 
-                await this.stateManager.updateAgent(event.agentId, agent);
-            }
+            await this.stateManager.updateAgent(event.agentId, {
+                ...agent,
+                executionState: updatedState,
+                metrics: updatedMetrics,
+                ...event.changes
+            });
         }, 'onAgentConfigUpdated');
     }
 
-    public async onAgentValidationCompleted(event: IAgentValidationCompletedEvent): Promise<void> {
+    private async onAgentError(event: IAgentErrorEvent): Promise<void> {
         await this.safeExecute(async () => {
-            this.logInfo('Validation completed', { agentId: event.agentId });
-            if (!event.validationResult.isValid) {
-                const agent = this.stateManager.getAgent(event.agentId);
-                if (!agent) {
-                    throw this.createBaseError(`Agent not found: ${event.agentId}`);
-                }
+            this.logError(`Error occurred: ${event.error.message}`, event.error);
+            const agent = this.stateManager.getAgent(event.agentId);
+            if (!agent) {
+                throw this.createBaseError(`Agent not found: ${event.agentId}`);
+            }
 
-                if (agent.executionState) {
-                    const historyEntry: IStateHistoryEntry = {
-                        timestamp: new Date(),
-                        action: 'VALIDATION_FAILED',
-                        category: STATE_CATEGORY.ERROR,
-                        details: {
-                            errors: event.validationResult.errors,
-                            warnings: event.validationResult.warnings
+            const errorMetric = this.createErrorMetrics(event.error, 'ExecutionError');
+            const updatedState: IAgentExecutionState = {
+                ...agent.executionState,
+                currentStep: agent.executionState.currentStep,
+                totalSteps: agent.executionState.totalSteps,
+                startTime: agent.executionState.startTime,
+                status: agent.executionState.status,
+                error: {
+                    name: 'ExecutionError',
+                    message: event.error.message,
+                    stack: event.error.stack,
+                    type: ERROR_KINDS.ExecutionError,
+                    errorCount: (agent.executionState.error?.errorCount || 0) + 1,
+                    errorHistory: this.createErrorHistory(
+                        agent.executionState.error?.errorHistory,
+                        event.error,
+                        {
+                            component: this.constructor.name,
+                            timestamp: Date.now(),
+                            operation: event.operation
                         }
-                    };
-                    agent.executionState.history.push(historyEntry);
+                    ),
+                    context: {
+                        component: this.constructor.name,
+                        timestamp: Date.now(),
+                        operation: event.operation
+                    }
+                } satisfies IAgentError,
+                lastUpdate: new Date()
+            };
 
-                    const errorContext: IAgentExecutionErrorContext = {
-                        operation: 'validation',
-                        state: agent,
-                        validationResult: event.validationResult
-                    };
+            const currentMetrics: IAgentEventMetrics = agent.metrics as IAgentEventMetrics || this.createAgentEventMetrics();
+            const updatedMetrics: IAgentEventMetrics = {
+                ...currentMetrics,
+                errors: errorMetric,
+                warnings: [...(currentMetrics.warnings || [])],
+                info: [...(currentMetrics.info || [])],
+                resources: currentMetrics.resources,
+                performance: {
+                    ...currentMetrics.performance as IAgentPerformanceMetrics,
+                    success: false,
+                    errorCount: ((currentMetrics.performance as IAgentPerformanceMetrics).errorCount || 0) + 1,
+                    timestamp: Date.now(),
+                    component: this.constructor.name,
+                    category: 'performance',
+                    version: '1.0.0'
+                } as IAgentPerformanceMetrics,
+                usage: currentMetrics.usage,
+                timestamp: Date.now(),
+                component: this.constructor.name,
+                category: 'agent',
+                version: '1.0.0'
+            };
 
-                    await this.eventEmitter.emitAgentErrorOccurred({
-                        agentId: event.agentId,
-                        error: this.createBaseError(
-                            event.validationResult.errors.join(', '),
-                            'ValidationError'
-                        ),
-                        context: errorContext
-                    });
-                }
-            }
-        }, 'onAgentValidationCompleted');
+            await this.stateManager.updateAgent(event.agentId, {
+                ...agent,
+                executionState: updatedState,
+                metrics: updatedMetrics
+            });
+        }, 'onAgentError');
     }
 
-    public async onAgentErrorOccurred(event: IAgentErrorOccurredEvent): Promise<void> {
+    private async onAgentExecution(event: IAgentExecutionEvent): Promise<void> {
         await this.safeExecute(async () => {
-            this.logError('Error occurred', event.error);
+            this.logInfo(`Execution ${event.success ? 'completed' : 'failed'}: ${event.operation}`, { agentId: event.agentId });
             const agent = this.stateManager.getAgent(event.agentId);
             if (!agent) {
                 throw this.createBaseError(`Agent not found: ${event.agentId}`);
             }
 
-            if (agent.executionState) {
-                agent.executionState.error.errorCount++;
-                agent.executionState.error.lastError = this.convertToBaseError(event.error);
-                agent.executionState.timing.lastActiveTime = new Date();
+            const updatedState: IAgentExecutionState = {
+                ...agent.executionState,
+                currentStep: agent.executionState.currentStep,
+                totalSteps: agent.executionState.totalSteps,
+                startTime: agent.executionState.startTime,
+                status: agent.executionState.status,
+                lastUpdate: new Date()
+            };
 
-                const historyEntry: IStateHistoryEntry = {
-                    timestamp: new Date(),
-                    action: 'ERROR_OCCURRED',
-                    category: STATE_CATEGORY.ERROR,
-                    details: {
-                        error: event.error.message,
-                        context: event.context
-                    }
-                };
-                agent.executionState.history.push(historyEntry);
+            const currentMetrics: IAgentEventMetrics = agent.metrics as IAgentEventMetrics || this.createAgentEventMetrics();
+            const updatedMetrics: IAgentEventMetrics = {
+                ...currentMetrics,
+                performance: {
+                    ...currentMetrics.performance as IAgentPerformanceMetrics,
+                    success: event.success,
+                    duration: event.duration,
+                    timestamp: Date.now(),
+                    component: this.constructor.name,
+                    category: 'performance',
+                    version: '1.0.0'
+                } as IAgentPerformanceMetrics,
+                timestamp: Date.now(),
+                component: this.constructor.name,
+                category: 'agent',
+                version: '1.0.0'
+            };
 
-                await this.stateManager.updateAgent(event.agentId, agent);
-            }
-        }, 'onAgentErrorOccurred');
+            await this.stateManager.updateAgent(event.agentId, {
+                ...agent,
+                executionState: updatedState,
+                metrics: updatedMetrics
+            });
+        }, 'onAgentExecution');
     }
 
-    public async onAgentErrorHandled(event: IAgentErrorHandledEvent): Promise<void> {
+    private async onAgentValidation(event: IAgentValidationEvent): Promise<void> {
         await this.safeExecute(async () => {
-            this.logInfo('Error handled', { agentId: event.agentId });
+            this.logInfo(`Validation ${event.isValid ? 'passed' : 'failed'}`, { agentId: event.agentId });
             const agent = this.stateManager.getAgent(event.agentId);
             if (!agent) {
                 throw this.createBaseError(`Agent not found: ${event.agentId}`);
             }
 
-            if (agent.executionState) {
-                agent.executionState.error.lastError = undefined;
-                agent.executionState.timing.lastActiveTime = new Date();
+            const updatedState: IAgentExecutionState = {
+                ...agent.executionState,
+                currentStep: agent.executionState.currentStep,
+                totalSteps: agent.executionState.totalSteps,
+                startTime: agent.executionState.startTime,
+                status: agent.executionState.status,
+                lastUpdate: new Date()
+            };
 
-                const historyEntry: IStateHistoryEntry = {
-                    timestamp: new Date(),
-                    action: 'ERROR_HANDLED',
-                    category: STATE_CATEGORY.ERROR,
-                    details: {
-                        error: this.convertToBaseError(event.error),
-                        task: event.task,
-                        context: event.context
-                    }
-                };
-                agent.executionState.history.push(historyEntry);
+            const currentMetrics: IAgentEventMetrics = agent.metrics as IAgentEventMetrics || this.createAgentEventMetrics();
+            const updatedMetrics: IAgentEventMetrics = {
+                ...currentMetrics,
+                warnings: [...(currentMetrics.warnings || []), ...event.warnings],
+                info: [...(currentMetrics.info || [])],
+                performance: {
+                    ...currentMetrics.performance as IAgentPerformanceMetrics,
+                    success: event.isValid,
+                    timestamp: Date.now(),
+                    component: this.constructor.name,
+                    category: 'performance',
+                    version: '1.0.0'
+                } as IAgentPerformanceMetrics,
+                timestamp: Date.now(),
+                component: this.constructor.name,
+                category: 'agent',
+                version: '1.0.0'
+            };
 
-                await this.stateManager.updateAgent(event.agentId, agent);
-            }
-        }, 'onAgentErrorHandled');
-    }
+            const updatedMetricsWithValidation: IAgentEventMetrics = {
+                ...updatedMetrics,
+                info: [
+                    ...updatedMetrics.info,
+                    event.validationResult ? JSON.stringify(event.validationResult) : ''
+                ]
+            };
 
-    public async onAgentErrorRecoveryStarted(event: IAgentErrorRecoveryStartedEvent): Promise<void> {
-        await this.safeExecute(async () => {
-            this.logInfo('Error recovery started', { agentId: event.agentId });
-            const agent = this.stateManager.getAgent(event.agentId);
-            if (!agent) {
-                throw this.createBaseError(`Agent not found: ${event.agentId}`);
-            }
-
-            if (agent.executionState) {
-                agent.executionState.timing.lastActiveTime = new Date();
-
-                const historyEntry: IStateHistoryEntry = {
-                    timestamp: new Date(),
-                    action: 'ERROR_RECOVERY_STARTED',
-                    category: STATE_CATEGORY.ERROR,
-                    details: {
-                        error: this.convertToBaseError(event.error),
-                        context: event.context
-                    }
-                };
-                agent.executionState.history.push(historyEntry);
-
-                await this.stateManager.updateAgent(event.agentId, agent);
-            }
-        }, 'onAgentErrorRecoveryStarted');
-    }
-
-    public async onAgentErrorRecoveryCompleted(event: IAgentErrorRecoveryCompletedEvent): Promise<void> {
-        await this.safeExecute(async () => {
-            this.logInfo('Error recovery completed', { agentId: event.agentId });
-            const agent = this.stateManager.getAgent(event.agentId);
-            if (!agent) {
-                throw this.createBaseError(`Agent not found: ${event.agentId}`);
-            }
-
-            if (agent.executionState) {
-                agent.executionState.error.lastError = undefined;
-                agent.executionState.timing.lastActiveTime = new Date();
-
-                const historyEntry: IStateHistoryEntry = {
-                    timestamp: new Date(),
-                    action: 'ERROR_RECOVERY_COMPLETED',
-                    category: STATE_CATEGORY.ERROR,
-                    details: {
-                        error: this.convertToBaseError(event.error),
-                        context: event.context
-                    }
-                };
-                agent.executionState.history.push(historyEntry);
-
-                await this.stateManager.updateAgent(event.agentId, agent);
-            }
-        }, 'onAgentErrorRecoveryCompleted');
-    }
-
-    public async onAgentErrorRecoveryFailed(event: IAgentErrorRecoveryFailedEvent): Promise<void> {
-        await this.safeExecute(async () => {
-            this.logError('Error recovery failed', event.error);
-            const agent = this.stateManager.getAgent(event.agentId);
-            if (!agent) {
-                throw this.createBaseError(`Agent not found: ${event.agentId}`);
-            }
-
-            if (agent.executionState) {
-                agent.executionState.error.lastError = this.convertToBaseError(event.error);
-                agent.executionState.timing.lastActiveTime = new Date();
-
-                const historyEntry: IStateHistoryEntry = {
-                    timestamp: new Date(),
-                    action: 'ERROR_RECOVERY_FAILED',
-                    category: STATE_CATEGORY.ERROR,
-                    details: {
-                        error: this.convertToBaseError(event.error),
-                        context: event.context
-                    }
-                };
-                agent.executionState.history.push(historyEntry);
-
-                await this.stateManager.updateAgent(event.agentId, agent);
-
-                const errorContext: IAgentExecutionErrorContext = {
-                    operation: 'error_recovery',
-                    state: agent,
-                    recoveryAttempts: agent.executionState.error.retryCount
-                };
-
-                await this.eventEmitter.emitAgentErrorOccurred({
-                    agentId: event.agentId,
-                    error: this.createBaseError(event.error.message, 'ExecutionError'),
-                    context: errorContext
-                });
-            }
-        }, 'onAgentErrorRecoveryFailed');
-    }
-
-    public cleanup(): void {
-        // No cleanup needed as we're using singletons
+            await this.stateManager.updateAgent(event.agentId, {
+                ...agent,
+                executionState: updatedState,
+                metrics: updatedMetricsWithValidation
+            });
+        }, 'onAgentValidation');
     }
 }
 

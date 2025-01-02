@@ -9,12 +9,6 @@
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { Tool } from "langchain/tools";
 import type { 
-    // Base prompt template
-    IAgentPromptTemplate,
-    
-    // REACT Champion agent prompts
-    IREACTChampionAgentPrompts,
-    
     // Parameter types
     ISystemMessageParams,
     IInitialMessageParams,
@@ -28,7 +22,8 @@ import type {
     IObservationFeedbackParams,
     IWeirdOutputFeedbackParams,
     IForceFinalAnswerParams,
-    IFeedbackMessageParams
+    IFeedbackMessageParams,
+    IREACTChampionAgentPrompts
 } from '../../../types/agent';
 
 import { validatePrompts } from './index';
@@ -37,7 +32,7 @@ import { validatePrompts } from './index';
  * Default prompt templates for REACT Champion agents
  * Provides a complete set of templates for agent-task interactions
  */
-const REACT_CHAMPION_AGENT_DEFAULT_PROMPTS = {
+const REACT_CHAMPION_AGENT_DEFAULT_PROMPTS: IREACTChampionAgentPrompts = {
     SYSTEM_MESSAGE: function systemMessageTemplate(params: ISystemMessageParams): string {
         const { agent, task } = params;
         const toolDescriptions = agent.tools.length > 0 
@@ -170,11 +165,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${ta
          Please reassess using only available tools listed in initial instructions. Respond in JSON format.`;
     },
 
-    OBSERVATION_FEEDBACK: function observationFeedbackTemplate(params: IObservationFeedbackParams): string {
+    OBSERVATION_FEEDBACK: function observationFeedbackTemplate(_: IObservationFeedbackParams): string {
         return `Observation phase. Please analyze current state and prepare next action in JSON format.`;
     },
 
-    WEIRD_OUTPUT_FEEDBACK: function weirdOutputFeedbackTemplate(params: IWeirdOutputFeedbackParams): string {
+    WEIRD_OUTPUT_FEEDBACK: function weirdOutputFeedbackTemplate(_: IWeirdOutputFeedbackParams): string {
         return `Unexpected output format detected. Please ensure your response follows the specified JSON structure.`;
     },
 

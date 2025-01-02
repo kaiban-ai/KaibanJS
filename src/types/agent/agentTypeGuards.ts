@@ -7,10 +7,8 @@
  */
 
 import type { 
-    IAgentType,
     IBaseAgent,
     IAgentMetadata,
-    IAgentCapabilities,
     IReactChampionAgent 
 } from './agentBaseTypes';
 import type {
@@ -29,8 +27,7 @@ import type {
 } from './agentSelectorsTypes';
 import type { IAgentEventMetadata } from './agentEventTypes';
 import type { 
-    IAgentValidationResult, 
-    IAgentValidationSchema,
+    IAgentValidationResult,
     IAgentSelectionCriteria,
     IAgentCreationResult 
 } from './agentValidationTypes';
@@ -45,13 +42,12 @@ export const AgentTypeGuards = {
             typeof metadata.id === 'string' &&
             typeof metadata.name === 'string' &&
             Array.isArray(metadata.capabilities) &&
-            Array.isArray(metadata.skills) &&
             metadata.created instanceof Date &&
-            metadata.updated instanceof Date &&  // Check for updated Date
+            metadata.modified instanceof Date &&  // Check for modified Date
             typeof metadata.version === 'string' &&  // Check for version string
-            (metadata.tags === undefined || Array.isArray(metadata.tags)) &&  // Check tags is optional array
-            (metadata.lastActive === undefined || metadata.lastActive instanceof Date) &&  // Check lastActive is optional Date
-            (metadata.description === undefined || typeof metadata.description === 'string')  // Check description is optional string
+            typeof metadata.type === 'string' &&
+            typeof metadata.description === 'string' &&
+            typeof metadata.status === 'string'
         );
     },
 
@@ -67,7 +63,7 @@ export const AgentTypeGuards = {
             'capabilities' in agent &&
             'metadata' in agent &&
             'executionState' in agent &&
-            AgentTypeGuards.isAgentMetadata((agent as IBaseAgent).metadata)  // Validate metadata using updated type guard
+            AgentTypeGuards.isAgentMetadata((agent as IBaseAgent).metadata)
         );
     },
 
@@ -79,16 +75,20 @@ export const AgentTypeGuards = {
             'executableAgent' in reactAgent &&
             typeof reactAgent.executableAgent === 'object' &&
             Object.keys(reactAgent.executableAgent || {}).length === 0 &&
-            // Check required methods
-            'messageHistory' in reactAgent &&
-            typeof reactAgent.handleIterationStart === 'function' &&
-            typeof reactAgent.handleIterationEnd === 'function' &&
-            typeof reactAgent.handleThinkingError === 'function' &&
-            typeof reactAgent.handleMaxIterationsError === 'function' &&
-            typeof reactAgent.handleAgenticLoopError === 'function' &&
-            typeof reactAgent.handleTaskCompleted === 'function' &&
-            typeof reactAgent.handleFinalAnswer === 'function' &&
-            typeof reactAgent.handleIssuesParsingLLMOutput === 'function'
+            // Check required properties
+            'messages' in reactAgent &&
+            'context' in reactAgent &&
+            'history' in reactAgent &&
+            // Check capabilities
+            'capabilities' in reactAgent &&
+            typeof reactAgent.capabilities === 'object' &&
+            reactAgent.capabilities !== null &&
+            typeof reactAgent.capabilities.canThink === 'boolean' &&
+            typeof reactAgent.capabilities.canUseTools === 'boolean' &&
+            typeof reactAgent.capabilities.canLearn === 'boolean' &&
+            Array.isArray(reactAgent.capabilities.supportedToolTypes) &&
+            typeof reactAgent.capabilities.maxConcurrentTasks === 'number' &&
+            typeof reactAgent.capabilities.memoryCapacity === 'number'
         );
     }
 };
@@ -225,7 +225,6 @@ export const EventTypeGuards = {
         return (
             typeof metadata.agent === 'object' &&
             metadata.agent !== null &&
-            typeof metadata.agent.id === 'string' &&
             typeof metadata.agent.name === 'string' &&
             typeof metadata.agent.role === 'string' &&
             typeof metadata.agent.status === 'string' &&

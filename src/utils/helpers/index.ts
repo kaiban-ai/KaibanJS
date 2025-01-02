@@ -18,6 +18,3 @@ export * from './prompts';
 
 // Task helpers
 export * from './tasks';
-
-// Statistics helpers
-export * from './tasks/stats';

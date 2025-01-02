@@ -4,8 +4,16 @@
  */
 
 import { VALIDATION_ERROR_enum, VALIDATION_WARNING_enum } from '../common/enumTypes';
-import type { IBaseHandlerMetadata } from '../common/baseTypes';
-import type { LLMProviderConfig } from './llmProviderTypes';
+import type { IBaseHandlerMetadata, IBaseContextRequired } from '../common/baseTypes';
+import type { ILLMProviderConfig } from './llmProviderTypes';
+import type { IPerformanceMetrics } from '../metrics/base/performanceMetrics';
+import type { IValidationResult } from '../common/validationTypes';
+
+export interface ILLMValidationField {
+    type: string;
+    min?: number;
+    max?: number;
+}
 
 /**
  * LLM validation metadata interface
@@ -36,7 +44,7 @@ export interface ILLMValidationOptions {
     strict?: boolean;
     timeout?: number;
     retryCount?: number;
-    customValidators?: Array<(config: LLMProviderConfig) => boolean>;
+    customValidators?: Array<(config: ILLMProviderConfig) => boolean>;
 }
 
 /**
@@ -65,45 +73,45 @@ export function createLLMValidationResult<T>(
         errors,
         warnings,
         data,
-        metadata: {
+        metadata: ({
             ...metadata,
             timestamp: Date.now(),
             component: 'LLMValidator',
             operation: 'validate',
             performance: {
-                executionTime: { total: 0, average: 0, min: 0, max: 0 },
-                latency: { total: 0, average: 0, min: 0, max: 0 },
-                responseTime: { total: 0, average: 0, min: 0, max: 0 },
-                throughput: { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
-                queueLength: 0,
-                errorRate: 0,
-                successRate: 1,
-                errorMetrics: { totalErrors: 0, errorRate: 0 },
-                resourceUtilization: {
-                    cpuUsage: 0,
-                    memoryUsage: process.memoryUsage().heapUsed,
-                    diskIO: { read: 0, write: 0 },
-                    networkUsage: { upload: 0, download: 0 },
-                    timestamp: Date.now()
+                timestamp: Date.now(),
+                component: 'LLMValidator',
+                category: 'validation',
+                version: '1.0',
+                responseTime: {
+                    average: 0,
+                    min: 0,
+                    max: 0,
+                    total: 0
                 },
-                timestamp: Date.now()
-            },
+                throughput: {
+                    requestsPerSecond: 0,
+                    bytesPerSecond: 0,
+                    operationsPerSecond: 0,
+                    dataProcessedPerSecond: 0
+                }
+            } satisfies IPerformanceMetrics,
             context: {
                 source: 'LLMValidator',
                 target: 'validation',
                 correlationId: Date.now().toString(),
                 causationId: Date.now().toString()
-            },
+            } satisfies IBaseContextRequired,
             validation: {
                 isValid: true,
                 errors: [],
                 warnings: []
-            },
+            } satisfies IValidationResult,
             provider: metadata?.provider || 'unknown',
             model: metadata?.model || 'unknown',
             validatedFields: metadata?.validatedFields || [],
             configHash: metadata?.configHash || '',
             validationDuration: metadata?.validationDuration || 0
-        } as ILLMValidationMetadata
+        }) satisfies ILLMValidationMetadata
     };
 }

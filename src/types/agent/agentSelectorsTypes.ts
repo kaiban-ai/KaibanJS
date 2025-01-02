@@ -8,9 +8,9 @@
 
 import type { IAgentType } from './agentBaseTypes';
 import type { ITaskType } from '../task/taskBaseTypes';
-import type { IAgentState } from './agentStoreTypes';
-import type { AGENT_STATUS_enum } from '../common/commonEnums';
-import type { ILLMUsageStats } from '../llm/llmResponseTypes';
+import type { IAgentState } from './agentStateTypes';
+import type { AGENT_STATUS_enum } from '../common/enumTypes';
+import type { ILLMUsageMetrics } from '../llm/llmMetricTypes';
 import type { ICostDetails } from '../workflow/workflowCostsTypes';
 
 // ─── Runtime Selectors ─────────────────────────────────────────────────────────
@@ -25,7 +25,7 @@ export interface IAgentRuntimeSelectors {
 // ─── Metric Selectors ──────────────────────────────────────────────────────────
 
 export interface IAgentMetricSelectors {
-    getLLMUsageStats: (state: IAgentState) => ILLMUsageStats;
+    getLLMUsageStats: (state: IAgentState) => ILLMUsageMetrics;
     getIterationCount: (state: IAgentState) => number;
     getTotalCalls: (state: IAgentState) => number;
     getErrorCount: (state: IAgentState) => number;

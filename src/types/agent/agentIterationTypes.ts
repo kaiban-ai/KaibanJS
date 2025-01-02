@@ -6,13 +6,15 @@
  * @module types/agent
  */
 
-import type { IHandlerResult } from '../common/commonHandlerTypes';
-import type { IBaseHandlerMetadata } from '../common/commonMetadataTypes';
+import type { 
+    IHandlerResult, 
+    IStandardCostDetails,
+    IBaseHandlerMetadata
+} from '../common/baseTypes';
 import type { IAgentType } from './agentBaseTypes';
 import type { ITaskType } from '../task/taskBaseTypes';
 import type { LLMResponse } from '../llm/llmResponseTypes';
 import type { ILLMUsageMetrics } from '../llm/llmMetricTypes';
-import type { IStandardCostDetails } from '../common/commonMetricTypes';
 import type {
     IAgentResourceMetrics,
     IAgentPerformanceMetrics,
@@ -91,6 +93,8 @@ export interface IIterationHandlerMetadata extends IBaseHandlerMetadata {
     agent: {
         id: string;
         name: string;
+        role: string;
+        status: string;
         metrics: {
             iterations: number;
             executionTime: number;

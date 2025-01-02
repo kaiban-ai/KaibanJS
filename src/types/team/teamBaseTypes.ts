@@ -7,10 +7,9 @@
 import { IHistoricalMetrics } from './teamTimeWindowTypes';
 import { IAgentResourceMetrics, IAgentPerformanceMetrics, IAgentUsageMetrics } from '../agent/agentMetricTypes';
 import { IWorkflowResult } from '../workflow/workflowBaseTypes';
-import { IWorkflowStats } from '../workflow/workflowStatsTypes';
-import { IHandlerResult } from '../common/commonHandlerTypes';
-import { IBaseHandlerMetadata, IErrorMetadata } from '../common/commonMetadataTypes';
-import { IPerformanceMetrics } from '../common/commonMetricTypes';
+import { IHandlerResult, IBaseHandlerMetadata } from '../common/baseTypes';
+import { IErrorMetadata } from '../common/metadataTypes';
+import { IPerformanceMetrics } from '../metrics/base/performanceMetrics';
 
 // ─── Team Agent Types ───────────────────────────────────────────────────────────
 

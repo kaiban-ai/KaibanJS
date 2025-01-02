@@ -1,8 +1,10 @@
 /**
- * @file taskEventTypes.ts
- * @path src/types/task/taskEventTypes.ts
- * @description Task event type definitions using Langchain's event system
- */
+* @file taskEventTypes.ts
+* @path src/types/task/taskEventTypes.ts
+* @description Task event type definitions using Langchain's event system
+*
+* @module @types/task
+*/
 
 import { 
     MessageContent,
@@ -12,14 +14,13 @@ import {
     mergeContent
 } from '@langchain/core/messages';
 import { ChainValues } from '@langchain/core/utils/types';
-import { TASK_EVENT_TYPE_enum, TASK_STATUS_enum } from '../common';
+import { TASK_EVENT_TYPE_enum, TASK_STATUS_enum } from '../common/enumTypes';
 import type { IBaseEvent } from '../common';
 import type { IBaseHandlerMetadata } from '../common';
 import { 
-    IBaseValidationResult,
     createValidationMetadata,
     createValidationResult
-} from '../common';
+} from '../common/validationTypes';
 import type { ITaskMetrics, ITaskValidationResult } from './taskHandlerTypes';
 
 // ─── Message Chunk Implementation ────────────────────────────────────────────
@@ -150,23 +151,6 @@ export interface ITaskErrorHandledEvent extends IBaseTaskEvent {
     resolution: string;
 }
 
-export interface ITaskErrorRecoveryStartedEvent extends IBaseTaskEvent {
-    type: TASK_EVENT_TYPE_enum.TASK_ERROR_RECOVERY_STARTED;
-    error: Error;
-    strategy: string;
-}
-
-export interface ITaskErrorRecoveryCompletedEvent extends IBaseTaskEvent {
-    type: TASK_EVENT_TYPE_enum.TASK_ERROR_RECOVERY_COMPLETED;
-    error: Error;
-    outputs: ChainValues;
-}
-
-export interface ITaskErrorRecoveryFailedEvent extends IBaseTaskEvent {
-    type: TASK_EVENT_TYPE_enum.TASK_ERROR_RECOVERY_FAILED;
-    originalError: Error;
-    recoveryError: Error;
-}
 
 // ─── Event Union Type ─────────────────────────────────────────────────────────
 
@@ -182,10 +166,7 @@ export type TaskEvent =
     | ITaskFeedbackAddedEvent
     | ITaskMetricsUpdatedEvent
     | ITaskErrorOccurredEvent
-    | ITaskErrorHandledEvent
-    | ITaskErrorRecoveryStartedEvent
-    | ITaskErrorRecoveryCompletedEvent
-    | ITaskErrorRecoveryFailedEvent;
+    | ITaskErrorHandledEvent;
 
 // ─── Type Guards ────────────────────────────────────────────────────────────
 
@@ -237,17 +218,6 @@ export const isTaskErrorHandledEvent = (event: TaskEvent): event is ITaskErrorHa
     return event.type === TASK_EVENT_TYPE_enum.TASK_ERROR_HANDLED;
 };
 
-export const isTaskErrorRecoveryStartedEvent = (event: TaskEvent): event is ITaskErrorRecoveryStartedEvent => {
-    return event.type === TASK_EVENT_TYPE_enum.TASK_ERROR_RECOVERY_STARTED;
-};
-
-export const isTaskErrorRecoveryCompletedEvent = (event: TaskEvent): event is ITaskErrorRecoveryCompletedEvent => {
-    return event.type === TASK_EVENT_TYPE_enum.TASK_ERROR_RECOVERY_COMPLETED;
-};
-
-export const isTaskErrorRecoveryFailedEvent = (event: TaskEvent): event is ITaskErrorRecoveryFailedEvent => {
-    return event.type === TASK_EVENT_TYPE_enum.TASK_ERROR_RECOVERY_FAILED;
-};
 
 // ─── Utility Functions ─────────────────────────────────────────────────────────
 
@@ -274,28 +244,19 @@ export function createTaskEventMetadata(
         previousState,
         newState,
         performance: {
-            executionTime: {
-                total: duration || 0,
+            responseTime: {
                 average: 0,
                 min: 0,
                 max: 0
             },
             throughput: {
-                operationsPerSecond: 0,
-                dataProcessedPerSecond: 0
+                requestsPerSecond: 0,
+                bytesPerSecond: 0
             },
-            errorMetrics: {
-                totalErrors: 0,
-                errorRate: 0
-            },
-            resourceUtilization: {
-                cpuUsage: 0,
-                memoryUsage: process.memoryUsage().heapUsed,
-                diskIO: { read: 0, write: 0 },
-                networkUsage: { upload: 0, download: 0 },
-                timestamp: Date.now()
-            },
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            component: '',
+            category: '',
+            version: ''
         },
         context: {
             source: component,
@@ -314,4 +275,4 @@ export function createTaskEventMetadata(
             })
         })
     };
-};
+}

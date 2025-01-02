@@ -8,7 +8,7 @@
 
 import { Tool } from '@langchain/core/tools';
 import { CoreManager } from '../../core/coreManager';
-import { MANAGER_CATEGORY_enum } from '../../../types/common/enumTypes';
+import { MANAGER_CATEGORY_enum, AGENT_STATUS_enum } from '../../../types/common/enumTypes';
 import { ToolError } from '../../../types/tool/toolErrorTypes';
 import { 
     IToolHandlerResult, 
@@ -52,7 +52,7 @@ export class ToolRegistrationManager extends CoreManager implements IBaseManager
         this.isInitialized = true;
     }
 
-    public async validate(params: unknown): Promise<boolean> {
+    public async validate(_params: unknown): Promise<boolean> {
         return true;
     }
 
@@ -62,7 +62,12 @@ export class ToolRegistrationManager extends CoreManager implements IBaseManager
             operation: 'tool-registration',
             duration: 0,
             status: 'success',
-            agent: { id: '', name: '', role: '', status: '' },
+            agent: { 
+                id: '', 
+                name: '', 
+                role: '', 
+                status: AGENT_STATUS_enum.IDLE // Using proper enum value instead of empty string
+            },
             timestamp: Date.now(),
             component: 'ToolRegistrationManager'
         };

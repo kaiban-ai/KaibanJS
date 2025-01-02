@@ -6,13 +6,9 @@
  * @module @types/workflow
  */
 
-import type { 
-    IResourceMetrics, 
-    IUsageMetrics, 
-    IPerformanceMetrics,
-    IStandardCostDetails,
-    ITokenCostBreakdown
-} from '../common/commonMetricTypes';
+import type { IUsageMetrics } from '../metrics/base/usageMetrics';
+import type { IPerformanceMetrics } from '../metrics/base/performanceMetrics';
+import type { IStandardCostDetails, ITokenCostBreakdown } from '../common/baseTypes';
 
 // ─── Initial State Helpers ────────────────────────────────────────────────────
 export const createInitialTokenCostBreakdown = (): ITokenCostBreakdown => ({
@@ -31,43 +27,37 @@ export const createInitialCostDetails = (): IStandardCostDetails => ({
     }
 });
 
-export const createInitialResourceMetrics = (): IResourceMetrics => ({
-    cpuUsage: 0,
-    memoryUsage: 0,
-    diskIO: {
-        read: 0,
-        write: 0
-    },
-    networkUsage: {
-        upload: 0,
-        download: 0
-    },
-    timestamp: Date.now()
-});
-
 export const createInitialUsageMetrics = (): IUsageMetrics => ({
-    totalOperations: 0,
-    successRate: 0,
-    averageDuration: 0,
-    costDetails: createInitialCostDetails(),
-    timestamp: Date.now()
+    totalRequests: 0,
+    activeUsers: 0,
+    requestsPerSecond: 0,
+    averageResponseSize: 0,
+    peakMemoryUsage: 0,
+    uptime: 0,
+    rateLimit: {
+        current: 0,
+        limit: 0,
+        remaining: 0,
+        resetTime: Date.now()
+    },
+    timestamp: Date.now(),
+    component: '',
+    category: '',
+    version: ''
 });
 
 export const createInitialPerformanceMetrics = (): IPerformanceMetrics => ({
-    executionTime: {
-        total: 0,
+    responseTime: {
         average: 0,
         min: 0,
         max: 0
     },
     throughput: {
-        operationsPerSecond: 0,
-        dataProcessedPerSecond: 0
+        requestsPerSecond: 0,
+        bytesPerSecond: 0
     },
-    errorMetrics: {
-        totalErrors: 0,
-        errorRate: 0
-    },
-    resourceUtilization: createInitialResourceMetrics(),
-    timestamp: Date.now()
+    timestamp: Date.now(),
+    component: '',
+    category: '',
+    version: ''
 });

@@ -5,12 +5,12 @@
 
 import type { Tool } from "langchain/tools";
 import type { BaseMessage } from "@langchain/core/messages";
-import type { ITimeMetrics, IThroughputMetrics, IErrorMetrics, IPerformanceMetrics } from '../metrics/base/performanceMetrics';
+import type { IPerformanceMetrics } from '../metrics/base/performanceMetrics';
 import type { IResourceMetrics } from '../metrics/base/resourceMetrics';
 import type { ILLMUsageMetrics } from '../llm/llmMetricTypes';
 import type { ICostDetails } from '../workflow/workflowCostsTypes';
 import type { LLMResponse } from '../llm/llmResponseTypes';
-import type { IBaseHandlerMetadata, IBaseHandlerParams, IBaseContextPartial } from './baseTypes';
+import type { IBaseHandlerMetadata, IBaseHandlerParams } from './baseTypes';
 import type { IValidationResult } from './validationTypes';
 import type { IErrorType, IBaseError } from './errorTypes';
 import type { WORKFLOW_STATUS_enum, TASK_STATUS_enum, AGENT_STATUS_enum, MESSAGE_STATUS_enum } from './enumTypes';
@@ -56,6 +56,7 @@ export interface IStatusChangeMetadata extends IBaseHandlerMetadata {
 
 export interface IErrorMetadata extends IBaseHandlerMetadata {
     readonly error: {
+        readonly name: string;
         readonly code: string;
         readonly message: string;
         readonly timestamp: number;
@@ -75,6 +76,7 @@ export interface IToolExecutionMetadata extends IBaseHandlerMetadata {
         readonly performance: IPerformanceMetrics;
         readonly resources: IResourceMetrics;
         readonly error?: {
+            readonly name: string;
             readonly code: string;
             readonly message: string;
             readonly timestamp: number;
@@ -101,7 +103,7 @@ export interface IResponseMetadata extends IBaseHandlerMetadata {
 // ================ Message Metadata Types ================
 
 export interface IMessageMetadata extends IBaseHandlerMetadata {
-    readonly message: {
+    readonly messageDetails: {
         readonly id: string;
         readonly processingInfo: {
             readonly parseTime: number;
@@ -214,6 +216,7 @@ export interface IAgentExecutionMetadata extends IBaseHandlerMetadata {
     readonly resources: IResourceMetrics;
     readonly status: AGENT_STATUS_enum;
     readonly error?: {
+        readonly name: string;
         readonly code: string;
         readonly message: string;
         readonly timestamp: number;
@@ -315,4 +318,3 @@ export interface IAgentExecutionResult {
     result?: LLMResponse;
     metadata: IAgentExecutionMetadata;
 }
-

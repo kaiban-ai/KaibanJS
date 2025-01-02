@@ -1,42 +1,60 @@
 /**
  * @file agentConfigTypes.ts
- * @path KaibanJS/src/types/agent/agentConfigTypes.ts
- * @description Agent configuration types and validation schemas
- *
- * @module types/agent
+ * @path src/types/agent/agentConfigTypes.ts
+ * @description Agent configuration type definitions
  */
 
-import { Tool } from "langchain/tools";
-import type { IBaseAgent } from './agentBaseTypes';
-import type { ILLMConfig } from "../llm/llmCommonTypes";
-import type { ITaskType } from "../task/taskBaseTypes";
-import type { ILLMMetrics } from "../llm/llmMetricTypes";
-import type { IErrorType } from "../common/commonErrorTypes";
+import type { IParserConfig } from '../common/baseTypes';
+import type { IMetricsCollectionOptions } from '../metrics/base/baseMetrics';
 
-// ─── Configuration Types ────────────────────────────────────────────────────
-
-export interface IExecutionContext {
-    task: ITaskType;
-    agent: IBaseAgent;
-    iterations: number;
-    maxAgentIterations: number;
-    startTime: number;
-    lastOutput?: ILLMMetrics;
-    lastError?: IErrorType;
+/**
+ * Agent configuration interface
+ */
+export interface IAgentConfig {
+    readonly id: string;
+    readonly name: string;
+    readonly role: string;
+    readonly capabilities: {
+        readonly canLearn: boolean;
+        readonly canTeach: boolean;
+        readonly canDelegate: boolean;
+        readonly canCollaborate: boolean;
+        readonly canThink?: boolean;
+        readonly canUseTools?: boolean;
+        readonly supportedProviders: string[];
+        readonly supportedModels: string[];
+        readonly supportedToolTypes?: string[];
+        readonly maxContextSize: number;
+        readonly maxConcurrentTasks?: number;
+        readonly memoryCapacity?: number;
+        readonly features: {
+            readonly streaming: boolean;
+            readonly batching: boolean;
+            readonly caching: boolean;
+            readonly recovery: boolean;
+            readonly metrics: boolean;
+        };
+    };
+    readonly metrics: IMetricsCollectionOptions;
+    readonly parser?: IParserConfig;
+    readonly maxConcurrentOperations?: number;
+    readonly timeout?: number;
+    readonly retryLimit?: number;
 }
 
-// ─── Type Guards ────────────────────────────────────────────────────────────
+/**
+ * Agent configuration validation interface
+ */
+export interface IAgentConfigValidation {
+    readonly isValid: boolean;
+    readonly errors: string[];
+    readonly warnings: string[];
+}
 
-export const IAgentConfigTypeGuards = {
-    isExecutionContext: (value: unknown): value is IExecutionContext => {
-        if (!value || typeof value !== 'object') return false;
-        const ctx = value as Partial<IExecutionContext>;
-        return !!(
-            ctx.task &&
-            ctx.agent &&
-            typeof ctx.iterations === 'number' &&
-            typeof ctx.maxAgentIterations === 'number' &&
-            typeof ctx.startTime === 'number'
-        );
-    }
-};
+/**
+ * Agent configuration factory interface
+ */
+export interface IAgentConfigFactory {
+    createConfig(params: Record<string, unknown>): IAgentConfig;
+    validateConfig(config: IAgentConfig): IAgentConfigValidation;
+}

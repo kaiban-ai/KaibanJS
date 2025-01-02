@@ -10,11 +10,11 @@ import type {
     ILLMMetrics,
     ILLMResourceMetrics,
     ILLMPerformanceMetrics,
-    ILLMUsageMetrics
+    ILLMUsageMetrics,
+    ILLMErrorMetrics
 } from '../../types/llm/llmMetricTypes';
 import { ERROR_KINDS } from '../../types/common/errorTypes';
 import { ERROR_SEVERITY_enum } from '../../types/common/enumTypes';
-import { RecoveryStrategyType } from '../../types/common/recoveryTypes';
 
 const createDefaultErrorDistribution = () => 
     Object.values(ERROR_KINDS).reduce(
@@ -28,11 +28,17 @@ const createDefaultSeverityDistribution = () =>
         {} as Record<keyof typeof ERROR_SEVERITY_enum, number>
     );
 
-const createDefaultRecoveryStrategyDistribution = () =>
-    Object.values(RecoveryStrategyType).reduce(
-        (acc, strategy) => ({ ...acc, [strategy]: 0 }),
-        {} as Record<keyof typeof RecoveryStrategyType, number>
-    );
+const createDefaultErrorMetrics = (): ILLMErrorMetrics => ({
+    count: 0,
+    rate: 0,
+    lastError: 0,
+    byType: createDefaultErrorDistribution(),
+    bySeverity: createDefaultSeverityDistribution(),
+    avgLatencyIncrease: 0,
+    avgMemoryUsage: 0,
+    avgCpuUsage: 0,
+    hourlyErrors: Array(24).fill(0)
+});
 
 export const convertToLLMResourceMetrics = (base: IResourceMetrics): ILLMResourceMetrics => ({
     ...base,
@@ -49,40 +55,7 @@ export const convertToLLMPerformanceMetrics = (base: IPerformanceMetrics): ILLMP
     tokensPerSecond: 0,
     coherenceScore: 1,
     temperatureImpact: 0,
-    errorMetrics: {
-        totalErrors: base.errorMetrics.totalErrors,
-        errorRate: base.errorMetrics.errorRate,
-        errorDistribution: createDefaultErrorDistribution(),
-        severityDistribution: createDefaultSeverityDistribution(),
-        patterns: [],
-        impact: {
-            severity: ERROR_SEVERITY_enum.INFO,
-            businessImpact: 0,
-            userExperienceImpact: 0,
-            systemStabilityImpact: 0,
-            resourceImpact: {
-                cpu: 0,
-                memory: 0,
-                io: 0
-            }
-        },
-        recovery: {
-            meanTimeToRecover: 0,
-            recoverySuccessRate: 1,
-            strategyDistribution: createDefaultRecoveryStrategyDistribution(),
-            failedRecoveries: 0
-        },
-        prevention: {
-            preventedCount: 0,
-            preventionRate: 1,
-            earlyWarnings: 0
-        },
-        trends: {
-            dailyRates: [],
-            weeklyRates: [],
-            monthlyRates: []
-        }
-    }
+    errorMetrics: createDefaultErrorMetrics()
 });
 
 export const createDefaultLLMUsageMetrics = (): ILLMUsageMetrics => ({
@@ -109,7 +82,10 @@ export const createDefaultLLMUsageMetrics = (): ILLMUsageMetrics => ({
         remaining: 0,
         resetTime: Date.now() + 3600000 // 1 hour from now
     },
-    timestamp: Date.now()
+    timestamp: Date.now(),
+    component: '',
+    category: '',
+    version: ''
 });
 
 export const convertToLLMMetrics = (

@@ -11,13 +11,12 @@ import type {
     ILLMMetrics, 
     ILLMResourceMetrics,
     ILLMPerformanceMetrics,
-    ILLMUsageMetrics 
+    ILLMUsageMetrics
 } from '../types/llm/llmMetricTypes';
 import type { IBaseMetrics } from '../types/metrics/base/baseMetrics';
-import type { IResourceMetrics } from '../types/metrics/base/resourceMetrics';
-import type { IPerformanceMetrics } from '../types/metrics/base/performanceMetrics';
-import type { IUsageMetrics, IRateLimitMetrics } from '../types/metrics/base/usageMetrics';
-import { MetricDomain, MetricType } from '../types/metrics/base/metricsManagerTypes';
+import type { IRateLimitMetrics } from '../types/metrics/base/usageMetrics';
+import { ERROR_KINDS } from '../types/common/errorTypes';
+import { ERROR_SEVERITY_enum } from '../types/common/enumTypes';
 
 /**
  * Adapter for converting between different metrics formats
@@ -27,7 +26,7 @@ export class MetricsAdapter {
      * Convert Langchain callback data to our metrics format
      */
     public static fromLangchainCallback(
-        input: BaseCallbackHandlerInput,
+        _input: BaseCallbackHandlerInput,
         result: LLMResult | ChainValues | undefined,
         startTime: number,
         endTime: number
@@ -38,6 +37,9 @@ export class MetricsAdapter {
 
         // Create resource metrics
         const resourceMetrics: ILLMResourceMetrics = {
+            component: 'llm',
+            category: 'resource',
+            version: '1.0.0',
             cpuUsage: process.cpuUsage().user / 1000000, // Convert to seconds
             memoryUsage: process.memoryUsage().heapUsed,
             diskIO: { read: 0, write: 0 }, // Not available from Langchain
@@ -53,36 +55,38 @@ export class MetricsAdapter {
 
         // Create performance metrics
         const performanceMetrics: ILLMPerformanceMetrics = {
-            executionTime: {
-                total: duration,
+            component: 'llm',
+            category: 'performance',
+            version: '1.0.0',
+            responseTime: {
                 average: duration,
                 min: duration,
-                max: duration
-            },
-            latency: {
-                total: duration,
-                average: duration,
-                min: duration,
-                max: duration
+                max: duration,
+                total: duration
             },
             throughput: {
+                requestsPerSecond: 1000 / duration,
+                bytesPerSecond: tokenCount * 2, // Rough estimate: 2 bytes per token
                 operationsPerSecond: 1000 / duration,
                 dataProcessedPerSecond: tokenCount / (duration / 1000)
             },
-            responseTime: {
-                total: duration,
-                average: duration,
-                min: duration,
-                max: duration
-            },
-            queueLength: 0,
-            errorRate: 0,
-            successRate: 1,
             errorMetrics: {
-                totalErrors: 0,
-                errorRate: 0
+                count: 0,
+                rate: 0,
+                lastError: 0,
+                byType: Object.values(ERROR_KINDS).reduce(
+                    (acc, key) => ({ ...acc, [key]: 0 }),
+                    {} as Record<string, number>
+                ),
+                bySeverity: Object.values(ERROR_SEVERITY_enum).reduce(
+                    (acc, key) => ({ ...acc, [key]: 0 }),
+                    {} as Record<string, number>
+                ),
+                avgLatencyIncrease: 0,
+                avgMemoryUsage: 0,
+                avgCpuUsage: 0,
+                hourlyErrors: new Array(24).fill(0)
             },
-            resourceUtilization: resourceMetrics,
             tokensPerSecond: tokenCount / (duration / 1000),
             coherenceScore: 1,
             temperatureImpact: 0,
@@ -91,12 +95,14 @@ export class MetricsAdapter {
 
         // Create usage metrics
         const usageMetrics: ILLMUsageMetrics = {
+            component: 'llm',
+            category: 'usage',
+            version: '1.0.0',
             totalRequests: 1,
             activeInstances: 1,
             activeUsers: 1,
             requestsPerSecond: 1000 / duration,
-            averageResponseLength: tokenCount,
-            averageResponseSize: 0,
+            averageResponseSize: tokenCount,
             peakMemoryUsage: process.memoryUsage().heapUsed,
             uptime: duration,
             rateLimit: {
@@ -136,45 +142,10 @@ export class MetricsAdapter {
             return this.createDefaultBaseMetrics();
         }
 
-        // Convert LLM resource metrics to base resource metrics format
-        const resourceMetrics: IResourceMetrics = {
-            cpuUsage: metrics.resources.cpuUsage,
-            memoryUsage: metrics.resources.memoryUsage,
-            diskIO: metrics.resources.diskIO,
-            networkUsage: metrics.resources.networkUsage,
-            timestamp: metrics.resources.timestamp
-        };
-
-        // Convert LLM performance metrics to base performance metrics format
-        const performanceMetrics: IPerformanceMetrics = {
-            executionTime: metrics.performance.executionTime,
-            latency: metrics.performance.latency,
-            throughput: metrics.performance.throughput,
-            responseTime: metrics.performance.responseTime,
-            queueLength: metrics.performance.queueLength,
-            errorRate: metrics.performance.errorRate,
-            successRate: metrics.performance.successRate,
-            errorMetrics: metrics.performance.errorMetrics,
-            resourceUtilization: resourceMetrics,
-            timestamp: metrics.performance.timestamp
-        };
-
-        // Convert LLM usage metrics to base usage metrics format
-        const usageMetrics: IUsageMetrics = {
-            totalRequests: metrics.usage.totalRequests,
-            activeUsers: metrics.usage.activeUsers,
-            requestsPerSecond: metrics.usage.requestsPerSecond,
-            averageResponseSize: metrics.usage.averageResponseSize,
-            peakMemoryUsage: metrics.usage.peakMemoryUsage,
-            uptime: metrics.usage.uptime,
-            rateLimit: metrics.usage.rateLimit,
-            timestamp: metrics.usage.timestamp
-        };
-
         return {
-            resources: resourceMetrics,
-            performance: performanceMetrics,
-            usage: usageMetrics,
+            component: metrics.resources.component,
+            category: metrics.resources.category,
+            version: metrics.resources.version,
             timestamp: metrics.timestamp
         };
     }
@@ -183,55 +154,93 @@ export class MetricsAdapter {
      * Convert base metrics to LLM metrics format
      */
     public static toLLMMetrics(metrics: IBaseMetrics): ILLMMetrics {
-        // Convert base resource metrics to LLM resource metrics format
-        const resourceMetrics: ILLMResourceMetrics = {
-            ...metrics.resources,
-            gpuMemoryUsage: 0,
-            modelMemoryAllocation: {
-                weights: 0,
-                cache: 0,
-                workspace: 0
-            }
-        };
-
-        // Convert base performance metrics to LLM performance metrics format
-        const performanceMetrics: ILLMPerformanceMetrics = {
-            executionTime: metrics.performance.executionTime,
-            latency: metrics.performance.latency,
-            throughput: metrics.performance.throughput,
-            responseTime: metrics.performance.responseTime,
-            queueLength: metrics.performance.queueLength,
-            errorRate: metrics.performance.errorRate,
-            successRate: metrics.performance.successRate,
-            errorMetrics: metrics.performance.errorMetrics,
-            resourceUtilization: resourceMetrics,  // Use the LLM resource metrics here
-            tokensPerSecond: 0,
-            coherenceScore: 1,
-            temperatureImpact: 0,
-            timestamp: metrics.performance.timestamp
-        };
-
-        // Convert base usage metrics to LLM usage metrics format
-        const usageMetrics: ILLMUsageMetrics = {
-            ...metrics.usage,
-            activeInstances: 0,
-            averageResponseLength: 0,
-            tokenDistribution: {
-                prompt: 0,
-                completion: 0,
-                total: 0
-            },
-            modelDistribution: {
-                gpt4: 0,
-                gpt35: 0,
-                other: 0
-            }
+        // Create default metrics with base values
+        const defaultRateLimit: IRateLimitMetrics = {
+            current: 0,
+            limit: 0,
+            remaining: 0,
+            resetTime: 0
         };
 
         return {
-            resources: resourceMetrics,
-            performance: performanceMetrics,
-            usage: usageMetrics,
+            resources: {
+                component: metrics.component,
+                category: metrics.category,
+                version: metrics.version,
+                cpuUsage: 0,
+                memoryUsage: 0,
+                diskIO: { read: 0, write: 0 },
+                networkUsage: { upload: 0, download: 0 },
+                gpuMemoryUsage: 0,
+                modelMemoryAllocation: {
+                    weights: 0,
+                    cache: 0,
+                    workspace: 0
+                },
+                timestamp: metrics.timestamp
+            },
+            performance: {
+                component: metrics.component,
+                category: metrics.category,
+                version: metrics.version,
+                responseTime: {
+                    average: 0,
+                    min: 0,
+                    max: 0,
+                    total: 0
+                },
+                throughput: {
+                    requestsPerSecond: 0,
+                    bytesPerSecond: 0,
+                    operationsPerSecond: 0,
+                    dataProcessedPerSecond: 0
+                },
+                errorMetrics: {
+                    count: 0,
+                    rate: 0,
+                    lastError: 0,
+                    byType: Object.values(ERROR_KINDS).reduce(
+                        (acc, key) => ({ ...acc, [key]: 0 }),
+                        {} as Record<string, number>
+                    ),
+                    bySeverity: Object.values(ERROR_SEVERITY_enum).reduce(
+                        (acc, key) => ({ ...acc, [key]: 0 }),
+                        {} as Record<string, number>
+                    ),
+                    avgLatencyIncrease: 0,
+                    avgMemoryUsage: 0,
+                    avgCpuUsage: 0,
+                    hourlyErrors: new Array(24).fill(0)
+                },
+                tokensPerSecond: 0,
+                coherenceScore: 1,
+                temperatureImpact: 0,
+                timestamp: metrics.timestamp
+            },
+            usage: {
+                component: metrics.component,
+                category: metrics.category,
+                version: metrics.version,
+                totalRequests: 0,
+                activeInstances: 0,
+                activeUsers: 0,
+                requestsPerSecond: 0,
+                averageResponseSize: 0,
+                peakMemoryUsage: 0,
+                uptime: 0,
+                rateLimit: defaultRateLimit,
+                tokenDistribution: {
+                    prompt: 0,
+                    completion: 0,
+                    total: 0
+                },
+                modelDistribution: {
+                    gpt4: 0,
+                    gpt35: 0,
+                    other: 0
+                },
+                timestamp: metrics.timestamp
+            },
             timestamp: metrics.timestamp
         };
     }
@@ -240,45 +249,10 @@ export class MetricsAdapter {
      * Create default base metrics
      */
     private static createDefaultBaseMetrics(): IBaseMetrics {
-        const defaultRateLimit: IRateLimitMetrics = {
-            current: 0,
-            limit: 0,
-            remaining: 0,
-            resetTime: 0
-        };
-
-        const defaultResource: IResourceMetrics = {
-            cpuUsage: 0,
-            memoryUsage: 0,
-            diskIO: { read: 0, write: 0 },
-            networkUsage: { upload: 0, download: 0 },
-            timestamp: Date.now()
-        };
-
         return {
-            resources: defaultResource,
-            performance: {
-                executionTime: { total: 0, average: 0, min: 0, max: 0 },
-                latency: { total: 0, average: 0, min: 0, max: 0 },
-                throughput: { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
-                responseTime: { total: 0, average: 0, min: 0, max: 0 },
-                queueLength: 0,
-                errorRate: 0,
-                successRate: 1,
-                errorMetrics: { totalErrors: 0, errorRate: 0 },
-                resourceUtilization: defaultResource,
-                timestamp: Date.now()
-            },
-            usage: {
-                totalRequests: 0,
-                activeUsers: 0,
-                requestsPerSecond: 0,
-                averageResponseSize: 0,
-                peakMemoryUsage: 0,
-                uptime: 0,
-                rateLimit: defaultRateLimit,
-                timestamp: Date.now()
-            },
+            component: 'llm',
+            category: 'metrics',
+            version: '1.0.0',
             timestamp: Date.now()
         };
     }

@@ -1,21 +1,21 @@
 /**
- * @file llmBaseTypes.ts
- * @path KaibanJS/src/types/llm/llmBaseTypes.ts
- * @description Base types and utilities for LLM configuration, response handling, and type guards
- *
- * @module types/llm
- */
+* @file llmBaseTypes.ts
+* @path src/types/llm/llmBaseTypes.ts
+* @description Base types and utilities for LLM configuration, response handling, and type guards
+*
+* @module @types/llm
+*/
 
-import { BaseMessage } from "@langchain/core/messages";
-import { ILLMProvider } from "./llmCommonTypes";
-import { IHandlerResult } from "../common/commonHandlerTypes";
-import { IBaseError } from "../common/commonErrorTypes";
-import { IResourceMetrics, IUsageMetrics } from "../common/commonMetricTypes";
+import { LLM_PROVIDER_enum } from '../common/enumTypes';
+import { IHandlerResult, IBaseHandlerMetadata } from '../common/baseTypes';
+import { IBaseError } from '../common/errorTypes';
+import { IResourceMetrics } from '../metrics/base/resourceMetrics';
+import { IUsageMetrics } from '../metrics/base/usageMetrics';
 
 // ─── LLM Configuration Interface ─────────────────────────────────────────────────
 
 export interface ILLMConfig {
-  provider: ILLMProvider;
+  provider: LLM_PROVIDER_enum;
   apiKey?: string;
   model?: string;
   temperature?: number;
@@ -38,7 +38,7 @@ export interface ILLMResponse<T = unknown> {
   };
   metadata: {
     model: string;
-    provider: ILLMProvider;
+    provider: LLM_PROVIDER_enum;
     timestamp: number;
     latency: number;
     finishReason?: string;
@@ -48,14 +48,15 @@ export interface ILLMResponse<T = unknown> {
 
 // ─── LLM Result Interface ──────────────────────────────────────────────────────
 
+export interface ILLMResultMetadata extends IBaseHandlerMetadata {
+  model: string;
+  latency: number;
+}
+
 export interface ILLMResult extends IHandlerResult {
   output?: string;
   error?: IBaseError;
-  metadata?: {
-    model?: string;
-    timestamp?: number;
-    latency?: number;
-  };
+  metadata: ILLMResultMetadata;
 }
 
 // ─── Streaming Options Interface ───────────────────────────────────────────────

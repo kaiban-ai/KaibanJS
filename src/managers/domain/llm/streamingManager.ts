@@ -7,11 +7,11 @@ import { BaseCallbackHandler } from '@langchain/core/callbacks/base';
 import { LLMResult } from '@langchain/core/outputs';
 import { Serialized } from '@langchain/core/load/serializable';
 import { NewTokenIndices, HandleLLMNewTokenCallbackFields } from '@langchain/core/callbacks/base';
+import { AIMessageChunk, BaseMessage } from '@langchain/core/messages';
 import { CoreManager } from '../../core/coreManager';
 import { LLM_PROVIDER_enum, MANAGER_CATEGORY_enum, LLM_STATUS_enum } from '../../../types/common/enumTypes';
 import { ERROR_KINDS } from '../../../types/common/errorTypes';
 import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
-import { AIMessageChunk } from '../../../types/llm/message/messageChunkTypes';
 import { createStreamingError, IStreamingErrorDetails } from '../../../types/llm/streamingErrorTypes';
 import { 
     createStreamingEvent, 
@@ -249,9 +249,16 @@ export class StreamingManager extends CoreManager {
             state.tokenUsage.totalTokens = 
                 state.tokenUsage.promptTokens + state.tokenUsage.completionTokens;
 
-            // Create new chunk and concatenate with current
-            const newChunk = new AIMessageChunk({ content: token });
-            state.currentChunk = state.currentChunk.concat(newChunk);
+            // Create new chunk with concatenated content
+            const currentContent = typeof state.currentChunk.content === 'string' 
+                ? state.currentChunk.content 
+                : '';
+            const newContent = typeof token === 'string' ? token : '';
+            
+            state.currentChunk = new AIMessageChunk({
+                content: currentContent + newContent,
+                additional_kwargs: state.currentChunk.additional_kwargs
+            });
 
             const event = createStreamingEvent<IStreamTokenEvent>(
                 'llm_stream_token',

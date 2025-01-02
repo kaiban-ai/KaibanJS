@@ -16,6 +16,13 @@ export type {
     BATCH_STATUS_enum
 } from '../common/enumTypes';
 
+// ─── Config Types (agentConfigTypes.ts) ─────────────────────────────────────
+export type {
+    IAgentConfig,
+    IAgentConfigValidation,
+    IAgentConfigFactory
+} from './agentConfigTypes';
+
 // ─── Base Agent Types (agentBaseTypes.ts) ───────────────────────────────────────
 export type {
     IAgentType,
@@ -27,6 +34,13 @@ export type {
     IStatusType
 } from './agentBaseTypes';
 
+// ─── Context Types (agentContextTypes.ts) ─────────────────────────────────────
+export type {
+    IAgentContext,
+    IAgentContextValidation,
+    IAgentContextFactory
+} from './agentContextTypes';
+
 // ─── Action Types (agentActionsTypes.ts) ─────────────────────────────────────
 export type {
     IAgentErrorActions,
@@ -36,125 +50,36 @@ export type {
     IAgentStoreActions
 } from './agentActionsTypes';
 
+// ─── Event Types (agentEventTypes.ts) ─────────────────────────────────────────
+export type {
+    IAgentEventBase,
+    IAgentStatusChangeEvent,
+    IAgentErrorEvent,
+    IAgentExecutionEvent,
+    IAgentValidationEvent,
+    AgentEvent,
+    IAgentEventHandler,
+    IAgentEventFactory
+} from './agentEventTypes';
+
+export {
+    AgentEventTypeGuards
+} from './agentEventValidation';
+
 // ─── Error Types (agentErrorTypes.ts) ─────────────────────────────────────────
 export type {
-    IRetryConfig,
-    ICircuitBreakerConfig,
-    IRetryDetails,
-    ICircuitBreakerDetails
+    IAgentErrorContext,
+    IAgentErrorDetails,
+    IAgentErrorValidation,
+    IAgentErrorFactory
 } from './agentErrorTypes';
-
-export {
-    DEFAULT_RETRY_CONFIG,
-    DEFAULT_CIRCUIT_BREAKER_CONFIG,
-    createRetryError,
-    createCircuitBreakerError,
-    ErrorTypeGuards
-} from './agentErrorTypes';
-
-// ─── Event Types (events.ts) ─────────────────────────────────────────────────
-export type {
-    IAgentEventMetadata,
-    IBaseAgentEvent,
-    IAgentCreatedEvent,
-    IAgentUpdatedEvent,
-    IAgentDeletedEvent,
-    IAgentStatusChangedEvent,
-    IAgentIterationStartedEvent,
-    IAgentIterationCompletedEvent,
-    IAgentIterationFailedEvent,
-    IAgentMetricsUpdatedEvent,
-    IAgentConfigUpdatedEvent,
-    IAgentValidationCompletedEvent,
-    IAgentErrorOccurredEvent,
-    IAgentErrorHandledEvent,
-    IAgentErrorRecoveryStartedEvent,
-    IAgentErrorRecoveryCompletedEvent,
-    IAgentErrorRecoveryFailedEvent,
-    IAgentEventHandler,
-    AgentEvent,
-    AgentLifecycleEvent,
-    AgentStateEvent,
-    AgentIterationEvent,
-    AgentMetricsEvent,
-    AgentConfigEvent,
-    AgentValidationEvent,
-    AgentErrorEvent,
-    IAgentEventValidationResult,
-    IAgentEventValidationSchema
-} from './events';
-
-export {
-    AGENT_EVENT_TYPE,
-    AGENT_EVENT_CATEGORY,
-    createAgentEventValidationResult,
-    AgentEventTypeGuards,
-    isAgentEventMetadata
-} from './events';
-
-// ─── Execution Types (agentExecutionTypes.ts) ──────────────────────────────────
-export type {
-    IAgentExecutionMetadata,
-    IAgentExecutionContext,
-    IAgentExecutionResult,
-    IAgentExecutionErrorContext,
-    IAgentExecutionHistoryEntry
-} from './agentExecutionTypes';
-
-export { ExecutionTypeGuards } from './agentExecutionTypes';
-
-// ─── Execution Flow Types (executionFlow.ts) ────────────────────────────────────
-export type {
-    ExecutionStatus,
-    IBaseExecutionContext,
-    IBaseExecutionControl,
-    IIterationStartParams,
-    IIterationEndParams,
-    IIterationControlParams,
-    IIterationContext,
-    IIterationControl,
-    IIterationHandlerMetadata,
-    IIterationResult,
-    IIterationHandlerResult,
-    ILoopExecutionParams,
-    ILoopContext,
-    ILoopControl,
-    IStateTransaction,
-    IStateManager,
-    ILoopHandlerMetadata,
-    ILoopResult,
-    ILoopHandlerResult
-} from './executionFlow';
-
-export {
-    ExecutionFlowTypeGuards,
-    createLoopHandlerResult
-} from './executionFlow';
 
 // ─── Handler Types (agentHandlersTypes.ts) ─────────────────────────────────────
 export type {
-    IBaseAgentHandlerMetadata,
-    IBaseHandlerParams,
-    IBaseAgentHandler,
-    ILifecycleHandlerParams,
-    IStateHandlerParams,
-    IErrorHandlerParams,
-    IThinkingHandlerParams,
-    IToolHandlerParams,
-    ILifecycleHandlerMetadata,
-    IStateHandlerMetadata,
-    IThinkingMetadata,
-    IErrorHandlerMetadata,
-    IThinkingExecutionParams,
-    IThinkingResult,
-    ILifecycleHandlerResult,
-    IStateHandlerResult,
-    IThinkingHandlerResult,
-    IErrorHandlerResult,
-    ILifecycleHandler,
-    IStateHandler,
-    IThinkingHandler,
-    IErrorHandler
+    IAgentHandler,
+    IAgentHandlerResult,
+    IAgentHandlerFactory,
+    IAgentHandlerRegistry
 } from './agentHandlersTypes';
 
 // ─── Manager Types (agentManagerTypes.ts) ─────────────────────────────────────
@@ -176,7 +101,6 @@ export { MANAGER_CATEGORY_enum } from './agentManagerTypes';
 
 // ─── Metric Types (agentMetricTypes.ts) ─────────────────────────────────────
 export type {
-    IBaseMetrics,
     IBaseResourceMetrics,
     IBasePerformanceMetrics,
     IBaseUsageMetrics,
@@ -221,18 +145,12 @@ export { AgentSelectorTypeGuards } from './agentSelectorsTypes';
 
 // ─── State Types (agentStateTypes.ts) ─────────────────────────────────────────
 export type {
-    ICoreState,
-    ITimingState,
-    IErrorState,
-    IAssignmentState,
-    IAgentExecutionState,
-    IStateValidationRules,
-    IStateValidationResult,
-    IStateHistoryEntry,
-    IStateTransition
+    IAgentState,
+    IAgentStateValidation,
+    IAgentStateFactory,
+    IAgentStateTransition,
+    IAgentStateHistory
 } from './agentStateTypes';
-
-export { STATE_CATEGORY, AgentStateTypeGuards } from './agentStateTypes';
 
 // ─── Validation Types (agentValidationTypes.ts) ──────────────────────────────
 export type {
@@ -270,7 +188,6 @@ export {
     AgentTypeGuards,
     MetricsTypeGuards,
     SelectorTypeGuards,
-    EventTypeGuards,
     ValidationTypeGuards
 } from './agentTypeGuards';
 

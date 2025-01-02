@@ -1,140 +1,35 @@
 /**
  * @file outputManager.ts
  * @path src/managers/domain/llm/outputManager.ts
- * @description LLM output handling and processing using Langchain with enhanced metrics
+ * @description Manages LLM output processing and metrics collection
  */
+
+import { BaseMessage } from '@langchain/core/messages';
+import { ChatGenerationChunk } from '@langchain/core/outputs';
+import { BaseCallbackHandler } from '@langchain/core/callbacks/base';
 
 import { CoreManager } from '../../core/coreManager';
-import { createError } from '../../../types/common/commonErrorTypes';
-import { MetadataFactory } from '../../../utils/factories/metadataFactory';
+import { createBaseMetadata } from '../../../types/common/baseTypes';
 import { 
-    BaseMessage, 
-    HumanMessage, 
-    AIMessage, 
-    SystemMessage, 
-    FunctionMessage 
-} from '@langchain/core/messages';
-import { 
-    ChatGenerationChunk, 
-    GenerationChunk, 
-    LLMResult 
-} from '@langchain/core/outputs';
-import { BaseCallbackHandler } from '@langchain/core/callbacks/base';
-import { LLMMetricsCollector } from '../../../metrics/LLMMetricsCollector';
-import { createBaseMetadata } from '../../../types/common/commonMetadataTypes';
+    MANAGER_CATEGORY_enum, 
+    LLM_PROVIDER_enum,
+    LLM_STATUS_enum 
+} from '../../../types/common/enumTypes';
+import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
+import { MetricsAdapter } from '../../../metrics/MetricsAdapter';
 
-import type { IHandlerResult } from '../../../types/common/commonHandlerTypes';
-import type { ILLMMetrics } from '../../../types/llm/llmMetricTypes';
-import type { ILLMEvent, ILLMEventMetadata } from '../../../types/llm/llmCallbacksTypes';
-import type { IBaseMetrics } from '../../../types/metrics/base/baseMetrics';
-import { LLM_PROVIDER_enum } from '../../../types/common/commonEnums';
-
-// ─── Metrics Adapter ────────────────────────────────────────────────────────
+import type { IHandlerResult } from '../../../types/common/baseTypes';
 
 /**
- * Adapt LLM metrics to base metrics interface
+ * Manages LLM output processing and metrics collection
  */
-function adaptMetricsToBase(llmMetrics: ILLMMetrics): IBaseMetrics {
-    return {
-        resources: {
-            cpuUsage: llmMetrics.resources.cpuUsage,
-            memoryUsage: llmMetrics.resources.memoryUsage,
-            diskIO: llmMetrics.resources.diskIO,
-            networkUsage: llmMetrics.resources.networkUsage,
-            timestamp: llmMetrics.timestamp
-        },
-        performance: llmMetrics.performance,
-        usage: {
-            totalRequests: llmMetrics.usage.totalRequests,
-            activeUsers: llmMetrics.usage.activeUsers,
-            requestsPerSecond: llmMetrics.usage.requestsPerSecond,
-            averageResponseSize: llmMetrics.usage.averageResponseSize,
-            peakMemoryUsage: llmMetrics.usage.peakMemoryUsage,
-            uptime: llmMetrics.usage.uptime,
-            rateLimit: llmMetrics.usage.rateLimit,
-            timestamp: llmMetrics.usage.timestamp
-        },
-        timestamp: llmMetrics.timestamp
-    };
-}
-
-// ─── Callback Handler for Streaming ────────────────────────────────────────────
-
-class StreamingCallbackHandler extends BaseCallbackHandler {
-    name = "streaming_handler";
-    private readonly metricsCollector: LLMMetricsCollector;
-    private readonly runId: string;
-    
-    constructor(
-        private onToken: (token: string) => void,
-        metricsCollector: LLMMetricsCollector
-    ) {
-        super();
-        this.metricsCollector = metricsCollector;
-        this.runId = `run_${Date.now()}`;
-    }
-
-    async handleLLMNewToken(token: string): Promise<void> {
-        try {
-            this.onToken(token);
-
-            const baseMetadata = createBaseMetadata('llm', 'token');
-            // Track token metrics with proper event structure
-            const event: ILLMEvent = {
-                type: 'token.received',
-                timestamp: Date.now(),
-                runId: this.runId,
-                parentRunId: undefined,
-                metadata: {
-                    ...baseMetadata,
-                    provider: LLM_PROVIDER_enum.GROQ,
-                    model: 'mixtral-8x7b-32768',
-                    metrics: adaptMetricsToBase(this.metricsCollector.getMetrics()),
-                    timestamp: Date.now(),
-                    runId: this.runId,
-                    performance: {
-                        executionTime: { total: 0, average: 0, min: 0, max: 0 },
-                        latency: { total: 0, average: 0, min: 0, max: 0 },
-                        throughput: { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
-                        responseTime: { total: 0, average: 0, min: 0, max: 0 },
-                        queueLength: 0,
-                        errorRate: 0,
-                        successRate: 1,
-                        errorMetrics: { totalErrors: 0, errorRate: 0 },
-                        resourceUtilization: {
-                            cpuUsage: 0,
-                            memoryUsage: 0,
-                            diskIO: { read: 0, write: 0 },
-                            networkUsage: { upload: 0, download: 0 },
-                            timestamp: Date.now()
-                        },
-                        timestamp: Date.now()
-                    },
-                    context: {
-                        source: 'llm',
-                        target: 'token',
-                        correlationId: this.runId,
-                        causationId: this.runId
-                    }
-                },
-                data: { token }
-            };
-            this.metricsCollector.handleEvent(event);
-        } catch (error) {
-            this.metricsCollector.handleLLMError(error, this.runId);
-        }
-    }
-}
-
-// ─── Output Manager Implementation ────────────────────────────────────────────
-
-export class OutputManager extends CoreManager {
+class OutputManager extends CoreManager {
     private static instance: OutputManager;
-    private readonly metricsCollector: LLMMetricsCollector;
+    private isInitialized = false;
+    public readonly category = MANAGER_CATEGORY_enum.EXECUTION;
 
     private constructor() {
         super();
-        this.metricsCollector = new LLMMetricsCollector();
         this.registerDomainManager('OutputManager', this);
     }
 
@@ -146,296 +41,256 @@ export class OutputManager extends CoreManager {
     }
 
     /**
-     * Create a streaming handler with integrated metrics
+     * Initialize the output manager
      */
-    public createStreamingHandler(onToken: (token: string) => void): BaseCallbackHandler {
-        return new StreamingCallbackHandler(onToken, this.metricsCollector);
+    public async initialize(params?: Record<string, unknown>): Promise<void> {
+        await super.initialize(params);
+
+        const result = await this.safeExecute(async () => {
+            await this.handleStatusTransition({
+                entity: 'llm',
+                entityId: this.constructor.name,
+                currentStatus: LLM_STATUS_enum.INITIALIZING,
+                targetStatus: LLM_STATUS_enum.READY,
+                context: {
+                    component: this.constructor.name,
+                    operation: 'initialize',
+                    params
+                }
+            });
+
+            this.isInitialized = true;
+            this.logInfo('Output Manager initialized successfully');
+        }, 'Failed to initialize Output manager');
+
+        if (!result.success) {
+            throw result.metadata.error;
+        }
     }
 
     /**
-     * Process chat generation output from Langchain
+     * Process chat generation output
      */
     public async processChatGeneration(
         generation: ChatGenerationChunk,
         rawOutput: string
     ): Promise<IHandlerResult<string>> {
-        try {
+        const result = await this.safeExecute(async () => {
+            if (!this.isInitialized) {
+                await this.initialize();
+            }
+
             const message = generation.message;
             const runId = `run_${Date.now()}`;
-            const baseMetadata = createBaseMetadata('llm', 'generation');
-            
-            // Track generation metrics with proper event structure
-            const event: ILLMEvent = {
+            const baseMetadata = createBaseMetadata(this.constructor.name, 'generation');
+            const metrics = MetricsAdapter.fromLangchainCallback({}, undefined, Date.now(), Date.now());
+
+            // Track generation metrics
+            const event = {
                 type: 'request.end',
                 timestamp: Date.now(),
                 runId,
-                parentRunId: undefined,
                 metadata: {
                     ...baseMetadata,
                     provider: LLM_PROVIDER_enum.GROQ,
-                    model: generation.generationInfo?.model_name || 'mixtral-8x7b-32768',
-                    metrics: adaptMetricsToBase(this.metricsCollector.getMetrics()),
+                    model: generation.generationInfo?.model_name || 'unknown',
+                    metrics: MetricsAdapter.toBaseMetrics(metrics),
                     timestamp: Date.now(),
                     runId,
-                    performance: {
-                        executionTime: { total: 0, average: 0, min: 0, max: 0 },
-                        latency: { total: 0, average: 0, min: 0, max: 0 },
-                        throughput: { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
-                        responseTime: { total: 0, average: 0, min: 0, max: 0 },
-                        queueLength: 0,
-                        errorRate: 0,
-                        successRate: 1,
-                        errorMetrics: { totalErrors: 0, errorRate: 0 },
-                        resourceUtilization: {
-                            cpuUsage: 0,
-                            memoryUsage: 0,
-                            diskIO: { read: 0, write: 0 },
-                            networkUsage: { upload: 0, download: 0 },
-                            timestamp: Date.now()
-                        },
-                        timestamp: Date.now()
-                    },
-                    context: {
-                        source: 'llm',
-                        target: 'generation',
-                        correlationId: runId,
-                        causationId: runId
-                    }
-                },
-                data: {
-                    output: {
-                        generations: [[generation]],
-                        llmOutput: generation.generationInfo
-                    }
+                    performance: metrics.performance,
+                    rawOutput
                 }
-            };
-            this.metricsCollector.handleEvent(event);
+            } as Record<string, unknown>;
 
-            // Log performance metrics at appropriate levels
-            const metrics = this.metricsCollector.getMetrics();
-            this.logPerformanceMetrics(metrics);
-
-            const metadata = MetadataFactory.createProviderMetadata({
-                provider: generation.generationInfo?.model_name || 'unknown',
-                model: generation.generationInfo?.model_name || 'unknown',
-                timestamp: Date.now()
+            await this.metricsManager.trackMetric({
+                domain: MetricDomain.LLM,
+                type: MetricType.PERFORMANCE,
+                value: 1,
+                timestamp: Date.now(),
+                metadata: event
             });
+
+            this.logDebug(`Processed generation: ${message.content}`);
 
             return {
                 success: true,
                 data: String(message.content),
-                metadata
+                metadata: baseMetadata
             };
-        } catch (error) {
-            const runId = `run_${Date.now()}`;
-            const baseMetadata = createBaseMetadata('llm', 'error');
-            const event: ILLMEvent = {
-                type: 'request.error',
-                timestamp: Date.now(),
-                runId,
-                parentRunId: undefined,
-                metadata: {
-                    ...baseMetadata,
-                    provider: LLM_PROVIDER_enum.GROQ,
-                    model: generation.generationInfo?.model_name || 'mixtral-8x7b-32768',
-                    metrics: adaptMetricsToBase(this.metricsCollector.getMetrics()),
-                    timestamp: Date.now(),
-                    runId,
-                    performance: {
-                        executionTime: { total: 0, average: 0, min: 0, max: 0 },
-                        latency: { total: 0, average: 0, min: 0, max: 0 },
-                        throughput: { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
-                        responseTime: { total: 0, average: 0, min: 0, max: 0 },
-                        queueLength: 0,
-                        errorRate: 0,
-                        successRate: 1,
-                        errorMetrics: { totalErrors: 0, errorRate: 0 },
-                        resourceUtilization: {
-                            cpuUsage: 0,
-                            memoryUsage: 0,
-                            diskIO: { read: 0, write: 0 },
-                            networkUsage: { upload: 0, download: 0 },
-                            timestamp: Date.now()
-                        },
-                        timestamp: Date.now()
-                    },
-                    context: {
-                        source: 'llm',
-                        target: 'error',
-                        correlationId: runId,
-                        causationId: runId
-                    }
-                },
-                data: { error }
-            };
-            this.metricsCollector.handleEvent(event);
+        }, 'Failed to process chat generation');
 
-            throw createError({
-                message: 'Failed to process LLM output',
-                type: 'SystemError',
-                context: { generation, rawOutput },
-                cause: error instanceof Error ? error : undefined
-            });
+        if (!result.success || !result.data) {
+            this.logError('Chat generation processing failed', result.metadata.error);
+            throw result.metadata.error;
         }
+
+        return result.data;
     }
 
     /**
-     * Process a sequence of messages from Langchain
+     * Process a sequence of messages
      */
     public async processMessageSequence(
         messages: BaseMessage[],
         rawOutput: string
     ): Promise<IHandlerResult<string>> {
-        try {
+        const result = await this.safeExecute(async () => {
+            if (!this.isInitialized) {
+                await this.initialize();
+            }
+
+            await this.handleStatusTransition({
+                entity: 'llm',
+                entityId: this.constructor.name,
+                currentStatus: LLM_STATUS_enum.READY,
+                targetStatus: LLM_STATUS_enum.ACTIVE,
+                context: {
+                    component: this.constructor.name,
+                    operation: 'processMessageSequence',
+                    messageCount: messages.length
+                }
+            });
+
             const combinedContent = messages.map(msg => String(msg.content)).join('\n');
             const runId = `run_${Date.now()}`;
-            const baseMetadata = createBaseMetadata('llm', 'sequence');
-            
-            // Track sequence metrics with proper event structure
-            const event: ILLMEvent = {
+            const baseMetadata = createBaseMetadata(this.constructor.name, 'sequence');
+            const metrics = MetricsAdapter.fromLangchainCallback({}, undefined, Date.now(), Date.now());
+
+            // Track sequence metrics
+            const event = {
                 type: 'request.end',
                 timestamp: Date.now(),
                 runId,
-                parentRunId: undefined,
                 metadata: {
                     ...baseMetadata,
                     provider: LLM_PROVIDER_enum.GROQ,
-                    model: 'mixtral-8x7b-32768',
-                    metrics: adaptMetricsToBase(this.metricsCollector.getMetrics()),
+                    model: 'unknown',
+                    metrics: MetricsAdapter.toBaseMetrics(metrics),
                     timestamp: Date.now(),
                     runId,
-                    performance: {
-                        executionTime: { total: 0, average: 0, min: 0, max: 0 },
-                        latency: { total: 0, average: 0, min: 0, max: 0 },
-                        throughput: { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
-                        responseTime: { total: 0, average: 0, min: 0, max: 0 },
-                        queueLength: 0,
-                        errorRate: 0,
-                        successRate: 1,
-                        errorMetrics: { totalErrors: 0, errorRate: 0 },
-                        resourceUtilization: {
-                            cpuUsage: 0,
-                            memoryUsage: 0,
-                            diskIO: { read: 0, write: 0 },
-                            networkUsage: { upload: 0, download: 0 },
-                            timestamp: Date.now()
-                        },
-                        timestamp: Date.now()
-                    },
-                    context: {
-                        source: 'llm',
-                        target: 'sequence',
-                        correlationId: runId,
-                        causationId: runId
-                    }
-                },
-                data: {
-                    messages: messages.map(m => ({
-                        content: m.content,
-                        type: m._getType()
-                    }))
+                    performance: metrics.performance,
+                    rawOutput
                 }
-            };
-            this.metricsCollector.handleEvent(event);
+            } as Record<string, unknown>;
 
-            // Log sequence metrics at appropriate levels
-            const metrics = this.metricsCollector.getMetrics();
-            this.logPerformanceMetrics(metrics);
-
-            const metadata = MetadataFactory.createProviderMetadata({
-                provider: 'langchain',
-                model: 'unknown',
-                timestamp: Date.now()
+            await this.metricsManager.trackMetric({
+                domain: MetricDomain.LLM,
+                type: MetricType.PERFORMANCE,
+                value: 1,
+                timestamp: Date.now(),
+                metadata: event
             });
+
+            await this.handleStatusTransition({
+                entity: 'llm',
+                entityId: this.constructor.name,
+                currentStatus: LLM_STATUS_enum.ACTIVE,
+                targetStatus: LLM_STATUS_enum.READY,
+                context: {
+                    component: this.constructor.name,
+                    operation: 'processMessageSequence',
+                    messageCount: messages.length,
+                    success: true
+                }
+            });
+
+            this.logDebug(`Processed message sequence: ${messages.length} messages`);
 
             return {
                 success: true,
                 data: combinedContent,
-                metadata
+                metadata: baseMetadata
             };
-        } catch (error) {
-            const runId = `run_${Date.now()}`;
-            const baseMetadata = createBaseMetadata('llm', 'error');
-            const event: ILLMEvent = {
-                type: 'request.error',
-                timestamp: Date.now(),
-                runId,
-                parentRunId: undefined,
-                metadata: {
-                    ...baseMetadata,
-                    provider: LLM_PROVIDER_enum.GROQ,
-                    model: 'mixtral-8x7b-32768',
-                    metrics: adaptMetricsToBase(this.metricsCollector.getMetrics()),
-                    timestamp: Date.now(),
-                    runId,
-                    performance: {
-                        executionTime: { total: 0, average: 0, min: 0, max: 0 },
-                        latency: { total: 0, average: 0, min: 0, max: 0 },
-                        throughput: { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
-                        responseTime: { total: 0, average: 0, min: 0, max: 0 },
-                        queueLength: 0,
-                        errorRate: 0,
-                        successRate: 1,
-                        errorMetrics: { totalErrors: 0, errorRate: 0 },
-                        resourceUtilization: {
-                            cpuUsage: 0,
-                            memoryUsage: 0,
-                            diskIO: { read: 0, write: 0 },
-                            networkUsage: { upload: 0, download: 0 },
-                            timestamp: Date.now()
-                        },
-                        timestamp: Date.now()
-                    },
-                    context: {
-                        source: 'llm',
-                        target: 'error',
-                        correlationId: runId,
-                        causationId: runId
-                    }
-                },
-                data: { error }
-            };
-            this.metricsCollector.handleEvent(event);
+        }, 'Failed to process message sequence');
 
-            throw createError({
-                message: 'Failed to process message sequence',
-                type: 'SystemError',
-                context: { messages, rawOutput },
-                cause: error instanceof Error ? error : undefined
-            });
+        if (!result.success || !result.data) {
+            this.logError('Message sequence processing failed', result.metadata.error);
+            throw result.metadata.error;
         }
+
+        return result.data;
     }
 
     /**
-     * Log performance metrics at appropriate levels
+     * Create a streaming handler
      */
-    private logPerformanceMetrics(metrics: ILLMMetrics): void {
-        // Log resource metrics
-        if (metrics.resources.cpuUsage > 80) {
-            this.logWarn(`High CPU usage: ${metrics.resources.cpuUsage}%`);
-        }
-        if (metrics.resources.memoryUsage > 1000000000) { // 1GB
-            this.logWarn(`High memory usage: ${metrics.resources.memoryUsage} bytes`);
+    public createStreamingHandler(onToken: (token: string) => void): BaseCallbackHandler {
+        return new StreamingCallbackHandler(onToken, this.metricsManager);
     }
 
-        // Log performance metrics
-        if (metrics.performance.errorRate > 0) {
-            this.logError(`Error rate: ${metrics.performance.errorRate}%`);
-        }
-        if (metrics.performance.tokensPerSecond < 10) {
-            this.logWarn(`Low processing speed: ${metrics.performance.tokensPerSecond} tokens/s`);
-        }
+    /**
+     * Clean up resources
+     */
+    public async cleanup(): Promise<void> {
+        const result = await this.safeExecute(async () => {
+            this.isInitialized = false;
+            this.logInfo('Output Manager cleaned up successfully');
+        }, 'Failed to cleanup Output manager');
 
-        // Log usage metrics
-        if (metrics.usage.tokenDistribution.total > 4000) {
-            this.logWarn(`High token usage: ${metrics.usage.tokenDistribution.total} tokens`);
+        if (!result.success) {
+            throw result.metadata.error;
         }
-
-        // Log general metrics at debug level
-        this.logDebug(`Tokens processed: ${metrics.usage.tokenDistribution.total}`);
-        this.logDebug(`Processing speed: ${metrics.performance.tokensPerSecond} tokens/s`);
-        this.logDebug(`Success rate: ${metrics.performance.successRate * 100}%`);
     }
 }
 
+/**
+ * Callback handler for streaming responses
+ */
+class StreamingCallbackHandler extends BaseCallbackHandler {
+    name = "streaming_handler";
+    private readonly runId: string;
+
+    constructor(
+        private onToken: (token: string) => void,
+        private readonly metricsManager: any // Type from CoreManager
+    ) {
+        super();
+        this.runId = `run_${Date.now()}`;
+    }
+
+    async handleLLMNewToken(token: string): Promise<void> {
+        try {
+            this.onToken(token);
+            const baseMetadata = createBaseMetadata('llm', 'token');
+            const metrics = MetricsAdapter.fromLangchainCallback({}, undefined, Date.now(), Date.now());
+
+            // Track token metrics
+            const event = {
+                type: 'token.received',
+                timestamp: Date.now(),
+                runId: this.runId,
+                metadata: {
+                    ...baseMetadata,
+                    provider: LLM_PROVIDER_enum.GROQ,
+                    model: 'unknown',
+                    metrics: MetricsAdapter.toBaseMetrics(metrics),
+                    timestamp: Date.now(),
+                    runId: this.runId,
+                    performance: metrics.performance
+                }
+            } as Record<string, unknown>;
+
+            // Track metrics using CoreManager's metricsManager
+            await this.metricsManager.trackMetric({
+                domain: MetricDomain.LLM,
+                type: MetricType.PERFORMANCE,
+                value: 1,
+                timestamp: Date.now(),
+                metadata: event
+            });
+
+        } catch (error) {
+            // Log error through metrics manager
+            await this.metricsManager.trackMetric({
+                domain: MetricDomain.LLM,
+                type: MetricType.ERROR,
+                value: 1,
+                timestamp: Date.now(),
+                metadata: { error }
+            });
+        }
+    }
+}
+
+// Export singleton instance
 export default OutputManager.getInstance();

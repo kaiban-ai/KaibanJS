@@ -5,13 +5,12 @@
  */
 
 import { CoreManager } from '../../core/coreManager';
-import { createError } from '../../../types/common/commonErrorTypes';
-import { createBaseMetadata } from '../../../types/common/commonMetadataTypes';
-import { LLM_STATUS_enum } from '../../../types/common/commonEnums';
+import { createBaseMetadata } from '../../../types/common/baseTypes';
+import { MANAGER_CATEGORY_enum, LLM_STATUS_enum } from '../../../types/common/enumTypes';
 
 import type { ILLMInstance } from '../../../types/llm/llmInstanceTypes';
-import type { IHandlerResult } from '../../../types/common/commonHandlerTypes';
-import type { IStatusTransitionContext, IStatusEntity } from '../../../types/common/commonStatusTypes';
+import type { IHandlerResult } from '../../../types/common/baseTypes';
+import type { IStatusTransitionContext, IStatusEntity } from '../../../types/common/statusTypes';
 import type { ILLMResourceMetrics } from '../../../types/llm/llmMetricTypes';
 
 /**
@@ -36,15 +35,25 @@ export class LLMResourceManager extends CoreManager {
     /**
      * Create LLM resource metrics
      */
+    public readonly category = MANAGER_CATEGORY_enum.RESOURCE;
+
     private async createLLMResourceMetrics(): Promise<ILLMResourceMetrics> {
-        const metricsManager = this.getMetricsManager();
-        const baseMetrics = await metricsManager.getInitialResourceMetrics();
+        const processMetrics = {
+            cpuUsage: process.cpuUsage().user / 1000000, // Convert to seconds
+            memoryUsage: process.memoryUsage().heapUsed,
+            diskIO: {
+                read: 0,
+                write: 0
+            },
+            networkUsage: {
+                upload: 0,
+                download: 0
+            },
+            timestamp: Date.now()
+        };
 
         return {
-            cpuUsage: baseMetrics.cpuUsage,
-            memoryUsage: baseMetrics.memoryUsage,
-            diskIO: baseMetrics.diskIO,
-            networkUsage: baseMetrics.networkUsage,
+            ...processMetrics,
             gpuMemoryUsage: 0,
             modelMemoryAllocation: {
                 weights: 0,
@@ -85,9 +94,7 @@ export class LLMResourceManager extends CoreManager {
                 // Update final status
                 await this.updateInstanceStatus(instance, LLM_STATUS_enum.CLEANED_UP);
             } catch (error) {
-                this.logError('Failed to release resources', null, instance.id, 
-                    error instanceof Error ? error : new Error(String(error))
-                );
+                this.logError('Failed to release resources', error instanceof Error ? error : new Error(String(error)));
                 await this.updateInstanceStatus(instance, LLM_STATUS_enum.ERROR);
                 throw error;
             }
@@ -115,12 +122,12 @@ export class LLMResourceManager extends CoreManager {
             phase: 'status_transition',
             startTime,
             duration: Date.now() - startTime,
-            resourceMetrics: this.getResourceMetrics(instance.id),
-            performanceMetrics: await this.getMetricsManager().getInitialPerformanceMetrics(),
             metadata: createBaseMetadata('LLMResourceManager', 'updateInstanceStatus'),
             context: {
                 provider: instance.provider,
-                model: instance.config.model
+                model: instance.config.model,
+                component: 'LLMResourceManager',
+                phase: 'status_transition'
             }
         };
 
@@ -154,9 +161,7 @@ export class LLMResourceManager extends CoreManager {
                 try {
                     await this.releaseResources(instance);
                 } catch (error) {
-                    this.logError(`Failed to cleanup resources for instance ${instance.id}`, null, instance.id,
-                        error instanceof Error ? error : new Error(String(error))
-                    );
+                    this.logError(`Failed to cleanup resources for instance ${instance.id}`, error instanceof Error ? error : new Error(String(error)));
                 }
             }
         }, 'Cleanup all resources');

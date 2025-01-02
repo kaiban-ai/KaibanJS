@@ -7,358 +7,199 @@
 import { BaseAgent } from './baseAgent';
 import { Tool } from 'langchain/tools';
 import { ChatMessageHistory } from 'langchain/memory';
-import { Runnable } from '@langchain/core/runnables';
+import { BaseMessage } from '@langchain/core/messages';
 import { AgentManager } from '../managers/domain/agent/agentManager';
 import { IterationManager } from '../managers/domain/agent/iterationManager';
 import { TaskManager } from '../managers/domain/task/taskManager';
-import { AGENT_STATUS_enum } from '../types/common/commonEnums';
-import { createError } from '../types/common/commonErrorTypes';
-import { IErrorType } from '../types/common/commonErrorTypes';
-import { IHandlerResult } from '../types/common/commonHandlerTypes';
-import { IBaseAgent, IExecutableAgent, IReactChampionAgent } from '../types/agent/agentBaseTypes';
-import { IAgentStoreMethods } from '../types/agent/agentStoreTypes';
+import { AGENT_STATUS_enum } from '../types/common/enumTypes';
+import { createError, IErrorType } from '../types/common/errorTypes';
+import { IExecutableAgent, IReactChampionAgent } from '../types/agent/agentBaseTypes';
 import { IREACTChampionAgentPrompts } from '../types/agent/promptsTypes';
-import { IAgenticLoopResult, ILLMInstance } from '../types/llm/llmInstanceTypes';
+import { ILLMInstance } from '../types/llm/llmInstanceTypes';
 import { IRuntimeLLMConfig } from '../types/llm/llmCommonTypes';
-import { IMessageHistory } from '../types/llm/message/messagingHistoryTypes';
+import { ILLMProviderConfig, IProviderInstance } from '../types/llm/llmProviderTypes';
+import { IMessageHistory } from '../types/llm/message/messagingBaseTypes';
 import { ITaskType } from '../types/task/taskBaseTypes';
-import { ILLMManager } from '../types/llm/llmManagerTypes';
-import { IPerformanceMetrics, IResourceMetrics, IUsageMetrics } from '../types/common/commonMetricTypes';
-import { ILoopHandlerResult, ILoopResult } from '../types/agent/agentLoopTypes';
-import { IThinkingManager, IThinkingHandlerResult, IThinkingMetadata } from '../types/agent/agentHandlersTypes';
-import { IAgentTypeGuards } from '../types/agent/agentBaseTypes';
-import { LLMProviderConfig, LLMProviderTypeGuards } from '../types/llm/llmProviderTypes';
+import { ILLMManager, IThinkingManager } from '../types/agent/agentManagerTypes';
+import { ITimeMetrics, IThroughputMetrics } from '../types/metrics/base';
+import { ITaskFeedback } from '../types/task/taskFeedbackTypes';
+import { ILoopResult } from '../types/agent/agentExecutionFlow';
+import { IThinkingHandlerResult } from '../types/agent/agentHandlersTypes';
 import { ILLMMetrics } from '../types/llm/llmMetricTypes';
 import { 
-    IAgentPerformanceMetrics, 
-    IAgentResourceMetrics, 
+    IAgentPerformanceMetrics,
+    IAgentResourceMetrics,
     IAgentUsageMetrics,
     ICognitiveResourceMetrics,
     IThinkingOperationMetrics,
     IAgentStateMetrics
 } from '../types/agent/agentMetricTypes';
 
-// Create default metrics
-const createDefaultCognitiveMetrics = (): ICognitiveResourceMetrics => ({
+// Create default metrics functions
+const createDefaultTimeMetrics = (): ITimeMetrics => ({
+    average: 0,
+    min: 0,
+    max: 0,
+    total: 0
+});
+
+const createDefaultThroughputMetrics = (): IThroughputMetrics => ({
+    requestsPerSecond: 0,
+    bytesPerSecond: 0,
+    operationsPerSecond: 0,
+    dataProcessedPerSecond: 0
+});
+
+const createDefaultBaseMetricsData = (component: string) => ({
+    component,
+    category: 'base',
+    version: '1.0.0',
+    timestamp: Date.now()
+});
+
+const createDefaultCognitiveResourceMetrics = (component: string): ICognitiveResourceMetrics => ({
+    ...createDefaultBaseMetricsData(component),
+    usage: 0,
+    limit: 100,
+    available: 100,
     memoryAllocation: 0,
     cognitiveLoad: 0,
     processingCapacity: 1,
     contextUtilization: 0
 });
 
-const createDefaultThinkingMetrics = (): IThinkingOperationMetrics => ({
-    reasoningTime: { total: 0, average: 0, min: 0, max: 0 },
-    planningTime: { total: 0, average: 0, min: 0, max: 0 },
-    learningTime: { total: 0, average: 0, min: 0, max: 0 },
+const createDefaultThinkingOperationMetrics = (component: string): IThinkingOperationMetrics => ({
+    ...createDefaultBaseMetricsData(component),
+    duration: 0,
+    success: true,
+    errorCount: 0,
+    reasoningTime: createDefaultTimeMetrics(),
+    planningTime: createDefaultTimeMetrics(),
+    learningTime: createDefaultTimeMetrics(),
     decisionConfidence: 0,
     learningEfficiency: 0
 });
 
-const createDefaultStateMetrics = (): IAgentStateMetrics => ({
+const createDefaultAgentStateMetrics = (component: string): IAgentStateMetrics => ({
+    ...createDefaultBaseMetricsData(component),
     currentState: 'IDLE',
     stateTime: 0,
     transitionCount: 0,
     failedTransitions: 0,
     blockedTaskCount: 0,
     historyEntryCount: 0,
-    lastHistoryUpdate: Date.now()
+    lastHistoryUpdate: Date.now(),
+    taskStats: {
+        completedCount: 0,
+        failedCount: 0,
+        averageDuration: 0,
+        successRate: 0,
+        averageIterations: 0
+    }
 });
 
-const createDefaultAgentResourceMetrics = (): IAgentResourceMetrics => ({
-    cognitive: createDefaultCognitiveMetrics(),
+const createDefaultAgentResourceMetrics = (component: string): IAgentResourceMetrics => ({
+    ...createDefaultBaseMetricsData(component),
+    usage: 0,
+    limit: 100,
+    available: 100,
+    cognitive: createDefaultCognitiveResourceMetrics(component),
     cpuUsage: 0,
     memoryUsage: process.memoryUsage().heapUsed,
     diskIO: { read: 0, write: 0 },
-    networkUsage: { upload: 0, download: 0 },
-    timestamp: Date.now()
+    networkUsage: { upload: 0, download: 0 }
 });
 
-const createDefaultAgentPerformanceMetrics = (): IAgentPerformanceMetrics => ({
-    executionTime: {
-        total: 0,
-        average: 0,
-        min: 0,
-        max: 0
-    },
-    throughput: {
-        operationsPerSecond: 0,
-        dataProcessedPerSecond: 0
-    },
-    errorMetrics: {
-        totalErrors: 0,
-        errorRate: 0
-    },
-    resourceUtilization: createDefaultAgentResourceMetrics(),
-    timestamp: Date.now(),
-    thinking: createDefaultThinkingMetrics(),
+const createDefaultAgentPerformanceMetrics = (component: string): IAgentPerformanceMetrics => ({
+    ...createDefaultBaseMetricsData(component),
+    duration: 0,
+    success: true,
+    errorCount: 0,
+    thinking: createDefaultThinkingOperationMetrics(component),
     taskSuccessRate: 0,
-    goalAchievementRate: 0
+    goalAchievementRate: 0,
+    responseTime: createDefaultTimeMetrics(),
+    throughput: createDefaultThroughputMetrics()
 });
 
-const createDefaultAgentUsageMetrics = (): IAgentUsageMetrics => ({
-    totalOperations: 0,
-    successRate: 0,
-    averageDuration: 0,
-    costDetails: {
-        inputCost: 0,
-        outputCost: 0,
-        totalCost: 0,
-        currency: 'USD',
-        breakdown: {
-            promptTokens: { count: 0, cost: 0 },
-            completionTokens: { count: 0, cost: 0 }
-        }
+const createDefaultAgentUsageMetrics = (component: string): IAgentUsageMetrics => ({
+    ...createDefaultBaseMetricsData(component),
+    totalRequests: 0,
+    activeUsers: 0,
+    requestsPerSecond: 0,
+    averageResponseSize: 0,
+    peakMemoryUsage: 0,
+    uptime: 0,
+    rateLimit: {
+        current: 0,
+        limit: 100,
+        remaining: 100,
+        resetTime: Date.now() + 3600000
     },
-    timestamp: Date.now(),
-    state: createDefaultStateMetrics(),
+    state: createDefaultAgentStateMetrics(component),
     toolUsageFrequency: {},
     taskCompletionCount: 0,
-    averageTaskTime: 0
+    averageTaskTime: 0,
+    costs: {
+        totalCost: 0,
+        inputCost: 0,
+        outputCost: 0,
+        currency: 'USD',
+            breakdown: {
+                promptTokens: { count: 0, cost: 0 },
+                completionTokens: { count: 0, cost: 0 }
+            }
+    }
 });
 
-// Create store factory to avoid circular dependency
-const createStoreFactory = () => {
-    let agent: ReactChampionAgent | null = null;
-
-    const store: IAgentStoreMethods = {
-        getState: () => ({
-            name: agent?.name || '',
-            agents: agent ? [agent] : [],
-            activeAgents: agent ? [agent] : [],
-            metadata: {},
-            executionState: {},
-            errors: [],
-            loading: false,
-            id: agent?.id || '',
-            version: '1.0.0',
-            timestamp: Date.now(),
-            tasks: [],
-            workflowLogs: []
-        }),
-        setState: () => {},
-        subscribe: () => () => {},
-        destroy: () => {},
-        handleAgentError: async (params) => {
-            const error = createError({
-                message: params.error.message,
-                type: 'AgentError',
-                context: params.context
-            });
-            if (agent) {
-                agent.handleAgentError(error, 'Agent error');
-            }
-            return {
-                success: false,
-                error,
-                metadata: {
-                    timestamp: Date.now(),
-                    component: 'AgentStore',
-                    operation: 'handleAgentError',
-                    agentId: agent?.id || '',
-                    agentName: agent?.name || '',
-                    agentType: 'ReactChampionAgent',
-                    status: agent?.status || 'IDLE',
-                    agentMetrics: {
-                        tokensUsed: 0,
-                        iterationCount: 0,
-                        successRate: 0
-                    },
-                    metrics: {
-                        performance: createDefaultAgentPerformanceMetrics(),
-                        resources: createDefaultAgentResourceMetrics(),
-                        usage: createDefaultAgentUsageMetrics()
-                    },
-                    performance: createDefaultAgentPerformanceMetrics(),
-                    context: params.context || {},
-                    validation: {
-                        isValid: false,
-                        errors: [error.message],
-                        warnings: []
-                    }
-                }
-            };
-        },
-        handleAgentThinking: async () => {
-            const result = await agent?.think();
-            return {
-                success: true,
-                data: result?.data,
-                metadata: {
-                    timestamp: Date.now(),
-                    component: 'AgentStore',
-                    operation: 'handleAgentThinking',
-                    agentId: agent?.id || '',
-                    agentName: agent?.name || '',
-                    agentType: 'ReactChampionAgent',
-                    status: agent?.status || 'IDLE',
-                    agentMetrics: {
-                        tokensUsed: 0,
-                        iterationCount: 0,
-                        successRate: 0
-                    },
-                    metrics: {
-                        performance: createDefaultAgentPerformanceMetrics(),
-                        resources: createDefaultAgentResourceMetrics(),
-                        usage: createDefaultAgentUsageMetrics()
-                    },
-                    performance: createDefaultAgentPerformanceMetrics(),
-                    context: {},
-                    validation: {
-                        isValid: true,
-                        errors: [],
-                        warnings: []
-                    }
-                }
-            };
-        },
-        handleAgentOutput: async () => ({
-            success: true,
-            data: null,
-            metadata: {
-                timestamp: Date.now(),
-                component: 'AgentStore',
-                operation: 'handleAgentOutput',
-                agentId: agent?.id || '',
-                agentName: agent?.name || '',
-                agentType: 'ReactChampionAgent',
-                status: agent?.status || 'IDLE',
-                agentMetrics: {
-                    tokensUsed: 0,
-                    iterationCount: 0,
-                    successRate: 0
-                },
-                metrics: {
-                    performance: createDefaultAgentPerformanceMetrics(),
-                    resources: createDefaultAgentResourceMetrics(),
-                    usage: createDefaultAgentUsageMetrics()
-                },
-                performance: createDefaultAgentPerformanceMetrics(),
-                context: {},
-                validation: {
-                    isValid: true,
-                    errors: [],
-                    warnings: []
-                }
-            }
-        }),
-        handleAgentStatusChange: async () => ({
-            success: true,
-            data: undefined,
-            metadata: {
-                timestamp: Date.now(),
-                component: 'AgentStore',
-                operation: 'handleAgentStatusChange',
-                agentId: agent?.id || '',
-                agentName: agent?.name || '',
-                agentType: 'ReactChampionAgent',
-                status: agent?.status || 'IDLE',
-                agentMetrics: {
-                    tokensUsed: 0,
-                    iterationCount: 0,
-                    successRate: 0
-                },
-                metrics: {
-                    performance: createDefaultAgentPerformanceMetrics(),
-                    resources: createDefaultAgentResourceMetrics(),
-                    usage: createDefaultAgentUsageMetrics()
-                },
-                performance: createDefaultAgentPerformanceMetrics(),
-                context: {},
-                validation: {
-                    isValid: true,
-                    errors: [],
-                    warnings: []
-                }
-            }
-        }),
-        handleIterationStart: async (params) => {
-            agent?.handleIterationStart(params);
-            return {
-                success: true,
-                data: undefined,
-                metadata: {
-                    timestamp: Date.now(),
-                    component: 'AgentStore',
-                    operation: 'handleIterationStart',
-                    agentId: agent?.id || '',
-                    agentName: agent?.name || '',
-                    agentType: 'ReactChampionAgent',
-                    status: agent?.status || 'IDLE',
-                    agentMetrics: {
-                        tokensUsed: 0,
-                        iterationCount: params.iterations,
-                        successRate: 0
-                    },
-                    metrics: {
-                        performance: createDefaultAgentPerformanceMetrics(),
-                        resources: createDefaultAgentResourceMetrics(),
-                        usage: createDefaultAgentUsageMetrics()
-                    },
-                    performance: createDefaultAgentPerformanceMetrics(),
-                    context: {},
-                    validation: {
-                        isValid: true,
-                        errors: [],
-                        warnings: []
-                    }
-                }
-            };
-        },
-        handleIterationEnd: async (params) => {
-            agent?.handleIterationEnd(params);
-            return {
-                success: true,
-                data: undefined,
-                metadata: {
-                    timestamp: Date.now(),
-                    component: 'AgentStore',
-                    operation: 'handleIterationEnd',
-                    agentId: agent?.id || '',
-                    agentName: agent?.name || '',
-                    agentType: 'ReactChampionAgent',
-                    status: agent?.status || 'IDLE',
-                    agentMetrics: {
-                        tokensUsed: 0,
-                        iterationCount: params.iterations,
-                        successRate: 0
-                    },
-                    metrics: {
-                        performance: createDefaultAgentPerformanceMetrics(),
-                        resources: createDefaultAgentResourceMetrics(),
-                        usage: createDefaultAgentUsageMetrics()
-                    },
-                    performance: createDefaultAgentPerformanceMetrics(),
-                    context: {},
-                    validation: {
-                        isValid: true,
-                        errors: [],
-                        warnings: []
-                    }
-                }
-            };
-        },
-        ensureReactChampionAgent: (agentInstance) => {
-            if (!IAgentTypeGuards.isReactChampionAgent(agentInstance)) {
-                throw new Error('Agent must be a REACT Champion agent to handle iterations');
-            }
-        }
-    };
-
-    return {
-        store,
-        setAgent: (newAgent: ReactChampionAgent) => {
-            agent = newAgent;
-        }
-    };
-};
-
 export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent {
-    public executableAgent: IExecutableAgent;
+    private static readonly defaultCapabilities = {
+        canThink: true,
+        canUseTools: true,
+        canLearn: true,
+        supportedToolTypes: ['function', 'web', 'system'],
+        maxConcurrentTasks: 5,
+        memoryCapacity: 1000,
+        canDelegate: false,
+        canTeach: false,
+        canCollaborate: true,
+        supportedProviders: ['openai', 'mistral', 'anthropic', 'groq', 'google'],
+        supportedModels: ['gpt-4', 'gpt-3.5-turbo', 'mistral', 'claude'],
+        maxContextSize: 8192,
+        features: {
+            streaming: true,
+            batching: true,
+            caching: true,
+            recovery: true,
+            metrics: true
+        }
+    };
+
+    public executableAgent!: IExecutableAgent & { runnable: IProviderInstance };
     protected readonly agentManager: AgentManager;
     protected readonly llmManager: ILLMManager;
     protected readonly iterationManager: IterationManager;
     protected readonly taskManager: TaskManager;
-    private static storeFactory = createStoreFactory();
+    
+    public readonly type: string = 'ReactChampionAgent';
+    public readonly description: string = 'A REACT-based agent implementation';
+    public readonly supportedModels: string[] = ['gpt-4', 'gpt-3.5-turbo', 'mistral', 'claude'];
+    public readonly supportedProviders: string[] = ['openai', 'mistral', 'anthropic'];
+    public readonly maxContextSize: number = 8192;
+    public readonly features = {
+        streaming: true,
+        batching: true,
+        caching: true,
+        recovery: true,
+        metrics: true
+    } as const;
+    
+    public messages: BaseMessage[] = [];
+    public context: string = '';
+    private _history: ChatMessageHistory;
+    private _messageHistory: IMessageHistory;
+
+    public readonly capabilities = ReactChampionAgent.defaultCapabilities;
 
     constructor(config: {
         id: string;
@@ -368,48 +209,146 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
         tools?: Tool[];
         llmConfig: IRuntimeLLMConfig;
         promptTemplates: IREACTChampionAgentPrompts;
-        messageHistory: IMessageHistory;
+        messageHistory: ChatMessageHistory;
     }) {
+        const messageHistory: IMessageHistory = {
+            messages: [],
+            metadata: {
+                conversationId: config.id,
+                sessionId: Date.now().toString()
+            }
+        };
+
         super({
             ...config,
-            llmConfig: config.llmConfig,
-            store: ReactChampionAgent.storeFactory.store
+            capabilities: ReactChampionAgent.defaultCapabilities,
+            messageHistory
         });
 
-        // Get managers through CoreManager registry
+        this._history = config.messageHistory;
+        this._messageHistory = messageHistory;
+
         this.agentManager = this.getDomainManager<AgentManager>('AgentManager');
         this.llmManager = this.getDomainManager<ILLMManager>('LLMManager');
         this.iterationManager = this.getDomainManager<IterationManager>('IterationManager');
         this.taskManager = TaskManager.getInstance();
 
+        this.initializeAgent().catch(error => {
+            this.handleError(
+                createError({
+                    message: `Failed to initialize agent: ${error.message}`,
+                    type: 'InitializationError',
+                    context: {
+                        component: this.constructor.name,
+                        agentId: this.id,
+                        error: error
+                    }
+                }),
+                'Agent initialization'
+            );
+        });
+    }
+    execute: () => Promise<void> = async () => { throw new Error('Not implemented'); };
+    pause: () => Promise<void> = async () => { throw new Error('Not implemented'); };
+    resume: () => Promise<void> = async () => { throw new Error('Not implemented'); };
+    stop: () => Promise<void> = async () => { throw new Error('Not implemented'); };
+    reset: () => Promise<void> = async () => { throw new Error('Not implemented'); };
+
+    protected async updateMessageHistory(): Promise<void> {
+        const messages = await this._history.getMessages();
+        this._messageHistory.messages = messages.map(msg => ({
+            message: msg,
+            timestamp: Date.now(),
+            metadata: {
+                timestamp: Date.now(),
+                component: this.constructor.name,
+                operation: 'message'
+            }
+        }));
+    }
+
+    public get history(): IMessageHistory {
+        return this._messageHistory;
+    }
+
+    private async initializeAgent(): Promise<void> {
+        await this.updateMessageHistory();
+
         this.executableAgent = {
-            runnable: {} as Runnable,
-            getMessageHistory: () => new ChatMessageHistory(),
-            inputMessagesKey: 'input',
-            historyMessagesKey: 'history'
+            name: this.name,
+            role: this.role,
+            goal: this.goal,
+            type: 'ReactChampionAgent',
+            description: 'A REACT-based agent implementation',
+            supportedModels: this.supportedModels,
+            supportedProviders: this.supportedProviders,
+            maxContextSize: this.maxContextSize,
+            features: this.features,
+            background: this.background,
+            version: this.version,
+            capabilities: this.capabilities,
+            tools: this.tools,
+            maxIterations: this.maxIterations,
+            status: this.status,
+            env: this.env,
+            metrics: this.metrics,
+            llmInstance: this.llmInstance,
+            llmSystemMessage: this.llmSystemMessage,
+            forceFinalAnswer: this.forceFinalAnswer,
+            promptTemplates: this.promptTemplates,
+            messageHistory: this.messageHistory,
+            metadata: this.metadata,
+            executionState: this.executionState,
+            execute: async () => { throw new Error('Not implemented'); },
+            pause: async () => { throw new Error('Not implemented'); },
+            resume: async () => { throw new Error('Not implemented'); },
+            stop: async () => { throw new Error('Not implemented'); },
+            reset: async () => { throw new Error('Not implemented'); },
+            validate: async () => true,
+            runnable: {
+                pause: async () => { throw new Error('Not implemented'); },
+                resume: async () => { throw new Error('Not implemented'); },
+                stop: ['<stop>', '</stop>'],
+                reset: async () => { throw new Error('Not implemented'); }
+            }
         };
-
-        // Initialize through AgentManager
-        this.agentManager['initializeAgent'](this);
-
-        // Update store with this instance
-        ReactChampionAgent.storeFactory.setAgent(this);
 
         this.logInfo(`Agent created: ${this.name}`);
     }
 
-    // Public error handler for store to use
-    public handleAgentError(error: IErrorType, message: string): void {
-        this.handleError(error, message);
+    protected async createGroqInstance(): Promise<void> {
+        await this.createLLMInstance();
     }
 
-    // Type guard for store to use
-    public isReactChampionAgent(agentInstance: unknown): agentInstance is IReactChampionAgent {
-        return IAgentTypeGuards.isReactChampionAgent(agentInstance);
+    protected async createOpenAIInstance(): Promise<void> {
+        await this.createLLMInstance();
     }
 
-    // Required interface implementations
-    public async workOnTask(task: ITaskType): Promise<IAgenticLoopResult> {
+    protected async createAnthropicInstance(): Promise<void> {
+        await this.createLLMInstance();
+    }
+
+    protected async createGoogleInstance(): Promise<void> {
+        await this.createLLMInstance();
+    }
+
+    protected async createMistralInstance(): Promise<void> {
+        await this.createLLMInstance();
+    }
+
+    protected async someAbstractMethod(_params?: unknown): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+
+    public async validate(): Promise<boolean> {
+        return true;
+    }
+
+    public async workOnFeedback(_task: ITaskType, _feedbackList: ITaskFeedback[], _context: string): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+
+    public async workOnTask(task: ITaskType): Promise<ILoopResult> {
         const result = await this.agentManager.executeAgentLoop(this, task);
 
         if (!result.success) {
@@ -436,23 +375,48 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
         }
 
         return {
+            success: result.success,
             result: result.result,
             metadata: {
                 iterations: result.metadata.iterations,
-                maxAgentIterations: result.metadata.maxAgentIterations
+                maxAgentIterations: result.metadata.maxAgentIterations,
+                metrics: {
+                    performance: result.metadata.metrics?.performance || {
+                        ...createDefaultAgentPerformanceMetrics(this.constructor.name),
+                        thinking: createDefaultThinkingOperationMetrics(this.constructor.name),
+                        taskSuccessRate: 0,
+                        goalAchievementRate: 0
+                    },
+                    resources: result.metadata.metrics?.resources || createDefaultAgentResourceMetrics(this.constructor.name),
+                    usage: result.metadata.metrics?.usage || {
+                        ...createDefaultAgentUsageMetrics(this.constructor.name),
+                        state: createDefaultAgentStateMetrics(this.constructor.name),
+                        toolUsageFrequency: {},
+                        taskCompletionCount: 0,
+                        averageTaskTime: 0
+                    },
+                    costs: {
+                        totalCost: 0,
+                        inputCost: 0,
+                        outputCost: 0,
+                        currency: 'USD',
+                        breakdown: {
+                            promptTokens: { count: 0, cost: 0 },
+                            completionTokens: { count: 0, cost: 0 }
+                        }
+                    }
+                }
             }
         };
     }
 
     public async createLLMInstance(): Promise<void> {
         try {
-            // Normalize config through LLMManager
             const normalizedConfig = await this.llmManager.validateConfig(this.llmConfig);
             if (!normalizedConfig.isValid) {
                 throw new Error(`Invalid LLM config: ${normalizedConfig.errors.join(', ')}`);
             }
 
-            // Create instance through LLMManager
             const result = await this.llmManager.createInstance(this.llmConfig);
             if (!result.success || !result.data) {
                 throw new Error('Failed to create LLM instance');
@@ -461,12 +425,12 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
             const llmInstance: ILLMInstance = {
                 ...result.data,
                 id: this.id,
-                getConfig: () => this.llmConfig as LLMProviderConfig,
-                updateConfig: (updates) => {
+                getConfig: () => this.llmConfig as ILLMProviderConfig,
+                updateConfig: (updates: Partial<ILLMProviderConfig>) => {
                     Object.assign(this.llmConfig, updates);
                 },
                 getProvider: () => this.llmConfig.provider,
-                validateConfig: async (config) => normalizedConfig,
+                validateConfig: async () => normalizedConfig,
                 cleanup: async () => {}
             };
 
@@ -480,15 +444,14 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
                 context: {
                     component: this.constructor.name,
                     agentId: this.id,
-                    config: this.llmConfig,
                     error: error
                 }
             });
         }
     }
 
-    public async think(): Promise<IThinkingHandlerResult> {
-        if (!this.executionState.currentTask) {
+    public async think(task: ITaskType): Promise<IThinkingHandlerResult> {
+        if (!task || !task.id) {
             throw createError({
                 message: 'No current task assigned',
                 type: 'StateError',
@@ -502,52 +465,36 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
         const thinkingManager = this.getDomainManager<IThinkingManager>('ThinkingManager');
         const result = await thinkingManager.executeThinking({
             agent: this,
-            task: this.executionState.currentTask,
+            task: task,
             ExecutableAgent: this.executableAgent
         });
 
-        const metrics = result.metadata?.metrics as ILLMMetrics;
+        const metrics = result.metadata?.metrics ? result.metadata.metrics as unknown as ILLMMetrics : undefined;
+        const component = this.constructor.name;
 
-        const agentPerformanceMetrics: IAgentPerformanceMetrics = {
-            ...createDefaultAgentPerformanceMetrics(),
-            executionTime: metrics?.performance?.executionTime || { total: 0, average: 0, min: 0, max: 0 },
-            throughput: metrics?.performance?.throughput || { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
-            errorMetrics: metrics?.performance?.errorMetrics || { totalErrors: 0, errorRate: 0 },
-            resourceUtilization: metrics?.performance?.resourceUtilization || createDefaultAgentResourceMetrics(),
-            thinking: createDefaultThinkingMetrics(),
-            taskSuccessRate: metrics?.performance?.successRate || 0,
-            goalAchievementRate: 0,
-            timestamp: Date.now()
-        };
-
-        const agentResourceMetrics: IAgentResourceMetrics = {
-            cognitive: createDefaultCognitiveMetrics(),
-            cpuUsage: metrics?.resources?.cpuUsage || 0,
-            memoryUsage: metrics?.resources?.memoryUsage || 0,
-            diskIO: metrics?.resources?.diskIO || { read: 0, write: 0 },
-            networkUsage: metrics?.resources?.networkUsage || { upload: 0, download: 0 },
-            timestamp: Date.now()
-        };
-
-        const agentUsageMetrics: IAgentUsageMetrics = {
-            totalOperations: metrics?.usage?.totalRequests || 0,
-            successRate: metrics?.usage?.successRate || 0,
-            averageDuration: metrics?.usage?.averageResponseLength || 0,
-            costDetails: {
+        const thinkingMetadata = {
+            messageCount: 0,
+            processingTime: 0,
+            metrics,
+            context: {
+                iteration: 0,
+                totalTokens: metrics?.usage?.tokenDistribution?.total || 0,
+                confidence: 0,
+                reasoningChain: [] as string[]
+            },
+            performance: createDefaultAgentPerformanceMetrics(component),
+            resources: createDefaultAgentResourceMetrics(component),
+            usage: createDefaultAgentUsageMetrics(component),
+            costs: {
                 inputCost: 0,
                 outputCost: 0,
                 totalCost: 0,
                 currency: 'USD',
                 breakdown: {
-                    promptTokens: { count: metrics?.usage?.tokenDistribution?.prompt || 0, cost: 0 },
-                    completionTokens: { count: metrics?.usage?.tokenDistribution?.completion || 0, cost: 0 }
+                    promptTokens: { count: 0, cost: 0 },
+                    completionTokens: { count: 0, cost: 0 }
                 }
-            },
-            timestamp: Date.now(),
-            state: createDefaultStateMetrics(),
-            toolUsageFrequency: {},
-            taskCompletionCount: 0,
-            averageTaskTime: 0
+            }
         };
 
         return {
@@ -555,33 +502,12 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
             data: result.data,
             metadata: {
                 ...result.metadata,
-                thinking: {
-                    messageCount: 0,
-                    processingTime: 0,
-                    metrics,
-                    context: {
-                        iteration: 0,
-                        totalTokens: metrics?.usage?.tokenDistribution?.total || 0,
-                        confidence: 0,
-                        reasoningChain: []
-                    },
-                    performance: agentPerformanceMetrics,
-                    resources: agentResourceMetrics,
-                    usage: agentUsageMetrics,
-                    costs: {
-                        inputCost: 0,
-                        outputCost: 0,
-                        totalCost: 0,
-                        currency: 'USD',
-                        breakdown: {
-                            promptTokens: { count: 0, cost: 0 },
-                            completionTokens: { count: 0, cost: 0 }
-                        }
-                    }
-                },
+                thinking: thinkingMetadata,
                 agent: {
                     id: this.id,
                     name: this.name,
+                    role: this.role,
+                    status: this.status,
                     metrics: {
                         iterations: 0,
                         executionTime: 0,
@@ -589,8 +515,8 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
                     }
                 },
                 task: {
-                    id: this.executionState.currentTask.id,
-                    title: this.executionState.currentTask.title,
+                    id: task.id,
+                    title: task.title,
                     metrics: {
                         iterations: 0,
                         executionTime: 0,
@@ -600,8 +526,8 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
                 llm: {
                     model: this.llmConfig.model,
                     provider: this.llmConfig.provider,
-                    temperature: this.llmConfig.temperature,
-                    maxTokens: this.llmConfig.maxTokens
+                    requestId: Date.now().toString(),
+                    usageMetrics: metrics
                 }
             }
         };
@@ -666,7 +592,7 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
         this.handleError(
             createError({
                 message: params.error.message,
-                type: 'CognitiveError',
+                type: 'ExecutionError',
                 context: {
                     component: this.constructor.name,
                     agentId: this.id,
@@ -736,15 +662,15 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
         iterations: number;
         maxAgentIterations: number;
     }): Promise<void> {
-        const startTime = params.task.metrics.startTime || 0;
-        const endTime = Date.now();
-        const duration = endTime - startTime;
-
-        // Use TaskManager's event emitter
-        await this.taskManager.getInstance().eventEmitter.emitTaskCompleted({
-            taskId: params.task.id,
-            outputs: params.parsedResultWithFinalAnswer,
-            duration
+        await this.taskManager.executeTask({
+            ...params.task,
+            inputs: params.parsedResultWithFinalAnswer,
+            metrics: {
+                ...params.task.metrics,
+                startTime: params.task.metrics.startTime || 0,
+                endTime: Date.now(),
+                duration: Date.now() - (params.task.metrics.startTime || 0)
+            }
         });
 
         this.handleStatusTransition({
@@ -762,7 +688,7 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
     }
 
     public handleFinalAnswer(params: {
-        agent: IBaseAgent;
+        agent: IReactChampionAgent;
         task: ITaskType;
         parsedLLMOutput: any;
     }): any {
@@ -770,7 +696,7 @@ export class ReactChampionAgent extends BaseAgent implements IReactChampionAgent
     }
 
     public handleIssuesParsingLLMOutput(params: {
-        agent: IBaseAgent;
+        agent: IReactChampionAgent;
         task: ITaskType;
         output: any;
         llmOutput: string;

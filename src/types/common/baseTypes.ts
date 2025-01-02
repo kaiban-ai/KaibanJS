@@ -4,7 +4,8 @@
  */
 
 import type { IPerformanceMetrics } from '../metrics/base/performanceMetrics';
-import type { IErrorType, IBaseError } from './errorTypes';
+import type { IBaseMetrics } from '../metrics/base/baseMetrics';
+import type { IErrorType } from './errorTypes';
 import type { IValidationResult } from './validationTypes';
 import type { IAgentType } from '../agent/agentBaseTypes';
 import type { ITaskType } from '../task/taskBaseTypes';
@@ -21,6 +22,93 @@ export interface IBaseContextRequired {
 export interface IBaseContextPartial extends Partial<IBaseContextRequired> {
     [key: string]: unknown;
 }
+
+// ================ Base Handler Types ================
+
+export interface IBaseHandlerMetadata {
+    readonly timestamp: number;
+    readonly component: string;
+    readonly operation: string;
+    readonly status?: string;
+    readonly duration?: number;
+    readonly agent?: {
+        id: string;
+        name: string;
+        role: string;
+        status: string;
+    };
+    readonly category?: string;
+    readonly performance?: IPerformanceMetrics;
+    readonly validation?: IValidationResult;
+    readonly metrics?: IBaseMetrics;
+    readonly error?: Error;
+    readonly message?: string;
+    [key: string]: unknown;
+}
+
+export interface IBaseHandler {
+    validate(): Promise<boolean>;
+    execute(): Promise<void>;
+    handleError(error: Error): Promise<void>;
+}
+
+export interface IHandlerResult<T = unknown, M extends IBaseHandlerMetadata = IBaseHandlerMetadata> {
+    success: boolean;
+    error?: IErrorType;
+    data?: T;
+    metadata: M;
+}
+
+export interface IBaseHandlerParams {
+    agent: IAgentType;
+    task: ITaskType;
+    metadata: IBaseHandlerMetadata;
+    context?: IBaseContextPartial;
+}
+
+export interface IBaseExecutionOptions {
+    timeout?: number;
+    retries?: number;
+    signal?: AbortSignal;
+    strict?: boolean;
+    customValidators?: ((value: unknown) => boolean)[];
+}
+
+// ================ Cost Types ================
+
+export interface ITokenCostBreakdown {
+    count: number;
+    cost: number;
+}
+
+export interface IStandardCostDetails {
+    inputCost: number;
+    outputCost: number;
+    totalCost: number;
+    currency: string;
+    breakdown: {
+        promptTokens: ITokenCostBreakdown;
+        completionTokens: ITokenCostBreakdown;
+    };
+}
+
+export interface IModelPricingConfig {
+    modelCode: string;
+    provider: string;
+    inputPricePerMillionTokens: number;
+    outputPricePerMillionTokens: number;
+    currency?: string;
+}
+
+export interface ICostTrackingOptions {
+    enableDetailedTracking: boolean;
+    costPrecision?: number;
+    budgetThreshold?: number;
+}
+
+export type ICostAggregate = {
+    [key: string]: IStandardCostDetails;
+};
 
 // ================ Memory Types ================
 
@@ -127,7 +215,119 @@ export enum DEPENDENCY_ERROR_TYPE {
     CONSTRAINT_VIOLATION = 'CONSTRAINT_VIOLATION'
 }
 
-// Version Utility Functions
+// ================ Base Event Types ================
+
+export interface IBaseEvent {
+    id: string;
+    timestamp: number;
+    type: string;
+    metadata: IBaseHandlerMetadata;
+}
+
+export interface IStateChangeEvent<T> extends IBaseEvent {
+    previousState: T;
+    newState: T;
+    validationResult: IValidationResult;
+}
+
+// ================ Event Handler Types ================
+
+export interface IEventHandler<T extends IBaseEvent> {
+    handle(event: T): Promise<void>;
+    validate(event: T): Promise<IValidationResult>;
+}
+
+export interface IEventEmitter {
+    emit<T extends IBaseEvent>(event: T): Promise<void>;
+    on<T extends IBaseEvent>(eventType: string, handler: IEventHandler<T>): void;
+    off<T extends IBaseEvent>(eventType: string, handler: IEventHandler<T>): void;
+}
+
+// ================ Event Bus Types ================
+
+export interface IEventSubscription {
+    unsubscribe(): void;
+}
+
+export interface IEventBus {
+    publish<T extends IBaseEvent>(event: T): Promise<void>;
+    subscribe<T extends IBaseEvent>(
+        eventType: string,
+        handler: IEventHandler<T>
+    ): IEventSubscription;
+}
+
+// ================ Event Registry Types ================
+
+export interface IEventRegistry {
+    registerHandler<T extends IBaseEvent>(
+        eventType: string,
+        handler: IEventHandler<T>
+    ): void;
+    unregisterHandler<T extends IBaseEvent>(
+        eventType: string,
+        handler: IEventHandler<T>
+    ): void;
+    getHandlers<T extends IBaseEvent>(eventType: string): IEventHandler<T>[];
+}
+
+// ================ Event Validation Types ================
+
+export interface IEventValidationMetadata {
+    timestamp: number;
+    duration: number;
+    validatorName: string;
+}
+
+export interface IEventValidationResult {
+    isValid: boolean;
+    errors: string[];
+    warnings: string[];
+    metadata: IEventValidationMetadata;
+}
+
+// ================ Type Guards ================
+
+export type TypeGuardCheck<T> = (value: unknown) => value is T;
+
+export const createTypeGuard = <T>(
+    checks: Array<(value: unknown) => boolean>,
+    metricsCheck?: boolean
+): TypeGuardCheck<T> => {
+    return (value: unknown): value is T => {
+        if (!checks.every(check => check(value))) {
+            return false;
+        }
+        if (metricsCheck && !commonChecks.hasMetrics(value)) {
+            return false;
+        }
+        return true;
+    };
+};
+
+export const commonChecks = {
+    isObject: (value: unknown): boolean =>
+        typeof value === 'object' && value !== null,
+    hasProperty: (prop: string) =>
+        (value: unknown): boolean =>
+            typeof value === 'object' &&
+            value !== null &&
+            prop in value,
+    isType: (prop: string, type: string) =>
+        (value: unknown): boolean =>
+            typeof value === 'object' &&
+            value !== null &&
+            typeof (value as any)[prop] === type,
+    hasMetrics: (value: unknown): boolean => {
+        if (typeof value !== 'object' || value === null || !('metrics' in value)) {
+            return false;
+        }
+        return isBaseMetrics((value as any).metrics);
+    }
+};
+
+// ================ Version Utility Functions ================
+
 export const parseVersion = (version: string): ISemanticVersion => {
     const match = version.match(
         /^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/
@@ -228,7 +428,313 @@ export const satisfiesRange = (version: ISemanticVersion, range: IVersionRange):
     return true;
 };
 
+// Dependency Type Guards
+export const isDependencySpec = (value: unknown): value is IDependencySpec => {
+    if (typeof value !== 'object' || value === null) return false;
+    const spec = value as Partial<IDependencySpec>;
+    return (
+        typeof spec.name === 'string' &&
+        typeof spec.version === 'string' &&
+        Array.isArray(spec.constraints) &&
+        spec.constraints.every(isVersionConstraint) &&
+        typeof spec.optional === 'boolean'
+    );
+};
+
+export const isDependencyResolution = (value: unknown): value is IDependencyResolution => {
+    if (typeof value !== 'object' || value === null) return false;
+    const resolution = value as Partial<IDependencyResolution>;
+    return (
+        typeof resolution.name === 'string' &&
+        isSemanticVersion(resolution.version) &&
+        typeof resolution.satisfied === 'boolean' &&
+        (resolution.error === undefined || typeof resolution.error === 'string') &&
+        (resolution.alternatives === undefined || (
+            Array.isArray(resolution.alternatives) &&
+            resolution.alternatives.every(isSemanticVersion)
+        ))
+    );
+};
+
+export const isDependencyNode = (value: unknown): value is IDependencyNode => {
+    if (typeof value !== 'object' || value === null) return false;
+    const node = value as Partial<IDependencyNode>;
+    return (
+        typeof node.name === 'string' &&
+        isSemanticVersion(node.version) &&
+        Array.isArray(node.dependencies) &&
+        node.dependencies.every(isDependencySpec) &&
+        Array.isArray(node.dependents) &&
+        node.dependents.every(dependent => typeof dependent === 'string') &&
+        typeof node.optional === 'boolean' &&
+        typeof node.resolved === 'boolean'
+    );
+};
+
+// Parser Type Guards
+export const isParsedJSON = (value: unknown): value is IParsedJSON => {
+    if (typeof value !== 'object' || value === null) return false;
+    const json = value as Partial<IParsedJSON>;
+    return (
+        (json.thought === undefined || typeof json.thought === 'string') &&
+        (json.action === undefined || typeof json.action === 'string') &&
+        (json.actionInput === undefined || json.actionInput === null || (
+            typeof json.actionInput === 'object' &&
+            json.actionInput !== null
+        )) &&
+        (json.observation === undefined || typeof json.observation === 'string') &&
+        (json.isFinalAnswerReady === undefined || typeof json.isFinalAnswerReady === 'boolean') &&
+        (json.finalAnswer === undefined || typeof json.finalAnswer === 'string')
+    );
+};
+
+export const isParserConfig = (value: unknown): value is IParserConfig => {
+    if (typeof value !== 'object' || value === null) return false;
+    const config = value as Partial<IParserConfig>;
+    return (
+        (config.attemptRecovery === undefined || typeof config.attemptRecovery === 'boolean') &&
+        (config.maxDepth === undefined || typeof config.maxDepth === 'number') &&
+        (config.allowNonStringProps === undefined || typeof config.allowNonStringProps === 'boolean') &&
+        (config.sanitizers === undefined || (
+            Array.isArray(config.sanitizers) &&
+            config.sanitizers.every(sanitizer => typeof sanitizer === 'function')
+        ))
+    );
+};
+
+export const isParserResult = <T>(value: unknown): value is IParserResult<T> => {
+    if (typeof value !== 'object' || value === null) return false;
+    const result = value as Partial<IParserResult<T>>;
+    return (
+        typeof result.success === 'boolean' &&
+        (result.data === undefined || result.data !== null) &&
+        (result.error === undefined || (
+            typeof result.error === 'object' &&
+            result.error !== null &&
+            typeof result.error.message === 'string' &&
+            (result.error.position === undefined || typeof result.error.position === 'number') &&
+            (result.error.context === undefined || typeof result.error.context === 'string')
+        )) &&
+        (result.recoveryAttempted === undefined || typeof result.recoveryAttempted === 'boolean') &&
+        (result.originalInput === undefined || typeof result.originalInput === 'string')
+    );
+};
+
+// Memory Type Guards
+export const isMemoryMetrics = (value: unknown): value is IMemoryMetrics => {
+    if (typeof value !== 'object' || value === null) return false;
+    const metrics = value as Partial<IMemoryMetrics>;
+    return (
+        typeof metrics.totalMessages === 'number' &&
+        typeof metrics.totalTokens === 'number' &&
+        typeof metrics.memoryUsage === 'number' &&
+        (metrics.lastCleanup === undefined || (
+            typeof metrics.lastCleanup === 'object' &&
+            metrics.lastCleanup !== null &&
+            typeof metrics.lastCleanup.timestamp === 'number' &&
+            typeof metrics.lastCleanup.messagesRemoved === 'number' &&
+            typeof metrics.lastCleanup.tokensFreed === 'number'
+        )) &&
+        (metrics.modelSpecificStats === undefined || (
+            typeof metrics.modelSpecificStats === 'object' &&
+            metrics.modelSpecificStats !== null &&
+            Object.values(metrics.modelSpecificStats).every(stats => 
+                typeof stats === 'object' &&
+                stats !== null &&
+                typeof stats.messageCount === 'number' &&
+                typeof stats.tokenCount === 'number' &&
+                typeof stats.averageTokensPerMessage === 'number'
+            )
+        ))
+    );
+};
+
+// Cost Type Guards
+export const isCostAggregate = (value: unknown): value is ICostAggregate => {
+    if (typeof value !== 'object' || value === null) return false;
+    return Object.values(value as Record<string, unknown>).every(isStandardCostDetails);
+};
+
+export const isModelPricingConfig = (value: unknown): value is IModelPricingConfig => {
+    if (typeof value !== 'object' || value === null) return false;
+    const config = value as Partial<IModelPricingConfig>;
+    return (
+        typeof config.modelCode === 'string' &&
+        typeof config.provider === 'string' &&
+        typeof config.inputPricePerMillionTokens === 'number' &&
+        typeof config.outputPricePerMillionTokens === 'number' &&
+        (config.currency === undefined || typeof config.currency === 'string')
+    );
+};
+
+export const isCostTrackingOptions = (value: unknown): value is ICostTrackingOptions => {
+    if (typeof value !== 'object' || value === null) return false;
+    const options = value as Partial<ICostTrackingOptions>;
+    return (
+        typeof options.enableDetailedTracking === 'boolean' &&
+        (options.costPrecision === undefined || typeof options.costPrecision === 'number') &&
+        (options.budgetThreshold === undefined || typeof options.budgetThreshold === 'number')
+    );
+};
+
+export const isTokenCostBreakdown = (value: unknown): value is ITokenCostBreakdown => {
+    if (typeof value !== 'object' || value === null) return false;
+    const breakdown = value as Partial<ITokenCostBreakdown>;
+    return (
+        typeof breakdown.count === 'number' &&
+        typeof breakdown.cost === 'number'
+    );
+};
+
+export const isStandardCostDetails = (value: unknown): value is IStandardCostDetails => {
+    if (typeof value !== 'object' || value === null) return false;
+    const details = value as Partial<IStandardCostDetails>;
+    return (
+        typeof details.inputCost === 'number' &&
+        typeof details.outputCost === 'number' &&
+        typeof details.totalCost === 'number' &&
+        typeof details.currency === 'string' &&
+        typeof details.breakdown === 'object' &&
+        details.breakdown !== null &&
+        isTokenCostBreakdown(details.breakdown.promptTokens) &&
+        isTokenCostBreakdown(details.breakdown.completionTokens)
+    );
+};
+
+// Event Type Guards
+export const isEventValidationResult = (value: unknown): value is IEventValidationResult => {
+    if (typeof value !== 'object' || value === null) return false;
+    const result = value as Partial<IEventValidationResult>;
+    return (
+        typeof result.isValid === 'boolean' &&
+        Array.isArray(result.errors) &&
+        result.errors.every(error => typeof error === 'string') &&
+        Array.isArray(result.warnings) &&
+        result.warnings.every(warning => typeof warning === 'string') &&
+        isEventValidationMetadata(result.metadata)
+    );
+};
+
+export const isEventValidationMetadata = (value: unknown): value is IEventValidationMetadata => {
+    if (typeof value !== 'object' || value === null) return false;
+    const metadata = value as Partial<IEventValidationMetadata>;
+    return (
+        typeof metadata.timestamp === 'number' &&
+        typeof metadata.duration === 'number' &&
+        typeof metadata.validatorName === 'string'
+    );
+};
+
+export const isStateChangeEvent = <T>(value: unknown): value is IStateChangeEvent<T> => {
+    if (!isBaseEvent(value)) return false;
+    const event = value as Partial<IStateChangeEvent<T>>;
+    return (
+        event.previousState !== undefined &&
+        event.newState !== undefined &&
+        isValidationResult(event.validationResult)
+    );
+};
+
+export const isBaseEvent = (value: unknown): value is IBaseEvent => {
+    if (typeof value !== 'object' || value === null) return false;
+    const event = value as Partial<IBaseEvent>;
+    return (
+        typeof event.id === 'string' &&
+        typeof event.timestamp === 'number' &&
+        typeof event.type === 'string' &&
+        isBaseHandlerMetadata(event.metadata)
+    );
+};
+
+// Context Type Guards
+export const isBaseContextRequired = (value: unknown): value is IBaseContextRequired => {
+    if (typeof value !== 'object' || value === null) return false;
+    const context = value as Partial<IBaseContextRequired>;
+    return (
+        typeof context.source === 'string' &&
+        typeof context.target === 'string' &&
+        typeof context.correlationId === 'string' &&
+        typeof context.causationId === 'string'
+    );
+};
+
+// Validation Type Guards
+export const isValidationResult = (value: unknown): value is IValidationResult => {
+    if (typeof value !== 'object' || value === null) return false;
+    const validation = value as Partial<IValidationResult>;
+    return (
+        typeof validation.isValid === 'boolean' &&
+        Array.isArray(validation.errors) &&
+        validation.errors.every(error => typeof error === 'string') &&
+        Array.isArray(validation.warnings) &&
+        validation.warnings.every(warning => typeof warning === 'string')
+    );
+};
+
+// Handler Type Guards
+export const isBaseHandlerMetadata = (value: unknown): value is IBaseHandlerMetadata => {
+    if (typeof value !== 'object' || value === null) return false;
+    const metadata = value as Partial<IBaseHandlerMetadata>;
+    return (
+        typeof metadata.timestamp === 'number' &&
+        typeof metadata.component === 'string' &&
+        typeof metadata.operation === 'string' &&
+        (metadata.status === undefined || typeof metadata.status === 'string') &&
+        (metadata.duration === undefined || typeof metadata.duration === 'number') &&
+        (metadata.metrics === undefined || isBaseMetrics(metadata.metrics)) &&
+        (metadata.performance === undefined || isPerformanceMetrics(metadata.performance)) &&
+        (metadata.validation === undefined || isValidationResult(metadata.validation)) &&
+        (metadata.agent === undefined || (
+            typeof metadata.agent === 'object' &&
+            metadata.agent !== null &&
+            typeof metadata.agent.id === 'string' &&
+            typeof metadata.agent.name === 'string' &&
+            typeof metadata.agent.role === 'string' &&
+            typeof metadata.agent.status === 'string'
+        )) &&
+        (metadata.error === undefined || metadata.error instanceof Error) &&
+        (metadata.message === undefined || typeof metadata.message === 'string')
+    );
+};
+
+// Metrics Type Guards
+export const isPerformanceMetrics = (value: unknown): value is IPerformanceMetrics => {
+    if (!isBaseMetrics(value)) return false;
+    const metrics = value as Partial<IPerformanceMetrics>;
+    return (
+        typeof metrics.responseTime === 'object' &&
+        metrics.responseTime !== null &&
+        typeof metrics.responseTime.average === 'number' &&
+        typeof metrics.responseTime.min === 'number' &&
+        typeof metrics.responseTime.max === 'number' &&
+        typeof metrics.throughput === 'object' &&
+        metrics.throughput !== null &&
+        typeof metrics.throughput.requestsPerSecond === 'number' &&
+        typeof metrics.throughput.bytesPerSecond === 'number'
+    );
+};
+
+export const isBaseMetrics = (value: unknown): value is IBaseMetrics => {
+    if (typeof value !== 'object' || value === null) return false;
+    const metrics = value as Partial<IBaseMetrics>;
+    return (
+        typeof metrics.timestamp === 'number' &&
+        typeof metrics.component === 'string' &&
+        typeof metrics.category === 'string' &&
+        typeof metrics.version === 'string'
+    );
+};
+
 // Version Type Guards
+export const isVersionRange = (value: unknown): value is IVersionRange => {
+    if (typeof value !== 'object' || value === null) return false;
+    const range = value as Partial<IVersionRange>;
+    return (
+        (range.min === undefined || isVersionConstraint(range.min)) &&
+        (range.max === undefined || isVersionConstraint(range.max))
+    );
+};
+
 export const isSemanticVersion = (value: unknown): value is ISemanticVersion => {
     if (typeof value !== 'object' || value === null) return false;
     const version = value as Partial<ISemanticVersion>;
@@ -249,205 +755,6 @@ export const isVersionConstraint = (value: unknown): value is IVersionConstraint
         ['=', '>', '<', '>=', '<=', '^', '~'].includes(constraint.operator) &&
         isSemanticVersion(constraint.version)
     );
-};
-
-// ================ Metrics Types ================
-
-export interface ITokenCostBreakdown {
-    count: number;
-    cost: number;
-}
-
-export interface IStandardCostDetails {
-    inputCost: number;
-    outputCost: number;
-    totalCost: number;
-    currency: string;
-    breakdown: {
-        promptTokens: ITokenCostBreakdown;
-        completionTokens: ITokenCostBreakdown;
-    };
-}
-
-export interface IModelPricingConfig {
-    modelCode: string;
-    provider: string;
-    inputPricePerMillionTokens: number;
-    outputPricePerMillionTokens: number;
-    currency?: string;
-}
-
-export interface ICostTrackingOptions {
-    enableDetailedTracking: boolean;
-    costPrecision?: number;
-    budgetThreshold?: number;
-}
-
-export type ICostAggregate = {
-    [key: string]: IStandardCostDetails;
-};
-
-export interface IResourceMetrics {
-    cpuUsage: number;
-    memoryUsage: number;
-    diskIO: {
-        read: number;
-        write: number;
-    };
-    networkUsage: {
-        upload: number;
-        download: number;
-    };
-    timestamp: number;
-}
-
-export interface IUsageMetrics {
-    totalOperations: number;
-    successRate: number;
-    averageDuration: number;
-    costDetails: IStandardCostDetails;
-    timestamp: number;
-}
-
-// ================ Base Handler Types ================
-
-export interface IBaseHandlerMetadata {
-    [key: string]: unknown;
-    readonly timestamp: number;
-    readonly component: string;
-    readonly operation: string;
-    readonly performance: IPerformanceMetrics;
-    readonly context: IBaseContextPartial;
-    readonly validation: IValidationResult;
-}
-
-export interface IBaseHandler {
-    validate(): Promise<boolean>;
-    execute(): Promise<void>;
-    handleError(error: Error): Promise<void>;
-}
-
-export interface IHandlerResult<T = unknown, M extends IBaseHandlerMetadata = IBaseHandlerMetadata> {
-    success: boolean;
-    error?: IErrorType;
-    data?: T;
-    metadata: M;
-}
-
-export interface IBaseHandlerParams {
-    agent: IAgentType;
-    task: ITaskType;
-    metadata: IBaseHandlerMetadata;
-    context?: IBaseContextPartial;
-}
-
-export interface IBaseExecutionOptions {
-    timeout?: number;
-    retries?: number;
-    signal?: AbortSignal;
-    strict?: boolean;
-    customValidators?: ((value: unknown) => boolean)[];
-}
-
-// ================ Base Event Types ================
-
-export interface IBaseEvent {
-    id: string;
-    timestamp: number;
-    type: string;
-    metadata: IBaseHandlerMetadata;
-}
-
-export interface IStateChangeEvent<T> extends IBaseEvent {
-    previousState: T;
-    newState: T;
-    validationResult: IValidationResult;
-}
-
-// ================ Event Handler Types ================
-
-export interface IEventHandler<T extends IBaseEvent> {
-    handle(event: T): Promise<void>;
-    validate(event: T): Promise<IValidationResult>;
-}
-
-export interface IEventEmitter {
-    emit<T extends IBaseEvent>(event: T): Promise<void>;
-    on<T extends IBaseEvent>(eventType: string, handler: IEventHandler<T>): void;
-    off<T extends IBaseEvent>(eventType: string, handler: IEventHandler<T>): void;
-}
-
-// ================ Event Bus Types ================
-
-export interface IEventSubscription {
-    unsubscribe(): void;
-}
-
-export interface IEventBus {
-    publish<T extends IBaseEvent>(event: T): Promise<void>;
-    subscribe<T extends IBaseEvent>(
-        eventType: string,
-        handler: IEventHandler<T>
-    ): IEventSubscription;
-}
-
-// ================ Event Registry Types ================
-
-export interface IEventRegistry {
-    registerHandler<T extends IBaseEvent>(
-        eventType: string,
-        handler: IEventHandler<T>
-    ): void;
-    unregisterHandler<T extends IBaseEvent>(
-        eventType: string,
-        handler: IEventHandler<T>
-    ): void;
-    getHandlers<T extends IBaseEvent>(eventType: string): IEventHandler<T>[];
-}
-
-// ================ Event Validation Types ================
-
-export interface IEventValidationMetadata {
-    timestamp: number;
-    duration: number;
-    validatorName: string;
-}
-
-export interface IEventValidationResult {
-    isValid: boolean;
-    errors: string[];
-    warnings: string[];
-    metadata: IEventValidationMetadata;
-}
-
-// ================ Type Guards ================
-
-export type TypeGuardCheck<T> = (value: unknown) => value is T;
-
-export const createTypeGuard = <T>(checks: Array<(value: unknown) => boolean>): TypeGuardCheck<T> => {
-    return (value: unknown): value is T => {
-        return checks.every(check => check(value));
-    };
-};
-
-export const commonChecks = {
-    isObject: (value: unknown): boolean =>
-        typeof value === 'object' && value !== null,
-    hasProperty: (prop: string) =>
-        (value: unknown): boolean =>
-            typeof value === 'object' &&
-            value !== null &&
-            prop in value,
-    isType: (prop: string, type: string) =>
-        (value: unknown): boolean =>
-            typeof value === 'object' &&
-            value !== null &&
-            typeof (value as any)[prop] === type,
-    hasMetrics: (value: unknown): boolean =>
-        typeof value === 'object' &&
-        value !== null &&
-        'metrics' in value &&
-        typeof (value as any).metrics === 'object'
 };
 
 // ================ Utility Functions ================
@@ -477,54 +784,12 @@ export const createBaseMetadata = (
     timestamp: Date.now(),
     component,
     operation,
-    performance: {
-        executionTime: {
-            total: 0,
-            average: 0,
-            min: 0,
-            max: 0
-        },
-        latency: {
-            total: 0,
-            average: 0,
-            min: 0,
-            max: 0
-        },
-        responseTime: {
-            total: 0,
-            average: 0,
-            min: 0,
-            max: 0
-        },
-        throughput: {
-            operationsPerSecond: 0,
-            dataProcessedPerSecond: 0
-        },
-        queueLength: 0,
-        errorRate: 0,
-        successRate: 1,
-        errorMetrics: {
-            totalErrors: 0,
-            errorRate: 0
-        },
-        resourceUtilization: {
-            cpuUsage: 0,
-            memoryUsage: process.memoryUsage().heapUsed,
-            diskIO: { read: 0, write: 0 },
-            networkUsage: { upload: 0, download: 0 },
-            timestamp: Date.now()
-        },
-        timestamp: Date.now()
-    },
-    context: {
-        source: component,
-        target: operation,
-        correlationId: Date.now().toString(),
-        causationId: Date.now().toString()
-    },
-    validation: {
-        isValid: true,
-        errors: [],
-        warnings: []
+    duration: 0,
+    status: 'success',
+    metrics: {
+        timestamp: Date.now(),
+        component,
+        category: 'base',
+        version: '1.0.0'
     }
 });

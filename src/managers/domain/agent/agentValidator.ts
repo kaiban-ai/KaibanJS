@@ -1,248 +1,267 @@
 /**
  * @file agentValidator.ts
- * @path src/managers/domain/agent/agentValidator.ts
- * @description Enhanced agent validation with rule inheritance and Zod/Langchain integration
+ * @description Enhanced agent validation with type-safe rule system and caching
  */
 
 import { z } from 'zod';
 import { CoreManager } from '../../core/coreManager';
-import { createValidationResult } from '../../../utils/validation/validationUtils';
-import { createError, AGENT_STATUS_enum, VALIDATION_ERROR_enum, VALIDATION_WARNING_enum } from '../../../types/common';
-import { AgentValidationSchema } from '../../../types/agent/agentValidationTypes';
-import type { IBaseAgent } from '../../../types/agent/agentBaseTypes';
-import type { IAgentExecutionState } from '../../../types/agent/agentStateTypes';
-import type { IValidationResult } from '../../../types/common';
+import { createValidationResult } from '../../../types/common/validationTypes';
+import { 
+    AGENT_STATUS_enum, 
+    MANAGER_CATEGORY_enum,
+    VALIDATION_ERROR_enum,
+    VALIDATION_WARNING_enum
+} from '../../../types/common/enumTypes';
+import { 
+    AgentValidationSchema,
+    type IAgentValidationRule,
+    type IAgentValidationContext,
+    type IAgentValidationCache,
+    type IAgentValidationResult
+} from '../../../types/agent/agentValidationTypes';
+import { ERROR_KINDS, createError } from '../../../types/common/errorTypes';
 import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
-import { AgentTypeGuards } from '../../../types/agent/agentTypeGuards';
+import { AGENT_EVENT_TYPE, AGENT_EVENT_CATEGORY } from '../../../types/agent/agentEvents';
 
-interface ValidationRule {
-    id: string;
-    parentId?: string;
-    validate: (agent: IBaseAgent, context?: ValidationContext) => Promise<IValidationResult>;
-    priority: number;
-}
-
-interface ValidationContext {
-    environment?: Record<string, unknown>;
-    runtime?: Record<string, unknown>;
-    capabilities?: string[];
-    tools?: string[];
-}
-
-interface ValidationCache {
-    result: IValidationResult;
-    timestamp: number;
-    context: ValidationContext;
-    hash: string;
-}
+import type { IBaseAgent, IAgentExecutionState } from '../../../types/agent/agentBaseTypes';
+import type { IToolManager } from '../../../types/tool/toolManagerTypes';
+import type { IValidationResult, IValidationError, IValidationWarning } from '../../../types/common/validationTypes';
+import type { IBaseEvent } from '../../../types/common/baseTypes';
+import type { IAgentValidationCompletedEvent } from '../../../types/agent/agentEvents';
+import type { IAgentPerformanceMetrics, IAgentResourceMetrics, IAgentUsageMetrics } from '../../../types/agent/agentMetricTypes';
 
 export class AgentValidator extends CoreManager {
-    protected static _instance: AgentValidator;
-    private validationRules: Map<string, ValidationRule>;
-    private validationCache: Map<string, ValidationCache>;
+    private static instance: AgentValidator;
+    private readonly validationRules = new Map<string, IAgentValidationRule>();
+    private readonly validationCache = new Map<string, IAgentValidationCache>();
     private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-    protected constructor() {
+    public readonly category = MANAGER_CATEGORY_enum.VALIDATION;
+
+    private constructor() {
         super();
         this.registerDomainManager('AgentValidator', this);
-        this.validationRules = new Map();
-        this.validationCache = new Map();
         this.initializeBaseRules();
     }
 
     public static getInstance(): AgentValidator {
-        if (!AgentValidator._instance) {
-            AgentValidator._instance = new AgentValidator();
+        if (!AgentValidator.instance) {
+            AgentValidator.instance = new AgentValidator();
         }
-        return AgentValidator._instance;
+        return AgentValidator.instance;
     }
 
-    public get category(): string {
-        return 'agent';
-    }
-
-    /**
-     * Registers a validation rule with inheritance support
-     */
-    public registerValidationRule(rule: ValidationRule): void {
+    public async initialize(): Promise<void> {
         try {
-            if (rule.parentId) {
-                const parentRule = this.validationRules.get(rule.parentId);
-                if (!parentRule) {
-                    throw new Error(`Parent rule '${rule.parentId}' not found`);
-                }
+            await super.initialize();
+            await this.trackInitializationMetrics();
+            await this.transitionToIdle();
+        } catch (error) {
+            await this.handleError(
+                error,
+                'Failed to initialize AgentValidator',
+                ERROR_KINDS.InitializationError
+            );
+            throw error;
+        }
+    }
+
+    private async trackInitializationMetrics(): Promise<void> {
+        await this.getMetricsManager().trackMetric({
+            domain: MetricDomain.AGENT,
+            type: MetricType.SYSTEM_HEALTH,
+            value: 1,
+            timestamp: Date.now(),
+            metadata: {
+                operation: 'initialize',
+                component: this.constructor.name
             }
+        });
+    }
+
+    private async transitionToIdle(): Promise<void> {
+        await this.handleStatusTransition({
+            entity: 'agent',
+            entityId: this.constructor.name,
+            currentStatus: AGENT_STATUS_enum.INITIAL,
+            targetStatus: AGENT_STATUS_enum.IDLE,
+            context: {
+                component: this.constructor.name,
+                operation: 'initialize'
+            }
+        });
+    }
+
+    public registerValidationRule(rule: IAgentValidationRule): void {
+        try {
             this.validationRules.set(rule.id, rule);
             this.clearCacheForRule(rule.id);
+            this.logInfo(`Registered validation rule: ${rule.id}`);
         } catch (error) {
-            this.logError(`Failed to register validation rule: ${error instanceof Error ? error.message : String(error)}`);
+            this.handleError(
+                error,
+                `Failed to register validation rule: ${rule.id}`,
+                ERROR_KINDS.ValidationError
+            );
         }
     }
 
-    /**
-     * Enhanced agent validation with context awareness and caching
-     */
     public async validateAgent(
         agent: IBaseAgent,
-        context?: ValidationContext
+        context?: IAgentValidationContext
     ): Promise<IValidationResult> {
         const startTime = Date.now();
         const validationKey = this.generateValidationKey(agent, context);
 
-        try {
-            // Check cache first
+        const result = await this.safeExecute(async () => {
             const cachedResult = this.getCachedValidation(validationKey, context);
-            if (cachedResult) {
-                return cachedResult;
+            if (cachedResult) return cachedResult;
+
+            const baseResult = await this.performBaseValidation(agent);
+            if (!baseResult.isValid) {
+                return this.cacheAndReturnResult(validationKey, baseResult, context);
             }
 
-            // Validate base agent properties first
-            if (!AgentTypeGuards.isBaseAgent(agent)) {
-                return this.cacheAndReturnResult(validationKey, createValidationResult(false, ['Invalid base agent properties']), context);
-            }
-
-            // Validate against schema
-            const zodResult = await this.validateAgainstZodSchema(agent);
-            if (!zodResult.isValid) {
-                return this.cacheAndReturnResult(validationKey, zodResult, context);
-            }
-
-            // Get inherited validation rules
-            const rules = this.getInheritedRules(agent);
-
-            // Apply context-aware validation rules
-            const results = await Promise.all(
-                rules.map(rule => rule.validate(agent, context))
-            );
-
-            // Combine results
-            const combinedResult = this.mergeValidationResults(results);
-
-            // Add execution state validation if needed
-            if (agent.executionState) {
-                const stateValidation = await this.validateExecutionState(agent.executionState);
-                this.mergeValidationResults([combinedResult, stateValidation]);
-            }
-
-            // Track metrics
+            const combinedResult = await this.performFullValidation(agent, context);
             await this.trackValidationMetrics(startTime, combinedResult);
+            await this.emitValidationEvent(agent, combinedResult);
 
             return this.cacheAndReturnResult(validationKey, combinedResult, context);
-        } catch (error) {
-            const errorResult = createValidationResult(false, [
-                `Validation error: ${error instanceof Error ? error.message : String(error)}`
-            ]);
-            return this.cacheAndReturnResult(validationKey, errorResult, context);
+        }, 'validateAgent');
+
+        if (!result.success || !result.data) {
+            return createValidationResult({
+                isValid: false,
+                errors: [VALIDATION_ERROR_enum.VALIDATION_FAILED],
+                warnings: []
+            });
         }
+
+        return result.data;
     }
 
-    /**
-     * Validates an agent against the schema
-     */
+    private async performBaseValidation(agent: IBaseAgent): Promise<IValidationResult> {
+        if (!agent || typeof agent !== 'object') {
+            return createValidationResult({
+                isValid: false,
+                errors: [VALIDATION_ERROR_enum.INVALID_INPUT],
+                warnings: []
+            });
+        }
+
+        return this.validateAgainstZodSchema(agent);
+    }
+
+    private async performFullValidation(
+        agent: IBaseAgent,
+        context?: IAgentValidationContext
+    ): Promise<IValidationResult> {
+        const rules = this.getValidationRules(agent);
+        const results = await Promise.all(
+            rules.map(rule => rule.validate(agent, context))
+        );
+
+        let combinedResult = this.mergeValidationResults(results);
+
+        if (agent.executionState) {
+            const stateValidation = await this.validateExecutionState(agent.executionState);
+            combinedResult = this.mergeValidationResults([combinedResult, stateValidation]);
+            
+            if (combinedResult.isValid) {
+                await this.updateAgentStatus(agent);
+            }
+        }
+
+        return combinedResult;
+    }
+
     private async validateAgainstZodSchema(agent: IBaseAgent): Promise<IValidationResult> {
         try {
             AgentValidationSchema.parse(agent);
-            return createValidationResult(true);
+            return createValidationResult({
+                isValid: true,
+                errors: [],
+                warnings: []
+            });
         } catch (error) {
             if (error instanceof z.ZodError) {
-                const errors = error.errors.map(err => `${err.path.join('.')}: ${err.message}`);
-                return createValidationResult(false, errors);
+                return this.convertZodErrorToValidationResult(error);
             }
-            return createValidationResult(false, ['Invalid agent schema']);
+            return createValidationResult({
+                isValid: false,
+                errors: [VALIDATION_ERROR_enum.SCHEMA_VALIDATION_FAILED],
+                warnings: []
+            });
         }
+    }
+
+    private convertZodErrorToValidationResult(error: z.ZodError): IValidationResult {
+        const errors = error.errors.map(err => {
+            if (err.code === z.ZodIssueCode.invalid_type) {
+                return VALIDATION_ERROR_enum.TYPE_MISMATCH;
+            }
+            if (err.message.includes('Required')) {
+                return VALIDATION_ERROR_enum.FIELD_MISSING;
+            }
+            return VALIDATION_ERROR_enum.SCHEMA_VALIDATION_FAILED;
+        });
+
+        return createValidationResult({
+            isValid: false,
+            errors,
+            warnings: []
+        });
+    }
+
+    private getValidationRules(agent: IBaseAgent): IAgentValidationRule[] {
+        return Array.from(this.validationRules.values())
+            .sort((a, b) => a.priority - b.priority);
+    }
+
+    private async updateAgentStatus(agent: IBaseAgent): Promise<void> {
+        await this.handleStatusTransition({
+            entity: 'agent',
+            entityId: agent.id,
+            currentStatus: agent.executionState.status,
+            targetStatus: AGENT_STATUS_enum.IDLE,
+            context: {
+                component: this.constructor.name,
+                operation: 'validateAgent'
+            }
+        });
     }
 
     private async validateExecutionState(state: IAgentExecutionState): Promise<IValidationResult> {
-        const errors: string[] = [];
-        const warnings: string[] = [];
+        const errors: VALIDATION_ERROR_enum[] = [];
 
-        // Validate assignment state
-        if (!Array.isArray(state.assignment.assignedTasks)) {
-            errors.push('assignedTasks must be an array');
-        }
-        if (!Array.isArray(state.assignment.completedTasks)) {
-            errors.push('completedTasks must be an array');
-        }
-        if (!Array.isArray(state.assignment.failedTasks)) {
-            errors.push('failedTasks must be an array');
-        }
-        if (!Array.isArray(state.assignment.blockedTasks)) {
-            errors.push('blockedTasks must be an array');
+        if (!Object.values(AGENT_STATUS_enum).includes(state.status)) {
+            errors.push(VALIDATION_ERROR_enum.INVALID_STATE);
         }
 
-        // Validate error state
-        if (typeof state.error.errorCount !== 'number' || state.error.errorCount < 0) {
-            errors.push('errorCount must be a non-negative number');
-        }
-        if (typeof state.error.retryCount !== 'number' || state.error.retryCount < 0) {
-            errors.push('retryCount must be a non-negative number');
-        }
-        if (state.error.retryCount > state.error.maxRetries) {
-            errors.push('retryCount cannot exceed maxRetries');
+        if (typeof state.currentStep !== 'number' || state.currentStep < 0) {
+            errors.push(VALIDATION_ERROR_enum.FIELD_CONSTRAINT_VIOLATION);
         }
 
-        // Validate timing state
-        if (state.timing.startTime && !(state.timing.startTime instanceof Date)) {
-            errors.push('startTime must be a Date object');
-        }
-        if (state.timing.endTime && !(state.timing.endTime instanceof Date)) {
-            errors.push('endTime must be a Date object');
+        if (!(state.startTime instanceof Date) || !(state.lastUpdate instanceof Date)) {
+            errors.push(VALIDATION_ERROR_enum.TYPE_MISMATCH);
         }
 
-        // Validate core state
-        if (!Object.values(AGENT_STATUS_enum).includes(state.core.status as AGENT_STATUS_enum)) {
-            errors.push('Invalid agent status');
-        }
-        if (typeof state.core.thinking !== 'boolean') {
-            errors.push('thinking must be a boolean');
-        }
-        if (typeof state.core.busy !== 'boolean') {
-            errors.push('busy must be a boolean');
-        }
-
-        return createValidationResult(errors.length === 0, errors, warnings);
+        return createValidationResult({
+            isValid: errors.length === 0,
+            errors,
+            warnings: []
+        });
     }
 
-    private getInheritedRules(agent: IBaseAgent): ValidationRule[] {
-        const rules: ValidationRule[] = [];
-        const addedRules = new Set<string>();
-
-        const addRule = (ruleId: string) => {
-            if (addedRules.has(ruleId)) return;
-            const rule = this.validationRules.get(ruleId);
-            if (!rule) return;
-
-            if (rule.parentId) {
-                addRule(rule.parentId);
-            }
-            rules.push(rule);
-            addedRules.add(ruleId);
-        };
-
-        // Add rules based on agent capabilities
-        if (agent.capabilities) {
-            if (agent.capabilities.canThink) addRule('thinkingCapabilityRule');
-            if (agent.capabilities.canUseTools) addRule('toolUsageRule');
-            if (agent.capabilities.canLearn) addRule('learningCapabilityRule');
-        }
-
-        return rules.sort((a, b) => a.priority - b.priority);
+    private generateValidationKey(agent: IBaseAgent, context?: IAgentValidationContext): string {
+        return `${agent.id}_${agent.version}_${context ? JSON.stringify(context) : ''}`;
     }
 
-    private generateValidationKey(agent: IBaseAgent, context?: ValidationContext): string {
-        const agentKey = `${agent.id}_${agent.version}`;
-        const contextKey = context ? JSON.stringify(context) : '';
-        return `${agentKey}_${contextKey}`;
-    }
-
-    private getCachedValidation(key: string, context?: ValidationContext): IValidationResult | null {
+    private getCachedValidation(key: string, context?: IAgentValidationContext): IValidationResult | null {
         const cached = this.validationCache.get(key);
         if (!cached) return null;
 
-        const isExpired = Date.now() - cached.timestamp > this.CACHE_TTL;
-        const contextChanged = context && JSON.stringify(context) !== JSON.stringify(cached.context);
-
-        if (isExpired || contextChanged) {
+        if (this.isCacheExpired(cached, context)) {
             this.validationCache.delete(key);
             return null;
         }
@@ -250,10 +269,17 @@ export class AgentValidator extends CoreManager {
         return cached.result;
     }
 
+    private isCacheExpired(cached: IAgentValidationCache, context?: IAgentValidationContext): boolean {
+        const isExpired = Date.now() - cached.timestamp > this.CACHE_TTL;
+        const contextChanged = context && 
+            JSON.stringify(context) !== JSON.stringify(cached.context);
+        return isExpired || contextChanged;
+    }
+
     private cacheAndReturnResult(
         key: string,
         result: IValidationResult,
-        context?: ValidationContext
+        context?: IAgentValidationContext
     ): IValidationResult {
         this.validationCache.set(key, {
             result,
@@ -272,105 +298,249 @@ export class AgentValidator extends CoreManager {
         }
     }
 
-    private async trackValidationMetrics(startTime: number, result: IValidationResult): Promise<void> {
+    private async trackValidationMetrics(
+        startTime: number,
+        result: IValidationResult
+    ): Promise<void> {
         const duration = Date.now() - startTime;
-        const metricsManager = this.getMetricsManager();
-
-        // Track validation duration
-        await metricsManager.trackMetric({
-            timestamp: Date.now(),
+        await this.getMetricsManager().trackMetric({
             domain: MetricDomain.AGENT,
             type: MetricType.PERFORMANCE,
             value: duration,
-            metadata: {
-                metric: 'validation_duration',
-                component: 'AgentValidator'
-            }
-        });
-
-        // Track validation success
-        await metricsManager.trackMetric({
             timestamp: Date.now(),
-            domain: MetricDomain.AGENT,
-            type: MetricType.PERFORMANCE,
-            value: result.isValid ? 1 : 0,
             metadata: {
-                metric: 'validation_success',
-                component: 'AgentValidator'
+                metric: 'validation_metrics',
+                component: this.constructor.name,
+                success: result.isValid,
+                errorCount: result.errors.length,
+                warningCount: result.warnings?.length || 0,
+                duration
             }
         });
+    }
 
-        // Track validation errors if any
-        if (!result.isValid && result.errors) {
-            await metricsManager.trackMetric({
+    private async emitValidationEvent(
+        agent: IBaseAgent,
+        result: IValidationResult
+    ): Promise<void> {
+        const validationResult = this.convertToAgentValidationResult(result, agent);
+        await this.emitEvent<IAgentValidationCompletedEvent>({
+            id: `validation_${Date.now()}`,
+            timestamp: Date.now(),
+            type: AGENT_EVENT_TYPE.AGENT_VALIDATION_COMPLETED,
+            agentId: agent.id,
+            validationResult,
+            metadata: {
                 timestamp: Date.now(),
-                domain: MetricDomain.AGENT,
-                type: MetricType.PERFORMANCE,
-                value: result.errors.length,
-                metadata: {
-                    metric: 'validation_errors',
-                    component: 'AgentValidator'
-                }
-            });
-        }
+                component: this.constructor.name,
+                operation: 'validateAgent',
+                agent: {
+                    id: agent.id,
+                    name: agent.name,
+                    role: agent.role,
+                    status: agent.executionState?.status || AGENT_STATUS_enum.IDLE,
+                    metrics: {
+                        performance: {} as IAgentPerformanceMetrics,
+                        resources: {} as IAgentResourceMetrics,
+                        usage: {} as IAgentUsageMetrics
+                    }
+                },
+                category: AGENT_EVENT_CATEGORY.VALIDATION,
+                source: this.constructor.name
+            }
+        });
     }
 
     private mergeValidationResults(results: IValidationResult[]): IValidationResult {
-        return results.reduce((combined, current) => ({
-            isValid: combined.isValid && current.isValid,
-            errors: [...(combined.errors || []), ...(current.errors || [])],
-            warnings: [...(combined.warnings || []), ...(current.warnings || [])]
-        }), { isValid: true, errors: [], warnings: [] });
+        const allErrors: IValidationError[] = [];
+        const allWarnings: IValidationWarning[] = [];
+
+        for (const result of results) {
+            if (result.errors) allErrors.push(...result.errors);
+            if (result.warnings) allWarnings.push(...result.warnings);
+        }
+
+        return createValidationResult({
+            isValid: results.every(r => r.isValid),
+            errors: allErrors.map(err => err.code),
+            warnings: allWarnings.map(warn => warn.code)
+        });
+    }
+
+    private convertToAgentValidationResult(
+        result: IValidationResult,
+        agent?: IBaseAgent
+    ): IAgentValidationResult {
+        return {
+            isValid: result.isValid,
+            errors: result.errors.map(err => err.code) as readonly VALIDATION_ERROR_enum[],
+            warnings: result.warnings?.map(warn => warn.code) as readonly VALIDATION_WARNING_enum[] || [],
+            agent,
+            metadata: {
+                timestamp: Date.now(),
+                duration: result.metadata?.duration || 0,
+                validatorName: this.constructor.name,
+                validatedFields: result.metadata?.validatedFields || [],
+                configHash: result.metadata?.context?.configHash as string | undefined,
+                validationDuration: result.metadata?.duration
+            }
+        };
+    }
+
+    public async cleanup(): Promise<void> {
+        try {
+            this.validationCache.clear();
+            this.validationRules.clear();
+            
+            await this.handleStatusTransition({
+                entity: 'agent',
+                entityId: this.constructor.name,
+                currentStatus: AGENT_STATUS_enum.IDLE,
+                targetStatus: AGENT_STATUS_enum.AGENTIC_LOOP_ERROR,
+                context: {
+                    component: this.constructor.name,
+                    operation: 'cleanup'
+                }
+            });
+
+            await this.emitEvent<IBaseEvent>({
+                id: `cleanup_${Date.now()}`,
+                timestamp: Date.now(),
+                type: 'agent.validator.cleanup',
+                metadata: {
+                    timestamp: Date.now(),
+                    component: this.constructor.name,
+                    operation: 'cleanup',
+                    status: 'completed'
+                }
+            });
+        } catch (error) {
+            await this.handleError(
+                error,
+                'Failed to cleanup AgentValidator',
+                ERROR_KINDS.SystemError
+            );
+        }
     }
 
     private initializeBaseRules(): void {
-        // Register base validation rules
+        // Core fields validation rule
         this.registerValidationRule({
-            id: 'baseAgentRule',
-            priority: 0,
-            validate: async (agent) => {
-                const errors: string[] = [];
-                if (!agent.id) errors.push('Agent ID is required');
-                if (!agent.name) errors.push('Agent name is required');
-                if (!agent.role) errors.push('Agent role is required');
-                return createValidationResult(errors.length === 0, errors);
+            id: 'core-fields',
+            priority: 100,
+            validate: async (agent: IBaseAgent): Promise<IValidationResult> => {
+                const errors: VALIDATION_ERROR_enum[] = [];
+                
+                if (!agent.id) errors.push(VALIDATION_ERROR_enum.FIELD_MISSING);
+                if (!agent.name) errors.push(VALIDATION_ERROR_enum.FIELD_MISSING);
+                if (!agent.role) errors.push(VALIDATION_ERROR_enum.FIELD_MISSING);
+                if (!agent.version) errors.push(VALIDATION_ERROR_enum.FIELD_MISSING);
+                
+                if (typeof agent.maxIterations !== 'number' || agent.maxIterations < 1) {
+                    errors.push(VALIDATION_ERROR_enum.FIELD_CONSTRAINT_VIOLATION);
+                }
+
+                return createValidationResult({
+                    isValid: errors.length === 0,
+                    errors,
+                    warnings: []
+                });
             }
         });
 
-        // Register capability-specific rules
+        // Capabilities validation rule
         this.registerValidationRule({
-            id: 'thinkingCapabilityRule',
-            parentId: 'baseAgentRule',
-            priority: 1,
-            validate: async (agent) => {
-                const errors: string[] = [];
-                if (!agent.capabilities?.canThink) {
-                    errors.push('Agent must have thinking capability enabled');
+            id: 'capabilities',
+            priority: 90,
+            validate: async (agent: IBaseAgent): Promise<IValidationResult> => {
+                const errors: VALIDATION_ERROR_enum[] = [];
+                const warnings: VALIDATION_WARNING_enum[] = [];
+
+                if (!agent.capabilities) {
+                    errors.push(VALIDATION_ERROR_enum.FIELD_MISSING);
+                    return createValidationResult({ isValid: false, errors, warnings });
                 }
-                return createValidationResult(errors.length === 0, errors);
+
+                if (agent.capabilities.canThink === undefined) {
+                    errors.push(VALIDATION_ERROR_enum.FIELD_MISSING);
+                }
+
+                if (agent.capabilities.canUseTools === undefined) {
+                    errors.push(VALIDATION_ERROR_enum.FIELD_MISSING);
+                }
+
+                if (agent.capabilities.canUseTools && 
+                    (!Array.isArray(agent.capabilities.supportedToolTypes) || 
+                     agent.capabilities.supportedToolTypes.length === 0)) {
+                    errors.push(VALIDATION_ERROR_enum.FIELD_CONSTRAINT_VIOLATION);
+                }
+
+                if (!agent.capabilities.maxConcurrentTasks || 
+                    agent.capabilities.maxConcurrentTasks < 1) {
+                    errors.push(VALIDATION_ERROR_enum.FIELD_CONSTRAINT_VIOLATION);
+                }
+
+                if (agent.capabilities.memoryCapacity !== undefined && 
+                    agent.capabilities.memoryCapacity < 0) {
+                    errors.push(VALIDATION_ERROR_enum.VALUE_OUT_OF_RANGE);
+                }
+
+                return createValidationResult({
+                    isValid: errors.length === 0,
+                    errors,
+                    warnings
+                });
             }
         });
 
+        // State validation rule
         this.registerValidationRule({
-            id: 'toolUsageRule',
-            parentId: 'baseAgentRule',
-            priority: 1,
-            validate: async (agent) => {
-                const errors: string[] = [];
-                if (!agent.capabilities?.canUseTools) {
-                    errors.push('Agent must have tool usage capability enabled');
+            id: 'execution-state',
+            priority: 80,
+            validate: async (agent: IBaseAgent): Promise<IValidationResult> => {
+                const errors: VALIDATION_ERROR_enum[] = [];
+
+                if (!agent.executionState) {
+                    errors.push(VALIDATION_ERROR_enum.FIELD_MISSING);
+                    return createValidationResult({ isValid: false, errors });
                 }
-                if (!Array.isArray(agent.capabilities?.supportedToolTypes)) {
-                    errors.push('Agent must define supported tool types');
-                }
-                return createValidationResult(errors.length === 0, errors);
+
+                const stateValidation = await this.validateExecutionState(agent.executionState);
+                return stateValidation;
             }
         });
-    }
 
-    public cleanup(): void {
-        this.validationCache.clear();
-        this.validationRules.clear();
+        // Tool configuration rule
+        this.registerValidationRule({
+            id: 'tool-config',
+            priority: 70,
+            validate: async (agent: IBaseAgent): Promise<IValidationResult> => {
+                const errors: VALIDATION_ERROR_enum[] = [];
+                const warnings: VALIDATION_WARNING_enum[] = [];
+
+                if (agent.capabilities?.canUseTools && 
+                    (!Array.isArray(agent.tools) || agent.tools.length === 0)) {
+                    warnings.push(VALIDATION_WARNING_enum.OPTIONAL_FIELD_MISSING);
+                }
+
+                if (agent.tools) {
+                    const toolManager = await this.getDomainManager<IToolManager>('ToolManager');
+                    const validations = await Promise.all(
+                        agent.tools.map(tool => toolManager.validateToolConfig(tool))
+                    );
+
+                    if (validations.some(result => !result.success)) {
+                        errors.push(VALIDATION_ERROR_enum.INVALID_CONFIG);
+                    }
+                }
+
+                return createValidationResult({
+                    isValid: errors.length === 0,
+                    errors,
+                    warnings
+                });
+            }
+        });
     }
 }
 

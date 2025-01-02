@@ -1,149 +1,338 @@
+/**
+ * @file workflowEventEmitter.ts
+ * @description Workflow-specific event emitter implementation
+ */
+
 import { CoreManager } from '../../core/coreManager';
 import { WorkflowEventHandler } from './workflowEventHandler';
-import { 
+import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
+import { MANAGER_CATEGORY_enum, ERROR_SEVERITY_enum } from '../../../types/common/enumTypes';
+import { ERROR_KINDS } from '../../../types/common/errorTypes';
+import { RecoveryStrategyType } from '../../../types/common/recoveryTypes';
+import { v4 as uuidv4 } from 'uuid';
+
+import type { 
     IWorkflowStepEvent, 
     IWorkflowControlEvent, 
     IWorkflowAgentEvent, 
     IWorkflowTaskEvent,
-    WorkflowEventType
+    WorkflowEventType,
+    IWorkflowEventBase
 } from '../../../types/workflow/workflowEventTypes';
-import { IValidationResult } from '../../../types/common/commonValidationTypes';
-import { IHandlerResult } from '../../../types/common/commonHandlerTypes';
-import { createBaseMetadata } from '../../../types/common/commonMetadataTypes';
-import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
+import type { IValidationResult } from '../../../types/common/validationTypes';
+import type { IHandlerResult } from '../../../types/common/baseTypes';
+
+type WorkflowEventBaseFields = 'id' | 'timestamp' | 'metadata';
+
+/**
+ * Workflow Event Registry
+ */
+class WorkflowEventRegistry {
+    private stepHandlers = new Set<(event: IWorkflowStepEvent) => Promise<void>>();
+    private controlHandlers = new Set<(event: IWorkflowControlEvent) => Promise<void>>();
+    private agentHandlers = new Set<(event: IWorkflowAgentEvent) => Promise<void>>();
+    private taskHandlers = new Set<(event: IWorkflowTaskEvent) => Promise<void>>();
+
+    onStep(handler: (event: IWorkflowStepEvent) => Promise<void>): void {
+        this.stepHandlers.add(handler);
+    }
+
+    onControl(handler: (event: IWorkflowControlEvent) => Promise<void>): void {
+        this.controlHandlers.add(handler);
+    }
+
+    onAgent(handler: (event: IWorkflowAgentEvent) => Promise<void>): void {
+        this.agentHandlers.add(handler);
+    }
+
+    onTask(handler: (event: IWorkflowTaskEvent) => Promise<void>): void {
+        this.taskHandlers.add(handler);
+    }
+
+    offStep(handler: (event: IWorkflowStepEvent) => Promise<void>): void {
+        this.stepHandlers.delete(handler);
+    }
+
+    offControl(handler: (event: IWorkflowControlEvent) => Promise<void>): void {
+        this.controlHandlers.delete(handler);
+    }
+
+    offAgent(handler: (event: IWorkflowAgentEvent) => Promise<void>): void {
+        this.agentHandlers.delete(handler);
+    }
+
+    offTask(handler: (event: IWorkflowTaskEvent) => Promise<void>): void {
+        this.taskHandlers.delete(handler);
+    }
+
+    async emitStep(event: IWorkflowStepEvent): Promise<void> {
+        await Promise.all(Array.from(this.stepHandlers).map(handler => handler(event)));
+    }
+
+    async emitControl(event: IWorkflowControlEvent): Promise<void> {
+        await Promise.all(Array.from(this.controlHandlers).map(handler => handler(event)));
+    }
+
+    async emitAgent(event: IWorkflowAgentEvent): Promise<void> {
+        await Promise.all(Array.from(this.agentHandlers).map(handler => handler(event)));
+    }
+
+    async emitTask(event: IWorkflowTaskEvent): Promise<void> {
+        await Promise.all(Array.from(this.taskHandlers).map(handler => handler(event)));
+    }
+}
 
 /**
  * Workflow Event Emitter
  * Emits and handles workflow domain events
  */
 export class WorkflowEventEmitter extends CoreManager {
-    private static instance: WorkflowEventEmitter;
+    protected static override _instance: WorkflowEventEmitter | null = null;
     private readonly eventHandler: WorkflowEventHandler;
-    private readonly subscribers: Map<string, Set<Function>>;
+    private readonly registry: WorkflowEventRegistry;
+    public readonly category = MANAGER_CATEGORY_enum.STATE;
 
-    private constructor() {
+    protected constructor() {
         super();
         this.eventHandler = WorkflowEventHandler.getInstance();
-        this.subscribers = new Map();
+        this.registry = new WorkflowEventRegistry();
         this.registerDomainManager('WorkflowEventEmitter', this);
     }
 
-    public static getInstance(): WorkflowEventEmitter {
-        if (!WorkflowEventEmitter.instance) {
-            WorkflowEventEmitter.instance = new WorkflowEventEmitter();
+    public static override getInstance(): WorkflowEventEmitter {
+        if (!WorkflowEventEmitter._instance) {
+            WorkflowEventEmitter._instance = new WorkflowEventEmitter();
         }
-        return WorkflowEventEmitter.instance;
+        return WorkflowEventEmitter._instance;
     }
 
     /**
-     * Subscribe to workflow events
+     * Create base workflow event
      */
-    public subscribe(eventType: string, callback: Function): void {
-        if (!this.subscribers.has(eventType)) {
-            this.subscribers.set(eventType, new Set());
-        }
-        this.subscribers.get(eventType)?.add(callback);
-        this.logDebug(`Subscribed to workflow event: ${eventType}`);
-    }
+    private async createBaseWorkflowEvent(operation: string): Promise<IWorkflowEventBase> {
+        const now = Date.now();
+        const errorContext = await this.createErrorContext(operation);
 
-    /**
-     * Unsubscribe from workflow events
-     */
-    public unsubscribe(eventType: string, callback: Function): void {
-        this.subscribers.get(eventType)?.delete(callback);
-        this.logDebug(`Unsubscribed from workflow event: ${eventType}`);
-    }
+        // Initialize error distribution
+        const errorDistribution = Object.values(ERROR_KINDS).reduce(
+            (acc, kind) => ({ ...acc, [kind]: 0 }),
+            {} as Record<string, number>
+        );
 
-    /**
-     * Emit workflow step event
-     */
-    public async emitStepEvent(event: IWorkflowStepEvent): Promise<IHandlerResult<IValidationResult>> {
-        const handlerResult = await this.eventHandler.handleStepEvent(event);
-        
-        if (handlerResult.success && handlerResult.data?.isValid) {
-            await this.notifySubscribers('workflow:step', event);
-            await this.trackEventMetrics('step', event);
-        }
+        // Initialize severity distribution
+        const severityDistribution = Object.values(ERROR_SEVERITY_enum).reduce(
+            (acc, severity) => ({ ...acc, [severity]: 0 }),
+            {} as Record<string, number>
+        );
 
-        return handlerResult;
-    }
+        // Initialize strategy distribution
+        const strategyDistribution = Object.values(RecoveryStrategyType).reduce(
+            (acc, strategy) => ({ ...acc, [strategy]: 0 }),
+            {} as Record<string, number>
+        );
 
-    /**
-     * Emit workflow control event
-     */
-    public async emitControlEvent(event: IWorkflowControlEvent): Promise<IHandlerResult<IValidationResult>> {
-        const handlerResult = await this.eventHandler.handleControlEvent(event);
-        
-        if (handlerResult.success && handlerResult.data?.isValid) {
-            await this.notifySubscribers('workflow:control', event);
-            await this.trackEventMetrics('control', event);
-        }
-
-        return handlerResult;
-    }
-
-    /**
-     * Emit workflow agent event
-     */
-    public async emitAgentEvent(event: IWorkflowAgentEvent): Promise<IHandlerResult<IValidationResult>> {
-        const handlerResult = await this.eventHandler.handleAgentEvent(event);
-        
-        if (handlerResult.success && handlerResult.data?.isValid) {
-            await this.notifySubscribers('workflow:agent', event);
-            await this.trackEventMetrics('agent', event);
-        }
-
-        return handlerResult;
-    }
-
-    /**
-     * Emit workflow task event
-     */
-    public async emitTaskEvent(event: IWorkflowTaskEvent): Promise<IHandlerResult<IValidationResult>> {
-        const handlerResult = await this.eventHandler.handleTaskEvent(event);
-        
-        if (handlerResult.success && handlerResult.data?.isValid) {
-            await this.notifySubscribers('workflow:task', event);
-            await this.trackEventMetrics('task', event);
-        }
-
-        return handlerResult;
-    }
-
-    /**
-     * Emit any workflow event
-     */
-    public async emit(event: WorkflowEventType): Promise<IHandlerResult<IValidationResult>> {
-        const handlerResult = await this.eventHandler.handleEvent(event);
-        
-        if (handlerResult.success && handlerResult.data?.isValid) {
-            const eventType = this.getEventType(event);
-            await this.notifySubscribers(eventType, event);
-            await this.trackEventMetrics(eventType.split(':')[1], event);
-        }
-
-        return handlerResult;
-    }
-
-    /**
-     * Notify event subscribers
-     */
-    private async notifySubscribers(eventType: string, event: WorkflowEventType): Promise<void> {
-        const subscribers = this.subscribers.get(eventType);
-        if (subscribers) {
-            const metadata = createBaseMetadata('workflow', 'event_notification');
-            for (const callback of subscribers) {
-                try {
-                    await callback(event, metadata);
-                } catch (error) {
-                    this.handleError(error, `Failed to notify subscriber for ${eventType}`);
+        return {
+            id: uuidv4(),
+            timestamp: now,
+            type: '',
+            metadata: {
+                timestamp: now,
+                component: this.constructor.name,
+                operation,
+                performance: {
+                    executionTime: { total: 0, average: 0, min: 0, max: 0 },
+                    latency: { total: 0, average: 0, min: 0, max: 0 },
+                    responseTime: { total: 0, average: 0, min: 0, max: 0 },
+                    throughput: { operationsPerSecond: 0, dataProcessedPerSecond: 0 },
+                    queueLength: 0,
+                    errorRate: 0,
+                    successRate: 1,
+                    errorMetrics: {
+                        totalErrors: 0,
+                        errorRate: 0,
+                        errorDistribution,
+                        severityDistribution,
+                        patterns: [],
+                        impact: {
+                            severity: ERROR_SEVERITY_enum.ERROR,
+                            businessImpact: 0,
+                            userExperienceImpact: 0,
+                            systemStabilityImpact: 0,
+                            resourceImpact: {
+                                cpu: 0,
+                                memory: 0,
+                                io: 0
+                            }
+                        },
+                        recovery: {
+                            meanTimeToRecover: 0,
+                            recoverySuccessRate: 0,
+                            strategyDistribution,
+                            failedRecoveries: 0
+                        },
+                        prevention: {
+                            preventedCount: 0,
+                            preventionRate: 0,
+                            earlyWarnings: 0
+                        },
+                        trends: {
+                            dailyRates: [],
+                            weeklyRates: [],
+                            monthlyRates: []
+                        }
+                    },
+                    resourceUtilization: {
+                        cpuUsage: 0,
+                        memoryUsage: 0,
+                        diskIO: {
+                            read: 0,
+                            write: 0
+                        },
+                        networkUsage: {
+                            upload: 0,
+                            download: 0
+                        },
+                        timestamp: now
+                    },
+                    timestamp: now
+                },
+                context: {
+                    source: this.constructor.name,
+                    target: operation,
+                    correlationId: uuidv4(),
+                    causationId: uuidv4()
+                },
+                validation: {
+                    isValid: true,
+                    errors: [],
+                    warnings: []
+                },
+                error: {
+                    code: '',
+                    message: '',
+                    timestamp: now,
+                    stack: ''
                 }
             }
-        }
+        };
     }
 
     /**
-     * Track event metrics
+     * Event registration methods
+     */
+    public onStepEvent(handler: (event: IWorkflowStepEvent) => Promise<void>): void {
+        this.registry.onStep(handler);
+    }
+
+    public onControlEvent(handler: (event: IWorkflowControlEvent) => Promise<void>): void {
+        this.registry.onControl(handler);
+    }
+
+    public onAgentEvent(handler: (event: IWorkflowAgentEvent) => Promise<void>): void {
+        this.registry.onAgent(handler);
+    }
+
+    public onTaskEvent(handler: (event: IWorkflowTaskEvent) => Promise<void>): void {
+        this.registry.onTask(handler);
+    }
+
+    public offStepEvent(handler: (event: IWorkflowStepEvent) => Promise<void>): void {
+        this.registry.offStep(handler);
+    }
+
+    public offControlEvent(handler: (event: IWorkflowControlEvent) => Promise<void>): void {
+        this.registry.offControl(handler);
+    }
+
+    public offAgentEvent(handler: (event: IWorkflowAgentEvent) => Promise<void>): void {
+        this.registry.offAgent(handler);
+    }
+
+    public offTaskEvent(handler: (event: IWorkflowTaskEvent) => Promise<void>): void {
+        this.registry.offTask(handler);
+    }
+
+    /**
+     * Event emission methods
+     */
+    public async emitStepEvent(params: Pick<IWorkflowStepEvent, Exclude<keyof IWorkflowStepEvent, WorkflowEventBaseFields>>): Promise<IHandlerResult<IValidationResult>> {
+        return this.safeExecute(async () => {
+            const base = await this.createBaseWorkflowEvent('emitStepEvent');
+            const fullEvent: IWorkflowStepEvent = {
+                ...base,
+                ...params
+            };
+
+            const handlerResult = await this.eventHandler.handleStepEvent(fullEvent);
+            
+            if (handlerResult.success && handlerResult.data?.isValid) {
+                await this.registry.emitStep(fullEvent);
+                await this.trackEventMetrics('step', fullEvent);
+            }
+
+            return handlerResult;
+        }, 'emit step event');
+    }
+
+    public async emitControlEvent(params: Pick<IWorkflowControlEvent, Exclude<keyof IWorkflowControlEvent, WorkflowEventBaseFields>>): Promise<IHandlerResult<IValidationResult>> {
+        return this.safeExecute(async () => {
+            const base = await this.createBaseWorkflowEvent('emitControlEvent');
+            const fullEvent: IWorkflowControlEvent = {
+                ...base,
+                ...params
+            };
+
+            const handlerResult = await this.eventHandler.handleControlEvent(fullEvent);
+            
+            if (handlerResult.success && handlerResult.data?.isValid) {
+                await this.registry.emitControl(fullEvent);
+                await this.trackEventMetrics('control', fullEvent);
+            }
+
+            return handlerResult;
+        }, 'emit control event');
+    }
+
+    public async emitAgentEvent(params: Pick<IWorkflowAgentEvent, Exclude<keyof IWorkflowAgentEvent, WorkflowEventBaseFields>>): Promise<IHandlerResult<IValidationResult>> {
+        return this.safeExecute(async () => {
+            const base = await this.createBaseWorkflowEvent('emitAgentEvent');
+            const fullEvent: IWorkflowAgentEvent = {
+                ...base,
+                ...params
+            };
+
+            const handlerResult = await this.eventHandler.handleAgentEvent(fullEvent);
+            
+            if (handlerResult.success && handlerResult.data?.isValid) {
+                await this.registry.emitAgent(fullEvent);
+                await this.trackEventMetrics('agent', fullEvent);
+            }
+
+            return handlerResult;
+        }, 'emit agent event');
+    }
+
+    public async emitTaskEvent(params: Pick<IWorkflowTaskEvent, Exclude<keyof IWorkflowTaskEvent, WorkflowEventBaseFields>>): Promise<IHandlerResult<IValidationResult>> {
+        return this.safeExecute(async () => {
+            const base = await this.createBaseWorkflowEvent('emitTaskEvent');
+            const fullEvent: IWorkflowTaskEvent = {
+                ...base,
+                ...params
+            };
+
+            const handlerResult = await this.eventHandler.handleTaskEvent(fullEvent);
+            
+            if (handlerResult.success && handlerResult.data?.isValid) {
+                await this.registry.emitTask(fullEvent);
+                await this.trackEventMetrics('task', fullEvent);
+            }
+
+            return handlerResult;
+        }, 'emit task event');
+    }
+
+    /**
+     * Helper methods
      */
     private async trackEventMetrics(category: string, event: WorkflowEventType): Promise<void> {
         const metricsManager = this.getMetricsManager();
@@ -158,24 +347,6 @@ export class WorkflowEventEmitter extends CoreManager {
                 component: event.metadata.component
             }
         });
-    }
-
-    /**
-     * Get event type string
-     */
-    private getEventType(event: WorkflowEventType): string {
-        switch (true) {
-            case ['start', 'complete', 'fail', 'skip'].includes(event.type):
-                return 'workflow:step';
-            case ['start', 'pause', 'resume', 'stop', 'reset'].includes(event.type):
-                return 'workflow:control';
-            case ['assign', 'unassign'].includes(event.type):
-                return 'workflow:agent';
-            case ['add', 'remove', 'update'].includes(event.type):
-                return 'workflow:task';
-            default:
-                throw new Error(`Unknown workflow event type: ${event.type}`);
-        }
     }
 }
 

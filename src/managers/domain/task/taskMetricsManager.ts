@@ -5,8 +5,11 @@
  */
 
 import { CoreManager } from '../../core/coreManager';
-import { createError } from '../../../types/common/commonErrorTypes';
+import { createError } from '../../../types/common/errorTypes';
 import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
+import { ERROR_KINDS } from '../../../types/common/errorTypes';
+import { ERROR_SEVERITY_enum, MANAGER_CATEGORY_enum } from '../../../types/common/enumTypes';
+import { RecoveryStrategyType } from '../../../types/common/recoveryTypes';
 
 import type { ITaskMetrics } from '../../../types/task/taskHandlerTypes';
 import type { 
@@ -14,12 +17,12 @@ import type {
     ITaskPerformanceMetrics,
     ITaskUsageMetrics 
 } from '../../../types/task/taskMetricTypes';
-import type { IStandardCostDetails } from '../../../types/common/commonMetricTypes';
+import type { ICostDetails } from '../../../types/workflow/workflowCostsTypes';
 import type { ILLMUsageMetrics } from '../../../types/llm/llmMetricTypes';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const DEFAULT_COST_METRICS: IStandardCostDetails = {
+const DEFAULT_COST_METRICS: ICostDetails = {
     inputCost: 0,
     outputCost: 0,
     totalCost: 0,
@@ -33,8 +36,9 @@ const DEFAULT_COST_METRICS: IStandardCostDetails = {
 const DEFAULT_LLM_METRICS: ILLMUsageMetrics = {
     totalRequests: 0,
     activeInstances: 0,
+    activeUsers: 0,
     requestsPerSecond: 0,
-    averageResponseLength: 0,
+    averageResponseSize: 0,
     peakMemoryUsage: 0,
     uptime: 0,
     rateLimit: {
@@ -59,6 +63,7 @@ const DEFAULT_LLM_METRICS: ILLMUsageMetrics = {
 // ─── Manager Implementation ───────────────────────────────────────────────────
 
 export class TaskMetricsManager extends CoreManager {
+    public readonly category = MANAGER_CATEGORY_enum.METRICS;
     private readonly metrics: Map<string, ITaskMetrics>;
 
     constructor() {
@@ -167,7 +172,46 @@ export class TaskMetricsManager extends CoreManager {
             successRate: 1,
             errorMetrics: {
                 totalErrors: 0,
-                errorRate: 0
+                errorRate: 0,
+                errorDistribution: Object.values(ERROR_KINDS).reduce(
+                    (acc, key) => ({ ...acc, [key]: 0 }),
+                    {} as Record<string, number>
+                ),
+                severityDistribution: Object.values(ERROR_SEVERITY_enum).reduce(
+                    (acc, key) => ({ ...acc, [key]: 0 }),
+                    {} as Record<string, number>
+                ),
+                patterns: [],
+                impact: {
+                    severity: ERROR_SEVERITY_enum.INFO,
+                    businessImpact: 0,
+                    userExperienceImpact: 0,
+                    systemStabilityImpact: 0,
+                    resourceImpact: {
+                        cpu: 0,
+                        memory: 0,
+                        io: 0
+                    }
+                },
+                recovery: {
+                    meanTimeToRecover: 0,
+                    recoverySuccessRate: 0,
+                    strategyDistribution: Object.values(RecoveryStrategyType).reduce(
+                        (acc, key) => ({ ...acc, [key]: 0 }),
+                        {} as Record<string, number>
+                    ),
+                    failedRecoveries: 0
+                },
+                prevention: {
+                    preventedCount: 0,
+                    preventionRate: 0,
+                    earlyWarnings: 0
+                },
+                trends: {
+                    dailyRates: [],
+                    weeklyRates: [],
+                    monthlyRates: []
+                }
             },
             resourceUtilization: this.getInitialResourceMetrics(),
             timestamp: Date.now()

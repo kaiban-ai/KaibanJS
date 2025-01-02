@@ -9,8 +9,6 @@
 import { Tool } from '@langchain/core/tools';
 import { CoreManager } from '../../core/coreManager';
 import { MANAGER_CATEGORY_enum, AGENT_STATUS_enum } from '../../../types/common/enumTypes';
-import { IAgentType } from '../../../types/agent/agentBaseTypes';
-import { ITaskType } from '../../../types/task/taskBaseTypes';
 import { ToolError } from '../../../types/tool/toolErrorTypes';
 import { 
     IToolHandlerParams, 
@@ -67,7 +65,7 @@ export class ToolExecutionManager extends CoreManager implements IBaseManager {
             operation: 'tool-execution',
             duration: 0,
             status: 'success',
-            agent: { id: '', name: '', role: '', status: '' },
+            agent: { id: '', name: '', role: '', status: AGENT_STATUS_enum.IDLE },
             timestamp: Date.now(),
             component: 'ToolExecutionManager'
         };
@@ -125,9 +123,11 @@ export class ToolExecutionManager extends CoreManager implements IBaseManager {
                 }
             });
 
-            this.logInfo(`Tool ${tool.name} executed successfully`, { 
+            const executionTime = Date.now() - startTime;
+            this.logInfo(`Tool ${tool.name} executed successfully in ${executionTime}ms`, { 
                 agentId: agent.id, 
-                taskId: task.id 
+                taskId: task.id,
+                executionTime
             });
 
             return createToolHandlerResult(true, undefined, {
@@ -228,7 +228,7 @@ export class ToolExecutionManager extends CoreManager implements IBaseManager {
         const toolInfo = this.activeTools.get(toolKey);
         if (!toolInfo) {
             throw new ToolError({
-                message: 'Tool info not found',
+                message: `Tool info not found. Original error: ${error instanceof Error ? error.message : String(error)}`,
                 toolName: tool.name,
                 type: 'ExecutionError'
             });

@@ -10,7 +10,7 @@ import type {
     ILoopHandlerMetadata,
     ILoopResult,
     ILoopControl
-} from './executionFlow';
+} from './agentExecutionFlow';
 
 /**
  * Type guards for loop-related types

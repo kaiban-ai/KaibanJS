@@ -1,54 +1,94 @@
 /**
  * @file metricsManager.ts
- * @description Core metrics management with delegated responsibilities to specialized managers
+ * @description Centralized metrics management with optimized collection and aggregation
  */
 
+import { CircularBuffer } from './metrics/CircularBuffer';
+import { MetricAggregator } from './metrics/MetricAggregator';
+import { MemoryManager } from './metrics/MemoryManager';
+import { PreAggregator } from './metrics/PreAggregator';
+import { MetricsBenchmark } from './metrics/MetricsBenchmark';
 import { CoreManager } from './coreManager';
-import { MetricsAdapter } from '../../metrics/MetricsAdapter';
-import { LLMMetricsCollector } from '../../metrics/LLMMetricsCollector';
-import { MANAGER_CATEGORY_enum } from '../../types/common/enumTypes';
-import { ERROR_KINDS, createError } from '../../types/common/errorTypes';
-import { createBaseMetadata } from '../../types/common/baseTypes';
 import { 
-    MetricDomain,
-    MetricType,
-    IMetricsManager,
     IMetricEvent,
     IMetricFilter,
     IAggregationQuery,
     IMetricsHandlerResult,
-    IMetricsHandlerMetadata
+    IMetricsHandlerMetadata,
+    IAgentMetrics,
+    IRolledUpMetrics,
+    AggregationStrategy,
+    MetricDomain,
+    MetricType
 } from '../../types/metrics/base/metricsManagerTypes';
-import type { IResourceMetrics } from '../../types/metrics/base/resourceMetrics';
-import type { IPerformanceMetrics } from '../../types/metrics/base/performanceMetrics';
-import type { IEnhancedErrorMetrics } from '../../types/metrics/base/errorMetrics';
+import { MANAGER_CATEGORY_enum, AGENT_STATUS_enum } from '../../types/common/enumTypes';
+import { createError, ERROR_KINDS } from '../../types/common/errorTypes';
+import { createBaseMetadata, IBaseHandlerMetadata } from '../../types/common/baseTypes';
+import { IBaseManager, IBaseManagerMetadata } from '../../types/agent/agentManagerTypes';
 
-import { ErrorMetricsManager } from './metrics/errorMetricsManager';
-import { ResourceMetricsManager } from './metrics/resourceMetricsManager';
-import { PerformanceMetricsManager } from './metrics/performanceMetricsManager';
-import { SystemHealthManager } from './metrics/systemHealthManager';
-import { AggregationManager } from './metrics/aggregationManager';
-import { validateMetricEvent } from './metrics/utils/metricValidation';
+export class MetricsManager extends CoreManager implements IBaseManager<IMetricEvent> {
+    private static instance: MetricsManager;
+    protected readonly buffer: CircularBuffer<IMetricEvent>;
+    protected readonly aggregator: MetricAggregator;
+    protected readonly memoryManager: MemoryManager;
+    protected readonly preAggregator: PreAggregator;
+    protected readonly benchmark: MetricsBenchmark;
 
-export class MetricsManager extends CoreManager implements IMetricsManager {
-    private static instance: MetricsManager | null = null;
-    private readonly metricsCollector: LLMMetricsCollector;
-    private readonly errorMetricsManager: ErrorMetricsManager;
-    private readonly resourceMetricsManager: ResourceMetricsManager;
-    private readonly performanceMetricsManager: PerformanceMetricsManager;
-    private readonly systemHealthManager: SystemHealthManager;
-    private readonly aggregationManager: AggregationManager;
+    public readonly category = MANAGER_CATEGORY_enum.METRICS as const;
 
-    public readonly category = MANAGER_CATEGORY_enum.CORE;
+    public getMetadata(): IBaseManagerMetadata {
+        return {
+            component: 'MetricsManager',
+            category: MANAGER_CATEGORY_enum.METRICS,
+            operation: 'getMetadata',
+            timestamp: Date.now(),
+            status: 'success',
+            duration: 0,
+            source: 'MetricsManager',
+            target: 'metrics',
+            correlationId: '',
+            causationId: '',
+            context: {
+                bufferSize: this.buffer.getSize(),
+                memoryUsage: this.memoryManager.getUsage()
+            },
+            agent: {
+                id: '',
+                name: '',
+                role: '',
+                status: AGENT_STATUS_enum.IDLE,
+                metrics: {
+                    iterations: 0,
+                    executionTime: 0,
+                    llmMetrics: ''
+                }
+            }
+        };
+    }
+
+    private createPerformanceMetrics(aggregates: Map<string, number>): Record<string, number> {
+        return {
+            averageResponseTime: aggregates.get('responseTime') || 0,
+            throughput: aggregates.get('throughput') || 0,
+            errorRate: aggregates.get('errorRate') || 0
+        };
+    }
+
+    private createUsageMetrics(aggregates: Map<string, number>): Record<string, number> {
+        return {
+            cpuUsage: aggregates.get('cpuUsage') || 0,
+            memoryUsage: aggregates.get('memoryUsage') || 0,
+            diskUsage: aggregates.get('diskUsage') || 0
+        };
+    }
 
     private constructor() {
         super();
-        this.metricsCollector = new LLMMetricsCollector();
-        this.errorMetricsManager = ErrorMetricsManager.getInstance();
-        this.resourceMetricsManager = ResourceMetricsManager.getInstance();
-        this.performanceMetricsManager = PerformanceMetricsManager.getInstance();
-        this.systemHealthManager = SystemHealthManager.getInstance();
-        this.aggregationManager = AggregationManager.getInstance();
+        this.buffer = new CircularBuffer<IMetricEvent>(1000);
+        this.aggregator = new MetricAggregator();
+        this.memoryManager = new MemoryManager();
+        this.preAggregator = new PreAggregator();
+        this.benchmark = new MetricsBenchmark();
         this.registerDomainManager('MetricsManager', this);
     }
 
@@ -59,102 +99,167 @@ export class MetricsManager extends CoreManager implements IMetricsManager {
         return MetricsManager.instance;
     }
 
-    private createMetricsMetadata(
-        domain: MetricDomain,
-        type: MetricType,
-        startTime: number
-    ): IMetricsHandlerMetadata {
+    /**
+     * Track a new metric event
+     */
+    public async trackMetric(event: IMetricEvent): Promise<void> {
+        try {
+            // Check memory limits
+            if (!this.memoryManager.shouldCollectMetric()) {
+                await this.memoryManager.enforceMemoryLimits();
+            return;
+            }
+
+            this.benchmark.start('trackMetric');
+
+            // Store and pre-aggregate metric
+            this.buffer.push(event);
+            this.preAggregator.addMetric(event);
+            this.aggregator.add(event);
+
+            this.benchmark.end('trackMetric');
+
+            return;
+        } catch (error) {
+            throw createError({
+                message: 'Failed to track metric',
+                type: ERROR_KINDS.ExecutionError,
+                context: { event, error }
+            });
+        }
+    }
+
+    /**
+     * Get metrics based on filter
+     */
+    public async get(filter: IMetricFilter): Promise<IMetricsHandlerResult<IAgentMetrics>> {
+        try {
+            this.benchmark.start('getMetrics');
+
+            // Get aggregated metrics
+            const aggregates = this.aggregator.getAggregates();
+            const metrics = this.transformToAgentMetrics(aggregates);
+
+            this.benchmark.end('getMetrics');
+
+            return {
+                success: true,
+                data: metrics,
+                metadata: this.createMetadata('getMetrics')
+            };
+        } catch (error) {
+            throw createError({
+                message: 'Failed to get metrics',
+                type: ERROR_KINDS.ExecutionError,
+                context: { filter, error }
+            });
+        }
+    }
+
+    /**
+     * Aggregate metrics based on query
+     */
+    public async aggregate(query: IAggregationQuery): Promise<IRolledUpMetrics[]> {
+        try {
+            this.benchmark.start('aggregate');
+
+            const metrics = await this.preAggregator.getAggregates(query);
+            const results = this.transformToRolledUpMetrics(metrics, query.strategy);
+
+            this.benchmark.end('aggregate');
+
+            return results;
+        } catch (error) {
+            throw createError({
+                message: 'Failed to aggregate metrics',
+                type: ERROR_KINDS.ExecutionError,
+                context: { query, error }
+            });
+        }
+    }
+
+    /**
+     * Create metadata for metric operations
+     */
+    private createMetadata(operation: string): IMetricsHandlerMetadata {
+        const base = createBaseMetadata('MetricsManager', operation);
         return {
-            ...createBaseMetadata(this.constructor.name, 'metrics'),
-            domain,
-            type,
-            processingTime: {
-                total: Date.now() - startTime,
-                average: Date.now() - startTime,
-                min: Date.now() - startTime,
-                max: Date.now() - startTime
+            ...base,
+            timestamp: Date.now(),
+            source: 'MetricsManager',
+            target: 'metrics',
+            correlationId: '',
+            causationId: '',
+            context: {
+                bufferSize: this.buffer.getSize(),
+                memoryUsage: this.memoryManager.getCurrentUsage()
+            },
+            performance: this.benchmark.getMetrics(operation)
+        };
+    }
+
+    /**
+     * Transform aggregated metrics to agent metrics format
+     */
+    private transformToAgentMetrics(aggregates: Map<string, number>): IAgentMetrics {
+        return {
+            performance: this.createPerformanceMetrics(aggregates),
+            usage: this.createUsageMetrics(aggregates),
+            error: {
+                count: 0,
+                type: 'UnknownError',
+                severity: 'INFO',
+                message: '',
+                timestamp: Date.now()
+            },
+            timestamp: Date.now(),
+            resources: {
+                cpuUsage: 0,
+                memoryUsage: 0,
+                diskIO: 0,
+                networkUsage: 0
+            },
+            state: {
+                currentState: 'active',
+                stateTime: Date.now(),
+                taskStats: {
+                    total: 0,
+                    completed: 0,
+                    failed: 0,
+                    pending: 0
+                }
             }
         };
     }
 
-    public async trackMetric(event: IMetricEvent): Promise<IMetricsHandlerResult<void>> {
-        const startTime = Date.now();
-        const metadata = this.createMetricsMetadata(event.domain, event.type, startTime);
+    /**
+     * Transform metrics to rolled up format
+     */
+    private transformToRolledUpMetrics(
+        metrics: Map<string, number[]>,
+        strategy: AggregationStrategy = AggregationStrategy.AVG
+    ): IRolledUpMetrics[] {
+        return Array.from(metrics.entries()).map(([key, values]) => ({
+            timestamp: Date.now(),
+            value: this.calculateAggregate(values, strategy),
+            count: values.length,
+            min: Math.min(...values),
+            max: Math.max(...values),
+            avg: values.reduce((sum, v) => sum + v, 0) / values.length,
+            metadata: { key }
+        }));
+    }
 
-        try {
-            const validation = validateMetricEvent(event);
-            if (!validation.isValid) {
-                throw createError({
-                    message: `Invalid metric event: ${validation.errors.join(', ')}`,
-                    type: ERROR_KINDS.ValidationError,
-                    context: {
-                        component: this.constructor.name,
-                        operation: 'trackMetric',
-                        event
-                    }
-                });
-            }
-
-            // Delegate to appropriate manager based on metric type
-            switch (event.type) {
-                case MetricType.RESOURCE:
-                    await this.resourceMetricsManager.trackMetric(event);
-                    break;
-                case MetricType.PERFORMANCE:
-                    await this.performanceMetricsManager.trackMetric(event);
-                    break;
-                default:
-                    await this.aggregationManager.trackMetric(event);
-            }
-
-            // Special handling for LLM metrics
-            if (event.domain === MetricDomain.LLM) {
-                this.metricsCollector.trackMetrics(event.type, event.metadata);
-            }
-
-            this.logDebug('Tracked metric');
-            return {
-                success: true,
-                metadata
-            };
-        } catch (error) {
-            return {
-                success: false,
-                error: createError({
-                    message: error instanceof Error ? error.message : String(error),
-                    type: ERROR_KINDS.SystemError,
-                    context: {
-                        component: this.constructor.name,
-                        operation: 'trackMetric'
-                    }
-                }),
-                metadata
-            };
+    private calculateAggregate(values: number[], strategy: AggregationStrategy): number {
+        switch (strategy) {
+            case AggregationStrategy.SUM: return values.reduce((sum, v) => sum + v, 0);
+            case AggregationStrategy.AVG: return values.reduce((sum, v) => sum + v, 0) / values.length;
+            case AggregationStrategy.MIN: return Math.min(...values);
+            case AggregationStrategy.MAX: return Math.max(...values);
+            case AggregationStrategy.COUNT: return values.length;
+            case AggregationStrategy.LATEST: return values[values.length - 1] || 0;
+            default: return 0;
         }
-    }
-
-    public async getMetrics(filter: IMetricFilter): Promise<IMetricsHandlerResult<IMetricEvent[]>> {
-        return this.aggregationManager.getMetrics(filter);
-    }
-
-    public async aggregateMetrics(query: IAggregationQuery): Promise<IMetricsHandlerResult<any>> {
-        return this.aggregationManager.aggregateMetrics(query);
-    }
-
-    public async rollupMetrics(query: IAggregationQuery): Promise<IMetricsHandlerResult<any>> {
-        return this.aggregationManager.rollupMetrics(query);
-    }
-
-    public async getInitialResourceMetrics(): Promise<IResourceMetrics> {
-        return this.resourceMetricsManager.getInitialMetrics();
-    }
-
-    public async getInitialPerformanceMetrics(): Promise<IPerformanceMetrics> {
-        return this.performanceMetricsManager.getInitialMetrics();
-    }
-
-    public getErrorMetrics(): IEnhancedErrorMetrics {
-        return this.errorMetricsManager.getMetrics();
     }
 }
 

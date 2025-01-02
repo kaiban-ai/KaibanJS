@@ -6,8 +6,10 @@
  * @module types/team
  */
 
-import { WORKFLOW_STATUS_enum } from '../common/commonEnums';
-import { IResourceMetrics, IUsageMetrics, IPerformanceMetrics } from '../common/commonMetricTypes';
+import { WORKFLOW_STATUS_enum } from '../common/enumTypes';
+import { IResourceMetrics } from '../metrics/base/resourceMetrics';
+import { IUsageMetrics } from '../metrics/base/usageMetrics';
+import { IPerformanceMetrics } from '../metrics/base/performanceMetrics';
 import { IAgentType } from '../agent/agentBaseTypes';
 import { ITaskType } from '../task/taskBaseTypes';
 import { IWorkflowStats } from '../workflow/workflowStatsTypes';

@@ -1,14 +1,14 @@
 /**
- * @file taskStateTypes.ts
- * @path KaibanJS/src/types/task/taskStateTypes.ts
- * @description Task execution state management types and interfaces
- *
- * @module types/task
- */
+* @file taskStateTypes.ts
+* @path src/types/task/taskStateTypes.ts
+* @description Task execution state management types and interfaces
+*
+* @module @types/task
+*/
 
-import { TASK_STATUS_enum } from '../common/commonEnums';
+import { TASK_STATUS_enum } from '../common/enumTypes';
 import type { IAgentType } from '../agent/agentBaseTypes';
-import type { ITaskMetrics } from './taskTrackingTypes';
+import type { ITaskMetrics } from './taskHandlerTypes';
 
 // ─── Task Execution State ───────────────────────────────────────────────────────
 
@@ -38,29 +38,17 @@ export interface ITaskExecutionMetrics {
     };
 }
 
-/**
- * Comprehensive task execution state that tracks all aspects of a task's execution
- */
 export interface ITaskExecutionState {
-    // Core execution state
     status: keyof typeof TASK_STATUS_enum;
     progress: number;
     currentStep: string;
     blockingReason?: string;
-    
-    // Timing and tracking
     startTime?: Date;
     endTime?: Date;
     duration?: number;
-    
-    // Error handling
     lastError?: Error;
     retryCount: number;
-    
-    // Assignment
     assignedAgent?: IAgentType;
-    
-    // Detailed execution data
     context: ITaskExecutionContext;
     executionMetrics: ITaskExecutionMetrics;
     runtimeMetrics: ITaskMetrics;
@@ -84,7 +72,7 @@ export const TaskStateTypeGuards = {
 
 // ─── State Creation Utilities ─────────────────────────────────────────────────
 
-export function createDefaultExecutionState(taskId: string): ITaskExecutionState {
+export function createDefaultExecutionState(): ITaskExecutionState {
     return {
         status: 'PENDING',
         progress: 0,
@@ -120,41 +108,103 @@ export function createDefaultExecutionState(taskId: string): ITaskExecutionState
             duration: 0,
             iterationCount: 0,
             resources: {
-                memory: 0,
-                cpu: 0,
-                tokens: 0
+                cpuUsage: 0,
+                memoryUsage: 0,
+                diskIO: { read: 0, write: 0 },
+                networkUsage: { upload: 0, download: 0 },
+                timestamp: Date.now()
             },
             performance: {
-                averageIterationTime: 0,
-                averageTokensPerSecond: 0,
-                peakMemoryUsage: 0
+                executionTime: {
+                    average: 0,
+                    min: 0,
+                    max: 0
+                },
+                latency: {
+                    average: 0,
+                    min: 0,
+                    max: 0
+                },
+                throughput: {
+                    requestsPerSecond: 0,
+                    bytesPerSecond: 0
+                },
+                responseTime: {
+                    average: 0,
+                    min: 0,
+                    max: 0
+                },
+                queueLength: 0,
+                errorRate: 0,
+                successRate: 1,
+                resourceUtilization: {
+                    timestamp: Date.now(),
+                    cpuUsage: 0,
+                    memoryUsage: 0,
+                    diskIO: {
+                        read: 0,
+                        write: 0
+                    },
+                    networkUsage: {
+                        upload: 0,
+                        download: 0
+                    }
+                },
+                timestamp: Date.now()
+            },
+            usage: {
+                totalRequests: 0,
+                activeUsers: 0,
+                requestsPerSecond: 0,
+                averageResponseSize: 0,
+                peakMemoryUsage: 0,
+                uptime: 0,
+                rateLimit: {
+                    current: 0,
+                    limit: 0,
+                    remaining: 0,
+                    resetTime: 0
+                },
+                timestamp: Date.now()
             },
             costs: {
-                input: 0,
-                output: 0,
-                total: 0,
-                currency: 'USD'
-            },
-            llmUsage: {
-                inputTokens: 0,
-                outputTokens: 0,
-                callsCount: 0,
-                callsErrorCount: 0,
-                parsingErrors: 0,
-                totalLatency: 0,
-                averageLatency: 0,
-                lastUsed: Date.now(),
-                memoryUtilization: {
-                    peakMemoryUsage: 0,
-                    averageMemoryUsage: 0,
-                    cleanupEvents: 0
-                },
-                costBreakdown: {
-                    input: 0,
-                    output: 0,
-                    total: 0,
-                    currency: 'USD'
+                inputCost: 0,
+                outputCost: 0,
+                totalCost: 0,
+                currency: 'USD',
+                breakdown: {
+                    promptTokens: { count: 0, cost: 0 },
+                    completionTokens: { count: 0, cost: 0 }
                 }
+            },
+            llmUsageMetrics: {
+                totalRequests: 0,
+                activeUsers: 0,
+                activeInstances: 0,
+                requestsPerSecond: 0,
+                averageResponseSize: 0,
+                peakMemoryUsage: 0,
+                uptime: 0,
+                rateLimit: {
+                    current: 0,
+                    limit: 0,
+                    remaining: 0,
+                    resetTime: 0
+                },
+                tokenDistribution: {
+                    prompt: 0,
+                    completion: 0,
+                    total: 0
+                },
+                modelDistribution: {
+                    gpt4: 0,
+                    gpt35: 0,
+                    other: 0
+                },
+                timestamp: Date.now(),
+                component: '',
+                category: '',
+                version: ''
             }
         },
         startTime: new Date(),

@@ -1,42 +1,47 @@
 /**
  * @file systemHealthMetrics.ts
  * @path src/types/metrics/base/systemHealthMetrics.ts
- * @description System health metrics type definitions and validation
- *
- * @module @types/metrics/base
+ * @description Core system health metrics type definitions
  */
 
-import { createValidationResult } from '@utils/validation/validationUtils';
 import type { IValidationResult } from '../../common/validationTypes';
-import type { IResourceMetrics } from './resourceMetrics';
-import type { IPerformanceMetrics } from './performanceMetrics';
 
-// ─── System Health Types ────────────────────────────────────────────────────────
-
-export interface ISystemStatus {
-    readonly isHealthy: boolean;
-    readonly isStable: boolean;
-    readonly isResponsive: boolean;
-    readonly lastHealthCheck: number;
-    readonly uptime: number;
+/**
+ * System metrics interface
+ */
+export interface ISystemMetrics {
+    readonly timestamp: number;
+    readonly cpu: {
+        readonly usage: number;
+        readonly temperature?: number;
+        readonly loadAverage: number[];
+    };
+    readonly memory: {
+        readonly used: number;
+        readonly total: number;
+        readonly free: number;
+    };
+    readonly disk: {
+        readonly read: number;
+        readonly write: number;
+        readonly free: number;
+        readonly total: number;
+    };
+    readonly network: {
+        readonly upload: number;
+        readonly download: number;
+    };
+    readonly process: {
+        readonly uptime: number;
+        readonly memoryUsage: NodeJS.MemoryUsage;
+        readonly cpuUsage: NodeJS.CpuUsage;
+    };
 }
 
-export interface ISystemCapacity {
-    readonly maxConcurrentOperations: number;
-    readonly currentLoad: number;
-    readonly availableCapacity: number;
-    readonly scalingFactor: number;
-}
-
-export interface ISystemStability {
-    readonly crashCount: number;
-    readonly recoveryCount: number;
-    readonly lastIncident: number;
-    readonly meanTimeBetweenFailures: number;
-    readonly meanTimeToRecover: number;
-}
-
-export interface ISystemThresholds {
+/**
+ * Core system thresholds interface
+ */
+export interface ICoreSystemThresholds {
     readonly cpu: {
         readonly warning: number;
         readonly critical: number;
@@ -55,7 +60,40 @@ export interface ISystemThresholds {
     };
 }
 
-export interface ISystemDegradation {
+/**
+ * Core system status interface
+ */
+export interface ICoreSystemStatus {
+    readonly isHealthy: boolean;
+    readonly isStable: boolean;
+    readonly isResponsive: boolean;
+    readonly lastHealthCheck: number;
+    readonly uptime: number;
+}
+
+/**
+ * Core system capacity interface
+ */
+export interface ICoreSystemCapacity {
+    readonly maxConcurrentOperations: number;
+    readonly currentLoad: number;
+    readonly availableCapacity: number;
+    readonly scalingFactor: number;
+}
+
+/**
+ * Core system stability interface
+ */
+export interface ICoreSystemStability {
+    readonly crashCount: number;
+    readonly lastIncident: number;
+    readonly meanTimeBetweenFailures: number;
+}
+
+/**
+ * Core system degradation interface
+ */
+export interface ICoreSystemDegradation {
     readonly performance: {
         readonly latencyIncrease: number;
         readonly throughputDecrease: number;
@@ -74,183 +112,140 @@ export interface ISystemDegradation {
 }
 
 /**
- * Comprehensive system health metrics
+ * Core system health metrics interface
  */
-export interface ISystemHealthMetrics {
-    /** Current system status */
-    readonly status: ISystemStatus;
-    /** System capacity metrics */
-    readonly capacity: ISystemCapacity;
-    /** System stability metrics */
-    readonly stability: ISystemStability;
-    /** System thresholds */
-    readonly thresholds: ISystemThresholds;
-    /** System degradation metrics */
-    readonly degradation: ISystemDegradation;
-    /** Resource utilization */
-    readonly resources: IResourceMetrics;
-    /** Performance metrics */
-    readonly performance: IPerformanceMetrics;
-    /** Timestamp of metrics collection */
+export interface ICoreSystemHealthMetrics {
+    readonly metrics: ISystemMetrics;
+    readonly status: ICoreSystemStatus;
+    readonly capacity: ICoreSystemCapacity;
+    readonly stability: ICoreSystemStability;
+    readonly thresholds: ICoreSystemThresholds;
+    readonly degradation: ICoreSystemDegradation;
     readonly timestamp: number;
 }
 
-// ─── Type Guards ────────────────────────────────────────────────────────────
-
+/**
+ * Type guards for system health metrics
+ */
 export const SystemHealthTypeGuards = {
-    isSystemStatus(value: unknown): value is ISystemStatus {
+    isSystemMetrics(value: unknown): value is ISystemMetrics {
         if (!value || typeof value !== 'object') return false;
-        const status = value as Partial<ISystemStatus>;
+        const metrics = value as Partial<ISystemMetrics>;
 
         return !!(
-            typeof status.isHealthy === 'boolean' &&
-            typeof status.isStable === 'boolean' &&
-            typeof status.isResponsive === 'boolean' &&
-            typeof status.lastHealthCheck === 'number' &&
-            typeof status.uptime === 'number'
+            typeof metrics.timestamp === 'number' &&
+            metrics.cpu &&
+            typeof metrics.cpu.usage === 'number' &&
+            Array.isArray(metrics.cpu.loadAverage) &&
+            metrics.memory &&
+            typeof metrics.memory.used === 'number' &&
+            typeof metrics.memory.total === 'number' &&
+            typeof metrics.memory.free === 'number' &&
+            metrics.disk &&
+            typeof metrics.disk.read === 'number' &&
+            typeof metrics.disk.write === 'number' &&
+            typeof metrics.disk.free === 'number' &&
+            typeof metrics.disk.total === 'number' &&
+            metrics.network &&
+            typeof metrics.network.upload === 'number' &&
+            typeof metrics.network.download === 'number' &&
+            metrics.process &&
+            typeof metrics.process.uptime === 'number' &&
+            metrics.process.memoryUsage &&
+            metrics.process.cpuUsage
         );
     },
 
-    isSystemCapacity(value: unknown): value is ISystemCapacity {
+    isCoreSystemHealthMetrics(value: unknown): value is ICoreSystemHealthMetrics {
         if (!value || typeof value !== 'object') return false;
-        const capacity = value as Partial<ISystemCapacity>;
+        const health = value as Partial<ICoreSystemHealthMetrics>;
 
         return !!(
-            typeof capacity.maxConcurrentOperations === 'number' &&
-            typeof capacity.currentLoad === 'number' &&
-            typeof capacity.availableCapacity === 'number' &&
-            typeof capacity.scalingFactor === 'number'
-        );
-    },
-
-    isSystemStability(value: unknown): value is ISystemStability {
-        if (!value || typeof value !== 'object') return false;
-        const stability = value as Partial<ISystemStability>;
-
-        return !!(
-            typeof stability.crashCount === 'number' &&
-            typeof stability.recoveryCount === 'number' &&
-            typeof stability.lastIncident === 'number' &&
-            typeof stability.meanTimeBetweenFailures === 'number' &&
-            typeof stability.meanTimeToRecover === 'number'
-        );
-    },
-
-    isSystemThresholds(value: unknown): value is ISystemThresholds {
-        if (!value || typeof value !== 'object') return false;
-        const thresholds = value as Partial<ISystemThresholds>;
-
-        return !!(
-            thresholds.cpu &&
-            typeof thresholds.cpu.warning === 'number' &&
-            typeof thresholds.cpu.critical === 'number' &&
-            thresholds.memory &&
-            typeof thresholds.memory.warning === 'number' &&
-            typeof thresholds.memory.critical === 'number' &&
-            thresholds.errorRate &&
-            typeof thresholds.errorRate.warning === 'number' &&
-            typeof thresholds.errorRate.critical === 'number' &&
-            thresholds.responseTime &&
-            typeof thresholds.responseTime.warning === 'number' &&
-            typeof thresholds.responseTime.critical === 'number'
-        );
-    },
-
-    isSystemDegradation(value: unknown): value is ISystemDegradation {
-        if (!value || typeof value !== 'object') return false;
-        const degradation = value as Partial<ISystemDegradation>;
-
-        return !!(
-            degradation.performance &&
-            typeof degradation.performance.latencyIncrease === 'number' &&
-            typeof degradation.performance.throughputDecrease === 'number' &&
-            typeof degradation.performance.errorRateIncrease === 'number' &&
-            degradation.resources &&
-            typeof degradation.resources.cpuDegradation === 'number' &&
-            typeof degradation.resources.memoryLeak === 'number' &&
-            typeof degradation.resources.ioBottleneck === 'number' &&
-            degradation.service &&
-            typeof degradation.service.availabilityImpact === 'number' &&
-            typeof degradation.service.reliabilityImpact === 'number' &&
-            typeof degradation.service.qualityImpact === 'number'
-        );
-    },
-
-    isSystemHealthMetrics(value: unknown): value is ISystemHealthMetrics {
-        if (!value || typeof value !== 'object') return false;
-        const metrics = value as Partial<ISystemHealthMetrics>;
-
-        return !!(
-            this.isSystemStatus(metrics.status) &&
-            this.isSystemCapacity(metrics.capacity) &&
-            this.isSystemStability(metrics.stability) &&
-            this.isSystemThresholds(metrics.thresholds) &&
-            this.isSystemDegradation(metrics.degradation) &&
-            typeof metrics.timestamp === 'number'
+            this.isSystemMetrics(health.metrics) &&
+            health.status &&
+            typeof health.status.isHealthy === 'boolean' &&
+            typeof health.status.isStable === 'boolean' &&
+            typeof health.status.isResponsive === 'boolean' &&
+            typeof health.status.lastHealthCheck === 'number' &&
+            typeof health.status.uptime === 'number' &&
+            health.capacity &&
+            typeof health.capacity.maxConcurrentOperations === 'number' &&
+            typeof health.capacity.currentLoad === 'number' &&
+            typeof health.capacity.availableCapacity === 'number' &&
+            typeof health.capacity.scalingFactor === 'number' &&
+            health.stability &&
+            typeof health.stability.crashCount === 'number' &&
+            typeof health.stability.lastIncident === 'number' &&
+            typeof health.stability.meanTimeBetweenFailures === 'number' &&
+            health.thresholds &&
+            health.degradation &&
+            typeof health.timestamp === 'number'
         );
     }
 };
 
-// ─── Validation Functions ────────────────────────────────────────────────────
+/**
+ * Validate system health metrics
+ */
+export function validateSystemHealth(metrics: unknown): IValidationResult {
+    const errors: string[] = [];
+    const warnings: string[] = [];
 
-export const SystemHealthValidation = {
-    validateSystemHealthMetrics(metrics: unknown): IValidationResult {
-        const errors: string[] = [];
-        const warnings: string[] = [];
-
-        if (!SystemHealthTypeGuards.isSystemHealthMetrics(metrics)) {
-            errors.push('Invalid system health metrics structure');
-            return createValidationResult(false, errors);
-        }
-
-        const healthMetrics = metrics as ISystemHealthMetrics;
-
-        // Validate capacity metrics
-        if (healthMetrics.capacity.currentLoad > healthMetrics.capacity.maxConcurrentOperations) {
-            errors.push('Current load exceeds maximum concurrent operations');
-        }
-
-        if (healthMetrics.capacity.availableCapacity < 0) {
-            errors.push('Available capacity cannot be negative');
-        }
-
-        // Validate stability metrics
-        if (healthMetrics.stability.recoveryCount > healthMetrics.stability.crashCount) {
-            warnings.push('Recovery count exceeds crash count');
-        }
-
-        if (healthMetrics.stability.meanTimeToRecover < 0) {
-            errors.push('Mean time to recover cannot be negative');
-        }
-
-        // Validate thresholds
-        if (healthMetrics.thresholds.cpu.warning >= healthMetrics.thresholds.cpu.critical) {
-            warnings.push('CPU warning threshold should be lower than critical threshold');
-        }
-
-        if (healthMetrics.thresholds.memory.warning >= healthMetrics.thresholds.memory.critical) {
-            warnings.push('Memory warning threshold should be lower than critical threshold');
-        }
-
-        // Validate degradation metrics
-        if (healthMetrics.degradation.performance.latencyIncrease < 0) {
-            errors.push('Latency increase cannot be negative');
-        }
-
-        if (healthMetrics.degradation.resources.memoryLeak < 0) {
-            errors.push('Memory leak cannot be negative');
-        }
-
-        if (healthMetrics.degradation.service.availabilityImpact < 0 || 
-            healthMetrics.degradation.service.availabilityImpact > 1) {
-            errors.push('Availability impact must be between 0 and 1');
-        }
-
-        // Validate timestamp
-        if (healthMetrics.timestamp > Date.now()) {
-            warnings.push('Timestamp is in the future');
-        }
-
-        return createValidationResult(errors.length === 0, errors, warnings);
+    if (!SystemHealthTypeGuards.isCoreSystemHealthMetrics(metrics)) {
+        return {
+            isValid: false,
+            errors: ['Invalid system health metrics structure'],
+            warnings: []
+        };
     }
-};
+
+    const health = metrics as ICoreSystemHealthMetrics;
+
+    // Validate raw metrics
+    if (health.metrics.memory.used > health.metrics.memory.total) {
+        errors.push('Used memory cannot exceed total memory');
+    }
+
+    if (health.metrics.disk.free > health.metrics.disk.total) {
+        errors.push('Free disk space cannot exceed total disk space');
+    }
+
+    // Validate capacity
+    if (health.capacity.currentLoad > health.capacity.maxConcurrentOperations) {
+        errors.push('Current load exceeds maximum concurrent operations');
+    }
+
+    if (health.capacity.availableCapacity < 0) {
+        errors.push('Available capacity cannot be negative');
+    }
+
+    // Validate stability
+    if (health.stability.meanTimeBetweenFailures < 0) {
+        errors.push('Mean time between failures cannot be negative');
+    }
+
+    // Validate degradation
+    if (health.degradation.performance.latencyIncrease < 0) {
+        errors.push('Latency increase cannot be negative');
+    }
+
+    if (health.degradation.resources.memoryLeak < 0) {
+        errors.push('Memory leak cannot be negative');
+    }
+
+    if (health.degradation.service.availabilityImpact < 0 || 
+        health.degradation.service.availabilityImpact > 1) {
+        errors.push('Availability impact must be between 0 and 1');
+    }
+
+    // Validate timestamp
+    if (health.timestamp > Date.now()) {
+        warnings.push('Timestamp is in the future');
+    }
+
+    return {
+        isValid: errors.length === 0,
+        errors,
+        warnings
+    };
+}

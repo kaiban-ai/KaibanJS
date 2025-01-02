@@ -11,17 +11,22 @@ import type {
   IBaseEvent,
   IEventEmitter,
   IEventHandler,
-  IEventRegistry,
+  IEventRegistry
+} from '../../types/common/baseTypes';
+import type {
   IValidationResult,
   IEventValidationResult
-} from '../../types/common/commonEventTypes';
-import { createBaseMetadata } from '../../types/common/commonMetadataTypes';
-import { createError } from '../../types/common/commonErrorTypes';
+} from '../../types/common/validationTypes';
+import { 
+  createBaseMetadata, 
+  createError,
+  ERROR_KINDS
+} from '../../types/common';
 
 // ─── Event Registry Implementation ──────────────────────────────────────────────
 
 class EventRegistry implements IEventRegistry {
-  private handlers: Map<string, Set<IEventHandler<any>>> = new Map();
+  private handlers: Map<string, Set<IEventHandler<IBaseEvent>>> = new Map();
 
   registerHandler<T extends IBaseEvent>(
     eventType: string,
@@ -47,7 +52,7 @@ class EventRegistry implements IEventRegistry {
   }
 
   getHandlers<T extends IBaseEvent>(eventType: string): IEventHandler<T>[] {
-    return Array.from(this.handlers.get(eventType) || []);
+    return Array.from(this.handlers.get(eventType) || []) as IEventHandler<T>[];
   }
 }
 
@@ -83,7 +88,7 @@ export class BaseEventEmitter implements IEventEmitter {
       if (!validationResult.isValid) {
         throw createError({
           message: `Event validation failed: ${validationResult.errors.join(', ')}`,
-          type: 'ValidationError',
+          type: ERROR_KINDS.ValidationError,
           context: {
             eventType: event.type,
             eventId: event.id,
@@ -152,17 +157,17 @@ export class BaseEventEmitter implements IEventEmitter {
   ): Promise<IEventValidationResult> {
     const startTime = Date.now();
     const validationResults = await Promise.all(
-      handlers.map(handler => handler.validate(event))
+      handlers.map((handler: IEventHandler<T>) => handler.validate(event))
     );
 
-    const isValid = validationResults.every(result => result.isValid);
+    const isValid = validationResults.every((result: IValidationResult) => result.isValid);
     const errors = validationResults
-      .filter(result => !result.isValid)
-      .map(result => result.errors)
+      .filter((result: IValidationResult) => !result.isValid)
+      .map((result: IValidationResult) => result.errors)
       .flat();
 
     const warnings = validationResults
-      .map(result => result.warnings || [])
+      .map((result: IValidationResult) => result.warnings || [])
       .flat();
 
     return {

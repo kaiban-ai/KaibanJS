@@ -2,46 +2,58 @@
  * @file agentStateManager.ts
  * @path src/managers/domain/agent/agentStateManager.ts
  * @description Agent state management and snapshot functionality
- *
- * @module @managers/domain/agent
  */
 
 import { CoreManager } from '../../core/coreManager';
-import { createValidationResult } from '../../../utils/validation/validationUtils';
-import { createError } from '../../../types/common/commonErrorTypes';
-import { AGENT_STATUS_enum } from '../../../types/common/commonEnums';
-import type { IAgentType, IAgentMetrics } from '../../../types/agent/agentBaseTypes';
-import type { IAgentExecutionState } from '../../../types/agent/agentStateTypes';
-import type { IValidationResult } from '../../../types/common/commonValidationTypes';
+import { MetricsManager } from '../../core/metricsManager';
+import { CircularBuffer } from '../../core/metrics/CircularBuffer';
+import { createValidationError, VALIDATION_SCOPE_enum } from '../../../types/common/validationTypes';
+import { 
+    VALIDATION_ERROR_enum, 
+    AGENT_STATUS_enum, 
+    MANAGER_CATEGORY_enum 
+} from '../../../types/common/enumTypes';
+import { createError, ERROR_KINDS } from '../../../types/common/errorTypes';
+import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
 
-interface IAgentStateSnapshot {
-    timestamp: number;
+// Type imports
+import type { IAgentType } from '../../../types/agent/agentBaseTypes';
+import type { IMetricEvent } from '../../../types/metrics/base/metricsManagerTypes';
+import type { 
+    IAgentExecutionContext, 
+    IAgentTaskState, 
+    IStateHistoryEntry, 
+    IAgentStateSnapshot, 
+    IAgentStateValidationResult, 
+    STATE_CATEGORY 
+} from '../../../types/agent/agentStateTypes';
+import type { IAgentStateAccessor } from '../../../types/agent/agentMetricsAccessor';
+import type { IAgentStateMetrics } from '../../../types/agent/agentMetricTypes';
+import type { IBaseManager } from '../../../types/agent/agentManagerTypes';
+
+interface IStateContainer {
     agents: Map<string, IAgentType>;
     activeAgents: Set<string>;
-    executionState: Map<string, IAgentExecutionState>;
-    metrics: Map<string, IAgentMetrics>;
-    metadata: Record<string, unknown>;
+    taskState: Map<string, IAgentTaskState>;
+    metrics: CircularBuffer<IMetricEvent>;
 }
 
-interface IAgentStateValidation {
-    isValid: boolean;
-    errors: string[];
-    warnings: string[];
-    metadata: {
-        timestamp: number;
-        validatedFields: string[];
-    };
-}
-
-export class AgentStateManager extends CoreManager {
+export class AgentStateManager extends CoreManager implements IAgentStateAccessor {
     private static instance: AgentStateManager;
-    private state: IAgentStateSnapshot;
-    private snapshots: Map<number, IAgentStateSnapshot> = new Map();
+    private readonly stateContainer: IStateContainer;
+    private readonly snapshots: Map<number, IAgentStateSnapshot>;
     private readonly MAX_SNAPSHOTS = 10;
+    private isInitialized = false;
+
+    protected readonly metricsManager: MetricsManager;
+
+    public readonly category = MANAGER_CATEGORY_enum.AGENT;
 
     protected constructor() {
         super();
-        this.state = this.createEmptyState();
+        this.stateContainer = this.createEmptyState();
+        this.snapshots = new Map();
+        this.metricsManager = this.getDomainManager<MetricsManager>('MetricsManager');
         this.registerDomainManager('AgentStateManager', this);
     }
 
@@ -52,133 +64,194 @@ export class AgentStateManager extends CoreManager {
         return AgentStateManager.instance;
     }
 
-    // ─── State Management Methods ───────────────────────────────────────────────
+    public async initialize(): Promise<void> {
+        if (this.isInitialized) return;
 
-    private createEmptyState(): IAgentStateSnapshot {
+        try {
+            await this.handleStatusTransition({
+                entity: 'agent',
+                entityId: 'AgentStateManager',
+                currentStatus: AGENT_STATUS_enum.INITIAL,
+                targetStatus: AGENT_STATUS_enum.IDLE,
+                context: { 
+                    operation: 'initialize',
+                    component: this.constructor.name
+                }
+            });
+
+            await this.trackStateMetric(MetricType.SYSTEM_HEALTH, 1);
+            this.isInitialized = true;
+            this.logInfo('Agent state manager initialized');
+        } catch (error) {
+            await this.handleError(error, 'Failed to initialize agent state manager', ERROR_KINDS.InitializationError);
+            throw error;
+        }
+    }
+
+    private createEmptyState(): IStateContainer {
         return {
-            timestamp: Date.now(),
-            agents: new Map(),
-            activeAgents: new Set(),
-            executionState: new Map(),
-            metrics: new Map(),
-            metadata: {}
+            agents: new Map<string, IAgentType>(),
+            activeAgents: new Set<string>(),
+            taskState: new Map<string, IAgentTaskState>(),
+            metrics: new CircularBuffer<IMetricEvent>(1000)
         };
     }
 
+    private async trackStateMetric(
+        type: MetricType, 
+        value: number, 
+        context?: Record<string, unknown>
+    ): Promise<void> {
+        await this.metricsManager.trackMetric({
+            domain: MetricDomain.AGENT,
+            type,
+            value,
+            timestamp: Date.now(),
+            metadata: {
+                component: this.constructor.name,
+                operation: 'state_management',
+                ...context
+            }
+        });
+    }
+
     public getAgent(agentId: string): IAgentType | undefined {
-        return this.state.agents.get(agentId);
+        return this.stateContainer.agents.get(agentId);
     }
 
     public getAllAgents(): IAgentType[] {
-        return Array.from(this.state.agents.values());
+        return Array.from(this.stateContainer.agents.values());
     }
 
     public getActiveAgents(): IAgentType[] {
-        return Array.from(this.state.activeAgents)
-            .map(id => this.state.agents.get(id))
+        return Array.from(this.stateContainer.activeAgents)
+            .map(id => this.stateContainer.agents.get(id))
             .filter((agent): agent is IAgentType => agent !== undefined);
     }
 
-    public async addAgent(agent: IAgentType): Promise<void> {
-        const validationResult = await this.validateAgent(agent);
-        if (!validationResult.isValid) {
-            throw createError({
-                message: `Invalid agent: ${validationResult.errors.join(', ')}`,
-                type: 'ValidationError',
-                context: {
-                    agent,
-                    errors: validationResult.errors
-                }
-            });
+    public async addAgent(agent: IAgentType): Promise<IAgentType> {
+        if (!this.isInitialized) {
+            await this.initialize();
         }
 
-        this.state.agents.set(agent.id, agent);
-        await this.createSnapshot();
+        try {
+            const validationResult = await this.validateAgent(agent);
+            if (!validationResult.isValid) {
+                throw createError({
+                    message: `Invalid agent: ${validationResult.errors.join(', ')}`,
+                    type: ERROR_KINDS.ValidationError,
+                    context: { agent }
+                });
+            }
+
+            await this.trackStateMetric(MetricType.USAGE, 1, { 
+                agentId: agent.id,
+                operation: 'addAgent'
+            });
+
+            this.stateContainer.agents.set(agent.id, agent);
+            await this.createSnapshot();
+            
+            return agent;
+        } catch (error) {
+            await this.handleError(error, 'Failed to add agent', ERROR_KINDS.StateError);
+            throw error;
+        }
     }
 
     public async updateAgent(agentId: string, update: Partial<IAgentType>): Promise<void> {
-        const agent = this.state.agents.get(agentId);
+        const agent = this.stateContainer.agents.get(agentId);
         if (!agent) {
             throw createError({
                 message: `Agent not found: ${agentId}`,
-                type: 'StateError',
+                type: ERROR_KINDS.StateError,
                 context: { agentId }
             });
         }
 
         const updatedAgent = { ...agent, ...update };
         const validationResult = await this.validateAgent(updatedAgent);
+        
         if (!validationResult.isValid) {
             throw createError({
                 message: `Invalid agent update: ${validationResult.errors.join(', ')}`,
-                type: 'ValidationError',
-                context: {
-                    agent: updatedAgent,
-                    errors: validationResult.errors
+                type: ERROR_KINDS.ValidationError,
+                context: { agent: updatedAgent }
+            });
+        }
+
+        this.stateContainer.agents.set(agentId, updatedAgent);
+        await this.createSnapshot();
+    }
+
+    public async updateExecutionContext(
+        agentId: string, 
+        context: IAgentExecutionContext
+    ): Promise<void> {
+        if (!this.isInitialized) {
+            await this.initialize();
+        }
+
+        try {
+            const validationResult = await this.validateExecutionContext(context);
+            if (!validationResult.isValid) {
+                throw createError({
+                    message: `Invalid execution context: ${validationResult.errors.join(', ')}`,
+                    type: ERROR_KINDS.ValidationError,
+                    context: { agentId, executionContext: context }
+                });
+            }
+
+            const agent = this.stateContainer.agents.get(agentId);
+            if (!agent) {
+                throw createError({
+                    message: `Agent not found: ${agentId}`,
+                    type: ERROR_KINDS.StateError,
+                    context: { agentId }
+                });
+            }
+
+            await this.trackStateMetric(MetricType.STATE_TRANSITION, 1, {
+                agentId,
+                fromStatus: agent.status,
+                toStatus: context.state.status
+            });
+
+            const updatedAgent = {
+                ...agent,
+                status: context.state.status,
+                executionState: {
+                    ...agent.executionState,
+                    status: context.state.status,
+                    lastUpdate: new Date()
                 }
-            });
-        }
+            };
 
-        this.state.agents.set(agentId, updatedAgent);
-        await this.createSnapshot();
+            await this.updateAgent(agentId, updatedAgent);
+            this.stateContainer.taskState.set(agentId, context.taskState);
+            await this.createSnapshot();
+
+        } catch (error) {
+            await this.handleError(error, 'Failed to update execution context', ERROR_KINDS.StateError);
+            throw error;
+        }
     }
-
-    public async removeAgent(agentId: string): Promise<void> {
-        if (!this.state.agents.has(agentId)) {
-            throw createError({
-                message: `Agent not found: ${agentId}`,
-                type: 'StateError',
-                context: { agentId }
-            });
-        }
-
-        this.state.agents.delete(agentId);
-        this.state.activeAgents.delete(agentId);
-        this.state.executionState.delete(agentId);
-        this.state.metrics.delete(agentId);
-        await this.createSnapshot();
-    }
-
-    public async setAgentActive(agentId: string, active: boolean): Promise<void> {
-        if (!this.state.agents.has(agentId)) {
-            throw createError({
-                message: `Agent not found: ${agentId}`,
-                type: 'StateError',
-                context: { agentId }
-            });
-        }
-
-        if (active) {
-            this.state.activeAgents.add(agentId);
-        } else {
-            this.state.activeAgents.delete(agentId);
-        }
-        await this.createSnapshot();
-    }
-
-    // ─── Snapshot Management ─────────────────────────────────────────────────────
 
     public async createSnapshot(): Promise<void> {
         const snapshot: IAgentStateSnapshot = {
             timestamp: Date.now(),
-            agents: new Map(this.state.agents),
-            activeAgents: new Set(this.state.activeAgents),
-            executionState: new Map(this.state.executionState),
-            metrics: new Map(this.state.metrics),
-            metadata: { ...this.state.metadata }
+            agents: new Map(this.stateContainer.agents),
+            activeAgents: new Set(this.stateContainer.activeAgents),
+            taskState: new Map(this.stateContainer.taskState),
+            metadata: {}
         };
 
         this.snapshots.set(snapshot.timestamp, snapshot);
-
-        // Remove oldest snapshots if exceeding MAX_SNAPSHOTS
+        
         const timestamps = Array.from(this.snapshots.keys()).sort();
         while (timestamps.length > this.MAX_SNAPSHOTS) {
             this.snapshots.delete(timestamps.shift()!);
         }
-    }
-
-    public getSnapshot(timestamp: number): IAgentStateSnapshot | undefined {
-        return this.snapshots.get(timestamp);
     }
 
     public getLatestSnapshot(): IAgentStateSnapshot {
@@ -187,41 +260,48 @@ export class AgentStateManager extends CoreManager {
         return this.snapshots.get(latestTimestamp) || this.createEmptyState();
     }
 
-    public async restoreSnapshot(timestamp: number): Promise<void> {
-        const snapshot = this.snapshots.get(timestamp);
-        if (!snapshot) {
-            throw createError({
-                message: `Snapshot not found: ${timestamp}`,
-                type: 'StateError',
-                context: { timestamp }
-            });
-        }
-
-        const validationResult = await this.validateSnapshot(snapshot);
-        if (!validationResult.isValid) {
-            throw createError({
-                message: `Invalid snapshot: ${validationResult.errors.join(', ')}`,
-                type: 'ValidationError',
-                context: {
-                    timestamp,
-                    errors: validationResult.errors
-                }
-            });
-        }
-
-        this.state = {
-            timestamp: snapshot.timestamp,
-            agents: new Map(snapshot.agents),
-            activeAgents: new Set(snapshot.activeAgents),
-            executionState: new Map(snapshot.executionState),
-            metrics: new Map(snapshot.metrics),
-            metadata: { ...snapshot.metadata }
+    public async getStateMetrics(agentId: string): Promise<IAgentStateMetrics> {
+        const agent = this.getAgent(agentId);
+        const taskState = this.stateContainer.taskState.get(agentId);
+        
+        const completedCount = taskState?.completedTasks.length || 0;
+        const failedCount = taskState?.failedTasks.length || 0;
+        const totalTasks = completedCount + failedCount;
+        
+        return {
+            currentState: agent?.status || AGENT_STATUS_enum.IDLE,
+            stateTime: 0,
+            transitionCount: 0,
+            failedTransitions: 0,
+            blockedTaskCount: taskState?.blockedTasks.length || 0,
+            historyEntryCount: taskState?.history.length || 0,
+            lastHistoryUpdate: Date.now(),
+            taskStats: {
+                completedCount,
+                failedCount,
+                averageDuration: 0,
+                successRate: totalTasks > 0 ? completedCount / totalTasks : 0,
+                averageIterations: 0
+            },
+            timestamp: Date.now(),
+            component: this.constructor.name,
+            category: this.category,
+            version: '1.0.0'
         };
     }
 
-    // ─── Validation Methods ─────────────────────────────────────────────────────
+    private isValidHistoryEntry(entry: IStateHistoryEntry): boolean {
+        return (
+            entry.timestamp instanceof Date &&
+            typeof entry.action === 'string' &&
+            typeof entry.category === 'string' &&
+            Object.values(STATE_CATEGORY).includes(entry.category) &&
+            typeof entry.details === 'object' &&
+            entry.details !== null
+        );
+    }
 
-    private async validateAgent(agent: IAgentType): Promise<IValidationResult> {
+    private async validateAgent(agent: IAgentType): Promise<IAgentStateValidationResult> {
         const errors: string[] = [];
 
         if (!agent.id) errors.push('Agent ID is required');
@@ -231,106 +311,88 @@ export class AgentStateManager extends CoreManager {
             errors.push('Invalid agent status');
         }
 
-        if (agent.executionState) {
-            if (!Array.isArray(agent.executionState.assignedTasks)) {
+        const taskState = this.stateContainer.taskState.get(agent.id);
+        if (taskState) {
+            if (!Array.isArray(taskState.assignedTasks)) {
                 errors.push('assignedTasks must be an array');
             }
-            if (!Array.isArray(agent.executionState.completedTasks)) {
+            if (!Array.isArray(taskState.completedTasks)) {
                 errors.push('completedTasks must be an array');
             }
-            if (!Array.isArray(agent.executionState.failedTasks)) {
+            if (!Array.isArray(taskState.failedTasks)) {
                 errors.push('failedTasks must be an array');
             }
-            if (!Array.isArray(agent.executionState.blockedTasks)) {
+            if (!Array.isArray(taskState.blockedTasks)) {
                 errors.push('blockedTasks must be an array');
             }
-            if (!Array.isArray(agent.executionState.history)) {
+            if (!Array.isArray(taskState.history)) {
                 errors.push('history must be an array');
             }
-
-            // Validate history entries
-            if (agent.executionState.history) {
-                agent.executionState.history.forEach((entry, index) => {
-                    if (!(entry.timestamp instanceof Date)) {
-                        errors.push(`history[${index}].timestamp must be a Date`);
-                    }
-                    if (typeof entry.action !== 'string') {
-                        errors.push(`history[${index}].action must be a string`);
-                    }
-                    if (typeof entry.details !== 'object') {
-                        errors.push(`history[${index}].details must be an object`);
-                    }
-                });
-            }
         }
-
-        return createValidationResult(errors.length === 0, errors);
-    }
-
-    private async validateSnapshot(snapshot: IAgentStateSnapshot): Promise<IAgentStateValidation> {
-        const startTime = Date.now();
-        const errors: string[] = [];
-        const warnings: string[] = [];
-        const validatedFields: string[] = [];
-
-        // Validate timestamp
-        if (!snapshot.timestamp || snapshot.timestamp > Date.now()) {
-            errors.push('Invalid snapshot timestamp');
-        }
-        validatedFields.push('timestamp');
-
-        // Validate agents
-        for (const [id, agent] of snapshot.agents) {
-            const agentValidation = await this.validateAgent(agent);
-            if (!agentValidation.isValid) {
-                errors.push(`Invalid agent ${id}: ${agentValidation.errors.join(', ')}`);
-            }
-        }
-        validatedFields.push('agents');
-
-        // Validate active agents
-        for (const agentId of snapshot.activeAgents) {
-            if (!snapshot.agents.has(agentId)) {
-                errors.push(`Active agent ${agentId} not found in agents map`);
-            }
-        }
-        validatedFields.push('activeAgents');
-
-        // Validate execution state
-        for (const [agentId, state] of snapshot.executionState) {
-            if (!snapshot.agents.has(agentId)) {
-                errors.push(`Execution state found for non-existent agent ${agentId}`);
-            }
-            if (!Array.isArray(state.blockedTasks)) {
-                errors.push(`Invalid blockedTasks for agent ${agentId}`);
-            }
-            if (!Array.isArray(state.history)) {
-                errors.push(`Invalid history for agent ${agentId}`);
-            }
-        }
-        validatedFields.push('executionState');
-
-        // Validate metrics
-        for (const [agentId, metrics] of snapshot.metrics) {
-            if (!snapshot.agents.has(agentId)) {
-                errors.push(`Metrics found for non-existent agent ${agentId}`);
-            }
-        }
-        validatedFields.push('metrics');
 
         return {
             isValid: errors.length === 0,
             errors,
-            warnings,
+            warnings: [],
             metadata: {
-                timestamp: startTime,
-                validatedFields
+                timestamp: Date.now(),
+                validatedFields: ['id', 'name', 'role', 'status', 'taskState']
+            },
+            context: {
+                taskId: '',
+                taskStatus: 'PENDING',
+                validationTime: 0
+            }
+        };
+    }
+
+    private async validateExecutionContext(context: IAgentExecutionContext): Promise<IAgentStateValidationResult> {
+        const errors: string[] = [];
+
+        if (!context.operation) {
+            errors.push(createValidationError({
+                code: VALIDATION_ERROR_enum.FIELD_MISSING,
+                message: 'Operation is required',
+                scope: VALIDATION_SCOPE_enum.EXECUTION
+            }).message);
+        }
+
+        if (!context.state?.id || !context.state?.status) {
+            errors.push(createValidationError({
+                code: VALIDATION_ERROR_enum.FIELD_MISSING,
+                message: 'State ID and status are required',
+                scope: VALIDATION_SCOPE_enum.EXECUTION
+            }).message);
+        }
+
+        if (!context.taskState) {
+            errors.push(createValidationError({
+                code: VALIDATION_ERROR_enum.FIELD_MISSING,
+                message: 'Task state is required',
+                scope: VALIDATION_SCOPE_enum.EXECUTION
+            }).message);
+        }
+
+        return {
+            isValid: errors.length === 0,
+            errors,
+            warnings: [],
+            metadata: {
+                timestamp: Date.now(),
+                validatedFields: ['operation', 'state', 'taskState']
+            },
+            context: {
+                taskId: context.state?.id || '',
+                taskStatus: 'PENDING',
+                validationTime: 0
             }
         };
     }
 
     public cleanup(): void {
-        this.state = this.createEmptyState();
+        this.stateContainer.agents.clear();
+        this.stateContainer.activeAgents.clear();
+        this.stateContainer.taskState.clear();
         this.snapshots.clear();
     }
 }

@@ -17,12 +17,13 @@ import type { IWorkflowStats } from '../types/workflow/workflowStatsTypes';
 import type { ILLMUsageMetrics } from '../types/llm/llmMetricTypes';
 import type { IAgentType } from '../types/agent/agentBaseTypes';
 import type { ITaskType } from '../types/task/taskBaseTypes';
+import type { IWorkflowLogMetadata } from '../types/team/teamLogsTypes';
 
 import { 
     TASK_STATUS_enum, 
     WORKFLOW_STATUS_enum,
     AGENT_STATUS_enum,
-} from '../types/common/commonEnums';
+} from '../types/common/enumTypes';
 
 export class Team {
     private readonly teamManager: TeamManager;
@@ -91,7 +92,7 @@ export class Team {
         return {
             status: WORKFLOW_STATUS_enum.RUNNING,
             result: result.data as IWorkflowResult,
-            stats: this.getWorkflowStats()
+            stats: await this.getWorkflowStats()
         };
     }
 
@@ -103,31 +104,39 @@ export class Team {
         await this.teamManager.handleTaskStatusChange(taskId, TASK_STATUS_enum.VALIDATED);
     }
 
-    public getWorkflowStatus(): keyof typeof WORKFLOW_STATUS_enum {
+    public getWorkflowStatus(): WORKFLOW_STATUS_enum {
         return WORKFLOW_STATUS_enum.RUNNING; // This should come from TeamManager state
     }
 
-    public getWorkflowResult(): IWorkflowResult {
+    public async getWorkflowResult(): Promise<IWorkflowResult> {
         return {
             status: WORKFLOW_STATUS_enum.FINISHED,
             result: '',
-            metadata: this.getWorkflowStats(),
+            metadata: await this.getWorkflowStats(),
             completionTime: Date.now()
         };
     }
 
-    public getWorkflowStats(): IWorkflowStats {
-        const context = this.metricsManager.createIterationContext();
+    public async getWorkflowStats(): Promise<IWorkflowStats> {
+        const startTime = Date.now();
+        const performanceMetrics = await this.metricsManager.getInitialPerformanceMetrics();
+        const resourceMetrics = await this.metricsManager.getInitialResourceMetrics();
+        const errorMetrics = this.metricsManager.getErrorMetrics();
+
         const llmUsageMetrics: ILLMUsageMetrics = {
-            totalRequests: context.usage.totalRequests,
+            totalRequests: performanceMetrics.throughput.operationsPerSecond ?? 0,
             activeInstances: 0,
-            activeUsers: context.usage.activeUsers,
-            requestsPerSecond: context.usage.requestsPerSecond,
-            averageResponseLength: 0,
-            averageResponseSize: context.usage.averageResponseSize,
-            peakMemoryUsage: context.usage.peakMemoryUsage,
-            uptime: context.usage.uptime,
-            rateLimit: context.usage.rateLimit,
+            activeUsers: 1,
+            requestsPerSecond: performanceMetrics.throughput.operationsPerSecond ?? 0,
+            averageResponseSize: resourceMetrics.networkUsage.download,
+            peakMemoryUsage: resourceMetrics.memoryUsage,
+            uptime: Date.now() - startTime,
+            rateLimit: {
+                current: 0,
+                limit: 0,
+                remaining: 0,
+                resetTime: 0
+            },
             tokenDistribution: {
                 prompt: 0,
                 completion: 0,
@@ -138,24 +147,79 @@ export class Team {
                 gpt35: 0,
                 other: 0
             },
-            timestamp: context.usage.timestamp
+            timestamp: Date.now(),
+            component: '',
+            category: '',
+            version: ''
         };
 
         const stats: IWorkflowStats = {
             llmUsageMetrics,
-            iterationCount: context.iterations,
-            duration: Date.now() - context.startTime
+            iterationCount: Math.floor(performanceMetrics.throughput.operationsPerSecond ?? 0),
+            duration: Date.now() - startTime
         };
 
         if (this.getWorkflowStatus() === WORKFLOW_STATUS_enum.FINISHED) {
-            logPrettyWorkflowResult({
-                metadata: {
-                    result: String(this.getWorkflowResult()),
+            const metadata: IWorkflowLogMetadata = {
+                workflow: {
                     duration: stats.duration,
-                    llmUsageMetrics: stats.llmUsageMetrics,
-                    iterationCount: stats.iterationCount
-                }
-            });
+                    id: this.name,
+                    performance: performanceMetrics,
+                    debugInfo: {
+                        lastCheckpoint: '',
+                        warnings: [],
+                        errors: []
+                    },
+                    priority: 0,
+                    retryCount: errorMetrics.totalErrors,
+                    taskCount: this.tasks.length,
+                    agentCount: this.agents.length,
+                    costDetails: {
+                        inputCost: 0,
+                        outputCost: 0,
+                        totalCost: 0,
+                        currency: 'USD',
+                        breakdown: {
+                            promptTokens: { count: 0, cost: 0 },
+                            completionTokens: { count: 0, cost: 0 }
+                        }
+                    },
+                    llmUsageMetrics,
+                    teamName: this.name,
+                    messageCount: 0,
+                    iterationCount: stats.iterationCount,
+                    status: this.getWorkflowStatus()
+                },
+                performance: performanceMetrics,
+                context: {
+                    source: 'Team',
+                    target: 'Workflow',
+                    correlationId: this.name,
+                    causationId: '',
+                    taskId: '',
+                    taskName: '',
+                    agentId: '',
+                    agentName: '',
+                    workflowId: this.name,
+                    messageId: '',
+                    phase: 'stats',
+                    duration: stats.duration
+                },
+                validation: {
+                    isValid: true,
+                    errors: [],
+                    warnings: [],
+                    metadata: {
+                        timestamp: Date.now(),
+                        validatorName: 'WorkflowStatsValidator'
+                    }
+                },
+                timestamp: Date.now(),
+                component: 'Team',
+                operation: 'getWorkflowStats'
+            };
+
+            logPrettyWorkflowResult(metadata);
         }
 
         return stats;

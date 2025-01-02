@@ -6,7 +6,7 @@
  * @module types/task
  */
 
-import { FEEDBACK_STATUS_enum } from '../common/commonEnums';
+import { FEEDBACK_STATUS_enum } from '../common/enumTypes';
 
 /**
  * Task feedback interface

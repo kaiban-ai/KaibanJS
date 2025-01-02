@@ -1,62 +1,145 @@
 /**
  * @file agentBaseTypes.ts
- * @path KaibanJS/src/types/agent/agentBaseTypes.ts
- * @description Core agent type definitions providing canonical types for the entire system
+ * @path src/types/agent/agentBaseTypes.ts
+ * @description Base type definitions for agents
  *
- * @module types/agent
+ * @module @types/agent
  */
 
-import { Tool } from "langchain/tools";
+import { Tool } from '@langchain/core/tools';
+import { BaseMessage } from '@langchain/core/messages';
+import { IMessageHistory } from '../llm/message/messagingBaseTypes';
 import { AGENT_STATUS_enum } from '../common/enumTypes';
-import { IErrorType } from '../common/errorTypes';
-import { IValidationSchema } from '../common/validationTypes';
-import { IRuntimeLLMConfig } from '../llm/llmCommonTypes';
-import { ILLMInstance, IAgenticLoopResult } from '../llm/llmInstanceTypes';
-import { ITaskType, ITaskFeedback } from '../task';
 import { IREACTChampionAgentPrompts } from './promptsTypes';
-import { Runnable } from "@langchain/core/runnables";
-import { ChatMessageHistory } from "langchain/stores/message/in_memory";
-import { IMessageHistory } from '../llm/message/messagingHistoryTypes';
-import { IAgentExecutionState } from './agentStateTypes';
-import { IAgentMetrics } from './agentMetricTypes';
+import { IRuntimeLLMConfig } from '../llm/llmCommonTypes';
+import { ILLMInstance } from '../llm/llmInstanceTypes';
+import { IAgentMetrics } from '../metrics/base/metricsManagerTypes';
 
-// ─── Common Types ───────────────────────────────────────────────────────────────
+// Re-export these types for backwards compatibility
+export { ILLMInstance } from '../llm/llmInstanceTypes';
+export { IAgentMetrics } from '../metrics/base/metricsManagerTypes';
 
-export type IStatusType = keyof typeof AGENT_STATUS_enum;
+// Status type definition
+export type IStatusType = AGENT_STATUS_enum;
 
-/**
- * Base metadata interface for agents
- */
-export interface IAgentMetadata {
-    id: string;
-    name: string;
-    description?: string;
-    capabilities: string[];
-    skills: string[];
-    created: Date;
-    updated: Date;
-    version: string;
-    tags?: string[];
-    lastActive?: Date;
-}
-
-/**
- * Agent capabilities interface
- */
 export interface IAgentCapabilities {
-    canThink: boolean;
-    canUseTools: boolean;
-    canLearn: boolean;
-    supportedToolTypes: string[];
-    supportedTools?: string[];
-    maxConcurrentTasks?: number;
-    memoryCapacity?: number;
+    readonly canLearn: boolean;
+    readonly canTeach: boolean;
+    readonly canDelegate: boolean;
+    readonly canCollaborate: boolean;
+    readonly canThink?: boolean;
+    readonly canUseTools?: boolean;
+    readonly supportedProviders: string[];
+    readonly supportedModels: string[];
+    readonly supportedToolTypes?: string[];
+    readonly maxContextSize: number;
+    readonly maxConcurrentTasks?: number;
+    readonly memoryCapacity?: number;
+    readonly features: {
+        readonly streaming: boolean;
+        readonly batching: boolean;
+        readonly caching: boolean;
+        readonly recovery: boolean;
+        readonly metrics: boolean;
+    };
 }
 
-/**
- * Base agent interface - Core properties and methods required by all agents
- * This interface is implemented by BaseAgent class which extends CoreManager
- */
+export interface IAgentMetadata {
+    readonly id: string;
+    readonly name: string;
+    readonly version: string;
+    readonly type: string;
+    readonly description: string;
+    readonly capabilities: IAgentCapabilities;
+    readonly created: Date;
+    readonly modified: Date;
+    readonly status: AGENT_STATUS_enum;
+    readonly metrics?: IAgentMetrics & {
+        iterations: number;
+        executionTime: number;
+        llmMetrics: unknown;
+        thinkingMetrics?: {
+            reasoningTime: number;
+            planningTime: number;
+            learningTime: number;
+            decisionConfidence: number;
+            learningEfficiency: number;
+            startTime: number; // Using number for timestamp
+        };
+    };
+}
+
+export interface IAgentState {
+    readonly id: string;
+    readonly status: AGENT_STATUS_enum;
+    readonly currentTask?: string;
+    readonly lastActivity: Date;
+    readonly metrics?: IAgentMetrics & {
+        iterations: number;
+        executionTime: number;
+        llmMetrics: unknown;
+        thinkingMetrics?: {
+            reasoningTime: number;
+            planningTime: number;
+            learningTime: number;
+            decisionConfidence: number;
+            learningEfficiency: number;
+            startTime: number; // Using number for timestamp
+        };
+    };
+    readonly error?: IAgentError;
+}
+
+export interface IAgentError extends Error {
+    readonly name: string;
+    readonly message: string;
+    readonly stack?: string;
+    readonly errorCount: number;
+    readonly errorHistory: Array<{
+        readonly timestamp: Date;
+        readonly error: Error;
+        readonly context?: Record<string, unknown>;
+    }>;
+    readonly type?: string;
+    readonly code?: string;
+    readonly context?: Record<string, unknown>;
+}
+
+export interface IAgentExecutionState {
+    readonly currentStep: number;
+    readonly totalSteps: number;
+    readonly startTime: Date;
+    readonly lastUpdate: Date;
+    readonly status: AGENT_STATUS_enum;
+    readonly error?: IAgentError;
+    readonly assignment?: {
+        readonly taskId: string;
+        readonly priority: number;
+        readonly deadline?: Date;
+        readonly progress: number;
+    };
+}
+
+export interface IAgentConfig {
+    readonly id: string;
+    readonly name: string;
+    readonly role: string;
+    readonly goal: string;
+    readonly version?: string;
+    readonly background?: string;
+    readonly capabilities: IAgentCapabilities;
+    readonly tools?: Tool[];
+    readonly llmConfig: IRuntimeLLMConfig;
+    readonly messageHistory: IMessageHistory;
+    readonly promptTemplates: IREACTChampionAgentPrompts;
+    readonly providerConfig?: Record<string, unknown>;
+    readonly stateConfig?: Record<string, unknown>;
+    readonly metricsConfig?: Record<string, unknown>;
+    readonly eventConfig?: Record<string, unknown>;
+    readonly toolConfig?: Record<string, unknown>;
+    readonly validationSchema?: Record<string, unknown>;
+}
+
 export interface IBaseAgent {
     readonly id: string;
     readonly name: string;
@@ -65,76 +148,69 @@ export interface IBaseAgent {
     readonly background: string;
     readonly version: string;
     readonly capabilities: IAgentCapabilities;
-    readonly validationSchema: IValidationSchema<IBaseAgent>;
-
-    tools: Tool[];
-    maxIterations: number;
-    status: IStatusType;
-    env: Record<string, unknown> | null;
-    metrics?: IAgentMetrics;
-
-    llmInstance: ILLMInstance | null;
-    llmConfig: IRuntimeLLMConfig;
-    llmSystemMessage: string | null;
-    forceFinalAnswer: boolean;
-    promptTemplates: IREACTChampionAgentPrompts;
-    messageHistory: IMessageHistory;
-
-    metadata: IAgentMetadata;
-    executionState: IAgentExecutionState;
-
-    initialize(env: Record<string, unknown>): void;
-    setStatus(status: IStatusType): void;
-    setEnv(env: Record<string, unknown>): void;
-    workOnTask(task: ITaskType): Promise<IAgenticLoopResult>;
-    workOnFeedback(task: ITaskType, feedbackList: ITaskFeedback[], context: string): Promise<void>;
-    normalizeLlmConfig(llmConfig: IRuntimeLLMConfig): IRuntimeLLMConfig;
-    createLLMInstance(): void;
-    cleanup?(): Promise<void> | void;
+    readonly tools: Tool[];
+    readonly maxIterations: number;
+    readonly status: AGENT_STATUS_enum;
+    readonly env: Record<string, unknown> | null;
+    readonly metrics?: IAgentMetrics & {
+        iterations: number;
+        executionTime: number;
+        llmMetrics: unknown;
+        thinkingMetrics?: {
+            reasoningTime: number;
+            planningTime: number;
+            learningTime: number;
+            decisionConfidence: number;
+            learningEfficiency: number;
+            startTime: number; // Using number for timestamp
+        };
+    };
+    readonly llmInstance: ILLMInstance | null;
+    readonly llmSystemMessage: string | null;
+    readonly forceFinalAnswer: boolean;
+    readonly promptTemplates: IREACTChampionAgentPrompts;
+    readonly messageHistory: IMessageHistory;
+    readonly metadata: IAgentMetadata;
+    readonly executionState: IAgentExecutionState;
 }
 
-/**
- * Executable agent interface - For agents that can be executed directly
- * This interface defines the contract for executable capabilities,
- * but the actual implementation is private within the agent class
- */
-export interface IExecutableAgent {
-    runnable: Runnable;
-    getMessageHistory: () => ChatMessageHistory;
-    inputMessagesKey: string;
-    historyMessagesKey: string;
+export interface IAgentType extends IBaseAgent {
+    readonly type: string;
+    readonly description: string;
+    readonly supportedModels: string[];
+    readonly supportedProviders: string[];
+    readonly maxContextSize: number;
+    readonly features: {
+        readonly streaming: boolean;
+        readonly batching: boolean;
+        readonly caching: boolean;
+    };
 }
 
-/**
- * REACT Champion agent interface - Extends base agent with REACT-specific capabilities
- * This interface is implemented by ReactChampionAgent class which extends BaseAgent
- * 
- * Note: The executableAgent is implemented as a private field in ReactChampionAgent
- * with a getter that returns an empty object for encapsulation
- */
-export interface IReactChampionAgent extends IBaseAgent {
-    readonly executableAgent: Record<string, never>;  // Empty object type to match implementation
-    messageHistory: IMessageHistory;
-    handleIterationStart(params: { task: ITaskType; iterations: number; maxAgentIterations: number }): void;
-    handleIterationEnd(params: { task: ITaskType; iterations: number; maxAgentIterations: number }): void;
-    handleThinkingError(params: { task: ITaskType; error: IErrorType }): void;
-    handleMaxIterationsError(params: { task: ITaskType; iterations: number; maxAgentIterations: number }): void;
-    handleAgenticLoopError(params: { task: ITaskType; error: IErrorType; iterations: number; maxAgentIterations: number }): void;
-    handleTaskCompleted(params: { task: ITaskType; parsedResultWithFinalAnswer: any; iterations: number; maxAgentIterations: number }): void;
-    handleFinalAnswer(params: { agent: IBaseAgent; task: ITaskType; parsedLLMOutput: any }): any;
-    handleIssuesParsingLLMOutput(params: { agent: IBaseAgent; task: ITaskType; output: any; llmOutput: string }): string;
+export interface IExecutableAgent extends IAgentType {
+    readonly execute: () => Promise<void>;
+    readonly pause: () => Promise<void>;
+    readonly resume: () => Promise<void>;
+    readonly stop: () => Promise<void>;
+    readonly reset: () => Promise<void>;
+    readonly validate: () => Promise<boolean>;
 }
 
-/**
- * Agent type - Represents any type of agent in the system
- * This type allows for both base agents and specialized REACT agents
- * while maintaining the proper inheritance hierarchy:
- * 
- * CoreManager (base class)
- * └── BaseAgent extends CoreManager, implements IBaseAgent
- *     └── ReactChampionAgent extends BaseAgent, implements IReactChampionAgent
- * 
- * Note: While IReactChampionAgent extends IBaseAgent, we keep both in the union
- * to support cases where we explicitly want to work with base agents
- */
-export type IAgentType = IBaseAgent | IReactChampionAgent;
+import { IProviderInstance } from '../llm/llmProviderTypes';
+
+export interface IReactChampionAgent extends IExecutableAgent {
+    readonly capabilities: IAgentCapabilities & {
+        readonly canThink: boolean;
+        readonly canUseTools: boolean;
+        readonly canLearn: boolean;
+        readonly supportedToolTypes: string[];
+        readonly maxConcurrentTasks: number;
+        readonly memoryCapacity: number;
+    };
+    readonly messages: BaseMessage[];
+    readonly context: string;
+    readonly history: IMessageHistory;
+    readonly executableAgent: {
+        runnable: IProviderInstance;
+    };
+}

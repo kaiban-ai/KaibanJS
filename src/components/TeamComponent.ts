@@ -6,23 +6,20 @@
 import { TeamManager } from '../managers/domain/team/teamManager';
 import { TeamEventEmitter } from '../managers/domain/team/teamEventEmitter';
 import { TeamEventType, type TeamEvent } from '../types/team/teamEventTypes';
-import { createError } from '../types/common/commonErrorTypes';
-import { createValidationResult } from '../utils/validation/validationUtils';
-import type { ITeamState, ITeamStoreMethods } from '../types/team/teamBaseTypes';
-import type { IEventHandler } from '../types/common/commonEventTypes';
-import type { IValidationResult } from '../types/common/commonValidationTypes';
-import { WORKFLOW_STATUS_enum } from '../types/common/commonEnums';
+import { createError } from '../types/common/errorTypes';
+import { createValidationResult } from '../managers/core/utils/validationUtils';
+import type { ITeamStoreMethods } from '../types/team/teamBaseTypes';
+import type { IEventHandler } from '../types/common/baseTypes';
+import type { IValidationResult } from '../types/common/validationTypes';
 
 export class TeamComponent {
     private readonly teamManager: TeamManager & ITeamStoreMethods;
     private readonly eventEmitter: TeamEventEmitter;
-    private state: ITeamState;
     private readonly eventHandlers: Map<TeamEventType, Set<IEventHandler<TeamEvent>>>;
 
     constructor() {
         this.teamManager = TeamManager.getInstance() as TeamManager & ITeamStoreMethods;
         this.eventEmitter = TeamEventEmitter.getInstance();
-        this.state = this.teamManager.getState();
         this.eventHandlers = new Map();
         this.initializeEventHandlers();
     }
@@ -54,7 +51,7 @@ export class TeamComponent {
     ): IEventHandler<TeamEvent> {
         return {
             handle: handleFn,
-            validate: async (event: TeamEvent): Promise<IValidationResult> => {
+            validate: async (): Promise<IValidationResult> => {
                 return createValidationResult(true, []);
             }
         };

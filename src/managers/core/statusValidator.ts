@@ -6,34 +6,42 @@
  * @module @core
  */
 
-import CoreManager from './coreManager';
+import { CoreManager } from './coreManager';
 import { TransitionRules } from './transitionRules';
-import { createValidationResult } from '../../types/common/commonValidationTypes';
-import { createBaseMetadata } from '../../types/common/commonMetadataTypes';
+
+import { 
+    createStatusValidationResult,
+    createValidationError,
+    VALIDATION_SCOPE_enum
+} from '../../types/common/validationTypes';
+
+import { ERROR_KINDS } from '../../types/common/errorTypes';
+import { 
+    VALIDATION_ERROR_enum,
+    VALIDATION_SEVERITY_enum,
+    MANAGER_CATEGORY_enum 
+} from '../../types/common/enumTypes';
 
 // Import types from canonical locations
 import type {
     IStatusTransitionContext,
     IStatusEntity,
     IStatusType,
-    IStatusTransitionRule,
-    IStatusTransition
-} from '../../types/common/commonStatusTypes';
+    IStatusTransitionRule
+} from '../../types/common/statusTypes';
 
 import type {
-    IStatusValidationResult
-} from '../../types/common/commonValidationTypes';
+    IStatusValidationResult,
+    IValidationError,
+    IValidationMetadata
+} from '../../types/common/validationTypes';
 
 import {
     AGENT_STATUS_enum,
     MESSAGE_STATUS_enum,
     TASK_STATUS_enum,
-    WORKFLOW_STATUS_enum,
-    MANAGER_CATEGORY_enum,
-    EnumTypeGuards
-} from '../../types/common/commonEnums';
-
-import type { IBaseManagerMetadata } from '../../types/agent/agentManagerTypes';
+    WORKFLOW_STATUS_enum
+} from '../../types/common/enumTypes';
 
 type Phase = 'pre-execution' | 'execution' | 'post-execution' | 'error';
 const VALID_PHASE_TRANSITIONS: Record<Phase, Phase[]> = {
@@ -48,11 +56,13 @@ const VALID_PHASE_TRANSITIONS: Record<Phase, Phase[]> = {
  */
 export class StatusValidator extends CoreManager {
     private static instance: StatusValidator;
+    private readonly COMPONENT_NAME = 'StatusValidator';
 
-    public readonly category: MANAGER_CATEGORY_enum = MANAGER_CATEGORY_enum.CORE;
+    public readonly category = MANAGER_CATEGORY_enum.CORE;
 
     private constructor() {
         super();
+        this.registerDomainManager('StatusValidator', this);
     }
 
     public static getInstance(): StatusValidator {
@@ -66,123 +76,125 @@ export class StatusValidator extends CoreManager {
      * Initialize the validator
      */
     public async initialize(params?: Record<string, unknown>): Promise<void> {
-        const metadata = createBaseMetadata('StatusValidator', 'initialize');
-        this.logInfo('Initializing status validator', { params, metadata });
+        await super.initialize(params);
+        this.logInfo('Status validator initialized');
     }
 
-    /**
-     * Validate manager parameters
-     */
     public async validate(params: unknown): Promise<boolean> {
-        return true;
-    }
-
-    /**
-     * Get manager metadata
-     */
-    public getMetadata(): IBaseManagerMetadata {
-        return {
-            category: this.category,
-            operation: 'validate',
-            duration: 0,
-            status: 'success',
-            agent: {
-                id: '',
-                name: '',
-                role: '',
-                status: ''
-            },
-            timestamp: Date.now(),
-            component: 'StatusValidator'
-        };
+        return await super.validate(params);
     }
 
     /**
      * Validate a proposed status transition
      */
-    public async validateTransition(context: IStatusTransitionContext): Promise<IStatusValidationResult> {
-        const startTime = Date.now();
+    public async validateTransition(
+        context: IStatusTransitionContext,
+        metadata: IValidationMetadata
+    ): Promise<IStatusValidationResult> {
         try {
             // Validate required fields
             const fieldErrors = this.validateRequiredFields(context);
             if (fieldErrors.length > 0) {
-                return {
-                    ...createValidationResult(false, 'StatusValidator'),
+                return createStatusValidationResult({
+                    isValid: false,
                     errors: fieldErrors,
                     metadata: {
-                        timestamp: Date.now(),
-                        duration: Date.now() - startTime,
-                        validatorName: 'StatusValidator'
+                        ...metadata,
+                        validatedFields: [...(metadata.validatedFields || []), ...Object.keys(context)],
+                        status: 'error'
                     }
-                };
+                });
             }
 
             // Validate phase transition
-            if (!this.isValidPhaseTransition(context.phase)) {
-                return {
-                    ...createValidationResult(false, 'StatusValidator'),
-                    errors: [`Invalid phase transition to: ${context.phase}`],
+            if (!this.isValidPhaseTransition(context.phase as Phase)) {
+                return createStatusValidationResult({
+                    isValid: false,
+            errors: [createValidationError({
+                code: VALIDATION_ERROR_enum.STATE_TRANSITION_INVALID,
+                message: `Invalid phase transition to: ${context.phase}`,
+                scope: VALIDATION_SCOPE_enum.SYSTEM,
+                severity: VALIDATION_SEVERITY_enum.ERROR
+            })],
                     metadata: {
-                        timestamp: Date.now(),
-                        duration: Date.now() - startTime,
-                        validatorName: 'StatusValidator'
+                        ...metadata,
+                        validatedFields: [...(metadata.validatedFields || []), 'phase'],
+                        status: 'error'
                     }
-                };
+                });
             }
 
             // Basic status validity checks
             if (!this.isValidStatus(context.currentStatus, context.entity)) {
-                return {
-                    ...createValidationResult(false, 'StatusValidator'),
-                    errors: [`Invalid current status: ${context.currentStatus}`],
+                return createStatusValidationResult({
+                    isValid: false,
+            errors: [createValidationError({
+                code: VALIDATION_ERROR_enum.INVALID_STATE,
+                message: `Invalid current status: ${context.currentStatus}`,
+                scope: VALIDATION_SCOPE_enum.SYSTEM,
+                severity: VALIDATION_SEVERITY_enum.ERROR
+            })],
                     metadata: {
-                        timestamp: Date.now(),
-                        duration: Date.now() - startTime,
-                        validatorName: 'StatusValidator'
+                        ...metadata,
+                        validatedFields: [...(metadata.validatedFields || []), 'currentStatus'],
+                        status: 'error'
                     }
-                };
+                });
             }
 
             if (!this.isValidStatus(context.targetStatus, context.entity)) {
-                return {
-                    ...createValidationResult(false, 'StatusValidator'),
-                    errors: [`Invalid target status: ${context.targetStatus}`],
+                return createStatusValidationResult({
+                    isValid: false,
+            errors: [createValidationError({
+                code: VALIDATION_ERROR_enum.INVALID_STATE,
+                message: `Invalid target status: ${context.targetStatus}`,
+                scope: VALIDATION_SCOPE_enum.SYSTEM,
+                severity: VALIDATION_SEVERITY_enum.ERROR
+            })],
                     metadata: {
-                        timestamp: Date.now(),
-                        duration: Date.now() - startTime,
-                        validatorName: 'StatusValidator'
+                        ...metadata,
+                        validatedFields: [...(metadata.validatedFields || []), 'targetStatus'],
+                        status: 'error'
                     }
-                };
+                });
             }
 
             // Get transition rules for entity
             const rules = TransitionRules.get(context.entity);
             if (!rules) {
-                return {
-                    ...createValidationResult(false, 'StatusValidator'),
-                    errors: [`No transition rules defined for entity: ${context.entity}`],
+                return createStatusValidationResult({
+                    isValid: false,
+            errors: [createValidationError({
+                code: VALIDATION_ERROR_enum.VALIDATION_RULE_VIOLATION,
+                message: `No transition rules defined for entity: ${context.entity}`,
+                scope: VALIDATION_SCOPE_enum.SYSTEM,
+                severity: VALIDATION_SEVERITY_enum.ERROR
+            })],
                     metadata: {
-                        timestamp: Date.now(),
-                        duration: Date.now() - startTime,
-                        validatorName: 'StatusValidator'
+                        ...metadata,
+                        validatedFields: [...(metadata.validatedFields || []), 'entity'],
+                        status: 'error'
                     }
-                };
+                });
             }
 
             // Check if transition is allowed
             const isAllowed = this.isTransitionAllowed(rules, context.currentStatus, context.targetStatus);
             if (!isAllowed) {
-                return {
-                    ...createValidationResult(false, 'StatusValidator'),
-                    errors: [
-                        `Transition from ${context.currentStatus} to ${context.targetStatus} not allowed for ${context.entity}`
-                    ],
+                return createStatusValidationResult({
+                    isValid: false,
+            errors: [createValidationError({
+                code: VALIDATION_ERROR_enum.STATE_TRANSITION_INVALID,
+                message: `Transition from ${context.currentStatus} to ${context.targetStatus} not allowed for ${context.entity}`,
+                scope: VALIDATION_SCOPE_enum.SYSTEM,
+                severity: VALIDATION_SEVERITY_enum.ERROR
+            })],
                     metadata: {
-                        timestamp: Date.now(),
-                        duration: Date.now() - startTime,
-                        validatorName: 'StatusValidator'
+                        ...metadata,
+                        validatedFields: [...(metadata.validatedFields || []), 'transition'],
+                        status: 'error'
                     }
-                };
+                });
             }
 
             // Execute custom validation if defined
@@ -191,33 +203,41 @@ export class StatusValidator extends CoreManager {
                     if (rule.validation) {
                         const isValid = await rule.validation(context);
                         if (!isValid) {
-                            return {
-                                ...createValidationResult(false, 'StatusValidator'),
-                                errors: [`Custom validation failed for transition`],
+                            return createStatusValidationResult({
+                                isValid: false,
+            errors: [createValidationError({
+                code: VALIDATION_ERROR_enum.VALIDATION_RULE_VIOLATION,
+                message: 'Custom validation failed for transition',
+                scope: VALIDATION_SCOPE_enum.SYSTEM,
+                severity: VALIDATION_SEVERITY_enum.ERROR
+            })],
                                 metadata: {
-                                    timestamp: Date.now(),
-                                    duration: Date.now() - startTime,
-                                    validatorName: 'StatusValidator'
+                                    ...metadata,
+                                    validatedFields: [...(metadata.validatedFields || []), 'customValidation'],
+                                    status: 'error'
                                 }
-                            };
+                            });
                         }
                     }
                 }
             }
 
-            return {
-                ...createValidationResult(true, 'StatusValidator'),
+            return createStatusValidationResult({
+                isValid: true,
                 metadata: {
-                    timestamp: Date.now(),
-                    duration: Date.now() - startTime,
-                    validatorName: 'StatusValidator'
+                    ...metadata,
+                    validatedFields: [
+                        ...(metadata.validatedFields || []),
+                        'status',
+                        'transition',
+                        'rules'
+                    ],
+                    status: 'success'
                 },
                 context: {
                     entity: context.entity,
                     transition: `${context.currentStatus} -> ${context.targetStatus}`,
-                    metadata: context.metadata,
-                    performance: context.performanceMetrics,
-                    resources: context.resourceMetrics
+                    metadata: context.metadata
                 },
                 domainMetadata: {
                     phase: context.phase,
@@ -229,51 +249,76 @@ export class StatusValidator extends CoreManager {
                     from: context.currentStatus,
                     to: context.targetStatus
                 }
-            };
+            });
 
         } catch (error) {
-            this.logError(`Validation error: ${error}`, error as Error);
-            return {
-                ...createValidationResult(false, 'StatusValidator'),
-                errors: [(error as Error).message],
+            await this.handleError(
+                error,
+                'Validation error',
+                ERROR_KINDS.ValidationError
+            );
+
+            return createStatusValidationResult({
+                isValid: false,
+            errors: [createValidationError({
+                code: VALIDATION_ERROR_enum.VALIDATION_FAILED,
+                message: error instanceof Error ? error.message : String(error),
+                scope: VALIDATION_SCOPE_enum.SYSTEM,
+                severity: VALIDATION_SEVERITY_enum.ERROR
+            })],
                 metadata: {
-                    timestamp: Date.now(),
-                    duration: Date.now() - startTime,
-                    validatorName: 'StatusValidator'
+                    ...metadata,
+                    validatedFields: [...(metadata.validatedFields || []), 'error'],
+                    status: 'error'
                 },
                 context: {
                     entity: context.entity,
-                    transition: `${context.currentStatus} -> ${context.targetStatus}`,
-                    error: error as Error
+                    transition: `${context.currentStatus} -> ${context.targetStatus}`
                 }
-            };
+            });
         }
     }
 
     /**
      * Validate required fields in transition context
      */
-    private validateRequiredFields(context: IStatusTransitionContext): string[] {
-        const errors: string[] = [];
+    private validateRequiredFields(context: IStatusTransitionContext): IValidationError[] {
+        const errors: IValidationError[] = [];
+
+        if (!context.entityId) {
+            errors.push(createValidationError({
+                code: VALIDATION_ERROR_enum.FIELD_MISSING,
+                message: 'Entity ID is required',
+                field: 'entityId',
+                severity: VALIDATION_SEVERITY_enum.ERROR
+            }));
+        }
 
         if (!context.operation) {
-            errors.push('Operation is required');
+            errors.push(createValidationError({
+                code: VALIDATION_ERROR_enum.FIELD_MISSING,
+                message: 'Operation is required',
+                field: 'operation',
+                severity: VALIDATION_SEVERITY_enum.ERROR
+            }));
         }
 
         if (!context.phase) {
-            errors.push('Phase is required');
+            errors.push(createValidationError({
+                code: VALIDATION_ERROR_enum.FIELD_MISSING,
+                message: 'Phase is required',
+                field: 'phase',
+                severity: VALIDATION_SEVERITY_enum.ERROR
+            }));
         }
 
         if (!context.startTime) {
-            errors.push('Start time is required');
-        }
-
-        if (!context.resourceMetrics) {
-            errors.push('Resource metrics are required');
-        }
-
-        if (!context.performanceMetrics) {
-            errors.push('Performance metrics are required');
+            errors.push(createValidationError({
+                code: VALIDATION_ERROR_enum.FIELD_MISSING,
+                message: 'Start time is required',
+                field: 'startTime',
+                severity: VALIDATION_SEVERITY_enum.ERROR
+            }));
         }
 
         return errors;
@@ -322,6 +367,14 @@ export class StatusValidator extends CoreManager {
 
     // ─── Private Helper Methods ───────────────────────────────────────────────
 
+    protected log(message: string, level: 'info' | 'error' = 'info', context?: Record<string, unknown>): void {
+        super.log(message, level, {
+            component: this.COMPONENT_NAME,
+            timestamp: Date.now(),
+            ...(context || {})
+        });
+    }
+
     /**
      * Check if a transition is allowed by rules
      */
@@ -354,30 +407,18 @@ export class StatusValidator extends CoreManager {
 
     // ─── Type Guard Methods ─────────────────────────────────────────────────────
 
-    /**
-     * Type guard for agent status
-     */
     private isAgentStatus(status: unknown): status is keyof typeof AGENT_STATUS_enum {
         return Object.values(AGENT_STATUS_enum).includes(status as AGENT_STATUS_enum);
     }
 
-    /**
-     * Type guard for message status
-     */
     private isMessageStatus(status: unknown): status is keyof typeof MESSAGE_STATUS_enum {
         return Object.values(MESSAGE_STATUS_enum).includes(status as MESSAGE_STATUS_enum);
     }
 
-    /**
-     * Type guard for task status
-     */
     private isTaskStatus(status: unknown): status is keyof typeof TASK_STATUS_enum {
         return Object.values(TASK_STATUS_enum).includes(status as TASK_STATUS_enum);
     }
 
-    /**
-     * Type guard for workflow status
-     */
     private isWorkflowStatus(status: unknown): status is keyof typeof WORKFLOW_STATUS_enum {
         return Object.values(WORKFLOW_STATUS_enum).includes(status as WORKFLOW_STATUS_enum);
     }

@@ -1,39 +1,52 @@
-/**
- * @file toolMetricsManager.ts
- * @path src/managers/domain/agent/toolMetricsManager.ts
- * @description Tool metrics collection and validation
- * 
- * @module @managers/domain/agent
- */
-
+import { Tool } from '@langchain/core/tools';
 import { CoreManager } from '../../core/coreManager';
-import { MANAGER_CATEGORY_enum } from '../../../types/common/enumTypes';
-import { 
-    IToolMetrics,
+import { MetricsManager } from '../../core/metricsManager';
+import { CircularBuffer } from '../../core/metrics/CircularBuffer';
+import { ERROR_KINDS, createError } from '../../../types/common/errorTypes';
+import { MANAGER_CATEGORY_enum, ERROR_SEVERITY_enum } from '../../../types/common/enumTypes';
+import { createBaseMetadata } from '../../../types/common/baseTypes';
+import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
+
+import type { 
     IToolResourceMetrics,
     IToolPerformanceMetrics,
     IToolUsageMetrics,
-    DefaultToolMetrics,
-    ToolMetricsValidation
+    IValidationResult
 } from '../../../types/tool/toolMetricTypes';
-import type { IBaseManager, IBaseManagerMetadata } from '../../../types/agent/agentManagerTypes';
+import type { IStandardCostDetails } from '../../../types/common/baseTypes';
+import type { IToolMetricsManager } from '../../../types/tool/toolManagerTypes';
 
-// ─── Tool Metrics Manager ──────────────────────────────────────────────────────
-
-export class ToolMetricsManager extends CoreManager implements IBaseManager {
+export class ToolMetricsManager extends CoreManager implements IToolMetricsManager {
     private static instance: ToolMetricsManager;
-    private readonly toolMetrics: Map<string, IToolMetrics>;
-    private readonly metricsHistory: Map<string, IToolMetrics[]>;
+    private readonly metricsManager: MetricsManager;
+    private readonly toolExecutions: Map<string, {
+        totalExecutions: number;
+        successfulExecutions: number;
+        failedExecutions: number;
+        totalDuration: number;
+        lastExecutionTime?: number;
+        lastError?: Error;
+    }>;
     private readonly collectionIntervals: Map<string, NodeJS.Timeout>;
-    private readonly DEFAULT_SAMPLING_RATE = 1000;
+    private readonly executionHistory: CircularBuffer<{
+        toolName: string;
+        duration: number;
+        success: boolean;
+        timestamp: number;
+    }>;
+
+    private readonly DEFAULT_SAMPLING_RATE = 1000; // 1 second
+    private readonly DEFAULT_HISTORY_SIZE = 1000;
     private isInitialized = false;
     public readonly category = MANAGER_CATEGORY_enum.METRICS;
 
     private constructor() {
         super();
-        this.toolMetrics = new Map();
-        this.metricsHistory = new Map();
+        this.metricsManager = MetricsManager.getInstance();
+        this.toolExecutions = new Map();
         this.collectionIntervals = new Map();
+        this.executionHistory = new CircularBuffer(this.DEFAULT_HISTORY_SIZE);
+        this.registerDomainManager('ToolMetricsManager', this);
     }
 
     public static getInstance(): ToolMetricsManager {
@@ -45,37 +58,55 @@ export class ToolMetricsManager extends CoreManager implements IBaseManager {
 
     public async initialize(): Promise<void> {
         if (this.isInitialized) return;
-        await super.initialize();
-        this.isInitialized = true;
+
+        try {
+            await this.metricsManager.trackMetric({
+                domain: MetricDomain.TOOL,
+                type: MetricType.SYSTEM_HEALTH,
+                value: 1,
+                timestamp: Date.now(),
+                metadata: {
+                    operation: 'initialize',
+                    component: this.constructor.name
+                }
+            });
+
+            this.isInitialized = true;
+            this.logInfo('Tool metrics manager initialized');
+        } catch (error) {
+            throw createError({
+                message: 'Failed to initialize tool metrics manager',
+                type: ERROR_KINDS.InitializationError,
+                context: { 
+                    error: error instanceof Error ? error : new Error(String(error))
+                }
+            });
+        }
     }
 
-    public async validate(params: unknown): Promise<boolean> {
-        return true;
+    public async validate(): Promise<boolean> {
+        return this.isInitialized;
     }
 
-    public getMetadata(): IBaseManagerMetadata {
-        return {
-            category: MANAGER_CATEGORY_enum.METRICS,
-            operation: 'tool-metrics',
-            duration: 0,
-            status: 'success',
-            agent: { id: '', name: '', role: '', status: '' },
+    public async createMetrics(toolName: string): Promise<void> {
+        this.toolExecutions.set(toolName, {
+            totalExecutions: 0,
+            successfulExecutions: 0,
+            failedExecutions: 0,
+            totalDuration: 0
+        });
+
+        await this.metricsManager.trackMetric({
+            domain: MetricDomain.TOOL,
+            type: MetricType.PERFORMANCE,
+            value: 0,
             timestamp: Date.now(),
-            component: 'ToolMetricsManager'
-        };
-    }
-
-    public async createMetrics(toolName: string): Promise<IToolMetrics> {
-        const timestamp = Date.now();
-        const metrics: IToolMetrics = {
-            resourceMetrics: await this.createResourceMetrics(timestamp),
-            performanceMetrics: await this.createPerformanceMetrics(timestamp),
-            usageMetrics: await this.createUsageMetrics(timestamp),
-            timestamp
-        };
-
-        this.toolMetrics.set(toolName, metrics);
-        return metrics;
+            metadata: {
+                toolName,
+                operation: 'createMetrics',
+                baseMetrics: this.createBaseMetrics()
+            }
+        });
     }
 
     public startCollection(toolName: string, samplingRate?: number): void {
@@ -85,7 +116,7 @@ export class ToolMetricsManager extends CoreManager implements IBaseManager {
         }
 
         const interval = setInterval(
-            () => this.collectMetrics(toolName),
+            () => this.collectMetricsInternal(toolName),
             samplingRate || this.DEFAULT_SAMPLING_RATE
         );
 
@@ -102,226 +133,163 @@ export class ToolMetricsManager extends CoreManager implements IBaseManager {
         }
     }
 
-    public getMetricsHistory(toolName: string): IToolMetrics[] {
-        return this.metricsHistory.get(toolName) || [];
-    }
-
     public clearMetricsHistory(toolName: string): void {
-        this.metricsHistory.delete(toolName);
+        this.toolExecutions.delete(toolName);
     }
 
-    public async updateMetrics(
-        toolName: string,
-        executionTime: number
-    ): Promise<void> {
-        const metrics = this.toolMetrics.get(toolName);
+    public async updateMetrics(toolName: string, executionTime: number): Promise<void> {
+        const metrics = this.toolExecutions.get(toolName);
         if (!metrics) return;
 
-        metrics.performanceMetrics.executionMetrics.latency.total += executionTime;
-        metrics.performanceMetrics.executionMetrics.latency.average = 
-            metrics.performanceMetrics.executionMetrics.latency.total / 
-            (metrics.usageMetrics.totalRequests + 1);
+        metrics.totalExecutions++;
+        metrics.totalDuration += executionTime;
+        metrics.lastExecutionTime = Date.now();
 
-        if (executionTime > metrics.performanceMetrics.executionMetrics.latency.max) {
-            metrics.performanceMetrics.executionMetrics.latency.max = executionTime;
-        }
-        if (executionTime < metrics.performanceMetrics.executionMetrics.latency.min || 
-            metrics.performanceMetrics.executionMetrics.latency.min === 0) {
-            metrics.performanceMetrics.executionMetrics.latency.min = executionTime;
-        }
-
-        metrics.usageMetrics.totalRequests++;
-        metrics.usageMetrics.requestsPerSecond = 
-            metrics.usageMetrics.totalRequests / 
-            ((Date.now() - metrics.timestamp) / 1000);
-
-        const validation = ToolMetricsValidation.validateToolMetrics(metrics);
-        if (!validation.isValid) {
-            this.logWarn(
-                `Tool metrics validation warnings: ${validation.warnings?.join(', ')}`,
-                { toolName }
-            );
-        }
-
-        this.toolMetrics.set(toolName, metrics);
+        await this.metricsManager.trackMetric({
+            domain: MetricDomain.TOOL,
+            type: MetricType.PERFORMANCE,
+            value: executionTime,
+            timestamp: Date.now(),
+            metadata: {
+                toolName,
+                operation: 'updateMetrics',
+                metrics,
+                baseMetrics: this.createBaseMetrics()
+            }
+        });
     }
 
-    private async collectMetrics(toolName: string): Promise<void> {
-        try {
-            const metrics = await this.createMetrics(toolName);
-            const history = this.metricsHistory.get(toolName) || [];
-            history.push(metrics);
-            this.metricsHistory.set(toolName, history);
+    public async trackToolExecution(params: {
+        tool: Tool;
+        duration: number;
+        success: boolean;
+        error?: Error;
+    }): Promise<void> {
+        const metrics = this.toolExecutions.get(params.tool.name);
+        if (!metrics) return;
 
-            const validation = ToolMetricsValidation.validateToolMetrics(metrics);
-            if (!validation.isValid) {
-                this.logError(
-                    `Metrics validation failed: ${validation.errors.join(', ')}`,
-                    undefined,
-                    { toolName }
-                );
+        if (params.success) {
+            metrics.successfulExecutions++;
+        } else {
+            metrics.failedExecutions++;
+            metrics.lastError = params.error;
+        }
+
+        this.executionHistory.push({
+            toolName: params.tool.name,
+            duration: params.duration,
+            success: params.success,
+            timestamp: Date.now()
+        });
+
+        await this.metricsManager.trackMetric({
+            domain: MetricDomain.TOOL,
+            type: MetricType.PERFORMANCE,
+            value: params.duration,
+            timestamp: Date.now(),
+            metadata: {
+                toolName: params.tool.name,
+                operation: 'trackToolExecution',
+                success: params.success,
+                error: params.error,
+                metrics,
+                baseMetrics: this.createBaseMetrics()
             }
+        });
+    }
 
-            await this.monitorMetrics(toolName, metrics);
+    public async getToolMetrics(toolName: string): Promise<{
+        totalExecutions: number;
+        successfulExecutions: number;
+        failedExecutions: number;
+        averageDuration: number;
+        lastExecutionTime?: number;
+        lastError?: Error;
+    }> {
+        const metrics = this.toolExecutions.get(toolName);
+        if (!metrics) {
+            throw createError({
+                message: `No metrics found for tool ${toolName}`,
+                type: ERROR_KINDS.NotFoundError
+            });
+        }
+
+        return {
+            ...metrics,
+            averageDuration: metrics.totalDuration / metrics.totalExecutions || 0
+        };
+    }
+
+    public async getUsageFrequency(toolName: string): Promise<Record<string, number>> {
+        const history = this.executionHistory.getItems()
+            .filter(item => item.toolName === toolName);
+        
+        const hourlyStats = new Map<number, number>();
+        const now = Date.now();
+        const hourInMs = 3600000;
+
+        history.forEach(item => {
+            const hourBucket = Math.floor((now - item.timestamp) / hourInMs);
+            hourlyStats.set(hourBucket, (hourlyStats.get(hourBucket) || 0) + 1);
+        });
+
+        return Object.fromEntries(Array.from(hourlyStats.entries())
+            .map(([hour, count]) => [`${hour}h`, count]));
+    }
+
+    public calculateCostDetails(
+        toolId: string,
+        inputSize: number,
+        outputSize: number
+    ): IStandardCostDetails {
+        // Standard cost calculation for tool usage
+        const inputCost = inputSize * 0.0001; // $0.0001 per input unit
+        const outputCost = outputSize * 0.0002; // $0.0002 per output unit
+
+        return {
+            inputCost,
+            outputCost,
+            totalCost: inputCost + outputCost,
+            currency: 'USD',
+            breakdown: {
+                promptTokens: { count: inputSize, cost: inputCost },
+                completionTokens: { count: outputSize, cost: outputCost }
+            }
+        };
+    }
+
+    private async collectMetricsInternal(toolName: string): Promise<void> {
+        try {
+            const metrics = await this.getToolMetrics(toolName);
+
+            await this.metricsManager.trackMetric({
+                domain: MetricDomain.TOOL,
+                type: MetricType.PERFORMANCE,
+                value: metrics.averageDuration,
+                timestamp: Date.now(),
+                metadata: {
+                    toolName,
+                    operation: 'collectMetrics',
+                    metrics,
+                    baseMetrics: this.createBaseMetrics()
+                }
+            });
 
         } catch (error) {
-            this.handleError(error, `Error collecting metrics for tool ${toolName}`);
-        }
-    }
-
-    private async createResourceMetrics(timestamp: number): Promise<IToolResourceMetrics> {
-        return {
-            cpuUsage: 0,
-            memoryUsage: 0,
-            diskIO: {
-                read: 0,
-                write: 0
-            },
-            networkUsage: {
-                upload: 0,
-                download: 0
-            },
-            timestamp,
-            apiRateLimits: {
-                current: 0,
-                limit: 100,
-                resetIn: 3600
-            },
-            serviceQuotas: {
-                usagePercent: 0,
-                remaining: 100,
-                total: 100
-            },
-            connectionPool: {
-                active: 0,
-                idle: 0,
-                maxSize: 10
-            },
-            integrationHealth: {
-                availability: 1,
-                responseTime: 0,
-                connectionStatus: 1
-            },
-            healthStatus: DefaultToolMetrics.createDefaultHealthStatus(),
-            recoveryState: DefaultToolMetrics.createDefaultRecoveryState()
-        };
-    }
-
-    private async createPerformanceMetrics(timestamp: number): Promise<IToolPerformanceMetrics> {
-        const defaultTime = DefaultToolMetrics.createDefaultTimeMetrics();
-        const defaultThroughput = DefaultToolMetrics.createDefaultThroughputMetrics();
-
-        return {
-            executionTime: defaultTime,
-            latency: defaultTime,
-            throughput: defaultThroughput,
-            responseTime: defaultTime,
-            queueLength: 0,
-            errorRate: 0,
-            successRate: 1,
-            errorMetrics: {
-                totalErrors: 0,
-                errorRate: 0
-            },
-            resourceUtilization: {
-                cpuUsage: 0,
-                memoryUsage: 0,
-                diskIO: { read: 0, write: 0 },
-                networkUsage: { upload: 0, download: 0 },
-                timestamp
-            },
-            timestamp,
-            executionMetrics: {
-                latency: defaultTime,
-                successRate: 1,
-                throughput: defaultThroughput
-            },
-            reliabilityMetrics: {
-                errors: {
-                    totalErrors: 0,
-                    errorRate: 0
-                },
-                recoveryTime: defaultTime,
-                failurePatterns: {
-                    types: {},
-                    frequency: 0,
-                    mtbf: 0
-                }
-            },
-            responseMetrics: {
-                time: defaultTime,
-                dataVolume: {
-                    total: 0,
-                    average: 0,
-                    peak: 0
-                },
-                processingRate: defaultThroughput
-            }
-        };
-    }
-
-    private async createUsageMetrics(timestamp: number): Promise<IToolUsageMetrics> {
-        return {
-            totalRequests: 0,
-            activeUsers: 0,
-            requestsPerSecond: 0,
-            averageResponseSize: 0,
-            peakMemoryUsage: 0,
-            uptime: 0,
-            timestamp,
-            rateLimit: {
-                current: 0,
-                limit: 100,
-                remaining: 100,
-                resetTime: Date.now() + 3600000
-            },
-            utilizationMetrics: {
-                callFrequency: 0,
-                resourceConsumption: {
-                    cpu: 0,
-                    memory: 0,
-                    bandwidth: 0
-                },
-                peakUsage: {
-                    times: [],
-                    values: [],
-                    duration: []
-                }
-            },
-            accessPatterns: {
-                distribution: {},
-                frequency: {},
-                operationTypes: {}
-            },
-            dependencies: {
-                services: [],
-                resources: [],
-                versions: {}
-            }
-        };
-    }
-
-    private async monitorMetrics(toolName: string, metrics: IToolMetrics): Promise<void> {
-        if (metrics.resourceMetrics.connectionPool.active > metrics.resourceMetrics.connectionPool.maxSize * 0.8) {
-            this.logWarn(
-                'High connection pool usage detected',
-                { toolName }
+            this.logError(
+                `Error collecting metrics for tool ${toolName}`,
+                error instanceof Error ? error : new Error(String(error))
             );
         }
+    }
 
-        if (metrics.performanceMetrics.executionMetrics.successRate < 0.95) {
-            this.logWarn(
-                'Low success rate detected',
-                { toolName }
-            );
-        }
-
-        if (metrics.usageMetrics.utilizationMetrics.resourceConsumption.memory > 0.9) {
-            this.logWarn(
-                'High memory usage detected',
-                { toolName }
-            );
-        }
+    private createBaseMetrics() {
+        return {
+            timestamp: Date.now(),
+            component: this.constructor.name,
+            category: this.category,
+            version: '1.0.0'
+        };
     }
 }
 

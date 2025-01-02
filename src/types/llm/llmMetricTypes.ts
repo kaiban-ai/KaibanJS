@@ -4,18 +4,10 @@
  * @description LLM-specific metrics type definitions extending base metrics
  */
 
-import { 
-    ITimeMetrics, 
-    IThroughputMetrics, 
-    IErrorMetrics, 
-    IPerformanceMetrics,
-    IErrorPattern,
-    IErrorImpact
-} from '../metrics/base/performanceMetrics';
-import { IUsageMetrics, IRateLimitMetrics } from '../metrics/base/usageMetrics';
+import { IPerformanceMetrics } from '../metrics/base/performanceMetrics';
+import { IUsageMetrics } from '../metrics/base/usageMetrics';
 import { IResourceMetrics } from '../metrics/base/resourceMetrics';
 import { IErrorKind, IErrorSeverity } from '../common/errorTypes';
-import { RecoveryStrategyType } from '../common/recoveryTypes';
 
 // ─── LLM-Specific Metrics ────────────────────────────────────────────────────
 
@@ -46,27 +38,23 @@ export interface ILLMResourceMetrics extends IResourceMetrics {
     };
 }
 
-export interface ILLMErrorMetrics extends IErrorMetrics {
-    readonly errorDistribution: Record<IErrorKind, number>;
-    readonly severityDistribution: Record<IErrorSeverity, number>;
-    readonly patterns: readonly IErrorPattern[];
-    readonly impact: IErrorImpact;
-    readonly recovery: {
-        readonly meanTimeToRecover: number;
-        readonly recoverySuccessRate: number;
-        readonly strategyDistribution: Record<RecoveryStrategyType, number>;
-        readonly failedRecoveries: number;
-    };
-    readonly prevention: {
-        readonly preventedCount: number;
-        readonly preventionRate: number;
-        readonly earlyWarnings: number;
-    };
-    readonly trends: {
-        readonly dailyRates: readonly number[];
-        readonly weeklyRates: readonly number[];
-        readonly monthlyRates: readonly number[];
-    };
+export interface ILLMErrorMetrics {
+    // Basic error tracking
+    readonly count: number;
+    readonly rate: number;
+    readonly lastError: number;
+    
+    // Error types
+    readonly byType: Record<IErrorKind, number>;
+    readonly bySeverity: Record<IErrorSeverity, number>;
+    
+    // Performance impact
+    readonly avgLatencyIncrease: number;
+    readonly avgMemoryUsage: number;
+    readonly avgCpuUsage: number;
+    
+    // Time windows (last 24h)
+    readonly hourlyErrors: number[];
 }
 
 export interface ILLMPerformanceMetrics extends IPerformanceMetrics {
@@ -139,15 +127,19 @@ export const LLMMetricsValidation = {
         if (!llmMetrics.performance.errorMetrics) {
             errors.push('Missing error metrics');
         } else {
-            const { errorRate, recoverySuccessRate, preventionRate } = llmMetrics.performance.errorMetrics;
-            if (errorRate < 0 || errorRate > 1) {
+            const errorMetrics = llmMetrics.performance.errorMetrics;
+            
+            if (errorMetrics.rate < 0 || errorMetrics.rate > 1) {
                 errors.push('Invalid error rate');
             }
-            if (recoverySuccessRate < 0 || recoverySuccessRate > 1) {
-                errors.push('Invalid recovery success rate');
+            if (errorMetrics.avgMemoryUsage < 0 || errorMetrics.avgMemoryUsage > 1) {
+                errors.push('Invalid average memory usage');
             }
-            if (preventionRate < 0 || preventionRate > 1) {
-                errors.push('Invalid prevention rate');
+            if (errorMetrics.avgCpuUsage < 0 || errorMetrics.avgCpuUsage > 1) {
+                errors.push('Invalid average CPU usage');
+            }
+            if (errorMetrics.avgLatencyIncrease < 0) {
+                errors.push('Invalid average latency increase');
             }
         }
 

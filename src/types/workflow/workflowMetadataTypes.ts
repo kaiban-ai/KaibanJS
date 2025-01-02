@@ -39,9 +39,10 @@ export const createEmptyWorkflowMetadata = (teamName: string): IWorkflowMetadata
     },
     llmUsageMetrics: {
         totalRequests: 0,
-        activeInstances: 0,
+        activeUsers: 0, // From IUsageMetrics
+        activeInstances: 0, // From ILLMUsageMetrics
         requestsPerSecond: 0,
-        averageResponseLength: 0,
+        averageResponseSize: 0,
         peakMemoryUsage: 0,
         uptime: 0,
         rateLimit: {
@@ -60,7 +61,10 @@ export const createEmptyWorkflowMetadata = (teamName: string): IWorkflowMetadata
             gpt35: 0,
             other: 0
         },
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        component: '',
+        category: '',
+        version: ''
     },
     teamName
 });

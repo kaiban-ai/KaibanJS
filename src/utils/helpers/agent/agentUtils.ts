@@ -4,9 +4,14 @@
  * @description Utility functions for agent operations
  */
 
-import { LLMConfig } from '@/utils/types/llm';
-import { AgentAttributes } from '@/utils/types/agent/utils';
-import { logger } from '../../core/logger';
+import type { IBaseLLMConfig } from '../../../types/llm/llmProviderTypes';
+import type { IBaseAgent } from '../../../types/agent/agentBaseTypes';
+import logger from '../../../managers/core/logManager';
+
+type AgentAttributes = Pick<IBaseAgent, 'name' | 'role' | 'background' | 'goal'> & {
+    context?: string;
+    expectedOutput?: string;
+};
 
 /**
  * Retrieves the API key for a given LLM configuration and environment
@@ -15,7 +20,7 @@ import { logger } from '../../core/logger';
  * @returns API key if found, undefined otherwise
  */
 export function getApiKey(
-    llmConfig: Pick<LLMConfig, 'apiKey' | 'provider'>, 
+    llmConfig: Pick<IBaseLLMConfig, 'apiKey' | 'provider'>, 
     env: Record<string, string>
 ): string | undefined {
     // Return existing API key if present
@@ -56,8 +61,9 @@ export function replaceAgentAttributes(
             .replace('{goal}', attributes.goal)
             .replace('{context}', attributes.context || '')
             .replace('{expectedOutput}', attributes.expectedOutput || '');
-    } catch (error) {
-        logger.error('Error replacing agent attributes:', error);
+    } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error('Unknown error occurred');
+        logger.error('Error replacing agent attributes:', err);
         throw new Error('Failed to replace agent attributes in template');
     }
 }

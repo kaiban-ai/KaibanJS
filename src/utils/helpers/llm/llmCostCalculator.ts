@@ -18,7 +18,7 @@ const logger = LogManager.getInstance();
 /**
  * Standard model pricing configurations
  */
-const modelsPricing: IModelPricing[] = [
+export const modelsPricing: IModelPricing[] = [
     // GPT Models
     {
         modelCode: "gpt-4o-mini",

@@ -1,11 +1,21 @@
+/**
+ * @file WorkflowMetricsManager.ts
+ * @description Workflow-specific metrics management
+ */
+
+import { CoreManager } from '../../core/coreManager';
+import { MetricsManager } from '../../core/metricsManager';
 import { WorkflowMetricsValidation } from '../../../types/workflow/workflowMetricTypes';
+import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
+import { ERROR_KINDS, createError } from '../../../types/common/errorTypes';
+import { MANAGER_CATEGORY_enum } from '../../../types/common/enumTypes';
+
 import type { 
     IWorkflowResourceMetrics,
     IWorkflowPerformanceMetrics,
     IWorkflowUsageMetrics
 } from '../../../types/workflow/workflowMetricTypes';
-import type { IErrorMetrics } from '../../../types/metrics/base/performanceMetrics';
-import type { IStepConfig, IStepResult } from '../../../types/workflow/workflowTypes';
+import type { IStepConfig, IStepResult } from '../../../types/workflow/workflowStateTypes';
 
 export interface IWorkflowMetrics {
     resource: IWorkflowResourceMetrics;
@@ -13,15 +23,76 @@ export interface IWorkflowMetrics {
     usage: IWorkflowUsageMetrics;
 }
 
-export class WorkflowMetricsManager {
+export class WorkflowMetricsManager extends CoreManager {
+    private static instance: WorkflowMetricsManager | null = null;
+    private readonly coreMetricsManager: MetricsManager;
     private workflowMetrics: Map<string, IWorkflowMetrics>;
 
-    constructor() {
+    public readonly category = MANAGER_CATEGORY_enum.METRICS;
+
+    private constructor() {
+        super();
+        this.coreMetricsManager = MetricsManager.getInstance();
         this.workflowMetrics = new Map();
+        this.registerDomainManager('WorkflowMetricsManager', this);
     }
 
-    public initializeMetrics(workflowId: string): void {
-        this.workflowMetrics.set(workflowId, this.createDefaultMetrics());
+    public static getInstance(): WorkflowMetricsManager {
+        if (!WorkflowMetricsManager.instance) {
+            WorkflowMetricsManager.instance = new WorkflowMetricsManager();
+        }
+        return WorkflowMetricsManager.instance;
+    }
+
+    public async initializeMetrics(workflowId: string): Promise<void> {
+        // Get initial metrics from core managers
+        const [resourceMetrics, performanceMetrics] = await Promise.all([
+            this.coreMetricsManager.getInitialResourceMetrics(),
+            this.coreMetricsManager.getInitialPerformanceMetrics()
+        ]);
+
+        // Create workflow-specific metrics
+        const metrics = {
+            resource: {
+                ...resourceMetrics,
+                concurrentWorkflows: 0,
+                resourceAllocation: {
+                    cpu: 0,
+                    memory: 0
+                }
+            },
+            performance: {
+                ...performanceMetrics,
+                completionRate: 0,
+                averageStepsPerWorkflow: 0,
+                errorMetrics: this.coreMetricsManager.getErrorMetrics(),
+                resourceUtilization: {
+                    ...resourceMetrics,
+                    concurrentWorkflows: 0,
+                    resourceAllocation: {
+                        cpu: 0,
+                        memory: 0
+                    }
+                },
+                timestamp: Date.now()
+            },
+            usage: this.createDefaultUsageMetrics()
+        };
+
+        this.workflowMetrics.set(workflowId, metrics);
+
+        // Track initialization in core metrics
+        await this.coreMetricsManager.trackMetric({
+            domain: MetricDomain.WORKFLOW,
+            type: MetricType.PERFORMANCE,
+            value: 0,
+            timestamp: Date.now(),
+            metadata: {
+                workflowId,
+                operation: 'initialize_metrics',
+                status: 'success'
+            }
+        });
     }
 
     public getMetrics(workflowId: string): IWorkflowMetrics | undefined {
@@ -40,11 +111,60 @@ export class WorkflowMetricsManager {
 
         const validationResult = WorkflowMetricsValidation.validateWorkflowResourceMetrics(updatedMetrics);
         if (!validationResult.isValid) {
-            throw new Error(`Invalid resource metrics: ${validationResult.errors.join(', ')}`);
+            throw createError({
+                message: `Invalid resource metrics: ${validationResult.errors.join(', ')}`,
+                type: ERROR_KINDS.ValidationError
+            });
         }
 
         currentMetrics.resource = updatedMetrics;
         this.workflowMetrics.set(workflowId, currentMetrics);
+
+        // Track in core metrics
+        await this.coreMetricsManager.trackMetric({
+            domain: MetricDomain.WORKFLOW,
+            type: MetricType.RESOURCE,
+            value: metrics.cpuUsage || 0,
+            timestamp: Date.now(),
+            metadata: {
+                workflowId,
+                metrics: updatedMetrics
+            }
+        });
+    }
+
+    public async updateUsageMetrics(workflowId: string, metrics: Partial<IWorkflowUsageMetrics>): Promise<void> {
+        const currentMetrics = this.workflowMetrics.get(workflowId);
+        if (!currentMetrics) return;
+
+        const updatedMetrics = {
+            ...currentMetrics.usage,
+            ...metrics,
+            timestamp: Date.now()
+        };
+
+        const validationResult = WorkflowMetricsValidation.validateWorkflowUsageMetrics(updatedMetrics);
+        if (!validationResult.isValid) {
+            throw createError({
+                message: `Invalid usage metrics: ${validationResult.errors.join(', ')}`,
+                type: ERROR_KINDS.ValidationError
+            });
+        }
+
+        currentMetrics.usage = updatedMetrics;
+        this.workflowMetrics.set(workflowId, currentMetrics);
+
+        // Track in core metrics
+        await this.coreMetricsManager.trackMetric({
+            domain: MetricDomain.WORKFLOW,
+            type: MetricType.USAGE,
+            value: metrics.totalRequests || 0,
+            timestamp: Date.now(),
+            metadata: {
+                workflowId,
+                metrics: updatedMetrics
+            }
+        });
     }
 
     public async updatePerformanceMetrics(workflowId: string, data: {
@@ -72,30 +192,27 @@ export class WorkflowMetricsManager {
 
         const validationResult = WorkflowMetricsValidation.validateWorkflowPerformanceMetrics(updatedMetrics);
         if (!validationResult.isValid) {
-            throw new Error(`Invalid performance metrics: ${validationResult.errors.join(', ')}`);
+            throw createError({
+                message: `Invalid performance metrics: ${validationResult.errors.join(', ')}`,
+                type: ERROR_KINDS.ValidationError
+            });
         }
 
         currentMetrics.performance = updatedMetrics;
         this.workflowMetrics.set(workflowId, currentMetrics);
-    }
 
-    public async updateUsageMetrics(workflowId: string, metrics: Partial<IWorkflowUsageMetrics>): Promise<void> {
-        const currentMetrics = this.workflowMetrics.get(workflowId);
-        if (!currentMetrics) return;
-
-        const updatedMetrics = {
-            ...currentMetrics.usage,
-            ...metrics,
-            timestamp: Date.now()
-        };
-
-        const validationResult = WorkflowMetricsValidation.validateWorkflowUsageMetrics(updatedMetrics);
-        if (!validationResult.isValid) {
-            throw new Error(`Invalid usage metrics: ${validationResult.errors.join(', ')}`);
-        }
-
-        currentMetrics.usage = updatedMetrics;
-        this.workflowMetrics.set(workflowId, currentMetrics);
+        // Track in core metrics
+        await this.coreMetricsManager.trackMetric({
+            domain: MetricDomain.WORKFLOW,
+            type: MetricType.PERFORMANCE,
+            value: data.executionTime,
+            timestamp: Date.now(),
+            metadata: {
+                workflowId,
+                success: data.success,
+                error: data.error?.message
+            }
+        });
     }
 
     public async updateStepMetrics(workflowId: string, step: IStepConfig): Promise<void> {
@@ -110,6 +227,19 @@ export class WorkflowMetricsManager {
             activeWorkflows: metrics.usage.activeWorkflows + 1,
             workflowsPerSecond: (metrics.usage.totalExecutions + 1) / ((Date.now() - metrics.usage.timestamp) / 1000)
         });
+
+        // Track step execution in core metrics
+        await this.coreMetricsManager.trackMetric({
+            domain: MetricDomain.WORKFLOW,
+            type: MetricType.PERFORMANCE,
+            value: 0,
+            timestamp: Date.now(),
+            metadata: {
+                workflowId,
+                stepId: step.id,
+                operation: 'step_execution'
+            }
+        });
     }
 
     public async updateStepCompletionMetrics(workflowId: string, result: IStepResult): Promise<void> {
@@ -121,97 +251,46 @@ export class WorkflowMetricsManager {
             activeWorkflows: metrics.usage.activeWorkflows - 1
         });
 
-        if (result.success) {
-            await this.updatePerformanceMetrics(workflowId, {
-                executionTime: 0,
-                success: true
-            });
-        }
-    }
-
-    public updateErrorMetrics(workflowId: string): void {
-        const metrics = this.workflowMetrics.get(workflowId);
-        if (!metrics) return;
-
-        const newErrorMetrics: IErrorMetrics = {
-            totalErrors: metrics.performance.errorMetrics.totalErrors + 1,
-            errorRate: (metrics.performance.errorMetrics.totalErrors + 1) / metrics.usage.totalExecutions
-        };
-        
-        metrics.performance = {
-            ...metrics.performance,
-            errorMetrics: newErrorMetrics,
-            errorRate: newErrorMetrics.errorRate
-        };
-    }
-
-    private createDefaultMetrics(): IWorkflowMetrics {
-        const timestamp = Date.now();
-        
-        return {
-            resource: {
-                cpuUsage: 0,
-                memoryUsage: 0,
-                diskIO: { read: 0, write: 0 },
-                networkUsage: { upload: 0, download: 0 },
-                concurrentWorkflows: 0,
-                resourceAllocation: { cpu: 0, memory: 0 },
-                timestamp
-            },
-            performance: {
-                executionTime: { total: 0, average: 0, max: 0, min: 0 },
-                latency: { total: 0, average: 0, max: 0, min: 0 },
-                throughput: {
-                    operationsPerSecond: 0,
-                    dataProcessedPerSecond: 0
-                },
-                responseTime: { total: 0, average: 0, max: 0, min: 0 },
-                queueLength: 0,
-                errorRate: 0,
-                successRate: 0,
-                errorMetrics: {
-                    totalErrors: 0,
-                    errorRate: 0
-                },
-                resourceUtilization: {
-                    cpuUsage: 0,
-                    memoryUsage: 0,
-                    diskIO: { read: 0, write: 0 },
-                    networkUsage: { upload: 0, download: 0 },
-                    concurrentWorkflows: 0,
-                    resourceAllocation: { cpu: 0, memory: 0 },
-                    timestamp
-                },
-                completionRate: 0,
-                averageStepsPerWorkflow: 0,
-                timestamp
-            },
-            usage: {
-                // Base IUsageMetrics properties
-                totalRequests: 0,
-                activeUsers: 0,
-                requestsPerSecond: 0,
-                averageResponseSize: 0,
-                peakMemoryUsage: 0,
-                uptime: 0,
-                rateLimit: {
-                    current: 0,
-                    limit: 100,
-                    remaining: 100,
-                    resetTime: Date.now() + 3600000
-                },
-                // Workflow-specific properties
-                totalExecutions: 0,
-                activeWorkflows: 0,
-                workflowsPerSecond: 0,
-                averageComplexity: 0,
-                workflowDistribution: {
-                    sequential: 0,
-                    parallel: 0,
-                    conditional: 0
-                },
-                timestamp
+        // Track step completion in core metrics
+        await this.coreMetricsManager.trackMetric({
+            domain: MetricDomain.WORKFLOW,
+            type: MetricType.PERFORMANCE,
+            value: result.metrics?.duration || 0,
+            timestamp: Date.now(),
+            metadata: {
+                workflowId,
+                stepId: result.stepId,
+                status: result.status,
+                operation: 'step_completion'
             }
+        });
+    }
+
+    private createDefaultUsageMetrics(): IWorkflowUsageMetrics {
+        const timestamp = Date.now();
+        return {
+            totalRequests: 0,
+            activeUsers: 0,
+            requestsPerSecond: 0,
+            averageResponseSize: 0,
+            peakMemoryUsage: 0,
+            uptime: 0,
+            rateLimit: {
+                current: 0,
+                limit: 100,
+                remaining: 100,
+                resetTime: timestamp + 3600000
+            },
+            totalExecutions: 0,
+            activeWorkflows: 0,
+            workflowsPerSecond: 0,
+            averageComplexity: 0,
+            workflowDistribution: {
+                sequential: 0,
+                parallel: 0,
+                conditional: 0
+            },
+            timestamp
         };
     }
 
@@ -219,3 +298,5 @@ export class WorkflowMetricsManager {
         this.workflowMetrics.clear();
     }
 }
+
+export default WorkflowMetricsManager.getInstance();

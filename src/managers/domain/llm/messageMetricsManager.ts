@@ -1,36 +1,42 @@
 /**
- * @file messageMetricsManager.ts
- * @path src/managers/domain/llm/messageMetricsManager.ts
- * @description Message metrics management integrating Langchain LLM metrics
- */
+* @file messageMetricsManager.ts
+* @path src/managers/domain/llm/messageMetricsManager.ts
+* @description Message metrics management integrating Langchain LLM metrics
+*/
 
 import { CoreManager } from '../../core/coreManager';
-import { createValidationResult } from '../../../utils/validation/validationUtils';
-import type { IValidationResult } from '../../../types/common/commonValidationTypes';
-import type { IStandardCostDetails } from '../../../types/common/commonMetricTypes';
-import { MESSAGE_ERROR_TYPE_enum } from '../../../types/common/commonEnums';
+import { createValidationResult } from '../../../types/common/validationTypes';
+import type { IValidationResult } from '../../../types/common/validationTypes';
+import { createBaseMetadata } from '../../../types/common/baseTypes';
+import type { IBaseManagerMetadata } from '../../../types/agent/agentManagerTypes';
+import { MANAGER_CATEGORY_enum } from '../../../types/common/enumTypes';
+import { ERROR_KINDS, ERROR_SEVERITY_enum, type IErrorKind, type IErrorSeverity } from '../../../types/common/errorTypes';
+
+// Initialize error type records with all possible values
+const createErrorTypeRecord = () => Object.values(ERROR_KINDS).reduce((acc, kind) => ({
+    ...acc,
+    [kind]: 0
+}), {} as Record<IErrorKind, number>);
+
+const createErrorSeverityRecord = () => Object.values(ERROR_SEVERITY_enum).reduce((acc, severity) => ({
+    ...acc,
+    [severity]: 0
+}), {} as Record<IErrorSeverity, number>);
 import {
     ILLMMetrics,
     ILLMResourceMetrics,
     ILLMPerformanceMetrics,
     ILLMUsageMetrics,
-    LLMMetricsTypeGuards,
     LLMMetricsValidation
 } from '../../../types/llm/llmMetricTypes';
 
 // ─── Types ───────────────────────────────────────────────────────────────────────
 
-interface IMessageMetricsCollection {
+export interface IMessageMetricsCollection {
     resources: ILLMResourceMetrics[];
     performance: ILLMPerformanceMetrics[];
     usage: ILLMUsageMetrics[];
     timestamp: number;
-}
-
-interface IBatchMetricsOptions {
-    startTime: number;
-    endTime: number;
-    aggregateBy?: 'minute' | 'hour' | 'day';
 }
 
 // ─── Manager Implementation ──────────────────────────────────────────────────────
@@ -42,13 +48,59 @@ export class MessageMetricsManager extends CoreManager {
         lastUpdate: number;
         metrics: IMessageMetricsCollection;
     }>;
+    public readonly category = MANAGER_CATEGORY_enum.METRICS;
 
-    private constructor() {
+    protected constructor() {
         super();
         this.metricsHistory = new Map();
         this.realtimeMetrics = new Map();
         this.registerDomainManager('MessageMetricsManager', this);
         this.initializePeriodicTasks();
+    }
+
+    public async initialize(params?: Record<string, unknown>): Promise<void> {
+        try {
+            this.logInfo('Initializing MessageMetricsManager', { params });
+            await super.initialize(params);
+            await this.initializePeriodicTasks();
+            this.logInfo('MessageMetricsManager initialized successfully');
+        } catch (error) {
+            await this.handleError(error, 'Failed to initialize MessageMetricsManager');
+            throw error;
+        }
+    }
+
+    protected async cleanup(): Promise<void> {
+        try {
+            this.logInfo('Cleaning up MessageMetricsManager');
+            this.metricsHistory.clear();
+            this.realtimeMetrics.clear();
+            this.logInfo('MessageMetricsManager cleanup completed');
+        } catch (error) {
+            await this.handleError(error, 'Failed to cleanup MessageMetricsManager');
+            throw error;
+        }
+    }
+
+    public async validate(_params: unknown): Promise<boolean> {
+        return true;
+    }
+
+    public getMetadata(): IBaseManagerMetadata {
+        const baseMetadata = createBaseMetadata(this.constructor.name, 'metrics');
+        return {
+            ...baseMetadata,
+            category: this.category,
+            operation: 'metrics',
+            duration: 0,
+            status: 'success',
+            agent: {
+                id: '',
+                name: this.constructor.name,
+                role: 'metrics',
+                status: ''
+            }
+        };
     }
 
     public static getInstance(): MessageMetricsManager {
@@ -58,14 +110,18 @@ export class MessageMetricsManager extends CoreManager {
         return MessageMetricsManager.instance;
     }
 
-    private initializePeriodicTasks(): void {
-        // Aggregate realtime metrics every 5 minutes
-        setInterval(() => this.aggregateRealtimeMetrics(), 300000);
+    private initializePeriodicTasks(): Promise<void> {
+        return new Promise<void>((resolve) => {
+            this.logInfo('Initializing periodic tasks');
+            // Aggregate realtime metrics every 5 minutes
+            setInterval(() => this.aggregateRealtimeMetrics(), 300000);
+            resolve();
+        });
     }
 
     // ─── Collection Methods ────────────────────────────────────────────────────────
 
-    public async collectMetrics(
+    public async collectLLMMetrics(
         messageId: string,
         metrics: ILLMMetrics
     ): Promise<IValidationResult> {
@@ -78,11 +134,18 @@ export class MessageMetricsManager extends CoreManager {
             await this.storeMetrics(messageId, metrics);
             await this.monitorMetrics(messageId, metrics);
 
-            return createValidationResult(true, [], []);
+            return createValidationResult({
+                isValid: true,
+                errors: [],
+                warnings: []
+            });
         } catch (error) {
             const errorMessage = `Failed to collect message metrics: ${error instanceof Error ? error.message : String(error)}`;
-            this.logError(errorMessage, undefined, undefined, error instanceof Error ? error : undefined);
-            return createValidationResult(false, [errorMessage]);
+            await this.handleError(error, errorMessage);
+            return createValidationResult({
+                isValid: false,
+                errors: [errorMessage]
+            });
         }
     }
 
@@ -117,8 +180,9 @@ export class MessageMetricsManager extends CoreManager {
             }
 
             // Performance monitoring
-            if (metrics.performance.errorRate > 10) {
-                this.logWarn(`High error rate for message ${messageId}: ${metrics.performance.errorRate}%`);
+            const errorRate = metrics.performance.errorMetrics?.rate || 0;
+            if (errorRate > 10) {
+                this.logWarn(`High error rate for message ${messageId}: ${errorRate}%`);
             }
 
             if (metrics.performance.tokensPerSecond < 10) {
@@ -132,12 +196,7 @@ export class MessageMetricsManager extends CoreManager {
 
             await this.analyzePerformanceTrends(messageId);
         } catch (error) {
-            this.logError(
-                `Failed to monitor metrics: ${error instanceof Error ? error.message : String(error)}`,
-                undefined,
-                undefined,
-                error instanceof Error ? error : undefined
-            );
+            await this.handleError(error, 'Failed to monitor metrics');
         }
     }
 
@@ -148,7 +207,7 @@ export class MessageMetricsManager extends CoreManager {
         const recentMetrics = messageMetrics.performance.slice(-5);
         
         // Analyze error rate trend
-        const avgErrorRate = recentMetrics.reduce((sum, m) => sum + m.errorRate, 0) / 5;
+        const avgErrorRate = recentMetrics.reduce((sum, m) => sum + (m.errorMetrics?.rate || 0), 0) / 5;
         if (avgErrorRate > 5) {
             this.logWarn(`Increasing error rate trend for message ${messageId}: ${avgErrorRate}% average`);
         }
@@ -200,6 +259,10 @@ export class MessageMetricsManager extends CoreManager {
 
         // Calculate shared resource metrics used for both properties
         const resourceMetrics: ILLMResourceMetrics = {
+            component: this.constructor.name,
+            category: 'RESOURCE',
+            version: '1.0.0',
+            timestamp: Date.now(),
             cpuUsage: metrics.resources.reduce((sum, m) => sum + m.cpuUsage, 0) / len,
             memoryUsage: metrics.resources.reduce((sum, m) => sum + m.memoryUsage, 0) / len,
             diskIO: {
@@ -215,35 +278,36 @@ export class MessageMetricsManager extends CoreManager {
                 weights: metrics.resources.reduce((sum, m) => sum + m.modelMemoryAllocation.weights, 0) / len,
                 cache: metrics.resources.reduce((sum, m) => sum + m.modelMemoryAllocation.cache, 0) / len,
                 workspace: metrics.resources.reduce((sum, m) => sum + m.modelMemoryAllocation.workspace, 0) / len
-            },
-            timestamp: Date.now()
+            }
         };
 
         // Return metrics with shared resource metrics for both properties
         return {
-            // Both properties reference the same metrics object
             resources: resourceMetrics,
             performance: {
-                executionTime: metrics.performance[len - 1].executionTime,
-                latency: metrics.performance[len - 1].latency,
-                throughput: metrics.performance[len - 1].throughput,
+                component: this.constructor.name,
+                category: 'PERFORMANCE',
+                version: '1.0.0',
+                timestamp: Date.now(),
                 responseTime: metrics.performance[len - 1].responseTime,
-                queueLength: metrics.performance.reduce((sum, m) => sum + m.queueLength, 0) / len,
-                errorRate: metrics.performance.reduce((sum, m) => sum + m.errorRate, 0) / len,
-                successRate: metrics.performance.reduce((sum, m) => sum + m.successRate, 0) / len,
-                errorMetrics: metrics.performance[len - 1].errorMetrics,
-                resourceUtilization: metrics.performance[len - 1].resourceUtilization,
+                throughput: metrics.performance[len - 1].throughput,
                 tokensPerSecond: metrics.performance.reduce((sum, m) => sum + m.tokensPerSecond, 0) / len,
                 coherenceScore: metrics.performance.reduce((sum, m) => sum + m.coherenceScore, 0) / len,
                 temperatureImpact: metrics.performance.reduce((sum, m) => sum + m.temperatureImpact, 0) / len,
-                timestamp: Date.now()
+                errorMetrics: {
+                    ...metrics.performance[len - 1].errorMetrics,
+                    rate: metrics.performance.reduce((sum, m) => sum + (m.errorMetrics?.rate || 0), 0) / len
+                }
             },
             usage: {
+                component: this.constructor.name,
+                category: 'USAGE',
+                version: '1.0.0',
+                timestamp: Date.now(),
                 totalRequests: metrics.usage[len - 1].totalRequests,
                 activeInstances: metrics.usage[len - 1].activeInstances,
                 activeUsers: metrics.usage[len - 1].activeUsers,
                 requestsPerSecond: metrics.usage.reduce((sum, m) => sum + m.requestsPerSecond, 0) / len,
-                averageResponseLength: metrics.usage.reduce((sum, m) => sum + m.averageResponseLength, 0) / len,
                 averageResponseSize: metrics.usage.reduce((sum, m) => sum + m.averageResponseSize, 0) / len,
                 peakMemoryUsage: Math.max(...metrics.usage.map(m => m.peakMemoryUsage)),
                 uptime: metrics.usage[len - 1].uptime,
@@ -257,11 +321,85 @@ export class MessageMetricsManager extends CoreManager {
                     gpt4: metrics.usage.reduce((sum, m) => sum + m.modelDistribution.gpt4, 0),
                     gpt35: metrics.usage.reduce((sum, m) => sum + m.modelDistribution.gpt35, 0),
                     other: metrics.usage.reduce((sum, m) => sum + m.modelDistribution.other, 0)
-                },
-                timestamp: Date.now()
+                }
             },
             timestamp: Date.now()
         };
+    }
+
+    // ─── Performance Metrics Update ───────────────────────────────────────────────
+
+    public async updatePerformanceMetrics(messageId: string, metrics: Partial<ILLMPerformanceMetrics>): Promise<void> {
+        try {
+            this.logInfo('Updating performance metrics', { messageId });
+            
+            const messageMetrics = this.metricsHistory.get(messageId) || {
+                resources: [],
+                performance: [],
+                usage: [],
+                timestamp: Date.now()
+            };
+
+            const currentPerformance = messageMetrics.performance[messageMetrics.performance.length - 1] || {
+                component: this.constructor.name,
+                category: 'PERFORMANCE',
+                version: '1.0.0',
+                timestamp: Date.now(),
+                responseTime: {
+                    average: 0,
+                    min: 0,
+                    max: 0
+                },
+                throughput: {
+                    requestsPerSecond: 0,
+                    bytesPerSecond: 0
+                },
+                tokensPerSecond: 0,
+                coherenceScore: 0,
+                temperatureImpact: 0,
+                errorMetrics: {
+                    count: 0,
+                    rate: 0,
+                    lastError: Date.now(),
+                    byType: createErrorTypeRecord(),
+                    bySeverity: createErrorSeverityRecord(),
+                    avgLatencyIncrease: 0,
+                    avgMemoryUsage: 0,
+                    avgCpuUsage: 0,
+                    hourlyErrors: new Array(24).fill(0)
+                }
+            };
+
+            // Update performance metrics with new values while preserving existing ones
+            const updatedPerformance = {
+                ...currentPerformance,
+                ...metrics,
+                timestamp: Date.now()
+            };
+
+            // Validate the updated metrics
+            const validationResult = await this.validate(updatedPerformance);
+            if (!validationResult) {
+                throw new Error('Invalid performance metrics update');
+            }
+
+            messageMetrics.performance.push(updatedPerformance);
+            this.metricsHistory.set(messageId, messageMetrics);
+
+            // Update realtime metrics if they exist
+            const realtimeData = this.realtimeMetrics.get(messageId);
+            if (realtimeData) {
+                realtimeData.metrics.performance.push(updatedPerformance);
+                realtimeData.lastUpdate = Date.now();
+                this.realtimeMetrics.set(messageId, realtimeData);
+            }
+
+            this.logInfo('Performance metrics updated successfully', { messageId });
+
+        } catch (error) {
+            await this.handleError(error, 'Failed to update performance metrics');
+            throw error;
+        }
     }
 
     // ─── Utility Methods ──────────────────────────────────────────────────────────

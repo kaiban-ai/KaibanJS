@@ -10,8 +10,8 @@
 import { CoreManager } from './coreManager';
 import { createError } from '../../types/common/errorTypes';
 import { DEFAULT_LOG_ANALYSIS_CONFIG } from '../../types/common/loggingTypes';
-import { MANAGER_CATEGORY_enum, ILogLevel } from '../../types/common/enumTypes';
-
+import { MANAGER_CATEGORY_enum } from '../../types/common/enumTypes';
+import type { ILogLevel } from '../../types/common/enumTypes';
 import type {
     ILogEntry,
     ILogPattern,
@@ -22,25 +22,17 @@ import type {
     ILogAggregationOptions,
     IErrorPattern,
     IErrorTrend,
-    IErrorImpact,
-    IRecoveryEffectiveness
+    IErrorImpact
 } from '../../types/common/loggingTypes';
 
 export class LogAnalyzer extends CoreManager {
     private static instance: LogAnalyzer;
     private readonly config: ILogAnalysisConfig;
-    private readonly patterns: Map<string, ILogPattern>;
-    private readonly anomalies: Map<string, ILogAnomaly[]>;
-    private readonly correlations: Map<string, ILogCorrelation>;
-
     public readonly category: MANAGER_CATEGORY_enum = MANAGER_CATEGORY_enum.CORE;
 
     private constructor() {
         super();
         this.config = DEFAULT_LOG_ANALYSIS_CONFIG;
-        this.patterns = new Map();
-        this.anomalies = new Map();
-        this.correlations = new Map();
         this.registerDomainManager('LogAnalyzer', this);
     }
 
@@ -393,14 +385,18 @@ export class LogAnalyzer extends CoreManager {
      * Convert log patterns to error patterns
      */
     public convertToErrorPatterns(patterns: ILogPattern[], entries: ILogEntry[]): IErrorPattern[] {
-        return patterns.map(pattern => ({
-            ...pattern,
-            errorType: this.determineErrorType(entries, pattern),
-            recoveryAttempts: this.countRecoveryAttempts(entries, pattern),
-            recoverySuccess: this.calculateRecoverySuccess(entries, pattern),
-            impactMetrics: this.calculateErrorImpact(entries, pattern),
-            resourceMetrics: this.aggregateResourceMetrics(entries, pattern)
-        }));
+        return patterns.map(pattern => {
+            const patternEntries = entries.filter(entry =>
+                this.extractPattern(entry.message as string) === pattern.pattern
+            );
+            return {
+                ...pattern,
+                errorType: this.determineErrorType(entries, pattern),
+                errorMetrics: this.calculateErrorMetrics(patternEntries),
+                impactMetrics: this.calculateErrorImpact(entries, pattern),
+                resourceMetrics: this.aggregateResourceMetrics(entries, pattern)
+            };
+        });
     }
 
     /**
@@ -414,7 +410,7 @@ export class LogAnalyzer extends CoreManager {
             endTime: window[window.length - 1].timestamp,
             errorCount: window.length,
             errorTypes: this.aggregateErrorTypes(window),
-            recoveryMetrics: this.calculateRecoveryMetrics(window),
+            errorMetrics: this.calculateErrorMetrics(window),
             performanceImpact: this.calculatePerformanceImpact(window)
         }));
     }
@@ -429,25 +425,11 @@ export class LogAnalyzer extends CoreManager {
             affectedComponents: this.getAffectedComponents(entries),
             resourceImpact: this.calculateResourceImpact(entries),
             performanceImpact: this.calculatePerformanceImpact(entries),
-            recoveryMetrics: this.calculateRecoveryMetrics(entries),
+            errorMetrics: this.calculateErrorMetrics(entries),
             userImpact: this.assessUserImpact(entries)
         };
     }
 
-    /**
-     * Track recovery effectiveness
-     */
-    public trackRecoveryEffectiveness(entries: ILogEntry[]): IRecoveryEffectiveness {
-        const recoveryAttempts = this.findRecoveryAttempts(entries);
-        
-        return {
-            totalAttempts: recoveryAttempts.length,
-            successfulAttempts: recoveryAttempts.filter(attempt => attempt.successful).length,
-            averageRecoveryTime: this.calculateAverageRecoveryTime(recoveryAttempts),
-            resourceEfficiency: this.calculateResourceEfficiency(recoveryAttempts),
-            strategyEffectiveness: this.analyzeStrategyEffectiveness(recoveryAttempts)
-        };
-    }
 
     // ─── Error Analysis Helper Methods ───────────────────────────────────────
 
@@ -471,27 +453,6 @@ export class LogAnalyzer extends CoreManager {
             .sort((a, b) => b[1] - a[1])[0][0];
     }
 
-    private countRecoveryAttempts(entries: ILogEntry[], pattern: ILogPattern): number {
-        return entries.filter(entry => 
-            entry.context?.recovery?.attempts !== undefined &&
-            this.extractPattern(entry.message as string) === pattern.pattern
-        ).length;
-    }
-
-    private calculateRecoverySuccess(entries: ILogEntry[], pattern: ILogPattern): number {
-        const recoveryEntries = entries.filter(entry => 
-            entry.context?.recovery?.attempts !== undefined &&
-            this.extractPattern(entry.message as string) === pattern.pattern
-        );
-
-        if (recoveryEntries.length === 0) return 0;
-
-        const successfulRecoveries = recoveryEntries.filter(entry =>
-            entry.context?.recovery?.successful === true
-        );
-
-        return successfulRecoveries.length / recoveryEntries.length;
-    }
 
     private calculateErrorImpact(entries: ILogEntry[], pattern: ILogPattern): {
         severity: 'low' | 'medium' | 'high';
@@ -534,28 +495,49 @@ export class LogAnalyzer extends CoreManager {
         return errorTypes;
     }
 
-    private calculateRecoveryMetrics(entries: ILogEntry[]): {
-        attempts: number;
-        successful: number;
-        averageTime: number;
+    private calculateErrorMetrics(entries: ILogEntry[]): {
+        count: number;
+        type: string;
+        severity: 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL';
+        timestamp: number;
+        message: string;
     } {
-        const recoveryAttempts = entries.filter(entry => 
-            entry.context?.recovery?.attempts !== undefined
+        const errorEntries = entries.filter(entry => 
+            entry.level === 'error' && entry.context?.error !== undefined
         );
 
-        const successful = recoveryAttempts.filter(entry =>
-            entry.context?.recovery?.successful === true
-        );
+        if (errorEntries.length === 0) {
+            return {
+                count: 0,
+                type: 'UNKNOWN',
+                severity: 'INFO',
+                timestamp: Date.now(),
+                message: 'No errors found'
+            };
+        }
 
-        const totalTime = recoveryAttempts.reduce((sum, entry) =>
-            sum + (entry.context?.recovery?.duration || 0), 0
-        );
+        // Get the most recent error
+        const latestError = errorEntries[errorEntries.length - 1];
 
         return {
-            attempts: recoveryAttempts.length,
-            successful: successful.length,
-            averageTime: recoveryAttempts.length > 0 ? totalTime / recoveryAttempts.length : 0
+            count: errorEntries.length,
+            type: latestError.context?.error?.type || 'UNKNOWN',
+            severity: this.determineSeverity(errorEntries),
+            timestamp: latestError.timestamp,
+            message: latestError.context?.error?.message || 'Unknown error'
         };
+    }
+
+    private determineSeverity(errorEntries: ILogEntry[]): 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL' {
+        const errorCount = errorEntries.length;
+        const timeSpan = errorEntries[errorEntries.length - 1].timestamp - errorEntries[0].timestamp;
+        const errorRate = errorCount / (timeSpan / 1000); // errors per second
+
+        if (errorRate > 10) return 'CRITICAL';
+        if (errorRate > 5) return 'ERROR';
+        if (errorRate > 1) return 'WARNING';
+        if (errorRate > 0.1) return 'INFO';
+        return 'DEBUG';
     }
 
     private calculatePerformanceImpact(entries: ILogEntry[]): {
@@ -604,82 +586,6 @@ export class LogAnalyzer extends CoreManager {
         };
     }
 
-    private findRecoveryAttempts(entries: ILogEntry[]): Array<{
-        successful: boolean;
-        recoveryTime: number;
-        strategy: string;
-    }> {
-        return entries
-            .filter(entry => entry.context?.recovery !== undefined)
-            .map(entry => ({
-                successful: entry.context?.recovery?.successful === true,
-                recoveryTime: entry.context?.recovery?.duration || 0,
-                strategy: entry.context?.recovery?.strategy || 'unknown'
-            }));
-    }
-
-    private calculateAverageRecoveryTime(attempts: Array<{
-        successful: boolean;
-        recoveryTime: number;
-        strategy: string;
-    }>): number {
-        if (attempts.length === 0) return 0;
-        const totalTime = attempts.reduce((sum, attempt) => sum + attempt.recoveryTime, 0);
-        return totalTime / attempts.length;
-    }
-
-    private calculateResourceEfficiency(attempts: Array<{
-        successful: boolean;
-        recoveryTime: number;
-        strategy: string;
-    }>): number {
-        if (attempts.length === 0) return 0;
-        const successfulAttempts = attempts.filter(attempt => attempt.successful);
-        const averageTime = this.calculateAverageRecoveryTime(attempts);
-        return successfulAttempts.length / attempts.length * (1 / (1 + averageTime / 1000));
-    }
-
-    private analyzeStrategyEffectiveness(attempts: Array<{
-        successful: boolean;
-        recoveryTime: number;
-        strategy: string;
-    }>): Map<string, {
-        attempts: number;
-        successes: number;
-        averageTime: number;
-    }> {
-        const strategyMap = new Map<string, {
-            attempts: number;
-            successes: number;
-            totalTime: number;
-        }>();
-
-        for (const attempt of attempts) {
-            if (!strategyMap.has(attempt.strategy)) {
-                strategyMap.set(attempt.strategy, {
-                    attempts: 0,
-                    successes: 0,
-                    totalTime: 0
-                });
-            }
-
-            const stats = strategyMap.get(attempt.strategy)!;
-            stats.attempts++;
-            if (attempt.successful) stats.successes++;
-            stats.totalTime += attempt.recoveryTime;
-        }
-
-        return new Map(
-            Array.from(strategyMap.entries()).map(([strategy, stats]) => [
-                strategy,
-                {
-                    attempts: stats.attempts,
-                    successes: stats.successes,
-                    averageTime: stats.attempts > 0 ? stats.totalTime / stats.attempts : 0
-                }
-            ])
-        );
-    }
 
     private determineScope(entries: ILogEntry[]): 'isolated' | 'moderate' | 'widespread' {
         const affectedComponents = new Set(entries.map(e => e.component));
