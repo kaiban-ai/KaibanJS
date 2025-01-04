@@ -101,8 +101,6 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
   const [statusLog, setStatusLog] = useState([]);
 
   useEffect(() => {
-    console.log('Team Workflow Status:', teamWorkflowStatus);
-
     setStatusLog((prevLog) => [...prevLog, teamWorkflowStatus]);
   }, [teamWorkflowStatus]);
 
