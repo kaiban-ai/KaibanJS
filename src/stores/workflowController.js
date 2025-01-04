@@ -9,7 +9,7 @@
  */
 
 import PQueue from 'p-queue';
-import { TASK_STATUS_enum } from '../utils/enums';
+import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from '../utils/enums';
 
 export const setupWorkflowController = (useTeamStore) => {
   const taskQueue = new PQueue({ concurrency: 1 });
@@ -80,6 +80,22 @@ export const setupWorkflowController = (useTeamStore) => {
             .getState()
             .updateTaskStatus(nextTask.id, TASK_STATUS_enum.DOING);
         }
+      }
+    }
+  );
+
+  // Managing workflow status changes
+  useTeamStore.subscribe(
+    (state) => state.teamWorkflowStatus,
+    (status) => {
+      if (status === WORKFLOW_STATUS_enum.PAUSED) {
+        taskQueue.pause();
+      } else if (status === WORKFLOW_STATUS_enum.RESUMED) {
+        taskQueue.start();
+
+        useTeamStore.setState({
+          teamWorkflowStatus: WORKFLOW_STATUS_enum.RUNNING,
+        });
       }
     }
   );

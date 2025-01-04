@@ -101,6 +101,8 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
   const [statusLog, setStatusLog] = useState([]);
 
   useEffect(() => {
+    console.log('Team Workflow Status:', teamWorkflowStatus);
+
     setStatusLog((prevLog) => [...prevLog, teamWorkflowStatus]);
   }, [teamWorkflowStatus]);
 
@@ -139,7 +141,20 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
           <button className="actionButton" onClick={startTeam}>
             Start Workflow
           </button>
-
+          <button
+            className="actionButton"
+            onClick={() => {
+              if (teamWorkflowStatus === 'PAUSED') {
+                team.resume();
+              } else if (teamWorkflowStatus === 'RUNNING') {
+                team.pause();
+              }
+            }}
+          >
+            {teamWorkflowStatus === 'PAUSED'
+              ? 'Resume Workflow'
+              : 'Pause Workflow'}
+          </button>
           {teamWorkflowStatus === 'running_workflow' && <Spinner />}
         </div>
       </div>

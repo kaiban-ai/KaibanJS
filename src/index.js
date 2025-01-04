@@ -158,6 +158,32 @@ class Team {
   }
 
   /**
+   * Pauses the team's workflow.
+   * This method temporarily halts the workflow, allowing for manual intervention or adjustments.
+   * @returns {void}
+   */
+  pause() {
+    const currentStatus = this.store.getState().teamWorkflowStatus;
+    if (currentStatus !== WORKFLOW_STATUS_enum.RUNNING) {
+      throw new Error('Cannot pause workflow unless it is running');
+    }
+    this.store.setState({ teamWorkflowStatus: WORKFLOW_STATUS_enum.PAUSED });
+  }
+
+  /**
+   * Resumes the team's workflow.
+   * This method continues the workflow after it has been paused.
+   * @returns {void}
+   */
+  resume() {
+    const currentStatus = this.store.getState().teamWorkflowStatus;
+    if (currentStatus !== WORKFLOW_STATUS_enum.PAUSED) {
+      throw new Error('Cannot resume workflow unless it is paused');
+    }
+    this.store.setState({ teamWorkflowStatus: WORKFLOW_STATUS_enum.RESUMED });
+  }
+
+  /**
    * Starts the team's workflow.
    * This method initiates the process of agents working on tasks.
    *
