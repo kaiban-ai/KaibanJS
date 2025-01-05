@@ -31,6 +31,8 @@ import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { logger } from '../utils/logger';
 import { LLMInvocationError } from '../utils/errors';
+import { WORKFLOW_STATUS_enum } from '../utils/enums';
+
 class ReactChampionAgent extends BaseAgent {
   #executableAgent;
   constructor(config) {
@@ -161,6 +163,13 @@ class ReactChampionAgent extends BaseAgent {
       iterations < maxAgentIterations &&
       !loopCriticalError
     ) {
+      while (
+        agent.store.getState().teamWorkflowStatus ===
+        WORKFLOW_STATUS_enum.PAUSED
+      ) {
+        await new Promise((resolve) => setTimeout(resolve, 100)); // Wait until resumed
+      }
+
       try {
         agent.handleIterationStart({
           agent: agent,
