@@ -96,6 +96,8 @@ export const setupWorkflowController = (useTeamStore) => {
         useTeamStore.setState({
           teamWorkflowStatus: WORKFLOW_STATUS_enum.RUNNING,
         });
+      } else if (status === WORKFLOW_STATUS_enum.STOPPED) {
+        taskQueue.clear(); // Clear the task queue to stop all tasks
       }
     }
   );

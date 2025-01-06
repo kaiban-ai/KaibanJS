@@ -153,6 +153,9 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
               ? 'Resume Workflow'
               : 'Pause Workflow'}
           </button>
+          <button className="actionButton" onClick={() => team.stop()}>
+            Stop Workflow
+          </button>
           {teamWorkflowStatus === 'running_workflow' && <Spinner />}
         </div>
       </div>

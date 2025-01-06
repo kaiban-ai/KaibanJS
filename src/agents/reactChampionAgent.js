@@ -165,9 +165,20 @@ class ReactChampionAgent extends BaseAgent {
     ) {
       while (
         agent.store.getState().teamWorkflowStatus ===
-        WORKFLOW_STATUS_enum.PAUSED
+          WORKFLOW_STATUS_enum.PAUSED ||
+        agent.store.getState().teamWorkflowStatus ===
+          WORKFLOW_STATUS_enum.STOPPED
       ) {
-        await new Promise((resolve) => setTimeout(resolve, 100)); // Wait until resumed
+        if (
+          agent.store.getState().teamWorkflowStatus ===
+          WORKFLOW_STATUS_enum.STOPPED
+        ) {
+          return {
+            result: parsedResultWithFinalAnswer,
+            metadata: { iterations, maxAgentIterations },
+          };
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100)); // Wait until resumed or stopped
       }
 
       try {

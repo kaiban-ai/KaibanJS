@@ -182,6 +182,18 @@ class Team {
     }
     this.store.setState({ teamWorkflowStatus: WORKFLOW_STATUS_enum.RESUMED });
   }
+  /**
+   * Stops the team's workflow.
+   * This method stops the workflow, preventing any further task execution.
+   * @returns {void}
+   */
+  stop() {
+    const currentStatus = this.store.getState().teamWorkflowStatus;
+    if (currentStatus === WORKFLOW_STATUS_enum.STOPPED) {
+      throw new Error('Workflow is already stopped');
+    }
+    this.store.setState({ teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED });
+  }
 
   /**
    * Starts the team's workflow.
