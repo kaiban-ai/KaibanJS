@@ -10,21 +10,22 @@
  * @property {string} OBSERVATION - The agent analyzes the results from the tools to update its understanding and plan.
  * @property {string} FINAL_ANSWER - The agent concludes the task with a final decision based on all collected and processed information.
  * @property {string} IDLE - The agent is idle, waiting for new instructions or tasks.
+ * @property {string} OUTPUT_SCHEMA_VALIDATION_ERROR - The agent's output failed to match the required schema structure and needs correction.
  */
-export enum AGENT_STATUS_enum {
+export declare enum AGENT_STATUS_enum {
   INITIAL = 'INITIAL',
-  THINKING = 'THINKING', // LangChain Callback: llmStart()
-  THINKING_END = 'THINKING_END', // LangChain Callback: llmEnd()
-  THINKING_ERROR = 'THINKING_ERROR', // LangChain Callback: handleLLMError()
-  THOUGHT = 'THOUGHT', // LangChain Callback: llmEnd() and THOUGH Present in the output
-  EXECUTING_ACTION = 'EXECUTING_ACTION', // LangChain Callback: handleAgentAction()
-  USING_TOOL = 'USING_TOOL', // LangChain Callback: handleToolStart()
+  THINKING = 'THINKING',
+  THINKING_END = 'THINKING_END',
+  THINKING_ERROR = 'THINKING_ERROR',
+  THOUGHT = 'THOUGHT',
+  EXECUTING_ACTION = 'EXECUTING_ACTION',
+  USING_TOOL = 'USING_TOOL',
   USING_TOOL_END = 'USING_TOOL_END',
-  USING_TOOL_ERROR = 'USING_TOOL_ERROR', // LangChain Callback: handleToolError()
+  USING_TOOL_ERROR = 'USING_TOOL_ERROR',
   TOOL_DOES_NOT_EXIST = 'TOOL_DOES_NOT_EXIST',
-  OBSERVATION = 'OBSERVATION', // LangChain Callback: handleToolEnd()
-  FINAL_ANSWER = 'FINAL_ANSWER', // LangChain Callback: handleAgentEnd(),
-  TASK_COMPLETED = 'TASK_COMPLETED', // Indicates all task operations, including final outputs, are completed
+  OBSERVATION = 'OBSERVATION',
+  FINAL_ANSWER = 'FINAL_ANSWER',
+  TASK_COMPLETED = 'TASK_COMPLETED',
   MAX_ITERATIONS_ERROR = 'MAX_ITERATIONS_ERROR',
   ISSUES_PARSING_LLM_OUTPUT = 'ISSUES_PARSING_LLM_OUTPUT',
   SELF_QUESTION = 'SELF_QUESTION',
@@ -32,6 +33,7 @@ export enum AGENT_STATUS_enum {
   ITERATION_END = 'ITERATION_END',
   AGENTIC_LOOP_ERROR = 'AGENTIC_LOOP_ERROR',
   WEIRD_LLM_OUTPUT = 'WEIRD_LLM_OUTPUT',
+  OUTPUT_SCHEMA_VALIDATION_ERROR = 'OUTPUT_SCHEMA_VALIDATION_ERROR',
 }
 
 /**
@@ -43,17 +45,13 @@ export enum AGENT_STATUS_enum {
  * @property {string} BLOCKED - Progress on the task is halted due to dependencies or obstacles.
  * @property {string} REVISE - Task requires additional review or adjustments.
  * @property {string} DONE - Task is completed and requires no further action.
- * @property {string} AWAITING_VALIDATION - Task is completed but requires validation or approval.
- * @property {string} VALIDATED - Task has been validated and confirmed as correctly completed.
  */
-export enum TASK_STATUS_enum {
+export declare enum TASK_STATUS_enum {
   TODO = 'TODO',
   DOING = 'DOING',
   BLOCKED = 'BLOCKED',
   REVISE = 'REVISE',
   DONE = 'DONE',
-  AWAITING_VALIDATION = 'AWAITING_VALIDATION',
-  VALIDATED = 'VALIDATED',
 }
 
 /**
@@ -68,7 +66,7 @@ export enum TASK_STATUS_enum {
  * @property {string} FINISHED - The workflow has successfully completed all its tasks and no further operational actions are required.
  * @property {string} BLOCKED - The workflow is unable to proceed due to one or more tasks being blocked, requiring administrative review or automated recovery actions to resume or terminate the blocked tasks.
  */
-export enum WORKFLOW_STATUS_enum {
+export declare enum WORKFLOW_STATUS_enum {
   INITIAL = 'INITIAL',
   RUNNING = 'RUNNING',
   STOPPING = 'STOPPING',
@@ -76,16 +74,4 @@ export enum WORKFLOW_STATUS_enum {
   ERRORED = 'ERRORED',
   FINISHED = 'FINISHED',
   BLOCKED = 'BLOCKED',
-}
-
-/**
- * ### Feedback status
- * @enum {string}
- * @readonly
- * @property {string} PENDING - Feedback has been received but not yet processed or addressed.
- * @property {string} PROCESSED - Feedback has been successfully addressed and incorporated.
- */
-export enum WORKFLOW_STATUS_enum {
-  PENDING = 'PENDING',
-  PROCESSED = 'PROCESSED',
 }

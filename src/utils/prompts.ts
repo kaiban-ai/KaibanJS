@@ -9,14 +9,13 @@
  */
 
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import { TPromptTemplates } from '../types/prompts';
 
 /**
  * Default prompt templates for the ReactChampionAgent.
  * These prompts are used to generate appropriate messages for different scenarios during the agent's execution.
  * @typedef {Object} ReactChampionAgentPrompts
  */
-const REACT_CHAMPION_AGENT_DEFAULT_PROMPTS: TPromptTemplates = {
+const REACT_CHAMPION_AGENT_DEFAULT_PROMPTS = {
   /**
    * Generates the system message that sets up the initial context and instructions for the agent.
    * This message defines the agent's role, capabilities, and the format of its responses.
@@ -45,7 +44,7 @@ ${
   agent.tools.length > 0
     ? agent.tools
         .map(
-          (tool: { name: string; description: string; schema: any }) =>
+          (tool) =>
             `${tool.name}: ${
               tool.description
             } Tool Input Schema: ${JSON.stringify(
