@@ -36,6 +36,7 @@ yarn-error.log*
 .DS_Store
 *.pem
 _todo.md
+.vscode
 
 *storybook.log
 _todo.md
