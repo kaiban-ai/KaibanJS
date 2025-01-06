@@ -18,15 +18,44 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { createTeamStore } from './stores';
-import { ReactChampionAgent } from './agents';
-import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from './utils/enums';
+import { BaseAgent, IBaseAgentParams, ReactChampionAgent } from './agents';
+import { TAgentTypes } from './types/agent';
+import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from './types/enums';
+import { ITaskStats } from './types/task';
+import { TStore } from './types/store';
 
+/**
+ * ### Agent
+ * A class representing an agent.
+ * @class
+ * @extends BaseAgent
+ * @property {BaseAgent} agentInstance - The agent instance.
+ * @property {string} type - The type of agent.
+ */
 class Agent {
-  constructor({ type, ...config }) {
+  agentInstance: BaseAgent;
+  type: string;
+
+  /**
+   * Creates an instance of an Agent.
+   * @param {IAgentParams} config - The configuration parameters for the agent.
+   */
+  constructor({
+    type,
+    ...config
+  }: {
+    type: TAgentTypes;
+  } & IBaseAgentParams) {
     this.agentInstance = this.createAgent(type, config);
     this.type = type || 'ReactChampionAgent';
   }
 
+  /**
+   * Creates an agent.
+   * @param {TAgentTypes} type - The type of agent.
+   * @param {IBaseAgentParams} config - The configuration parameters for the agent.
+   * @returns {BaseAgent} The created agent instance.
+   */
   createAgent(type, config) {
     switch (type) {
       case 'ReactChampionAgent':
@@ -93,7 +122,65 @@ class Agent {
     return this.agentInstance.promptTemplates;
   }
 }
+
+/**
+ * ### Task parameters
+ * @interface ITaskParams
+ * @property {string} [title] - The title of the task.
+ * @property {string} description - The description of the task.
+ * @property {string} expectedOutput - The expected output of the task.
+ * @property {BaseAgent} agent - The agent to execute the task.
+ * @property {boolean} [isDeliverable] - Indicates whether the task is deliverable.
+ * @property {object} [outputSchema] - The schema for validating the task output.
+ */
+export interface ITaskParams {
+  title?: string;
+  description: string;
+  expectedOutput: string;
+  agent: Agent;
+  isDeliverable?: boolean;
+  outputSchema?: object;
+}
+
+/**
+ * ### Task
+ * A class representing a task.
+ * @class
+ * @property {string} id - The task ID.
+ * @property {string} title - The task title.
+ * @property {string} description - The task description.
+ * @property {string} expectedOutput - The expected output of the task.
+ * @property {boolean} isDeliverable - Indicates whether the task is deliverable.
+ * @property {Agent} agent - The agent to execute the task.
+ * @property {TASK_STATUS_enum} status - The status of the task.
+ * @property {string} result - The result of the task.
+ * @property {ITaskStats | null} stats - The statistics of the task.
+ * @property {number | null} duration - The duration of the task.
+ * @property {Task[]} dependencies - The dependencies of the task.
+ * @property {string | null} interpolatedTaskDescription - The interpolated task description.
+ * @property {TStore} store - The store.
+ * @property {object | null} outputSchema - The schema for validating the task output.
+ */
 class Task {
+  id: string;
+  title: string;
+  description: string;
+  expectedOutput: string;
+  isDeliverable: boolean;
+  agent: Agent;
+  status: TASK_STATUS_enum;
+  result: string;
+  stats: ITaskStats | null;
+  duration: number | null;
+  dependencies: Task[];
+  interpolatedTaskDescription: string | null;
+  store: TStore;
+  outputSchema: object | null;
+
+  /**
+   * Creates an instance of a Task.
+   * @param {ITaskParams} params - The parameters for the task.
+   */
   constructor({
     title = '',
     description,
@@ -120,17 +207,45 @@ class Task {
     this.expectedOutput = expectedOutput;
   }
 
-  setStore(store) {
+  /**
+   * Executes the task.
+   * @param {TStore} store - The store.
+   */
+  setStore(store: TStore) {
     this.store = store;
   }
 }
 
 /**
+ * ### Team parameters
+ * @interface ITeamParams
+ * @property {string} name - The name of the team.
+ * @property {BaseAgent[]} [agents] - The agents in the team.
+ * @property {Task[]} [tasks] - The tasks for the team.
+ * @property {string} [logLevel] - The log level for the team.
+ * @property {Record<string, string>} [inputs] - The inputs for the team.
+ * @property {Record<string, any> | null} [env] - The environment variables for the team.
+ */
+export interface ITeamParams {
+  name: string;
+  agents?: Agent[];
+  tasks?: Task[];
+  logLevel?: string;
+  inputs?: Record<string, any>;
+  env?: Record<string, any> | null;
+}
+
+/**
+ * ### Team
  * Represents a team of AI agents working on a set of tasks.
  * This class provides methods to control the workflow, interact with tasks,
  * and observe the state of the team's operations.
+ * @class
+ * @property {TStore} store - The store instance.
  */
 class Team {
+  store: TStore;
+
   /**
    * Creates a new Team instance.
    *
