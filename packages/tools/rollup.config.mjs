@@ -20,6 +20,7 @@ const toolFolders = [
   'textfile-search',
   'zapier-webhook',
   'make-webhook',
+  'jina-url-to-markdown',
 ]; // Add more folder names as needed
 
 const toolConfigs = toolFolders.map((tool) => {
