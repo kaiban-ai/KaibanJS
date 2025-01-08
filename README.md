@@ -442,7 +442,9 @@ For more details on how to utilize observability features in KaibanJS, please vi
 ## Documentation
 
 - [Official Documentation](https://docs.kaibanjs.com/category/get-started)
+- [LLM-friendly Documentation](https://docs.kaibanjs.com/llms-full.txt) - Optimized for AI tools and coding assistants
 - [Join Our Discord](https://www.kaibanjs.com/discord)
+
 
 ### Compatibility
 
