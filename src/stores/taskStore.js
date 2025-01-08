@@ -287,4 +287,57 @@ export const useTaskStore = (set, get) => ({
     }));
     get().handleWorkflowBlocked({ task, error });
   },
+  handleTaskAborted: ({ task, error }) => {
+    const stats = get().getTaskStats(task, get);
+    task.status = TASK_STATUS_enum.BLOCKED;
+    const modelCode = task.agent.llmConfig.model; // Assuming this is where the model code is stored
+    // Calculate costs directly using stats
+    const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
+
+    const updatedFeedbackHistory = task.feedbackHistory.map((f) =>
+      f.status === FEEDBACK_STATUS_enum.PENDING
+        ? { ...f, status: FEEDBACK_STATUS_enum.PROCESSED }
+        : f
+    );
+
+    const taskLog = get().prepareNewLog({
+      agent: task.agent,
+      task,
+      logDescription: `Task blocked: ${getTaskTitleForLogs(task)}, Reason: ${
+        error.message
+      }`,
+      metadata: {
+        ...stats,
+        costDetails,
+        error,
+      },
+      logType: 'TaskStatusUpdate',
+    });
+
+    const prettyError = new PrettyError({
+      name: 'TASK BLOCKED',
+      message: 'Task blocked due to a possible error during execution.',
+      recommendedAction:
+        'Enable logLevel: "debug" during team initialization to obtain more detailed logs and facilitate troubleshooting.',
+      rootError: error,
+      context: { task, error },
+    });
+
+    logger.warn(prettyError.prettyMessage);
+    logger.debug(prettyError.context);
+    set((state) => ({
+      tasks: state.tasks.map((t) =>
+        t.id === task.id
+          ? {
+              ...t,
+              ...stats,
+              status: TASK_STATUS_enum.BLOCKED,
+              feedbackHistory: updatedFeedbackHistory,
+            }
+          : t
+      ),
+      workflowLogs: [...state.workflowLogs, taskLog],
+    }));
+    get().handleWorkflowAborted({ task, error });
+  },
 });

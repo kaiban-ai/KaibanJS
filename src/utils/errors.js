@@ -67,4 +67,11 @@ class PrettyError extends Error {
   }
 }
 
+export class AbortError extends Error {
+  constructor(message = 'Operation was aborted') {
+    super(message);
+    this.name = 'AbortError';
+  }
+}
+
 export { LLMInvocationError, PrettyError };

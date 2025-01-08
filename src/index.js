@@ -189,10 +189,13 @@ class Team {
    */
   stop() {
     const currentStatus = this.store.getState().teamWorkflowStatus;
-    if (currentStatus === WORKFLOW_STATUS_enum.STOPPED) {
-      throw new Error('Workflow is already stopped');
+    if (
+      currentStatus !== WORKFLOW_STATUS_enum.RUNNING &&
+      currentStatus !== WORKFLOW_STATUS_enum.PAUSED
+    ) {
+      throw new Error('Cannot stop workflow unless it is running or paused');
     }
-    this.store.setState({ teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED });
+    this.store.setState({ teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPING });
   }
 
   /**

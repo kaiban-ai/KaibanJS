@@ -32,6 +32,7 @@ import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { logger } from '../utils/logger';
 import { LLMInvocationError } from '../utils/errors';
 import { WORKFLOW_STATUS_enum } from '../utils/enums';
+import { AbortError } from '../utils/errors';
 
 class ReactChampionAgent extends BaseAgent {
   #executableAgent;
@@ -265,6 +266,9 @@ class ReactChampionAgent extends BaseAgent {
                     tool,
                   });
                 } catch (error) {
+                  if (error instanceof AbortError) {
+                    throw error;
+                  }
                   feedbackMessage = this.handleUsingToolError({
                     agent: agent,
                     task,
@@ -302,6 +306,10 @@ class ReactChampionAgent extends BaseAgent {
             break;
         }
       } catch (error) {
+        if (error instanceof AbortError) {
+          this.handleTaskAborted({ agent, task, error });
+          break;
+        }
         // Check if the error is of type 'LLMInvocationError'
         if (error.name === 'LLMInvocationError') {
           // Handle specific LLMInvocationError
@@ -505,14 +513,36 @@ class ReactChampionAgent extends BaseAgent {
   }
 
   async executeThinking(agent, task, ExecutableAgent, feedbackMessage) {
+    const abortController =
+      agent.store.getState().workflowController.abortController;
+
     return new Promise((resolve, reject) => {
+      // Check if already aborted
+      if (abortController.signal.aborted) {
+        reject(new AbortError());
+        return;
+      }
+
+      // Use once: true to ensure the listener is removed after firing
+      abortController.signal.addEventListener(
+        'abort',
+        () => {
+          reject(new AbortError());
+        },
+        { once: true }
+      );
+
       ExecutableAgent.invoke(
         { feedbackMessage },
         {
-          configurable: { sessionId: 'foo-bar-baz' },
+          configurable: {
+            sessionId: 'foo-bar-baz',
+            signal: abortController.signal,
+          },
           callbacks: [
             {
               handleChatModelStart: (llm, messages) => {
+                if (abortController.signal.aborted) return;
                 agent
                   .handleThinkingStart({ agent, task, messages })
                   .catch((error) => {
@@ -521,6 +551,7 @@ class ReactChampionAgent extends BaseAgent {
               },
 
               handleLLMEnd: async (output) => {
+                if (abortController.signal.aborted) return;
                 agent
                   .handleThinkingEnd({ agent, task, output })
                   .then((thinkingResult) => resolve(thinkingResult))
@@ -536,12 +567,16 @@ class ReactChampionAgent extends BaseAgent {
           `LLM_INVOCATION_ERROR: Error during LLM API call for Agent: ${agent.name}, Task: ${task.id}. Details:`,
           error
         );
-        reject(
-          new LLMInvocationError(
-            `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
-            error
-          )
-        );
+        if (error.name === 'AbortError' || abortController.signal.aborted) {
+          reject(new AbortError());
+        } else {
+          reject(
+            new LLMInvocationError(
+              `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
+              error
+            )
+          );
+        }
       });
     });
   }
@@ -649,19 +684,42 @@ class ReactChampionAgent extends BaseAgent {
   }
 
   async executeUsingTool({ agent, task, parsedLLMOutput, tool }) {
-    // If the tool exists, use it
+    const abortController =
+      agent.store.getState().workflowController.abortController;
+
     const toolInput = parsedLLMOutput.actionInput;
     agent.handleUsingToolStart({ agent, task, tool, input: toolInput });
-    const toolResult = await tool.call(toolInput);
-    agent.handleUsingToolEnd({ agent, task, tool, output: toolResult });
-    // console.log(toolResult);
-    const feedbackMessage = this.promptTemplates.TOOL_RESULT_FEEDBACK({
-      agent,
-      task,
-      toolResult,
-      parsedLLMOutput,
-    });
-    return feedbackMessage;
+
+    try {
+      const toolResult = await Promise.race([
+        tool.call(toolInput),
+        new Promise((_, reject) => {
+          abortController.signal.addEventListener('abort', () => {
+            reject(new AbortError());
+          });
+        }),
+      ]);
+
+      agent.handleUsingToolEnd({ agent, task, tool, output: toolResult });
+
+      return this.promptTemplates.TOOL_RESULT_FEEDBACK({
+        agent,
+        task,
+        toolResult,
+        parsedLLMOutput,
+      });
+    } catch (error) {
+      if (error instanceof AbortError) {
+        throw error;
+      }
+      return this.handleUsingToolError({
+        agent,
+        task,
+        parsedLLMOutput,
+        tool,
+        error,
+      });
+    }
   }
 
   handleUsingToolStart({ agent, task, tool, input }) {
@@ -673,7 +731,6 @@ class ReactChampionAgent extends BaseAgent {
 
   handleUsingToolError({ agent, task, parsedLLMOutput, tool, error }) {
     agent.store.getState().handleAgentToolError({ agent, task, tool, error });
-    // console.error(`Error occurred while using the tool ${parsedLLMOutput.action}:`, error);
     const feedbackMessage = this.promptTemplates.TOOL_ERROR_FEEDBACK({
       agent,
       task,
@@ -735,6 +792,10 @@ class ReactChampionAgent extends BaseAgent {
       iterations,
       maxAgentIterations,
     });
+  }
+
+  handleTaskAborted({ agent, task, error }) {
+    agent.store.getState().handleAgentTaskAborted({ agent, task, error });
   }
 
   handleMaxIterationsError({ agent, task, iterations, maxAgentIterations }) {

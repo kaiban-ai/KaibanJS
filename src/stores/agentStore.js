@@ -345,6 +345,23 @@ const useAgentStore = (set, get) => ({
     }));
     get().handleTaskBlocked({ task, error });
   },
+  handleAgentTaskAborted: ({ agent, task, error }) => {
+    agent.status = AGENT_STATUS_enum.TASK_ABORTED;
+    const newLog = get().prepareNewLog({
+      agent,
+      task,
+      logDescription: `🛑 Agent ${agent.name} - ${AGENT_STATUS_enum.TASK_ABORTED}`,
+      metadata: { error },
+      logType: 'AgentStatusUpdate',
+      agentStatus: agent.status,
+    });
+    logger.info(
+      `🛑 ${AGENT_STATUS_enum.TASK_ABORTED}: Agent ${agent.name} - Task Aborted.`
+    );
+    set((state) => ({ workflowLogs: [...state.workflowLogs, newLog] }));
+
+    get().handleTaskAborted({ task, error });
+  },
 
   handleAgentMaxIterationsError: ({
     agent,

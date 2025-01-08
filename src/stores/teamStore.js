@@ -64,6 +64,7 @@ const createTeamStore = (initialState = {}) => {
           workflowContext: initialState.workflowContext || '',
           env: initialState.env || {},
           logLevel: initialState.logLevel,
+          workflowController: initialState.workflowController || {},
 
           setInputs: (inputs) => set({ inputs }), // Add a new action to update inputs
           setName: (name) => set({ name }), // Add a new action to update inputs
@@ -265,7 +266,36 @@ const createTeamStore = (initialState = {}) => {
               workflowLogs: [...state.workflowLogs, newLog], // Append new log to the logs array
             }));
           },
+          handleWorkflowAborted: ({ task, error }) => {
+            // Detailed console error logging
+            logger.warn(`WORKFLOW ABORTED:`, error.message);
+            // Get current workflow stats
+            const stats = get().getWorkflowStats();
 
+            // Prepare the error log with specific workflow context
+            const newLog = {
+              task,
+              agent: task.agent,
+              timestamp: Date.now(),
+              logDescription: `Workflow aborted: ${error.message}`,
+              workflowStatus: WORKFLOW_STATUS_enum.STOPPED,
+              metadata: {
+                error: error.message,
+                ...stats,
+                teamName: get().name,
+                taskCount: get().tasks.length,
+                agentCount: get().agents.length,
+              },
+              logType: 'WorkflowStatusUpdate',
+            };
+
+            // Update state with error details and add new log entry
+            set((state) => ({
+              ...state,
+              teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED, // Set status to indicate a blocked workflow
+              workflowLogs: [...state.workflowLogs, newLog], // Append new log to the logs array
+            }));
+          },
           workOnTask: async (agent, task) => {
             if (task && agent) {
               // Log the start of the task
