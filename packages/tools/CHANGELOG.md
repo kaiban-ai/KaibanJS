@@ -2,6 +2,20 @@
 
 All notable changes to the `@kaibanjs/tools` package will be documented in this file.
 
+## [0.5.0] - 2025-01-08
+
+### Added
+
+- Jina URL to Markdown Tool for advanced web scraping and content extraction
+  - Clean, LLM-ready markdown conversion
+  - Support for dynamic content and anti-bot mechanisms
+  - Configurable output formats
+  - Powered by Jina.ai integration
+
+### Contributors
+
+- Special thanks to Aitor Roma (@aitorroma) from the Nimbox360 team and @anthonydevs17.
+
 ## [0.4.1] - 2024-12-19
 
 ### Documentation

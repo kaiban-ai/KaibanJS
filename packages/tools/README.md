@@ -28,6 +28,7 @@ Here's a list of all available tools. Click on the tool names to view their deta
 | Exa              | AI-focused search engine using embeddings to organize web data         | [README](src/exa/README.md)             |
 | Firecrawl        | Web scraping service for extracting structured data                    | [README](src/firecrawl/README.md)       |
 | GitHub Issues    | GitHub API integration for fetching and analyzing repository issues    | [README](src/github-issues/README.md)   |
+| Jina URL to MD   | Convert web content into clean, LLM-ready markdown using Jina.ai      | [README](src/jina-url-to-markdown/README.md) |
 | PDF Search       | Extract and search content from PDF documents                          | [README](src/pdf-search/README.md)      |
 | Serper           | Google Search API integration with support for multiple search types   | [README](src/serper/README.md)          |
 | Simple RAG       | Basic Retrieval-Augmented Generation implementation for Q&A            | [README](src/simple-rag/README.md)      |

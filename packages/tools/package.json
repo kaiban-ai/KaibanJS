@@ -53,6 +53,10 @@
     "./make-webhook": {
       "import": "./dist/make-webhook/index.esm.js",
       "require": "./dist/make-webhook/index.cjs.js"
+    },
+    "./jina-url-to-markdown": {
+      "import": "./dist/jina-url-to-markdown/index.esm.js",
+      "require": "./dist/jina-url-to-markdown/index.cjs.js"
     }
   },
   "files": [
