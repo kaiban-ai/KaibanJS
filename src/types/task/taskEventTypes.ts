@@ -151,7 +151,6 @@ export interface ITaskErrorHandledEvent extends IBaseTaskEvent {
     resolution: string;
 }
 
-
 // ─── Event Union Type ─────────────────────────────────────────────────────────
 
 export type TaskEvent =
@@ -167,6 +166,12 @@ export type TaskEvent =
     | ITaskMetricsUpdatedEvent
     | ITaskErrorOccurredEvent
     | ITaskErrorHandledEvent;
+
+// ─── Event Handler Interface ────────────────────────────────────────────────────
+
+export interface IEventHandler<T extends TaskEvent> {
+    handle(event: T): Promise<void>;
+}
 
 // ─── Type Guards ────────────────────────────────────────────────────────────
 
@@ -217,7 +222,6 @@ export const isTaskErrorOccurredEvent = (event: TaskEvent): event is ITaskErrorO
 export const isTaskErrorHandledEvent = (event: TaskEvent): event is ITaskErrorHandledEvent => {
     return event.type === TASK_EVENT_TYPE_enum.TASK_ERROR_HANDLED;
 };
-
 
 // ─── Utility Functions ─────────────────────────────────────────────────────────
 

@@ -7,28 +7,30 @@
  */
 
 import { CoreManager } from '../../core/coreManager';
-import { createError } from '../../../types/common/commonErrorTypes';
-import { TASK_STATUS_enum } from '../../../types/common/commonEnums';
-import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
-
+import { MANAGER_CATEGORY_enum } from '../../../types/common/enumTypes';
+import { METRIC_DOMAIN_enum, METRIC_TYPE_enum } from '../../../types/metrics/base/metricEnums';
+import type { IMetricEvent } from '../../../types/metrics/base/metricTypes';
 import type { ITaskType } from '../../../types/task/taskBaseTypes';
+import { LogManager } from '../../core/logManager';
 
 interface ITaskStateSnapshot {
     timestamp: number;
     activeTasks: Map<string, ITaskType>;
-    metrics: Record<string, unknown>;
     version: string;
 }
 
 export class TaskStateManager extends CoreManager {
+    public readonly category = MANAGER_CATEGORY_enum.STATE;
     private static instance: TaskStateManager;
     private readonly stateVersion = '1.0.0';
     private snapshots: ITaskStateSnapshot[] = [];
     private readonly maxSnapshots = 10;
+    private readonly logManager: LogManager;
 
     private constructor() {
         super();
         this.registerDomainManager('TaskStateManager', this);
+        this.logManager = LogManager.getInstance();
     }
 
     public static getInstance(): TaskStateManager {
@@ -38,11 +40,10 @@ export class TaskStateManager extends CoreManager {
         return TaskStateManager.instance;
     }
 
-    public createSnapshot(activeTasks: Map<string, ITaskType>, metrics: Record<string, unknown>): ITaskStateSnapshot {
+    public createSnapshot(activeTasks: Map<string, ITaskType>): ITaskStateSnapshot {
         const snapshot: ITaskStateSnapshot = {
             timestamp: Date.now(),
             activeTasks: new Map(activeTasks),
-            metrics: { ...metrics },
             version: this.stateVersion
         };
 
@@ -51,8 +52,11 @@ export class TaskStateManager extends CoreManager {
             this.snapshots.shift();
         }
 
-        this.logDebug(
-            `State snapshot created - timestamp: ${snapshot.timestamp}, tasks: ${snapshot.activeTasks.size}, version: ${snapshot.version}`
+        this.logManager.logEvent(
+            'TaskStateManager',
+            `State snapshot created - timestamp: ${snapshot.timestamp}, tasks: ${snapshot.activeTasks.size}, version: ${snapshot.version}`,
+            'debug',
+            'createSnapshot'
         );
         return snapshot;
     }
@@ -61,55 +65,52 @@ export class TaskStateManager extends CoreManager {
         try {
             await this.validateSnapshot(snapshot);
             
-            // Track restoration metrics
-            await this.getMetricsManager().trackMetric({
-                domain: MetricDomain.TASK,
-                type: MetricType.PERFORMANCE,
-                value: JSON.stringify({
-                    operation: 'restoreSnapshot',
-                    timestamp: snapshot.timestamp,
-                    taskCount: snapshot.activeTasks.size
-                }),
+            const metric: IMetricEvent = {
                 timestamp: Date.now(),
-                metadata: { operation: 'stateRestore' }
-            });
+                domain: METRIC_DOMAIN_enum.TASK,
+                type: METRIC_TYPE_enum.STATE_TRANSITION,
+                value: snapshot.activeTasks.size,
+                metadata: {
+                    operation: 'restoreSnapshot',
+                    snapshotTimestamp: snapshot.timestamp,
+                    version: snapshot.version
+                }
+            };
 
-            this.logInfo(
-                `State snapshot restored - timestamp: ${snapshot.timestamp}, tasks: ${snapshot.activeTasks.size}, version: ${snapshot.version}`
+            await this.metricsManager.trackMetric(metric);
+
+            this.logManager.logEvent(
+                'TaskStateManager',
+                `State snapshot restored - timestamp: ${snapshot.timestamp}, tasks: ${snapshot.activeTasks.size}, version: ${snapshot.version}`,
+                'info',
+                'restoreSnapshot'
             );
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-            this.logError(`Failed to restore state snapshot: ${errorMessage}`);
-            throw createError({
-                message: 'State restoration failed',
-                type: 'StateError',
-                cause: error as Error
-            });
+            this.logManager.logEvent(
+                'TaskStateManager',
+                `Failed to restore state snapshot: ${errorMessage}`,
+                'error',
+                'restoreSnapshot',
+                { error: error as Error }
+            );
+            throw new Error('State restoration failed');
         }
     }
 
     private async validateSnapshot(snapshot: ITaskStateSnapshot): Promise<void> {
         if (!snapshot || !snapshot.timestamp || !snapshot.activeTasks || !snapshot.version) {
-            throw createError({
-                message: 'Invalid snapshot format',
-                type: 'ValidationError'
-            });
+            throw new Error('Invalid snapshot format');
         }
 
         if (snapshot.version !== this.stateVersion) {
-            throw createError({
-                message: 'Incompatible snapshot version',
-                type: 'ValidationError'
-            });
+            throw new Error('Incompatible snapshot version');
         }
 
         // Validate each task in the snapshot
         for (const [taskId, task] of snapshot.activeTasks) {
             if (!this.validateTask(task)) {
-                throw createError({
-                    message: `Invalid task state in snapshot: ${taskId}`,
-                    type: 'ValidationError'
-                });
+                throw new Error(`Invalid task state in snapshot: ${taskId}`);
             }
         }
     }
@@ -118,8 +119,7 @@ export class TaskStateManager extends CoreManager {
         return (
             typeof task.id === 'string' &&
             typeof task.title === 'string' &&
-            task.status in TASK_STATUS_enum &&
-            typeof task.metrics === 'object'
+            typeof task.status === 'string'
         );
     }
 
@@ -129,7 +129,12 @@ export class TaskStateManager extends CoreManager {
 
     public cleanup(): void {
         this.snapshots = [];
-        this.logDebug('State manager cleaned up - snapshots cleared');
+        this.logManager.logEvent(
+            'TaskStateManager',
+            'State manager cleaned up - snapshots cleared',
+            'debug',
+            'cleanup'
+        );
     }
 }
 

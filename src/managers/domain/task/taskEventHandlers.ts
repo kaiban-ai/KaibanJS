@@ -7,19 +7,11 @@
  */
 
 import { CoreManager } from '../../core/coreManager';
-import { TASK_EVENT_TYPE_enum, TASK_STATUS_enum } from '../../../types/common/commonEnums';
-import { MetadataTypeGuards } from '../../../types/common/commonTypeGuards';
-import { 
-    createValidationResult, 
-    createValidationMetadata,
-    IValidationResult,
-    ValidationErrorType,
-    ValidationWarningType
-} from '../../../types/common/commonValidationTypes';
-import { createError } from '../../../types/common/commonErrorTypes';
-import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
-
-import type { 
+import { MANAGER_CATEGORY_enum } from '../../../types/common/enumTypes';
+import { METRIC_DOMAIN_enum, METRIC_TYPE_enum } from '../../../types/metrics/base/metricEnums';
+import type { IMetricEvent } from '../../../types/metrics/base/metricTypes';
+import type { IStatusTransitionContext } from '../../../types/common/statusTypes';
+import type {
     TaskEvent,
     ITaskCreatedEvent,
     ITaskUpdatedEvent,
@@ -27,71 +19,90 @@ import type {
     ITaskProgressUpdatedEvent,
     ITaskCompletedEvent,
     ITaskFailedEvent,
-    ITaskErrorOccurredEvent
+    ITaskErrorOccurredEvent,
+    IEventHandler
 } from '../../../types/task/taskEventTypes';
-import type { IEventHandler } from '../../../types/common/commonEventTypes';
-import type { IStatusTransitionContext } from '../../../types/common/commonStatusTypes';
+import { LogManager } from '../../core/logManager';
+import { StatusManager } from '../../core/statusManager';
+import { ErrorManager } from '../../core/errorManager';
 
 // ─── Base Handler ────────────────────────────────────────────────────────────
 
 abstract class BaseTaskEventHandler<T extends TaskEvent> extends CoreManager implements IEventHandler<T> {
+    public readonly category = MANAGER_CATEGORY_enum.EXECUTION;
+    protected readonly logManager: LogManager;
+    protected readonly statusManager: StatusManager;
+    protected readonly errorManager: ErrorManager;
+
     protected constructor() {
         super();
-        this.registerDomainManager('TaskEventHandler', this);
+        this.logManager = LogManager.getInstance();
+        this.statusManager = StatusManager.getInstance();
+        this.errorManager = ErrorManager.getInstance();
     }
 
     abstract handle(event: T): Promise<void>;
 
-    async validate(event: T): Promise<IValidationResult<unknown>> {
-        const startTime = Date.now();
-        const errors: ValidationErrorType[] = [];
-        const warnings: ValidationWarningType[] = [];
+    public async validate(): Promise<boolean> {
+        return true;
+    }
 
-        if (!event.id || typeof event.id !== 'string') {
-            errors.push({
-                code: 'INVALID_ID',
-                message: 'Invalid event ID'
-            });
-        }
-        if (!event.timestamp || typeof event.timestamp !== 'number') {
-            errors.push({
-                code: 'INVALID_TIMESTAMP',
-                message: 'Invalid event timestamp'
-            });
-        }
-        if (!event.type || !Object.values(TASK_EVENT_TYPE_enum).includes(event.type)) {
-            errors.push({
-                code: 'INVALID_TYPE',
-                message: 'Invalid event type'
-            });
-        }
-        if (!event.taskId || typeof event.taskId !== 'string') {
-            errors.push({
-                code: 'INVALID_TASK_ID',
-                message: 'Invalid task ID'
-            });
-        }
-        if (!MetadataTypeGuards.isBaseHandlerMetadata(event.metadata)) {
-            errors.push({
-                code: 'INVALID_METADATA',
-                message: 'Invalid event metadata'
-            });
-        }
-
-        return createValidationResult({
-            isValid: errors.length === 0,
-            errors,
-            warnings,
-            metadata: createValidationMetadata({
-                component: 'TaskEventHandler',
-                operation: 'validate',
-                validatedFields: ['id', 'timestamp', 'type', 'taskId', 'metadata']
-            })
-        });
+    protected async validateEvent(event: T): Promise<boolean> {
+        return !!(event.id && event.timestamp && event.type && event.taskId && event.metadata);
     }
 
     protected async handleStatusTransition(params: IStatusTransitionContext): Promise<boolean> {
         return await this.statusManager.transition(params);
+    }
+
+    protected createTransitionContext(
+        entityId: string,
+        currentStatus: string,
+        targetStatus: string,
+        operation: string,
+        phase: string
+    ): IStatusTransitionContext {
+        const startTime = Date.now();
+        return {
+            entity: 'task',
+            entityId,
+            currentStatus,
+            targetStatus,
+            operation,
+            phase,
+            startTime,
+            duration: 0,
+            metadata: {}
+        };
+    }
+
+    protected async trackMetric(taskId: string, type: METRIC_TYPE_enum, value: number, metadata?: Record<string, unknown>): Promise<void> {
+        const metric: IMetricEvent = {
+            timestamp: Date.now(),
+            domain: METRIC_DOMAIN_enum.TASK,
+            type,
+            value,
+            metadata: {
+                taskId,
+                ...metadata
+            }
+        };
+
+        await this.metricsManager.trackMetric(metric);
+    }
+
+    protected logInfo(message: string, context?: Record<string, unknown>): void {
+        this.logManager.logEvent('TaskEventHandler', message, 'info', 'log', context);
+    }
+
+    protected logError(message: string, error: Error, context?: Record<string, unknown>): void {
+        this.logManager.logEvent('TaskEventHandler', message, 'error', 'error', { ...context, error });
+    }
+
+    protected handleError(error: unknown, operation: string, errorType: string): void {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.logError(`Error in ${operation}: ${errorMessage}`, error as Error);
+        this.errorManager.handleError(error as Error);
     }
 }
 
@@ -116,55 +127,25 @@ export class TaskCreatedHandler extends BaseTaskEventHandler<ITaskCreatedEvent> 
             const { taskId, task } = event;
             this.logInfo(`Task ${taskId} created`);
             
-            await this.initializeResources(taskId, task);
-            await this.initializeMetrics(taskId);
-            await this.logCreation(taskId, task);
+            await this.trackMetric(taskId, METRIC_TYPE_enum.INITIALIZATION, 1, {
+                operation: 'create',
+                taskData: task
+            });
 
             const transitionContext: IStatusTransitionContext = {
                 entity: 'task',
                 entityId: taskId,
-                currentStatus: TASK_STATUS_enum.PENDING,
-                targetStatus: TASK_STATUS_enum.TODO,
+                currentStatus: 'PENDING',
+                targetStatus: 'TODO',
                 operation: 'creation',
                 phase: 'pre-execution',
-                startTime: Date.now(),
-                resourceMetrics: await this.getMetricsManager().getInitialResourceMetrics(),
-                performanceMetrics: await this.getMetricsManager().getInitialPerformanceMetrics()
+                startTime: Date.now()
             };
 
             await this.handleStatusTransition(transitionContext);
         } catch (error) {
             this.handleError(error, 'TaskCreated', 'SystemError');
         }
-    }
-
-    private async initializeResources(taskId: string, task: unknown): Promise<void> {
-        this.logDebug(`Initializing resources for task ${taskId}`);
-        const metrics = await this.getMetricsManager().getInitialResourceMetrics();
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.RESOURCE,
-            value: JSON.stringify(metrics),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'initialize' }
-        });
-    }
-
-    private async initializeMetrics(taskId: string): Promise<void> {
-        this.logDebug(`Initializing metrics for task ${taskId}`);
-        const metrics = await this.getMetricsManager().getInitialPerformanceMetrics();
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.PERFORMANCE,
-            value: JSON.stringify(metrics),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'initialize' }
-        });
-    }
-
-    private async logCreation(taskId: string, task: unknown): Promise<void> {
-        this.logDebug(`Logging creation of task ${taskId}`);
-        this.logManager.info(`Task ${taskId} created with initial state`, null, taskId);
     }
 }
 
@@ -189,61 +170,26 @@ export class TaskUpdatedHandler extends BaseTaskEventHandler<ITaskUpdatedEvent> 
             const { taskId, previousState, newState } = event;
             this.logInfo(`Task ${taskId} updated`);
             
-            await this.trackChanges(taskId, previousState, newState);
-            await this.updateMetrics(taskId);
-            await this.logUpdate(taskId, previousState, newState);
+            await this.trackMetric(taskId, METRIC_TYPE_enum.STATE_TRANSITION, 1, {
+                operation: 'update',
+                previousState,
+                newState
+            });
 
             const transitionContext: IStatusTransitionContext = {
                 entity: 'task',
                 entityId: taskId,
-                currentStatus: TASK_STATUS_enum.TODO,
-                targetStatus: TASK_STATUS_enum.DOING,
+                currentStatus: 'TODO',
+                targetStatus: 'DOING',
                 operation: 'update',
                 phase: 'execution',
-                startTime: Date.now(),
-                resourceMetrics: await this.getMetricsManager().getInitialResourceMetrics(),
-                performanceMetrics: await this.getMetricsManager().getInitialPerformanceMetrics()
+                startTime: Date.now()
             };
 
             await this.handleStatusTransition(transitionContext);
         } catch (error) {
             this.handleError(error, 'TaskUpdated', 'SystemError');
         }
-    }
-
-    private async trackChanges(taskId: string, previousState: unknown, newState: unknown): Promise<void> {
-        this.logDebug(`Tracking changes for task ${taskId}`);
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.PERFORMANCE,
-            value: JSON.stringify({ previous: previousState, current: newState }),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'update' }
-        });
-    }
-
-    private async updateMetrics(taskId: string): Promise<void> {
-        this.logDebug(`Updating metrics for task ${taskId}`);
-        const metrics = await this.getMetricsManager().getInitialPerformanceMetrics();
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.PERFORMANCE,
-            value: JSON.stringify(metrics),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'update' }
-        });
-    }
-
-    private async logUpdate(taskId: string, previousState: unknown, newState: unknown): Promise<void> {
-        this.logDebug(`Logging update for task ${taskId}`);
-        this.logManager.info(`Task ${taskId} updated with new state`, null, taskId);
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.PERFORMANCE,
-            value: JSON.stringify({ previous: previousState, current: newState }),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'update' }
-        });
     }
 }
 
@@ -268,6 +214,13 @@ export class TaskStatusChangedHandler extends BaseTaskEventHandler<ITaskStatusCh
             const { taskId, previousStatus, newStatus, reason = 'Status changed' } = event;
             this.logInfo(`Task ${taskId} status changed from ${previousStatus} to ${newStatus}: ${reason}`);
 
+            await this.trackMetric(taskId, METRIC_TYPE_enum.STATE_TRANSITION, 1, {
+                operation: 'statusChange',
+                previousStatus,
+                newStatus,
+                reason
+            });
+
             const transitionContext: IStatusTransitionContext = {
                 entity: 'task',
                 entityId: taskId,
@@ -275,42 +228,13 @@ export class TaskStatusChangedHandler extends BaseTaskEventHandler<ITaskStatusCh
                 targetStatus: newStatus,
                 operation: 'statusChange',
                 phase: 'execution',
-                startTime: Date.now(),
-                resourceMetrics: await this.getMetricsManager().getInitialResourceMetrics(),
-                performanceMetrics: await this.getMetricsManager().getInitialPerformanceMetrics(),
-                errorContext: {
-                    error: createError({
-                        message: reason,
-                        type: 'SystemError'
-                    }),
-                    recoverable: true,
-                    retryCount: 0,
-                    failureReason: reason
-                }
+                startTime: Date.now()
             };
 
             await this.handleStatusTransition(transitionContext);
-            await this.updateMetrics(taskId, previousStatus, newStatus);
-            await this.logTransition(taskId, previousStatus, newStatus, reason);
         } catch (error) {
             this.handleError(error, 'TaskStatusChanged', 'SystemError');
         }
-    }
-
-    private async updateMetrics(taskId: string, from: TASK_STATUS_enum, to: TASK_STATUS_enum): Promise<void> {
-        this.logDebug(`Updating metrics for task ${taskId}`);
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.PERFORMANCE,
-            value: JSON.stringify({ from, to }),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'statusChange' }
-        });
-    }
-
-    private async logTransition(taskId: string, from: TASK_STATUS_enum, to: TASK_STATUS_enum, reason: string): Promise<void> {
-        this.logDebug(`Logging transition for task ${taskId}`);
-        this.logManager.info(`Task ${taskId} transitioned from ${from} to ${to}: ${reason}`, null, taskId);
     }
 }
 
@@ -335,54 +259,26 @@ export class TaskProgressUpdatedHandler extends BaseTaskEventHandler<ITaskProgre
             const { taskId, previousProgress, newProgress } = event;
             this.logInfo(`Task ${taskId} progress updated: ${newProgress}%`);
             
-            await this.updateProgressTracking(taskId, previousProgress, newProgress);
-            await this.updateMetrics(taskId, newProgress);
-            await this.logProgress(taskId, previousProgress, newProgress);
+            await this.trackMetric(taskId, METRIC_TYPE_enum.PERFORMANCE, newProgress, {
+                operation: 'progressUpdate',
+                previousProgress,
+                newProgress
+            });
 
             const transitionContext: IStatusTransitionContext = {
                 entity: 'task',
                 entityId: taskId,
-                currentStatus: TASK_STATUS_enum.TODO,
-                targetStatus: TASK_STATUS_enum.DOING,
+                currentStatus: 'TODO',
+                targetStatus: 'DOING',
                 operation: 'progress',
                 phase: 'execution',
-                startTime: Date.now(),
-                resourceMetrics: await this.getMetricsManager().getInitialResourceMetrics(),
-                performanceMetrics: await this.getMetricsManager().getInitialPerformanceMetrics()
+                startTime: Date.now()
             };
 
             await this.handleStatusTransition(transitionContext);
         } catch (error) {
             this.handleError(error, 'TaskProgressUpdated', 'SystemError');
         }
-    }
-
-    private async updateProgressTracking(taskId: string, previous: unknown, current: unknown): Promise<void> {
-        this.logDebug(`Updating progress tracking for task ${taskId}`);
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.PERFORMANCE,
-            value: JSON.stringify({ previous, current }),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'progressUpdate' }
-        });
-    }
-
-    private async updateMetrics(taskId: string, progress: unknown): Promise<void> {
-        this.logDebug(`Updating metrics for task ${taskId}`);
-        const metrics = await this.getMetricsManager().getInitialPerformanceMetrics();
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.PERFORMANCE,
-            value: JSON.stringify({ ...metrics, progress }),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'progressUpdate' }
-        });
-    }
-
-    private async logProgress(taskId: string, previous: unknown, current: unknown): Promise<void> {
-        this.logDebug(`Logging progress for task ${taskId}`);
-        this.logManager.info(`Task ${taskId} progress updated`, null, taskId);
     }
 }
 
@@ -407,54 +303,25 @@ export class TaskCompletedHandler extends BaseTaskEventHandler<ITaskCompletedEve
             const { taskId, outputs, duration } = event;
             this.logInfo(`Task ${taskId} completed in ${duration}ms`);
             
-            await this.processCompletion(taskId, outputs);
-            await this.updateMetrics(taskId, duration);
-            await this.logCompletion(taskId, outputs, duration);
+            await this.trackMetric(taskId, METRIC_TYPE_enum.SUCCESS, duration, {
+                operation: 'complete',
+                outputs
+            });
 
             const transitionContext: IStatusTransitionContext = {
                 entity: 'task',
                 entityId: taskId,
-                currentStatus: TASK_STATUS_enum.DOING,
-                targetStatus: TASK_STATUS_enum.DONE,
+                currentStatus: 'DOING',
+                targetStatus: 'DONE',
                 operation: 'completion',
                 phase: 'post-execution',
-                startTime: Date.now(),
-                resourceMetrics: await this.getMetricsManager().getInitialResourceMetrics(),
-                performanceMetrics: await this.getMetricsManager().getInitialPerformanceMetrics()
+                startTime: Date.now()
             };
 
             await this.handleStatusTransition(transitionContext);
         } catch (error) {
             this.handleError(error, 'TaskCompleted', 'SystemError');
         }
-    }
-
-    private async processCompletion(taskId: string, outputs: unknown): Promise<void> {
-        this.logDebug(`Processing completion for task ${taskId}`);
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.PERFORMANCE,
-            value: JSON.stringify(outputs),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'complete' }
-        });
-    }
-
-    private async updateMetrics(taskId: string, duration: number): Promise<void> {
-        this.logDebug(`Updating metrics for task ${taskId}`);
-        const metrics = await this.getMetricsManager().getInitialPerformanceMetrics();
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.PERFORMANCE,
-            value: JSON.stringify({ ...metrics, duration }),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'complete' }
-        });
-    }
-
-    private async logCompletion(taskId: string, outputs: unknown, duration: number): Promise<void> {
-        this.logDebug(`Logging completion for task ${taskId}`);
-        this.logManager.info(`Task ${taskId} completed in ${duration}ms`, null, taskId);
     }
 }
 
@@ -477,79 +344,28 @@ export class TaskFailedHandler extends BaseTaskEventHandler<ITaskFailedEvent> {
     async handle(event: ITaskFailedEvent): Promise<void> {
         try {
             const { taskId, error, context } = event;
-            this.logError(`Task ${taskId} failed`, null, taskId, error);
+            this.logError(`Task ${taskId} failed`, error);
             
-            await this.logFailure(taskId, error, context);
-            await this.cleanupResources(taskId);
-            await this.updateFailureMetrics(taskId, error);
-            await this.notifyFailure(taskId, error, context);
+            await this.trackMetric(taskId, METRIC_TYPE_enum.ERROR, 1, {
+                operation: 'failure',
+                error: error.message,
+                context
+            });
 
             const transitionContext: IStatusTransitionContext = {
                 entity: 'task',
                 entityId: taskId,
-                currentStatus: TASK_STATUS_enum.ERROR,
-                targetStatus: TASK_STATUS_enum.BLOCKED,
+                currentStatus: 'ERROR',
+                targetStatus: 'BLOCKED',
                 operation: 'failure',
                 phase: 'error',
-                startTime: Date.now(),
-                resourceMetrics: await this.getMetricsManager().getInitialResourceMetrics(),
-                performanceMetrics: await this.getMetricsManager().getInitialPerformanceMetrics(),
-                errorContext: {
-                    error: createError({
-                        message: error.message,
-                        type: 'SystemError'
-                    }),
-                    recoverable: false,
-                    retryCount: 0,
-                    failureReason: error.message
-                }
+                startTime: Date.now()
             };
 
             await this.handleStatusTransition(transitionContext);
         } catch (error) {
             this.handleError(error, 'TaskFailed', 'SystemError');
         }
-    }
-
-    private async logFailure(taskId: string, error: Error, context: unknown): Promise<void> {
-        this.logDebug(`Logging failure for task ${taskId}`);
-        this.logManager.error(`Task ${taskId} failure details: ${error.message}`, null, taskId, error);
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.PERFORMANCE,
-            value: JSON.stringify({ error: error.message, context }),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'failure' }
-        });
-    }
-
-    private async cleanupResources(taskId: string): Promise<void> {
-        this.logDebug(`Cleaning up resources for failed task ${taskId}`);
-        const metrics = await this.getMetricsManager().getInitialResourceMetrics();
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.RESOURCE,
-            value: JSON.stringify(metrics),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'cleanup' }
-        });
-    }
-
-    private async updateFailureMetrics(taskId: string, error: Error): Promise<void> {
-        this.logDebug(`Updating failure metrics for task ${taskId}`);
-        const metrics = await this.getMetricsManager().getInitialPerformanceMetrics();
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.PERFORMANCE,
-            value: JSON.stringify({ ...metrics, error: error.message }),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'failure' }
-        });
-    }
-
-    private async notifyFailure(taskId: string, error: Error, context: unknown): Promise<void> {
-        this.logDebug(`Notifying failure for task ${taskId}`);
-        this.logManager.error(`Task ${taskId} failed: ${error.message}`, null, taskId, error);
     }
 }
 
@@ -572,33 +388,29 @@ export class TaskErrorOccurredHandler extends BaseTaskEventHandler<ITaskErrorOcc
     async handle(event: ITaskErrorOccurredEvent): Promise<void> {
         try {
             const { taskId, error, context } = event;
-            this.logError(`Task ${taskId} encountered error`, null, taskId, error);
+            this.logError(`Task ${taskId} encountered error`, error);
             
-            await this.logErrorDetails(taskId, error, context);
-            const isRecoverable = await this.assessError(error);
-            
-            if (isRecoverable) {
-                await this.initiateRecovery(taskId, error, context);
-            } else {
-                await this.transitionToFailed(taskId, error, context);
-            }
-            
-            await this.updateErrorMetrics(taskId, error);
+            await this.trackMetric(taskId, METRIC_TYPE_enum.ERROR, 1, {
+                operation: 'error',
+                error: error.message,
+                context,
+                recoverable: await this.assessError(error)
+            });
+
+            const transitionContext: IStatusTransitionContext = {
+                entity: 'task',
+                entityId: taskId,
+                currentStatus: 'ERROR',
+                targetStatus: 'REVISE',
+                operation: 'errorTransition',
+                phase: 'error',
+                startTime: Date.now()
+            };
+
+            await this.handleStatusTransition(transitionContext);
         } catch (error) {
             this.handleError(error, 'TaskErrorOccurred', 'SystemError');
         }
-    }
-
-    private async logErrorDetails(taskId: string, error: Error, context: unknown): Promise<void> {
-        this.logDebug(`Logging error details for task ${taskId}`);
-        this.logManager.error(`Task ${taskId} error details: ${error.message}`, null, taskId, error);
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.PERFORMANCE,
-            value: JSON.stringify({ error: error.message, context }),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'error' }
-        });
     }
 
     private async assessError(error: Error): Promise<boolean> {
@@ -612,66 +424,18 @@ export class TaskErrorOccurredHandler extends BaseTaskEventHandler<ITaskErrorOcc
             error.message.toLowerCase().includes(pattern)
         );
     }
-
-    private async initiateRecovery(taskId: string, error: Error, context: unknown): Promise<void> {
-        this.logDebug(`Initiating recovery for task ${taskId}`);
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.PERFORMANCE,
-            value: JSON.stringify({ error: error.message, context }),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'recovery' }
-        });
-    }
-
-    private async transitionToFailed(taskId: string, error: Error, context: unknown): Promise<void> {
-        const transitionContext: IStatusTransitionContext = {
-            entity: 'task',
-            entityId: taskId,
-            currentStatus: TASK_STATUS_enum.ERROR,
-            targetStatus: TASK_STATUS_enum.REVISE,
-            operation: 'errorTransition',
-            phase: 'error',
-            startTime: Date.now(),
-            resourceMetrics: await this.getMetricsManager().getInitialResourceMetrics(),
-            performanceMetrics: await this.getMetricsManager().getInitialPerformanceMetrics(),
-            errorContext: {
-                error: createError({
-                    message: error.message,
-                    type: 'SystemError'
-                }),
-                recoverable: false,
-                retryCount: 0,
-                failureReason: error.message
-            }
-        };
-
-        await this.handleStatusTransition(transitionContext);
-    }
-
-    private async updateErrorMetrics(taskId: string, error: Error): Promise<void> {
-        this.logDebug(`Updating error metrics for task ${taskId}`);
-        const metrics = await this.getMetricsManager().getInitialPerformanceMetrics();
-        await this.getMetricsManager().trackMetric({
-            domain: MetricDomain.TASK,
-            type: MetricType.PERFORMANCE,
-            value: JSON.stringify({ ...metrics, error: error.message }),
-            timestamp: Date.now(),
-            metadata: { taskId, operation: 'error' }
-        });
-    }
 }
 
 // ─── Handler Registry ─────────────────────────────────────────────────────────
 
-export const taskEventHandlers = new Map<TASK_EVENT_TYPE_enum, IEventHandler<TaskEvent>>([
-    [TASK_EVENT_TYPE_enum.TASK_CREATED, TaskCreatedHandler.getInstance()],
-    [TASK_EVENT_TYPE_enum.TASK_UPDATED, TaskUpdatedHandler.getInstance()],
-    [TASK_EVENT_TYPE_enum.TASK_STATUS_CHANGED, TaskStatusChangedHandler.getInstance()],
-    [TASK_EVENT_TYPE_enum.TASK_PROGRESS_UPDATED, TaskProgressUpdatedHandler.getInstance()],
-    [TASK_EVENT_TYPE_enum.TASK_COMPLETED, TaskCompletedHandler.getInstance()],
-    [TASK_EVENT_TYPE_enum.TASK_ERROR_OCCURRED, TaskErrorOccurredHandler.getInstance()],
-    [TASK_EVENT_TYPE_enum.TASK_FAILED, TaskFailedHandler.getInstance()]
-]) as ReadonlyMap<TASK_EVENT_TYPE_enum, IEventHandler<TaskEvent>>;
+export const taskEventHandlers = new Map<string, IEventHandler<TaskEvent>>([
+    ['TASK_CREATED', TaskCreatedHandler.getInstance()],
+    ['TASK_UPDATED', TaskUpdatedHandler.getInstance()],
+    ['TASK_STATUS_CHANGED', TaskStatusChangedHandler.getInstance()],
+    ['TASK_PROGRESS_UPDATED', TaskProgressUpdatedHandler.getInstance()],
+    ['TASK_COMPLETED', TaskCompletedHandler.getInstance()],
+    ['TASK_ERROR_OCCURRED', TaskErrorOccurredHandler.getInstance()],
+    ['TASK_FAILED', TaskFailedHandler.getInstance()]
+]) as ReadonlyMap<string, IEventHandler<TaskEvent>>;
 
 export default taskEventHandlers;

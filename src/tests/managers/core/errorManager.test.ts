@@ -8,7 +8,8 @@ import { ErrorManager } from '../../../managers/core/errorManager';
 import { createError } from '../../../types/common/errorTypes';
 import { ERROR_KINDS } from '../../../types/common/errorTypes';
 import { ERROR_SEVERITY_enum } from '../../../types/common/enumTypes';
-import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
+import { MetricDomain } from '../../../types/metrics/base/metricTypes';
+import { METRIC_TYPE_enum } from '../../../types/common/enumTypes';
 import { createBaseMetadata } from '../../../types/common/baseTypes';
 
 import type { IBaseError } from '../../../types/common/errorTypes';
@@ -51,7 +52,7 @@ describe('ErrorManager', () => {
             // Verify metrics tracking
             expect(metricsManagerSpy).toHaveBeenCalledWith(expect.objectContaining({
                 domain: MetricDomain.WORKFLOW,
-                type: MetricType.PERFORMANCE,
+                type: METRIC_TYPE_enum.PERFORMANCE,
                 metadata: expect.objectContaining({
                     errorType: ERROR_KINDS.NetworkError
                 })
@@ -95,7 +96,18 @@ describe('ErrorManager', () => {
             }
 
             const trends = await errorManager.getErrorTrends();
-            expect(trends.get(ERROR_KINDS.NetworkError)).toBeDefined();
+            expect(trends.get(ERROR_KINDS.NetworkError)).toBeDefined();[{
+                "resource": "/c:/Users/pwalc/Documents/GroqEmailAssistant/KaibanJS/src/managers/core/status/statusEventEmitter.ts",
+                "owner": "typescript",
+                "code": "2345",
+                "severity": 8,
+                "message": "Argument of type 'import(\"c:/Users/pwalc/Documents/GroqEmailAssistant/KaibanJS/src/types/metrics/base/metricsManagerTypes\").IMetricEvent' is not assignable to parameter of type 'import(\"c:/Users/pwalc/Documents/GroqEmailAssistant/KaibanJS/src/types/metrics/base/metricTypes\").IMetricEvent'.\n  Types of property 'type' are incompatible.\n    Type 'import(\"c:/Users/pwalc/Documents/GroqEmailAssistant/KaibanJS/src/types/metrics/base/metricsManagerTypes\").METRIC_TYPE_enum' is not assignable to type 'import(\"c:/Users/pwalc/Documents/GroqEmailAssistant/KaibanJS/src/types/common/enumTypes\").METRIC_TYPE_enum'.\n      Each declaration of 'METRIC_TYPE_enum.INITIALIZATION' differs in its value, where '\"INITIALIZATION\"' was expected but '\"initialization\"' was given.",
+                "source": "ts",
+                "startLineNumber": 149,
+                "startColumn": 55,
+                "endLineNumber": 149,
+                "endColumn": 66
+            }]
             expect(trends.get(ERROR_KINDS.NetworkError)?.count).toBeGreaterThan(0);
         });
 

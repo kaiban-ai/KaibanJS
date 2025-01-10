@@ -4,6 +4,28 @@
  * @description Core enumeration types used throughout the application
  */
 
+// ─── Metric Aggregation Strategies ────────────────────────────────────────────
+
+export enum IAggregationStrategy {
+    SUM = 'sum',
+    AVG = 'avg',
+    MIN = 'min',
+    MAX = 'max',
+    COUNT = 'count',
+    LATEST = 'latest'
+}
+
+// ─── Metric Domains ───────────────────────────────────────────────────────────
+
+export enum METRIC_DOMAIN_enum {
+    AGENT = 'agent',
+    TASK = 'task', 
+    WORKFLOW = 'workflow',
+    SYSTEM = 'system',
+    TEAM = 'team',
+    TOOL = 'tool'
+}
+
 // ─── Manager Categories ────────────────────────────────────────────────────────
 
 export enum MANAGER_CATEGORY_enum {
@@ -244,9 +266,14 @@ export enum MESSAGE_LOG_TYPE_enum {
 
 export enum METRIC_TYPE_enum {
     RESOURCE = 'RESOURCE',
-    PERFORMANCE = 'PERFORMANCE',
+    PERFORMANCE = 'PERFORMANCE', 
     USAGE = 'USAGE',
-    COST = 'COST'
+    COST = 'COST',
+    INITIALIZATION = 'INITIALIZATION',
+    STATE_TRANSITION = 'STATE_TRANSITION',
+    SYSTEM_HEALTH = 'SYSTEM_HEALTH',
+    SYSTEM = 'SYSTEM',
+    ERROR = 'ERROR'
 }
 
 export enum EVENT_TYPE_enum {

@@ -39,3 +39,10 @@ _todo.md
 
 *storybook.log
 _todo.md
+Lib/
+*cleanup*.md
+*.bat
+Scripts/
+*.sh
+*.cmd
+

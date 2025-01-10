@@ -9,7 +9,6 @@ import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { CoreManager } from '../../core/coreManager';
 import { createError, ERROR_KINDS, type IErrorType } from '../../../types/common/errorTypes';
 import { AgentTypeGuards } from '../../../types/agent/agentTypeGuards';
-import { createBaseMetadata} from '../../../types/common/baseTypes';
 import { isLangchainTool } from '../../../types/tool/toolTypes';
 import { MANAGER_CATEGORY_enum, ERROR_SEVERITY_enum, AGENT_STATUS_enum } from '../../../types/common/enumTypes';
 
@@ -24,7 +23,7 @@ import type { IReactChampionAgent } from '../../../types/agent/agentBaseTypes';
 import type { ITaskType } from '../../../types/task/taskBaseTypes';
 import type { IBaseManagerMetadata } from '../../../types/agent/agentManagerTypes';
 import type { IToolHandlerParams } from '../../../types/tool/toolHandlerTypes';
-import {
+import { 
     createLoopHandlerResult,
     type ILoopContext,
     type ILoopExecutionParams,
@@ -34,6 +33,9 @@ import {
     type ExecutionStatus
 } from '../../../types/agent/agentExecutionFlow';
 import type { IAgenticLoopManager } from '../../../types/agent/agentManagerTypes';
+import type { IHandlerResult } from '../../../types/common/baseTypes';
+import { MetricDomain } from '../../../types/metrics/base/metricTypes';
+import { METRIC_TYPE_enum } from '../../../types/common/enumTypes';
 
 // ─── Manager Implementation ───────────────────────────────────────────────────
 
@@ -52,12 +54,68 @@ export class AgenticLoopManager extends CoreManager implements IAgenticLoopManag
 
     // ─── Initialization ──────────────────────────────────────────────────────────
 
-    private registerManagers(): void {
-        this.registerDomainManager('AgenticLoopManager', this);
-        this.registerDomainManager('CacheInitManager', CacheInitManager);
-        this.registerDomainManager('AgenticLoopStateManager', AgenticLoopStateManager);
-        this.registerDomainManager('ThinkingManager', ThinkingManager);
-        this.registerDomainManager('ToolManager', ToolManager);
+    public async safeExecute<T>(fn: () => Promise<T>, operation: string): Promise<IHandlerResult<T>> {
+        const startTime = Date.now();
+        
+        try {
+            const result = await fn();
+            
+            await this.trackMetric({
+                domain: MetricDomain.AGENT,
+                type: METRIC_TYPE_enum.PERFORMANCE,
+                value: Date.now() - startTime,
+                timestamp: Date.now(),
+                metadata: {
+                    component: this.constructor.name,
+                    operation,
+                    status: 'success'
+                }
+            });
+            
+            return {
+                success: true,
+                data: result,
+                metadata: {
+                    operation,
+                    duration: Date.now() - startTime,
+                    status: 'success',
+                    timestamp: Date.now(),
+                    component: this.constructor.name
+                }
+            };
+        } catch (error) {
+            await this.trackMetric({
+                domain: MetricDomain.AGENT,
+                type: METRIC_TYPE_enum.SYSTEM,
+                value: 1,
+                timestamp: Date.now(),
+                metadata: {
+                    component: this.constructor.name,
+                    operation,
+                    error: error instanceof Error ? error : new Error(String(error))
+                }
+            });
+            
+            return {
+                success: false,
+                error: createError({
+                    message: error instanceof Error ? error.message : String(error),
+                    type: ERROR_KINDS.ExecutionError,
+                    severity: ERROR_SEVERITY_enum.ERROR,
+                    context: {
+                        operation,
+                        component: this.constructor.name
+                    }
+                }),
+                metadata: {
+                    operation,
+                    duration: Date.now() - startTime,
+                    status: 'error',
+                    timestamp: Date.now(),
+                    component: this.constructor.name
+                }
+            };
+        }
     }
 
     public async initialize(metadata?: IBaseManagerMetadata): Promise<void> {

@@ -6,8 +6,8 @@
  * @module @types/workflow
  */
 
-import type { IUsageMetrics } from '../metrics/base/usageMetrics';
-import type { IPerformanceMetrics } from '../metrics/base/performanceMetrics';
+import type { IMetricEvent, IBaseMetrics } from '../metrics/base/metricTypes';
+import { METRIC_DOMAIN_enum, METRIC_TYPE_enum } from '../metrics/base/metricEnums';
 import type { IStandardCostDetails, ITokenCostBreakdown } from '../common/baseTypes';
 
 // ─── Initial State Helpers ────────────────────────────────────────────────────
@@ -27,37 +27,85 @@ export const createInitialCostDetails = (): IStandardCostDetails => ({
     }
 });
 
-export const createInitialUsageMetrics = (): IUsageMetrics => ({
-    totalRequests: 0,
-    activeUsers: 0,
-    requestsPerSecond: 0,
-    averageResponseSize: 0,
-    peakMemoryUsage: 0,
-    uptime: 0,
-    rateLimit: {
-        current: 0,
-        limit: 0,
-        remaining: 0,
-        resetTime: Date.now()
-    },
-    timestamp: Date.now(),
-    component: '',
-    category: '',
-    version: ''
-});
+export interface IWorkflowMetricGroup {
+    latency: IMetricEvent;
+    throughput: IMetricEvent;
+    cpu: IMetricEvent;
+    memory: IMetricEvent;
+    usage: IMetricEvent;
+}
 
-export const createInitialPerformanceMetrics = (): IPerformanceMetrics => ({
-    responseTime: {
-        average: 0,
-        min: 0,
-        max: 0
-    },
-    throughput: {
-        requestsPerSecond: 0,
-        bytesPerSecond: 0
-    },
-    timestamp: Date.now(),
-    component: '',
-    category: '',
-    version: ''
+export const createInitialWorkflowMetrics = (workflowId: string): IWorkflowMetricGroup => {
+    const timestamp = Date.now();
+
+    return {
+        latency: {
+            timestamp,
+            domain: METRIC_DOMAIN_enum.WORKFLOW,
+            type: METRIC_TYPE_enum.LATENCY,
+            value: 0,
+            metadata: {
+                workflowId,
+                component: 'workflow',
+                operation: 'execution'
+            }
+        },
+        throughput: {
+            timestamp,
+            domain: METRIC_DOMAIN_enum.WORKFLOW,
+            type: METRIC_TYPE_enum.THROUGHPUT,
+            value: 0,
+            metadata: {
+                workflowId,
+                component: 'workflow',
+                operation: 'processing'
+            }
+        },
+        cpu: {
+            timestamp,
+            domain: METRIC_DOMAIN_enum.WORKFLOW,
+            type: METRIC_TYPE_enum.CPU,
+            value: 0,
+            metadata: {
+                workflowId,
+                component: 'workflow',
+                operation: 'resource'
+            }
+        },
+        memory: {
+            timestamp,
+            domain: METRIC_DOMAIN_enum.WORKFLOW,
+            type: METRIC_TYPE_enum.MEMORY,
+            value: 0,
+            metadata: {
+                workflowId,
+                component: 'workflow',
+                operation: 'resource'
+            }
+        },
+        usage: {
+            timestamp,
+            domain: METRIC_DOMAIN_enum.WORKFLOW,
+            type: METRIC_TYPE_enum.USAGE,
+            value: 0,
+            metadata: {
+                workflowId,
+                component: 'workflow',
+                operation: 'execution',
+                requests: 0,
+                activeUsers: 0,
+                requestsPerSecond: 0
+            }
+        }
+    };
+};
+
+export const createInitialBaseMetrics = (workflowId: string): IBaseMetrics => ({
+    startTime: Date.now(),
+    success: true,
+    duration: 0,
+    metadata: {
+        component: 'workflow',
+        workflowId
+    }
 });

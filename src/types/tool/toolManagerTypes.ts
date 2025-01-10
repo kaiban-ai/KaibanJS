@@ -16,7 +16,7 @@ import { IToolHandlerResult } from './toolHandlerTypes';
 import { MANAGER_CATEGORY_enum } from '../common/enumTypes';
 import { IMetricsManager } from '../metrics/base/metricsManagerTypes';
 import { IToolDependency } from './toolTypes';
-import { IToolResourceMetrics, IToolPerformanceMetrics, IToolUsageMetrics } from './toolMetricTypes';
+import { IToolResourceMetrics, IToolPerformanceMetrics, IToolUsageMetrics } from './toolMetricsTypes';
 import { IValidationResult } from '../common/validationTypes';
 
 /**
@@ -157,12 +157,12 @@ export interface IToolMetricsManager extends IMetricsManager {
     }>;
 
     // Advanced metrics features
-    getMetricsHistory(toolId: string): {
+    getMetricsHistory(toolId: string): Promise<{
         resources: IToolResourceMetrics[];
         performance: IToolPerformanceMetrics[];
         usage: IToolUsageMetrics[];
         timestamp: number;
-    } | undefined;
+    } | undefined>;
 
     getMetricsHistorySize(): number;
 
@@ -171,7 +171,7 @@ export interface IToolMetricsManager extends IMetricsManager {
         toolId: string,
         inputSize: number,
         outputSize: number
-    ): IStandardCostDetails;
+    ): Promise<IStandardCostDetails>;
 
     // Metrics management
     resetToolMetrics(toolName: string): Promise<void>;

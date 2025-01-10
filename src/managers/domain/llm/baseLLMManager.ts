@@ -124,6 +124,48 @@ export class BaseLLMManager extends CoreManager {
         return BaseLLMManager.instance;
     }
 
+    public createLLMUsageMetrics(tokenDistribution: any, modelCode: string): ILLMUsageMetrics {
+        return {
+            tokenDistribution: {
+                prompt: tokenDistribution.prompt,
+                completion: tokenDistribution.completion,
+                total: tokenDistribution.prompt + tokenDistribution.completion
+            },
+            modelDistribution: {
+                gpt4: modelCode.includes('gpt-4') ? 1 : 0,
+                gpt35: modelCode.includes('gpt-3.5') ? 1 : 0,
+                other: (!modelCode.includes('gpt-4') && !modelCode.includes('gpt-3.5')) ? 1 : 0
+            },
+            activeInstances: 1,
+            totalRequests: 1,
+            activeUsers: 1,
+            successfulRequests: 1,
+            failedRequests: 0,
+            requestsPerSecond: 0,
+            averageResponseTime: 0,
+            averageResponseSize: 0,
+            peakConcurrency: 1,
+            peakMemoryUsage: 0,
+            errorRate: 0,
+            cacheHitRate: 0,
+            uptime: 0,
+            totalTokens: tokenDistribution.prompt + tokenDistribution.completion,
+            totalCost: 0,
+            costPerRequest: 0,
+            rateLimit: {
+                limit: 0,
+                remaining: 0,
+                reset: 0,
+                current: 0,
+                resetTime: Date.now() + 3600000 // 1 hour from now
+            },
+            timestamp: Date.now(),
+            component: 'llmManager',
+            category: 'llm',
+            version: '1.0.0'
+        };
+    }
+
     private createGoogleSafetyRatingsForResponse() {
         return Object.values(HarmCategory).map(category => ({
             category: category.toString(),

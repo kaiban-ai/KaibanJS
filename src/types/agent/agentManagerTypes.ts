@@ -22,7 +22,8 @@ import {
 import { IIterationContext, IIterationHandlerResult } from './agentIterationTypes';
 import { 
     ILoopHandlerResult,
-    ILoopResult 
+    ILoopResult,
+    ILoopHandlerMetadata
 } from './agentExecutionFlow';
 import { ILLMUsageMetrics } from '../llm/llmMetricTypes';
 import { ILLMValidationResult } from '../llm/llmValidationTypes';
@@ -263,6 +264,17 @@ export interface IIterationManager extends IBaseManager<IIterationContext> {
         maxIterations: number;
         error: IErrorType;
     }): Promise<IIterationHandlerResult<IIterationContext>>;
+}
+
+export interface IAgenticLoopManager extends IBaseManager {
+    executeLoop(params: {
+        agent: IReactChampionAgent;
+        task: ITaskType;
+        metadata: ILoopHandlerMetadata;
+        feedbackMessage?: string;
+    }): Promise<ILoopHandlerResult<ILoopResult>>;
+    
+    safeExecute<T>(fn: () => Promise<T>, operation: string): Promise<IHandlerResult<T>>;
 }
 
 // ... rest of the file remains unchanged ...

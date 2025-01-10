@@ -1,27 +1,26 @@
-/**
- * @file teamMetricsManager.ts
- * @path src/managers/domain/team/teamMetricsManager.ts
- * @description Team metrics management implementation
- */
-
 import { CoreManager } from '../../core/coreManager';
-import { MetricsValidator } from '../../validation/metricsValidator';
-import type { ITeamHandlerMetadata } from '../../../types/team/teamBaseTypes';
-import type { ITeamMetrics, ITeamThroughputMetrics } from '../../../types/team/teamMetricTypes';
 import { MANAGER_CATEGORY_enum } from '../../../types/common/enumTypes';
-import { createBaseMetadata } from '../../../types/common/baseTypes';
+import type { IMetricEvent } from '../../../types/metrics/base/metricTypes';
+import { METRIC_DOMAIN_enum, METRIC_TYPE_enum } from '../../../types/metrics/base/metricEnums';
+import { MetricsCollector } from '../../core/metrics/MetricsCollector';
+
+export interface ITeamMetricGroup {
+    latency: IMetricEvent;
+    throughput: IMetricEvent;
+    cpu: IMetricEvent;
+    memory: IMetricEvent;
+}
 
 export class TeamMetricsManager extends CoreManager {
-    private static instance: TeamMetricsManager | null = null;
-    private readonly metrics: Map<string, ITeamMetrics>;
-    private readonly metricsValidator: MetricsValidator;
+    public readonly category = MANAGER_CATEGORY_enum.METRICS;
+    private readonly collector: MetricsCollector;
 
     private constructor() {
         super();
-        this.registerDomainManager('TeamMetricsManager', this);
-        this.metrics = new Map();
-        this.metricsValidator = MetricsValidator.getInstance();
+        this.collector = MetricsCollector.getInstance();
     }
+
+    private static instance: TeamMetricsManager | null = null;
 
     public static getInstance(): TeamMetricsManager {
         if (!TeamMetricsManager.instance) {
@@ -30,77 +29,118 @@ export class TeamMetricsManager extends CoreManager {
         return TeamMetricsManager.instance;
     }
 
-    public readonly category = MANAGER_CATEGORY_enum.METRICS;
-
-    public getMetrics(teamId: string): ITeamMetrics | undefined {
-        return this.metrics.get(teamId);
-    }
-
-    public async setMetrics(teamId: string, metrics: ITeamMetrics): Promise<void> {
-        // Validate metrics before setting
-        const validationResult = await this.metricsValidator.validateErrorMetrics(metrics.errors);
-        if (!validationResult.isValid) {
-            throw new Error(`Invalid team metrics: ${validationResult.errors.join(', ')}`);
-        }
-
-        this.metrics.set(teamId, metrics);
-        this.logInfo(`Updated metrics for team ${teamId}`, {
-            warnings: validationResult.warnings
-        });
-    }
-
-    public clearMetrics(teamId: string): void {
-        this.metrics.delete(teamId);
-        this.logInfo(`Cleared metrics for team ${teamId}`);
-    }
-
-    public getTeamPerformance(teamId: string): ITeamHandlerMetadata {
-        const metrics = this.getMetrics(teamId);
-        const baseMetadata = createBaseMetadata(this.constructor.name, 'getTeamPerformance');
-        
-        if (!metrics) {
-            return {
-                ...baseMetadata,
-                teamId,
-                teamName: '',
-                agentCount: 0,
-                taskCount: 0,
-                workflowStatus: '',
-                performance: {
-                    responseTime: {
-                        average: 0,
-                        min: 0,
-                        max: 0
-                    },
-                    throughput: {
-                        requestsPerSecond: 0,
-                        bytesPerSecond: 0
-                    },
-                    timestamp: Date.now(),
-                    agentUtilization: 0,
-                    taskCompletion: 0
+    public async trackExecution(
+        teamId: string, 
+        duration: number, 
+        success: boolean,
+        operationsPerSecond?: number
+    ): Promise<void> {
+        // Status and latency metrics
+        await Promise.all([
+            this.collector.collect(
+                METRIC_DOMAIN_enum.TEAM,
+                METRIC_TYPE_enum.LATENCY,
+                duration,
+                {
+                    teamId,
+                    component: 'team',
+                    operation: 'execution',
+                    success
                 }
-            };
-        }
+            ),
+            // Add throughput if provided
+            ...(operationsPerSecond !== undefined ? [
+                this.collector.collect(
+                    METRIC_DOMAIN_enum.TEAM,
+                    METRIC_TYPE_enum.THROUGHPUT,
+                    operationsPerSecond,
+                    {
+                        teamId,
+                        component: 'team',
+                        operation: 'processing'
+                    }
+                )
+            ] : [])
+        ]);
+    }
 
-        const throughput: ITeamThroughputMetrics = metrics.performance.throughput;
+    public async trackResource(teamId: string, resourceType: 'cpu' | 'memory', value: number): Promise<void> {
+        const metricType = resourceType === 'cpu' ? METRIC_TYPE_enum.CPU : METRIC_TYPE_enum.MEMORY;
+
+        await this.collector.collect(
+            METRIC_DOMAIN_enum.TEAM,
+            metricType,
+            value,
+            {
+                teamId,
+                component: 'team',
+                operation: 'resource'
+            }
+        );
+    }
+
+    public async trackStateTransition(teamId: string, from: string, to: string): Promise<void> {
+        await this.collector.collect(
+            METRIC_DOMAIN_enum.TEAM,
+            METRIC_TYPE_enum.STATE_TRANSITION,
+            1,
+            {
+                teamId,
+                component: 'team',
+                operation: 'state',
+                from,
+                to
+            }
+        );
+    }
+
+    public createTeamMetrics(teamId: string): ITeamMetricGroup {
+        const timestamp = Date.now();
 
         return {
-            ...baseMetadata,
-            teamId,
-            teamName: teamId,
-            agentCount: metrics.resources.agentCount,
-            taskCount: metrics.resources.taskCount,
-            workflowStatus: 'RUNNING',
-            performance: {
-                responseTime: metrics.performance.responseTime,
-                throughput: {
-                    requestsPerSecond: throughput.requestsPerSecond,
-                    bytesPerSecond: throughput.bytesPerSecond
-                },
-                timestamp: metrics.timestamp,
-                agentUtilization: metrics.usage.resourceUtilization,
-                taskCompletion: throughput.taskCompletionRate
+            latency: {
+                timestamp,
+                domain: METRIC_DOMAIN_enum.TEAM,
+                type: METRIC_TYPE_enum.LATENCY,
+                value: 0,
+                metadata: {
+                    teamId,
+                    component: 'team',
+                    operation: 'execution'
+                }
+            },
+            throughput: {
+                timestamp,
+                domain: METRIC_DOMAIN_enum.TEAM,
+                type: METRIC_TYPE_enum.THROUGHPUT,
+                value: 0,
+                metadata: {
+                    teamId,
+                    component: 'team',
+                    operation: 'processing'
+                }
+            },
+            cpu: {
+                timestamp,
+                domain: METRIC_DOMAIN_enum.TEAM,
+                type: METRIC_TYPE_enum.CPU,
+                value: 0,
+                metadata: {
+                    teamId,
+                    component: 'team',
+                    operation: 'resource'
+                }
+            },
+            memory: {
+                timestamp,
+                domain: METRIC_DOMAIN_enum.TEAM,
+                type: METRIC_TYPE_enum.MEMORY,
+                value: 0,
+                metadata: {
+                    teamId,
+                    component: 'team',
+                    operation: 'resource'
+                }
             }
         };
     }

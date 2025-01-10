@@ -11,7 +11,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { createBaseMetadata } from '../../../types/common/baseTypes';
 import { MANAGER_CATEGORY_enum, AGENT_STATUS_enum } from '../../../types/common/enumTypes';
 import { ERROR_KINDS } from '../../../types/common/errorTypes';
-import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
+import { METRIC_DOMAIN_enum as MetricDomain, METRIC_TYPE_enum as MetricType } from '../../../types/common/enumTypes';
+import type { IMetricType } from '../../../types/metrics/base/metricTypes';
 import { AGENT_EVENT_TYPE } from '../../../types/agent/agentEventTypes';
 
 // Type-only imports from common domain
@@ -53,7 +54,7 @@ import type {
 
 export class AgentEventEmitter extends CoreManager implements IEventEmitter {
     protected static _instance: AgentEventEmitter;
-    protected override readonly eventEmitter: BaseEventEmitter;
+    protected readonly eventEmitter: BaseEventEmitter;
     protected readonly metricsManager: MetricsManager;
     protected readonly agentMetricsManager: AgentMetricsManager;
     protected readonly errorManager: ErrorManager;
@@ -68,7 +69,7 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
         this.registerDomainManager('AgentEventEmitter', this);
     }
 
-    public static override getInstance(): AgentEventEmitter {
+    public static getInstance(): AgentEventEmitter {
         if (!AgentEventEmitter._instance) {
             AgentEventEmitter._instance = new AgentEventEmitter();
         }
@@ -187,25 +188,24 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
             const baseMetadata = createBaseMetadata(this.constructor.name, operation);
             
             // Get metrics from MetricsManager
-            const initialMetrics = await this.metricsManager.getInitialPerformanceMetrics();
+            const initialMetrics = await this.metricsManager.get({
+                domain: MetricDomain.AGENT,
+                type: MetricType.PERFORMANCE as IMetricType,
+                timeRange: 'hour'
+            });
             
             // Get agent metrics
-            const metricsResult = await this.agentMetricsManager.get({
-                timeRange: 'hour',
-                metadata: {
-                    agentId: agentId
-                }
-            });
+            const metricsResult = await this.agentMetricsManager.get();
 
             // Convert base metrics to agent-specific metrics
             const agentMetrics = metricsResult.success && metricsResult.data ? {
                 performance: {
                     ...this.createDefaultPerformanceMetrics(),
-                    ...metricsResult.data.performance,
+                    ...(metricsResult.data as any).performance,
                 },
                 usage: {
                     ...this.createDefaultUsageMetrics(),
-                    ...metricsResult.data.usage,
+                    ...(metricsResult.data as any).usage,
                 }
             } : null;
 
@@ -238,42 +238,49 @@ export class AgentEventEmitter extends CoreManager implements IEventEmitter {
                     name: '', // Will be populated by agent manager
                     role: '', // Will be populated by agent manager
                     status: AGENT_STATUS_enum.INITIAL.toString(),
-                    metrics: {
-                        performance: agentMetrics?.performance || this.createDefaultPerformanceMetrics(),
-                        resources: {
-                            cognitive: {
-                                usage: 0,
-                                limit: 100,
-                                available: 100,
-                                memoryAllocation: 0,
-                                cognitiveLoad: 0,
-                                processingCapacity: 1,
-                                contextUtilization: 0,
-                                timestamp: Date.now(),
-                                component: this.constructor.name,
-                                category: 'COGNITIVE',
-                                version: '1.0.0'
-                            },
-                            cpuUsage: 0,
-                            memoryUsage: process.memoryUsage().heapUsed,
-                            diskIO: {
-                                read: 0,
-                                write: 0
-                            },
-                            networkUsage: {
-                                upload: 0,
-                                download: 0
-                            },
+                metrics: {
+                    performance: agentMetrics?.performance || this.createDefaultPerformanceMetrics(),
+                    resources: {
+                        cognitive: {
                             usage: 0,
                             limit: 100,
                             available: 100,
+                            memoryAllocation: 0,
+                            cognitiveLoad: 0,
+                            processingCapacity: 1,
+                            contextUtilization: 0,
                             timestamp: Date.now(),
                             component: this.constructor.name,
-                            category: 'RESOURCE',
+                            category: 'COGNITIVE',
                             version: '1.0.0'
                         },
-                        usage: agentMetrics?.usage || this.createDefaultUsageMetrics()
+                        cpuUsage: 0,
+                        memoryUsage: process.memoryUsage().heapUsed,
+                        diskIO: {
+                            read: 0,
+                            write: 0
+                        },
+                        networkUsage: {
+                            upload: 0,
+                            download: 0
+                        },
+                        usage: 0,
+                        limit: 100,
+                        available: 100,
+                        timestamp: Date.now(),
+                        component: this.constructor.name,
+                        category: 'RESOURCE',
+                        version: '1.0.0'
+                    },
+                    usage: agentMetrics?.usage || this.createDefaultUsageMetrics(),
+                    iterations: 0,
+                    executionTime: 0,
+                    llmMetrics: {
+                        promptTokens: 0,
+                        completionTokens: 0,
+                        totalTokens: 0
                     }
+                }
                 }
             };
         } catch (error) {

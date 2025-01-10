@@ -1,67 +1,20 @@
 /**
  * @file index.ts
- * @path src/types/metrics/index.ts
- * @description Centralized exports for all metrics-related types and validation
- *
- * @module @types/metrics
+ * @description Metrics type exports
  */
 
-// ─── Base Metric Types ────────────────────────────────────────────────────────
-
 export {
-    type IBaseMetrics,
-    type IMetricsCollectionOptions
-} from './base/baseMetrics';
-
-export {
+    METRIC_DOMAIN_enum,
+    METRIC_TYPE_enum,
     MetricDomain,
-    MetricType,
-    AggregationStrategy,
-    type IMetricEvent,
-    type ITimeFrame,
-    type MutableMetrics,
-    type IAggregatedMetric,
-    type IMetricFilter,
-    type IAggregationQuery,
-    type IRolledUpMetrics,
-    type IMetricsHandlerMetadata,
-    type IMetricsHandlerResult,
-    type IMetricsManager,
-    type IMetricStorage,
-    type IMetricAggregator
-} from './base/metricsManagerTypes';
+    IMetricType,
+    IMetricEvent,
+    IBaseMetrics,
+    IMetricsManager
+} from './base/metricTypes';
 
-// ─── Error Metrics ────────────────────────────────────────────────────────────
-
-export { type IErrorMetrics } from './base/errorMetrics';
-
-// ─── Performance Metrics ────────────────────────────────────────────────────────
-
+// Re-export from common types for backward compatibility
 export {
-    type ITimeMetrics,
-    type IThroughputMetrics,
-    type IPerformanceMetrics
-} from './base/performanceMetrics';
-
-// ─── Resource Metrics ──────────────────────────────────────────────────────────
-
-export { type IResourceMetrics } from './base/resourceMetrics';
-
-// ─── Usage Metrics ────────────────────────────────────────────────────────────
-
-export {
-    type IRateLimitMetrics,
-    type IUsageMetrics
-} from './base/usageMetrics';
-
-// ─── System Health Metrics ──────────────────────────────────────────────────────
-
-export {
-    type ICoreSystemStatus,
-    type ICoreSystemCapacity,
-    type ICoreSystemStability,
-    type ICoreSystemThresholds,
-    type ICoreSystemDegradation,
-    type ICoreSystemHealthMetrics,
-    type ISystemMetrics
-} from './base/systemHealthMetrics';
+    METRIC_DOMAIN_enum as METRIC_DOMAIN_enum_DEPRECATED,
+    METRIC_TYPE_enum as METRIC_TYPE_enum_DEPRECATED
+} from '../common/enumTypes';

@@ -7,20 +7,20 @@ import {
     WorkflowEventType
 } from '../../../types/workflow/workflowEventTypes';
 import { validateWorkflowEvent } from '../../../types/workflow/workflowEventValidation';
-import { IValidationResult } from '../../../types/common/commonValidationTypes';
-import { TASK_STATUS_enum } from '../../../types/common/commonEnums';
-import { IHandlerResult } from '../../../types/common/commonHandlerTypes';
-import { createBaseMetadata } from '../../../types/common/commonMetadataTypes';
-import { TypeGuardCheck, createTypeGuard, metadataChecks } from '../../../types/common/commonTypeGuards';
+import { IValidationResult } from '../../../types/common/validationTypes';
+import { TASK_STATUS_enum, MANAGER_CATEGORY_enum } from '../../../types/common/enumTypes';
+import { IHandlerResult, createBaseMetadata, TypeGuardCheck, createTypeGuard } from '../../../types/common/baseTypes';
 import { IAgentType } from '../../../types/agent/agentBaseTypes';
 import { ITaskType } from '../../../types/task/taskBaseTypes';
-import { MetricDomain, MetricType } from '../../../types/metrics/base/metricsManagerTypes';
+import { METRIC_DOMAIN_enum, METRIC_TYPE_enum } from '../../../types/metrics/base/metricEnums';
+import { ERROR_KINDS } from '../../../types/common/errorTypes';
 
 /**
  * Workflow Event Handler
  * Handles workflow events using CoreManager services
  */
 export class WorkflowEventHandler extends CoreManager {
+    public readonly category = MANAGER_CATEGORY_enum.STATE;
     private static instance: WorkflowEventHandler;
 
     private constructor() {
@@ -38,8 +38,8 @@ export class WorkflowEventHandler extends CoreManager {
      * Type guard for agent type
      */
     private isAgentType: TypeGuardCheck<IAgentType> = createTypeGuard<IAgentType>([
-        metadataChecks.isObject,
         (value: unknown): boolean => {
+            if (typeof value !== 'object' || value === null) return false;
             const agent = value as IAgentType;
             return (
                 typeof agent.id === 'string' &&
@@ -53,8 +53,8 @@ export class WorkflowEventHandler extends CoreManager {
      * Type guard for task type
      */
     private isTaskType: TypeGuardCheck<ITaskType> = createTypeGuard<ITaskType>([
-        metadataChecks.isObject,
         (value: unknown): boolean => {
+            if (typeof value !== 'object' || value === null) return false;
             const task = value as ITaskType;
             return (
                 typeof task.id === 'string' &&
@@ -64,6 +64,37 @@ export class WorkflowEventHandler extends CoreManager {
         }
     ]);
 
+    protected async safeExecute<T>(
+        fn: () => Promise<T>,
+        errorContext: string
+    ): Promise<IHandlerResult<T>> {
+        try {
+            const result = await fn();
+            return {
+                success: true,
+                data: result,
+                metadata: createBaseMetadata(this.constructor.name, errorContext)
+            };
+        } catch (error) {
+            const baseError = new Error(error instanceof Error ? error.message : String(error));
+            baseError.name = ERROR_KINDS.ExecutionError;
+            this.logError(`Operation failed: ${errorContext}`, baseError);
+            return {
+                success: false,
+                metadata: createBaseMetadata(this.constructor.name, errorContext),
+                error: baseError
+            };
+        }
+    }
+
+    protected logInfo(message: string, context?: string): void {
+        console.info(`[${this.constructor.name}] ${message}${context ? ` (${context})` : ''}`);
+    }
+
+    protected logError(message: string, error: Error): void {
+        console.error(`[${this.constructor.name}] ${message}:`, error);
+    }
+
     /**
      * Handle workflow step events
      */
@@ -72,32 +103,19 @@ export class WorkflowEventHandler extends CoreManager {
             // Validate event
             const validationResult = validateWorkflowEvent(event);
             if (!validationResult.isValid) {
-                this.handleError(
-                    new Error(validationResult.errors.join(', ')),
-                    'Step event validation failed',
-                    'ValidationError'
-                );
-                return validationResult;
+                const error = new Error(validationResult.errors.join(', '));
+                error.name = ERROR_KINDS.ValidationError;
+                throw error;
             }
 
             // Log event
-            this.logInfo('Workflow step event', null, event.stepId);
-
-            // Handle status transition
-            await this.handleStatusTransition({
-                entity: 'workflow',
-                entityId: event.stepId,
-                currentStatus: event.type === 'start' ? 'PENDING' : 'DOING',
-                targetStatus: this.mapStepTypeToStatus(event.type),
-                context: event.metadata
-            });
+            this.logInfo('Workflow step event', event.stepId);
 
             // Track metrics
-            const metricsManager = this.getMetricsManager();
-            await metricsManager.trackMetric({
-                domain: MetricDomain.WORKFLOW,
-                type: MetricType.PERFORMANCE,
-                value: event.metadata.performance.executionTime.total,
+            await this.metricsManager.trackMetric({
+                domain: METRIC_DOMAIN_enum.WORKFLOW,
+                type: METRIC_TYPE_enum.PERFORMANCE,
+                value: event.metadata?.performance?.executionTime?.total || 0,
                 timestamp: Date.now(),
                 metadata: {
                     stepId: event.stepId,
@@ -118,48 +136,25 @@ export class WorkflowEventHandler extends CoreManager {
             // Validate event
             const validationResult = validateWorkflowEvent(event);
             if (!validationResult.isValid) {
-                this.handleError(
-                    new Error(validationResult.errors.join(', ')),
-                    'Control event validation failed',
-                    'ValidationError'
-                );
-                return validationResult;
+                const error = new Error(validationResult.errors.join(', '));
+                error.name = ERROR_KINDS.ValidationError;
+                throw error;
             }
 
             // Log event
-            this.logInfo('Workflow control event', null, event.metadata.component);
+            this.logInfo('Workflow control event', event.metadata?.component);
 
-            // Handle workflow state
-            switch (event.type) {
-                case 'start':
-                case 'resume':
-                    await this.handleStatusTransition({
-                        entity: 'workflow',
-                        entityId: event.metadata.component,
-                        currentStatus: 'PENDING',
-                        targetStatus: 'DOING',
-                        context: event.metadata
-                    });
-                    break;
-                case 'pause':
-                    await this.handleStatusTransition({
-                        entity: 'workflow',
-                        entityId: event.metadata.component,
-                        currentStatus: 'DOING',
-                        targetStatus: 'BLOCKED',
-                        context: event.metadata
-                    });
-                    break;
-                case 'stop':
-                    await this.handleStatusTransition({
-                        entity: 'workflow',
-                        entityId: event.metadata.component,
-                        currentStatus: 'DOING',
-                        targetStatus: 'DONE',
-                        context: event.metadata
-                    });
-                    break;
-            }
+            // Track state transition
+            await this.metricsManager.trackMetric({
+                domain: METRIC_DOMAIN_enum.WORKFLOW,
+                type: METRIC_TYPE_enum.STATE_TRANSITION,
+                value: 1,
+                timestamp: Date.now(),
+                metadata: {
+                    type: event.type,
+                    component: event.metadata?.component
+                }
+            });
 
             return validationResult;
         }, 'Handle workflow control event');
@@ -173,36 +168,20 @@ export class WorkflowEventHandler extends CoreManager {
             // Validate event
             const validationResult = validateWorkflowEvent(event);
             if (!validationResult.isValid) {
-                this.handleError(
-                    new Error(validationResult.errors.join(', ')),
-                    'Agent event validation failed',
-                    'ValidationError'
-                );
-                return validationResult;
+                const error = new Error(validationResult.errors.join(', '));
+                error.name = ERROR_KINDS.ValidationError;
+                throw error;
             }
 
             // Log event
-            this.logInfo('Workflow agent event', event.agent?.id || null, event.stepId);
+            this.logInfo('Workflow agent event', `${event.agent?.id || 'unknown'} - ${event.stepId}`);
 
             // Validate agent assignment
             if (event.type === 'assign' && event.agent) {
                 if (!this.isAgentType(event.agent)) {
-                    const error = {
-                        isValid: false,
-                        errors: ['Invalid agent type'],
-                        warnings: [],
-                        metadata: {
-                            timestamp: Date.now(),
-                            duration: 0,
-                            validatorName: 'WorkflowAgentValidator'
-                        }
-                    };
-                    this.handleError(
-                        new Error('Invalid agent type'),
-                        'Agent validation failed',
-                        'ValidationError'
-                    );
-                    return error;
+                    const error = new Error('Invalid agent type');
+                    error.name = ERROR_KINDS.ValidationError;
+                    throw error;
                 }
             }
 
@@ -218,34 +197,19 @@ export class WorkflowEventHandler extends CoreManager {
             // Validate event
             const validationResult = validateWorkflowEvent(event);
             if (!validationResult.isValid) {
-                this.handleError(
-                    new Error(validationResult.errors.join(', ')),
-                    'Task event validation failed',
-                    'ValidationError'
-                );
-                return validationResult;
+                const error = new Error(validationResult.errors.join(', '));
+                error.name = ERROR_KINDS.ValidationError;
+                throw error;
             }
 
             // Log event
-            this.logInfo('Workflow task event', null, event.task.id);
-
-            // Handle task status if provided
-            if (event.status) {
-                await this.handleStatusTransition({
-                    entity: 'task',
-                    entityId: event.task.id,
-                    currentStatus: event.task.status as keyof typeof TASK_STATUS_enum,
-                    targetStatus: event.status,
-                    context: event.metadata
-                });
-            }
+            this.logInfo('Workflow task event', event.task.id);
 
             // Track task metrics
-            const metricsManager = this.getMetricsManager();
-            await metricsManager.trackMetric({
-                domain: MetricDomain.TASK,
-                type: MetricType.PERFORMANCE,
-                value: event.metadata.performance.executionTime.total,
+            await this.metricsManager.trackMetric({
+                domain: METRIC_DOMAIN_enum.TASK,
+                type: METRIC_TYPE_enum.PERFORMANCE,
+                value: event.metadata?.performance?.executionTime?.total || 0,
                 timestamp: Date.now(),
                 metadata: {
                     taskId: event.task.id,
@@ -278,30 +242,16 @@ export class WorkflowEventHandler extends CoreManager {
                         return (await this.handleTaskEvent(event as IWorkflowTaskEvent)).data;
                     
                     default:
-                        return {
-                            isValid: false,
-                            errors: [`Unknown workflow event type: ${event.type}`],
-                            warnings: [],
-                            metadata: {
-                                timestamp: Date.now(),
-                                duration: 0,
-                                validatorName: 'WorkflowEventValidator'
-                            }
-                        };
+                        const error = new Error(`Unknown workflow event type: ${event.type}`);
+                        error.name = ERROR_KINDS.ValidationError;
+                        throw error;
                 }
             })();
 
             if (!result) {
-                return {
-                    isValid: false,
-                    errors: ['Event handler returned no result'],
-                    warnings: [],
-                    metadata: {
-                        timestamp: Date.now(),
-                        duration: 0,
-                        validatorName: 'WorkflowEventValidator'
-                    }
-                };
+                const error = new Error('Event handler returned no result');
+                error.name = ERROR_KINDS.ValidationError;
+                throw error;
             }
 
             return result;
@@ -326,3 +276,5 @@ export class WorkflowEventHandler extends CoreManager {
         }
     }
 }
+
+export default WorkflowEventHandler.getInstance();
