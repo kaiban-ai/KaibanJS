@@ -15,7 +15,7 @@ import {
 } from '../utils/enums';
 import { getTaskTitleForLogs } from '../utils/tasks';
 import { logger } from '../utils/logger';
-import { PrettyError } from '../utils/errors';
+import { PrettyError, StopAbortError } from '../utils/errors';
 import { calculateTaskCost } from '../utils/llmCostCalculator';
 
 export const useTaskStore = (set, get) => ({
@@ -288,6 +288,43 @@ export const useTaskStore = (set, get) => ({
     get().handleWorkflowBlocked({ task, error });
   },
   handleTaskAborted: ({ task, error }) => {
+    if (error instanceof StopAbortError) {
+      //create task log
+      const stats = get().getTaskStats(task, get);
+      const modelCode = task.agent.llmConfig.model; // Assuming this is where the model code is stored
+      // Calculate costs directly using stats
+      const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
+
+      const taskLog = get().prepareNewLog({
+        agent: task.agent,
+        task,
+        logDescription: `Task aborted: ${getTaskTitleForLogs(task)}, Reason: ${
+          error.message
+        }`,
+        metadata: {
+          ...stats,
+          costDetails,
+          error,
+        },
+        logType: 'TaskStatusUpdate',
+      });
+      // create pretty error
+      const prettyError = new PrettyError({
+        name: 'TASK STOPPED',
+        message: 'Task manually stopped by user.',
+        recommendedAction:
+          'Enable logLevel: "debug" during team initialization to obtain more detailed logs and facilitate troubleshooting.',
+        rootError: error,
+        context: { task, error },
+      });
+      logger.warn(prettyError.prettyMessage);
+      logger.debug(prettyError.context);
+
+      set((state) => ({
+        workflowLogs: [...state.workflowLogs, taskLog],
+      }));
+      return;
+    }
     const stats = get().getTaskStats(task, get);
     task.status = TASK_STATUS_enum.BLOCKED;
     const modelCode = task.agent.llmConfig.model; // Assuming this is where the model code is stored
@@ -338,6 +375,5 @@ export const useTaskStore = (set, get) => ({
       ),
       workflowLogs: [...state.workflowLogs, taskLog],
     }));
-    get().handleWorkflowAborted({ task, error });
   },
 });

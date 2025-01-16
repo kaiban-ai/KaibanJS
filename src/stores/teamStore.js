@@ -13,6 +13,7 @@ import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { useAgentStore } from './agentStore';
 import { useTaskStore } from './taskStore';
+import { useWorkflowLoopStore } from './workflowLoopStore';
 import {
   TASK_STATUS_enum,
   AGENT_STATUS_enum,
@@ -52,7 +53,7 @@ const createTeamStore = (initialState = {}) => {
         (set, get) => ({
           ...useAgentStore(set, get),
           ...useTaskStore(set, get),
-
+          ...useWorkflowLoopStore(set, get),
           teamWorkflowStatus:
             initialState.teamWorkflowStatus || WORKFLOW_STATUS_enum.INITIAL,
           workflowResult: initialState.workflowResult || null,

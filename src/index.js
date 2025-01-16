@@ -163,11 +163,7 @@ class Team {
    * @returns {void}
    */
   pause() {
-    const currentStatus = this.store.getState().teamWorkflowStatus;
-    if (currentStatus !== WORKFLOW_STATUS_enum.RUNNING) {
-      throw new Error('Cannot pause workflow unless it is running');
-    }
-    this.store.setState({ teamWorkflowStatus: WORKFLOW_STATUS_enum.PAUSED });
+    return this.store.getState().pauseWorkflow();
   }
 
   /**
@@ -176,11 +172,7 @@ class Team {
    * @returns {void}
    */
   resume() {
-    const currentStatus = this.store.getState().teamWorkflowStatus;
-    if (currentStatus !== WORKFLOW_STATUS_enum.PAUSED) {
-      throw new Error('Cannot resume workflow unless it is paused');
-    }
-    this.store.setState({ teamWorkflowStatus: WORKFLOW_STATUS_enum.RESUMED });
+    return this.store.getState().resumeWorkflow();
   }
   /**
    * Stops the team's workflow.
@@ -188,14 +180,7 @@ class Team {
    * @returns {void}
    */
   stop() {
-    const currentStatus = this.store.getState().teamWorkflowStatus;
-    if (
-      currentStatus !== WORKFLOW_STATUS_enum.RUNNING &&
-      currentStatus !== WORKFLOW_STATUS_enum.PAUSED
-    ) {
-      throw new Error('Cannot stop workflow unless it is running or paused');
-    }
-    this.store.setState({ teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPING });
+    return this.store.getState().stopWorkflow();
   }
 
   /**

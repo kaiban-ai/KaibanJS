@@ -82,8 +82,8 @@ class ReactChampionAgent extends BaseAgent {
       };
       this.llmConfig = extractedLlmConfig;
     }
-
     this.interactionsHistory = new ChatMessageHistory();
+    this.lastFeedbackMessage = null;
   }
 
   async workOnTask(task, inputs, context) {
@@ -147,7 +147,7 @@ class ReactChampionAgent extends BaseAgent {
 
     return {
       executableAgent: chainAgentWithHistory,
-      initialFeedbackMessage: feedbackMessage,
+      initialFeedbackMessage: this.lastFeedbackMessage || feedbackMessage,
     };
   }
 
@@ -164,22 +164,20 @@ class ReactChampionAgent extends BaseAgent {
       iterations < maxAgentIterations &&
       !loopCriticalError
     ) {
-      while (
-        agent.store.getState().teamWorkflowStatus ===
-          WORKFLOW_STATUS_enum.PAUSED ||
-        agent.store.getState().teamWorkflowStatus ===
-          WORKFLOW_STATUS_enum.STOPPED
+      // Save the feedback message as the last feedback message
+      this.lastFeedbackMessage = feedbackMessage;
+
+      // Check workflow status
+      const workflowStatus = agent.store.getState().teamWorkflowStatus;
+
+      if (
+        workflowStatus === WORKFLOW_STATUS_enum.STOPPED ||
+        workflowStatus === WORKFLOW_STATUS_enum.STOPPING
       ) {
-        if (
-          agent.store.getState().teamWorkflowStatus ===
-          WORKFLOW_STATUS_enum.STOPPED
-        ) {
-          return {
-            result: parsedResultWithFinalAnswer,
-            metadata: { iterations, maxAgentIterations },
-          };
-        }
-        await new Promise((resolve) => setTimeout(resolve, 100)); // Wait until resumed or stopped
+        return {
+          result: parsedResultWithFinalAnswer,
+          metadata: { iterations, maxAgentIterations },
+        };
       }
 
       try {
@@ -513,63 +511,48 @@ class ReactChampionAgent extends BaseAgent {
   }
 
   async executeThinking(agent, task, ExecutableAgent, feedbackMessage) {
-    const abortController =
-      agent.store.getState().workflowController.abortController;
-
-    return new Promise((resolve, reject) => {
-      // Check if already aborted
-      if (abortController.signal.aborted) {
-        reject(new AbortError());
-        return;
-      }
-
-      // Use once: true to ensure the listener is removed after firing
-      abortController.signal.addEventListener(
-        'abort',
-        () => {
-          reject(new AbortError());
-        },
-        { once: true }
-      );
+    const promiseObj = {};
+    let rejectFn; // Declare reject function outside Promise
+    // Create an AbortController for this invocation
+    const abortController = new AbortController();
+    const thinkingPromise = new Promise((resolve, reject) => {
+      rejectFn = reject; // Capture the reject function
 
       ExecutableAgent.invoke(
         { feedbackMessage },
         {
-          configurable: {
-            sessionId: 'foo-bar-baz',
-            signal: abortController.signal,
-          },
+          configurable: { sessionId: task.id },
           callbacks: [
             {
-              handleChatModelStart: (llm, messages) => {
-                if (abortController.signal.aborted) return;
-                agent
-                  .handleThinkingStart({ agent, task, messages })
-                  .catch((error) => {
-                    reject(error);
-                  });
+              handleChatModelStart: async (llm, messages) => {
+                await agent.handleThinkingStart({ agent, task, messages });
               },
-
               handleLLMEnd: async (output) => {
-                if (abortController.signal.aborted) return;
-                agent
-                  .handleThinkingEnd({ agent, task, output })
-                  .then((thinkingResult) => resolve(thinkingResult))
-                  .catch((error) => {
-                    reject(error);
-                  });
+                if (
+                  this.store.getState().teamWorkflowStatus ===
+                  WORKFLOW_STATUS_enum.PAUSED
+                ) {
+                  return;
+                }
+                const result = await agent.handleThinkingEnd({
+                  agent,
+                  task,
+                  output,
+                });
+                resolve(result);
               },
             },
-          ],
+          ], // Add the signal to the options
+          signal: abortController.signal,
         }
       ).catch((error) => {
-        logger.error(
-          `LLM_INVOCATION_ERROR: Error during LLM API call for Agent: ${agent.name}, Task: ${task.id}. Details:`,
-          error
-        );
-        if (error.name === 'AbortError' || abortController.signal.aborted) {
-          reject(new AbortError());
+        if (error.name === 'AbortError') {
+          reject(new AbortError('Task was cancelled'));
         } else {
+          logger.error(
+            `LLM_INVOCATION_ERROR: Error during LLM API call for Agent: ${agent.name}, Task: ${task.id}. Details:`,
+            error
+          );
           reject(
             new LLMInvocationError(
               `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
@@ -579,6 +562,35 @@ class ReactChampionAgent extends BaseAgent {
         }
       });
     });
+
+    // Assign both the promise and the captured reject function
+    Object.assign(promiseObj, {
+      promise: thinkingPromise,
+      // reject: rejectFn,
+      reject: (e) => {
+        abortController.abort();
+        rejectFn(e);
+      },
+    });
+
+    // Track promise in store
+    this.store.getState().trackPromise(this.id, promiseObj);
+
+    try {
+      return await thinkingPromise;
+    } catch (error) {
+      // Ensure we properly handle and rethrow the error
+      if (error instanceof AbortError) {
+        throw error; // Rethrow AbortError
+      }
+      // Wrap unexpected errors
+      throw new LLMInvocationError(
+        `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
+        error
+      );
+    } finally {
+      this.store.getState().removePromise(this.id, promiseObj);
+    }
   }
 
   handleIssuesParsingLLMOutput({ agent, task, output }) {
@@ -684,28 +696,29 @@ class ReactChampionAgent extends BaseAgent {
   }
 
   async executeUsingTool({ agent, task, parsedLLMOutput, tool }) {
-    const abortController =
-      agent.store.getState().workflowController.abortController;
-
     const toolInput = parsedLLMOutput.actionInput;
     agent.handleUsingToolStart({ agent, task, tool, input: toolInput });
 
+    const promiseObj = {};
+    let rejectFn; // Declare reject function outside Promise
+
+    const toolPromise = new Promise((resolve, reject) => {
+      rejectFn = reject; // Capture the reject function
+      tool.call(toolInput).then(resolve).catch(reject);
+    });
+
+    // Track promise in store
+    Object.assign(promiseObj, { promise: toolPromise, reject: rejectFn });
+
+    this.store.getState().trackPromise(this.id, promiseObj);
+
     try {
-      const toolResult = await Promise.race([
-        tool.call(toolInput),
-        new Promise((_, reject) => {
-          abortController.signal.addEventListener('abort', () => {
-            reject(new AbortError());
-          });
-        }),
-      ]);
-
-      agent.handleUsingToolEnd({ agent, task, tool, output: toolResult });
-
+      const result = await toolPromise;
+      agent.handleUsingToolEnd({ agent, task, tool, output: result });
       return this.promptTemplates.TOOL_RESULT_FEEDBACK({
         agent,
         task,
-        toolResult,
+        toolResult: result,
         parsedLLMOutput,
       });
     } catch (error) {
@@ -719,6 +732,8 @@ class ReactChampionAgent extends BaseAgent {
         tool,
         error,
       });
+    } finally {
+      this.store.getState().removePromise(this.id, promiseObj);
     }
   }
 

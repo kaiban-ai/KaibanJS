@@ -108,9 +108,17 @@ const FEEDBACK_STATUS_enum = {
   PROCESSED: 'PROCESSED',
 };
 
+const WORKFLOW_ACTION_enum = {
+  STOP: 'STOP',
+  PAUSE: 'PAUSE',
+  RESUME: 'RESUME',
+  INITIATE: 'INITIATE',
+};
+
 export {
   AGENT_STATUS_enum,
   TASK_STATUS_enum,
   WORKFLOW_STATUS_enum,
   FEEDBACK_STATUS_enum,
+  WORKFLOW_ACTION_enum,
 };

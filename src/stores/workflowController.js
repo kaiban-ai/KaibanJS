@@ -8,11 +8,12 @@
  * Integrate this controller to manage the flow of tasks within your application, ensuring tasks are executed in an orderly and efficient manner.
  */
 
-import PQueue from 'p-queue';
-import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from '../utils/enums';
-import { logger } from '../utils/logger';
+// import PQueue from 'p-queue';
+import { TASK_STATUS_enum /*WORKFLOW_STATUS_enum*/ } from '../utils/enums';
+// import { logger } from '../utils/logger';
 export const setupWorkflowController = (useTeamStore) => {
-  const taskQueue = new PQueue({ concurrency: 1 });
+  // const taskQueue = new PQueue({ concurrency: 1 });
+  const taskQueue = useTeamStore.getState().taskQueue;
   useTeamStore.setState({
     workflowController: {
       abortController: new AbortController(),
@@ -89,78 +90,14 @@ export const setupWorkflowController = (useTeamStore) => {
     }
   );
 
-  // Managing workflow status changes
+  //Managing tasks moving to 'DONE'
   useTeamStore.subscribe(
-    (state) => state.teamWorkflowStatus,
-    async (status) => {
-      if (status === WORKFLOW_STATUS_enum.PAUSED) {
-        taskQueue.pause();
-      } else if (status === WORKFLOW_STATUS_enum.RESUMED) {
-        taskQueue.start();
-        useTeamStore.setState({
-          teamWorkflowStatus: WORKFLOW_STATUS_enum.RUNNING,
+    (state) => state.tasks.filter((t) => t.status === TASK_STATUS_enum.DONE),
+    (doneTasks, previousDoneTasks) => {
+      if (doneTasks.length > previousDoneTasks.length) {
+        doneTasks.forEach((task) => {
+          useTeamStore.getState().clearAgentLoopState(task.agent.id);
         });
-      } else if (status === WORKFLOW_STATUS_enum.STOPPING) {
-        try {
-          const abortController =
-            useTeamStore.getState().workflowController.abortController;
-
-          // Create a promise that resolves when all ongoing tasks are aborted
-          const abortPromise = new Promise((resolve) => {
-            // Use 'aborted' event instead of 'abort'
-            if (abortController.signal.aborted) {
-              resolve();
-            } else {
-              abortController.signal.addEventListener(
-                'abort',
-                () => {
-                  resolve();
-                },
-                { once: true }
-              );
-            }
-          });
-
-          // Trigger the abort
-          abortController.abort();
-
-          // Wait for abort to complete with a timeout
-          await Promise.race([
-            abortPromise,
-            new Promise((_, reject) =>
-              setTimeout(() => reject(new Error('Abort timeout')), 5000)
-            ),
-          ]);
-
-          // Clear the task queue
-          taskQueue.clear();
-
-          // Update all DOING tasks to TODO
-          const tasks = useTeamStore.getState().tasks;
-          tasks.forEach((task) => {
-            if (task.status === TASK_STATUS_enum.DOING) {
-              useTeamStore
-                .getState()
-                .updateTaskStatus(task.id, TASK_STATUS_enum.TODO);
-            }
-          });
-
-          // Set final stopped status and create new abortController
-          useTeamStore.setState({
-            teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED,
-            workflowController: {
-              abortController: new AbortController(),
-            },
-          });
-        } catch (error) {
-          logger.error('Error while stopping workflow:', error);
-          useTeamStore.setState({
-            teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED,
-            workflowController: {
-              abortController: new AbortController(),
-            },
-          });
-        }
       }
     }
   );
