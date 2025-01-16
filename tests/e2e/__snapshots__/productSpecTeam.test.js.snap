@@ -6,6 +6,7 @@ exports[`Product Spec Team Workflows HITL Features Using OpenAI Agents (1) - han
     {
       "agentInstance": {
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -21,6 +22,7 @@ exports[`Product Spec Team Workflows HITL Features Using OpenAI Agents (1) - han
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -159,6 +161,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
     {
       "agentInstance": {
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -174,6 +177,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -312,6 +316,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
     {
       "agentInstance": {
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -327,6 +332,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -473,6 +479,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -488,6 +495,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -656,6 +664,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Technical Writing",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Convert functional outlines into detailed technical specifications.",
@@ -671,6 +680,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -925,6 +935,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {
           "background": "Quality Assurance",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Ensure the specifications are accurate and complete.",
@@ -940,6 +951,7 @@ This document outlines the detailed technical specifications for implementing a 
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -1239,6 +1251,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -1254,6 +1267,7 @@ This document outlines the detailed technical specifications for implementing a 
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -1403,6 +1417,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -1418,6 +1433,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1582,6 +1598,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -1597,6 +1614,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -1738,6 +1756,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -1753,6 +1772,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1917,6 +1937,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -1932,6 +1953,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2154,6 +2176,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -2169,6 +2192,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2333,6 +2357,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -2348,6 +2373,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2540,6 +2566,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -2555,6 +2582,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2719,6 +2747,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -2734,6 +2763,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2876,6 +2906,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -2891,6 +2922,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3055,6 +3087,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -3070,6 +3103,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3211,6 +3245,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -3226,6 +3261,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3390,6 +3426,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -3405,6 +3442,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3547,6 +3585,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -3562,6 +3601,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3726,6 +3766,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -3741,6 +3782,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3894,6 +3936,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -3909,6 +3952,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4073,6 +4117,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -4088,6 +4133,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -4252,6 +4298,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -4267,6 +4314,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4430,6 +4478,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -4445,6 +4494,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -4592,6 +4642,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -4607,6 +4658,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4778,6 +4830,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -4793,6 +4846,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -4942,6 +4996,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -4957,6 +5012,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5129,6 +5185,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -5144,6 +5201,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -5307,6 +5365,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -5322,6 +5381,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5494,6 +5554,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Technical Writing",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Convert functional outlines into detailed technical specifications.",
@@ -5509,6 +5570,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -5658,6 +5720,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -5673,6 +5736,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5923,6 +5987,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -5938,6 +6003,7 @@ This document outlines the detailed technical specifications for implementing a 
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -6079,6 +6145,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -6094,6 +6161,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -6344,6 +6412,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -6359,6 +6428,7 @@ This document outlines the detailed technical specifications for implementing a 
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -6583,6 +6653,7 @@ Result: {"coreFunctionalities":[{"functionality":"User Registration and Onboardi
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -6598,6 +6669,7 @@ Result: {"coreFunctionalities":[{"functionality":"User Registration and Onboardi
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -6848,6 +6920,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -6863,6 +6936,7 @@ This document outlines the detailed technical specifications for implementing a 
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -7100,6 +7174,7 @@ This document outlines the detailed technical specifications for implementing a 
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -7115,6 +7190,7 @@ This document outlines the detailed technical specifications for implementing a 
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -7365,6 +7441,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -7380,6 +7457,7 @@ This document outlines the detailed technical specifications for implementing a 
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -7608,6 +7686,7 @@ This document outlines the detailed technical specifications for implementing a 
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -7623,6 +7702,7 @@ This document outlines the detailed technical specifications for implementing a 
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -7873,6 +7953,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -7888,6 +7969,7 @@ This document outlines the detailed technical specifications for implementing a 
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -8029,6 +8111,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -8044,6 +8127,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -8294,6 +8378,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -8309,6 +8394,7 @@ This document outlines the detailed technical specifications for implementing a 
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -8537,6 +8623,7 @@ This document outlines the detailed technical specifications for implementing a 
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -8552,6 +8639,7 @@ This document outlines the detailed technical specifications for implementing a 
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -8802,6 +8890,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -8817,6 +8906,7 @@ This document outlines the detailed technical specifications for implementing a 
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -9056,6 +9146,7 @@ This document outlines the detailed technical specifications for implementing a 
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -9071,6 +9162,7 @@ This document outlines the detailed technical specifications for implementing a 
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -9321,6 +9413,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {
           "background": "Quality Assurance",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Ensure the specifications are accurate and complete.",
@@ -9336,6 +9429,7 @@ This document outlines the detailed technical specifications for implementing a 
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -9485,6 +9579,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -9500,6 +9595,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -9775,6 +9871,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -9790,6 +9887,7 @@ This document outlines the detailed technical specifications for implementing a 
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -9931,6 +10029,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -9946,6 +10045,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -10221,6 +10321,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -10236,6 +10337,7 @@ This document outlines the detailed technical specifications for implementing a 
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -10549,6 +10651,7 @@ This document outlines the detailed technical specifications for implementing a 
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -10564,6 +10667,7 @@ This document outlines the detailed technical specifications for implementing a 
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -10839,6 +10943,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -10854,6 +10959,7 @@ This document outlines the detailed technical specifications for implementing a 
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -11116,6 +11222,7 @@ This document outlines the detailed technical specifications for implementing a 
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -11131,6 +11238,7 @@ This document outlines the detailed technical specifications for implementing a 
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -11406,6 +11514,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -11421,6 +11530,7 @@ This document outlines the detailed technical specifications for implementing a 
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -11674,6 +11784,7 @@ This document outlines the detailed technical specifications for implementing a 
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -11689,6 +11800,7 @@ This document outlines the detailed technical specifications for implementing a 
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -11964,6 +12076,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -11979,6 +12092,7 @@ This document outlines the detailed technical specifications for implementing a 
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -12120,6 +12234,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -12135,6 +12250,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -12410,6 +12526,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -12425,6 +12542,7 @@ This document outlines the detailed technical specifications for implementing a 
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -12678,6 +12796,7 @@ This document outlines the detailed technical specifications for implementing a 
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -12693,6 +12812,7 @@ This document outlines the detailed technical specifications for implementing a 
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -12968,6 +13088,7 @@ This document outlines the detailed technical specifications for implementing a 
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -12983,6 +13104,7 @@ This document outlines the detailed technical specifications for implementing a 
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -13247,6 +13369,7 @@ This document outlines the detailed technical specifications for implementing a 
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -13262,6 +13385,7 @@ This document outlines the detailed technical specifications for implementing a 
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -13848,6 +13972,9 @@ exports[`Product Spec Team Workflows HITL Features Using OpenAI Agents (1) - han
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -14001,6 +14128,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -14083,6 +14211,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -14173,6 +14302,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -14356,6 +14488,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -14457,6 +14590,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -14578,6 +14712,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -14742,6 +14879,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -14921,6 +15061,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -15077,6 +15220,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -15256,6 +15402,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -15493,6 +15642,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -15672,6 +15824,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -15879,6 +16034,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -16058,6 +16216,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -16215,6 +16376,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -16394,6 +16558,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -16550,6 +16717,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -16729,6 +16899,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -16886,6 +17059,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -17065,6 +17241,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -17233,6 +17412,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -17412,6 +17594,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -17591,6 +17776,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -17761,6 +17949,7 @@ exports[`Product Spec Team Workflows HITL Features Using OpenAI Agents (2) - pro
     {
       "agentInstance": {
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -17776,6 +17965,7 @@ exports[`Product Spec Team Workflows HITL Features Using OpenAI Agents (2) - pro
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -17914,6 +18104,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
     {
       "agentInstance": {
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -17929,6 +18120,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -18067,6 +18259,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
     {
       "agentInstance": {
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -18082,6 +18275,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -18228,6 +18422,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -18243,6 +18438,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -18417,6 +18613,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Technical Writing",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Convert functional outlines into detailed technical specifications.",
@@ -18432,6 +18629,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -18678,6 +18876,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {
           "background": "Quality Assurance",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Ensure the specifications are accurate and complete.",
@@ -18693,6 +18892,7 @@ This technical specifications document provides a comprehensive outline to guide
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -18959,6 +19159,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -18974,6 +19175,7 @@ This technical specifications document provides a comprehensive outline to guide
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -19123,6 +19325,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -19138,6 +19341,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -19302,6 +19506,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -19317,6 +19522,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -19458,6 +19664,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -19473,6 +19680,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -19637,6 +19845,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -19652,6 +19861,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -19874,6 +20084,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -19889,6 +20100,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -20053,6 +20265,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -20068,6 +20281,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -20219,6 +20433,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -20234,6 +20449,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -20398,6 +20614,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -20413,6 +20630,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -20555,6 +20773,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -20570,6 +20789,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -20734,6 +20954,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -20749,6 +20970,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -20890,6 +21112,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -20905,6 +21128,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -21069,6 +21293,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -21084,6 +21309,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -21226,6 +21452,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -21241,6 +21468,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -21405,6 +21633,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -21420,6 +21649,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -21573,6 +21803,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -21588,6 +21819,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -21752,6 +21984,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -21767,6 +22000,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -21931,6 +22165,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -21946,6 +22181,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -22109,6 +22345,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -22124,6 +22361,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -22275,6 +22513,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -22290,6 +22529,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -22461,6 +22701,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -22476,6 +22717,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -22629,6 +22871,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -22644,6 +22887,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -22822,6 +23066,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -22837,6 +23082,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -22986,6 +23232,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -23001,6 +23248,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -23179,6 +23427,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -23194,6 +23443,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -23335,6 +23585,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -23350,6 +23601,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -23528,6 +23780,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -23543,6 +23796,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -23775,6 +24029,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -23790,6 +24045,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -23968,6 +24224,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -23983,6 +24240,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -24134,6 +24392,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -24149,6 +24408,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -24327,6 +24587,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -24342,6 +24603,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -24484,6 +24746,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -24499,6 +24762,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -24677,6 +24941,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -24692,6 +24957,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -24833,6 +25099,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -24848,6 +25115,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -25026,6 +25294,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -25041,6 +25310,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -25183,6 +25453,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -25198,6 +25469,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -25376,6 +25648,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -25391,6 +25664,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -25544,6 +25818,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -25559,6 +25834,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -25737,6 +26013,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -25752,6 +26029,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -25916,6 +26194,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -25931,6 +26210,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -26108,6 +26388,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -26123,6 +26404,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -26270,6 +26552,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -26285,6 +26568,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -26462,6 +26746,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -26477,6 +26762,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -26626,6 +26912,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -26641,6 +26928,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -26819,6 +27107,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -26834,6 +27123,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -26997,6 +27287,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -27012,6 +27303,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -27190,6 +27482,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Technical Writing",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Convert functional outlines into detailed technical specifications.",
@@ -27205,6 +27498,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -27354,6 +27648,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -27369,6 +27664,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -27611,6 +27907,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -27626,6 +27923,7 @@ This technical specifications document provides a comprehensive outline to guide
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -27767,6 +28065,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -27782,6 +28081,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -28024,6 +28324,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -28039,6 +28340,7 @@ This technical specifications document provides a comprehensive outline to guide
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -28263,6 +28565,7 @@ Result: The revised functional outline based on the founder's idea to spend $10,
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -28278,6 +28581,7 @@ Result: The revised functional outline based on the founder's idea to spend $10,
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -28520,6 +28824,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -28535,6 +28840,7 @@ This technical specifications document provides a comprehensive outline to guide
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -28764,6 +29070,7 @@ This technical specifications document provides a comprehensive outline to guide
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -28779,6 +29086,7 @@ This technical specifications document provides a comprehensive outline to guide
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -29021,6 +29329,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -29036,6 +29345,7 @@ This technical specifications document provides a comprehensive outline to guide
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -29256,6 +29566,7 @@ This technical specifications document provides a comprehensive outline to guide
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -29271,6 +29582,7 @@ This technical specifications document provides a comprehensive outline to guide
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -29513,6 +29825,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -29528,6 +29841,7 @@ This technical specifications document provides a comprehensive outline to guide
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -29669,6 +29983,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -29684,6 +29999,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -29926,6 +30242,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -29941,6 +30258,7 @@ This technical specifications document provides a comprehensive outline to guide
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -30161,6 +30479,7 @@ This technical specifications document provides a comprehensive outline to guide
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -30176,6 +30495,7 @@ This technical specifications document provides a comprehensive outline to guide
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -30418,6 +30738,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -30433,6 +30754,7 @@ This technical specifications document provides a comprehensive outline to guide
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -30664,6 +30986,7 @@ This technical specifications document provides a comprehensive outline to guide
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -30679,6 +31002,7 @@ This technical specifications document provides a comprehensive outline to guide
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -30921,6 +31245,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {
           "background": "Quality Assurance",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Ensure the specifications are accurate and complete.",
@@ -30936,6 +31261,7 @@ This technical specifications document provides a comprehensive outline to guide
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -31085,6 +31411,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -31100,6 +31427,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -31342,6 +31670,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -31357,6 +31686,7 @@ This technical specifications document provides a comprehensive outline to guide
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -31498,6 +31828,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -31513,6 +31844,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -31755,6 +32087,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -31770,6 +32103,7 @@ This technical specifications document provides a comprehensive outline to guide
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -32075,6 +32409,7 @@ This technical specifications document provides a comprehensive outline to guide
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -32090,6 +32425,7 @@ This technical specifications document provides a comprehensive outline to guide
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -32332,6 +32668,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -32347,6 +32684,7 @@ This technical specifications document provides a comprehensive outline to guide
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -32576,6 +32914,7 @@ This technical specifications document provides a comprehensive outline to guide
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -32591,6 +32930,7 @@ This technical specifications document provides a comprehensive outline to guide
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -32833,6 +33173,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -32848,6 +33189,7 @@ This technical specifications document provides a comprehensive outline to guide
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -33068,6 +33410,7 @@ This technical specifications document provides a comprehensive outline to guide
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -33083,6 +33426,7 @@ This technical specifications document provides a comprehensive outline to guide
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -33325,6 +33669,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -33340,6 +33685,7 @@ This technical specifications document provides a comprehensive outline to guide
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -33481,6 +33827,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -33496,6 +33843,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -33738,6 +34086,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -33753,6 +34102,7 @@ This technical specifications document provides a comprehensive outline to guide
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -33973,6 +34323,7 @@ This technical specifications document provides a comprehensive outline to guide
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -33988,6 +34339,7 @@ This technical specifications document provides a comprehensive outline to guide
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -34230,6 +34582,7 @@ This technical specifications document provides a comprehensive outline to guide
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -34245,6 +34598,7 @@ This technical specifications document provides a comprehensive outline to guide
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -34476,6 +34830,7 @@ This technical specifications document provides a comprehensive outline to guide
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -34491,6 +34846,7 @@ This technical specifications document provides a comprehensive outline to guide
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -35020,6 +35376,7 @@ exports[`Product Spec Team Workflows HITL Features Using OpenAI Agents (2) - pro
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -35173,6 +35530,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -35255,6 +35613,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -35345,6 +35704,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -35534,6 +35894,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -35635,6 +35996,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -35756,6 +36118,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -35920,6 +36283,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -36099,6 +36463,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -36255,6 +36620,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -36434,6 +36800,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -36671,6 +37038,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -36850,6 +37218,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -37016,6 +37385,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -37195,6 +37565,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -37352,6 +37723,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -37531,6 +37903,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -37687,6 +38060,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -37866,6 +38240,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -38023,6 +38398,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -38202,6 +38578,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -38370,6 +38747,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -38549,6 +38927,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -38728,6 +39107,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -38906,6 +39286,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -39072,6 +39453,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -39258,6 +39640,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -39426,6 +39809,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -39619,6 +40003,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -39783,6 +40168,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -39976,6 +40362,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -40132,6 +40519,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -40325,6 +40713,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -40572,6 +40961,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -40765,6 +41155,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -40931,6 +41322,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -41124,6 +41516,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -41281,6 +41674,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -41474,6 +41868,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -41630,6 +42025,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -41823,6 +42219,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -41980,6 +42377,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -42173,6 +42571,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -42341,6 +42740,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -42534,6 +42934,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -42713,6 +43114,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Here is some feedback for you to address: Sorry the founder idea is to spent 10k in Google Ads every",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -42912,6 +43314,9 @@ exports[`Product Spec Team Workflows HITL Features Using OpenAI Agents (2) - pro
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -43065,6 +43470,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -43147,6 +43553,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -43237,6 +43644,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -43420,6 +43830,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -43521,6 +43932,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -43642,6 +44054,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -43806,6 +44221,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -43985,6 +44403,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -44141,6 +44562,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -44320,6 +44744,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -44557,6 +44984,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -44736,6 +45166,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -44902,6 +45335,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -45081,6 +45517,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -45238,6 +45677,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -45417,6 +45859,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -45573,6 +46018,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -45752,6 +46200,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -45909,6 +46360,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -46088,6 +46542,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -46256,6 +46713,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -46435,6 +46895,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -46614,6 +47077,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Emma, please complete the following task: Analyze the founder's idea: I want to add a Referral program to our SAAS platform. and outline the necessary functionalities to implement it.. 
+        Your expected output should be: "A functional outline of the Founder Idea". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -46784,6 +47250,7 @@ exports[`Product Spec Team Workflows Using OpenAI Agents completes the entire wo
     {
       "agentInstance": {
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -46799,6 +47266,7 @@ exports[`Product Spec Team Workflows Using OpenAI Agents completes the entire wo
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -46937,6 +47405,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
     {
       "agentInstance": {
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -46952,6 +47421,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -47090,6 +47560,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
     {
       "agentInstance": {
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -47105,6 +47576,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -47251,6 +47723,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -47266,6 +47739,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -47434,6 +47908,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Technical Writing",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Convert functional outlines into detailed technical specifications.",
@@ -47449,6 +47924,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -47693,6 +48169,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {
           "background": "Quality Assurance",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Ensure the specifications are accurate and complete.",
@@ -47708,6 +48185,7 @@ This document serves as a comprehensive guide for the development team to implem
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -47972,6 +48450,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {
           "background": "Business Analysis",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -47987,6 +48466,7 @@ This document serves as a comprehensive guide for the development team to implem
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -48136,6 +48616,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -48151,6 +48632,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -48315,6 +48797,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -48330,6 +48813,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -48471,6 +48955,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -48486,6 +48971,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -48650,6 +49136,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -48665,6 +49152,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -48887,6 +49375,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -48902,6 +49391,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -49066,6 +49556,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -49081,6 +49572,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -49268,6 +49760,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -49283,6 +49776,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -49447,6 +49941,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -49462,6 +49957,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -49604,6 +50100,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -49619,6 +50116,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -49783,6 +50281,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -49798,6 +50297,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -49939,6 +50439,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -49954,6 +50455,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -50118,6 +50620,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -50133,6 +50636,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -50275,6 +50779,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -50290,6 +50795,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -50454,6 +50960,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {},
         "background": "Business Analysis",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -50469,6 +50976,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -50622,6 +51130,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
         "agent": {
           "agentInstance": {
             "background": "Business Analysis",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Outline core functionalities and objectives for new features based on the founder’s input.",
@@ -50637,6 +51146,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -50801,6 +51311,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
       "agent": {
         "agentInstance": {
           "background": "Technical Writing",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Convert functional outlines into detailed technical specifications.",
@@ -50816,6 +51327,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A fu
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -50965,6 +51477,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -50980,6 +51493,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -51220,6 +51734,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -51235,6 +51750,7 @@ This document serves as a comprehensive guide for the development team to implem
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -51376,6 +51892,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -51391,6 +51908,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -51631,6 +52149,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -51646,6 +52165,7 @@ This document serves as a comprehensive guide for the development team to implem
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -51870,6 +52390,7 @@ Result: {"coreFunctionalities":[{"functionality":"User Registration and Referral
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -51885,6 +52406,7 @@ Result: {"coreFunctionalities":[{"functionality":"User Registration and Referral
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -52125,6 +52647,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -52140,6 +52663,7 @@ This document serves as a comprehensive guide for the development team to implem
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -52367,6 +52891,7 @@ This document serves as a comprehensive guide for the development team to implem
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -52382,6 +52907,7 @@ This document serves as a comprehensive guide for the development team to implem
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -52622,6 +53148,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -52637,6 +53164,7 @@ This document serves as a comprehensive guide for the development team to implem
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -52855,6 +53383,7 @@ This document serves as a comprehensive guide for the development team to implem
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -52870,6 +53399,7 @@ This document serves as a comprehensive guide for the development team to implem
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -53110,6 +53640,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -53125,6 +53656,7 @@ This document serves as a comprehensive guide for the development team to implem
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -53266,6 +53798,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -53281,6 +53814,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -53521,6 +54055,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -53536,6 +54071,7 @@ This document serves as a comprehensive guide for the development team to implem
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -53754,6 +54290,7 @@ This document serves as a comprehensive guide for the development team to implem
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -53769,6 +54306,7 @@ This document serves as a comprehensive guide for the development team to implem
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -54009,6 +54547,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {},
         "background": "Technical Writing",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Convert functional outlines into detailed technical specifications.",
@@ -54024,6 +54563,7 @@ This document serves as a comprehensive guide for the development team to implem
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -54253,6 +54793,7 @@ This document serves as a comprehensive guide for the development team to implem
         "agent": {
           "agentInstance": {
             "background": "Technical Writing",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Convert functional outlines into detailed technical specifications.",
@@ -54268,6 +54809,7 @@ This document serves as a comprehensive guide for the development team to implem
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -54508,6 +55050,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {
           "background": "Quality Assurance",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Ensure the specifications are accurate and complete.",
@@ -54523,6 +55066,7 @@ This document serves as a comprehensive guide for the development team to implem
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -54672,6 +55216,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -54687,6 +55232,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -54927,6 +55473,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -54942,6 +55489,7 @@ This document serves as a comprehensive guide for the development team to implem
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -55083,6 +55631,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -55098,6 +55647,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -55338,6 +55888,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -55353,6 +55904,7 @@ This document serves as a comprehensive guide for the development team to implem
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -55656,6 +56208,7 @@ This document serves as a comprehensive guide for the development team to implem
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -55671,6 +56224,7 @@ This document serves as a comprehensive guide for the development team to implem
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -55911,6 +56465,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -55926,6 +56481,7 @@ This document serves as a comprehensive guide for the development team to implem
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -56153,6 +56709,7 @@ This document serves as a comprehensive guide for the development team to implem
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -56168,6 +56725,7 @@ This document serves as a comprehensive guide for the development team to implem
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -56408,6 +56966,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -56423,6 +56982,7 @@ This document serves as a comprehensive guide for the development team to implem
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -56641,6 +57201,7 @@ This document serves as a comprehensive guide for the development team to implem
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -56656,6 +57217,7 @@ This document serves as a comprehensive guide for the development team to implem
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -56896,6 +57458,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -56911,6 +57474,7 @@ This document serves as a comprehensive guide for the development team to implem
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -57052,6 +57616,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -57067,6 +57632,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A va
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -57307,6 +57873,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -57322,6 +57889,7 @@ This document serves as a comprehensive guide for the development team to implem
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -57540,6 +58108,7 @@ This document serves as a comprehensive guide for the development team to implem
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -57555,6 +58124,7 @@ This document serves as a comprehensive guide for the development team to implem
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -57795,6 +58365,7 @@ This document serves as a comprehensive guide for the development team to implem
       "agent": {
         "agentInstance": {},
         "background": "Quality Assurance",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Ensure the specifications are accurate and complete.",
@@ -57810,6 +58381,7 @@ This document serves as a comprehensive guide for the development team to implem
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -58039,6 +58611,7 @@ This document serves as a comprehensive guide for the development team to implem
         "agent": {
           "agentInstance": {
             "background": "Quality Assurance",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Ensure the specifications are accurate and complete.",
@@ -58054,6 +58627,7 @@ This document serves as a comprehensive guide for the development team to implem
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,

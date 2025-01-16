@@ -6,6 +6,7 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
     {
       "agentInstance": {
         "background": "Data Processor",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
@@ -21,6 +22,7 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -161,6 +163,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Craft compelling, well-structured resumes 
@@ -177,6 +180,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -335,6 +339,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "agent": {
         "agentInstance": {
           "background": "Data Processor",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Extract structured information from conversational user input.",
@@ -350,6 +355,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -540,6 +546,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Craft compelling, well-structured resumes 
@@ -556,6 +563,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -801,6 +809,7 @@ Florida International University (FIU)
       "agent": {
         "agentInstance": {
           "background": "Data Processor",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Extract structured information from conversational user input.",
@@ -816,6 +825,7 @@ Florida International University (FIU)
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -965,6 +975,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         "agent": {
           "agentInstance": {
             "background": "Data Processor",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
@@ -980,6 +991,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1164,6 +1176,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "agent": {
         "agentInstance": {},
         "background": "Data Processor",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
@@ -1179,6 +1192,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -1320,6 +1334,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         "agent": {
           "agentInstance": {
             "background": "Data Processor",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
@@ -1335,6 +1350,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1519,6 +1535,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "agent": {
         "agentInstance": {},
         "background": "Data Processor",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
@@ -1534,6 +1551,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -1766,6 +1784,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         "agent": {
           "agentInstance": {
             "background": "Data Processor",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
@@ -1781,6 +1800,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1965,6 +1985,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "agent": {
         "agentInstance": {},
         "background": "Data Processor",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
@@ -1980,6 +2001,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2160,6 +2182,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         "agent": {
           "agentInstance": {
             "background": "Data Processor",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
@@ -2175,6 +2198,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2359,6 +2383,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "agent": {
         "agentInstance": {},
         "background": "Data Processor",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
@@ -2374,6 +2399,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2516,6 +2542,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         "agent": {
           "agentInstance": {
             "background": "Data Processor",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
@@ -2531,6 +2558,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2715,6 +2743,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "agent": {
         "agentInstance": {},
         "background": "Data Processor",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
@@ -2730,6 +2759,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2871,6 +2901,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         "agent": {
           "agentInstance": {
             "background": "Data Processor",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
@@ -2886,6 +2917,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3070,6 +3102,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "agent": {
         "agentInstance": {},
         "background": "Data Processor",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
@@ -3085,6 +3118,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3227,6 +3261,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         "agent": {
           "agentInstance": {
             "background": "Data Processor",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
@@ -3242,6 +3277,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3426,6 +3462,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "agent": {
         "agentInstance": {},
         "background": "Data Processor",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
@@ -3441,6 +3478,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3594,6 +3632,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         "agent": {
           "agentInstance": {
             "background": "Data Processor",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Extract structured information from conversational user input.",
@@ -3609,6 +3648,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3795,6 +3835,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Craft compelling, well-structured resumes 
@@ -3811,6 +3852,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -3966,6 +4008,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
             "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Craft compelling, well-structured resumes 
@@ -3982,6 +4025,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4205,6 +4249,7 @@ Florida International University (FIU)
         "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Craft compelling, well-structured resumes 
@@ -4221,6 +4266,7 @@ Florida International University (FIU)
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -4368,6 +4414,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
             "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Craft compelling, well-structured resumes 
@@ -4384,6 +4431,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4607,6 +4655,7 @@ Florida International University (FIU)
         "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Craft compelling, well-structured resumes 
@@ -4623,6 +4672,7 @@ Florida International University (FIU)
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -4863,6 +4913,7 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
             "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Craft compelling, well-structured resumes 
@@ -4879,6 +4930,7 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5102,6 +5154,7 @@ Florida International University (FIU)
         "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Craft compelling, well-structured resumes 
@@ -5118,6 +5171,7 @@ Florida International University (FIU)
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -5313,6 +5367,7 @@ Florida International University (FIU)
             "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Craft compelling, well-structured resumes 
@@ -5329,6 +5384,7 @@ Florida International University (FIU)
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5552,6 +5608,7 @@ Florida International University (FIU)
         "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Craft compelling, well-structured resumes 
@@ -5568,6 +5625,7 @@ Florida International University (FIU)
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -5754,6 +5812,7 @@ Florida International University (FIU)
             "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Craft compelling, well-structured resumes 
@@ -5770,6 +5829,7 @@ Florida International University (FIU)
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5993,6 +6053,7 @@ Florida International University (FIU)
         "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Craft compelling, well-structured resumes 
@@ -6009,6 +6070,7 @@ Florida International University (FIU)
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -6156,6 +6218,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
             "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Craft compelling, well-structured resumes 
@@ -6172,6 +6235,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -6395,6 +6459,7 @@ Florida International University (FIU)
         "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Craft compelling, well-structured resumes 
@@ -6411,6 +6476,7 @@ Florida International University (FIU)
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -6597,6 +6663,7 @@ Florida International University (FIU)
             "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Craft compelling, well-structured resumes 
@@ -6613,6 +6680,7 @@ Florida International University (FIU)
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -6836,6 +6904,7 @@ Florida International University (FIU)
         "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Craft compelling, well-structured resumes 
@@ -6852,6 +6921,7 @@ Florida International University (FIU)
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -7049,6 +7119,7 @@ Florida International University (FIU)
             "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Craft compelling, well-structured resumes 
@@ -7065,6 +7136,7 @@ Florida International University (FIU)
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,

@@ -6,6 +6,7 @@ exports[`History Fact Summary Team Workflows Using OpenAI Agents completes the e
     {
       "agentInstance": {
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -21,6 +22,7 @@ exports[`History Fact Summary Team Workflows Using OpenAI Agents completes the e
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -167,6 +169,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {
           "background": "Writer",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Write a summary about any given historical fact.",
@@ -182,6 +185,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -720,6 +724,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {
           "background": "Writer",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Write a summary about any given historical fact.",
@@ -735,6 +740,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -884,6 +890,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -899,6 +906,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1413,6 +1421,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -1428,6 +1437,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -1569,6 +1579,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -1584,6 +1595,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2098,6 +2110,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -2113,6 +2126,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2335,6 +2349,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -2350,6 +2365,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2864,6 +2880,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -2879,6 +2896,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3390,6 +3408,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -3405,6 +3424,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3919,6 +3939,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -3934,6 +3955,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -4429,6 +4451,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -4444,6 +4467,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4958,6 +4982,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -4973,6 +4998,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -5114,6 +5140,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -5129,6 +5156,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5643,6 +5671,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -5658,6 +5687,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -5818,6 +5848,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -5833,6 +5864,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -6347,6 +6379,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -6362,6 +6395,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -6533,6 +6567,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -6548,6 +6583,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": null,
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
