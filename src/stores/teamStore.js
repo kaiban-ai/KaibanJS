@@ -11,24 +11,21 @@
  */
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
-import { useAgentStore } from './agentStore';
-import { useTaskStore } from './taskStore';
 import {
-  TASK_STATUS_enum,
   AGENT_STATUS_enum,
-  WORKFLOW_STATUS_enum,
   FEEDBACK_STATUS_enum,
+  TASK_STATUS_enum,
+  WORKFLOW_STATUS_enum,
 } from '../utils/enums';
+import { calculateTotalWorkflowCost } from '../utils/llmCostCalculator';
+import { logger, setLogLevel } from '../utils/logger';
 import {
   getTaskTitleForLogs,
   interpolateTaskDescription,
 } from '../utils/tasks';
-import { logger, setLogLevel } from '../utils/logger';
-import { calculateTotalWorkflowCost } from '../utils/llmCostCalculator';
-import { subscribeWorkflowStatusUpdates } from '../subscribers/teamSubscriber';
-import { subscribeTaskStatusUpdates } from '../subscribers/taskSubscriber';
-import { setupWorkflowController } from './workflowController';
 import { initializeTelemetry } from '../utils/telemetry';
+import { useAgentStore } from './agentStore';
+import { useTaskStore } from './taskStore';
 
 // Initialize telemetry with default values
 const td = initializeTelemetry();
@@ -64,6 +61,7 @@ const createTeamStore = (initialState = {}) => {
           workflowContext: initialState.workflowContext || '',
           env: initialState.env || {},
           logLevel: initialState.logLevel,
+          flowType: initialState.flowType,
 
           setInputs: (inputs) => set({ inputs }), // Add a new action to update inputs
           setName: (name) => set({ name }), // Add a new action to update inputs
@@ -93,6 +91,14 @@ const createTeamStore = (initialState = {}) => {
                 task.id === taskId ? { ...task, status } : task
               ),
             })),
+
+          updateStatusOfMultipleTasks: (taskIds, status) => {
+            set((state) => ({
+              tasks: state.tasks.map((task) =>
+                taskIds.includes(task.id) ? { ...task, status } : task
+              ),
+            }));
+          },
 
           startWorkflow: async (inputs) => {
             // Start the first task or set all to 'TODO' initially
@@ -124,11 +130,6 @@ const createTeamStore = (initialState = {}) => {
               workflowLogs: [...state.workflowLogs, initialLog],
               teamWorkflowStatus: WORKFLOW_STATUS_enum.RUNNING,
             }));
-
-            const tasks = get().tasks;
-            if (tasks.length > 0 && tasks[0].status === TASK_STATUS_enum.TODO) {
-              get().updateTaskStatus(tasks[0].id, TASK_STATUS_enum.DOING);
-            }
           },
 
           resetWorkflowStateAction: () => {
@@ -136,7 +137,7 @@ const createTeamStore = (initialState = {}) => {
               // Cloning tasks and agents to ensure there are no direct mutations
               const resetTasks = state.tasks.map((task) => ({
                 ...task,
-                status: 'TODO',
+                status: TASK_STATUS_enum.TODO,
                 // Ensure to reset or clear any other task-specific states if needed
               }));
 
@@ -266,7 +267,7 @@ const createTeamStore = (initialState = {}) => {
             }));
           },
 
-          workOnTask: async (agent, task) => {
+          workOnTask: async (agent, task, context) => {
             if (task && agent) {
               // Log the start of the task
               logger.debug(`Task: ${getTaskTitleForLogs(task)} starting...`);
@@ -299,11 +300,13 @@ const createTeamStore = (initialState = {}) => {
                 (f) => f.status === FEEDBACK_STATUS_enum.PENDING
               );
 
-              // Derive the current context from workflowLogs, passing the current task ID
-              const currentContext = get().deriveContextFromLogs(
-                get().workflowLogs,
-                task.id
-              );
+              // // Derive the current context from workflowLogs, passing the current task ID
+              // const currentContext = get().deriveContextFromLogs(
+              //   get().workflowLogs,
+              //   task.id
+              // );
+
+              const currentContext = context;
 
               // Check if the task has pending feedbacks
               if (pendingFeedbacks.length > 0) {
@@ -704,19 +707,19 @@ const createTeamStore = (initialState = {}) => {
     )
   );
 
-  // ──── Workflow Controller Initialization ────────────────────────────
-  //
-  // Activates the workflow controller to monitor and manage task transitions and overall workflow states:
-  // - Monitors changes in task statuses, handling transitions from TODO to DONE.
-  // - Ensures tasks proceed seamlessly through their lifecycle stages within the application.
-  // ─────────────────────────────────────────────────────────────────────
-  setupWorkflowController(useTeamStore);
+  // // ──── Workflow Controller Initialization ────────────────────────────
+  // //
+  // // Activates the workflow controller to monitor and manage task transitions and overall workflow states:
+  // // - Monitors changes in task statuses, handling transitions from TODO to DONE.
+  // // - Ensures tasks proceed seamlessly through their lifecycle stages within the application.
+  // // ─────────────────────────────────────────────────────────────────────
+  // setupWorkflowController(useTeamStore);
 
-  // Subscribe to task updates: Used mainly for logging purposes
-  subscribeTaskStatusUpdates(useTeamStore);
+  // // Subscribe to task updates: Used mainly for logging purposes
+  // subscribeTaskStatusUpdates(useTeamStore);
 
-  // Subscribe to WorkflowStatus updates: Used mainly for loggin purposes
-  subscribeWorkflowStatusUpdates(useTeamStore);
+  // // Subscribe to WorkflowStatus updates: Used mainly for loggin purposes
+  // subscribeWorkflowStatusUpdates(useTeamStore);
 
   return useTeamStore;
 };

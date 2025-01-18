@@ -135,13 +135,13 @@ export const useTaskStore = (set, get) => ({
         error: new Error('Task awaiting validation'),
       });
     } else {
-      task.status = TASK_STATUS_enum.DONE;
+      // task.status = TASK_STATUS_enum.DONE;
       const modelCode = agent.llmConfig.model; // Assuming this is where the model code is stored
       // Calculate costs directly using stats
       const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
       const taskLog = get().prepareNewLog({
         agent,
-        task,
+        task: { ...task, status: TASK_STATUS_enum.DONE },
         logDescription: `Task completed: ${getTaskTitleForLogs(task)}.`,
         metadata: {
           ...stats,
@@ -168,6 +168,8 @@ export const useTaskStore = (set, get) => ({
             : t
         ),
       }));
+
+      task.status = TASK_STATUS_enum.DONE;
 
       // This logic is here cause if put it in a subscriber, it will create race conditions
       // that will create a a non deterministic behavior for the Application State

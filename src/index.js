@@ -19,6 +19,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { createTeamStore } from './stores';
 import { ReactChampionAgent } from './agents';
+import TaskManager from './managers/taskManager';
+import { subscribeTaskStatusUpdates } from './subscribers/taskSubscriber';
+import { subscribeWorkflowStatusUpdates } from './subscribers/teamSubscriber';
 import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from './utils/enums';
 
 class Agent {
@@ -96,14 +99,16 @@ class Agent {
 class Task {
   constructor({
     title = '',
+    id = uuidv4(),
     description,
     expectedOutput,
     agent,
+    dependencies = [],
     isDeliverable = false,
     externalValidationRequired = false,
     outputSchema = null,
   }) {
-    this.id = uuidv4();
+    this.id = id;
     this.title = title; // Title is now optional with a default empty string
     this.description = description;
     this.isDeliverable = isDeliverable;
@@ -112,7 +117,7 @@ class Task {
     this.result = null;
     this.stats = null;
     this.duration = null;
-    this.dependencies = [];
+    this.dependencies = dependencies;
     this.interpolatedTaskDescription = null;
     this.feedbackHistory = []; // Initialize feedbackHistory as an empty array
     this.externalValidationRequired = externalValidationRequired;
@@ -142,7 +147,15 @@ class Team {
    * @param {Object} config.inputs - Initial inputs for the team's tasks.
    * @param {Object} config.env - Environment variables for the team.
    */
-  constructor({ name, agents, tasks, logLevel, inputs = {}, env = null }) {
+  constructor({
+    name,
+    agents,
+    tasks,
+    logLevel,
+    inputs = {},
+    env = null,
+    flowType = 'sequential',
+  }) {
     this.store = createTeamStore({
       name,
       agents: [],
@@ -150,11 +163,26 @@ class Team {
       inputs,
       env,
       logLevel,
+      flowType,
     });
+
+    // ──── Task Manager Initialization ────────────────────────────
+    //
+    // Activates the task manager to monitor and manage task transitions and overall workflow states:
+    // - Monitors changes in task statuses, handling transitions from TODO to DONE.
+    // - Ensures tasks proceed seamlessly through their lifecycle stages within the application.
+    // ─────────────────────────────────────────────────────────────────────
+    this.taskManager = new TaskManager(this.store);
 
     // Add agents and tasks to the store, they will be set with the store automatically
     this.store.getState().addAgents(agents);
     this.store.getState().addTasks(tasks);
+
+    // Subscribe to task updates: Used mainly for logging purposes
+    subscribeTaskStatusUpdates(this.store);
+
+    // Subscribe to WorkflowStatus updates: Used mainly for loggin purposes
+    subscribeWorkflowStatusUpdates(this.store);
   }
 
   /**
@@ -201,6 +229,7 @@ class Team {
       try {
         // Trigger the workflow
         this.store.getState().startWorkflow(inputs);
+        this.taskManager.start();
       } catch (error) {
         reject(error);
         // Unsubscribe to prevent memory leaks in case of an error
