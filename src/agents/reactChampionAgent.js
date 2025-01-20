@@ -528,12 +528,6 @@ class ReactChampionAgent extends BaseAgent {
                 await agent.handleThinkingStart({ agent, task, messages });
               },
               handleLLMEnd: async (output) => {
-                if (
-                  this.store.getState().teamWorkflowStatus ===
-                  WORKFLOW_STATUS_enum.PAUSED
-                ) {
-                  return;
-                }
                 const result = await agent.handleThinkingEnd({
                   agent,
                   task,
