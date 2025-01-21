@@ -3,32 +3,36 @@ import WorkflowExecutionStrategy from './workflowExecutionStrategy';
 import PQueue from 'p-queue';
 
 class SequentialExecutionStrategy extends WorkflowExecutionStrategy {
-  constructor(useTeamStore) {
-    super(useTeamStore);
-    // this.taskQueue = fastq.promise(this._executeTask, 1);
+  constructor() {
+    super();
     this.taskQueue = new PQueue({ concurrency: 1 });
   }
 
-  async startExecution() {
+  async startExecution(teamStoreState) {
     // execute the first task
-    const tasks = this.useTeamStore.getState().tasks;
+    const tasks = teamStoreState.tasks;
     const firstTask = tasks.find((t) => t.status === TASK_STATUS_enum.TODO);
     if (firstTask) {
-      this._updateTaskStatus(firstTask.id, TASK_STATUS_enum.DOING);
+      this._updateTaskStatus(
+        teamStoreState,
+        firstTask.id,
+        TASK_STATUS_enum.DOING
+      );
     }
   }
 
   /**
    * Get the context for a task from the previous tasks results stored in workflow logs.
    *
+   * @param {Object} teamStoreState - The team store state
    * @param {Object} task - The task to get context for
    * @returns {Object} The context for the task
    */
-  getContextForTask(task) {
+  getContextForTask(teamStoreState, task) {
     const currentTaskId = task.id;
-    const logs = this.useTeamStore.getState().workflowLogs;
+    const logs = teamStoreState.workflowLogs;
     const taskResults = new Map();
-    const tasks = this.useTeamStore.getState().tasks; // Get the tasks array from the store
+    const tasks = teamStoreState.tasks; // Get the tasks array from the store
     const currentTaskIndex = tasks.findIndex(
       (task) => task.id === currentTaskId
     );
@@ -71,31 +75,30 @@ class SequentialExecutionStrategy extends WorkflowExecutionStrategy {
       .join('\n');
   }
 
-  async executeFromChangedTasks(changedTasks, allTasks) {
-    if (!Array.isArray(changedTasks)) {
+  async executeFromChangedTasks(teamStoreState, changedTaskIds) {
+    if (!Array.isArray(changedTaskIds)) {
       return;
     }
+
+    const allTasks = teamStoreState.tasks;
 
     // Implement the logic for the sequential execution strategy
     // This method should handle the tasks in the order they are received
     // and ensure that tasks are executed sequentially
-    for (const changedTask of changedTasks) {
+    for (const changedTaskId of changedTaskIds) {
+      const changedTask = allTasks.find((t) => t.id === changedTaskId);
       switch (changedTask.status) {
         case TASK_STATUS_enum.DOING:
           this.taskQueue
-            .add(() => this._executeTask(changedTask))
+            .add(() => this._executeTask(teamStoreState, changedTask))
             .catch((error) => {
-              this.useTeamStore
-                .getState()
-                .handleTaskError({ changedTask, error });
-              this.useTeamStore
-                .getState()
-                .handleWorkflowError(changedTask, error);
+              teamStoreState.handleTaskError({ changedTask, error });
+              teamStoreState.handleWorkflowError(changedTask, error);
             });
 
           // this.taskQueue.push(changedTask).catch((error) => {
-          //   this.useTeamStore.getState().handleTaskError({ changedTask, error });
-          //   this.useTeamStore.getState().handleWorkflowError(changedTask, error);
+          //   teamStoreState.handleTaskError({ changedTask, error });
+          //   teamStoreState.handleWorkflowError(changedTask, error);
           // });
           break;
         case TASK_STATUS_enum.REVISE:
@@ -107,21 +110,33 @@ class SequentialExecutionStrategy extends WorkflowExecutionStrategy {
 
             // Move all subsequent tasks to TODO
             for (let i = taskIndex + 1; i < allTasks.length; i++) {
-              this._updateTaskStatus(allTasks[i].id, TASK_STATUS_enum.TODO);
+              this._updateTaskStatus(
+                teamStoreState,
+                allTasks[i].id,
+                TASK_STATUS_enum.TODO
+              );
             }
 
-            this._updateTaskStatus(changedTask.id, TASK_STATUS_enum.DOING);
+            this._updateTaskStatus(
+              teamStoreState,
+              changedTask.id,
+              TASK_STATUS_enum.DOING
+            );
           }
           break;
         case TASK_STATUS_enum.DONE:
           {
-            const tasks = this.useTeamStore.getState().tasks;
+            const tasks = teamStoreState.tasks;
             const nextTask = tasks.find(
               (t) => t.status === TASK_STATUS_enum.TODO
             );
 
             if (nextTask) {
-              this._updateTaskStatus(nextTask.id, TASK_STATUS_enum.DOING);
+              this._updateTaskStatus(
+                teamStoreState,
+                nextTask.id,
+                TASK_STATUS_enum.DOING
+              );
             }
           }
           break;

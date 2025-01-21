@@ -4,13 +4,12 @@ import { TASK_STATUS_enum } from '../../utils/enums';
  * Abstract base class defining the workflow execution strategy interface
  */
 class WorkflowExecutionStrategy {
-  constructor(useTeamStore) {
+  constructor() {
     if (this.constructor === WorkflowExecutionStrategy) {
       throw new Error(
         'Cannot instantiate abstract WorkflowExecutionStrategy directly'
       );
     }
-    this.useTeamStore = useTeamStore;
   }
 
   _isTaskAgentBusy(currentTask, tasks) {
@@ -27,17 +26,14 @@ class WorkflowExecutionStrategy {
    * Execute the task
    * @param {Object} task - The task to execute
    */
-  async _executeTask(task) {
-    const shouldClone = this._isTaskAgentBusy(
-      task,
-      this.useTeamStore.getState().tasks
-    );
+  async _executeTask(teamStoreState, task) {
+    const shouldClone = this._isTaskAgentBusy(task, teamStoreState.tasks);
 
     const agent = shouldClone ? cloneAgent(task.agent) : task.agent;
 
-    const context = this.getContextForTask(task);
+    const context = this.getContextForTask(teamStoreState, task);
 
-    return this.useTeamStore.getState().workOnTask(agent, task, context);
+    return teamStoreState.workOnTask(agent, task, context);
   }
 
   /**
@@ -45,18 +41,18 @@ class WorkflowExecutionStrategy {
    * @param {string} taskId - The ID of the task to update
    * @param {string} status - The new status to set
    */
-  _updateTaskStatus(taskId, status) {
-    this.useTeamStore.getState().updateTaskStatus(taskId, status);
+  _updateTaskStatus(teamStoreState, taskId, status) {
+    teamStoreState.updateTaskStatus(taskId, status);
   }
 
-  _updateStatusOfMultipleTasks(tasks, status) {
-    this.useTeamStore.getState().updateStatusOfMultipleTasks(tasks, status);
+  _updateStatusOfMultipleTasks(teamStoreState, tasks, status) {
+    teamStoreState.updateStatusOfMultipleTasks(tasks, status);
   }
 
   /*
    * Start the workflow execution. Each strategy knows which tasks to execute.
    */
-  async startExecution() {
+  async startExecution(_teamStoreState) {
     throw new Error(
       'startExecution() must be implemented by concrete strategies'
     );
@@ -65,10 +61,11 @@ class WorkflowExecutionStrategy {
   /**
    * Get the context for a task from the previous tasks results.
    *
+   * @param {Object} teamStoreState - The team store state
    * @param {Object} task - The task to get context for
    * @returns {Object} The context for the task
    */
-  getContextForTask(_task) {
+  getContextForTask(_teamStoreState, _task) {
     throw new Error(
       'getContextForTask() must be implemented by concrete strategies'
     );
@@ -76,12 +73,36 @@ class WorkflowExecutionStrategy {
 
   /**
    * Execute the strategy for the given changed tasks
-   * @param {Array} changedTasks - Array of tasks that have changed status
-   * @param {Array} allTasks - Array of all tasks in the workflow
+   * @param {Object} teamStoreState - The team store state
+   * @param {Array} changedTaskIds - Array of task IDs that have changed status
    */
-  async executeFromChangedTasks(_changedTasks, _allTasks) {
+  async executeFromChangedTasks(_teamStoreState, _changedTaskIds) {
     throw new Error(
       'executeFromChangedTasks() must be implemented by concrete strategies'
+    );
+  }
+
+  /**
+   * Stops the workflow execution.
+   * This method should be implemented by concrete strategies to handle stopping workflow execution.
+   *
+   * @param {Object} teamStoreState - The team store state
+   */
+  async stopExecution(_teamStoreState) {
+    throw new Error(
+      'stopExecution() must be implemented by concrete strategies'
+    );
+  }
+
+  /**
+   * Resumes the workflow execution from its current state.
+   * This method should be implemented by concrete strategies to handle resuming workflow execution.
+   *
+   * @param {Object} teamStoreState - The team store state
+   */
+  async resumeExecution(_teamStoreState) {
+    throw new Error(
+      'resumeExecution() must be implemented by concrete strategies'
     );
   }
 }

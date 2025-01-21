@@ -26,6 +26,8 @@ import {
 import { initializeTelemetry } from '../utils/telemetry';
 import { useAgentStore } from './agentStore';
 import { useTaskStore } from './taskStore';
+import SequentialExecutionStrategy from '../workflowExecution/executionStrategies/sequentialExecutionStrategy';
+import HierarchyExecutionStrategy from '../workflowExecution/executionStrategies/hierarchyExecutionStrategy';
 
 // Initialize telemetry with default values
 const td = initializeTelemetry();
@@ -62,6 +64,7 @@ const createTeamStore = (initialState = {}) => {
           env: initialState.env || {},
           logLevel: initialState.logLevel,
           flowType: initialState.flowType,
+          workflowExecutionStrategy: undefined,
 
           setInputs: (inputs) => set({ inputs }), // Add a new action to update inputs
           setName: (name) => set({ name }), // Add a new action to update inputs
@@ -99,6 +102,39 @@ const createTeamStore = (initialState = {}) => {
               ),
             }));
           },
+          createWorkflowExecutionStrategy: () => {
+            const state = get();
+            const tasks = state.tasks;
+            const workflowType = state.flowType || 'sequential';
+            let strategy;
+
+            if (workflowType === 'sequential') {
+              // For sequential workflows, ensure all tasks except first have dependencies
+              const tasksWithDeps = tasks.filter(
+                (task) => task.dependencies && task.dependencies.length > 0
+              );
+
+              if (tasksWithDeps.length > 1) {
+                throw new Error(
+                  'Invalid task configuration: Sequential workflow requires all tasks except the first to have dependencies'
+                );
+              }
+
+              // Default to sequential execution if not specified
+              strategy = new SequentialExecutionStrategy(state);
+            } else if (
+              workflowType === 'hierarchy' ||
+              tasks.some((task) => task.dependencies?.length > 0)
+            ) {
+              // For hierarchical workflows or when dependencies exist
+              strategy = new HierarchyExecutionStrategy(state);
+            } else {
+              // Default to sequential execution if not specified
+              strategy = new SequentialExecutionStrategy(state);
+            }
+
+            return strategy;
+          },
 
           startWorkflow: async (inputs) => {
             // Start the first task or set all to 'TODO' initially
@@ -124,12 +160,40 @@ const createTeamStore = (initialState = {}) => {
               logType: 'WorkflowStatusUpdate',
             };
 
+            const strategy = get().createWorkflowExecutionStrategy();
+
             // Update state with the new log
             set((state) => ({
               ...state,
               workflowLogs: [...state.workflowLogs, initialLog],
               teamWorkflowStatus: WORKFLOW_STATUS_enum.RUNNING,
+              workflowExecutionStrategy: strategy,
             }));
+
+            await strategy.startExecution(get());
+          },
+
+          handleChangedTasks: async (changedTaskIds) => {
+            const strategy = get().workflowExecutionStrategy;
+
+            if (strategy) {
+              strategy
+                .executeFromChangedTasks(get(), changedTaskIds)
+                .then(() => {
+                  logger.debug(
+                    `Workflow execution strategy executed from changed tasks (${changedTaskIds.join(
+                      ', '
+                    )})`
+                  );
+                })
+                .catch((error) => {
+                  logger.error(
+                    `Error executing workflow execution strategy from changed tasks (${changedTaskIds.join(
+                      ', '
+                    )}): ${error.message}`
+                  );
+                });
+            }
           },
 
           resetWorkflowStateAction: () => {

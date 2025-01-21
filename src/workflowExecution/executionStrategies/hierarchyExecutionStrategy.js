@@ -1,4 +1,3 @@
-import { DepGraph } from 'dependency-graph';
 import { TASK_STATUS_enum } from '../../utils/enums';
 import WorkflowExecutionStrategy from './workflowExecutionStrategy';
 
@@ -10,33 +9,13 @@ import WorkflowExecutionStrategy from './workflowExecutionStrategy';
  * until all of their prerequisites are complete.
  */
 class HierarchyExecutionStrategy extends WorkflowExecutionStrategy {
-  constructor(useTeamStore) {
-    super(useTeamStore);
-    this.graph = new DepGraph();
-
-    // Initialize dependency graph
-    const tasks = useTeamStore.getState().tasks;
-    tasks.forEach((task) => {
-      this.graph.addNode(task.id);
-    });
-
-    // Add dependencies
-    tasks.forEach((task) => {
-      if (task.dependencies) {
-        task.dependencies.forEach((depId) => {
-          this.graph.addDependency(task.id, depId);
-        });
-      }
-    });
-  }
-
   /**
    * Gets all tasks that the given task depends on (its prerequisites)
    * @param {Object} task - The task to find dependencies for
    * @param {Array} allTasks - Array of all tasks in the workflow
    * @returns {Array} Array of task objects that are dependencies of the given task
    */
-  getTaskDependencies(task, allTasks) {
+  _getTaskDependencies(task, allTasks) {
     if (!task.dependencies || task.dependencies.length === 0) {
       return [];
     }
@@ -49,7 +28,7 @@ class HierarchyExecutionStrategy extends WorkflowExecutionStrategy {
    * @param {Array} allTasks - Array of all tasks in the workflow
    * @returns {Array} Array of task objects that depend on the given task
    */
-  getAllTasksDependingOn(task, allTasks) {
+  _getAllTasksDependingOn(task, allTasks) {
     return allTasks.filter(
       (t) => t.dependencies && t.dependencies.includes(task.id)
     );
@@ -60,13 +39,13 @@ class HierarchyExecutionStrategy extends WorkflowExecutionStrategy {
    * @param {Array} allTasks - Array of all tasks in the workflow
    * @returns {Array} Array of task objects that are ready to be executed
    */
-  getReadyTasks(allTasks) {
+  _getReadyTasks(allTasks) {
     return allTasks.filter((task) => {
       // Task must be in TODO status
       if (task.status !== TASK_STATUS_enum.TODO) return false;
 
       // All dependencies must be DONE
-      const deps = this.getTaskDependencies(task, allTasks);
+      const deps = this._getTaskDependencies(task, allTasks);
       return (
         deps.length === 0 ||
         deps.every((dep) => dep.status === TASK_STATUS_enum.DONE)
@@ -74,13 +53,15 @@ class HierarchyExecutionStrategy extends WorkflowExecutionStrategy {
     });
   }
 
-  _findAndExecuteAllPossibleTasks(allTasks) {
+  async _findAndExecuteAllPossibleTasks(teamStoreState) {
+    const allTasks = teamStoreState.tasks;
+
     // Find and execute all possible tasks
     const executableTasks = allTasks.filter((task) => {
       if (task.status !== TASK_STATUS_enum.TODO) return false;
 
       // Check if task has no dependencies or all dependencies are done
-      const deps = this.getTaskDependencies(task, allTasks);
+      const deps = this._getTaskDependencies(task, allTasks);
       return (
         deps.length === 0 ||
         deps.every((dep) => dep.status === TASK_STATUS_enum.DONE)
@@ -89,6 +70,7 @@ class HierarchyExecutionStrategy extends WorkflowExecutionStrategy {
 
     if (executableTasks.length > 0) {
       this._updateStatusOfMultipleTasks(
+        teamStoreState,
         executableTasks.map((t) => t.id),
         TASK_STATUS_enum.DOING
       );
@@ -104,7 +86,7 @@ class HierarchyExecutionStrategy extends WorkflowExecutionStrategy {
    */
   _getParentTasks(task, allTasks) {
     const parentTasks = [];
-    const dependencies = this.getTaskDependencies(task, allTasks);
+    const dependencies = this._getTaskDependencies(task, allTasks);
     dependencies.forEach((dep) => {
       parentTasks.push(dep);
       parentTasks.push(...this._getParentTasks(dep, allTasks));
@@ -122,10 +104,10 @@ class HierarchyExecutionStrategy extends WorkflowExecutionStrategy {
    * @param {Object} task - The task to get context for
    * @returns {Object} The context for the task
    */
-  getContextForTask(task) {
-    const logs = this.useTeamStore.getState().workflowLogs;
+  getContextForTask(teamStoreState, task) {
+    const logs = teamStoreState.workflowLogs;
     const taskResultsByTaskId = new Map();
-    const tasks = this.useTeamStore.getState().tasks;
+    const tasks = teamStoreState.tasks;
 
     // Get all dependencies for the current task
     const dependencies = this._getParentTasks(task, tasks);
@@ -171,27 +153,26 @@ class HierarchyExecutionStrategy extends WorkflowExecutionStrategy {
     return taskResults;
   }
 
-  async startExecution() {
-    this._findAndExecuteAllPossibleTasks(this.useTeamStore.getState().tasks);
+  async startExecution(teamStoreState) {
+    return this._findAndExecuteAllPossibleTasks(teamStoreState);
   }
 
-  async executeFromChangedTasks(changedTasks, allTasks) {
-    if (!Array.isArray(changedTasks)) {
+  async executeFromChangedTasks(teamStoreState, changedTaskIds) {
+    if (!Array.isArray(changedTaskIds)) {
       return;
     }
 
+    const allTasks = teamStoreState.tasks;
+
     // Handle changed tasks first
-    for (const changedTask of changedTasks) {
+    for (const changedTaskId of changedTaskIds) {
+      const changedTask = allTasks.find((t) => t.id === changedTaskId);
       switch (changedTask.status) {
         case TASK_STATUS_enum.DOING:
           // Execute the task
-          this._executeTask(changedTask).catch((error) => {
-            this.useTeamStore
-              .getState()
-              .handleTaskError({ changedTask, error });
-            this.useTeamStore
-              .getState()
-              .handleWorkflowError(changedTask, error);
+          this._executeTask(teamStoreState, changedTask).catch((error) => {
+            teamStoreState.handleTaskError({ changedTask, error });
+            teamStoreState.handleWorkflowError(changedTask, error);
           });
           break;
 
@@ -203,9 +184,10 @@ class HierarchyExecutionStrategy extends WorkflowExecutionStrategy {
               allTasks
             );
             dependentTasks.forEach((task) => {
-              this.useTeamStore
-                .getState()
-                .updateTaskStatus(task.id, TASK_STATUS_enum.BLOCKED);
+              teamStoreState.updateTaskStatus(
+                task.id,
+                TASK_STATUS_enum.BLOCKED
+              );
             });
           }
 
@@ -213,7 +195,7 @@ class HierarchyExecutionStrategy extends WorkflowExecutionStrategy {
       }
     }
 
-    this._findAndExecuteAllPossibleTasks(allTasks);
+    return this._findAndExecuteAllPossibleTasks(teamStoreState);
   }
 }
 

@@ -19,11 +19,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { createTeamStore } from './stores';
 import { ReactChampionAgent } from './agents';
-import TaskManager from './managers/taskManager';
 import { subscribeTaskStatusUpdates } from './subscribers/taskSubscriber';
 import { subscribeWorkflowStatusUpdates } from './subscribers/teamSubscriber';
 import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from './utils/enums';
-
+import { setupWorkflowController } from './workflowExecution/workflowController';
 class Agent {
   constructor({ type, ...config }) {
     this.agentInstance = this.createAgent(type, config);
@@ -166,13 +165,13 @@ class Team {
       flowType,
     });
 
-    // ──── Task Manager Initialization ────────────────────────────
+    // ──── Workflow Controller Initialization ────────────────────────────
     //
-    // Activates the task manager to monitor and manage task transitions and overall workflow states:
+    // Activates the workflow controller to monitor and manage task transitions and overall workflow states:
     // - Monitors changes in task statuses, handling transitions from TODO to DONE.
     // - Ensures tasks proceed seamlessly through their lifecycle stages within the application.
     // ─────────────────────────────────────────────────────────────────────
-    this.taskManager = new TaskManager(this.store);
+    setupWorkflowController(this.store);
 
     // Add agents and tasks to the store, they will be set with the store automatically
     this.store.getState().addAgents(agents);
@@ -229,7 +228,6 @@ class Team {
       try {
         // Trigger the workflow
         this.store.getState().startWorkflow(inputs);
-        this.taskManager.start();
       } catch (error) {
         reject(error);
         // Unsubscribe to prevent memory leaks in case of an error

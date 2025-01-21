@@ -1,11 +1,7 @@
 import WorkflowExecutionStrategy from './workflowExecutionStrategy';
 
 class ManagerLLMStrategy extends WorkflowExecutionStrategy {
-  constructor(useTeamStore) {
-    super(useTeamStore);
-  }
-
-  execute(_changedTasks, _allTasks) {
+  executeFromChangedTasks(_teamStore, _changedTaskIds) {
     // TODO: Implement ManagerLLMStrategy.execute()
     throw new Error('ManagerLLMStrategy.execute() not implemented');
   }
