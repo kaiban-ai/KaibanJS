@@ -20,7 +20,7 @@
 // FINAL_ANSWER: The agent concludes the task with a final decision based on all collected and processed information.
 // IDLE: The agent is idle, waiting for new instructions or tasks.
 // ABORTED: The agent has been aborted due to an error or external interruption.
-//
+// PAUSED: The agent has been paused due to an external interruption.
 // ─────────────────────────────────────────────────────────────────────
 
 const AGENT_STATUS_enum = {
@@ -46,6 +46,7 @@ const AGENT_STATUS_enum = {
   AGENTIC_LOOP_ERROR: 'AGENTIC_LOOP_ERROR',
   WEIRD_LLM_OUTPUT: 'WEIRD_LLM_OUTPUT',
   TASK_ABORTED: 'TASK_ABORTED',
+  PAUSED: 'PAUSED',
 };
 
 // ──── Task Status Definitions ───────────────────────────────────────
@@ -53,6 +54,7 @@ const AGENT_STATUS_enum = {
 // TODO: Task is queued for initiation, awaiting processing.
 // DOING: Task is actively being worked on.
 // BLOCKED: Progress on the task is halted due to dependencies or obstacles.
+// PAUSED: Task is paused due to an external interruption.
 // REVISE: Task requires additional review or adjustments.
 // DONE: Task is completed and requires no further action.
 // AWAITING_VALIDATION: Task is completed but requires validation or approval.
@@ -64,6 +66,7 @@ const TASK_STATUS_enum = {
   TODO: 'TODO',
   DOING: 'DOING',
   BLOCKED: 'BLOCKED',
+  PAUSED: 'PAUSED',
   REVISE: 'REVISE',
   DONE: 'DONE',
   AWAITING_VALIDATION: 'AWAITING_VALIDATION',

@@ -92,16 +92,28 @@ export const useWorkflowLoopStore = (set, get) => ({
       throw new WorkflowError('Cannot pause workflow unless it is running');
     }
 
-    // Pause task queue
-    get().taskQueue.pause();
-    // Abort all active agent promises
-    for (const agentId of get().activePromises.keys()) {
-      get().abortAgentPromises(agentId, WORKFLOW_ACTION_enum.PAUSE);
-    }
+    try {
+      // Pause task queue
+      get().taskQueue.pause();
+      // Abort all active agent promises
+      for (const agentId of get().activePromises.keys()) {
+        get().abortAgentPromises(agentId, WORKFLOW_ACTION_enum.PAUSE);
+      }
 
-    set({ teamWorkflowStatus: WORKFLOW_STATUS_enum.PAUSED });
-    logger.info('Workflow paused');
-    console.log(get().agents);
+      set({ teamWorkflowStatus: WORKFLOW_STATUS_enum.PAUSED });
+      const tasks = get().tasks;
+
+      tasks.forEach((task) => {
+        if (task.status === TASK_STATUS_enum.DOING) {
+          get().handleAgentTaskPaused({ agent: task.agent, task });
+        }
+      });
+      logger.info('Workflow paused');
+    } catch (error) {
+      logger.error('Error pausing workflow:', error);
+      set({ teamWorkflowStatus: WORKFLOW_STATUS_enum.PAUSED });
+      throw error;
+    }
   },
 
   resumeWorkflow: async () => {
@@ -115,7 +127,7 @@ export const useWorkflowLoopStore = (set, get) => ({
     const tasks = get().tasks;
 
     tasks.forEach((task) => {
-      if (task.status === TASK_STATUS_enum.BLOCKED) {
+      if (task.status === TASK_STATUS_enum.PAUSED) {
         get().updateTaskStatus(task.id, TASK_STATUS_enum.DOING);
       }
     });
@@ -154,6 +166,11 @@ export const useWorkflowLoopStore = (set, get) => ({
       // Update all DOING tasks to TODO
       const tasks = get().tasks;
       tasks.forEach((task) => {
+        get().handleAgentTaskAborted({
+          agent: task.agent,
+          task,
+          error: new StopAbortError(),
+        });
         get().updateTaskStatus(task.id, TASK_STATUS_enum.TODO);
       });
 

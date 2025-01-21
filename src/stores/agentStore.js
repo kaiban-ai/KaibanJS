@@ -346,7 +346,7 @@ const useAgentStore = (set, get) => ({
     get().handleTaskBlocked({ task, error });
   },
   handleAgentTaskAborted: ({ agent, task, error }) => {
-    agent.status = AGENT_STATUS_enum.TASK_ABORTED;
+    agent.setStatus(AGENT_STATUS_enum.TASK_ABORTED);
     const newLog = get().prepareNewLog({
       agent,
       task,
@@ -361,6 +361,22 @@ const useAgentStore = (set, get) => ({
     set((state) => ({ workflowLogs: [...state.workflowLogs, newLog] }));
 
     get().handleTaskAborted({ task, error });
+  },
+  handleAgentTaskPaused: ({ agent, task, error }) => {
+    agent.setStatus(AGENT_STATUS_enum.PAUSED);
+    const newLog = get().prepareNewLog({
+      agent,
+      task,
+      logDescription: `🛑 Agent ${agent.name} - ${AGENT_STATUS_enum.PAUSED}`,
+      metadata: { error },
+      logType: 'AgentStatusUpdate',
+      agentStatus: agent.status,
+    });
+    logger.info(
+      `🛑 ${AGENT_STATUS_enum.PAUSED}: Agent ${agent.name} - Paused.`
+    );
+    set((state) => ({ workflowLogs: [...state.workflowLogs, newLog] }));
+    get().handleTaskPaused({ task, error });
   },
 
   handleAgentMaxIterationsError: ({

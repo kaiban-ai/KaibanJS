@@ -305,7 +305,7 @@ class ReactChampionAgent extends BaseAgent {
         }
       } catch (error) {
         if (error instanceof AbortError) {
-          this.handleTaskAborted({ agent, task, error });
+          // this.handleTaskAborted({ agent, task, error });
           break;
         }
         // Check if the error is of type 'LLMInvocationError'

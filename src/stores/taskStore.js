@@ -15,7 +15,7 @@ import {
 } from '../utils/enums';
 import { getTaskTitleForLogs } from '../utils/tasks';
 import { logger } from '../utils/logger';
-import { PrettyError, StopAbortError } from '../utils/errors';
+import { PrettyError } from '../utils/errors';
 import { calculateTaskCost } from '../utils/llmCostCalculator';
 
 export const useTaskStore = (set, get) => ({
@@ -288,45 +288,44 @@ export const useTaskStore = (set, get) => ({
     get().handleWorkflowBlocked({ task, error });
   },
   handleTaskAborted: ({ task, error }) => {
-    if (error instanceof StopAbortError) {
-      //create task log
-      const stats = get().getTaskStats(task, get);
-      const modelCode = task.agent.llmConfig.model; // Assuming this is where the model code is stored
-      // Calculate costs directly using stats
-      const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
-
-      const taskLog = get().prepareNewLog({
-        agent: task.agent,
-        task,
-        logDescription: `Task aborted: ${getTaskTitleForLogs(task)}, Reason: ${
-          error.message
-        }`,
-        metadata: {
-          ...stats,
-          costDetails,
-          error,
-        },
-        logType: 'TaskStatusUpdate',
-      });
-      // create pretty error
-      const prettyError = new PrettyError({
-        name: 'TASK STOPPED',
-        message: 'Task manually stopped by user.',
-        recommendedAction:
-          'Enable logLevel: "debug" during team initialization to obtain more detailed logs and facilitate troubleshooting.',
-        rootError: error,
-        context: { task, error },
-      });
-      logger.warn(prettyError.prettyMessage);
-      logger.debug(prettyError.context);
-
-      set((state) => ({
-        workflowLogs: [...state.workflowLogs, taskLog],
-      }));
-      return;
-    }
+    //create task log
     const stats = get().getTaskStats(task, get);
-    task.status = TASK_STATUS_enum.BLOCKED;
+    const modelCode = task.agent.llmConfig.model; // Assuming this is where the model code is stored
+    // Calculate costs directly using stats
+    const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
+
+    const taskLog = get().prepareNewLog({
+      agent: task.agent,
+      task,
+      logDescription: `Task aborted: ${getTaskTitleForLogs(task)}, Reason: ${
+        error.message
+      }`,
+      metadata: {
+        ...stats,
+        costDetails,
+        error,
+      },
+      logType: 'TaskStatusUpdate',
+    });
+    // create pretty error
+    const prettyError = new PrettyError({
+      name: 'TASK STOPPED',
+      message: 'Task manually stopped by user.',
+      recommendedAction:
+        'Enable logLevel: "debug" during team initialization to obtain more detailed logs and facilitate troubleshooting.',
+      rootError: error,
+      context: { task, error },
+    });
+    logger.warn(prettyError.prettyMessage);
+    logger.debug(prettyError.context);
+
+    set((state) => ({
+      workflowLogs: [...state.workflowLogs, taskLog],
+    }));
+  },
+  handleTaskPaused: ({ task, error }) => {
+    const stats = get().getTaskStats(task, get);
+    task.status = TASK_STATUS_enum.PAUSED;
     const modelCode = task.agent.llmConfig.model; // Assuming this is where the model code is stored
     // Calculate costs directly using stats
     const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
@@ -340,9 +339,9 @@ export const useTaskStore = (set, get) => ({
     const taskLog = get().prepareNewLog({
       agent: task.agent,
       task,
-      logDescription: `Task blocked: ${getTaskTitleForLogs(task)}, Reason: ${
-        error.message
-      }`,
+      logDescription: `Task paused: ${getTaskTitleForLogs(
+        task
+      )}, Reason: An external interruption occurred.`,
       metadata: {
         ...stats,
         costDetails,
@@ -352,8 +351,8 @@ export const useTaskStore = (set, get) => ({
     });
 
     const prettyError = new PrettyError({
-      name: 'TASK BLOCKED',
-      message: 'Task blocked due to a possible error during execution.',
+      name: 'TASK PAUSED',
+      message: 'Task paused due to an external interruption.',
       recommendedAction:
         'Enable logLevel: "debug" during team initialization to obtain more detailed logs and facilitate troubleshooting.',
       rootError: error,
@@ -368,7 +367,7 @@ export const useTaskStore = (set, get) => ({
           ? {
               ...t,
               ...stats,
-              status: TASK_STATUS_enum.BLOCKED,
+              status: TASK_STATUS_enum.PAUSED,
               feedbackHistory: updatedFeedbackHistory,
             }
           : t
