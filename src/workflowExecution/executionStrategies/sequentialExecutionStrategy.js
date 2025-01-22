@@ -133,8 +133,6 @@ class SequentialExecutionStrategy extends WorkflowExecutionStrategy {
           break;
         case TASK_STATUS_enum.DONE:
           {
-            teamStoreState.clearAgentLoopState(changedTask.agent.id);
-
             const tasks = teamStoreState.tasks;
             const nextTask = tasks.find(
               (t) => t.status === TASK_STATUS_enum.TODO

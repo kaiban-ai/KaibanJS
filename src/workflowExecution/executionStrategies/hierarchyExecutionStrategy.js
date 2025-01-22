@@ -210,9 +210,6 @@ class HierarchyExecutionStrategy extends WorkflowExecutionStrategy {
           }
 
           break;
-        case TASK_STATUS_enum.DONE:
-          teamStoreState.clearAgentLoopState(changedTask.agent.id);
-          break;
       }
     }
 

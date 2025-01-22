@@ -251,7 +251,7 @@ const createTeamStore = (initialState = {}) => {
                 teamWorkflowStatus: WORKFLOW_STATUS_enum.INITIAL,
               };
             });
-            get().taskQueue.clear();
+
             logger.debug('Workflow state has been reset.');
           },
 
