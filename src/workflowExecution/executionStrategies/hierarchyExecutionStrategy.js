@@ -53,6 +53,14 @@ class HierarchyExecutionStrategy extends WorkflowExecutionStrategy {
     });
   }
 
+  /**
+   * Returns the concurrency for the task queue
+   * @returns {number} The concurrency for the task queue
+   */
+  getConcurrencyForTaskQueue(teamStoreState) {
+    return teamStoreState.maxConcurrency || 5;
+  }
+
   async _findAndExecuteAllPossibleTasks(teamStoreState) {
     const allTasks = teamStoreState.tasks;
 
@@ -157,23 +165,33 @@ class HierarchyExecutionStrategy extends WorkflowExecutionStrategy {
     return this._findAndExecuteAllPossibleTasks(teamStoreState);
   }
 
-  async executeFromChangedTasks(teamStoreState, changedTaskIds) {
-    if (!Array.isArray(changedTaskIds)) {
+  async executeFromChangedTasks(
+    teamStoreState,
+    changedTaskIdsWithPreviousStatus
+  ) {
+    if (!Array.isArray(changedTaskIdsWithPreviousStatus)) {
       return;
     }
 
     const allTasks = teamStoreState.tasks;
 
     // Handle changed tasks first
-    for (const changedTaskId of changedTaskIds) {
-      const changedTask = allTasks.find((t) => t.id === changedTaskId);
+    for (const changedTaskIdWithPreviousStatus of changedTaskIdsWithPreviousStatus) {
+      const changedTask = allTasks.find(
+        (t) => t.id === changedTaskIdWithPreviousStatus.taskId
+      );
       switch (changedTask.status) {
         case TASK_STATUS_enum.DOING:
-          // Execute the task
-          this._executeTask(teamStoreState, changedTask).catch((error) => {
-            teamStoreState.handleTaskError({ changedTask, error });
-            teamStoreState.handleWorkflowError(changedTask, error);
-          });
+          if (
+            changedTaskIdWithPreviousStatus.previousStatus !==
+            TASK_STATUS_enum.PAUSED
+          ) {
+            // Execute the task
+            this._executeTask(teamStoreState, changedTask).catch((error) => {
+              teamStoreState.handleTaskError({ changedTask, error });
+              teamStoreState.handleWorkflowError(changedTask, error);
+            });
+          }
           break;
 
         case TASK_STATUS_enum.REVISE:
@@ -191,6 +209,9 @@ class HierarchyExecutionStrategy extends WorkflowExecutionStrategy {
             });
           }
 
+          break;
+        case TASK_STATUS_enum.DONE:
+          teamStoreState.clearAgentLoopState(changedTask.agent.id);
           break;
       }
     }

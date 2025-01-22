@@ -11,6 +11,7 @@
  */
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
+import PQueue from 'p-queue';
 import { useAgentStore } from './agentStore';
 import { useTaskStore } from './taskStore';
 import { useWorkflowLoopStore } from './workflowLoopStore';
@@ -68,6 +69,9 @@ const createTeamStore = (initialState = {}) => {
           workflowExecutionStrategy: undefined,
           workflowController: initialState.workflowController || {},
 
+          taskQueue: undefined, // initialized in startWorkflow
+          maxConcurrency: initialState.maxConcurrency || 5,
+
           setInputs: (inputs) => set({ inputs }), // Add a new action to update inputs
           setName: (name) => set({ name }), // Add a new action to update inputs
           setEnv: (env) => set({ env }), // Add a new action to update inputs
@@ -103,6 +107,16 @@ const createTeamStore = (initialState = {}) => {
                 taskIds.includes(task.id) ? { ...task, status } : task
               ),
             }));
+          },
+          addTaskToQueue: (agent, task, context) => {
+            get().taskQueue.add(
+              async () => {
+                await get().workOnTask(agent, task, context);
+              },
+              {
+                id: task.id,
+              }
+            );
           },
           createWorkflowExecutionStrategy: () => {
             const state = get();
@@ -164,6 +178,12 @@ const createTeamStore = (initialState = {}) => {
 
             const strategy = get().createWorkflowExecutionStrategy();
 
+            // init task queue
+            get().taskQueue = new PQueue({
+              concurrency: strategy.getConcurrencyForTaskQueue(get()),
+              autoStart: true,
+            });
+
             // Update state with the new log
             set((state) => ({
               ...state,
@@ -175,22 +195,25 @@ const createTeamStore = (initialState = {}) => {
             await strategy.startExecution(get());
           },
 
-          handleChangedTasks: async (changedTaskIds) => {
+          handleChangedTasks: async (changedTaskIdsWithPreviousStatus) => {
             const strategy = get().workflowExecutionStrategy;
 
             if (strategy) {
               strategy
-                .executeFromChangedTasks(get(), changedTaskIds)
+                .executeFromChangedTasks(
+                  get(),
+                  changedTaskIdsWithPreviousStatus
+                )
                 .then(() => {
                   logger.debug(
-                    `Workflow execution strategy executed from changed tasks (${changedTaskIds.join(
+                    `Workflow execution strategy executed from changed tasks (${changedTaskIdsWithPreviousStatus.join(
                       ', '
                     )})`
                   );
                 })
                 .catch((error) => {
                   logger.error(
-                    `Error executing workflow execution strategy from changed tasks (${changedTaskIds.join(
+                    `Error executing workflow execution strategy from changed tasks (${changedTaskIdsWithPreviousStatus.join(
                       ', '
                     )}): ${error.message}`
                   );
@@ -710,30 +733,45 @@ const createTeamStore = (initialState = {}) => {
           },
           getCleanedState() {
             // Function to clean individual agent data
-            const cleanAgent = (agent) => ({
-              ...agent,
-              id: '[REDACTED]', // Clean sensitive ID at the root level
-              env: '[REDACTED]', // Clean sensitive Env in agent
-              llmConfig: agent.llmConfig
-                ? {
-                    ...agent.llmConfig,
-                    apiKey: '[REDACTED]', // Clean API key at the root level
-                  }
-                : {}, // Provide an empty object if llmConfig is undefined at the root level
-              agentInstance: agent.agentInstance
-                ? {
-                    ...agent.agentInstance,
-                    id: '[REDACTED]', // Clean sensitive ID in agentInstance
-                    env: '[REDACTED]', // Clean sensitive Env in agentInstance
-                    llmConfig: agent.agentInstance.llmConfig
-                      ? {
-                          ...agent.agentInstance.llmConfig,
-                          apiKey: '[REDACTED]', // Clean API key in agentInstance llmConfig
-                        }
-                      : {}, // Provide an empty object if llmConfig is undefined in agentInstance
-                  }
-                : {}, // Provide an empty object if agentInstance is undefined
-            });
+            const cleanAgent = (agent) => {
+              const { agentInstance } = agent;
+              let cleanedAgentInstance = agentInstance;
+
+              // if (agentInstance) {
+              //   const {
+              //     interactionsHistory: _interactionsHistory,
+              //     lastFeedbackMessage: _lastFeedbackMessage,
+              //     currentIterations: _currentIterations,
+              //     ..._cleanedAgentInstance
+              //   } = agentInstance;
+              //   cleanedAgentInstance = _cleanedAgentInstance;
+              // }
+
+              return {
+                ...agent,
+                id: '[REDACTED]', // Clean sensitive ID at the root level
+                env: '[REDACTED]', // Clean sensitive Env in agent
+                llmConfig: agent.llmConfig
+                  ? {
+                      ...agent.llmConfig,
+                      apiKey: '[REDACTED]', // Clean API key at the root level
+                    }
+                  : {}, // Provide an empty object if llmConfig is undefined at the root level
+                agentInstance: cleanedAgentInstance
+                  ? {
+                      ...cleanedAgentInstance,
+                      id: '[REDACTED]', // Clean sensitive ID in agentInstance
+                      env: '[REDACTED]', // Clean sensitive Env in agentInstance
+                      llmConfig: cleanedAgentInstance.llmConfig
+                        ? {
+                            ...cleanedAgentInstance.llmConfig,
+                            apiKey: '[REDACTED]', // Clean API key in agentInstance llmConfig
+                          }
+                        : {}, // Provide an empty object if llmConfig is undefined in agentInstance
+                    }
+                  : {}, // Provide an empty object if agentInstance is undefined
+              };
+            };
 
             // Function to clean individual task data
             const cleanTask = (task) => ({

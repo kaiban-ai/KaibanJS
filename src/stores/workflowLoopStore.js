@@ -10,11 +10,10 @@ import {
   WorkflowError,
 } from '../utils/errors';
 import { logger } from '../utils/logger';
-import PQueue from 'p-queue';
 
 export const useWorkflowLoopStore = (set, get) => ({
-  taskQueue: new PQueue({ concurrency: 1 }),
   activePromises: new Map(),
+
   clearAgentLoopState: (agentId) =>
     set((store) => {
       const newAgents = [...store.agents];
@@ -28,15 +27,6 @@ export const useWorkflowLoopStore = (set, get) => ({
       logger.info('cleared agent loop state', agentId);
       return { agents: newAgents };
     }),
-
-  // Initialize
-  initializeWorkflow: () => {
-    set((state) => ({
-      ...state,
-      teamWorkflowStatus: WORKFLOW_STATUS_enum.RUNNING,
-      taskQueue: new PQueue({ concurrency: 1 }),
-    }));
-  },
 
   // Promise Management
   trackPromise: (agentId, promiseObj) => {

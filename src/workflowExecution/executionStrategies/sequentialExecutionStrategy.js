@@ -75,8 +75,15 @@ class SequentialExecutionStrategy extends WorkflowExecutionStrategy {
       .join('\n');
   }
 
-  async executeFromChangedTasks(teamStoreState, changedTaskIds) {
-    if (!Array.isArray(changedTaskIds)) {
+  getConcurrencyForTaskQueue() {
+    return 1;
+  }
+
+  async executeFromChangedTasks(
+    teamStoreState,
+    changedTaskIdsWithPreviousStatus
+  ) {
+    if (!Array.isArray(changedTaskIdsWithPreviousStatus)) {
       return;
     }
 
@@ -85,21 +92,21 @@ class SequentialExecutionStrategy extends WorkflowExecutionStrategy {
     // Implement the logic for the sequential execution strategy
     // This method should handle the tasks in the order they are received
     // and ensure that tasks are executed sequentially
-    for (const changedTaskId of changedTaskIds) {
-      const changedTask = allTasks.find((t) => t.id === changedTaskId);
+    for (const changedTaskIdWithPreviousStatus of changedTaskIdsWithPreviousStatus) {
+      const changedTask = allTasks.find(
+        (t) => t.id === changedTaskIdWithPreviousStatus.taskId
+      );
       switch (changedTask.status) {
         case TASK_STATUS_enum.DOING:
-          this.taskQueue
-            .add(() => this._executeTask(teamStoreState, changedTask))
-            .catch((error) => {
+          if (
+            changedTaskIdWithPreviousStatus.previousStatus !==
+            TASK_STATUS_enum.PAUSED
+          ) {
+            this._executeTask(teamStoreState, changedTask).catch((error) => {
               teamStoreState.handleTaskError({ changedTask, error });
               teamStoreState.handleWorkflowError(changedTask, error);
             });
-
-          // this.taskQueue.push(changedTask).catch((error) => {
-          //   teamStoreState.handleTaskError({ changedTask, error });
-          //   teamStoreState.handleWorkflowError(changedTask, error);
-          // });
+          }
           break;
         case TASK_STATUS_enum.REVISE:
           {
@@ -126,6 +133,8 @@ class SequentialExecutionStrategy extends WorkflowExecutionStrategy {
           break;
         case TASK_STATUS_enum.DONE:
           {
+            teamStoreState.clearAgentLoopState(changedTask.agent.id);
+
             const tasks = teamStoreState.tasks;
             const nextTask = tasks.find(
               (t) => t.status === TASK_STATUS_enum.TODO

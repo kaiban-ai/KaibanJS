@@ -23,6 +23,14 @@ class WorkflowExecutionStrategy {
   }
 
   /**
+   * Returns the concurrency for the task queue
+   * @returns {number} The concurrency for the task queue
+   */
+  getConcurrencyForTaskQueue() {
+    return 1;
+  }
+
+  /**
    * Execute the task
    * @param {Object} task - The task to execute
    */
@@ -33,7 +41,7 @@ class WorkflowExecutionStrategy {
 
     const context = this.getContextForTask(teamStoreState, task);
 
-    return teamStoreState.workOnTask(agent, task, context);
+    return teamStoreState.addTaskToQueue(agent, task, context);
   }
 
   /**
