@@ -185,6 +185,32 @@ class Team {
   }
 
   /**
+   * Pauses the team's workflow.
+   * This method temporarily halts the workflow, allowing for manual intervention or adjustments.
+   * @returns {void}
+   */
+  pause() {
+    return this.store.getState().pauseWorkflow();
+  }
+
+  /**
+   * Resumes the team's workflow.
+   * This method continues the workflow after it has been paused.
+   * @returns {void}
+   */
+  resume() {
+    return this.store.getState().resumeWorkflow();
+  }
+  /**
+   * Stops the team's workflow.
+   * This method stops the workflow, preventing any further task execution.
+   * @returns {void}
+   */
+  stop() {
+    return this.store.getState().stopWorkflow();
+  }
+
+  /**
    * Starts the team's workflow.
    * This method initiates the process of agents working on tasks.
    *

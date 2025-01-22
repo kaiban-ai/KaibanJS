@@ -11,6 +11,9 @@
  */
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
+import { useAgentStore } from './agentStore';
+import { useTaskStore } from './taskStore';
+import { useWorkflowLoopStore } from './workflowLoopStore';
 import {
   AGENT_STATUS_enum,
   FEEDBACK_STATUS_enum,
@@ -24,8 +27,6 @@ import {
   interpolateTaskDescription,
 } from '../utils/tasks';
 import { initializeTelemetry } from '../utils/telemetry';
-import { useAgentStore } from './agentStore';
-import { useTaskStore } from './taskStore';
 import SequentialExecutionStrategy from '../workflowExecution/executionStrategies/sequentialExecutionStrategy';
 import HierarchyExecutionStrategy from '../workflowExecution/executionStrategies/hierarchyExecutionStrategy';
 
@@ -51,7 +52,7 @@ const createTeamStore = (initialState = {}) => {
         (set, get) => ({
           ...useAgentStore(set, get),
           ...useTaskStore(set, get),
-
+          ...useWorkflowLoopStore(set, get),
           teamWorkflowStatus:
             initialState.teamWorkflowStatus || WORKFLOW_STATUS_enum.INITIAL,
           workflowResult: initialState.workflowResult || null,
@@ -65,6 +66,7 @@ const createTeamStore = (initialState = {}) => {
           logLevel: initialState.logLevel,
           flowType: initialState.flowType,
           workflowExecutionStrategy: undefined,
+          workflowController: initialState.workflowController || {},
 
           setInputs: (inputs) => set({ inputs }), // Add a new action to update inputs
           setName: (name) => set({ name }), // Add a new action to update inputs
@@ -330,7 +332,36 @@ const createTeamStore = (initialState = {}) => {
               workflowLogs: [...state.workflowLogs, newLog], // Append new log to the logs array
             }));
           },
+          handleWorkflowAborted: ({ task, error }) => {
+            // Detailed console error logging
+            logger.warn(`WORKFLOW ABORTED:`, error.message);
+            // Get current workflow stats
+            const stats = get().getWorkflowStats();
 
+            // Prepare the error log with specific workflow context
+            const newLog = {
+              task,
+              agent: task.agent,
+              timestamp: Date.now(),
+              logDescription: `Workflow aborted: ${error.message}`,
+              workflowStatus: WORKFLOW_STATUS_enum.STOPPED,
+              metadata: {
+                error: error.message,
+                ...stats,
+                teamName: get().name,
+                taskCount: get().tasks.length,
+                agentCount: get().agents.length,
+              },
+              logType: 'WorkflowStatusUpdate',
+            };
+
+            // Update state with error details and add new log entry
+            set((state) => ({
+              ...state,
+              teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED, // Set status to indicate a blocked workflow
+              workflowLogs: [...state.workflowLogs, newLog], // Append new log to the logs array
+            }));
+          },
           workOnTask: async (agent, task, context) => {
             if (task && agent) {
               // Log the start of the task
