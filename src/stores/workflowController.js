@@ -32,6 +32,7 @@ export const setupWorkflowController = (useTeamStore) => {
               useTeamStore.getState().handleTaskError({ task, error });
               useTeamStore.getState().handleWorkflowError(task, error);
             });
+          if (taskQueue.isPaused) taskQueue.start();
         }
       });
     }
@@ -86,18 +87,6 @@ export const setupWorkflowController = (useTeamStore) => {
             .getState()
             .updateTaskStatus(nextTask.id, TASK_STATUS_enum.DOING);
         }
-      }
-    }
-  );
-
-  //Managing tasks moving to 'DONE'
-  useTeamStore.subscribe(
-    (state) => state.tasks.filter((t) => t.status === TASK_STATUS_enum.DONE),
-    (doneTasks, previousDoneTasks) => {
-      if (doneTasks.length > previousDoneTasks.length) {
-        doneTasks.forEach((task) => {
-          useTeamStore.getState().clearAgentLoopState(task.agent.id);
-        });
       }
     }
   );

@@ -1,4 +1,3 @@
-import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
 import {
   WORKFLOW_STATUS_enum,
   TASK_STATUS_enum,
@@ -13,20 +12,6 @@ import { logger } from '../utils/logger';
 
 export const useWorkflowLoopStore = (set, get) => ({
   activePromises: new Map(),
-
-  clearAgentLoopState: (agentId) =>
-    set((store) => {
-      const newAgents = [...store.agents];
-      newAgents.forEach(({ agentInstance }) => {
-        if (agentInstance.id === agentId) {
-          agentInstance.interactionsHistory = new ChatMessageHistory();
-          agentInstance.lastFeedbackMessage = null;
-          agentInstance.currentIterations = 0;
-        }
-      });
-      logger.info('cleared agent loop state', agentId);
-      return { agents: newAgents };
-    }),
 
   // Promise Management
   trackPromise: (agentId, promiseObj) => {
@@ -147,7 +132,6 @@ export const useWorkflowLoopStore = (set, get) => ({
       // Abort all active agent promises
       for (const agentId of get().activePromises.keys()) {
         get().abortAgentPromises(agentId, WORKFLOW_ACTION_enum.STOP);
-        get().clearAgentLoopState(agentId);
       }
 
       // Clear task queue

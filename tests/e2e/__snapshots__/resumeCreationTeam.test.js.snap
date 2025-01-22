@@ -22,7 +22,19 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -180,7 +192,17 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -355,7 +377,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
             "lc": 1,
             "type": "not_implemented",
           },
-          "lastFeedbackMessage": null,
+          "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -563,7 +597,17 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "lc": 1,
             "type": "not_implemented",
           },
-          "lastFeedbackMessage": null,
+          "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -825,7 +869,19 @@ Florida International University (FIU)
             "lc": 1,
             "type": "not_implemented",
           },
-          "lastFeedbackMessage": null,
+          "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -991,7 +1047,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1192,7 +1260,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -1350,7 +1430,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1551,7 +1643,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -1800,7 +1904,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2001,7 +2117,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2198,7 +2326,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2399,7 +2539,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2558,7 +2710,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2759,7 +2923,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2917,7 +3093,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3118,7 +3306,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3277,7 +3477,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3478,7 +3690,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3648,7 +3872,19 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Mary, please complete the following task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: My name is David Llaca. 
+    JavaScript Developer for 5 years. 
+    I worked for three years at Disney, 
+    where I developed user interfaces for their primary landing pages
+     using React, NextJS, and Redux. Before Disney, 
+     I was a Junior Front-End Developer at American Airlines, 
+     where I worked with Vue and Tailwind. 
+     I earned a Bachelor of Science in Computer Science from FIU in 2018, 
+     and I completed a JavaScript bootcamp that same year.. 
+        Your expected output should be: "Structured data ready to be used for a resume creation.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3852,7 +4088,17 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
             "lc": 1,
             "type": "not_implemented",
           },
-          "lastFeedbackMessage": null,
+          "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -4025,7 +4271,17 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4266,7 +4522,17 @@ Florida International University (FIU)
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -4431,7 +4697,17 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4672,7 +4948,17 @@ Florida International University (FIU)
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -4930,7 +5216,17 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5171,7 +5467,17 @@ Florida International University (FIU)
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -5384,7 +5690,17 @@ Florida International University (FIU)
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5625,7 +5941,17 @@ Florida International University (FIU)
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -5829,7 +6155,17 @@ Florida International University (FIU)
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -6070,7 +6406,17 @@ Florida International University (FIU)
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -6235,7 +6581,17 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -6476,7 +6832,17 @@ Florida International University (FIU)
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -6680,7 +7046,17 @@ Florida International University (FIU)
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -6921,7 +7297,17 @@ Florida International University (FIU)
           "lc": 1,
           "type": "not_implemented",
         },
-        "lastFeedbackMessage": null,
+        "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -7136,7 +7522,17 @@ Florida International University (FIU)
               "lc": 1,
               "type": "not_implemented",
             },
-            "lastFeedbackMessage": null,
+            "lastFeedbackMessage": "Hi Alex Mercer, please complete the following task: Utilize the structured data to create 
+    a detailed and attractive resume. 
+    Enrich the resume content by inferring additional details from the provided information.
+    Include sections such as a personal summary, detailed work experience, skills, and educational background.. 
+        Your expected output should be: "A professionally formatted resume in markdown format, 
+    ready for submission to potential employers.". 
+        Incorporate the following findings and insights from previous tasks: "Task: Extract relevant details such as name, 
+  experience, skills, and job history from the user's 'aboutMe' input. 
+  aboutMe: {aboutMe}
+Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","React","NextJS","Redux","Vue","Tailwind"],"jobHistory":[{"company":"Disney","position":"JavaScript Developer","duration":"3 years","responsibilities":"Developed user interfaces for their primary landing pages."},{"company":"American Airlines","position":"Junior Front-End Developer","duration":"1 year","responsibilities":"Worked with Vue and Tailwind."}],"education":{"degree":"Bachelor of Science in Computer Science","institution":"FIU","graduationYear":2018},"additionalTraining":[{"program":"JavaScript bootcamp","completionYear":2018}]}
+"",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,

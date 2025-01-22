@@ -12,6 +12,7 @@
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import PQueue from 'p-queue';
+import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
 import { useAgentStore } from './agentStore';
 import { useTaskStore } from './taskStore';
 import { useWorkflowLoopStore } from './workflowLoopStore';
@@ -42,7 +43,6 @@ const td = initializeTelemetry();
 // ─────────────────────────────────────────────────────────────────────
 
 const createTeamStore = (initialState = {}) => {
-  // console.log("Initial state:", initialState); // Log the initial state
   // Define the store with centralized state management and actions
   if (initialState.logLevel) {
     setLogLevel(initialState.logLevel); // Update logger level if provided
@@ -231,7 +231,12 @@ const createTeamStore = (initialState = {}) => {
               }));
 
               get().agents.forEach((agent) => {
-                agent.setStatus('INITIAL'); // Update status using agent's method
+                agent.setStatus('INITIAL');
+                // Update status using agent's method
+                agent.agentInstance.interactionsHistory =
+                  new ChatMessageHistory();
+                agent.agentInstance.lastFeedbackMessage = null;
+                agent.agentInstance.currentIterations = 0;
               });
 
               const resetAgents = [...state.agents];
@@ -246,6 +251,7 @@ const createTeamStore = (initialState = {}) => {
                 teamWorkflowStatus: WORKFLOW_STATUS_enum.INITIAL,
               };
             });
+            get().taskQueue.clear();
             logger.debug('Workflow state has been reset.');
           },
 
