@@ -106,6 +106,10 @@ class BaseAgent {
   workOnTask(_task) {
     throw new Error('workOnTask must be implemented by subclasses.');
   }
+
+  workOnTaskResume(_task) {
+    throw new Error('workOnTaskResume must be implemented by subclasses.');
+  }
 }
 
 export { BaseAgent };

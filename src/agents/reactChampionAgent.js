@@ -85,7 +85,15 @@ class ReactChampionAgent extends BaseAgent {
     this.interactionsHistory = new ChatMessageHistory();
     this.lastFeedbackMessage = null;
   }
-
+  async workOnTaskResume(task) {
+    const lastFeedbackMessage = this.lastFeedbackMessage;
+    return await this.agenticLoop(
+      this,
+      task,
+      this.#executableAgent,
+      lastFeedbackMessage
+    );
+  }
   async workOnTask(task, inputs, context) {
     const config = this.prepareAgentForTask(task, inputs, context);
     this.#executableAgent = config.executableAgent;
