@@ -39,6 +39,9 @@ class Agent {
   workOnTask(task, inputs, context) {
     return this.agentInstance.workOnTask(task, inputs, context);
   }
+  workOnTaskResume(task) {
+    return this.agentInstance.workOnTaskResume(task);
+  }
 
   workOnFeedback(task, inputs, context) {
     return this.agentInstance.workOnFeedback(task, inputs, context);

@@ -9,7 +9,7 @@
  */
 
 // import PQueue from 'p-queue';
-import { TASK_STATUS_enum /*WORKFLOW_STATUS_enum*/ } from '../utils/enums';
+import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from '../utils/enums';
 // import { logger } from '../utils/logger';
 export const setupWorkflowController = (useTeamStore) => {
   // const taskQueue = new PQueue({ concurrency: 1 });
@@ -24,14 +24,28 @@ export const setupWorkflowController = (useTeamStore) => {
   useTeamStore.subscribe(
     (state) => state.tasks.filter((t) => t.status === TASK_STATUS_enum.DOING),
     (doingTasks, previousDoingTasks) => {
+      const isResumed =
+        useTeamStore.getState().teamWorkflowStatus ===
+        WORKFLOW_STATUS_enum.RESUMED;
       doingTasks.forEach((task) => {
         if (!previousDoingTasks.find((t) => t.id === task.id)) {
-          taskQueue
-            .add(() => useTeamStore.getState().workOnTask(task.agent, task))
-            .catch((error) => {
-              useTeamStore.getState().handleTaskError({ task, error });
-              useTeamStore.getState().handleWorkflowError(task, error);
-            });
+          if (isResumed) {
+            taskQueue
+              .add(() =>
+                useTeamStore.getState().workOnTaskResume(task.agent, task)
+              )
+              .catch((error) => {
+                useTeamStore.getState().handleTaskError({ task, error });
+                useTeamStore.getState().handleWorkflowError(task, error);
+              });
+          } else {
+            taskQueue
+              .add(() => useTeamStore.getState().workOnTask(task.agent, task))
+              .catch((error) => {
+                useTeamStore.getState().handleTaskError({ task, error });
+                useTeamStore.getState().handleWorkflowError(task, error);
+              });
+          }
           if (taskQueue.isPaused) taskQueue.start();
         }
       });

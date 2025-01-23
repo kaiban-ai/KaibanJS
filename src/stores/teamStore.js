@@ -356,7 +356,9 @@ const createTeamStore = (initialState = {}) => {
               }
             }
           },
-
+          workOnTaskResume: async (agent, task) => {
+            await agent.workOnTaskResume(task);
+          },
           deriveContextFromLogs: (logs, currentTaskId) => {
             const taskResults = new Map();
             const tasks = get().tasks; // Get the tasks array from the store
