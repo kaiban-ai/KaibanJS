@@ -184,12 +184,6 @@ const createTeamStore = (initialState = {}) => {
 
             const strategy = get().createWorkflowExecutionStrategy();
 
-            // init task queue
-            get().taskQueue = new PQueue({
-              concurrency: strategy.getConcurrencyForTaskQueue(get()),
-              autoStart: true,
-            });
-
             // Update state with the new log
             set((state) => ({
               ...state,
@@ -197,6 +191,12 @@ const createTeamStore = (initialState = {}) => {
               teamWorkflowStatus: WORKFLOW_STATUS_enum.RUNNING,
               workflowExecutionStrategy: strategy,
             }));
+
+            // init task queue
+            get().taskQueue = new PQueue({
+              concurrency: strategy.getConcurrencyForTaskQueue(get()),
+              autoStart: true,
+            });
 
             await strategy.startExecution(get());
           },

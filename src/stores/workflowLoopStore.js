@@ -148,16 +148,33 @@ export const useWorkflowLoopStore = (set, get) => ({
       );
     }
 
-    set({ teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPING });
+    // Clear task queue
+    get().taskQueue.pause();
+    get().taskQueue.clear();
+
+    set((state) => ({
+      teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPING,
+      workflowLogs: [
+        ...state.workflowLogs,
+        {
+          task: null,
+          agent: null,
+          timestamp: Date.now(),
+          logDescription: 'Workflow is stopping.',
+          workflowStatus: WORKFLOW_STATUS_enum.STOPPING,
+          metadata: {
+            message: 'Workflow stop operation initiated',
+          },
+          logType: 'WorkflowStatusUpdate',
+        },
+      ],
+    }));
 
     try {
       // Abort all active agent promises
       for (const agentId of get().activePromises.keys()) {
         get().abortAgentPromises(agentId, WORKFLOW_ACTION_enum.STOP);
       }
-
-      // Clear task queue
-      get().taskQueue.clear();
 
       // Update all DOING tasks to TODO
       const tasks = get().tasks;
@@ -170,11 +187,44 @@ export const useWorkflowLoopStore = (set, get) => ({
         get().updateTaskStatus(task.id, TASK_STATUS_enum.TODO);
       });
 
-      set({ teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED });
+      set((state) => ({
+        teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED,
+        workflowLogs: [
+          ...state.workflowLogs,
+          {
+            task: null,
+            agent: null,
+            timestamp: Date.now(),
+            logDescription: 'Workflow has been stopped.',
+            workflowStatus: WORKFLOW_STATUS_enum.STOPPED,
+            metadata: {
+              message: 'Workflow stop operation completed',
+            },
+            logType: 'WorkflowStatusUpdate',
+          },
+        ],
+      }));
       logger.info('Workflow stopped successfully');
     } catch (error) {
       logger.error('Error stopping workflow:', error);
-      set({ teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED });
+      set((state) => ({
+        teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED,
+        workflowLogs: [
+          ...state.workflowLogs,
+          {
+            task: null,
+            agent: null,
+            timestamp: Date.now(),
+            logDescription: 'Error stopping workflow.',
+            workflowStatus: WORKFLOW_STATUS_enum.STOPPED,
+            metadata: {
+              message: 'Workflow stop operation failed',
+              error: error.message,
+            },
+            logType: 'WorkflowStatusUpdate',
+          },
+        ],
+      }));
       throw error;
     }
   },

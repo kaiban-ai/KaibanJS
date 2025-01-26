@@ -481,4 +481,184 @@ describe('Trip Planning Team Workflows', () => {
       );
     });
   });
+
+  describe.only('Stop', () => {
+    beforeEach(() => {
+      if (withMockedApis) {
+        mock(openAITeamRecordedRequests, { delay: 100 });
+      }
+    });
+
+    afterEach(() => {
+      if (withMockedApis) {
+        restoreAll();
+      }
+    });
+
+    it('should stop workflow when no tasks have been completed', async () => {
+      openAITeam.start();
+      const store = openAITeam.useStore();
+
+      // Wait for the first task to start
+      await new Promise((resolve) => {
+        const unsubscribe = store.subscribe(
+          (state) => state.workflowLogs,
+          (logs) => {
+            const hasStarted = logs.some(
+              (log) =>
+                log.logType === 'AgentStatusUpdate' &&
+                log.agentStatus === 'THINKING'
+            );
+            if (hasStarted) {
+              unsubscribe();
+              resolve();
+            }
+          }
+        );
+      });
+
+      // Stop the workflow
+      await openAITeam.stop();
+      const state = store.getState();
+
+      // Check workflow status transitions
+      const statusTransitions = state.workflowLogs
+        .filter((log) => log.logType === 'WorkflowStatusUpdate')
+        .map((log) => log.workflowStatus);
+      expect(statusTransitions).toEqual(['RUNNING', 'STOPPING', 'STOPPED']);
+
+      // Check all tasks are in TODO status
+      state.tasks.forEach((task) => {
+        expect(task.status).toBe('TODO');
+      });
+
+      // Check no executions in progress
+      const lastLog = state.workflowLogs[state.workflowLogs.length - 1];
+      expect(lastLog.logType).toBe('WorkflowStatusUpdate');
+      expect(lastLog.workflowStatus).toBe('STOPPED');
+
+      // check that the task queue is paused
+      expect(state.taskQueue.isPaused).toBe(true);
+
+      // check that the task queue is empty
+      expect(state.taskQueue.size).toBe(0);
+
+      // check that the workflow is stopped
+      expect(state.teamWorkflowStatus).toBe('STOPPED');
+    });
+
+    it('should stop workflow when intermediate task is executing', async () => {
+      openAITeam.start();
+      const store = openAITeam.useStore();
+
+      // Wait for the second task to start
+      await new Promise((resolve) => {
+        const unsubscribe = store.subscribe(
+          (state) => state.workflowLogs,
+          (logs) => {
+            const firstTaskDone = logs.some(
+              (log) =>
+                log.logType === 'TaskStatusUpdate' &&
+                log.taskStatus === 'DONE' &&
+                log.task.description === store.getState().tasks[0].description
+            );
+            const secondTaskStarted = logs.some(
+              (log) =>
+                log.logType === 'AgentStatusUpdate' &&
+                log.agentStatus === 'THINKING' &&
+                log.task.description === store.getState().tasks[1].description
+            );
+            if (firstTaskDone && secondTaskStarted) {
+              unsubscribe();
+              resolve();
+            }
+          }
+        );
+      });
+
+      // Stop the workflow
+      await openAITeam.stop();
+      const state = store.getState();
+
+      // Check workflow status transitions
+      const statusTransitions = state.workflowLogs
+        .filter((log) => log.logType === 'WorkflowStatusUpdate')
+        .map((log) => log.workflowStatus);
+      expect(statusTransitions).toEqual(['RUNNING', 'STOPPING', 'STOPPED']);
+
+      // Check all tasks are reset to TODO
+      state.tasks.forEach((task) => {
+        expect(task.status).toBe('TODO');
+      });
+
+      // check that the task queue is paused
+      expect(state.taskQueue.isPaused).toBe(true);
+
+      // check that the task queue is empty
+      expect(state.taskQueue.size).toBe(0);
+
+      // check that the workflow is stopped
+      expect(state.teamWorkflowStatus).toBe('STOPPED');
+
+      // Check no executions in progress
+      const lastLog = state.workflowLogs[state.workflowLogs.length - 1];
+      expect(lastLog.logType).toBe('WorkflowStatusUpdate');
+      expect(lastLog.workflowStatus).toBe('STOPPED');
+    });
+
+    it('should stop workflow when last task is executing', async () => {
+      openAITeam.start();
+      const store = openAITeam.useStore();
+      const lastTaskIndex = store.getState().tasks.length - 1;
+
+      // Wait for the last task to start
+      await new Promise((resolve) => {
+        const unsubscribe = store.subscribe(
+          (state) => state.workflowLogs,
+          (logs) => {
+            const lastTaskStarted = logs.some(
+              (log) =>
+                log.logType === 'AgentStatusUpdate' &&
+                log.agentStatus === 'THINKING' &&
+                log.task.description ===
+                  store.getState().tasks[lastTaskIndex].description
+            );
+            if (lastTaskStarted) {
+              unsubscribe();
+              resolve();
+            }
+          }
+        );
+      });
+
+      // Stop the workflow
+      await openAITeam.stop();
+      const state = store.getState();
+
+      // Check workflow status transitions
+      const statusTransitions = state.workflowLogs
+        .filter((log) => log.logType === 'WorkflowStatusUpdate')
+        .map((log) => log.workflowStatus);
+      expect(statusTransitions).toEqual(['RUNNING', 'STOPPING', 'STOPPED']);
+
+      // Check all tasks are reset to TODO
+      state.tasks.forEach((task) => {
+        expect(task.status).toBe('TODO');
+      });
+
+      // check that the task queue is paused
+      expect(state.taskQueue.isPaused).toBe(true);
+
+      // check that the task queue is empty
+      expect(state.taskQueue.size).toBe(0);
+
+      // check that the workflow is stopped
+      expect(state.teamWorkflowStatus).toBe('STOPPED');
+
+      // Check no executions in progress
+      const lastLog = state.workflowLogs[state.workflowLogs.length - 1];
+      expect(lastLog.logType).toBe('WorkflowStatusUpdate');
+      expect(lastLog.workflowStatus).toBe('STOPPED');
+    });
+  });
 });
