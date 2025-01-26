@@ -327,7 +327,7 @@ export const useTaskStore = (set, get) => ({
   },
   handleTaskPaused: ({ task, error }) => {
     const stats = get().getTaskStats(task, get);
-    task.status = TASK_STATUS_enum.PAUSED;
+    // task.status = TASK_STATUS_enum.PAUSED;
     const modelCode = task.agent.llmConfig.model; // Assuming this is where the model code is stored
     // Calculate costs directly using stats
     const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
@@ -369,12 +369,15 @@ export const useTaskStore = (set, get) => ({
           ? {
               ...t,
               ...stats,
-              status: TASK_STATUS_enum.PAUSED,
+              // status: TASK_STATUS_enum.PAUSED,
               feedbackHistory: updatedFeedbackHistory,
             }
           : t
       ),
       workflowLogs: [...state.workflowLogs, taskLog],
     }));
+  },
+  handleTaskResumed: ({ _task, _error }) => {
+    // TODO: Define what to do when a task is resumed if needed
   },
 });

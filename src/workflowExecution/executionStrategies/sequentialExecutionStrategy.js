@@ -98,15 +98,19 @@ class SequentialExecutionStrategy extends WorkflowExecutionStrategy {
       );
       switch (changedTask.status) {
         case TASK_STATUS_enum.DOING:
-          if (
-            changedTaskIdWithPreviousStatus.previousStatus !==
-            TASK_STATUS_enum.PAUSED
-          ) {
-            this._executeTask(teamStoreState, changedTask).catch((error) => {
-              teamStoreState.handleTaskError({ changedTask, error });
-              teamStoreState.handleWorkflowError(changedTask, error);
-            });
-          }
+          // if (
+          //   changedTaskIdWithPreviousStatus.previousStatus !==
+          //   TASK_STATUS_enum.PAUSED
+          // ) {
+          //   this._executeTask(teamStoreState, changedTask).catch((error) => {
+          //     teamStoreState.handleTaskError({ changedTask, error });
+          //     teamStoreState.handleWorkflowError(changedTask, error);
+          //   });
+          // }
+          this._executeTask(teamStoreState, changedTask).catch((error) => {
+            teamStoreState.handleTaskError({ changedTask, error });
+            teamStoreState.handleWorkflowError(changedTask, error);
+          });
           break;
         case TASK_STATUS_enum.REVISE:
           {

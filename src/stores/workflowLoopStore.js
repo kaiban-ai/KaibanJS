@@ -78,11 +78,24 @@ export const useWorkflowLoopStore = (set, get) => ({
       set({ teamWorkflowStatus: WORKFLOW_STATUS_enum.PAUSED });
       const tasks = get().tasks;
 
-      tasks.forEach((task) => {
-        if (task.status === TASK_STATUS_enum.DOING) {
+      const tasksToPause = tasks.filter(
+        (task) => task.status === TASK_STATUS_enum.DOING
+      );
+
+      const taskIdsToPause = tasksToPause.map((task) => task.id);
+
+      // update status of all tasks to PAUSED
+      get().updateStatusOfMultipleTasks(
+        tasksToPause.map((task) => task.id),
+        TASK_STATUS_enum.PAUSED
+      );
+
+      get()
+        .tasks.filter((task) => taskIdsToPause.includes(task.id))
+        .forEach((task) => {
           get().handleAgentTaskPaused({ agent: task.agent, task });
-        }
-      });
+        });
+
       logger.info('Workflow paused');
     } catch (error) {
       logger.error('Error pausing workflow:', error);
@@ -99,13 +112,22 @@ export const useWorkflowLoopStore = (set, get) => ({
     set({
       teamWorkflowStatus: WORKFLOW_STATUS_enum.RESUMED,
     });
+
     const tasks = get().tasks;
 
     tasks.forEach((task) => {
-      if (task.status === TASK_STATUS_enum.PAUSED) {
-        get().updateTaskStatus(task.id, TASK_STATUS_enum.DOING);
+      if (task.status === TASK_STATUS_enum.DOING) {
+        get().handleAgentTaskResumed({ agent: task.agent, task });
       }
     });
+
+    const pausedTasks = tasks.filter(
+      (task) => task.status === TASK_STATUS_enum.PAUSED
+    );
+    get().updateStatusOfMultipleTasks(
+      pausedTasks.map((task) => task.id),
+      TASK_STATUS_enum.DOING
+    );
 
     // Resume task queue
     get().taskQueue.start();

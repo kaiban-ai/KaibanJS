@@ -107,6 +107,12 @@ const createTeamStore = (initialState = {}) => {
                 taskIds.includes(task.id) ? { ...task, status } : task
               ),
             }));
+
+            get()
+              .tasks.filter((task) => taskIds.includes(task.id))
+              .forEach((task) => {
+                task.status = status;
+              });
           },
           addTaskToQueue: (agent, task, context) => {
             get().taskQueue.add(

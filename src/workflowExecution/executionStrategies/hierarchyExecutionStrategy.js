@@ -182,18 +182,12 @@ class HierarchyExecutionStrategy extends WorkflowExecutionStrategy {
       );
       switch (changedTask.status) {
         case TASK_STATUS_enum.DOING:
-          if (
-            changedTaskIdWithPreviousStatus.previousStatus !==
-            TASK_STATUS_enum.PAUSED
-          ) {
-            // Execute the task
-            this._executeTask(teamStoreState, changedTask).catch((error) => {
-              teamStoreState.handleTaskError({ changedTask, error });
-              teamStoreState.handleWorkflowError(changedTask, error);
-            });
-          }
+          // Execute the task
+          this._executeTask(teamStoreState, changedTask).catch((error) => {
+            teamStoreState.handleTaskError({ changedTask, error });
+            teamStoreState.handleWorkflowError(changedTask, error);
+          });
           break;
-
         case TASK_STATUS_enum.REVISE:
           {
             // Block all dependent tasks

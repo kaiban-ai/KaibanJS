@@ -57,15 +57,30 @@ function moscaFetch() {
             });
           }
 
+          if (mockOptions && mockOptions.delay) {
+            await new Promise((resolve) =>
+              setTimeout(resolve, mockOptions.delay)
+            );
+          }
+
           return Promise.resolve(mockResponse);
         }
       }
     }
+
     console.log(
       'MoscaFetch -> No mocks or recorders matched:',
       input,
       cleanRequestBody
     );
+
+    // if (input === 'nom.telemetrydeck.com') {
+    //   return new Response(JSON.stringify({}), {
+    //     status: 200,
+    //     headers: { 'Content-Type': 'application/json' },
+    //   });
+    // }
+
     return originalFetch(input, options); // Call the original fetch if no mocks or recorders match
   };
 
@@ -79,8 +94,15 @@ function moscaFetch() {
 
   let mocks = [];
   let records = [];
+  let mockOptions = {};
 
-  function mock(mockConfigs) {
+  /**
+   * @param {Array<Object>} mockConfigs - An array of mock configurations.
+   * @param {Object} options - Additional options for the mock.
+   * @param {number} options.delay - The delay in milliseconds before returning the mock response.
+   *
+   */
+  function mock(mockConfigs, options) {
     // Ensure the input is always treated as an array, even if it's a single object
     const configs = Array.isArray(mockConfigs) ? mockConfigs : [mockConfigs];
 
@@ -93,6 +115,7 @@ function moscaFetch() {
       mockConfig.isRecorder = false; // Explicitly flag mock configurations as non-recorders
       mocks.push(mockConfig);
     });
+    mockOptions = options;
 
     ensureFetchIsMocked();
   }

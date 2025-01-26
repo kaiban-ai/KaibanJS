@@ -378,6 +378,22 @@ const useAgentStore = (set, get) => ({
     set((state) => ({ workflowLogs: [...state.workflowLogs, newLog] }));
     get().handleTaskPaused({ task, error });
   },
+  handleAgentTaskResumed: ({ agent, task, error }) => {
+    agent.setStatus(AGENT_STATUS_enum.RESUMED);
+    const newLog = get().prepareNewLog({
+      agent,
+      task,
+      logDescription: `🔄 Agent ${agent.name} - ${AGENT_STATUS_enum.RESUMED}`,
+      metadata: { error },
+      logType: 'AgentStatusUpdate',
+      agentStatus: agent.status,
+    });
+    logger.info(
+      `🔄 ${AGENT_STATUS_enum.RESUMED}: Agent ${agent.name} - Resumed.`
+    );
+    set((state) => ({ workflowLogs: [...state.workflowLogs, newLog] }));
+    get().handleTaskResumed({ task, error });
+  },
 
   handleAgentMaxIterationsError: ({
     agent,

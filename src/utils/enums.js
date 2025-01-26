@@ -47,6 +47,7 @@ const AGENT_STATUS_enum = {
   WEIRD_LLM_OUTPUT: 'WEIRD_LLM_OUTPUT',
   TASK_ABORTED: 'TASK_ABORTED',
   PAUSED: 'PAUSED',
+  RESUMED: 'RESUMED',
 };
 
 // ──── Task Status Definitions ───────────────────────────────────────

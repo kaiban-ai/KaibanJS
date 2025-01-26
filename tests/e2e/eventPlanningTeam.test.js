@@ -19,7 +19,79 @@ const withMockedApis =
 //     body: '*'  // Record any POST request to this URL
 // });
 
-describe('OpenAI Team Workflows', () => {
+/**
+ * Check if there are no task updates between PAUSED and DOING for a given task
+ * except for the parallel tasks
+ * @param {*} state
+ * @param {*} task
+ * @param {*} parallelTasks
+ * @returns
+ */
+const checkNoTaskUpdatesBetween = (state, task, parallelTasks) => {
+  const startIndex = state.workflowLogs.findIndex(
+    (log) =>
+      log.logType === 'TaskStatusUpdate' &&
+      log.task.description === task.description &&
+      log.taskStatus === 'PAUSED'
+  );
+  const endIndex = state.workflowLogs.findIndex(
+    (log) =>
+      log.logType === 'TaskStatusUpdate' &&
+      log.task.description === task.description &&
+      log.taskStatus === 'DOING' &&
+      state.workflowLogs.indexOf(log) > startIndex
+  );
+  const logsInBetween = state.workflowLogs.slice(startIndex + 1, endIndex);
+  const taskStatusUpdatesInBetween = logsInBetween.filter(
+    (log) =>
+      log.logType === 'TaskStatusUpdate' &&
+      !parallelTasks.includes(log.task.description)
+  );
+  expect(taskStatusUpdatesInBetween.length).toBe(0);
+
+  return { pausedIndex: startIndex, nextDoingIndex: endIndex };
+};
+
+/**
+ * Check if the thinking metadata is consistent between PAUSED and DOING for a given task
+ * @param {*} state
+ * @param {*} task
+ * @param {*} pausedIndex
+ * @param {*} nextDoingIndex
+ * @returns
+ */
+const checkThinkingMetadataConsistency = (
+  state,
+  task,
+  pausedIndex,
+  nextDoingIndex
+) => {
+  const lastThinkingBeforePause = state.workflowLogs
+    .slice(0, pausedIndex)
+    .filter(
+      (log) =>
+        log.logType === 'AgentStatusUpdate' &&
+        log.agentStatus === 'THINKING' &&
+        log.task.description === task.description
+    )
+    .pop();
+
+  const firstThinkingAfterResume = state.workflowLogs
+    .slice(nextDoingIndex)
+    .filter(
+      (log) =>
+        log.logType === 'AgentStatusUpdate' &&
+        log.agentStatus === 'THINKING' &&
+        log.task.description === task.description
+    )
+    .shift();
+
+  expect(lastThinkingBeforePause.metadata).toEqual(
+    firstThinkingAfterResume.metadata
+  );
+};
+
+describe('Event Planning Team Workflows', () => {
   describe('Using Standard OpenAI Agents', () => {
     beforeEach(() => {
       // Mocking all POST requests with a callback
@@ -182,6 +254,295 @@ describe('OpenAI Team Workflows', () => {
       // const recordedData = getRecords();
       // console.log(recordedData);
       // saveRecords();
+    });
+  });
+
+  describe('Pause and Resume', () => {
+    beforeEach(() => {
+      if (withMockedApis) {
+        mock(openAITeamRecordedRequests, { delay: 100 });
+      }
+    });
+
+    afterEach(() => {
+      if (withMockedApis) {
+        restoreAll();
+      }
+    });
+
+    it('should pause and resume first task correctly', async () => {
+      const { team } = openAITeam;
+      const workflowPromise = team.start();
+      const store = team.useStore();
+
+      const firstTask = store.getState().tasks[0]; // selectEventDateTask
+
+      // Wait for the event manager agent to start working
+      await new Promise((resolve) => {
+        const unsubscribe = store.subscribe(
+          (state) => state.workflowLogs,
+          (logs) => {
+            const hasAgentStarted = logs.some(
+              (log) =>
+                log.logType === 'AgentStatusUpdate' &&
+                log.agent.name === firstTask.agent.name &&
+                log.task.description === firstTask.description &&
+                log.agentStatus === 'THINKING'
+            );
+
+            if (hasAgentStarted) {
+              unsubscribe();
+              resolve();
+            }
+          }
+        );
+      });
+
+      // Pause workflow
+      await team.pause();
+      let state = store.getState();
+
+      // Verify pause state
+      expect(state.teamWorkflowStatus).toBe('PAUSED');
+      expect(state.tasks[0].status).toBe('PAUSED');
+      expect(state.taskQueue.isPaused).toBe(true);
+
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      // Resume workflow
+      await team.resume();
+      state = store.getState();
+
+      // Verify resume state
+      expect(state.teamWorkflowStatus).toBe('RUNNING');
+      expect(state.tasks[0].status).toBe('DOING');
+      expect(state.taskQueue.isPaused).toBe(false);
+
+      // Complete workflow
+      await workflowPromise;
+      state = store.getState();
+
+      // Verify workflow logs for pause status
+      const pauseLogs = state.workflowLogs.filter(
+        (log) =>
+          log.logType === 'TaskStatusUpdate' && log.taskStatus === 'PAUSED'
+      );
+
+      expect(pauseLogs.length).toBe(1);
+      expect(pauseLogs[0].task.description).toBe(firstTask.description);
+      expect(pauseLogs[0].agent.name).toBe(firstTask.agent.name);
+
+      // Check evolution of the paused task through logs
+      const taskStatusLogs = state.workflowLogs.filter(
+        (log) =>
+          log.logType === 'TaskStatusUpdate' &&
+          log.task.description === firstTask.description
+      );
+
+      const statusSequence = taskStatusLogs.map((log) => log.taskStatus);
+      expect(statusSequence).toEqual(['DOING', 'PAUSED', 'DOING', 'DONE']);
+
+      // Check no other task updates between PAUSED and DOING
+      const { pausedIndex, nextDoingIndex } = checkNoTaskUpdatesBetween(
+        state,
+        firstTask,
+        []
+      );
+
+      // Verify thinking metadata consistency
+      checkThinkingMetadataConsistency(
+        state,
+        firstTask,
+        pausedIndex,
+        nextDoingIndex
+      );
+    });
+
+    it('should pause and resume one task in parallel with another task correctly', async () => {
+      const { team } = openAITeam;
+      const workflowPromise = team.start();
+      const store = team.useStore();
+      let state = store.getState();
+
+      const intermediateTaskIndex = 2;
+      const inParallelTaskIndex = 1;
+      const intermediateTask = state.tasks[intermediateTaskIndex]; // finalizeGuestListTask
+      const inParallelTask = state.tasks[inParallelTaskIndex]; // bookVenueTask
+
+      // Wait for the marketing agent to start working
+      await new Promise((resolve) => {
+        const unsubscribe = store.subscribe(
+          (state) => state.workflowLogs,
+          (logs) => {
+            const hasAgentStarted = logs.some(
+              (log) =>
+                log.logType === 'AgentStatusUpdate' &&
+                log.agent.name === intermediateTask.agent.name &&
+                log.task.description === intermediateTask.description &&
+                log.agentStatus === 'THINKING'
+            );
+
+            if (hasAgentStarted) {
+              unsubscribe();
+              resolve();
+            }
+          }
+        );
+      });
+
+      // Pause and verify
+      await team.pause();
+      state = store.getState();
+
+      expect(state.teamWorkflowStatus).toBe('PAUSED');
+      expect(state.tasks[intermediateTaskIndex].status).toBe('PAUSED');
+      expect(state.tasks[inParallelTaskIndex].status).toBe('PAUSED');
+      expect(state.taskQueue.isPaused).toBe(true);
+
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      // Resume and verify
+      await team.resume();
+      state = store.getState();
+
+      expect(state.teamWorkflowStatus).toBe('RUNNING');
+      expect(state.tasks[intermediateTaskIndex].status).toBe('DOING');
+      expect(state.tasks[inParallelTaskIndex].status).toBe('DOING');
+      expect(state.taskQueue.isPaused).toBe(false);
+
+      // Complete workflow and verify logs
+      await workflowPromise;
+      state = store.getState();
+
+      // Check evolution of the intermediate task through logs
+      const taskStatusLogs = state.workflowLogs.filter(
+        (log) =>
+          log.logType === 'TaskStatusUpdate' &&
+          log.task.description === intermediateTask.description
+      );
+
+      const statusSequence = taskStatusLogs.map((log) => log.taskStatus);
+      expect(statusSequence).toEqual(['DOING', 'PAUSED', 'DOING', 'DONE']);
+
+      // Check evolution of the in parallel task through logs
+      const inParallelTaskStatusLogs = state.workflowLogs.filter(
+        (log) =>
+          log.logType === 'TaskStatusUpdate' &&
+          log.task.description === inParallelTask.description
+      );
+
+      const inParallelTaskStatusSequence = inParallelTaskStatusLogs.map(
+        (log) => log.taskStatus
+      );
+      expect(inParallelTaskStatusSequence).toEqual([
+        'DOING',
+        'PAUSED',
+        'DOING',
+        'DONE',
+      ]);
+
+      // Check no other task updates between PAUSED and DOING of intermediate task
+      const { pausedIndex, nextDoingIndex } = checkNoTaskUpdatesBetween(
+        state,
+        intermediateTask,
+        [inParallelTask.description]
+      );
+
+      // Check no other task updates between PAUSED and DOING of in parallel task
+      const {
+        pausedIndex: inParallelPausedIndex,
+        nextDoingIndex: inParallelNextDoingIndex,
+      } = checkNoTaskUpdatesBetween(state, inParallelTask, [
+        intermediateTask.description,
+      ]);
+
+      // Verify thinking metadata consistency
+      checkThinkingMetadataConsistency(
+        state,
+        intermediateTask,
+        pausedIndex,
+        nextDoingIndex
+      );
+      checkThinkingMetadataConsistency(
+        state,
+        inParallelTask,
+        inParallelPausedIndex,
+        inParallelNextDoingIndex
+      );
+    });
+
+    it('should pause and resume last task correctly', async () => {
+      const { team } = openAITeam;
+      const workflowPromise = team.start();
+      const store = team.useStore();
+      let state = store.getState();
+
+      const lastTaskIndex = state.tasks.length - 1;
+      const lastTask = state.tasks[lastTaskIndex]; // finalizeInspectionAndApprovalTask
+
+      // Wait for the last task to start working
+      await new Promise((resolve) => {
+        const unsubscribe = store.subscribe(
+          (state) => state.workflowLogs,
+          (logs) => {
+            const hasAgentStarted = logs.some(
+              (log) =>
+                log.logType === 'AgentStatusUpdate' &&
+                log.agent.name === lastTask.agent.name &&
+                log.task.description === lastTask.description &&
+                log.agentStatus === 'THINKING'
+            );
+
+            if (hasAgentStarted) {
+              unsubscribe();
+              resolve();
+            }
+          }
+        );
+      });
+
+      // Pause workflow
+      await team.pause();
+      state = store.getState();
+      expect(state.teamWorkflowStatus).toBe('PAUSED');
+      expect(state.tasks[lastTaskIndex].status).toBe('PAUSED');
+      expect(state.taskQueue.isPaused).toBe(true);
+
+      // Resume workflow
+      await team.resume();
+      state = store.getState();
+      expect(state.teamWorkflowStatus).toBe('RUNNING');
+      expect(state.tasks[lastTaskIndex].status).toBe('DOING');
+      expect(state.taskQueue.isPaused).toBe(false);
+
+      // Complete workflow and verify logs
+      await workflowPromise;
+      state = store.getState();
+
+      // Check evolution of the last task through logs
+      const taskStatusLogs = state.workflowLogs.filter(
+        (log) =>
+          log.logType === 'TaskStatusUpdate' &&
+          log.task.description === state.tasks[lastTaskIndex].description
+      );
+
+      const statusSequence = taskStatusLogs.map((log) => log.taskStatus);
+      expect(statusSequence).toEqual(['DOING', 'PAUSED', 'DOING', 'DONE']);
+
+      // Check no other task updates between PAUSED and DOING
+      const { pausedIndex, nextDoingIndex } = checkNoTaskUpdatesBetween(
+        state,
+        state.tasks[lastTaskIndex],
+        []
+      );
+
+      // Verify thinking metadata consistency
+      checkThinkingMetadataConsistency(
+        state,
+        state.tasks[lastTaskIndex],
+        pausedIndex,
+        nextDoingIndex
+      );
     });
   });
 });
