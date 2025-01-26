@@ -11,24 +11,26 @@
  */
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
+import PQueue from 'p-queue';
+import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
 import { useAgentStore } from './agentStore';
 import { useTaskStore } from './taskStore';
+import { useWorkflowLoopStore } from './workflowLoopStore';
 import {
-  TASK_STATUS_enum,
   AGENT_STATUS_enum,
-  WORKFLOW_STATUS_enum,
   FEEDBACK_STATUS_enum,
+  TASK_STATUS_enum,
+  WORKFLOW_STATUS_enum,
 } from '../utils/enums';
+import { calculateTotalWorkflowCost } from '../utils/llmCostCalculator';
+import { logger, setLogLevel } from '../utils/logger';
 import {
   getTaskTitleForLogs,
   interpolateTaskDescription,
 } from '../utils/tasks';
-import { logger, setLogLevel } from '../utils/logger';
-import { calculateTotalWorkflowCost } from '../utils/llmCostCalculator';
-import { subscribeWorkflowStatusUpdates } from '../subscribers/teamSubscriber';
-import { subscribeTaskStatusUpdates } from '../subscribers/taskSubscriber';
-import { setupWorkflowController } from './workflowController';
 import { initializeTelemetry } from '../utils/telemetry';
+import SequentialExecutionStrategy from '../workflowExecution/executionStrategies/sequentialExecutionStrategy';
+import HierarchyExecutionStrategy from '../workflowExecution/executionStrategies/hierarchyExecutionStrategy';
 
 // Initialize telemetry with default values
 const td = initializeTelemetry();
@@ -41,7 +43,6 @@ const td = initializeTelemetry();
 // ─────────────────────────────────────────────────────────────────────
 
 const createTeamStore = (initialState = {}) => {
-  // console.log("Initial state:", initialState); // Log the initial state
   // Define the store with centralized state management and actions
   if (initialState.logLevel) {
     setLogLevel(initialState.logLevel); // Update logger level if provided
@@ -52,7 +53,7 @@ const createTeamStore = (initialState = {}) => {
         (set, get) => ({
           ...useAgentStore(set, get),
           ...useTaskStore(set, get),
-
+          ...useWorkflowLoopStore(set, get),
           teamWorkflowStatus:
             initialState.teamWorkflowStatus || WORKFLOW_STATUS_enum.INITIAL,
           workflowResult: initialState.workflowResult || null,
@@ -64,6 +65,12 @@ const createTeamStore = (initialState = {}) => {
           workflowContext: initialState.workflowContext || '',
           env: initialState.env || {},
           logLevel: initialState.logLevel,
+          flowType: initialState.flowType,
+          workflowExecutionStrategy: undefined,
+          workflowController: initialState.workflowController || {},
+
+          taskQueue: undefined, // initialized in startWorkflow
+          maxConcurrency: initialState.maxConcurrency || 5,
 
           setInputs: (inputs) => set({ inputs }), // Add a new action to update inputs
           setName: (name) => set({ name }), // Add a new action to update inputs
@@ -94,6 +101,63 @@ const createTeamStore = (initialState = {}) => {
               ),
             })),
 
+          updateStatusOfMultipleTasks: (taskIds, status) => {
+            set((state) => ({
+              tasks: state.tasks.map((task) =>
+                taskIds.includes(task.id) ? { ...task, status } : task
+              ),
+            }));
+
+            get()
+              .tasks.filter((task) => taskIds.includes(task.id))
+              .forEach((task) => {
+                task.status = status;
+              });
+          },
+          addTaskToQueue: (agent, task, context) => {
+            get().taskQueue.add(
+              async () => {
+                await get().workOnTask(agent, task, context);
+              },
+              {
+                id: task.id,
+              }
+            );
+          },
+          createWorkflowExecutionStrategy: () => {
+            const state = get();
+            const tasks = state.tasks;
+            const workflowType = state.flowType || 'sequential';
+            let strategy;
+
+            if (workflowType === 'sequential') {
+              // For sequential workflows, ensure all tasks except first have dependencies
+              const tasksWithDeps = tasks.filter(
+                (task) => task.dependencies && task.dependencies.length > 0
+              );
+
+              if (tasksWithDeps.length > 1) {
+                throw new Error(
+                  'Invalid task configuration: Sequential workflow requires all tasks except the first to have dependencies'
+                );
+              }
+
+              // Default to sequential execution if not specified
+              strategy = new SequentialExecutionStrategy(state);
+            } else if (
+              workflowType === 'hierarchy' ||
+              tasks.some((task) => task.dependencies?.length > 0)
+            ) {
+              // For hierarchical workflows or when dependencies exist
+              strategy = new HierarchyExecutionStrategy(state);
+            } else {
+              // Default to sequential execution if not specified
+              strategy = new SequentialExecutionStrategy(state);
+            }
+
+            return strategy;
+          },
+
           startWorkflow: async (inputs) => {
             // Start the first task or set all to 'TODO' initially
             logger.info(`🚀 Team *${get().name}* is starting to work.`);
@@ -118,16 +182,48 @@ const createTeamStore = (initialState = {}) => {
               logType: 'WorkflowStatusUpdate',
             };
 
+            const strategy = get().createWorkflowExecutionStrategy();
+
             // Update state with the new log
             set((state) => ({
               ...state,
               workflowLogs: [...state.workflowLogs, initialLog],
               teamWorkflowStatus: WORKFLOW_STATUS_enum.RUNNING,
+              workflowExecutionStrategy: strategy,
             }));
 
-            const tasks = get().tasks;
-            if (tasks.length > 0 && tasks[0].status === TASK_STATUS_enum.TODO) {
-              get().updateTaskStatus(tasks[0].id, TASK_STATUS_enum.DOING);
+            // init task queue
+            get().taskQueue = new PQueue({
+              concurrency: strategy.getConcurrencyForTaskQueue(get()),
+              autoStart: true,
+            });
+
+            await strategy.startExecution(get());
+          },
+
+          handleChangedTasks: async (changedTaskIdsWithPreviousStatus) => {
+            const strategy = get().workflowExecutionStrategy;
+
+            if (strategy) {
+              strategy
+                .executeFromChangedTasks(
+                  get(),
+                  changedTaskIdsWithPreviousStatus
+                )
+                .then(() => {
+                  logger.debug(
+                    `Workflow execution strategy executed from changed tasks (${changedTaskIdsWithPreviousStatus.join(
+                      ', '
+                    )})`
+                  );
+                })
+                .catch((error) => {
+                  logger.error(
+                    `Error executing workflow execution strategy from changed tasks (${changedTaskIdsWithPreviousStatus.join(
+                      ', '
+                    )}): ${error.message}`
+                  );
+                });
             }
           },
 
@@ -136,12 +232,17 @@ const createTeamStore = (initialState = {}) => {
               // Cloning tasks and agents to ensure there are no direct mutations
               const resetTasks = state.tasks.map((task) => ({
                 ...task,
-                status: 'TODO',
+                status: TASK_STATUS_enum.TODO,
                 // Ensure to reset or clear any other task-specific states if needed
               }));
 
               get().agents.forEach((agent) => {
-                agent.setStatus('INITIAL'); // Update status using agent's method
+                agent.setStatus('INITIAL');
+                // Update status using agent's method
+                agent.agentInstance.interactionsHistory =
+                  new ChatMessageHistory();
+                agent.agentInstance.lastFeedbackMessage = null;
+                agent.agentInstance.currentIterations = 0;
               });
 
               const resetAgents = [...state.agents];
@@ -156,6 +257,7 @@ const createTeamStore = (initialState = {}) => {
                 teamWorkflowStatus: WORKFLOW_STATUS_enum.INITIAL,
               };
             });
+
             logger.debug('Workflow state has been reset.');
           },
 
@@ -265,8 +367,37 @@ const createTeamStore = (initialState = {}) => {
               workflowLogs: [...state.workflowLogs, newLog], // Append new log to the logs array
             }));
           },
+          handleWorkflowAborted: ({ task, error }) => {
+            // Detailed console error logging
+            logger.warn(`WORKFLOW ABORTED:`, error.message);
+            // Get current workflow stats
+            const stats = get().getWorkflowStats();
 
-          workOnTask: async (agent, task) => {
+            // Prepare the error log with specific workflow context
+            const newLog = {
+              task,
+              agent: task.agent,
+              timestamp: Date.now(),
+              logDescription: `Workflow aborted: ${error.message}`,
+              workflowStatus: WORKFLOW_STATUS_enum.STOPPED,
+              metadata: {
+                error: error.message,
+                ...stats,
+                teamName: get().name,
+                taskCount: get().tasks.length,
+                agentCount: get().agents.length,
+              },
+              logType: 'WorkflowStatusUpdate',
+            };
+
+            // Update state with error details and add new log entry
+            set((state) => ({
+              ...state,
+              teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED, // Set status to indicate a blocked workflow
+              workflowLogs: [...state.workflowLogs, newLog], // Append new log to the logs array
+            }));
+          },
+          workOnTask: async (agent, task, context) => {
             if (task && agent) {
               // Log the start of the task
               logger.debug(`Task: ${getTaskTitleForLogs(task)} starting...`);
@@ -299,11 +430,13 @@ const createTeamStore = (initialState = {}) => {
                 (f) => f.status === FEEDBACK_STATUS_enum.PENDING
               );
 
-              // Derive the current context from workflowLogs, passing the current task ID
-              const currentContext = get().deriveContextFromLogs(
-                get().workflowLogs,
-                task.id
-              );
+              // // Derive the current context from workflowLogs, passing the current task ID
+              // const currentContext = get().deriveContextFromLogs(
+              //   get().workflowLogs,
+              //   task.id
+              // );
+
+              const currentContext = context;
 
               // Check if the task has pending feedbacks
               if (pendingFeedbacks.length > 0) {
@@ -319,7 +452,9 @@ const createTeamStore = (initialState = {}) => {
               }
             }
           },
-
+          workOnTaskResume: async (agent, task) => {
+            await agent.workOnTaskResume(task);
+          },
           deriveContextFromLogs: (logs, currentTaskId) => {
             const taskResults = new Map();
             const tasks = get().tasks; // Get the tasks array from the store
@@ -612,30 +747,45 @@ const createTeamStore = (initialState = {}) => {
           },
           getCleanedState() {
             // Function to clean individual agent data
-            const cleanAgent = (agent) => ({
-              ...agent,
-              id: '[REDACTED]', // Clean sensitive ID at the root level
-              env: '[REDACTED]', // Clean sensitive Env in agent
-              llmConfig: agent.llmConfig
-                ? {
-                    ...agent.llmConfig,
-                    apiKey: '[REDACTED]', // Clean API key at the root level
-                  }
-                : {}, // Provide an empty object if llmConfig is undefined at the root level
-              agentInstance: agent.agentInstance
-                ? {
-                    ...agent.agentInstance,
-                    id: '[REDACTED]', // Clean sensitive ID in agentInstance
-                    env: '[REDACTED]', // Clean sensitive Env in agentInstance
-                    llmConfig: agent.agentInstance.llmConfig
-                      ? {
-                          ...agent.agentInstance.llmConfig,
-                          apiKey: '[REDACTED]', // Clean API key in agentInstance llmConfig
-                        }
-                      : {}, // Provide an empty object if llmConfig is undefined in agentInstance
-                  }
-                : {}, // Provide an empty object if agentInstance is undefined
-            });
+            const cleanAgent = (agent) => {
+              const { agentInstance } = agent;
+              let cleanedAgentInstance = agentInstance;
+
+              // if (agentInstance) {
+              //   const {
+              //     interactionsHistory: _interactionsHistory,
+              //     lastFeedbackMessage: _lastFeedbackMessage,
+              //     currentIterations: _currentIterations,
+              //     ..._cleanedAgentInstance
+              //   } = agentInstance;
+              //   cleanedAgentInstance = _cleanedAgentInstance;
+              // }
+
+              return {
+                ...agent,
+                id: '[REDACTED]', // Clean sensitive ID at the root level
+                env: '[REDACTED]', // Clean sensitive Env in agent
+                llmConfig: agent.llmConfig
+                  ? {
+                      ...agent.llmConfig,
+                      apiKey: '[REDACTED]', // Clean API key at the root level
+                    }
+                  : {}, // Provide an empty object if llmConfig is undefined at the root level
+                agentInstance: cleanedAgentInstance
+                  ? {
+                      ...cleanedAgentInstance,
+                      id: '[REDACTED]', // Clean sensitive ID in agentInstance
+                      env: '[REDACTED]', // Clean sensitive Env in agentInstance
+                      llmConfig: cleanedAgentInstance.llmConfig
+                        ? {
+                            ...cleanedAgentInstance.llmConfig,
+                            apiKey: '[REDACTED]', // Clean API key in agentInstance llmConfig
+                          }
+                        : {}, // Provide an empty object if llmConfig is undefined in agentInstance
+                    }
+                  : {}, // Provide an empty object if agentInstance is undefined
+              };
+            };
 
             // Function to clean individual task data
             const cleanTask = (task) => ({
@@ -704,19 +854,19 @@ const createTeamStore = (initialState = {}) => {
     )
   );
 
-  // ──── Workflow Controller Initialization ────────────────────────────
-  //
-  // Activates the workflow controller to monitor and manage task transitions and overall workflow states:
-  // - Monitors changes in task statuses, handling transitions from TODO to DONE.
-  // - Ensures tasks proceed seamlessly through their lifecycle stages within the application.
-  // ─────────────────────────────────────────────────────────────────────
-  setupWorkflowController(useTeamStore);
+  // // ──── Workflow Controller Initialization ────────────────────────────
+  // //
+  // // Activates the workflow controller to monitor and manage task transitions and overall workflow states:
+  // // - Monitors changes in task statuses, handling transitions from TODO to DONE.
+  // // - Ensures tasks proceed seamlessly through their lifecycle stages within the application.
+  // // ─────────────────────────────────────────────────────────────────────
+  // setupWorkflowController(useTeamStore);
 
-  // Subscribe to task updates: Used mainly for logging purposes
-  subscribeTaskStatusUpdates(useTeamStore);
+  // // Subscribe to task updates: Used mainly for logging purposes
+  // subscribeTaskStatusUpdates(useTeamStore);
 
-  // Subscribe to WorkflowStatus updates: Used mainly for loggin purposes
-  subscribeWorkflowStatusUpdates(useTeamStore);
+  // // Subscribe to WorkflowStatus updates: Used mainly for loggin purposes
+  // subscribeWorkflowStatusUpdates(useTeamStore);
 
   return useTeamStore;
 };

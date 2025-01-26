@@ -78,4 +78,36 @@ const getParsedJSON = (str) => {
   }
 };
 
-export { getApiKey, replaceAgentAttributes, getParsedJSON };
+/**
+ * Creates a proxy-based clone of a BaseAgent instance that intercepts and handles method calls
+ * while maintaining the original agent's properties and behavior
+ *
+ * @param {BaseAgent} agent - The agent instance to clone
+ * @returns {Proxy} A proxy wrapper around a cloned agent
+ */
+const cloneAgent = (agent) => {
+  // Create a proper clone preserving the prototype chain
+  const clonedAgent = Object.create(Object.getPrototypeOf(agent), {
+    ...Object.getOwnPropertyDescriptors(agent),
+    // Define id as a new property with proper descriptors
+    id: {
+      value: crypto.randomUUID(),
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    },
+  });
+
+  return new Proxy(clonedAgent, {
+    get(target, prop) {
+      // if (prop === 'workOnTask') {
+      //   return function (...args) {
+      //     return target[prop].apply(target, args);
+      //   };
+      // }
+      return target[prop];
+    },
+  });
+};
+
+export { getApiKey, replaceAgentAttributes, getParsedJSON, cloneAgent };
