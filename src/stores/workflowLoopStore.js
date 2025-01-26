@@ -184,8 +184,12 @@ export const useWorkflowLoopStore = (set, get) => ({
           task,
           error: new StopAbortError(),
         });
-        get().updateTaskStatus(task.id, TASK_STATUS_enum.TODO);
       });
+
+      get().updateStatusOfMultipleTasks(
+        tasks.map((task) => task.id),
+        TASK_STATUS_enum.TODO
+      );
 
       set((state) => ({
         teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED,

@@ -482,7 +482,7 @@ describe('Trip Planning Team Workflows', () => {
     });
   });
 
-  describe.only('Stop', () => {
+  describe('Stop', () => {
     beforeEach(() => {
       if (withMockedApis) {
         mock(openAITeamRecordedRequests, { delay: 100 });

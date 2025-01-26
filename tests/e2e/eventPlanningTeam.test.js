@@ -545,4 +545,182 @@ describe('Event Planning Team Workflows', () => {
       );
     });
   });
+
+  describe('Stop', () => {
+    beforeEach(() => {
+      if (withMockedApis) {
+        mock(openAITeamRecordedRequests, { delay: 100 });
+      }
+    });
+
+    afterEach(() => {
+      if (withMockedApis) {
+        restoreAll();
+      }
+    });
+
+    it('should stop workflow when no tasks have been completed', async () => {
+      const { team } = openAITeam;
+      team.start();
+      const store = team.useStore();
+
+      // Wait for the first task to start (event date selection)
+      await new Promise((resolve) => {
+        const unsubscribe = store.subscribe(
+          (state) => state.workflowLogs,
+          (logs) => {
+            const hasStarted = logs.some(
+              (log) =>
+                log.logType === 'AgentStatusUpdate' &&
+                log.agentStatus === 'THINKING'
+            );
+            if (hasStarted) {
+              unsubscribe();
+              resolve();
+            }
+          }
+        );
+      });
+
+      await team.stop();
+      const state = store.getState();
+
+      // Check workflow status transitions
+      const statusTransitions = state.workflowLogs
+        .filter((log) => log.logType === 'WorkflowStatusUpdate')
+        .map((log) => log.workflowStatus);
+      expect(statusTransitions).toEqual(['RUNNING', 'STOPPING', 'STOPPED']);
+
+      // Check all tasks are in TODO status
+      state.tasks.forEach((task) => {
+        expect(task.status).toBe('TODO');
+      });
+
+      // Check task queue state
+      expect(state.taskQueue.isPaused).toBe(true);
+      expect(state.teamWorkflowStatus).toBe('STOPPED');
+
+      // Check no executions in progress
+      const lastLog = state.workflowLogs[state.workflowLogs.length - 1];
+      expect(lastLog.logType).toBe('WorkflowStatusUpdate');
+      expect(lastLog.workflowStatus).toBe('STOPPED');
+    });
+
+    it('should stop workflow when intermediate and parallel tasks are executing', async () => {
+      const { team } = openAITeam;
+      team.start();
+      const store = team.useStore();
+      let state = store.getState();
+
+      const intermediateTaskIndex = 2;
+      const inParallelTaskIndex = 1;
+      const intermediateTask = state.tasks[intermediateTaskIndex]; // finalizeGuestListTask
+      const inParallelTask = state.tasks[inParallelTaskIndex]; // bookVenueTask
+
+      // Wait for both guest list and marketing tasks to start
+      await new Promise((resolve) => {
+        const unsubscribe = store.subscribe(
+          (state) => state.workflowLogs,
+          (logs) => {
+            const guestListStarted = logs.some(
+              (log) =>
+                log.logType === 'AgentStatusUpdate' &&
+                log.agent.name === intermediateTask.agent.name &&
+                log.task.description === intermediateTask.description &&
+                log.agentStatus === 'THINKING'
+            );
+            const marketingStarted = logs.some(
+              (log) =>
+                log.logType === 'AgentStatusUpdate' &&
+                log.agent.name === inParallelTask.agent.name &&
+                log.task.description === inParallelTask.description &&
+                log.agentStatus === 'THINKING'
+            );
+            if (guestListStarted && marketingStarted) {
+              unsubscribe();
+              resolve();
+            }
+          }
+        );
+      });
+
+      await team.stop();
+      state = store.getState();
+
+      // Check workflow status transitions
+      const statusTransitions = state.workflowLogs
+        .filter((log) => log.logType === 'WorkflowStatusUpdate')
+        .map((log) => log.workflowStatus);
+      expect(statusTransitions).toEqual(['RUNNING', 'STOPPING', 'STOPPED']);
+
+      // Check all tasks are reset to TODO
+      state.tasks.forEach((task) => {
+        expect(task.status).toBe('TODO');
+      });
+
+      // Check task queue state
+      expect(state.taskQueue.isPaused).toBe(true);
+      expect(state.teamWorkflowStatus).toBe('STOPPED');
+
+      // Check no executions in progress
+      const lastLog = state.workflowLogs[state.workflowLogs.length - 1];
+      expect(lastLog.logType).toBe('WorkflowStatusUpdate');
+      expect(lastLog.workflowStatus).toBe('STOPPED');
+    });
+
+    it('should stop workflow when last task is executing', async () => {
+      const { team } = openAITeam;
+      team.start();
+      const store = team.useStore();
+      let state = store.getState();
+
+      const lastTaskIndex = state.tasks.length - 1;
+      const lastTask = state.tasks[lastTaskIndex]; // finalizeInspectionAndApprovalTask
+
+      // Wait for the final inspection task to start
+      await new Promise((resolve) => {
+        const unsubscribe = store.subscribe(
+          (state) => state.workflowLogs,
+          (logs) => {
+            const lastTaskStarted = logs.some(
+              (log) =>
+                log.logType === 'AgentStatusUpdate' &&
+                log.agent.name === lastTask.agent.name &&
+                log.task.description === lastTask.description &&
+                log.agentStatus === 'THINKING'
+            );
+            if (lastTaskStarted) {
+              unsubscribe();
+              resolve();
+            }
+          }
+        );
+      });
+
+      await team.stop();
+      state = store.getState();
+
+      // Check workflow status transitions
+      const statusTransitions = state.workflowLogs
+        .filter((log) => log.logType === 'WorkflowStatusUpdate')
+        .map((log) => log.workflowStatus);
+      expect(statusTransitions).toEqual(['RUNNING', 'STOPPING', 'STOPPED']);
+
+      // Check all tasks are reset to TODO
+      state.tasks.forEach((task) => {
+        expect(task.status).toBe('TODO');
+      });
+
+      // Check task queue state
+      expect(state.taskQueue.isPaused).toBe(true);
+
+      // check that the workflow is stopped
+      expect(state.teamWorkflowStatus).toBe('STOPPED');
+
+      // Check no executions in progress
+      const lastLog = state.workflowLogs[state.workflowLogs.length - 1];
+      expect(lastLog.logType).toBe('WorkflowStatusUpdate');
+      expect(lastLog.workflowStatus).toBe('STOPPED');
+    });
+  });
 });

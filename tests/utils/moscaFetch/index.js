@@ -68,18 +68,11 @@ function moscaFetch() {
       }
     }
 
-    console.log(
-      'MoscaFetch -> No mocks or recorders matched:',
-      input,
-      cleanRequestBody
-    );
-
-    // if (input === 'nom.telemetrydeck.com') {
-    //   return new Response(JSON.stringify({}), {
-    //     status: 200,
-    //     headers: { 'Content-Type': 'application/json' },
-    //   });
-    // }
+    // console.debug(
+    //   'MoscaFetch -> No mocks or recorders matched:',
+    //   input,
+    //   cleanRequestBody
+    // );
 
     return originalFetch(input, options); // Call the original fetch if no mocks or recorders match
   };
