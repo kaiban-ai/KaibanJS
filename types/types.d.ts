@@ -72,6 +72,7 @@ export declare class BaseAgent {
   maxIterations: number;
   forceFinalAnswer: boolean;
   llmInstance: any;
+  promptTemplates: IPromptTemplates;
 
   /**
    * Creates an instance of BaseAgent.
@@ -96,6 +97,10 @@ export declare class BaseAgent {
    * @param {Record<string, any>} env - The environment variables to be set.
    */
   setEnv(env: Record<string, any>): void;
+
+  workOnTask(task: Task, inputs: any, context: any): Promise<any>;
+  workOnFeedback(task: Task, inputs: any, context: any): Promise<any>;
+  initialize(store: TStore, env: Record<string, any>): void;
 }
 
 /**
@@ -160,4 +165,9 @@ export interface ITaskStats {
   duration: number;
   llmUsageStats: ILLMUsageStats;
   iterationCount: number;
+}
+
+// Add missing prompt templates interface
+export interface IPromptTemplates {
+  [key: string]: string;
 }
