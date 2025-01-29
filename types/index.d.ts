@@ -4,7 +4,11 @@
 // Definitions by: @alienkarma <github.com/alienkarma>
 
 import { Tool } from 'langchain/tools';
-import type { AGENT_STATUS_enum, TASK_STATUS_enum } from './enums.d.ts';
+import type {
+  AGENT_STATUS_enum,
+  TASK_STATUS_enum,
+  WORKFLOW_STATUS_enum,
+} from './enums.d.ts';
 import type {
   BaseAgent,
   IBaseAgentParams,
@@ -12,6 +16,7 @@ import type {
   ITaskStats,
   TAgentTypes,
   TStore,
+  ILLMUsageStats,
 } from './types.d.ts';
 
 /**
@@ -79,61 +84,92 @@ export class Agent {
    * Returns the agent ID.
    * @returns {string} The agent ID.
    */
-  id(): string;
+  get id(): string;
 
   /**
    * Returns the agent name.
    * @returns {string} The agent name.
    */
-  name(): string;
+  get name(): string;
 
   /**
    * Returns the agent role.
    * @returns {string} The agent role.
    */
-  role(): string;
+  get role(): string;
 
   /**
    * Returns the agent goal.
    * @returns {string} The agent goal.
    */
-  goal(): string;
+  get goal(): string;
 
   /**
    * Returns the agent background.
    * @returns {string} The agent background.
    */
-  background(): string;
+  get background(): string;
 
   /**
    * Returns the tools available to the agent.
    * @returns {Tool[]} The list of tools.
    */
-  tools(): Tool[];
+  get tools(): Tool[];
 
   /**
    * Returns the status of the agent.
    * @returns {AGENT_STATUS_enum} The agent's status.
    */
-  status(): AGENT_STATUS_enum;
+  get status(): AGENT_STATUS_enum;
 
   /**
    * Returns the configuration for the language model.
    * @returns {ILLMConfig} The language model configuration.
    */
-  llmConfig(): ILLMConfig;
+  get llmConfig(): ILLMConfig;
 
   /**
    * Returns the system message for the language model.
    * @returns {string} The language model system message.
    */
-  llmSystemMessage(): string;
+  get llmSystemMessage(): string;
 
   /**
    * Indicates whether the agent is forced to provide a final answer.
    * @returns {boolean} True if the agent is forced to give a final answer, otherwise false.
    */
-  forceFinalAnswer(): boolean;
+  get forceFinalAnswer(): boolean;
+
+  /**
+   * Returns the prompt templates for the agent.
+   * @returns {Record<string, string>} The prompt templates.
+   */
+  get promptTemplates(): Record<string, string>;
+
+  /**
+   * Works on a task.
+   * @param {Task} task - The task to work on.
+   * @param {any} inputs - The inputs for the task.
+   * @param {any} context - The context for the task.
+   * @returns {Promise<any>} A promise resolving with the result of the task.
+   */
+  workOnTask(task: Task, inputs: any, context: any): Promise<any>;
+
+  /**
+   * Works on feedback.
+   * @param {Task} task - The task to work on.
+   * @param {any} inputs - The inputs for the task.
+   * @param {any} context - The context for the task.
+   * @returns {Promise<any>} A promise resolving with the result of the task.
+   */
+  workOnFeedback(task: Task, inputs: any, context: any): Promise<any>;
+
+  /**
+   * Initializes the agent.
+   * @param {TStore} store - The store to initialize.
+   * @param {Record<string, any>} env - The environment variables to initialize.
+   */
+  initialize(store: TStore, env: Record<string, any>): void;
 }
 
 /**
@@ -144,7 +180,8 @@ export class Agent {
  * @property {string} expectedOutput - The expected output of the task.
  * @property {BaseAgent} agent - The agent to execute the task.
  * @property {boolean} [isDeliverable] - Indicates whether the task is deliverable.
- * @property {object} [outputSchema] - The schema for validating the task output.
+ * @property {boolean} [externalValidationRequired] - Indicates whether external validation is required.
+ * @property {object | null} [outputSchema] - The schema for validating the task output.
  */
 export interface ITaskParams {
   title?: string;
@@ -152,7 +189,8 @@ export interface ITaskParams {
   expectedOutput: string;
   agent: Agent;
   isDeliverable?: boolean;
-  outputSchema?: object;
+  externalValidationRequired?: boolean;
+  outputSchema?: object | null;
 }
 
 /**
@@ -166,13 +204,14 @@ export interface ITaskParams {
  * @property {boolean} isDeliverable - Indicates whether the task is deliverable.
  * @property {Agent} agent - The agent to execute the task.
  * @property {TASK_STATUS_enum} status - The status of the task.
- * @property {string} result - The result of the task.
+ * @property {string | null} result - The result of the task.
  * @property {ITaskStats | null} stats - The statistics of the task.
  * @property {number | null} duration - The duration of the task.
  * @property {Task[]} dependencies - The dependencies of the task.
  * @property {string | null} interpolatedTaskDescription - The interpolated task description.
- * @property {TStore} store - The store.
+ * @property {boolean} externalValidationRequired - Indicates whether external validation is required.
  * @property {object | null} outputSchema - The schema for validating the task output.
+ * @property {TStore | undefined} store - The store.
  */
 export class Task {
   id: string;
@@ -182,13 +221,15 @@ export class Task {
   isDeliverable: boolean;
   agent: Agent;
   status: TASK_STATUS_enum;
-  result: string;
+  result: string | null;
   stats: ITaskStats | null;
   duration: number | null;
   dependencies: Task[];
   interpolatedTaskDescription: string | null;
-  store: TStore;
+  feedbackHistory: any[];
+  externalValidationRequired: boolean;
   outputSchema: object | null;
+  store?: TStore;
 
   /**
    * Creates an instance of a Task.
@@ -215,8 +256,8 @@ export class Task {
  */
 export interface ITeamParams {
   name: string;
-  agents?: Agent[];
-  tasks?: Task[];
+  agents: Agent[];
+  tasks: Task[];
   logLevel?: string;
   inputs?: Record<string, any>;
   env?: Record<string, any> | null;
@@ -241,7 +282,7 @@ export class Team {
    * Starts the team operations.
    * @returns {Promise<void>} A promise resolving when the team has started.
    */
-  start(): Promise<void>;
+  start(inputs?: Record<string, any> | null): Promise<ITeamWorkflowResult>;
 
   /**
    * Returns the store.
@@ -265,4 +306,37 @@ export class Team {
     listener: (newValues: any) => void,
     properties?: string[]
   ): () => void;
+
+  provideFeedback(taskId: string, feedbackContent: string): void;
+  validateTask(taskId: string): void;
+  onWorkflowStatusChange(
+    callback: (status: WORKFLOW_STATUS_enum) => void
+  ): () => void;
+  getTasksByStatus(status: TASK_STATUS_enum): Task[];
+  getWorkflowStatus(): WORKFLOW_STATUS_enum;
+  getWorkflowResult(): any | null;
+  getTasks(): Task[];
+  getWorkflowStats(): IWorkflowStats | null;
+}
+
+export interface ITeamWorkflowResult {
+  status: WORKFLOW_STATUS_enum;
+  result: any;
+  stats: IWorkflowStats | null;
+}
+
+export interface IWorkflowStats {
+  startTime: number;
+  endTime: number;
+  duration: number;
+  llmUsageStats: ILLMUsageStats;
+  iterationCount: number;
+  costDetails: {
+    costInputTokens: number;
+    costOutputTokens: number;
+    totalCost: number;
+  };
+  teamName: string;
+  taskCount: number;
+  agentCount: number;
 }

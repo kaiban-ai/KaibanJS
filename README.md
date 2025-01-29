@@ -445,7 +445,6 @@ For more details on how to utilize observability features in KaibanJS, please vi
 - [LLM-friendly Documentation](https://docs.kaibanjs.com/llms-full.txt) - Optimized for AI tools and coding assistants
 - [Join Our Discord](https://www.kaibanjs.com/discord)
 
-
 ### Compatibility
 
 KaibanJS aims to be compatible with major front-end frameworks like React, Vue, Angular, and NextJS, making it a versatile choice for developers. The JavaScript ecosystem is a "bit complex...". If you have any problems, please tell us and we'll help you fix them.
