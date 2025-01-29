@@ -6,6 +6,7 @@ exports[`History Fact Summary Team Workflows Using OpenAI Agents completes the e
     {
       "agentInstance": {
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -21,6 +22,9 @@ exports[`History Fact Summary Team Workflows Using OpenAI Agents completes the e
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -167,6 +171,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {
           "background": "Writer",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Write a summary about any given historical fact.",
@@ -182,6 +187,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -720,6 +728,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {
           "background": "Writer",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Write a summary about any given historical fact.",
@@ -735,6 +744,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -884,6 +896,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -899,6 +912,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1413,6 +1429,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -1428,6 +1445,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -1569,6 +1589,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -1584,6 +1605,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2098,6 +2122,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -2113,6 +2138,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2335,6 +2363,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -2350,6 +2379,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2864,6 +2896,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -2879,6 +2912,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3390,6 +3426,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -3405,6 +3442,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3919,6 +3959,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -3934,6 +3975,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -4429,6 +4473,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -4444,6 +4489,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4958,6 +5006,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -4973,6 +5022,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -5114,6 +5166,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -5129,6 +5182,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5643,6 +5699,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -5658,6 +5715,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -5818,6 +5878,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -5833,6 +5894,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -6347,6 +6411,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -6362,6 +6427,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -6533,6 +6601,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -6548,6 +6617,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
