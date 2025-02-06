@@ -41,20 +41,9 @@ class WorkflowExecutionStrategy {
 
     const context = this.getContextForTask(teamStoreState, task);
 
-    return teamStoreState.addTaskToQueue(agent, task, context);
-  }
-
-  /**
-   * Updates the status of a task in the store
-   * @param {string} taskId - The ID of the task to update
-   * @param {string} status - The new status to set
-   */
-  _updateTaskStatus(teamStoreState, taskId, status) {
-    teamStoreState.updateTaskStatus(taskId, status);
-  }
-
-  _updateStatusOfMultipleTasks(teamStoreState, tasks, status) {
-    teamStoreState.updateStatusOfMultipleTasks(tasks, status);
+    teamStoreState.updateExecutingTasks({ toAdd: [task.id] });
+    teamStoreState.updatePendingTasks({ toRemove: [task.id] });
+    return await teamStoreState.workOnTask(agent, task, context);
   }
 
   /*

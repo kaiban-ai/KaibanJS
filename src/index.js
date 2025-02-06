@@ -109,6 +109,7 @@ class Task {
     isDeliverable = false,
     externalValidationRequired = false,
     outputSchema = null,
+    allowParallelExecution = false,
   }) {
     this.id = id;
     this.title = title; // Title is now optional with a default empty string
@@ -125,6 +126,7 @@ class Task {
     this.externalValidationRequired = externalValidationRequired;
     this.outputSchema = outputSchema; // Zod Schema
     this.expectedOutput = expectedOutput;
+    this.allowParallelExecution = allowParallelExecution;
   }
 
   setStore(store) {
@@ -148,6 +150,7 @@ class Team {
    * @param {string} config.logLevel - The logging level for the team's operations.
    * @param {Object} config.inputs - Initial inputs for the team's tasks.
    * @param {Object} config.env - Environment variables for the team.
+   * @param {boolean} config.managerWithLLM - Whether to use LLM for task management.
    */
   constructor({
     name,
@@ -156,7 +159,7 @@ class Team {
     logLevel,
     inputs = {},
     env = null,
-    flowType = 'sequential',
+    managerWithLLM = false,
   }) {
     this.store = createTeamStore({
       name,
@@ -165,7 +168,7 @@ class Team {
       inputs,
       env,
       logLevel,
-      flowType,
+      managerWithLLM,
     });
 
     // ──── Workflow Controller Initialization ────────────────────────────

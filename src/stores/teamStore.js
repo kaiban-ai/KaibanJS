@@ -29,8 +29,8 @@ import {
   interpolateTaskDescription,
 } from '../utils/tasks';
 import { initializeTelemetry } from '../utils/telemetry';
-import SequentialExecutionStrategy from '../workflowExecution/executionStrategies/sequentialExecutionStrategy';
-import HierarchyExecutionStrategy from '../workflowExecution/executionStrategies/hierarchyExecutionStrategy';
+import DeterministicExecutionStrategy from '../workflowExecution/executionStrategies/deterministicExecutionStrategy';
+import ManagerLLMStrategy from '../workflowExecution/executionStrategies/managerLLMExecutionStrategy';
 
 // Initialize telemetry with default values
 const td = initializeTelemetry();
@@ -69,7 +69,8 @@ const createTeamStore = (initialState = {}) => {
           workflowExecutionStrategy: undefined,
           workflowController: initialState.workflowController || {},
 
-          taskQueue: undefined, // initialized in startWorkflow
+          // New state for task execution management
+          executingTasks: new Set(),
           maxConcurrency: initialState.maxConcurrency || 5,
 
           setInputs: (inputs) => set({ inputs }), // Add a new action to update inputs
@@ -94,68 +95,120 @@ const createTeamStore = (initialState = {}) => {
             }));
           },
 
-          updateTaskStatus: (taskId, status) =>
-            set((state) => ({
-              tasks: state.tasks.map((task) =>
+          /**
+           * Update the status of a single task. This method:
+           * - Updates the task's status in the tasks array
+           * - Manages the executing and pending task sets based on the new status:
+           *   - DOING: Removes from pending, adds to executing
+           *   - DONE/BLOCKED: Removes from executing
+           *   - TODO: Removes from both executing and pending
+           *
+           * @param {string} taskId - The ID of the task to update
+           * @param {string} status - The new status for the task
+           */
+          updateTaskStatus: (taskId, status) => {
+            set((state) => {
+              // Update task status
+              const updatedTasks = state.tasks.map((task) =>
                 task.id === taskId ? { ...task, status } : task
-              ),
-            })),
+              );
 
+              // Update executing and pending sets based on the new status
+              const newExecuting = new Set(state.executingTasks);
+              const newPending = new Set(state.pendingTasks);
+
+              switch (status) {
+                case TASK_STATUS_enum.DOING:
+                  newPending.delete(taskId);
+                  newExecuting.add(taskId);
+                  break;
+                case TASK_STATUS_enum.DONE:
+                case TASK_STATUS_enum.BLOCKED:
+                  newExecuting.delete(taskId);
+                  break;
+                case TASK_STATUS_enum.TODO:
+                  newExecuting.delete(taskId);
+                  newPending.delete(taskId);
+                  break;
+              }
+
+              return {
+                tasks: updatedTasks,
+                executingTasks: newExecuting,
+                pendingTasks: newPending,
+              };
+            });
+          },
+
+          /**
+           * Update the status of multiple tasks at once. This method:
+           * - Updates the status of all specified tasks in the tasks array
+           * - Manages the executing and pending task sets based on the new status:
+           *   - DOING: Removes from pending, adds to executing
+           *   - DONE/BLOCKED: Removes from executing
+           *   - TODO: Removes from both executing and pending
+           * - Updates the task objects directly after state update
+           *
+           * @param {string[]} taskIds - The IDs of the tasks to update
+           * @param {string} status - The new status for the tasks
+           */
           updateStatusOfMultipleTasks: (taskIds, status) => {
-            set((state) => ({
-              tasks: state.tasks.map((task) =>
+            set((state) => {
+              // Update tasks status
+              const updatedTasks = state.tasks.map((task) =>
                 taskIds.includes(task.id) ? { ...task, status } : task
-              ),
-            }));
+              );
 
+              // Update executing and pending sets based on the new status
+              const newExecuting = new Set(state.executingTasks);
+              const newPending = new Set(state.pendingTasks);
+
+              switch (status) {
+                case TASK_STATUS_enum.DOING:
+                  taskIds.forEach((taskId) => {
+                    newPending.delete(taskId);
+                    newExecuting.add(taskId);
+                  });
+                  break;
+                case TASK_STATUS_enum.DONE:
+                case TASK_STATUS_enum.BLOCKED:
+                  taskIds.forEach((taskId) => {
+                    newExecuting.delete(taskId);
+                  });
+                  break;
+                case TASK_STATUS_enum.TODO:
+                  taskIds.forEach((taskId) => {
+                    newExecuting.delete(taskId);
+                    newPending.delete(taskId);
+                  });
+                  break;
+              }
+
+              return {
+                tasks: updatedTasks,
+                executingTasks: newExecuting,
+                pendingTasks: newPending,
+              };
+            });
+
+            // Update task objects directly
             get()
               .tasks.filter((task) => taskIds.includes(task.id))
               .forEach((task) => {
                 task.status = status;
               });
           },
-          addTaskToQueue: (agent, task, context) => {
-            get().taskQueue.add(
-              async () => {
-                await get().workOnTask(agent, task, context);
-              },
-              {
-                id: task.id,
-              }
-            );
-          },
+
           createWorkflowExecutionStrategy: () => {
             const state = get();
-            const tasks = state.tasks;
-            const workflowType = state.flowType || 'sequential';
-            let strategy;
 
-            if (workflowType === 'sequential') {
-              // For sequential workflows, ensure all tasks except first have dependencies
-              const tasksWithDeps = tasks.filter(
-                (task) => task.dependencies && task.dependencies.length > 0
-              );
-
-              if (tasksWithDeps.length > 1) {
-                throw new Error(
-                  'Invalid task configuration: Sequential workflow requires all tasks except the first to have dependencies'
-                );
-              }
-
-              // Default to sequential execution if not specified
-              strategy = new SequentialExecutionStrategy(state);
-            } else if (
-              workflowType === 'hierarchy' ||
-              tasks.some((task) => task.dependencies?.length > 0)
-            ) {
-              // For hierarchical workflows or when dependencies exist
-              strategy = new HierarchyExecutionStrategy(state);
-            } else {
-              // Default to sequential execution if not specified
-              strategy = new SequentialExecutionStrategy(state);
+            // Check if team has managerWithLLM enabled
+            if (state.managerWithLLM) {
+              return new ManagerLLMStrategy(state);
             }
 
-            return strategy;
+            // Use deterministic strategy for all other cases
+            return new DeterministicExecutionStrategy(state);
           },
 
           startWorkflow: async (inputs) => {
@@ -174,10 +227,10 @@ const createTeamStore = (initialState = {}) => {
               agent: null,
               timestamp: Date.now(),
               logDescription: `Workflow initiated for team *${get().name}*.`,
-              workflowStatus: WORKFLOW_STATUS_enum.RUNNING, // Using RUNNING as the initial status
+              workflowStatus: WORKFLOW_STATUS_enum.RUNNING,
               metadata: {
                 message: 'Workflow has been initialized with input settings.',
-                inputs: inputs, // Assuming you want to log the inputs used to start the workflow
+                inputs: inputs,
               },
               logType: 'WorkflowStatusUpdate',
             };
@@ -848,25 +901,62 @@ const createTeamStore = (initialState = {}) => {
               // Include other state parts as necessary, cleaned as needed
             };
           },
+          handleTaskCompleted: ({ agent, task, result }) => {
+            const state = get();
+            task.result = result;
+            task.status = TASK_STATUS_enum.DONE;
+
+            // Create a log entry for task completion
+            const newLog = state.prepareNewLog({
+              agent,
+              task,
+              logDescription: `Task completed: ${getTaskTitleForLogs(task)}.`,
+              metadata: {
+                result,
+              },
+              logType: 'TaskStatusUpdate',
+            });
+
+            // Update state with the new log
+            set((state) => ({
+              ...state,
+              workflowLogs: [...state.workflowLogs, newLog],
+            }));
+
+            // Check if all tasks are completed
+            const allTasksCompleted = state.tasks.every(
+              (t) => t.status === TASK_STATUS_enum.DONE
+            );
+
+            if (allTasksCompleted) {
+              state.finishWorkflowAction();
+            }
+          },
+
+          // Update executing tasks set - single state update for multiple operations
+          updateExecutingTasks: ({ toAdd = [], toRemove = [] }) => {
+            set((state) => {
+              const newExecuting = new Set(state.executingTasks);
+              toRemove.forEach((taskId) => newExecuting.delete(taskId));
+              toAdd.forEach((taskId) => newExecuting.add(taskId));
+              return { ...state, executingTasks: newExecuting };
+            });
+          },
+
+          // Update pending tasks set - single state update for multiple operations
+          updatePendingTasks: ({ toAdd = [], toRemove = [] }) => {
+            set((state) => {
+              const newPending = new Set(state.pendingTasks);
+              toRemove.forEach((taskId) => newPending.delete(taskId));
+              toAdd.forEach((taskId) => newPending.add(taskId));
+              return { ...state, pendingTasks: newPending };
+            });
+          },
         }),
         'teamStore'
       )
     )
   );
-
-  // // ──── Workflow Controller Initialization ────────────────────────────
-  // //
-  // // Activates the workflow controller to monitor and manage task transitions and overall workflow states:
-  // // - Monitors changes in task statuses, handling transitions from TODO to DONE.
-  // // - Ensures tasks proceed seamlessly through their lifecycle stages within the application.
-  // // ─────────────────────────────────────────────────────────────────────
-  // setupWorkflowController(useTeamStore);
-
-  // // Subscribe to task updates: Used mainly for logging purposes
-  // subscribeTaskStatusUpdates(useTeamStore);
-
-  // // Subscribe to WorkflowStatus updates: Used mainly for loggin purposes
-  // subscribeWorkflowStatusUpdates(useTeamStore);
 
   return useTeamStore;
 };
