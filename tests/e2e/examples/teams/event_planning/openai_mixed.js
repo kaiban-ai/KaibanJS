@@ -2,8 +2,6 @@ const { Agent, Task, Team } = require('kaibanjs');
 const {
   TavilySearchResults,
 } = require('@langchain/community/tools/tavily_search');
-// const {calculator} = require('@agentic/stdlib/calculator');
-// const { createLangChainTools } = require('@agentic/stdlib/langchain');
 
 // Define tools
 const searchInternetTool = new TavilySearchResults({
@@ -11,10 +9,7 @@ const searchInternetTool = new TavilySearchResults({
   apiKey: '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',
 });
 
-// const searchInternet = createLangChainTools(rawSearchInternetTool)[0];
-// const calculatorTool = createLangChainTools(calculator)[0];
-
-// Define agents with exact roles, goals, and backgrounds from Python example
+// Define agents with exact roles, goals, and backgrounds
 const eventManagerAgent = new Agent({
   name: 'Peter Atlas',
   role: 'Oversees event planning and ensures smooth execution.',
@@ -52,7 +47,7 @@ const marketingAgent = new Agent({
   tools: [searchInternetTool],
 });
 
-// Define tasks with dynamic input placeholders
+// Define tasks with mixed parallel/non-parallel execution
 const selectEventDateTask = new Task({
   id: 'selectEventDateTask',
   name: 'Select Event Date',
@@ -63,6 +58,7 @@ const selectEventDateTask = new Task({
   agent: eventManagerAgent,
 });
 
+// Non-parallel task
 const bookVenueTask = new Task({
   id: 'bookVenueTask',
   name: 'Book Venue',
@@ -77,6 +73,22 @@ const bookVenueTask = new Task({
   dependencies: ['selectEventDateTask'],
 });
 
+// Non-parallel task
+const prepareEventBudgetTask = new Task({
+  id: 'prepareEventBudgetTask',
+  name: 'Prepare Event Budget',
+  description: `Create a detailed budget plan for the event, including venue costs, catering, marketing, and contingencies`,
+  expectedOutput: `
+  Detailed budget breakdown.
+  Cost estimates for each category.
+  Contingency allocations.
+  Total budget summary.
+  `,
+  agent: eventManagerAgent,
+  dependencies: ['selectEventDateTask'],
+});
+
+// Parallel task
 const finalizeGuestListTask = new Task({
   id: 'finalizeGuestListTask',
   name: 'Finalize Guest List',
@@ -88,8 +100,10 @@ Special dietary or accessibility requirements.
   `,
   agent: marketingAgent,
   dependencies: ['selectEventDateTask'],
+  allowParallelExecution: true,
 });
 
+// Non-parallel task
 const createCateringPlanTask = new Task({
   id: 'createCateringPlanTask',
   name: 'Create Catering Plan',
@@ -104,6 +118,7 @@ Notes on special arrangements for individual guests.
   dependencies: ['selectEventDateTask', 'finalizeGuestListTask'],
 });
 
+// Parallel task
 const setupMarketingCampaignTask = new Task({
   id: 'setupMarketingCampaignTask',
   name: 'Setup Marketing Campaign',
@@ -113,8 +128,10 @@ const setupMarketingCampaignTask = new Task({
   `,
   agent: marketingAgent,
   dependencies: ['selectEventDateTask', 'bookVenueTask'],
+  allowParallelExecution: true,
 });
 
+// Non-parallel task
 const coordinateVenueSetupTask = new Task({
   id: 'coordinateVenueSetupTask',
   name: 'Coordinate Venue Setup',
@@ -127,6 +144,7 @@ const coordinateVenueSetupTask = new Task({
   dependencies: ['bookVenueTask', 'createCateringPlanTask'],
 });
 
+// Parallel task
 const executeMarketingCampaignTask = new Task({
   id: 'executeMarketingCampaignTask',
   name: 'Execute Marketing Campaign',
@@ -137,8 +155,10 @@ const executeMarketingCampaignTask = new Task({
   `,
   agent: marketingAgent,
   dependencies: ['setupMarketingCampaignTask'],
+  allowParallelExecution: true,
 });
 
+// Non-parallel task
 const finalizeInspectionAndApprovalTask = new Task({
   id: 'finalizeInspectionAndApprovalTask',
   name: 'Finalize Inspection and Approval',
@@ -151,7 +171,7 @@ const finalizeInspectionAndApprovalTask = new Task({
   dependencies: ['coordinateVenueSetupTask', 'executeMarketingCampaignTask'],
 });
 
-// Team to coordinate the agents, with dynamic inputs
+// Team to coordinate the agents
 const team = new Team({
   name: 'Event Planning Team',
   agents: [
@@ -163,6 +183,7 @@ const team = new Team({
   tasks: [
     selectEventDateTask,
     bookVenueTask,
+    prepareEventBudgetTask,
     finalizeGuestListTask,
     createCateringPlanTask,
     setupMarketingCampaignTask,
@@ -171,8 +192,8 @@ const team = new Team({
     finalizeInspectionAndApprovalTask,
   ],
   logLevel: 'error',
-  inputs: {}, // Actual dynamic inputs
-  env: { OPENAI_API_KEY: process.env.OPENAI_API_KEY }, // Environment variables for the team,
+  inputs: {},
+  env: { OPENAI_API_KEY: process.env.OPENAI_API_KEY },
 });
 
 module.exports = {
@@ -180,12 +201,13 @@ module.exports = {
   tasks: [
     selectEventDateTask,
     bookVenueTask,
+    prepareEventBudgetTask,
     finalizeGuestListTask,
+    createCateringPlanTask,
     setupMarketingCampaignTask,
     coordinateVenueSetupTask,
     executeMarketingCampaignTask,
     finalizeInspectionAndApprovalTask,
-    createCateringPlanTask,
   ],
   agents: [
     eventManagerAgent,

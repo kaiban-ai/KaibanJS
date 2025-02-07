@@ -2,8 +2,6 @@ const { Agent, Task, Team } = require('kaibanjs');
 const {
   TavilySearchResults,
 } = require('@langchain/community/tools/tavily_search');
-// const {calculator} = require('@agentic/stdlib/calculator');
-// const { createLangChainTools } = require('@agentic/stdlib/langchain');
 
 // Define tools
 const searchInternetTool = new TavilySearchResults({
@@ -11,10 +9,7 @@ const searchInternetTool = new TavilySearchResults({
   apiKey: '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',
 });
 
-// const searchInternet = createLangChainTools(rawSearchInternetTool)[0];
-// const calculatorTool = createLangChainTools(calculator)[0];
-
-// Define agents with exact roles, goals, and backgrounds from Python example
+// Define agents with exact roles, goals, and backgrounds
 const eventManagerAgent = new Agent({
   name: 'Peter Atlas',
   role: 'Oversees event planning and ensures smooth execution.',
@@ -52,7 +47,7 @@ const marketingAgent = new Agent({
   tools: [searchInternetTool],
 });
 
-// Define tasks with dynamic input placeholders
+// Define tasks with allowParallelExecution for dependent tasks
 const selectEventDateTask = new Task({
   id: 'selectEventDateTask',
   name: 'Select Event Date',
@@ -75,6 +70,7 @@ const bookVenueTask = new Task({
   `,
   agent: venueCoordinatorAgent,
   dependencies: ['selectEventDateTask'],
+  allowParallelExecution: true,
 });
 
 const finalizeGuestListTask = new Task({
@@ -88,6 +84,7 @@ Special dietary or accessibility requirements.
   `,
   agent: marketingAgent,
   dependencies: ['selectEventDateTask'],
+  allowParallelExecution: true,
 });
 
 const createCateringPlanTask = new Task({
@@ -102,6 +99,7 @@ Notes on special arrangements for individual guests.
   `,
   agent: cateringAgent,
   dependencies: ['selectEventDateTask', 'finalizeGuestListTask'],
+  allowParallelExecution: true,
 });
 
 const setupMarketingCampaignTask = new Task({
@@ -113,6 +111,7 @@ const setupMarketingCampaignTask = new Task({
   `,
   agent: marketingAgent,
   dependencies: ['selectEventDateTask', 'bookVenueTask'],
+  allowParallelExecution: true,
 });
 
 const coordinateVenueSetupTask = new Task({
@@ -125,6 +124,7 @@ const coordinateVenueSetupTask = new Task({
   `,
   agent: venueCoordinatorAgent,
   dependencies: ['bookVenueTask', 'createCateringPlanTask'],
+  allowParallelExecution: true,
 });
 
 const executeMarketingCampaignTask = new Task({
@@ -137,6 +137,7 @@ const executeMarketingCampaignTask = new Task({
   `,
   agent: marketingAgent,
   dependencies: ['setupMarketingCampaignTask'],
+  allowParallelExecution: true,
 });
 
 const finalizeInspectionAndApprovalTask = new Task({
@@ -149,9 +150,10 @@ const finalizeInspectionAndApprovalTask = new Task({
   `,
   agent: eventManagerAgent,
   dependencies: ['coordinateVenueSetupTask', 'executeMarketingCampaignTask'],
+  allowParallelExecution: true,
 });
 
-// Team to coordinate the agents, with dynamic inputs
+// Team to coordinate the agents
 const team = new Team({
   name: 'Event Planning Team',
   agents: [
@@ -171,8 +173,8 @@ const team = new Team({
     finalizeInspectionAndApprovalTask,
   ],
   logLevel: 'error',
-  inputs: {}, // Actual dynamic inputs
-  env: { OPENAI_API_KEY: process.env.OPENAI_API_KEY }, // Environment variables for the team,
+  inputs: {},
+  env: { OPENAI_API_KEY: process.env.OPENAI_API_KEY },
 });
 
 module.exports = {

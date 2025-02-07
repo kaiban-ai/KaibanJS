@@ -41,8 +41,8 @@ class WorkflowExecutionStrategy {
 
     const context = this.getContextForTask(teamStoreState, task);
 
-    teamStoreState.updateExecutingTasks({ toAdd: [task.id] });
-    teamStoreState.updatePendingTasks({ toRemove: [task.id] });
+    // teamStoreState.updateExecutingTasks({ toAdd: [task.id] });
+    // teamStoreState.updatePendingTasks({ toRemove: [task.id] });
     return await teamStoreState.workOnTask(agent, task, context);
   }
 

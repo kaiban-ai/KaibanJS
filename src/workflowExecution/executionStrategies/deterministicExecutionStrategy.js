@@ -205,22 +205,31 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
     );
   }
 
-  async _putInDoingPossibleTasksToExecute(teamStoreState) {
+  async _putInDoingPossibleTasksToExecute(teamStoreState, executingTasks) {
     const allTasks = teamStoreState.tasks;
 
+    // get pending tasks
+    const pendingTasks = teamStoreState.pendingTasks || new Set();
+
     // Find all tasks that are ready to be executed
-    const readyTasks = this._getReadyTasks(allTasks);
-    if (readyTasks.length === 0) return;
+    // tasks not allowed to execute in parallel have more priority
+    const newReadyTasks = this._getReadyTasks(allTasks);
+    const possibleTasksToExecute = [
+      ...newReadyTasks.filter((t) => !t.allowParallelExecution),
+      ...allTasks.filter((t) => pendingTasks.has(t.id)),
+      ...newReadyTasks.filter((t) => t.allowParallelExecution),
+    ];
+
+    if (possibleTasksToExecute.length === 0) return;
 
     // Calculate available execution slots
-    const availableSlots =
-      teamStoreState.maxConcurrency - teamStoreState.executingTasks.size;
+    const availableSlots = teamStoreState.maxConcurrency - executingTasks.size;
     if (availableSlots <= 0) return;
 
     // Separate parallel and non-parallel tasks
     const parallelTasks = [];
     const nonParallelTasks = [];
-    readyTasks.forEach((task) => {
+    possibleTasksToExecute.forEach((task) => {
       if (task.allowParallelExecution) {
         parallelTasks.push(task);
       } else {
@@ -233,12 +242,12 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
     let slotsLeft = availableSlots;
 
     // First add the first available task (parallel or not)
-    if (readyTasks.length > 0) {
-      tasksToExecute.push(readyTasks[0]);
+    if (possibleTasksToExecute.length > 0) {
+      tasksToExecute.push(possibleTasksToExecute[0]);
       slotsLeft--;
 
       // Remove the selected task from its respective array
-      if (readyTasks[0].allowParallelExecution) {
+      if (possibleTasksToExecute[0].allowParallelExecution) {
         parallelTasks.shift();
       } else {
         nonParallelTasks.shift();
@@ -249,7 +258,7 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
     // fill remaining slots with parallel tasks
     if (
       slotsLeft > 0 &&
-      (readyTasks[0]?.allowParallelExecution ||
+      (possibleTasksToExecute[0]?.allowParallelExecution ||
         teamStoreState.executingTasks.size === 0)
     ) {
       while (slotsLeft > 0 && parallelTasks.length > 0) {
@@ -259,6 +268,19 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
     }
 
     if (tasksToExecute.length === 0) return;
+
+    const tasksToAddToPendingTasks = possibleTasksToExecute.filter(
+      (t) => !tasksToExecute.includes(t)
+    );
+
+    // add the rest of the tasks not included in tasksToExecute
+    // remove the tasks that are being executed from the pending tasks
+    teamStoreState.updatePendingTasks({
+      toAdd: tasksToAddToPendingTasks.map((t) => t.id),
+      toRemove: tasksToExecute
+        .filter((t) => pendingTasks.has(t.id))
+        .map((t) => t.id),
+    });
 
     // Single state update for task status
     teamStoreState.updateStatusOfMultipleTasks(
@@ -277,13 +299,20 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
 
     const allTasks = teamStoreState.tasks;
 
+    const executingTasks = new Set(teamStoreState.executingTasks);
+    const tasksToRemoveFromExecutingTasks = [];
+
     // Handle changed tasks first
     for (const changedTaskIdWithPreviousStatus of changedTaskIdsWithPreviousStatus) {
       const changedTask = allTasks.find(
         (t) => t.id === changedTaskIdWithPreviousStatus.taskId
       );
+
       switch (changedTask.status) {
         case TASK_STATUS_enum.DOING:
+          // add the task to the executing tasks
+          teamStoreState.updateExecutingTasks({ toAdd: [changedTask.id] });
+
           // Execute the task
           this._executeTask(teamStoreState, changedTask).catch((error) => {
             teamStoreState.handleTaskError({ changedTask, error });
@@ -304,10 +333,25 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
             );
           }
           break;
+        case TASK_STATUS_enum.DONE:
+          {
+            executingTasks.delete(changedTask.id);
+            tasksToRemoveFromExecutingTasks.push(changedTask.id);
+          }
+          break;
       }
     }
 
-    return this._putInDoingPossibleTasksToExecute(teamStoreState);
+    if (tasksToRemoveFromExecutingTasks.length > 0) {
+      teamStoreState.updateExecutingTasks({
+        toRemove: tasksToRemoveFromExecutingTasks,
+      });
+    }
+
+    return this._putInDoingPossibleTasksToExecute(
+      teamStoreState,
+      executingTasks
+    );
   }
 }
 

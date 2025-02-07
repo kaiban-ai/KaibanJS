@@ -68,11 +68,11 @@ function moscaFetch() {
       }
     }
 
-    // console.debug(
-    //   'MoscaFetch -> No mocks or recorders matched:',
-    //   input,
-    //   cleanRequestBody
-    // );
+    console.debug(
+      'MoscaFetch -> No mocks or recorders matched:',
+      input,
+      cleanRequestBody
+    );
 
     return originalFetch(input, options); // Call the original fetch if no mocks or recorders match
   };

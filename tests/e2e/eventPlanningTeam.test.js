@@ -106,7 +106,7 @@ describe('Event Planning Team Workflows', () => {
       }
     });
 
-    it('completes the entire workflow successfully', async () => {
+    it('completes the entire workflow successfully with proper task sequencing', async () => {
       const { team, tasks } = openAITeam;
       await team.start();
       let storeFinalState = team.useStore().getState().getCleanedState();
@@ -254,6 +254,69 @@ describe('Event Planning Team Workflows', () => {
       // const recordedData = getRecords();
       // console.log(recordedData);
       // saveRecords();
+    });
+
+    it('executes tasks in correct sequential order with proper state transitions', async () => {
+      const { team, tasks } = openAITeam;
+      await team.start();
+      const store = team.useStore();
+      const finalState = store.getState();
+      const cleanedState = finalState.getCleanedState();
+
+      // Verify workflow completed successfully
+      expect(cleanedState.teamWorkflowStatus).toBe('FINISHED');
+
+      // Get task status updates from workflow logs
+      const taskStatusLogs = cleanedState.workflowLogs.filter(
+        (log) => log.logType === 'TaskStatusUpdate'
+      );
+
+      // Group status updates by task
+      const taskStatusHistory = tasks.reduce((acc, task) => {
+        acc[task.id] = taskStatusLogs
+          .filter((log) => log.task.id === task.id)
+          .map((log) => log.taskStatus);
+        return acc;
+      }, {});
+
+      // Verify each task followed the correct status sequence
+      tasks.forEach((task) => {
+        const statusHistory = taskStatusHistory[task.id];
+        expect(statusHistory).toEqual(['DOING', 'DONE']);
+      });
+
+      // Verify tasks were executed in correct order
+      const taskCompletionOrder = taskStatusLogs
+        .filter((log) => log.taskStatus === 'DONE')
+        .map((log) => log.task.id);
+
+      // Verify all task dependencies were respected
+      const dependencyPairs = tasks.reduce((pairs, task) => {
+        if (task.dependencies) {
+          task.dependencies.forEach((depId) => {
+            pairs.push({
+              taskId: task.id,
+              dependencyId: depId,
+            });
+          });
+        }
+        return pairs;
+      }, []);
+
+      // Verify each dependency pair
+      dependencyPairs.forEach(({ taskId, dependencyId }) => {
+        const taskIndex = taskCompletionOrder.indexOf(taskId);
+        const depIndex = taskCompletionOrder.indexOf(dependencyId);
+        expect(depIndex).toBeLessThan(taskIndex);
+      });
+
+      // Verify executingTasks and pendingTasks are not in cleaned state
+      expect(cleanedState).not.toHaveProperty('executingTasks');
+      expect(cleanedState).not.toHaveProperty('pendingTasks');
+
+      // Verify final state of actual store
+      expect(finalState.executingTasks.size).toBe(0);
+      expect(finalState.pendingTasks.size).toBe(0);
     });
   });
 
@@ -721,6 +784,247 @@ describe('Event Planning Team Workflows', () => {
       const lastLog = state.workflowLogs[state.workflowLogs.length - 1];
       expect(lastLog.logType).toBe('WorkflowStatusUpdate');
       expect(lastLog.workflowStatus).toBe('STOPPED');
+    });
+  });
+
+  describe('Parallel Execution', () => {
+    beforeEach(() => {
+      if (withMockedApis) {
+        mock(openAITeamRecordedRequests);
+      }
+    });
+
+    afterEach(() => {
+      if (withMockedApis) {
+        restoreAll();
+      }
+    });
+
+    it('executes parallel tasks simultaneously when dependencies are met', async () => {
+      const openAITeamParallel = require('./examples/teams/event_planning/openai_parallel');
+      const { team, tasks } = openAITeamParallel;
+
+      // Start the workflow
+      const workflowPromise = team.start();
+      const store = team.useStore();
+
+      // Wait for parallel tasks to start
+      await new Promise((resolve) => {
+        const unsubscribe = store.subscribe(
+          (state) => state.workflowLogs,
+          (logs) => {
+            // Check if first task is completed and parallel tasks have started
+            const firstTaskDone = logs.some(
+              (log) =>
+                log.logType === 'TaskStatusUpdate' &&
+                log.task.id === tasks[0].id &&
+                log.taskStatus === 'DONE'
+            );
+
+            const parallelTasksStarted =
+              logs.filter(
+                (log) =>
+                  log.logType === 'TaskStatusUpdate' &&
+                  log.taskStatus === 'DOING' &&
+                  (log.task.id === tasks[1].id || log.task.id === tasks[2].id)
+              ).length >= 2;
+
+            if (firstTaskDone && parallelTasksStarted) {
+              unsubscribe();
+              resolve();
+            }
+          }
+        );
+      });
+
+      // Get current state
+      const state = store.getState();
+
+      // Verify parallel tasks are in executingTasks
+      const executingTaskIds = Array.from(state.executingTasks);
+      expect(executingTaskIds).toContain(tasks[1].id); // bookVenueTask
+      expect(executingTaskIds).toContain(tasks[2].id); // finalizeGuestListTask
+
+      // Complete workflow
+      await workflowPromise;
+      const finalState = store.getState();
+      const cleanedState = finalState.getCleanedState();
+
+      // Verify workflow completed successfully
+      expect(cleanedState.teamWorkflowStatus).toBe('FINISHED');
+
+      // Get task status updates from workflow logs
+      const taskStatusLogs = cleanedState.workflowLogs.filter(
+        (log) => log.logType === 'TaskStatusUpdate'
+      );
+
+      // Verify parallel tasks started after their dependencies
+      const taskStartTimes = {};
+      taskStatusLogs.forEach((log) => {
+        if (log.taskStatus === 'DOING') {
+          taskStartTimes[log.task.id] = log.timestamp;
+        }
+      });
+
+      // Verify bookVenueTask and finalizeGuestListTask started after selectEventDateTask
+      expect(taskStartTimes[tasks[1].id]).toBeGreaterThan(
+        taskStartTimes[tasks[0].id]
+      );
+      expect(taskStartTimes[tasks[2].id]).toBeGreaterThan(
+        taskStartTimes[tasks[0].id]
+      );
+
+      // Verify parallel tasks were actually running simultaneously
+      const parallelTaskLogs = taskStatusLogs.filter(
+        (log) =>
+          (log.task.id === tasks[1].id || log.task.id === tasks[2].id) &&
+          log.taskStatus === 'DOING'
+      );
+
+      // Get timestamps when parallel tasks were running
+      const parallelTaskTimestamps = parallelTaskLogs.map(
+        (log) => log.timestamp
+      );
+      const timestampDiff = Math.abs(
+        parallelTaskTimestamps[1] - parallelTaskTimestamps[0]
+      );
+
+      // Verify timestamps are close together (within 1 second)
+      expect(timestampDiff).toBeLessThan(1000);
+
+      // Verify executingTasks and pendingTasks are not in cleaned state
+      expect(cleanedState).not.toHaveProperty('executingTasks');
+      expect(cleanedState).not.toHaveProperty('pendingTasks');
+
+      // Verify final state
+      expect(finalState.executingTasks.size).toBe(0);
+      expect(finalState.pendingTasks.size).toBe(0);
+    });
+
+    it('respects priority order for non-parallel tasks', async () => {
+      const openAITeamMixed = require('./examples/teams/event_planning/openai_mixed');
+      const { team, tasks } = openAITeamMixed;
+
+      // Start the workflow
+      const workflowPromise = team.start();
+      const store = team.useStore();
+
+      // Wait for first task to complete and parallel tasks to start executing
+      await new Promise((resolve) => {
+        const unsubscribe = store.subscribe(
+          (state) => state.workflowLogs,
+          (logs) => {
+            // Check if first task is completed
+            const firstTaskDone = logs.some(
+              (log) =>
+                log.logType === 'TaskStatusUpdate' &&
+                log.task.id === tasks[0].id &&
+                log.taskStatus === 'DONE'
+            );
+
+            // Check if parallel tasks have started
+            const task1Started = logs.some(
+              (log) =>
+                log.logType === 'TaskStatusUpdate' &&
+                log.task.id === tasks[1].id &&
+                log.taskStatus === 'DOING'
+            );
+
+            const task3Started = logs.some(
+              (log) =>
+                log.logType === 'TaskStatusUpdate' &&
+                log.task.id === tasks[3].id &&
+                log.taskStatus === 'DOING'
+            );
+
+            if (firstTaskDone && task1Started && task3Started) {
+              unsubscribe();
+              resolve();
+            }
+          }
+        );
+      });
+
+      // Get current state
+      const state = store.getState();
+
+      // verify the workflow is running
+      // this validates the subscription is working
+      expect(state.teamWorkflowStatus).toBe('RUNNING');
+
+      // Get task status logs
+      const taskStatusLogs = state.workflowLogs.filter(
+        (log) => log.logType === 'TaskStatusUpdate'
+      );
+
+      // Get timestamps for key events
+      const firstTaskDoneLog = taskStatusLogs.find(
+        (log) => log.task.id === tasks[0].id && log.taskStatus === 'DONE'
+      );
+
+      const task1StartLog = taskStatusLogs.find(
+        (log) => log.task.id === tasks[1].id && log.taskStatus === 'DOING'
+      );
+
+      const task3StartLog = taskStatusLogs.find(
+        (log) => log.task.id === tasks[3].id && log.taskStatus === 'DOING'
+      );
+
+      // Verify parallel tasks started after first task completed
+      expect(task1StartLog.timestamp).toBeGreaterThan(
+        firstTaskDoneLog.timestamp
+      );
+      expect(task3StartLog.timestamp).toBeGreaterThan(
+        firstTaskDoneLog.timestamp
+      );
+
+      // Verify parallel tasks started at approximately the same time
+      const startTimeDiff = Math.abs(
+        task1StartLog.timestamp - task3StartLog.timestamp
+      );
+      expect(startTimeDiff).toBeLessThan(1000); // Within 1 second
+
+      // Verify parallel tasks are in executingTasks
+      const executingTaskIds = Array.from(state.executingTasks);
+      expect(executingTaskIds).toContain(tasks[1].id);
+      expect(executingTaskIds).toContain(tasks[3].id);
+
+      // Verify non-parallel task is in pendingTasks and not in executingTasks
+      const pendingTaskIds = Array.from(state.pendingTasks);
+      expect(pendingTaskIds).toContain(tasks[2].id);
+      expect(executingTaskIds).not.toContain(tasks[2].id);
+
+      // Complete workflow
+      await workflowPromise;
+      const finalState = store.getState();
+      const cleanedState = finalState.getCleanedState();
+
+      // Verify workflow completed successfully
+      expect(cleanedState.teamWorkflowStatus).toBe('FINISHED');
+
+      // Verify all task dependencies were respected
+      const taskCompletionOrder = taskStatusLogs
+        .filter((log) => log.taskStatus === 'DONE')
+        .map((log) => log.task.id);
+
+      tasks.forEach((task) => {
+        if (task.dependencies) {
+          const taskIndex = taskCompletionOrder.indexOf(task.id);
+          task.dependencies.forEach((depId) => {
+            const depIndex = taskCompletionOrder.indexOf(depId);
+            // eslint-disable-next-line jest/no-conditional-expect
+            expect(depIndex).toBeLessThan(taskIndex);
+          });
+        }
+      });
+
+      // Verify executingTasks and pendingTasks are not in cleaned state
+      expect(cleanedState).not.toHaveProperty('executingTasks');
+      expect(cleanedState).not.toHaveProperty('pendingTasks');
+
+      // Verify final state
+      expect(finalState.executingTasks.size).toBe(0);
+      expect(finalState.pendingTasks.size).toBe(0);
     });
   });
 });

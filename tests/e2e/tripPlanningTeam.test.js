@@ -19,7 +19,7 @@ const withMockedApis =
 // });
 
 describe('Trip Planning Team Workflows', () => {
-  describe('Using OpenAI Agents', () => {
+  describe.only('Using OpenAI Agents', () => {
     beforeEach(() => {
       // Mocking all POST requests with a callback
       if (withMockedApis) {
@@ -42,6 +42,67 @@ describe('Trip Planning Team Workflows', () => {
       // const recordedData = getRecords();
       // console.log(recordedData);
       // saveRecords();
+    });
+
+    it.only('executes tasks in correct sequential order with proper state transitions', async () => {
+      await openAITeam.start();
+      const store = openAITeam.useStore();
+      const finalState = store.getState();
+      const cleanedState = finalState.getCleanedState();
+
+      // Verify workflow completed successfully
+      expect(cleanedState.teamWorkflowStatus).toBe('FINISHED');
+
+      // Get task status updates from workflow logs
+      const taskStatusLogs = cleanedState.workflowLogs.filter(
+        (log) => log.logType === 'TaskStatusUpdate'
+      );
+
+      const tasks = store.getState().tasks;
+
+      // Verify each task followed the correct status sequence
+      tasks.forEach((task) => {
+        const statusHistory = taskStatusLogs
+          .filter(
+            (log) =>
+              log.task.description === task.description &&
+              log.logType === 'TaskStatusUpdate'
+          )
+          .map((log) => log.taskStatus);
+        expect(statusHistory).toEqual(['DOING', 'DONE']);
+      });
+
+      // Verify tasks were executed in correct order
+      const taskCompletionOrder = taskStatusLogs
+        .filter((log) => log.taskStatus === 'DONE')
+        .map((log) => log.task.description);
+
+      // Verify each task was completed after its dependencies
+      const tasksWithDependencies = tasks.filter(
+        (task) => task.dependencies && task.dependencies.length > 0
+      );
+
+      tasksWithDependencies.forEach((task) => {
+        const taskIndex = taskCompletionOrder.indexOf(task.description);
+        task.dependencies.forEach((depId) => {
+          const depIndex = taskCompletionOrder.indexOf(depId);
+          expect(depIndex).toBeLessThan(taskIndex);
+        });
+      });
+
+      // Verify first task started first
+      const firstTaskStartLog = taskStatusLogs.find(
+        (log) => log.taskStatus === 'DOING'
+      );
+      expect(firstTaskStartLog.task.description).toBe(tasks[0].description);
+
+      // Verify executingTasks and pendingTasks are not in cleaned state
+      expect(cleanedState).not.toHaveProperty('executingTasks');
+      expect(cleanedState).not.toHaveProperty('pendingTasks');
+
+      // Verify final state of actual store
+      expect(finalState.executingTasks.size).toBe(0);
+      expect(finalState.pendingTasks.size).toBe(0);
     });
   });
   describe('Using OpenAI Agents with Custom Prompts', () => {
