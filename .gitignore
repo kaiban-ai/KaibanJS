@@ -44,3 +44,4 @@ _todo.md
 .eslintcache
 
 server.js
+recordedData.json

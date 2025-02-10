@@ -68,11 +68,16 @@ function moscaFetch() {
       }
     }
 
-    console.debug(
-      'MoscaFetch -> No mocks or recorders matched:',
-      input,
-      cleanRequestBody
-    );
+    // console.debug(
+    //   'MoscaFetch -> No mocks or recorders matched:',
+    //   input,
+    //   cleanRequestBody
+    // );
+
+    // for (const mock of mocks) {
+    //   const cleanMockBody = JSON.stringify(mock.body).replace(/\\n\s+/g, '\\n'); // Regular Expression to remove spaces between newlines
+    //   console.debug('MoscaFetch -> Mock:', mock.url, mock.method, cleanMockBody);
+    // }
 
     return originalFetch(input, options); // Call the original fetch if no mocks or recorders match
   };

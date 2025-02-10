@@ -69,13 +69,6 @@ const createTeamStore = (initialState = {}) => {
           workflowExecutionStrategy: undefined,
           workflowController: initialState.workflowController || {},
 
-          // List of task ids currently being executed
-          executingTasks: new Set(),
-
-          // List of task ids ready to be executed
-          // but waiting for execution (not available slots or dependencies not met)
-          pendingTasks: new Set(),
-
           // Maximum number of tasks that can be executed in parallel
           maxConcurrency: initialState.maxConcurrency || 5,
 
@@ -104,10 +97,6 @@ const createTeamStore = (initialState = {}) => {
           /**
            * Update the status of a single task. This method:
            * - Updates the task's status in the tasks array
-           * - Manages the executing and pending task sets based on the new status:
-           *   - DOING: Removes from pending, adds to executing
-           *   - DONE/BLOCKED: Removes from executing
-           *   - TODO: Removes from both executing and pending
            *
            * @param {string} taskId - The ID of the task to update
            * @param {string} status - The new status for the task
@@ -129,11 +118,6 @@ const createTeamStore = (initialState = {}) => {
           /**
            * Update the status of multiple tasks at once. This method:
            * - Updates the status of all specified tasks in the tasks array
-           * - Manages the executing and pending task sets based on the new status:
-           *   - DOING: Removes from pending, adds to executing
-           *   - DONE/BLOCKED: Removes from executing
-           *   - TODO: Removes from both executing and pending
-           * - Updates the task objects directly after state update
            *
            * @param {string[]} taskIds - The IDs of the tasks to update
            * @param {string} status - The new status for the tasks
@@ -793,20 +777,29 @@ const createTeamStore = (initialState = {}) => {
             };
 
             // Function to clean individual task data
-            const cleanTask = (task) => ({
-              ...task,
-              id: '[REDACTED]', // Clean sensitive ID
-              agent: task.agent ? cleanAgent(task.agent) : null, // Clean the nested agent if exists
-              duration: '[REDACTED]',
-              endTime: '[REDACTED]',
-              startTime: '[REDACTED]',
-              feedbackHistory: task.feedbackHistory
-                ? task.feedbackHistory.map((feedback) => ({
-                    ...feedback,
-                    timestamp: '[REDACTED]', // Redact the timestamp
-                  }))
-                : [], // Provide an empty array if feedbackHistory is undefined
-            });
+            const cleanTask = (task) => {
+              const { allowParallelExecution = false, ...rest } = task;
+              const cleanedTask = {
+                ...rest,
+                id: '[REDACTED]', // Clean sensitive ID
+                agent: task.agent ? cleanAgent(task.agent) : null, // Clean the nested agent if exists
+                duration: '[REDACTED]',
+                endTime: '[REDACTED]',
+                startTime: '[REDACTED]',
+                feedbackHistory: task.feedbackHistory
+                  ? task.feedbackHistory.map((feedback) => ({
+                      ...feedback,
+                      timestamp: '[REDACTED]', // Redact the timestamp
+                    }))
+                  : [], // Provide an empty array if feedbackHistory is undefined
+              };
+
+              if (allowParallelExecution) {
+                cleanedTask.allowParallelExecution = allowParallelExecution;
+              }
+
+              return cleanedTask;
+            };
 
             // Function to clean log metadata
             const cleanMetadata = (metadata) => ({
@@ -852,28 +845,6 @@ const createTeamStore = (initialState = {}) => {
               logLevel: get().logLevel,
               // Include other state parts as necessary, cleaned as needed
             };
-          },
-
-          // Update executing tasks set - single state update for multiple operations
-          updateExecutingTasks: ({ toAdd = [], toRemove = [] }) => {
-            set((state) => {
-              const newExecuting = new Set(state.executingTasks);
-              toRemove.forEach((taskId) => newExecuting.delete(taskId));
-              toAdd.forEach((taskId) => newExecuting.add(taskId));
-              return { ...state, executingTasks: newExecuting };
-            });
-          },
-
-          // Update pending tasks set - single state update for multiple operations
-          updatePendingTasks: ({ toAdd = [], toRemove = [] }) => {
-            if (toAdd.length === 0 && toRemove.length === 0) return;
-
-            set((state) => {
-              const newPending = new Set(state.pendingTasks);
-              toRemove.forEach((taskId) => newPending.delete(taskId));
-              toAdd.forEach((taskId) => newPending.add(taskId));
-              return { ...state, pendingTasks: newPending };
-            });
           },
         }),
         'teamStore'

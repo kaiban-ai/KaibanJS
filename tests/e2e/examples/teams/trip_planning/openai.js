@@ -80,7 +80,7 @@ const team = new Team({
   name: 'Trip Planning Team',
   agents: [citySelectorAgent, localExpertAgent, travelConciergeAgent],
   tasks: [identifyTask, gatherTask, planTask],
-  logLevel: 'debug',
+  logLevel: 'error',
   inputs: {
     origin: 'New York',
     cities: ['Tokyo', 'Paris', 'Berlin'],

@@ -10,54 +10,6 @@ import WorkflowExecutionStrategy from './workflowExecutionStrategy';
  * and allowParallelExecution flag.
  */
 class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
-  constructor(teamStoreState) {
-    super();
-
-    const tasks = teamStoreState.tasks;
-    if (tasks.length <= 1) return;
-
-    // Get all non-parallel tasks in their original order
-    const nonParallelTasks = tasks.filter(
-      (task) => !task.allowParallelExecution
-    );
-
-    // Apply sequential dependencies to non-parallel tasks
-    for (let i = 1; i < nonParallelTasks.length; i++) {
-      const currentTask = nonParallelTasks[i];
-      const previousTask = nonParallelTasks[i - 1];
-
-      // Create or update dependencies array
-      if (!currentTask.dependencies) {
-        currentTask.dependencies = [];
-      }
-
-      // Add dependency to previous task if not already present
-      if (!currentTask.dependencies.includes(previousTask.id)) {
-        currentTask.dependencies.push(previousTask.id);
-      }
-    }
-
-    // For parallel tasks that have dependencies, ensure they depend on all previous non-parallel tasks
-    tasks.forEach((task) => {
-      if (
-        task.allowParallelExecution &&
-        task.dependencies &&
-        task.dependencies.length > 0
-      ) {
-        const taskIndex = tasks.indexOf(task);
-        const previousNonParallelTasks = nonParallelTasks.filter(
-          (t) => tasks.indexOf(t) < taskIndex
-        );
-
-        previousNonParallelTasks.forEach((prevTask) => {
-          if (!task.dependencies.includes(prevTask.id)) {
-            task.dependencies.push(prevTask.id);
-          }
-        });
-      }
-    });
-  }
-
   /**
    * Gets all tasks that the given task depends on (its prerequisites)
    * @param {Object} task - The task to find dependencies for
@@ -84,33 +36,47 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
   }
 
   /**
-   * Gets all tasks that are ready to be executed based on their dependencies
-   * and allowParallelExecution flag
-   * @param {Array} allTasks - Array of all tasks in the workflow
-   * @returns {Array} Array of task objects that are ready to be executed
+   * Get tasks that are ready to be executed based on their dependencies
+   * @param {Array} tasks - Array of all tasks
+   * @returns {Array} Array of tasks that are ready to be executed
    */
-  _getReadyTasks(allTasks) {
-    return allTasks.filter((task) => {
-      // Task must be in TODO status
-      if (task.status !== TASK_STATUS_enum.TODO) return false;
+  _getReadyTasks(tasks) {
+    return tasks.filter((task) => {
+      // Skip tasks that are already DOING or DONE
+      if (task.status !== TASK_STATUS_enum.TODO) {
+        return false;
+      }
 
-      // All dependencies must be DONE
-      const deps = this._getTaskDependencies(task, allTasks);
-      const depsCompleted =
-        deps.length === 0 ||
-        deps.every((dep) => dep.status === TASK_STATUS_enum.DONE);
+      // Check if all dependencies are completed
+      const areDependenciesDone =
+        !task.dependencies ||
+        task.dependencies.length === 0 ||
+        task.dependencies.every((depId) => {
+          const depTask = tasks.find((t) => t.id === depId);
+          return depTask && depTask.status === TASK_STATUS_enum.DONE;
+        });
 
-      // If dependencies are completed and task allows parallel execution, it's ready
-      if (depsCompleted && task.allowParallelExecution) {
+      if (!areDependenciesDone) {
+        return false;
+      }
+
+      // If it's a parallel task and dependencies are met, it's ready
+      if (task.allowParallelExecution) {
         return true;
       }
 
-      // If dependencies are completed and no other task is currently executing, it's ready
-      if (depsCompleted) {
-        return !allTasks.some((t) => t.status === TASK_STATUS_enum.DOING);
+      // For non-parallel tasks, check if all previous tasks are done
+      const taskIndex = tasks.findIndex((t) => t.id === task.id);
+      if (taskIndex === 0) {
+        // If it's the first task, it's ready if dependencies are met
+        return true;
       }
 
-      return false;
+      // Check if all previous non-parallel tasks are done
+      const previousTasks = tasks.slice(0, taskIndex);
+      return previousTasks.every((t) =>
+        !t.allowParallelExecution ? t.status === TASK_STATUS_enum.DONE : true
+      );
     });
   }
 
@@ -122,13 +88,28 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
    * @returns {Array} Array of task objects that are dependencies of the given task
    */
   _getParentTasks(task, allTasks) {
-    const parentTasks = [];
+    const parentTasks = new Set();
     const dependencies = this._getTaskDependencies(task, allTasks);
     dependencies.forEach((dep) => {
-      parentTasks.push(dep);
-      parentTasks.push(...this._getParentTasks(dep, allTasks));
+      const depParentTasks = this._getParentTasks(dep, allTasks);
+      depParentTasks.forEach((t) => {
+        parentTasks.add(t);
+      });
+      parentTasks.add(dep);
     });
-    return parentTasks;
+
+    if (dependencies.length === 0 && !task.allowParallelExecution) {
+      // get list of previous non-parallel tasks
+      const taskIndex = allTasks.findIndex((t) => t.id === task.id);
+      const previousTasks = allTasks.slice(0, taskIndex);
+      previousTasks.forEach((t) => {
+        if (!t.allowParallelExecution) {
+          parentTasks.add(t);
+        }
+      });
+    }
+
+    return Array.from(parentTasks);
   }
 
   /**
@@ -144,42 +125,39 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
    */
   getContextForTask(teamStoreState, task) {
     const logs = teamStoreState.workflowLogs;
-    const taskResultsByTaskId = new Map();
+    const resultsFromParentTasks = [];
     const tasks = teamStoreState.tasks;
 
     // Get all dependencies for the current task
     const dependencies = this._getParentTasks(task, tasks);
 
-    // Iterate through logs to get the most recent result for each dependency
-    for (const l of logs) {
-      if (
-        l.logType === 'TaskStatusUpdate' &&
-        l.taskStatus === TASK_STATUS_enum.DONE
-      ) {
-        // Only include results from dependency tasks
-        const isDependency = dependencies.some((dep) => dep.id === l.task.id);
-        if (isDependency) {
-          taskResultsByTaskId.set(l.task.id, {
-            taskDescription: l.task.description,
-            result: l.metadata.result,
-            taskId: l.task.id,
-            taskName: l.task.name,
-            timestamp: l.timestamp,
-          });
-        }
+    for (const dependency of dependencies) {
+      const dependencyResultsLogs = logs.find(
+        (l) =>
+          l.logType === 'TaskStatusUpdate' &&
+          l.taskStatus === TASK_STATUS_enum.DONE &&
+          l.task.id === dependency.id
+      );
+
+      if (!dependencyResultsLogs) {
+        console.warn(
+          `No dependency results found for task ${dependency.id}`,
+          dependencies
+        );
+        continue;
       }
+
+      resultsFromParentTasks.push({
+        taskId: dependency.id,
+        taskName: dependency.name,
+        result: dependencyResultsLogs.metadata.result,
+        taskDescription: dependency.description,
+        timestamp: dependencyResultsLogs.timestamp,
+      });
     }
 
     // Create context string from dependency results
-    const taskResults = Array.from(taskResultsByTaskId.values())
-      .sort((a, b) => {
-        // Then by taskId if timestamps are equal
-        if (a.taskId !== b.taskId) {
-          return a.taskId.localeCompare(b.taskId);
-        }
-        // Finally by taskName if taskIds are equal
-        return a.taskName.localeCompare(b.taskName);
-      })
+    const taskResults = resultsFromParentTasks
       .map(
         ({ taskDescription, result }) =>
           `Task: ${taskDescription}\nResult: ${
@@ -205,25 +183,21 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
     );
   }
 
-  async _putInDoingPossibleTasksToExecute(teamStoreState, executingTasks) {
+  async _putInDoingPossibleTasksToExecute(teamStoreState) {
     const allTasks = teamStoreState.tasks;
 
-    // get pending tasks
-    const pendingTasks = teamStoreState.pendingTasks || new Set();
-
     // Find all tasks that are ready to be executed
-    // tasks not allowed to execute in parallel have more priority
-    const newReadyTasks = this._getReadyTasks(allTasks);
-    const possibleTasksToExecute = [
-      ...newReadyTasks.filter((t) => !t.allowParallelExecution),
-      ...allTasks.filter((t) => pendingTasks.has(t.id)),
-      ...newReadyTasks.filter((t) => t.allowParallelExecution),
-    ];
+    const possibleTasksToExecute = this._getReadyTasks(allTasks);
 
     if (possibleTasksToExecute.length === 0) return;
 
+    // Calculate number of tasks currently executing
+    const executingTasksCount = allTasks.filter(
+      (t) => t.status === TASK_STATUS_enum.DOING
+    ).length;
+
     // Calculate available execution slots
-    const availableSlots = teamStoreState.maxConcurrency - executingTasks.size;
+    const availableSlots = teamStoreState.maxConcurrency - executingTasksCount;
     if (availableSlots <= 0) return;
 
     // Separate parallel and non-parallel tasks
@@ -241,25 +215,18 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
     const tasksToExecute = [];
     let slotsLeft = availableSlots;
 
-    // First add the first available task (parallel or not)
-    if (possibleTasksToExecute.length > 0) {
-      tasksToExecute.push(possibleTasksToExecute[0]);
+    // First add non-parallel tasks (they have priority)
+    if (nonParallelTasks.length > 0) {
+      tasksToExecute.push(nonParallelTasks[0]);
       slotsLeft--;
-
-      // Remove the selected task from its respective array
-      if (possibleTasksToExecute[0].allowParallelExecution) {
-        parallelTasks.shift();
-      } else {
-        nonParallelTasks.shift();
-      }
     }
 
-    // If the first task wasn't non-parallel and we have slots left,
-    // fill remaining slots with parallel tasks
+    // Then add parallel tasks if we have slots left and no non-parallel tasks are executing
     if (
       slotsLeft > 0 &&
-      (possibleTasksToExecute[0]?.allowParallelExecution ||
-        teamStoreState.executingTasks.size === 0)
+      !allTasks.some(
+        (t) => !t.allowParallelExecution && t.status === TASK_STATUS_enum.DOING
+      )
     ) {
       while (slotsLeft > 0 && parallelTasks.length > 0) {
         tasksToExecute.push(parallelTasks.shift());
@@ -268,19 +235,6 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
     }
 
     if (tasksToExecute.length === 0) return;
-
-    const tasksToAddToPendingTasks = possibleTasksToExecute.filter(
-      (t) => !tasksToExecute.includes(t)
-    );
-
-    // add the rest of the tasks not included in tasksToExecute
-    // remove the tasks that are being executed from the pending tasks
-    teamStoreState.updatePendingTasks({
-      toAdd: tasksToAddToPendingTasks.map((t) => t.id),
-      toRemove: tasksToExecute
-        .filter((t) => pendingTasks.has(t.id))
-        .map((t) => t.id),
-    });
 
     // Single state update for task status
     teamStoreState.updateStatusOfMultipleTasks(
@@ -299,9 +253,6 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
 
     const allTasks = teamStoreState.tasks;
 
-    const executingTasks = new Set(teamStoreState.executingTasks);
-    const tasksToRemoveFromExecutingTasks = [];
-
     // Handle changed tasks first
     for (const changedTaskIdWithPreviousStatus of changedTaskIdsWithPreviousStatus) {
       const changedTask = allTasks.find(
@@ -310,9 +261,6 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
 
       switch (changedTask.status) {
         case TASK_STATUS_enum.DOING:
-          // add the task to the executing tasks
-          teamStoreState.updateExecutingTasks({ toAdd: [changedTask.id] });
-
           // Execute the task
           this._executeTask(teamStoreState, changedTask).catch((error) => {
             teamStoreState.handleTaskError({ changedTask, error });
@@ -326,32 +274,21 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
               changedTask,
               allTasks
             );
-            // update the status of the dependent tasks
+
+            // the dependent tasks and the changed task should be set to TODO
+            // this is to ensure those tasks are re-evaluated
+            // The changed task will get more priority in the next round of execution
+            // because will be at the top of the list of tasks to execute
             teamStoreState.updateStatusOfMultipleTasks(
-              dependentTasks.map((task) => task.id),
-              TASK_STATUS_enum.BLOCKED
+              [...dependentTasks, changedTask].map((task) => task.id),
+              TASK_STATUS_enum.TODO
             );
-          }
-          break;
-        case TASK_STATUS_enum.DONE:
-          {
-            executingTasks.delete(changedTask.id);
-            tasksToRemoveFromExecutingTasks.push(changedTask.id);
           }
           break;
       }
     }
 
-    if (tasksToRemoveFromExecutingTasks.length > 0) {
-      teamStoreState.updateExecutingTasks({
-        toRemove: tasksToRemoveFromExecutingTasks,
-      });
-    }
-
-    return this._putInDoingPossibleTasksToExecute(
-      teamStoreState,
-      executingTasks
-    );
+    return this._putInDoingPossibleTasksToExecute(teamStoreState);
   }
 }
 
