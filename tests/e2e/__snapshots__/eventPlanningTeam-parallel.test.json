@@ -390,7 +390,8 @@
         "callsErrorCount": 0,
         "parsingErrors": 0
       },
-      "iterationCount": 1
+      "iterationCount": 1,
+      "referenceId": "selectEventDateTask"
     },
     {
       "id": "[REDACTED]",
@@ -496,7 +497,8 @@
         "parsingErrors": 0
       },
       "iterationCount": 3,
-      "allowParallelExecution": true
+      "allowParallelExecution": true,
+      "referenceId": "bookVenueTask"
     },
     {
       "id": "[REDACTED]",
@@ -602,7 +604,8 @@
         "parsingErrors": 0
       },
       "iterationCount": 1,
-      "allowParallelExecution": true
+      "allowParallelExecution": true,
+      "referenceId": "finalizeGuestListTask"
     },
     {
       "id": "[REDACTED]",
@@ -709,7 +712,8 @@
         "parsingErrors": 0
       },
       "iterationCount": 1,
-      "allowParallelExecution": true
+      "allowParallelExecution": true,
+      "referenceId": "createCateringPlanTask"
     },
     {
       "id": "[REDACTED]",
@@ -816,7 +820,8 @@
         "parsingErrors": 0
       },
       "iterationCount": 8,
-      "allowParallelExecution": true
+      "allowParallelExecution": true,
+      "referenceId": "setupMarketingCampaignTask"
     },
     {
       "id": "[REDACTED]",
@@ -923,7 +928,8 @@
         "parsingErrors": 0
       },
       "iterationCount": 1,
-      "allowParallelExecution": true
+      "allowParallelExecution": true,
+      "referenceId": "coordinateVenueSetupTask"
     },
     {
       "id": "[REDACTED]",
@@ -1029,7 +1035,8 @@
         "parsingErrors": 0
       },
       "iterationCount": 1,
-      "allowParallelExecution": true
+      "allowParallelExecution": true,
+      "referenceId": "executeMarketingCampaignTask"
     },
     {
       "id": "[REDACTED]",
@@ -1126,7 +1133,8 @@
         "parsingErrors": 0
       },
       "iterationCount": 1,
-      "allowParallelExecution": true
+      "allowParallelExecution": true,
+      "referenceId": "finalizeInspectionAndApprovalTask"
     }
   ],
   "workflowLogs": [
@@ -1231,7 +1239,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "agentInstance": {
@@ -1397,7 +1406,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -1555,7 +1565,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -1721,7 +1732,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -1887,7 +1899,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -2046,7 +2059,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -2204,7 +2218,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -2363,7 +2378,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -2546,7 +2562,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "agentInstance": {
@@ -2735,7 +2752,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -2916,7 +2934,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "agentInstance": {
@@ -3105,7 +3124,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -3286,7 +3306,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -3475,7 +3496,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -3664,7 +3686,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -3857,7 +3880,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -4043,7 +4067,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -4224,7 +4249,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -4405,7 +4431,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -4602,7 +4629,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -4791,7 +4819,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -4973,7 +5002,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -5154,7 +5184,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -5336,7 +5367,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -5530,7 +5562,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "agentInstance": {
@@ -5720,7 +5753,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -5902,7 +5936,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -6091,7 +6126,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -6281,7 +6317,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -6464,7 +6501,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -6645,7 +6683,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -6826,7 +6865,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -7032,7 +7072,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -7222,7 +7263,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -7405,7 +7447,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -7587,7 +7630,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -7770,7 +7814,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -7963,7 +8008,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -8152,7 +8198,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -8334,7 +8381,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -8515,7 +8563,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -8697,7 +8746,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -8891,7 +8941,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "agentInstance": {
@@ -9081,7 +9132,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -9263,7 +9315,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "agentInstance": {
@@ -9453,7 +9506,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -9635,7 +9689,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -9833,7 +9888,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -10047,7 +10103,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -10241,7 +10298,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -10428,7 +10486,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -10610,7 +10669,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -10792,7 +10852,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -10998,7 +11059,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -11188,7 +11250,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -11371,7 +11434,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -11553,7 +11617,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -11736,7 +11801,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -11930,7 +11996,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -12121,7 +12188,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -12305,7 +12373,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -12487,7 +12556,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -12669,7 +12739,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -12883,7 +12954,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -13077,7 +13149,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -13264,7 +13337,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -13446,7 +13520,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -13628,7 +13703,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -13850,7 +13926,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -14041,7 +14118,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -14225,7 +14303,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -14407,7 +14486,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -14589,7 +14669,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -14819,7 +14900,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -15013,7 +15095,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -15200,7 +15283,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -15382,7 +15466,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -15564,7 +15649,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -15802,7 +15888,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -15993,7 +16080,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -16177,7 +16265,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -16359,7 +16448,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -16541,7 +16631,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -16787,7 +16878,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -16981,7 +17073,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -17168,7 +17261,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -17350,7 +17444,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -17532,7 +17627,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -17786,7 +17882,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -17976,7 +18073,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -18159,7 +18257,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -18341,7 +18440,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -18524,7 +18624,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -18717,7 +18818,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "agentInstance": {
@@ -18906,7 +19008,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -19087,7 +19190,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -19348,7 +19452,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -19537,7 +19642,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -19719,7 +19825,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -19900,7 +20007,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -20082,7 +20190,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -20266,7 +20375,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "agentInstance": {
@@ -20436,7 +20546,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -20598,7 +20709,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -20776,7 +20888,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -20946,7 +21059,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -21109,7 +21223,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -21271,7 +21386,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -21434,7 +21550,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "id": "[REDACTED]",

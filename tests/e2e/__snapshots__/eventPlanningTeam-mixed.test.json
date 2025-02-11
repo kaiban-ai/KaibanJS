@@ -390,7 +390,8 @@
         "callsErrorCount": 0,
         "parsingErrors": 0
       },
-      "iterationCount": 1
+      "iterationCount": 1,
+      "referenceId": "selectEventDateTask"
     },
     {
       "id": "[REDACTED]",
@@ -495,7 +496,8 @@
         "callsErrorCount": 0,
         "parsingErrors": 0
       },
-      "iterationCount": 8
+      "iterationCount": 8,
+      "referenceId": "bookVenueTask"
     },
     {
       "id": "[REDACTED]",
@@ -590,7 +592,8 @@
         "callsErrorCount": 0,
         "parsingErrors": 0
       },
-      "iterationCount": 7
+      "iterationCount": 7,
+      "referenceId": "prepareEventBudgetTask"
     },
     {
       "id": "[REDACTED]",
@@ -696,7 +699,8 @@
         "parsingErrors": 0
       },
       "iterationCount": 9,
-      "allowParallelExecution": true
+      "allowParallelExecution": true,
+      "referenceId": "finalizeGuestListTask"
     },
     {
       "id": "[REDACTED]",
@@ -802,7 +806,8 @@
         "callsErrorCount": 0,
         "parsingErrors": 0
       },
-      "iterationCount": 6
+      "iterationCount": 6,
+      "referenceId": "createCateringPlanTask"
     },
     {
       "id": "[REDACTED]",
@@ -909,7 +914,8 @@
         "parsingErrors": 0
       },
       "iterationCount": 3,
-      "allowParallelExecution": true
+      "allowParallelExecution": true,
+      "referenceId": "setupMarketingCampaignTask"
     },
     {
       "id": "[REDACTED]",
@@ -1015,7 +1021,8 @@
         "callsErrorCount": 0,
         "parsingErrors": 0
       },
-      "iterationCount": 1
+      "iterationCount": 1,
+      "referenceId": "coordinateVenueSetupTask"
     },
     {
       "id": "[REDACTED]",
@@ -1121,7 +1128,8 @@
         "parsingErrors": 0
       },
       "iterationCount": 1,
-      "allowParallelExecution": true
+      "allowParallelExecution": true,
+      "referenceId": "executeMarketingCampaignTask"
     },
     {
       "id": "[REDACTED]",
@@ -1217,7 +1225,8 @@
         "callsErrorCount": 0,
         "parsingErrors": 0
       },
-      "iterationCount": 1
+      "iterationCount": 1,
+      "referenceId": "finalizeInspectionAndApprovalTask"
     }
   ],
   "workflowLogs": [
@@ -1322,7 +1331,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "agentInstance": {
@@ -1488,7 +1498,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -1646,7 +1657,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -1812,7 +1824,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -1978,7 +1991,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -2137,7 +2151,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -2295,7 +2310,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -2454,7 +2470,8 @@
         "expectedOutput": "Selected event date. \n  Rationale for the chosen date. \n  Notes on any potential conflicts or considerations.",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "selectEventDateTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -2636,7 +2653,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "agentInstance": {
@@ -2824,7 +2842,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -3005,7 +3024,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "agentInstance": {
@@ -3194,7 +3214,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -3374,7 +3395,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -3563,7 +3585,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -3751,7 +3774,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -3943,7 +3967,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -4134,7 +4159,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -4327,7 +4353,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -4513,7 +4540,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -4694,7 +4722,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -4875,7 +4904,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -5071,7 +5101,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -5250,7 +5281,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -5430,7 +5462,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -5610,7 +5643,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -5807,7 +5841,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -5997,7 +6032,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -6180,7 +6216,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -6361,7 +6398,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -6542,7 +6580,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -6746,7 +6785,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -6935,7 +6975,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -7117,7 +7158,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -7297,7 +7339,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -7477,7 +7520,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -7682,7 +7726,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -7875,7 +7920,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -8061,7 +8107,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -8242,7 +8289,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -8423,7 +8471,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -8635,7 +8684,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -8827,7 +8877,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -9018,7 +9069,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -9208,7 +9260,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -9391,7 +9444,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -9572,7 +9626,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -9753,7 +9808,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -9973,7 +10029,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -10152,7 +10209,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -10332,7 +10390,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -10512,7 +10571,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -10725,7 +10785,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -10918,7 +10979,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -11104,7 +11166,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -11285,7 +11348,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -11466,7 +11530,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -11694,7 +11759,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -11883,7 +11949,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -12065,7 +12132,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -12245,7 +12313,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -12425,7 +12494,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -12646,7 +12716,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -12836,7 +12907,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -13019,7 +13091,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -13200,7 +13273,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -13381,7 +13455,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -13617,7 +13692,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -13809,7 +13885,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -14000,7 +14077,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -14193,7 +14271,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -14379,7 +14458,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -14560,7 +14640,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -14741,7 +14822,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -14985,7 +15067,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -15164,7 +15247,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -15344,7 +15428,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -15524,7 +15609,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -15753,7 +15839,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -15943,7 +16030,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -16126,7 +16214,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -16307,7 +16396,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -16488,7 +16578,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -16740,7 +16831,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -16929,7 +17021,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -17111,7 +17204,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -17291,7 +17385,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -17471,7 +17566,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -17708,7 +17804,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -17897,7 +17994,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -18079,7 +18177,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -18260,7 +18359,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -18442,7 +18542,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "finalizeGuestListTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -18634,7 +18735,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -18826,7 +18928,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -19016,7 +19119,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -19195,7 +19299,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -19375,7 +19480,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -19555,7 +19661,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -19799,7 +19906,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -19987,7 +20095,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -20168,7 +20277,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -20348,7 +20458,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -20529,7 +20640,8 @@
         "expectedOutput": "\n  Venue name and address.\n  Confirmation details\n  Cost estimate.\n  Any notes on policies or special arrangements.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "bookVenueTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -20711,7 +20823,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "agentInstance": {
@@ -20879,7 +20992,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -21051,7 +21165,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "agentInstance": {
@@ -21241,7 +21356,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -21411,7 +21527,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -21599,7 +21716,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -21849,7 +21967,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -22021,7 +22140,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -22186,7 +22306,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -22346,7 +22467,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -22506,7 +22628,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -22702,7 +22825,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -22896,7 +23020,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -23083,7 +23208,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -23265,7 +23391,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -23447,7 +23574,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -23705,7 +23833,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -23874,7 +24003,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -24036,7 +24166,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -24196,7 +24327,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -24356,7 +24488,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -24560,7 +24693,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -24751,7 +24885,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -24935,7 +25070,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -25117,7 +25253,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -25299,7 +25436,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -25565,7 +25703,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -25737,7 +25876,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -25902,7 +26042,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -26062,7 +26203,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -26222,7 +26364,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -26434,7 +26577,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -26624,7 +26768,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -26807,7 +26952,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -26989,7 +27135,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -27172,7 +27319,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "setupMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -27354,7 +27502,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -27523,7 +27672,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -27685,7 +27835,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -27845,7 +27996,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -28005,7 +28157,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -28213,7 +28366,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -28385,7 +28539,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -28550,7 +28705,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -28710,7 +28866,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -28870,7 +29027,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -29086,7 +29244,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -29255,7 +29414,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -29417,7 +29577,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -29577,7 +29738,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -29737,7 +29899,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -29961,7 +30124,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -30129,7 +30293,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -30290,7 +30455,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -30450,7 +30616,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -30611,7 +30778,8 @@
         "expectedOutput": "\n  Detailed budget breakdown.\n  Cost estimates for each category.\n  Contingency allocations.\n  Total budget summary.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "prepareEventBudgetTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -30794,7 +30962,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "agentInstance": {
@@ -30983,7 +31152,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -31164,7 +31334,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "agentInstance": {
@@ -31353,7 +31524,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -31534,7 +31706,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -31723,7 +31896,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -32008,7 +32182,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -32201,7 +32376,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -32387,7 +32563,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -32568,7 +32745,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -32749,7 +32927,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -32946,7 +33125,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -33135,7 +33315,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -33317,7 +33498,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -33498,7 +33680,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -33680,7 +33863,8 @@
         "inputs": {},
         "endTime": "[REDACTED]",
         "startTime": "[REDACTED]",
-        "allowParallelExecution": true
+        "allowParallelExecution": true,
+        "referenceId": "executeMarketingCampaignTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -33873,7 +34057,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -34063,7 +34248,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -34246,7 +34432,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -34427,7 +34614,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -34608,7 +34796,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -34813,7 +35002,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -35006,7 +35196,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -35197,7 +35388,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -35377,7 +35569,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -35558,7 +35751,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -35739,7 +35933,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -35952,7 +36147,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -36142,7 +36338,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -36325,7 +36522,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -36506,7 +36704,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -36687,7 +36886,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -36908,7 +37108,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -37101,7 +37302,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -37292,7 +37494,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -37472,7 +37675,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -37653,7 +37857,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -37834,7 +38039,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -38063,7 +38269,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -38252,7 +38459,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -38434,7 +38642,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -38615,7 +38824,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -38797,7 +39007,8 @@
         "expectedOutput": "\n  Detailed menu.\nVendor name and contract details.\nTotal cost estimate.\nNotes on special arrangements for individual guests.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "createCateringPlanTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -38990,7 +39201,8 @@
         "expectedOutput": "\n  Venue setup schedule and checklist.\n  Any notes on special arrangements or last-minute details.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "agentInstance": {
@@ -39179,7 +39391,8 @@
         "expectedOutput": "\n  Venue setup schedule and checklist.\n  Any notes on special arrangements or last-minute details.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -39360,7 +39573,8 @@
         "expectedOutput": "\n  Venue setup schedule and checklist.\n  Any notes on special arrangements or last-minute details.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -39613,7 +39827,8 @@
         "expectedOutput": "\n  Venue setup schedule and checklist.\n  Any notes on special arrangements or last-minute details.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -39802,7 +40017,8 @@
         "expectedOutput": "\n  Venue setup schedule and checklist.\n  Any notes on special arrangements or last-minute details.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -39984,7 +40200,8 @@
         "expectedOutput": "\n  Venue setup schedule and checklist.\n  Any notes on special arrangements or last-minute details.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -40165,7 +40382,8 @@
         "expectedOutput": "\n  Venue setup schedule and checklist.\n  Any notes on special arrangements or last-minute details.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -40347,7 +40565,8 @@
         "expectedOutput": "\n  Venue setup schedule and checklist.\n  Any notes on special arrangements or last-minute details.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "coordinateVenueSetupTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -40530,7 +40749,8 @@
         "expectedOutput": "\n  Inspection report.\n  Any notes on final adjustments or feedback.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "agentInstance": {
@@ -40699,7 +40919,8 @@
         "expectedOutput": "\n  Inspection report.\n  Any notes on final adjustments or feedback.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -40860,7 +41081,8 @@
         "expectedOutput": "\n  Inspection report.\n  Any notes on final adjustments or feedback.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -41093,7 +41315,8 @@
         "expectedOutput": "\n  Inspection report.\n  Any notes on final adjustments or feedback.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -41262,7 +41485,8 @@
         "expectedOutput": "\n  Inspection report.\n  Any notes on final adjustments or feedback.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -41424,7 +41648,8 @@
         "expectedOutput": "\n  Inspection report.\n  Any notes on final adjustments or feedback.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -41585,7 +41810,8 @@
         "expectedOutput": "\n  Inspection report.\n  Any notes on final adjustments or feedback.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "id": "[REDACTED]",
@@ -41747,7 +41973,8 @@
         "expectedOutput": "\n  Inspection report.\n  Any notes on final adjustments or feedback.\n  ",
         "inputs": {},
         "endTime": "[REDACTED]",
-        "startTime": "[REDACTED]"
+        "startTime": "[REDACTED]",
+        "referenceId": "finalizeInspectionAndApprovalTask"
       },
       "agent": {
         "id": "[REDACTED]",

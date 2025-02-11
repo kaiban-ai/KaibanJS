@@ -740,16 +740,6 @@ const createTeamStore = (initialState = {}) => {
               const { agentInstance } = agent;
               let cleanedAgentInstance = agentInstance;
 
-              // if (agentInstance) {
-              //   const {
-              //     interactionsHistory: _interactionsHistory,
-              //     lastFeedbackMessage: _lastFeedbackMessage,
-              //     currentIterations: _currentIterations,
-              //     ..._cleanedAgentInstance
-              //   } = agentInstance;
-              //   cleanedAgentInstance = _cleanedAgentInstance;
-              // }
-
               return {
                 ...agent,
                 id: '[REDACTED]', // Clean sensitive ID at the root level
@@ -778,7 +768,11 @@ const createTeamStore = (initialState = {}) => {
 
             // Function to clean individual task data
             const cleanTask = (task) => {
-              const { allowParallelExecution = false, ...rest } = task;
+              const {
+                allowParallelExecution = false,
+                referenceId,
+                ...rest
+              } = task;
               const cleanedTask = {
                 ...rest,
                 id: '[REDACTED]', // Clean sensitive ID
@@ -796,6 +790,10 @@ const createTeamStore = (initialState = {}) => {
 
               if (allowParallelExecution) {
                 cleanedTask.allowParallelExecution = allowParallelExecution;
+              }
+
+              if (referenceId) {
+                cleanedTask.referenceId = referenceId;
               }
 
               return cleanedTask;

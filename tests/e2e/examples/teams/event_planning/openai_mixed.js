@@ -49,7 +49,7 @@ const marketingAgent = new Agent({
 
 // Define tasks with mixed parallel/non-parallel execution
 const selectEventDateTask = new Task({
-  id: 'selectEventDateTask',
+  referenceId: 'selectEventDateTask',
   name: 'Select Event Date',
   description: `Evaluates possible event dates based on key stakeholder availability, venue schedules, and other constraints like holidays`,
   expectedOutput: `Selected event date. 
@@ -60,7 +60,7 @@ const selectEventDateTask = new Task({
 
 // Non-parallel task
 const bookVenueTask = new Task({
-  id: 'bookVenueTask',
+  referenceId: 'bookVenueTask',
   name: 'Book Venue',
   description: `Contact the venue, confirms availability for the selected date, and handles booking formalities`,
   expectedOutput: `
@@ -75,7 +75,7 @@ const bookVenueTask = new Task({
 
 // Non-parallel task
 const prepareEventBudgetTask = new Task({
-  id: 'prepareEventBudgetTask',
+  referenceId: 'prepareEventBudgetTask',
   name: 'Prepare Event Budget',
   description: `Create a detailed budget plan for the event, including venue costs, catering, marketing, and contingencies`,
   expectedOutput: `
@@ -90,7 +90,7 @@ const prepareEventBudgetTask = new Task({
 
 // Parallel task
 const finalizeGuestListTask = new Task({
-  id: 'finalizeGuestListTask',
+  referenceId: 'finalizeGuestListTask',
   name: 'Finalize Guest List',
   description: `Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts`,
   expectedOutput: `
@@ -105,7 +105,7 @@ Special dietary or accessibility requirements.
 
 // Non-parallel task
 const createCateringPlanTask = new Task({
-  id: 'createCateringPlanTask',
+  referenceId: 'createCateringPlanTask',
   name: 'Create Catering Plan',
   description: `Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.`,
   expectedOutput: `
@@ -120,7 +120,7 @@ Notes on special arrangements for individual guests.
 
 // Parallel task
 const setupMarketingCampaignTask = new Task({
-  id: 'setupMarketingCampaignTask',
+  referenceId: 'setupMarketingCampaignTask',
   name: 'Setup Marketing Campaign',
   description: `Develop a marketing plan to promote the event, including social media, email, and PR strategies.`,
   expectedOutput: `
@@ -133,7 +133,7 @@ const setupMarketingCampaignTask = new Task({
 
 // Non-parallel task
 const coordinateVenueSetupTask = new Task({
-  id: 'coordinateVenueSetupTask',
+  referenceId: 'coordinateVenueSetupTask',
   name: 'Coordinate Venue Setup',
   description: `Coordinate with venue staff to ensure all necessary preparations are made for the event.`,
   expectedOutput: `
@@ -146,7 +146,7 @@ const coordinateVenueSetupTask = new Task({
 
 // Parallel task
 const executeMarketingCampaignTask = new Task({
-  id: 'executeMarketingCampaignTask',
+  referenceId: 'executeMarketingCampaignTask',
   name: 'Execute Marketing Campaign',
   description: `Execute the marketing plan, including social media, email, and PR strategies.`,
   expectedOutput: `
@@ -160,7 +160,7 @@ const executeMarketingCampaignTask = new Task({
 
 // Non-parallel task
 const finalizeInspectionAndApprovalTask = new Task({
-  id: 'finalizeInspectionAndApprovalTask',
+  referenceId: 'finalizeInspectionAndApprovalTask',
   name: 'Finalize Inspection and Approval',
   description: `Finalize inspection and approval of the event setup.`,
   expectedOutput: `

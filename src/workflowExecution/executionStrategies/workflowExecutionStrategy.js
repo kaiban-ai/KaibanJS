@@ -38,11 +38,8 @@ class WorkflowExecutionStrategy {
     const shouldClone = this._isTaskAgentBusy(task, teamStoreState.tasks);
 
     const agent = shouldClone ? cloneAgent(task.agent) : task.agent;
-
     const context = this.getContextForTask(teamStoreState, task);
 
-    // teamStoreState.updateExecutingTasks({ toAdd: [task.id] });
-    // teamStoreState.updatePendingTasks({ toRemove: [task.id] });
     return await teamStoreState.workOnTask(agent, task, context);
   }
 

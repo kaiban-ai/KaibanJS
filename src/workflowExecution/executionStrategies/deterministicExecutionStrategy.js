@@ -20,7 +20,7 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
     if (!task.dependencies || task.dependencies.length === 0) {
       return [];
     }
-    return allTasks.filter((t) => task.dependencies.includes(t.id));
+    return allTasks.filter((t) => task.dependencies.includes(t.referenceId));
   }
 
   /**
@@ -31,7 +31,7 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
    */
   _getTasksDependingOn(task, allTasks) {
     return allTasks.filter(
-      (t) => t.dependencies && t.dependencies.includes(task.id)
+      (t) => t.dependencies && t.dependencies.includes(task.referenceId)
     );
   }
 
@@ -52,7 +52,7 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
         !task.dependencies ||
         task.dependencies.length === 0 ||
         task.dependencies.every((depId) => {
-          const depTask = tasks.find((t) => t.id === depId);
+          const depTask = tasks.find((t) => t.referenceId === depId);
           return depTask && depTask.status === TASK_STATUS_enum.DONE;
         });
 

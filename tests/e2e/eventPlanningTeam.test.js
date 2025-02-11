@@ -33,7 +33,7 @@ const validateTaskExecution = (workflowLogs, tasks, taskIdsToDescriptions) => {
   const taskCompletionOrder = taskStatusLogs
     .filter((log) => log.taskStatus === 'DONE')
     .map((log, index) => ({
-      id: log.task.id,
+      referenceId: log.task.referenceId,
       description: log.task.description,
       logIndex: index,
     }));
@@ -183,17 +183,20 @@ describe('Execution Strategies Integration Tests', () => {
       // Verify workflow completed successfully
       expect(cleanedState.teamWorkflowStatus).toBe('FINISHED');
 
-      // create mapping between task ids and task descriptions
-      const taskIdToDescription = sequentialTeam.tasks.reduce((acc, task) => {
-        acc[task.id] = task.description;
-        return acc;
-      }, {});
+      // create mapping between task referenceIds and task descriptions
+      const taskRefIdToDescription = sequentialTeam.tasks.reduce(
+        (acc, task) => {
+          acc[task.referenceId] = task.description;
+          return acc;
+        },
+        {}
+      );
 
       // Validate task execution order and dependencies
       validateTaskExecution(
         cleanedState.workflowLogs,
         sequentialTeam.tasks,
-        taskIdToDescription
+        taskRefIdToDescription
       );
 
       // Verify maximum concurrent tasks is 1 for sequential execution
@@ -264,9 +267,9 @@ describe('Execution Strategies Integration Tests', () => {
       // Verify workflow completed successfully
       expect(cleanedState.teamWorkflowStatus).toBe('FINISHED');
 
-      // create mapping between task ids and task descriptions
-      const taskIdToDescription = parallelTeam.tasks.reduce((acc, task) => {
-        acc[task.id] = task.description;
+      // create mapping between task referenceIds and task descriptions
+      const taskRefIdToDescription = parallelTeam.tasks.reduce((acc, task) => {
+        acc[task.referenceId] = task.description;
         return acc;
       }, {});
 
@@ -274,7 +277,7 @@ describe('Execution Strategies Integration Tests', () => {
       validateTaskExecution(
         cleanedState.workflowLogs,
         parallelTeam.tasks,
-        taskIdToDescription
+        taskRefIdToDescription
       );
 
       // Verify parallel execution occurred
@@ -288,25 +291,27 @@ describe('Execution Strategies Integration Tests', () => {
         (log) =>
           log.logType === 'TaskStatusUpdate' &&
           log.taskStatus === 'DOING' &&
-          log.task.description === taskIdToDescription['bookVenueTask']
+          log.task.description === taskRefIdToDescription['bookVenueTask']
       );
       const bookVenueEndIndex = cleanedState.workflowLogs.findIndex(
         (log) =>
           log.logType === 'TaskStatusUpdate' &&
           log.taskStatus === 'DONE' &&
-          log.task.description === taskIdToDescription['bookVenueTask']
+          log.task.description === taskRefIdToDescription['bookVenueTask']
       );
       const finalizeGuestListStartIndex = cleanedState.workflowLogs.findIndex(
         (log) =>
           log.logType === 'TaskStatusUpdate' &&
           log.taskStatus === 'DOING' &&
-          log.task.description === taskIdToDescription['finalizeGuestListTask']
+          log.task.description ===
+            taskRefIdToDescription['finalizeGuestListTask']
       );
       const finalizeGuestListEndIndex = cleanedState.workflowLogs.findIndex(
         (log) =>
           log.logType === 'TaskStatusUpdate' &&
           log.taskStatus === 'DONE' &&
-          log.task.description === taskIdToDescription['finalizeGuestListTask']
+          log.task.description ===
+            taskRefIdToDescription['finalizeGuestListTask']
       );
 
       // Verify tasks started within a small number of log entries of each other
@@ -367,9 +372,9 @@ describe('Execution Strategies Integration Tests', () => {
       // Verify workflow completed successfully
       expect(cleanedState.teamWorkflowStatus).toBe('FINISHED');
 
-      // create mapping between task ids and task descriptions
-      const taskIdToDescription = mixedTeam.tasks.reduce((acc, task) => {
-        acc[task.id] = task.description;
+      // create mapping between task referenceIds and task descriptions
+      const taskRefIdToDescription = mixedTeam.tasks.reduce((acc, task) => {
+        acc[task.referenceId] = task.description;
         return acc;
       }, {});
 
@@ -377,7 +382,7 @@ describe('Execution Strategies Integration Tests', () => {
       validateTaskExecution(
         cleanedState.workflowLogs,
         mixedTeam.tasks,
-        taskIdToDescription
+        taskRefIdToDescription
       );
 
       // Verify mixed execution pattern
@@ -417,25 +422,27 @@ describe('Execution Strategies Integration Tests', () => {
         (log) =>
           log.logType === 'TaskStatusUpdate' &&
           log.taskStatus === 'DOING' &&
-          log.task.description === taskIdToDescription['bookVenueTask']
+          log.task.description === taskRefIdToDescription['bookVenueTask']
       );
       const bookVenueEndIndex = cleanedState.workflowLogs.findIndex(
         (log) =>
           log.logType === 'TaskStatusUpdate' &&
           log.taskStatus === 'DONE' &&
-          log.task.description === taskIdToDescription['bookVenueTask']
+          log.task.description === taskRefIdToDescription['bookVenueTask']
       );
       const finalizeGuestListStartIndex = cleanedState.workflowLogs.findIndex(
         (log) =>
           log.logType === 'TaskStatusUpdate' &&
           log.taskStatus === 'DOING' &&
-          log.task.description === taskIdToDescription['finalizeGuestListTask']
+          log.task.description ===
+            taskRefIdToDescription['finalizeGuestListTask']
       );
       const finalizeGuestListEndIndex = cleanedState.workflowLogs.findIndex(
         (log) =>
           log.logType === 'TaskStatusUpdate' &&
           log.taskStatus === 'DONE' &&
-          log.task.description === taskIdToDescription['finalizeGuestListTask']
+          log.task.description ===
+            taskRefIdToDescription['finalizeGuestListTask']
       );
 
       expect(bookVenueStartIndex).toBeLessThan(finalizeGuestListEndIndex);
@@ -446,7 +453,8 @@ describe('Execution Strategies Integration Tests', () => {
         (log) =>
           log.logType === 'TaskStatusUpdate' &&
           log.taskStatus === 'DOING' &&
-          log.task.description === taskIdToDescription['prepareEventBudgetTask']
+          log.task.description ===
+            taskRefIdToDescription['prepareEventBudgetTask']
       );
       expect(prepareEventBudgetStartIndex).toBeGreaterThan(bookVenueEndIndex);
 
@@ -497,12 +505,14 @@ describe('Execution Strategies Integration Tests', () => {
         const unsubscribe = store.subscribe(
           (state) => state.tasks,
           (tasks) => {
-            const bookVenueTask = tasks.find((t) => t.id === 'bookVenueTask');
+            const bookVenueTask = tasks.find(
+              (t) => t.referenceId === 'bookVenueTask'
+            );
             const finalizeGuestListTask = tasks.find(
-              (t) => t.id === 'finalizeGuestListTask'
+              (t) => t.referenceId === 'finalizeGuestListTask'
             );
             const selectEventDateTask = tasks.find(
-              (t) => t.id === 'selectEventDateTask'
+              (t) => t.referenceId === 'selectEventDateTask'
             );
 
             if (
@@ -524,13 +534,13 @@ describe('Execution Strategies Integration Tests', () => {
       // 1.2 Check task statuses
       const tasksAfterPause = state.tasks;
       const bookVenueTask = tasksAfterPause.find(
-        (t) => t.id === 'bookVenueTask'
+        (t) => t.referenceId === 'bookVenueTask'
       );
       const finalizeGuestListTask = tasksAfterPause.find(
-        (t) => t.id === 'finalizeGuestListTask'
+        (t) => t.referenceId === 'finalizeGuestListTask'
       );
       const selectEventDateTask = tasksAfterPause.find(
-        (t) => t.id === 'selectEventDateTask'
+        (t) => t.referenceId === 'selectEventDateTask'
       );
       const otherTasks = tasksAfterPause.filter(
         (t) =>
@@ -538,7 +548,7 @@ describe('Execution Strategies Integration Tests', () => {
             'bookVenueTask',
             'finalizeGuestListTask',
             'selectEventDateTask',
-          ].includes(t.id)
+          ].includes(t.referenceId)
       );
 
       expect(bookVenueTask.status).toBe('PAUSED');
@@ -567,10 +577,10 @@ describe('Execution Strategies Integration Tests', () => {
       // 1.6 Check previously paused tasks are now DOING
       const tasksAfterResume = state.tasks;
       const bookVenueTaskAfterResume = tasksAfterResume.find(
-        (t) => t.id === 'bookVenueTask'
+        (t) => t.referenceId === 'bookVenueTask'
       );
       const finalizeGuestListTaskAfterResume = tasksAfterResume.find(
-        (t) => t.id === 'finalizeGuestListTask'
+        (t) => t.referenceId === 'finalizeGuestListTask'
       );
 
       expect(bookVenueTaskAfterResume.status).toBe('DOING');
@@ -585,7 +595,7 @@ describe('Execution Strategies Integration Tests', () => {
         .filter(
           (log) =>
             log.logType === 'TaskStatusUpdate' &&
-            log.task.id === 'bookVenueTask'
+            log.task.referenceId === 'bookVenueTask'
         )
         .map((log) => log.taskStatus);
 
@@ -593,7 +603,7 @@ describe('Execution Strategies Integration Tests', () => {
         .filter(
           (log) =>
             log.logType === 'TaskStatusUpdate' &&
-            log.task.id === 'finalizeGuestListTask'
+            log.task.referenceId === 'finalizeGuestListTask'
         )
         .map((log) => log.taskStatus);
 
@@ -617,8 +627,8 @@ describe('Execution Strategies Integration Tests', () => {
           .findIndex(
             (log) =>
               log.logType === 'TaskStatusUpdate' &&
-              (log.task.id === 'bookVenueTask' ||
-                log.task.id === 'finalizeGuestListTask') &&
+              (log.task.referenceId === 'bookVenueTask' ||
+                log.task.referenceId === 'finalizeGuestListTask') &&
               log.taskStatus === 'DOING'
           ) +
         lastLogIndexBeforeResume +
@@ -705,8 +715,8 @@ describe('Execution Strategies Integration Tests', () => {
       // Start workflow
       team.start();
 
-      const taskIdToDescription = mixedTeam.tasks.reduce((acc, task) => {
-        acc[task.id] = task.description;
+      const taskRefIdToDescription = mixedTeam.tasks.reduce((acc, task) => {
+        acc[task.referenceId] = task.description;
         return acc;
       }, {});
 
@@ -720,16 +730,16 @@ describe('Execution Strategies Integration Tests', () => {
                 log.logType === 'TaskStatusUpdate' &&
                 log.taskStatus === 'DONE' &&
                 log.task.description ===
-                  taskIdToDescription['selectEventDateTask']
+                  taskRefIdToDescription['selectEventDateTask']
             );
             const parallelTasksStarted = logs.some(
               (log) =>
                 log.logType === 'AgentStatusUpdate' &&
                 log.agentStatus === 'THINKING' &&
                 (log.task.description ===
-                  taskIdToDescription['bookVenueTask'] ||
+                  taskRefIdToDescription['bookVenueTask'] ||
                   log.task.description ===
-                    taskIdToDescription['finalizeGuestListTask'])
+                    taskRefIdToDescription['finalizeGuestListTask'])
             );
             if (selectEventDateDone && parallelTasksStarted) {
               unsubscribe();

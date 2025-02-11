@@ -110,6 +110,7 @@ class Task {
     externalValidationRequired = false,
     outputSchema = null,
     allowParallelExecution = false,
+    referenceId = undefined,
   }) {
     this.id = id;
     this.title = title; // Title is now optional with a default empty string
@@ -127,6 +128,7 @@ class Task {
     this.outputSchema = outputSchema; // Zod Schema
     this.expectedOutput = expectedOutput;
     this.allowParallelExecution = allowParallelExecution;
+    this.referenceId = referenceId;
   }
 
   setStore(store) {
