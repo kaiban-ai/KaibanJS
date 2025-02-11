@@ -459,11 +459,304 @@ describe('Execution Strategies Integration Tests', () => {
     });
   });
 
-  describe.skip('Pause-Resume', () => {
-    // TODO: Implement pause-resume tests
+  describe('Pause-Resume', () => {
+    let mixedTeam;
+    let mixedTeamRequests;
+    beforeAll(() => {
+      mixedTeam = require('./examples/teams/event_planning/openai_mixed');
+      mixedTeamRequests = require('./examples/teams/event_planning/openai_mixed.requests.json');
+
+      //   record({
+      //   url: '*',
+      //   method: '*',
+      //   body: '*', // Record any POST request to this URL
+      // });
+    });
+
+    beforeEach(() => {
+      if (withMockedApis) {
+        mock(mixedTeamRequests, { delay: 100 });
+      }
+    });
+
+    afterEach(() => {
+      if (withMockedApis) {
+        restoreAll();
+      }
+    });
+
+    it('should correctly pause and resume parallel tasks', async () => {
+      const team = mixedTeam.team;
+      const store = team.getStore();
+
+      // Start workflow
+      const workflowPromise = team.start();
+
+      // Wait for parallel tasks (bookVenue and finalizeGuestList) to start
+      await new Promise((resolve) => {
+        const unsubscribe = store.subscribe(
+          (state) => state.tasks,
+          (tasks) => {
+            const bookVenueTask = tasks.find((t) => t.id === 'bookVenueTask');
+            const finalizeGuestListTask = tasks.find(
+              (t) => t.id === 'finalizeGuestListTask'
+            );
+            const selectEventDateTask = tasks.find(
+              (t) => t.id === 'selectEventDateTask'
+            );
+
+            if (
+              bookVenueTask?.status === 'DOING' &&
+              finalizeGuestListTask?.status === 'DOING' &&
+              selectEventDateTask?.status === 'DONE'
+            ) {
+              unsubscribe();
+              resolve();
+            }
+          }
+        );
+      });
+
+      // Pause workflow
+      await team.pause();
+      let state = store.getState();
+
+      // 1.2 Check task statuses
+      const tasksAfterPause = state.tasks;
+      const bookVenueTask = tasksAfterPause.find(
+        (t) => t.id === 'bookVenueTask'
+      );
+      const finalizeGuestListTask = tasksAfterPause.find(
+        (t) => t.id === 'finalizeGuestListTask'
+      );
+      const selectEventDateTask = tasksAfterPause.find(
+        (t) => t.id === 'selectEventDateTask'
+      );
+      const otherTasks = tasksAfterPause.filter(
+        (t) =>
+          ![
+            'bookVenueTask',
+            'finalizeGuestListTask',
+            'selectEventDateTask',
+          ].includes(t.id)
+      );
+
+      expect(bookVenueTask.status).toBe('PAUSED');
+      expect(finalizeGuestListTask.status).toBe('PAUSED');
+      expect(selectEventDateTask.status).toBe('DONE');
+      expect(otherTasks.every((t) => t.status === 'TODO')).toBe(true);
+
+      // 1.3 Check workflow status
+      expect(state.teamWorkflowStatus).toBe('PAUSED');
+
+      // Store the last task status update log index before resuming
+      const lastLogIndexBeforeResume = state.workflowLogs.reduce(
+        (maxIndex, log, index) => {
+          return log.logType === 'TaskStatusUpdate' ? index : maxIndex;
+        },
+        -1
+      );
+
+      // 1.4 Resume execution
+      await team.resume();
+      state = store.getState();
+
+      // 1.5 Check workflow status is RUNNING
+      expect(state.teamWorkflowStatus).toBe('RUNNING');
+
+      // 1.6 Check previously paused tasks are now DOING
+      const tasksAfterResume = state.tasks;
+      const bookVenueTaskAfterResume = tasksAfterResume.find(
+        (t) => t.id === 'bookVenueTask'
+      );
+      const finalizeGuestListTaskAfterResume = tasksAfterResume.find(
+        (t) => t.id === 'finalizeGuestListTask'
+      );
+
+      expect(bookVenueTaskAfterResume.status).toBe('DOING');
+      expect(finalizeGuestListTaskAfterResume.status).toBe('DOING');
+
+      // 1.7 Wait for workflow to finish
+      await workflowPromise;
+      state = store.getState();
+
+      // 1.8 Check status sequence for paused tasks
+      const bookVenueStatusUpdates = state.workflowLogs
+        .filter(
+          (log) =>
+            log.logType === 'TaskStatusUpdate' &&
+            log.task.id === 'bookVenueTask'
+        )
+        .map((log) => log.taskStatus);
+
+      const finalizeGuestListStatusUpdates = state.workflowLogs
+        .filter(
+          (log) =>
+            log.logType === 'TaskStatusUpdate' &&
+            log.task.id === 'finalizeGuestListTask'
+        )
+        .map((log) => log.taskStatus);
+
+      expect(bookVenueStatusUpdates).toEqual([
+        'DOING',
+        'PAUSED',
+        'DOING',
+        'DONE',
+      ]);
+      expect(finalizeGuestListStatusUpdates).toEqual([
+        'DOING',
+        'PAUSED',
+        'DOING',
+        'DONE',
+      ]);
+
+      // 1.9 Check no task status updates during pause
+      const changeToDoingAfterPause =
+        state.workflowLogs
+          .slice(lastLogIndexBeforeResume + 1)
+          .findIndex(
+            (log) =>
+              log.logType === 'TaskStatusUpdate' &&
+              (log.task.id === 'bookVenueTask' ||
+                log.task.id === 'finalizeGuestListTask') &&
+              log.taskStatus === 'DOING'
+          ) +
+        lastLogIndexBeforeResume +
+        1;
+
+      expect(changeToDoingAfterPause).toBeGreaterThan(lastLogIndexBeforeResume);
+
+      // there should be no task update status logs between lastLogIndexBeforeResume and changeToDoingAfterPause
+      const logsBetweenPauseAndResume = state.workflowLogs
+        .slice(lastLogIndexBeforeResume + 1, changeToDoingAfterPause)
+        .filter((log) => log.logType === 'TaskStatusUpdate');
+
+      expect(logsBetweenPauseAndResume.length).toBe(0);
+
+      // 1.10 Check final workflow status
+      expect(state.tasks.every((task) => task.status === 'DONE')).toBe(true);
+      expect(state.teamWorkflowStatus).toBe('FINISHED');
+    });
   });
 
-  describe.skip('Stop', () => {
-    // TODO: Implement stop tests
+  describe('Stop', () => {
+    let mixedTeam;
+    let mixedTeamRequests;
+
+    beforeEach(() => {
+      mixedTeam = require('./examples/teams/event_planning/openai_mixed');
+      mixedTeamRequests = require('./examples/teams/event_planning/openai_mixed.requests.json');
+
+      if (withMockedApis) {
+        mock(mixedTeamRequests, { delay: 100 });
+      }
+    });
+
+    afterEach(() => {
+      if (withMockedApis) {
+        restoreAll();
+      }
+    });
+
+    it('should stop workflow and reset task states', async () => {
+      const team = mixedTeam.team;
+      const store = team.getStore();
+
+      // Start workflow
+      team.start();
+
+      // Wait for first task to start
+      await new Promise((resolve) => {
+        const unsubscribe = store.subscribe(
+          (state) => state.workflowLogs,
+          (logs) => {
+            const hasStarted = logs.some(
+              (log) =>
+                log.logType === 'AgentStatusUpdate' &&
+                log.agentStatus === 'THINKING'
+            );
+            if (hasStarted) {
+              unsubscribe();
+              resolve();
+            }
+          }
+        );
+      });
+
+      // Stop workflow
+      await team.stop();
+      const state = store.getState();
+
+      // Verify stop state
+      expect(state.teamWorkflowStatus).toBe('STOPPED');
+      expect(state.tasks.every((task) => task.status === 'TODO')).toBe(true);
+
+      // Verify workflow status transitions in logs
+      const statusTransitions = state.workflowLogs
+        .filter((log) => log.logType === 'WorkflowStatusUpdate')
+        .map((log) => log.workflowStatus);
+      expect(statusTransitions).toEqual(['RUNNING', 'STOPPING', 'STOPPED']);
+    });
+
+    it('should stop workflow during parallel task execution', async () => {
+      const team = mixedTeam.team;
+      const store = team.getStore();
+
+      // Start workflow
+      team.start();
+
+      const taskIdToDescription = mixedTeam.tasks.reduce((acc, task) => {
+        acc[task.id] = task.description;
+        return acc;
+      }, {});
+
+      // Wait for parallel tasks to start
+      await new Promise((resolve) => {
+        const unsubscribe = store.subscribe(
+          (state) => state.workflowLogs,
+          (logs) => {
+            const selectEventDateDone = logs.some(
+              (log) =>
+                log.logType === 'TaskStatusUpdate' &&
+                log.taskStatus === 'DONE' &&
+                log.task.description ===
+                  taskIdToDescription['selectEventDateTask']
+            );
+            const parallelTasksStarted = logs.some(
+              (log) =>
+                log.logType === 'AgentStatusUpdate' &&
+                log.agentStatus === 'THINKING' &&
+                (log.task.description ===
+                  taskIdToDescription['bookVenueTask'] ||
+                  log.task.description ===
+                    taskIdToDescription['finalizeGuestListTask'])
+            );
+            if (selectEventDateDone && parallelTasksStarted) {
+              unsubscribe();
+              resolve();
+            }
+          }
+        );
+      });
+
+      // Stop workflow
+      await team.stop();
+      const state = store.getState();
+
+      // Verify stop state
+      expect(state.teamWorkflowStatus).toBe('STOPPED');
+
+      // Check all tasks are in TODO status except the first one
+      expect(state.tasks[0].status).toBe('DONE');
+      state.tasks.slice(1).forEach((task) => {
+        expect(task.status).toBe('TODO');
+      });
+
+      // Verify workflow status transitions in logs
+      const statusTransitions = state.workflowLogs
+        .filter((log) => log.logType === 'WorkflowStatusUpdate')
+        .map((log) => log.workflowStatus);
+      expect(statusTransitions).toEqual(['RUNNING', 'STOPPING', 'STOPPED']);
+    });
   });
 });

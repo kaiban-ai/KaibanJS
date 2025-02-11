@@ -124,7 +124,7 @@ describe('Trip Planning Team Workflows', () => {
       // saveRecords();
     });
   });
-  describe.skip('Pause and Resume', () => {
+  describe('Pause and Resume', () => {
     beforeEach(() => {
       if (withMockedApis) {
         mock(openAITeamRecordedRequests, { delay: 100 });
@@ -172,7 +172,6 @@ describe('Trip Planning Team Workflows', () => {
       // Verify pause state
       expect(state.teamWorkflowStatus).toBe('PAUSED');
       expect(state.tasks[0].status).toBe('PAUSED');
-      expect(state.taskQueue.isPaused).toBe(true);
 
       // Resume workflow
       await openAITeam.resume();
@@ -182,7 +181,6 @@ describe('Trip Planning Team Workflows', () => {
       // Verify resume state
       expect(state.teamWorkflowStatus).toBe('RUNNING');
       expect(state.tasks[0].status).toBe('DOING');
-      expect(state.taskQueue.isPaused).toBe(false);
 
       // Complete workflow
       await workflowPromise;
@@ -309,7 +307,6 @@ describe('Trip Planning Team Workflows', () => {
       // Verify pause state
       expect(state.teamWorkflowStatus).toBe('PAUSED');
       expect(state.tasks[1].status).toBe('PAUSED');
-      expect(state.taskQueue.isPaused).toBe(true);
 
       // Resume workflow
       await openAITeam.resume();
@@ -319,7 +316,6 @@ describe('Trip Planning Team Workflows', () => {
       // Verify resume state
       expect(state.teamWorkflowStatus).toBe('RUNNING');
       expect(state.tasks[1].status).toBe('DOING');
-      expect(state.taskQueue.isPaused).toBe(false);
 
       // Complete workflow
       await workflowPromise;
@@ -422,7 +418,6 @@ describe('Trip Planning Team Workflows', () => {
       // Verify pause state
       expect(state.teamWorkflowStatus).toBe('PAUSED');
       expect(state.tasks[2].status).toBe('PAUSED'); // planTask
-      expect(state.taskQueue.isPaused).toBe(true);
 
       // Resume workflow
       await openAITeam.resume();
@@ -432,7 +427,6 @@ describe('Trip Planning Team Workflows', () => {
       // Verify resume state
       expect(state.teamWorkflowStatus).toBe('RUNNING');
       expect(state.tasks[2].status).toBe('DOING');
-      expect(state.taskQueue.isPaused).toBe(false);
 
       // Complete workflow
       await workflowPromise;
@@ -541,7 +535,7 @@ describe('Trip Planning Team Workflows', () => {
     });
   });
 
-  describe.skip('Stop', () => {
+  describe('Stop', () => {
     beforeEach(() => {
       if (withMockedApis) {
         mock(openAITeamRecordedRequests, { delay: 100 });
@@ -596,12 +590,6 @@ describe('Trip Planning Team Workflows', () => {
       expect(lastLog.logType).toBe('WorkflowStatusUpdate');
       expect(lastLog.workflowStatus).toBe('STOPPED');
 
-      // check that the task queue is paused
-      expect(state.taskQueue.isPaused).toBe(true);
-
-      // check that the task queue is empty
-      expect(state.taskQueue.size).toBe(0);
-
       // check that the workflow is stopped
       expect(state.teamWorkflowStatus).toBe('STOPPED');
     });
@@ -646,15 +634,11 @@ describe('Trip Planning Team Workflows', () => {
       expect(statusTransitions).toEqual(['RUNNING', 'STOPPING', 'STOPPED']);
 
       // Check all tasks are reset to TODO
-      state.tasks.forEach((task) => {
+      // the first task is not reset because it is already done
+      expect(state.tasks[0].status).toBe('DONE');
+      state.tasks.slice(1).forEach((task) => {
         expect(task.status).toBe('TODO');
       });
-
-      // check that the task queue is paused
-      expect(state.taskQueue.isPaused).toBe(true);
-
-      // check that the task queue is empty
-      expect(state.taskQueue.size).toBe(0);
 
       // check that the workflow is stopped
       expect(state.teamWorkflowStatus).toBe('STOPPED');
@@ -700,16 +684,11 @@ describe('Trip Planning Team Workflows', () => {
         .map((log) => log.workflowStatus);
       expect(statusTransitions).toEqual(['RUNNING', 'STOPPING', 'STOPPED']);
 
-      // Check all tasks are reset to TODO
-      state.tasks.forEach((task) => {
-        expect(task.status).toBe('TODO');
+      // Check all tasks are in DONE status except the last one
+      state.tasks.slice(0, lastTaskIndex).forEach((task) => {
+        expect(task.status).toBe('DONE');
       });
-
-      // check that the task queue is paused
-      expect(state.taskQueue.isPaused).toBe(true);
-
-      // check that the task queue is empty
-      expect(state.taskQueue.size).toBe(0);
+      expect(state.tasks[lastTaskIndex].status).toBe('TODO');
 
       // check that the workflow is stopped
       expect(state.teamWorkflowStatus).toBe('STOPPED');

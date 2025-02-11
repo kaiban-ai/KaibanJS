@@ -340,7 +340,7 @@ export const useTaskStore = (set, get) => ({
 
     const taskLog = get().prepareNewLog({
       agent: task.agent,
-      task,
+      task: { ...task, status: TASK_STATUS_enum.PAUSED },
       logDescription: `Task paused: ${getTaskTitleForLogs(
         task
       )}, Reason: An external interruption occurred.`,
@@ -369,7 +369,7 @@ export const useTaskStore = (set, get) => ({
           ? {
               ...t,
               ...stats,
-              // status: TASK_STATUS_enum.PAUSED,
+              status: TASK_STATUS_enum.PAUSED,
               feedbackHistory: updatedFeedbackHistory,
             }
           : t

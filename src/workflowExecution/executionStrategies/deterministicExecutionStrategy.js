@@ -1,4 +1,4 @@
-import { TASK_STATUS_enum } from '../../utils/enums';
+import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from '../../utils/enums';
 import WorkflowExecutionStrategy from './workflowExecutionStrategy';
 
 /**
@@ -286,6 +286,15 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
           }
           break;
       }
+    }
+
+    const statesToAvoidExecution = [
+      WORKFLOW_STATUS_enum.STOPPED,
+      WORKFLOW_STATUS_enum.PAUSED,
+    ];
+
+    if (statesToAvoidExecution.includes(teamStoreState.teamWorkflowStatus)) {
+      return;
     }
 
     return this._putInDoingPossibleTasksToExecute(teamStoreState);
