@@ -161,8 +161,13 @@ class Team {
    * Starts the team's workflow.
    * This method initiates the process of agents working on tasks.
    *
-   * @param {Object} inputs - Optional inputs to override or supplement the initial inputs.
-   * @returns {void}
+   * @param {Object} inputs - Optional inputs that will be merged with the initial inputs provided during team creation.
+   *                         In case of conflicts, these inputs take precedence over the initial ones.
+   * @returns {Promise<Object>} A promise that resolves when the workflow completes or encounters a terminal state.
+   *                           The resolved value contains:
+   *                           - status: The final workflow status
+   *                           - result: The workflow result (if finished)
+   *                           - stats: Workflow execution statistics
    */
   async start(inputs = null) {
     return new Promise((resolve, reject) => {
