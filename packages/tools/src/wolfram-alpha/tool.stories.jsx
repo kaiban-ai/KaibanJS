@@ -1,5 +1,5 @@
 import { ToolPreviewer } from '../_utils/ToolPreviewer.jsx';
-import { WolframAlphaTool } from './index.ts';
+import { WolframAlphaTool } from './index.js';
 import { Agent, Task, Team } from '../../../../src/index';
 import React from 'react';
 import { AgentWithToolPreviewer } from '../_utils/AgentWithToolPreviewer.jsx';

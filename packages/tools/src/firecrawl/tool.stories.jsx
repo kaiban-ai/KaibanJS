@@ -1,6 +1,6 @@
 import { ToolPreviewer } from '../_utils/ToolPreviewer.jsx';
 import { AgentWithToolPreviewer } from '../_utils/AgentWithToolPreviewer.jsx';
-import { Firecrawl } from './index.ts';
+import { Firecrawl } from './index.js';
 import { Agent, Task, Team } from '../../../../src/index';
 import React from 'react';
 

@@ -3,7 +3,7 @@
 // Author: @darielnoel <github.com/darielnoel>
 // Definitions by: @alienkarma <github.com/alienkarma>
 
-import { StructuredTool } from 'langchain/tools';
+import { Tool } from 'langchain/tools';
 import type {
   AGENT_STATUS_enum,
   TASK_STATUS_enum,
@@ -112,9 +112,9 @@ export class Agent {
 
   /**
    * Returns the tools available to the agent.
-   * @returns {StructuredTool[]} The list of tools.
+   * @returns {Tool[]} The list of tools.
    */
-  get tools(): StructuredTool[];
+  get tools(): Tool[];
 
   /**
    * Returns the status of the agent.

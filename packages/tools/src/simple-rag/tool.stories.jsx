@@ -1,6 +1,6 @@
 import { ToolPreviewer } from '../_utils/ToolPreviewer.jsx';
 import { AgentWithToolPreviewer } from '../_utils/AgentWithToolPreviewer.jsx';
-import { SimpleRAG } from './index.ts';
+import { SimpleRAG } from './index.js';
 import { Agent, Task, Team } from '../../../../src/index';
 import React from 'react';
 

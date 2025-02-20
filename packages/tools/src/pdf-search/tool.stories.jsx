@@ -1,6 +1,6 @@
 import { ToolPreviewer } from '../_utils/ToolPreviewer.jsx';
 import { AgentWithToolPreviewer } from '../_utils/AgentWithToolPreviewer.jsx';
-import { PdfSearch } from './index.ts';
+import { PdfSearch } from './index.js';
 import { Agent, Task, Team } from '../../../../src/index';
 import React from 'react';
 
