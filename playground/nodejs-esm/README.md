@@ -27,11 +27,13 @@ nodejs-esm/
 ## Getting Started
 
 1. Install dependencies:
+
    ```bash
    npm install
    ```
 
 2. Configure your environment:
+
    - Copy `.env.example` to `.env` (if not already done)
    - Add your OpenAI API key to `.env`:
      ```
@@ -39,6 +41,7 @@ nodejs-esm/
      ```
 
 3. Run the examples:
+
    ```bash
    # Run ESM version
    npm start
@@ -50,11 +53,13 @@ nodejs-esm/
 ## Code Examples
 
 ### ESM Version (index.js)
+
 ```javascript
 import { Agent, Task, Team } from 'kaibanjs';
 ```
 
 ### CommonJS Version (index.cjs)
+
 ```javascript
 const { Agent, Task, Team } = require('kaibanjs');
 ```
@@ -63,4 +68,4 @@ const { Agent, Task, Team } = require('kaibanjs');
 
 - This example demonstrates that KaibanJS works in Node.js environments without requiring React as a dependency
 - The example uses zustand's core functionality without React-specific features
-- Both ESM and CommonJS versions implement the same functionality to showcase module system compatibility 
+- Both ESM and CommonJS versions implement the same functionality to showcase module system compatibility
