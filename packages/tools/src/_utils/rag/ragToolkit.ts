@@ -1,17 +1,43 @@
-// import { TextLoader } from "langchain/document_loaders/fs/text";
-// import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
-// import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/cheerio";
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { ChatOpenAI, OpenAIEmbeddings } from '@langchain/openai';
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { PromptTemplate } from '@langchain/core/prompts';
 import { createStuffDocumentsChain } from 'langchain/chains/combine_documents';
 import { StringOutputParser } from '@langchain/core/output_parsers';
-// import { BrowserPDFLoader } from "./utils/loaders/BrowserPDFLoader";
+import { BaseDocumentLoader } from '@langchain/core/document_loaders/base';
+import { Document } from 'langchain/document';
 import { TextInputLoader } from './loaders/textInputLoader';
 
-class RAGToolkit {
-  constructor(options = {}) {
+interface RAGToolkitOptions {
+  embeddings?: OpenAIEmbeddings;
+  vectorStore?: MemoryVectorStore;
+  llmInstance?: ChatOpenAI;
+  promptQuestionTemplate?: string;
+  chunkOptions?: {
+    chunkSize: number;
+    chunkOverlap: number;
+  };
+  env?: {
+    OPENAI_API_KEY: string;
+  };
+}
+
+interface DocumentSource {
+  source: string | File;
+  type: string;
+}
+
+type LoaderFunction = (source: string | File) => BaseDocumentLoader;
+
+export class RAGToolkit {
+  private embeddings: OpenAIEmbeddings;
+  private vectorStore: MemoryVectorStore;
+  private llmInstance: ChatOpenAI;
+  private promptQuestionTemplate: string;
+  private chunkOptions: { chunkSize: number; chunkOverlap: number };
+  private loaders: Record<string, LoaderFunction>;
+
+  constructor(options: RAGToolkitOptions = {}) {
     this.embeddings =
       options.embeddings ||
       new OpenAIEmbeddings({ apiKey: options?.env?.OPENAI_API_KEY });
@@ -38,24 +64,31 @@ class RAGToolkit {
     };
 
     this.loaders = {
-      string: (source) => new TextInputLoader(source),
+      string: (source: string | File) => new TextInputLoader(source as string),
     };
   }
 
-  registerLoader(type, loaderFunction) {
+  registerLoader(type: string, loaderFunction: LoaderFunction): void {
     if (this.loaders[type]) {
       throw new Error(`Loader type '${type}' is already registered.`);
     }
     this.loaders[type] = loaderFunction;
   }
 
-  async addDocuments(sources) {
+  async addDocuments(sources: DocumentSource[]): Promise<void> {
     const documents = await this.loadDocuments(sources);
     const chunks = await this.chunkDocuments(documents);
-    await this.vectorStore.addDocuments(chunks, this.embeddings);
+    if (this.vectorStore instanceof MemoryVectorStore) {
+      await this.vectorStore.addDocuments(chunks);
+    } else {
+      // Used for vector stores like Pinecone or Supabase
+      // Convert to vector store type
+      const vectorStore = this.vectorStore as any;
+      await vectorStore.addDocuments(chunks, this.embeddings);
+    }
   }
 
-  async loadDocuments(sources) {
+  async loadDocuments(sources: DocumentSource[]): Promise<Document[]> {
     const promises = sources.map(({ source, type }) => {
       const loaderFn = this.loaders[type];
       if (!loaderFn) {
@@ -67,17 +100,17 @@ class RAGToolkit {
     return results.flat();
   }
 
-  async chunkDocuments(documents) {
+  async chunkDocuments(documents: Document[]): Promise<Document[]> {
     const splitter = new RecursiveCharacterTextSplitter(this.chunkOptions);
     return splitter.splitDocuments(documents);
   }
 
-  async search(query) {
+  async search(query: string): Promise<Document[]> {
     const retriever = this.vectorStore.asRetriever();
     return retriever.invoke(query);
   }
 
-  async askQuestion(query) {
+  async askQuestion(query: string): Promise<string> {
     const retriever = this.vectorStore.asRetriever();
     const context = await retriever.invoke(query);
 
@@ -87,12 +120,10 @@ class RAGToolkit {
 
     const chain = await createStuffDocumentsChain({
       llm: this.llmInstance,
-      prompt: promptTemplate,
-      outputParser: new StringOutputParser(),
+      prompt: promptTemplate as any,
+      outputParser: new StringOutputParser() as any,
     });
 
     return chain.invoke({ question: query, context });
   }
 }
-
-export default RAGToolkit;
