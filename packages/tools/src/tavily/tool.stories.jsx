@@ -1,5 +1,5 @@
 import { ToolPreviewer } from '../_utils/ToolPreviewer.jsx';
-import { TavilySearchResults } from './index.ts';
+import { TavilySearchResults } from './index.js';
 import { Agent, Task, Team } from '../../../../src/index';
 import React from 'react';
 import { AgentWithToolPreviewer } from '../_utils/AgentWithToolPreviewer.jsx';

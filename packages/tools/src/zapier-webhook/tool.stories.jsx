@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { ToolPreviewer } from '../_utils/ToolPreviewer.jsx';
 import { AgentWithToolPreviewer } from '../_utils/AgentWithToolPreviewer.jsx';
-import { GithubIssues } from '../github-issues/index.ts';
-import { ZapierWebhook } from './index.ts';
+import { GithubIssues } from '../github-issues/index.js';
+import { ZapierWebhook } from './index.js';
 import { Agent, Task, Team } from '../../../../src/index';
 import React from 'react';
 

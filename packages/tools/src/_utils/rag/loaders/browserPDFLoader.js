@@ -1,46 +1,15 @@
 import { BaseDocumentLoader } from '@langchain/core/document_loaders/base';
 import { Document as BaseDocument } from 'langchain/document';
+// import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 
-interface PDFMetadata {
-  [key: string]: any;
-}
-
-interface PDFTextItem {
-  str?: string;
-  [key: string]: any;
-}
-
-interface PDFPage {
-  getTextContent(): Promise<{ items: PDFTextItem[] }>;
-}
-
-interface PDFDocument {
-  numPages: number;
-  getPage(pageNum: number): Promise<PDFPage>;
-}
-
-interface PDFDocumentProxy {
-  promise: Promise<PDFDocument>;
-}
-
-interface PDFLib {
-  getDocument(data: Uint8Array): PDFDocumentProxy;
-  GlobalWorkerOptions: {
-    workerSrc: string;
-  };
-}
-
-export class BrowserPDFLoader extends BaseDocumentLoader {
-  private file: string | File;
-  private metadata: PDFMetadata;
-
-  constructor(file: string | File, metadata: PDFMetadata = {}) {
+class BrowserPDFLoader extends BaseDocumentLoader {
+  constructor(file, metadata = {}) {
     super();
     this.file = file;
     this.metadata = metadata;
   }
 
-  async load(): Promise<BaseDocument[]> {
+  async load() {
     if (!this.file) {
       console.log('No file selected.');
       return [];
@@ -53,28 +22,26 @@ export class BrowserPDFLoader extends BaseDocumentLoader {
     }
 
     try {
-      const { getDocument, GlobalWorkerOptions } = (await import(
-        'pdfjs-dist'
-      )) as PDFLib;
+      const { getDocument, GlobalWorkerOptions } = await import('pdfjs-dist');
       GlobalWorkerOptions.workerSrc =
         'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.worker.min.mjs';
 
       const fileReader = new FileReader();
 
-      const fileReaderPromise = new Promise<Uint8Array>((resolve, reject) => {
+      const fileReaderPromise = new Promise((resolve, reject) => {
         fileReader.onload = () => {
-          resolve(new Uint8Array(fileReader.result as ArrayBuffer));
+          resolve(new Uint8Array(fileReader.result));
         };
         fileReader.onerror = (error) => {
           reject(error);
         };
       });
 
-      fileReader.readAsArrayBuffer(this.file as File);
+      fileReader.readAsArrayBuffer(this.file);
 
       const typedArray = await fileReaderPromise;
       const pdf = await getDocument(typedArray).promise;
-      const pagesContent: string[] = [];
+      const pagesContent = [];
 
       for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
         const page = await pdf.getPage(pageNum);
@@ -94,8 +61,11 @@ export class BrowserPDFLoader extends BaseDocumentLoader {
       );
 
       return documents;
-    } catch (_error) {
+    } catch {
+      // console.log('Error loading PDF:', error);
       throw new Error('Error loading PDF.');
     }
   }
 }
+
+export { BrowserPDFLoader };

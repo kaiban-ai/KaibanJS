@@ -5,7 +5,6 @@ import terser from '@rollup/plugin-terser';
 import json from '@rollup/plugin-json';
 import nodePolyfills from 'rollup-plugin-node-polyfills'; // Correct plugin name
 import replace from '@rollup/plugin-replace';
-import typescript from '@rollup/plugin-typescript';
 
 // Array of tool folder names
 const toolFolders = [
@@ -25,7 +24,7 @@ const toolFolders = [
 ]; // Add more folder names as needed
 
 const toolConfigs = toolFolders.map((tool) => {
-  const inputPath = `src/${tool}/index.ts`;
+  const inputPath = `src/${tool}/index.js`; // Adjusted for plain JavaScript
 
   return defineConfig({
     input: inputPath,
@@ -49,19 +48,9 @@ const toolConfigs = toolFolders.map((tool) => {
       'pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js',
     ],
     plugins: [
-      typescript({
-        tsconfig: './tsconfig.json',
-        declaration: true,
-        declarationDir: `dist/${tool}/`,
-        outDir: `./dist/${tool}`,
-        rootDir: `./src/${tool}/`,
-      }),
       nodeResolve({
         browser: true,
         preferBuiltins: false, // Use polyfills for Node built-in modules
-        extensions: ['.ts', '.js', '.json'],
-        moduleDirectories: ['node_modules', 'src'],
-        preserveSymlinks: true,
       }),
       commonjs(),
       json(),
@@ -81,7 +70,7 @@ const toolConfigs = toolFolders.map((tool) => {
 
 // Main index config
 const mainConfig = defineConfig({
-  input: 'src/index.ts',
+  input: 'src/index.js',
   output: [
     {
       file: 'dist/index.cjs.js',
@@ -102,12 +91,6 @@ const mainConfig = defineConfig({
     'pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js',
   ],
   plugins: [
-    typescript({
-      tsconfig: './tsconfig.json',
-      declaration: true,
-      declarationDir: `./dist/`,
-      rootDir: './src/',
-    }),
     nodeResolve({
       browser: true,
       preferBuiltins: false,
@@ -126,9 +109,8 @@ const mainConfig = defineConfig({
     }),
   ],
 });
-
 const ragToolkitConfig = defineConfig({
-  input: 'src/_utils/rag/ragToolkit.ts',
+  input: 'src/_utils/rag/ragToolkit.js',
   output: [
     {
       file: 'dist/rag-toolkit/index.cjs.js',
@@ -144,12 +126,6 @@ const ragToolkitConfig = defineConfig({
     },
   ],
   plugins: [
-    typescript({
-      tsconfig: './tsconfig.json',
-      declaration: true,
-      declarationDir: './dist/rag-toolkit/',
-      rootDir: './src/_utils/rag/',
-    }),
     nodeResolve({
       browser: true,
       preferBuiltins: false,
@@ -158,15 +134,6 @@ const ragToolkitConfig = defineConfig({
     json(),
     nodePolyfills(),
     terser(),
-    replace({
-      preventAssignment: true,
-      values: {
-        'node:fs/promises': 'fs/promises',
-        'Promise.withResolvers':
-          '(() => ({ promise: new Promise(() => {}), resolve: () => {}, reject: () => {} }))',
-      },
-    }),
   ],
 });
-
 export default [ragToolkitConfig, ...toolConfigs, mainConfig];
