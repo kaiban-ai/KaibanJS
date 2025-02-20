@@ -1,0 +1,17 @@
+{
+  "name": "nodejs-esm",
+  "version": "1.0.0",
+  "description": "Reproduction of ESM import issue with KaibanJS",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "start:cjs": "node index.cjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "kaibanjs": "^0.14.0",
+    "dotenv": "^16.4.5"
+  }
+} 
