@@ -4,7 +4,7 @@ import { TASK_STATUS_enum } from '../../utils/enums';
  * Abstract base class defining the workflow execution strategy interface
  */
 class WorkflowExecutionStrategy {
-  constructor() {
+  constructor(_teamStore) {
     if (this.constructor === WorkflowExecutionStrategy) {
       throw new Error(
         'Cannot instantiate abstract WorkflowExecutionStrategy directly'
@@ -20,14 +20,6 @@ class WorkflowExecutionStrategy {
         t.agent.id === currentTask.agent.id &&
         t.status === TASK_STATUS_enum.DOING
     );
-  }
-
-  /**
-   * Returns the concurrency for the task queue
-   * @returns {number} The concurrency for the task queue
-   */
-  getConcurrencyForTaskQueue() {
-    return 1;
   }
 
   /**

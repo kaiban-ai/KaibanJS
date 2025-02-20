@@ -11,7 +11,6 @@
  */
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
-import PQueue from 'p-queue';
 import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
 import { useAgentStore } from './agentStore';
 import { useTaskStore } from './taskStore';
@@ -29,8 +28,6 @@ import {
   interpolateTaskDescription,
 } from '../utils/tasks';
 import { initializeTelemetry } from '../utils/telemetry';
-import DeterministicExecutionStrategy from '../workflowExecution/executionStrategies/deterministicExecutionStrategy';
-import ManagerLLMStrategy from '../workflowExecution/executionStrategies/managerLLMExecutionStrategy';
 
 // Initialize telemetry with default values
 const td = initializeTelemetry();
@@ -115,36 +112,8 @@ const createTeamStore = (initialState = {}) => {
             });
           },
 
-          /**
-           * Update the status of multiple tasks at once. This method:
-           * - Updates the status of all specified tasks in the tasks array
-           *
-           * @param {string[]} taskIds - The IDs of the tasks to update
-           * @param {string} status - The new status for the tasks
-           */
-          updateStatusOfMultipleTasks: (taskIds, status) => {
-            set((state) => {
-              // Update tasks status
-              const updatedTasks = state.tasks.map((task) =>
-                taskIds.includes(task.id) ? { ...task, status } : task
-              );
-              return {
-                ...state,
-                tasks: updatedTasks,
-              };
-            });
-          },
-
-          createWorkflowExecutionStrategy: () => {
-            const state = get();
-
-            // Check if team has managerWithLLM enabled
-            if (state.managerWithLLM) {
-              return new ManagerLLMStrategy(state);
-            }
-
-            // Use deterministic strategy for all other cases
-            return new DeterministicExecutionStrategy(state);
+          setWorkflowExecutionStrategy: (strategy) => {
+            set({ workflowExecutionStrategy: strategy });
           },
 
           startWorkflow: async (inputs) => {
@@ -171,48 +140,15 @@ const createTeamStore = (initialState = {}) => {
               logType: 'WorkflowStatusUpdate',
             };
 
-            const strategy = get().createWorkflowExecutionStrategy();
-
             // Update state with the new log
             set((state) => ({
               ...state,
               workflowLogs: [...state.workflowLogs, initialLog],
               teamWorkflowStatus: WORKFLOW_STATUS_enum.RUNNING,
-              workflowExecutionStrategy: strategy,
             }));
 
-            // init task queue
-            get().taskQueue = new PQueue({
-              concurrency: strategy.getConcurrencyForTaskQueue(get()),
-              autoStart: true,
-            });
-
-            await strategy.startExecution(get());
-          },
-
-          handleChangedTasks: async (changedTaskIdsWithPreviousStatus) => {
-            const strategy = get().workflowExecutionStrategy;
-
-            if (strategy) {
-              strategy
-                .executeFromChangedTasks(
-                  get(),
-                  changedTaskIdsWithPreviousStatus
-                )
-                .then(() => {
-                  logger.debug(
-                    `Workflow execution strategy executed from changed tasks (${changedTaskIdsWithPreviousStatus.join(
-                      ', '
-                    )})`
-                  );
-                })
-                .catch((error) => {
-                  logger.error(
-                    `Error executing workflow execution strategy from changed tasks (${changedTaskIdsWithPreviousStatus.join(
-                      ', '
-                    )}): ${error.message}`
-                  );
-                });
+            if (get().workflowExecutionStrategy) {
+              await get().workflowExecutionStrategy.startExecution(get());
             }
           },
 

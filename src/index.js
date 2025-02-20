@@ -152,17 +152,8 @@ class Team {
    * @param {string} config.logLevel - The logging level for the team's operations.
    * @param {Object} config.inputs - Initial inputs for the team's tasks.
    * @param {Object} config.env - Environment variables for the team.
-   * @param {boolean} config.managerWithLLM - Whether to use LLM for task management.
    */
-  constructor({
-    name,
-    agents,
-    tasks,
-    logLevel,
-    inputs = {},
-    env = null,
-    managerWithLLM = false,
-  }) {
+  constructor({ name, agents, tasks, logLevel, inputs = {}, env = null }) {
     this.store = createTeamStore({
       name,
       agents: [],
@@ -170,7 +161,6 @@ class Team {
       inputs,
       env,
       logLevel,
-      managerWithLLM,
     });
 
     // ──── Workflow Controller Initialization ────────────────────────────

@@ -10,6 +10,25 @@ import WorkflowExecutionStrategy from './workflowExecutionStrategy';
  * and allowParallelExecution flag.
  */
 class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
+  constructor(teamStore) {
+    super(teamStore);
+    // subscribe to task status changes
+    teamStore.subscribe(
+      (state) => state.tasks,
+      (tasks, previousTasks) => {
+        // get list of tasks that have changed status
+        const changedTasks = tasks.filter((task, index) => {
+          return task.status !== previousTasks[index]?.status;
+        });
+
+        // handle changed tasks
+        for (const changedTask of changedTasks) {
+          this._handleTaskStatusChange(teamStore.getState(), changedTask);
+        }
+      }
+    );
+  }
+
   /**
    * Gets all tasks that the given task depends on (its prerequisites)
    * @param {Object} task - The task to find dependencies for
@@ -42,6 +61,12 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
    */
   _getReadyTasks(tasks) {
     return tasks.filter((task) => {
+      const statusesToMarkAsReady = [TASK_STATUS_enum.REVISE];
+
+      if (statusesToMarkAsReady.includes(task.status)) {
+        return true;
+      }
+
       // Skip tasks that are already DOING or DONE
       if (task.status !== TASK_STATUS_enum.TODO) {
         return false;
@@ -169,6 +194,13 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
     return taskResults;
   }
 
+  /**
+   * Start the execution of the workflow
+   * Process:
+   * 1. Get the first task
+   * 2. Update the status of the first task to DOING
+   * @param {Object} teamStoreState - The team store state
+   */
   async startExecution(teamStoreState) {
     const tasks = teamStoreState.tasks;
     if (tasks.length === 0) return;
@@ -177,10 +209,7 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
     const firstTask = tasks[0];
 
     // Update task status and execute it
-    teamStoreState.updateStatusOfMultipleTasks(
-      [firstTask.id],
-      TASK_STATUS_enum.DOING
-    );
+    teamStoreState.updateTaskStatus(firstTask.id, TASK_STATUS_enum.DOING);
   }
 
   async _putInDoingPossibleTasksToExecute(teamStoreState) {
@@ -236,66 +265,64 @@ class DeterministicExecutionStrategy extends WorkflowExecutionStrategy {
 
     if (tasksToExecute.length === 0) return;
 
-    // Single state update for task status
-    teamStoreState.updateStatusOfMultipleTasks(
-      tasksToExecute.map((t) => t.id),
-      TASK_STATUS_enum.DOING
-    );
+    // Update the status of the tasks to be executed to DOING
+    for (const task of tasksToExecute) {
+      teamStoreState.updateTaskStatus(task.id, TASK_STATUS_enum.DOING);
+    }
   }
 
-  async executeFromChangedTasks(
-    teamStoreState,
-    changedTaskIdsWithPreviousStatus
-  ) {
-    if (!Array.isArray(changedTaskIdsWithPreviousStatus)) {
-      return;
-    }
+  /**
+   * Handle the status change of a task
+   * Process:
+   * 1. If the task is DOING, execute it
+   * 2. If the task is REVISE, block all dependent tasks and set them to TODO
+   * 3. Check if there are other tasks that can be executed
+   * @param {Object} teamStoreState - The team store state
+   * @param {Object} task - The task that has changed status
+   */
+  _handleTaskStatusChange(teamStoreState, task) {
+    switch (task.status) {
+      case TASK_STATUS_enum.DOING:
+        // Execute the task
+        this._executeTask(teamStoreState, task).catch((error) => {
+          teamStoreState.handleTaskError({ task, error });
+          teamStoreState.handleWorkflowError(task, error);
+        });
+        break;
+      case TASK_STATUS_enum.REVISE:
+        {
+          // Block all dependent tasks
+          const dependentTasks = this._getTasksDependingOn(
+            task,
+            teamStoreState.tasks
+          );
 
-    const allTasks = teamStoreState.tasks;
-
-    // Handle changed tasks first
-    for (const changedTaskIdWithPreviousStatus of changedTaskIdsWithPreviousStatus) {
-      const changedTask = allTasks.find(
-        (t) => t.id === changedTaskIdWithPreviousStatus.taskId
-      );
-
-      switch (changedTask.status) {
-        case TASK_STATUS_enum.DOING:
-          // Execute the task
-          this._executeTask(teamStoreState, changedTask).catch((error) => {
-            teamStoreState.handleTaskError({ changedTask, error });
-            teamStoreState.handleWorkflowError(changedTask, error);
-          });
-          break;
-        case TASK_STATUS_enum.REVISE:
-          {
-            // Block all dependent tasks
-            const dependentTasks = this._getTasksDependingOn(
-              changedTask,
-              allTasks
-            );
-
-            // the dependent tasks and the changed task should be set to TODO
-            // this is to ensure those tasks are re-evaluated
-            // The changed task will get more priority in the next round of execution
-            // because will be at the top of the list of tasks to execute
-            teamStoreState.updateStatusOfMultipleTasks(
-              [...dependentTasks, changedTask].map((task) => task.id),
+          // the dependent tasks and the changed task should be set to TODO
+          // this is to ensure those tasks are re-evaluated
+          // The changed task will get more priority in the next round of execution
+          for (const dependentTask of dependentTasks) {
+            teamStoreState.updateTaskStatus(
+              dependentTask.id,
               TASK_STATUS_enum.TODO
             );
           }
-          break;
-      }
+        }
+        break;
     }
 
     const statesToAvoidExecution = [
       WORKFLOW_STATUS_enum.STOPPED,
       WORKFLOW_STATUS_enum.PAUSED,
+      WORKFLOW_STATUS_enum.INITIAL,
     ];
 
     if (statesToAvoidExecution.includes(teamStoreState.teamWorkflowStatus)) {
       return;
     }
+
+    // if (teamStoreState.teamWorkflowStatus !== WORKFLOW_STATUS_enum.RUNNING) {
+    //   return;
+    // }
 
     return this._putInDoingPossibleTasksToExecute(teamStoreState);
   }
