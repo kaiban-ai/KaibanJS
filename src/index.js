@@ -22,7 +22,8 @@ import { ReactChampionAgent } from './agents';
 import { subscribeTaskStatusUpdates } from './subscribers/taskSubscriber';
 import { subscribeWorkflowStatusUpdates } from './subscribers/teamSubscriber';
 import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from './utils/enums';
-import { setupWorkflowController } from './workflowExecution/workflowController';
+import { subscribeDeterministicExecution } from './subscribers/deterministicExecutionSubscriber';
+
 class Agent {
   constructor({ type, ...config }) {
     this.agentInstance = this.createAgent(type, config);
@@ -163,14 +164,6 @@ class Team {
       logLevel,
     });
 
-    // ──── Workflow Controller Initialization ────────────────────────────
-    //
-    // Activates the workflow controller to monitor and manage task transitions and overall workflow states:
-    // - Monitors changes in task statuses, handling transitions from TODO to DONE.
-    // - Ensures tasks proceed seamlessly through their lifecycle stages within the application.
-    // ─────────────────────────────────────────────────────────────────────
-    setupWorkflowController(this.store);
-
     // Add agents and tasks to the store, they will be set with the store automatically
     this.store.getState().addAgents(agents);
     this.store.getState().addTasks(tasks);
@@ -180,6 +173,9 @@ class Team {
 
     // Subscribe to WorkflowStatus updates: Used mainly for loggin purposes
     subscribeWorkflowStatusUpdates(this.store);
+
+    // Subscribe to Deterministic Execution: Used to execute tasks in a deterministic order
+    subscribeDeterministicExecution(this.store);
   }
 
   /**

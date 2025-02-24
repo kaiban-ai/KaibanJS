@@ -122,12 +122,20 @@ const verifySnapshots = ({
   );
 
   // Verify all logs exist in both states regardless of order
-  const logsExistInBoth = storeFinalState.workflowLogs.every((currentLog) =>
-    snapshotContentObj.workflowLogs.some(
-      (snapshotLog) =>
-        JSON.stringify(currentLog) === JSON.stringify(snapshotLog)
-    )
-  );
+  const logsExistInBoth = storeFinalState.workflowLogs.every((currentLog) => {
+    const logExists = snapshotContentObj.workflowLogs.some((snapshotLog) => {
+      const currentLogStr = JSON.stringify(currentLog);
+      const snapshotLogStr = JSON.stringify(snapshotLog);
+
+      return currentLogStr === snapshotLogStr;
+    });
+
+    if (!logExists) {
+      console.log(currentLog);
+    }
+
+    return logExists;
+  });
   expect(logsExistInBoth).toBe(true);
 
   // Verify task definitions match the logs

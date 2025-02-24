@@ -119,7 +119,7 @@ export const useTaskStore = (set, get) => ({
         tasks: state.tasks.map((t) =>
           t.id === task.id
             ? {
-                ...t,
+                ...task,
                 ...stats,
                 status: TASK_STATUS_enum.AWAITING_VALIDATION,
                 result: result,
@@ -135,7 +135,6 @@ export const useTaskStore = (set, get) => ({
         error: new Error('Task awaiting validation'),
       });
     } else {
-      // task.status = TASK_STATUS_enum.DONE;
       const modelCode = agent.llmConfig.model; // Assuming this is where the model code is stored
       // Calculate costs directly using stats
       const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
@@ -159,7 +158,7 @@ export const useTaskStore = (set, get) => ({
         tasks: state.tasks.map((t) =>
           t.id === task.id
             ? {
-                ...t,
+                ...task,
                 ...stats,
                 status: TASK_STATUS_enum.DONE,
                 result: result,
@@ -171,8 +170,6 @@ export const useTaskStore = (set, get) => ({
 
       task.status = TASK_STATUS_enum.DONE;
 
-      // This logic is here cause if put it in a subscriber, it will create race conditions
-      // that will create a a non deterministic behavior for the Application State
       const tasks = get().tasks;
       const allTasksDone = tasks.every(
         (t) => t.status === TASK_STATUS_enum.DONE

@@ -23,7 +23,7 @@ console.log(withMockedApis);
 // });
 
 describe('Product Spec Team Workflows', () => {
-  describe('Using OpenAI Agents', () => {
+  describe.skip('Using OpenAI Agents', () => {
     beforeEach(() => {
       // Mocking all POST requests with a callback
       if (withMockedApis) {

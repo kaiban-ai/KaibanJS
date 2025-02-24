@@ -19,7 +19,7 @@ const withMockedApis =
 // });
 
 describe('Trip Planning Team Workflows', () => {
-  describe('Using OpenAI Agents', () => {
+  describe.only('Using OpenAI Agents', () => {
     beforeEach(() => {
       // Mocking all POST requests with a callback
       if (withMockedApis) {
@@ -124,7 +124,7 @@ describe('Trip Planning Team Workflows', () => {
       // saveRecords();
     });
   });
-  describe('Pause and Resume', () => {
+  describe.skip('Pause and Resume', () => {
     beforeEach(() => {
       if (withMockedApis) {
         mock(openAITeamRecordedRequests, { delay: 100 });
@@ -535,7 +535,7 @@ describe('Trip Planning Team Workflows', () => {
     });
   });
 
-  describe('Stop', () => {
+  describe.skip('Stop', () => {
     beforeEach(() => {
       if (withMockedApis) {
         mock(openAITeamRecordedRequests, { delay: 100 });

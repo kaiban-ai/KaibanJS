@@ -63,7 +63,7 @@ const createTeamStore = (initialState = {}) => {
           env: initialState.env || {},
           logLevel: initialState.logLevel,
           flowType: initialState.flowType,
-          workflowExecutionStrategy: undefined,
+          workflowExecutionStrategy: '_deterministic',
           workflowController: initialState.workflowController || {},
 
           // Maximum number of tasks that can be executed in parallel
@@ -146,10 +146,6 @@ const createTeamStore = (initialState = {}) => {
               workflowLogs: [...state.workflowLogs, initialLog],
               teamWorkflowStatus: WORKFLOW_STATUS_enum.RUNNING,
             }));
-
-            if (get().workflowExecutionStrategy) {
-              await get().workflowExecutionStrategy.startExecution(get());
-            }
           },
 
           resetWorkflowStateAction: () => {

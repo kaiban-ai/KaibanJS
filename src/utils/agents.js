@@ -98,6 +98,7 @@ const cloneAgent = (agent) => {
     },
   });
 
+  // TODO: Remove this proxy
   return new Proxy(clonedAgent, {
     get(target, prop) {
       // if (prop === 'workOnTask') {
