@@ -1,7 +1,7 @@
 import PQueue from 'p-queue';
 import { DepGraph } from 'dependency-graph';
 import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from '../utils/enums';
-import { cloneAgent } from '../utils/agents';
+
 /**
  * Creates a deterministic execution subscriber that manages task execution
  * using a queue and dependency graph.
@@ -11,9 +11,14 @@ import { cloneAgent } from '../utils/agents';
  */
 export const subscribeDeterministicExecution = (teamStore) => {
   const taskQueue = new PQueue({ concurrency: 5, autoStart: true });
+
+  // A graph with the pending tasks to execute
+  // Every time a task is done, it is removed from the graph
   const executionDepGraph = new DepGraph();
+
+  // A graph with the dependencies between tasks
+  // This is used to get the context for a task
   const contextDepGraph = new DepGraph();
-  let abortController = new AbortController();
 
   const _isTaskAgentBusy = (currentTask, tasks) => {
     return tasks.some(
@@ -91,7 +96,7 @@ export const subscribeDeterministicExecution = (teamStore) => {
   const _executeTask = async (teamStoreState, task) => {
     const shouldClone = _isTaskAgentBusy(task, teamStoreState.tasks);
 
-    const agent = shouldClone ? cloneAgent(task.agent) : task.agent;
+    const agent = shouldClone ? task.agent.clone() : task.agent;
     const context = _getContextForTask(teamStoreState, task);
 
     teamStoreState.updateTaskStatus(task.id, TASK_STATUS_enum.DOING);
@@ -113,7 +118,7 @@ export const subscribeDeterministicExecution = (teamStore) => {
         { priority: highPriority ? 1 : 0 }
       )
       .catch((error) => {
-        console.error('Error queuing task', error);
+        throw new Error('Error queuing task', error);
       });
   };
 
@@ -147,9 +152,12 @@ export const subscribeDeterministicExecution = (teamStore) => {
       // add dependencies to all previous tasks
       if (!task.allowParallelExecution && index > 0) {
         for (let i = 0; i < index; i++) {
-          executionDepGraph.addDependency(tasks[i].id, task.id);
-          if (!hasDependencies) {
-            contextDepGraph.addDependency(tasks[i].id, task.id);
+          const previousTask = tasks[i];
+          executionDepGraph.addDependency(previousTask.id, task.id);
+
+          // add context dependencies to all non-parallel previous tasks
+          if (!hasDependencies && !previousTask.allowParallelExecution) {
+            contextDepGraph.addDependency(previousTask.id, task.id);
           }
         }
       }
@@ -166,64 +174,98 @@ export const subscribeDeterministicExecution = (teamStore) => {
 
   const _clearGraph = (graph) => {
     while (graph.size() > 0) {
-      graph.removeNode(graph.entryNodes()[0]);
+      for (const node of graph.entryNodes()) {
+        graph.removeNode(node);
+      }
     }
   };
 
-  // Subscribe to workflow status changes
-  teamStore.subscribe(
-    (state) => state.teamWorkflowStatus,
-    (status, previousStatus) => {
-      switch (status) {
-        case WORKFLOW_STATUS_enum.PAUSED:
-          taskQueue.pause();
-          abortController.abort();
-          abortController = new AbortController();
-          break;
+  const _handleWorkflowStatusUpdate = ({ currentLog, previousLogs, state }) => {
+    const status = currentLog.workflowStatus;
+    const previousLog =
+      Array.isArray(previousLogs) && previousLogs.length > 0
+        ? previousLogs[previousLogs.length - 1]
+        : null;
+    const previousStatus =
+      previousLog?.workflowStatus || WORKFLOW_STATUS_enum.INITIAL;
 
-        case WORKFLOW_STATUS_enum.RUNNING:
-          if (previousStatus === WORKFLOW_STATUS_enum.INITIAL) {
-            try {
-              _initializeGraph();
-              _queueTasksReadyToExecute(teamStore.getState());
-            } catch (error) {
-              console.error('Error initializing graph', error);
-            }
-          }
-          break;
+    switch (status) {
+      case WORKFLOW_STATUS_enum.PAUSED:
+        taskQueue.pause();
+        break;
 
-        case WORKFLOW_STATUS_enum.STOPPED:
-          taskQueue.clear();
-          _clearGraph(executionDepGraph);
-          _clearGraph(contextDepGraph);
-          abortController.abort();
-          break;
-      }
+      case WORKFLOW_STATUS_enum.RESUMED:
+        taskQueue.resume();
+        break;
+
+      case WORKFLOW_STATUS_enum.RUNNING:
+        if (previousStatus === WORKFLOW_STATUS_enum.INITIAL) {
+          _initializeGraph();
+          _queueTasksReadyToExecute(state);
+        }
+        break;
+
+      case WORKFLOW_STATUS_enum.STOPPED:
+        taskQueue.clear();
+        _clearGraph(executionDepGraph);
+        _clearGraph(contextDepGraph);
+        break;
     }
-  );
+  };
 
-  // Subscribe to task status changes
-  teamStore.subscribe(
-    (state) => state.tasks,
-    (tasks, previousTasks) => {
-      tasks.forEach((task, index) => {
-        if (task.status !== previousTasks[index]?.status) {
-          switch (task.status) {
-            case TASK_STATUS_enum.DONE:
-              // if the task is done, remove it from the graph and queue the next tasks
-              // remove task from graph
-              executionDepGraph.removeNode(task.id);
-              _queueTasksReadyToExecute(teamStore.getState());
-              break;
+  const _handleTaskStatusUpdate = ({ currentLog, state }) => {
+    const task = currentLog.task;
+    const taskStatus = currentLog.taskStatus;
 
-            case TASK_STATUS_enum.REVISE:
-              // task is ready to be executed again
-              // execute the task with highest priority
-              _queueTask(teamStore.getState(), task, true);
-              break;
+    switch (taskStatus) {
+      case TASK_STATUS_enum.DONE:
+        executionDepGraph.removeNode(task.id);
+        _queueTasksReadyToExecute(state);
+        break;
+
+      case TASK_STATUS_enum.REVISE:
+        _queueTask(state, task, true);
+        break;
+    }
+  };
+
+  // Mapping of workflow log types to handlers
+  // Each handler is called with the current log, the previous logs, the current logs and the team store state
+  const _handleWorkflowLogByType = {
+    WorkflowStatusUpdate: _handleWorkflowStatusUpdate,
+    TaskStatusUpdate: _handleTaskStatusUpdate,
+  };
+
+  // Subscribe to workflow logs
+  const workflowLogsUnsubscribe = teamStore.subscribe(
+    (state) => state.workflowLogs,
+    (logs, previousLogs) => {
+      // Get new logs since last update
+      const newLogs = logs.slice(previousLogs.length);
+
+      // Process each new log
+      newLogs.forEach((currentLog) => {
+        const handler = _handleWorkflowLogByType[currentLog.logType];
+        if (handler) {
+          try {
+            handler({
+              currentLog,
+              previousLogs,
+              logs,
+              state: teamStore.getState(),
+            });
+          } catch (error) {
+            console.error('Error handling workflow log', error);
           }
         }
       });
     }
   );
+
+  return () => {
+    workflowLogsUnsubscribe();
+    taskQueue.clear();
+    _clearGraph(executionDepGraph);
+    _clearGraph(contextDepGraph);
+  };
 };

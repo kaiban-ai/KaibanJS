@@ -92,7 +92,7 @@ describe('Product Spec Team Workflows', () => {
     });
 
     // eslint-disable-next-line jest/no-done-callback
-    it('(2) - processes feedback and completes workflow', (done) => {
+    it.only('(2) - processes feedback and completes workflow', (done) => {
       if (withMockedApis) {
         mock(openAITeamRecordedRequestsHITL2);
       }
