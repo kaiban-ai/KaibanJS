@@ -233,7 +233,7 @@ const createTeamStore = (initialState = {}) => {
           // Adjusted method to handle workflow errors
           handleWorkflowError: (task, error) => {
             // Detailed console error logging
-            logger.error(`Workflow Error:`, error.message);
+            logger.error(`Workflow Error:`, error.message, error.stack);
             const stats = get().getWorkflowStats();
             // Prepare the error log with specific workflow context
             const newLog = {
@@ -374,6 +374,25 @@ const createTeamStore = (initialState = {}) => {
             }
           },
           workOnTaskResume: async (agent, task) => {
+            logger.debug(`🔄 Running task: ${getTaskTitleForLogs(task)}`);
+            task.status = TASK_STATUS_enum.DOING;
+            // Add a log entry for the task starting
+            set((state) => {
+              const newLog = get().prepareNewLog({
+                agent,
+                task,
+                logDescription: `Task "${getTaskTitleForLogs(
+                  task
+                )}" running again.`,
+                metadata: {},
+                logType: 'TaskStatusUpdate',
+              });
+              return {
+                ...state,
+                workflowLogs: [...state.workflowLogs, newLog],
+              };
+            });
+
             await agent.workOnTaskResume(task);
           },
           deriveContextFromLogs: (logs, currentTaskId) => {

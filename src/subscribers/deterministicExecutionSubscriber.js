@@ -94,24 +94,34 @@ export const subscribeDeterministicExecution = (teamStore) => {
    * @param {Object} task - The task to execute
    */
   const _executeTask = async (teamStoreState, task) => {
-    const shouldClone = _isTaskAgentBusy(task, teamStoreState.tasks);
-
-    const agent = shouldClone ? task.agent.clone() : task.agent;
     const context = _getContextForTask(teamStoreState, task);
 
     teamStoreState.updateTaskStatus(task.id, TASK_STATUS_enum.DOING);
-    return await teamStoreState.workOnTask(agent, task, context);
+    return await teamStoreState.workOnTask(task.agent, task, context);
+  };
+
+  const _resumeTask = async (teamStoreState, task) => {
+    teamStoreState.updateTaskStatus(task.id, TASK_STATUS_enum.DOING);
+    return await teamStoreState.workOnTaskResume(task.agent, task);
   };
 
   /**
    * Add a task to the execution queue
    * @param {Object} task - The task to queue
    */
-  const _queueTask = (teamStoreState, task, highPriority = false) => {
+  const _queueTask = ({
+    teamStoreState,
+    task,
+    highPriority = false,
+    resume = false,
+  }) => {
     taskQueue
       .add(
         () =>
-          _executeTask(teamStoreState, task).catch((error) => {
+          (resume
+            ? _resumeTask(teamStoreState, task)
+            : _executeTask(teamStoreState, task)
+          ).catch((error) => {
             teamStoreState.handleTaskError({ task, error });
             teamStoreState.handleWorkflowError(task, error);
           }),
@@ -166,9 +176,18 @@ export const subscribeDeterministicExecution = (teamStore) => {
 
   // add tasks ready to execute to queue
   const _queueTasksReadyToExecute = (teamStoreState) => {
-    executionDepGraph.entryNodes().forEach((taskId) => {
+    const entryNodes = executionDepGraph.entryNodes();
+    const allowedStatusesToRun = [
+      TASK_STATUS_enum.TODO,
+      TASK_STATUS_enum.REVISE,
+    ];
+    entryNodes.forEach((taskId) => {
       const task = teamStoreState.tasks.find((t) => t.id === taskId);
-      _queueTask(teamStoreState, task);
+      const isTaskAgentBusy = _isTaskAgentBusy(task, teamStoreState.tasks);
+
+      if (allowedStatusesToRun.includes(task.status) && !isTaskAgentBusy) {
+        _queueTask({ teamStoreState, task });
+      }
     });
   };
 
@@ -195,13 +214,17 @@ export const subscribeDeterministicExecution = (teamStore) => {
         break;
 
       case WORKFLOW_STATUS_enum.RESUMED:
-        taskQueue.resume();
+        taskQueue.start();
         break;
 
       case WORKFLOW_STATUS_enum.RUNNING:
         if (previousStatus === WORKFLOW_STATUS_enum.INITIAL) {
-          _initializeGraph();
-          _queueTasksReadyToExecute(state);
+          try {
+            _initializeGraph();
+            _queueTasksReadyToExecute(state);
+          } catch (error) {
+            console.error('Error initializing graph', error);
+          }
         }
         break;
 
@@ -224,7 +247,16 @@ export const subscribeDeterministicExecution = (teamStore) => {
         break;
 
       case TASK_STATUS_enum.REVISE:
-        _queueTask(state, task, true);
+        _queueTask({ teamStoreState: state, task, highPriority: true });
+        break;
+
+      case TASK_STATUS_enum.RESUMED:
+        _queueTask({
+          teamStoreState: state,
+          task,
+          resume: true,
+          highPriority: true,
+        });
         break;
     }
   };

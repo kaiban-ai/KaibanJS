@@ -57,7 +57,7 @@ const team = new Team({
     founderIdea: 'I want to add a Referral program to our SAAS platform.',
   }, // Initial input for the first task,
   env: { OPENAI_API_KEY: process.env.OPENAI_API_KEY }, // Environment variables for the team
-  logLevel: 'info',
+  logLevel: 'error',
 });
 
 module.exports = team;

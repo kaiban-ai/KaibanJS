@@ -23,7 +23,7 @@ console.log(withMockedApis);
 // });
 
 describe('Product Spec Team Workflows', () => {
-  describe.skip('Using OpenAI Agents', () => {
+  describe('Using OpenAI Agents', () => {
     beforeEach(() => {
       // Mocking all POST requests with a callback
       if (withMockedApis) {
@@ -131,6 +131,20 @@ describe('Product Spec Team Workflows', () => {
             expect(blockedState).toMatchSnapshot(
               'State when workflow is blocked after feedback, waiting for validation'
             );
+
+            const taskStatusUpdates = blockedState.workflowLogs.filter(
+              (log) => log.logType === 'TaskStatusUpdate'
+            );
+
+            console.log(
+              taskStatusUpdates.map((l) => ({
+                description: l.task.description,
+                taskStatus: l.taskStatus,
+                result: l.task.result,
+                status: l.task.status,
+              }))
+            );
+
             const taskToValidate = tasksAwaitingValidation[0];
             team.validateTask(taskToValidate.id);
           }

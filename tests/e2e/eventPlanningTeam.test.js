@@ -26,7 +26,10 @@ const validateTaskExecution = (workflowLogs, tasks, taskIdsToDescriptions) => {
           log.logType === 'TaskStatusUpdate'
       )
       .map((log) => log.taskStatus);
-    expect(statusHistory).toEqual(['DOING', 'DONE']);
+    expect(statusHistory).toEqual(
+      ['DOING', 'DONE'],
+      `Task "${task.description}" did not follow the expected status sequence`
+    );
   });
 
   // Get completion order with log indices
@@ -188,6 +191,10 @@ describe('Execution Strategies Integration Tests', () => {
       const finalState = store.getState();
       const cleanedState = finalState.getCleanedState();
 
+      // const recordedData = getRecords();
+      // console.log(recordedData);
+      // saveRecords();
+
       // Verify workflow completed successfully
       expect(cleanedState.teamWorkflowStatus).toBe('FINISHED');
 
@@ -229,10 +236,6 @@ describe('Execution Strategies Integration Tests', () => {
         fileName: 'sequential',
         verifyFullMatch: true,
       });
-
-      // const recordedData = getRecords();
-      // console.log(recordedData);
-      // saveRecords();
     });
   });
 
@@ -243,11 +246,11 @@ describe('Execution Strategies Integration Tests', () => {
       parallelTeam = require('./examples/teams/event_planning/openai_parallel');
       parallelTeamRequests = require('./examples/teams/event_planning/openai_parallel.requests.json');
 
-      //   record({
-      //     url: '*',
-      //     method: '*',
-      //     body: '*', // Record any POST request to this URL
-      //   });
+      // record({
+      //   url: '*',
+      //   method: '*',
+      //   body: '*', // Record any POST request to this URL
+      // });
     });
 
     beforeEach(() => {
@@ -348,7 +351,7 @@ describe('Execution Strategies Integration Tests', () => {
       mixedTeam = require('./examples/teams/event_planning/openai_mixed');
       mixedTeamRequests = require('./examples/teams/event_planning/openai_mixed.requests.json');
 
-      //   record({
+      // record({
       //   url: '*',
       //   method: '*',
       //   body: '*', // Record any POST request to this URL
@@ -422,7 +425,12 @@ describe('Execution Strategies Integration Tests', () => {
             log.taskStatus === 'DONE' &&
             log.task.description === nonParallelTasks[index - 1].description
         );
-        expect(currentTaskStartIndex).toBeGreaterThan(previousTaskEndIndex);
+        expect(currentTaskStartIndex).toBeGreaterThan(
+          previousTaskEndIndex,
+          `Task "${task.description}" did not start after task "${
+            nonParallelTasks[index - 1].description
+          }"`
+        );
       });
 
       // check bookVenueTask and finalizeGuestListTask are executed in parallel
@@ -618,12 +626,14 @@ describe('Execution Strategies Integration Tests', () => {
       expect(bookVenueStatusUpdates).toEqual([
         'DOING',
         'PAUSED',
+        'RESUMED',
         'DOING',
         'DONE',
       ]);
       expect(finalizeGuestListStatusUpdates).toEqual([
         'DOING',
         'PAUSED',
+        'RESUMED',
         'DOING',
         'DONE',
       ]);
@@ -637,7 +647,7 @@ describe('Execution Strategies Integration Tests', () => {
               log.logType === 'TaskStatusUpdate' &&
               (log.task.referenceId === 'bookVenueTask' ||
                 log.task.referenceId === 'finalizeGuestListTask') &&
-              log.taskStatus === 'DOING'
+              (log.taskStatus === 'DOING' || log.taskStatus === 'RESUMED')
           ) +
         lastLogIndexBeforeResume +
         1;

@@ -8,7 +8,7 @@ const {
 // Define tools
 const searchInternetTool = new TavilySearchResults({
   maxResults: 3,
-  apiKey: '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',
+  apiKey: process.env.TAVILY_API_KEY,
 });
 
 // const searchInternet = createLangChainTools(rawSearchInternetTool)[0];
@@ -17,6 +17,16 @@ const searchInternetTool = new TavilySearchResults({
 // Define agents with exact roles, goals, and backgrounds from Python example
 const eventManagerAgent = new Agent({
   name: 'Peter Atlas',
+  role: 'Oversees event planning and ensures smooth execution.',
+  goal: 'Coordinate tasks and ensure timely execution.',
+  background:
+    'Expertise in event planning, resource allocation, and scheduling.',
+  type: 'ReactChampionAgent',
+  maxIterations: 20,
+});
+
+const eventManagerAgent1 = new Agent({
+  name: 'Peter Atlas--1',
   role: 'Oversees event planning and ensures smooth execution.',
   goal: 'Coordinate tasks and ensure timely execution.',
   background:
@@ -34,6 +44,15 @@ const venueCoordinatorAgent = new Agent({
   tools: [searchInternetTool],
 });
 
+const venueCoordinatorAgent1 = new Agent({
+  name: 'Sophia Lore--1',
+  role: 'Manages venue logistics.',
+  goal: 'Confirm venue availability, arrange setup, and handle issues.',
+  background: `Knowledge of venue layouts, policies, and equipment setup.`,
+  type: 'ReactChampionAgent',
+  tools: [searchInternetTool],
+});
+
 const cateringAgent = new Agent({
   name: 'Maxwell Journey',
   role: 'Organizes food and beverages for the event',
@@ -43,8 +62,35 @@ const cateringAgent = new Agent({
   tools: [searchInternetTool],
 });
 
+const cateringAgent1 = new Agent({
+  name: 'Maxwell Journey--1',
+  role: 'Organizes food and beverages for the event',
+  goal: `Deliver a catering plan and coordinate with vendors`,
+  background: `Experience with catering contracts, menu planning, and dietary requirements`,
+  type: 'ReactChampionAgent',
+  tools: [searchInternetTool],
+});
+
 const marketingAgent = new Agent({
   name: 'Riley Morgan',
+  role: 'Promotes the event and handles attendee registrations',
+  goal: `Drive attendance and manage guest lists`,
+  background: `Skilled in social media marketing, email campaigns, and analytics`,
+  type: 'ReactChampionAgent',
+  tools: [searchInternetTool],
+});
+
+const marketingAgent1 = new Agent({
+  name: 'Riley Morgan--1',
+  role: 'Promotes the event and handles attendee registrations',
+  goal: `Drive attendance and manage guest lists`,
+  background: `Skilled in social media marketing, email campaigns, and analytics`,
+  type: 'ReactChampionAgent',
+  tools: [searchInternetTool],
+});
+
+const marketingAgent2 = new Agent({
+  name: 'Riley Morgan--2',
   role: 'Promotes the event and handles attendee registrations',
   goal: `Drive attendance and manage guest lists`,
   background: `Skilled in social media marketing, email campaigns, and analytics`,
@@ -111,7 +157,7 @@ const setupMarketingCampaignTask = new Task({
   expectedOutput: `
   Marketing plan with key strategies and timelines.
   `,
-  agent: marketingAgent,
+  agent: marketingAgent1,
   dependencies: ['selectEventDateTask', 'bookVenueTask'],
 });
 
@@ -123,7 +169,7 @@ const coordinateVenueSetupTask = new Task({
   Venue setup schedule and checklist.
   Any notes on special arrangements or last-minute details.
   `,
-  agent: venueCoordinatorAgent,
+  agent: venueCoordinatorAgent1,
   dependencies: ['bookVenueTask', 'createCateringPlanTask'],
 });
 
@@ -135,7 +181,7 @@ const executeMarketingCampaignTask = new Task({
   Marketing campaign execution report.
   Any notes on campaign performance or feedback.
   `,
-  agent: marketingAgent,
+  agent: marketingAgent2,
   dependencies: ['setupMarketingCampaignTask'],
 });
 
@@ -147,7 +193,7 @@ const finalizeInspectionAndApprovalTask = new Task({
   Inspection report.
   Any notes on final adjustments or feedback.
   `,
-  agent: eventManagerAgent,
+  agent: eventManagerAgent1,
   dependencies: ['coordinateVenueSetupTask', 'executeMarketingCampaignTask'],
 });
 
@@ -156,9 +202,14 @@ const team = new Team({
   name: 'Event Planning Team',
   agents: [
     eventManagerAgent,
+    eventManagerAgent1,
     venueCoordinatorAgent,
+    venueCoordinatorAgent1,
     cateringAgent,
+    cateringAgent1,
     marketingAgent,
+    marketingAgent1,
+    marketingAgent2,
   ],
   tasks: [
     selectEventDateTask,
@@ -189,8 +240,13 @@ module.exports = {
   ],
   agents: [
     eventManagerAgent,
+    eventManagerAgent1,
     venueCoordinatorAgent,
+    venueCoordinatorAgent1,
     cateringAgent,
+    cateringAgent1,
     marketingAgent,
+    marketingAgent1,
+    marketingAgent2,
   ],
 };

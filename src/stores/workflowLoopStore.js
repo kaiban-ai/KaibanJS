@@ -82,8 +82,6 @@ export const useWorkflowLoopStore = (set, get) => ({
         (task) => task.status === TASK_STATUS_enum.DOING
       );
 
-      set({ teamWorkflowStatus: WORKFLOW_STATUS_enum.PAUSED });
-
       // handle task paused for each task
       tasksToPause.forEach((task) => {
         get().handleAgentTaskPaused({ agent: task.agent, task });
@@ -119,18 +117,28 @@ export const useWorkflowLoopStore = (set, get) => ({
       get().handleAgentTaskResumed({ agent: task.agent, task });
     });
 
-    const updatedTasks = tasks.map((task) => {
-      if (task.status === TASK_STATUS_enum.PAUSED) {
-        return { ...task, status: TASK_STATUS_enum.DOING };
-      }
-      return task;
-    });
-
     logger.info('🔄 Workflow resumed - Back in action! 🚀');
 
+    const resumeLog = {
+      task: null,
+      agent: null,
+      timestamp: Date.now(),
+      logDescription: `🔄 Workflow resumed for team "${
+        get().name
+      }" - All paused tasks will continue execution`,
+      workflowStatus: WORKFLOW_STATUS_enum.RESUMED,
+      metadata: {
+        message:
+          'Workflow execution has been resumed after being paused. All agents will continue working on their assigned tasks.',
+        resumedAt: new Date().toISOString(),
+        previousStatus: WORKFLOW_STATUS_enum.PAUSED,
+      },
+      logType: 'WorkflowStatusUpdate',
+    };
+
     set({
-      tasks: updatedTasks,
       teamWorkflowStatus: WORKFLOW_STATUS_enum.RUNNING,
+      workflowLogs: [...get().workflowLogs, resumeLog],
     });
   },
 

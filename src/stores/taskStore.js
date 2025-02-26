@@ -338,9 +338,9 @@ export const useTaskStore = (set, get) => ({
     const taskLog = get().prepareNewLog({
       agent: task.agent,
       task: { ...task, status: TASK_STATUS_enum.PAUSED },
-      logDescription: `Task paused: ${getTaskTitleForLogs(
-        task
-      )}, Reason: An external interruption occurred.`,
+      logDescription: `⏸️ Task "${getTaskTitleForLogs(task)}" paused | Agent ${
+        task.agent.name
+      } has temporarily suspended work`,
       metadata: {
         ...stats,
         costDetails,
@@ -351,9 +351,9 @@ export const useTaskStore = (set, get) => ({
 
     const prettyError = new PrettyError({
       name: 'TASK PAUSED',
-      message: 'Task paused due to an external interruption.',
+      message: `Task "${task.description}" has been paused. Agent ${task.agent.name} will resume work when workflow continues.`,
       recommendedAction:
-        'Enable logLevel: "debug" during team initialization to obtain more detailed logs and facilitate troubleshooting.',
+        'Use resume() to continue workflow execution, or enable logLevel: "debug" for more detailed logs.',
       rootError: error,
       context: { task, error },
     });
@@ -374,7 +374,34 @@ export const useTaskStore = (set, get) => ({
       workflowLogs: [...state.workflowLogs, taskLog],
     }));
   },
-  handleTaskResumed: ({ _task, _error }) => {
-    // TODO: Define what to do when a task is resumed if needed
+  handleTaskResumed: ({ task }) => {
+    const taskLog = get().prepareNewLog({
+      agent: task.agent,
+      task: { ...task, status: TASK_STATUS_enum.RESUMED },
+      logDescription: `🔄 Task resumed: ${getTaskTitleForLogs(task)} | Agent: ${
+        task.agent.name
+      } is continuing work`,
+      metadata: {},
+      logType: 'TaskStatusUpdate',
+    });
+
+    const prettyError = new PrettyError({
+      name: 'TASK RESUMED',
+      message: `Task "${task.description}" has been resumed after being paused. Agent ${task.agent.name} will continue working on it.`,
+      context: { task },
+    });
+
+    logger.debug(prettyError.context);
+    set((state) => ({
+      tasks: state.tasks.map((t) =>
+        t.id === task.id
+          ? {
+              ...t,
+              status: TASK_STATUS_enum.RESUMED,
+            }
+          : t
+      ),
+      workflowLogs: [...state.workflowLogs, taskLog],
+    }));
   },
 });
