@@ -248,3 +248,33 @@ pre {
 .status-using_tool_end {
   color: #2e7d32;
 }
+
+.workflow-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.pause-resume-button,
+.stop-button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.pause-resume-button:disabled,
+.stop-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pause-resume-button {
+  background-color: #f0ad4e;
+  color: white;
+}
+
+.stop-button {
+  background-color: #d9534f;
+  color: white;
+}

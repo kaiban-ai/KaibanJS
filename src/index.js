@@ -39,6 +39,9 @@ class Agent {
   workOnTask(task, inputs, context) {
     return this.agentInstance.workOnTask(task, inputs, context);
   }
+  workOnTaskResume(task) {
+    return this.agentInstance.workOnTaskResume(task);
+  }
 
   workOnFeedback(task, inputs, context) {
     return this.agentInstance.workOnFeedback(task, inputs, context);
@@ -155,6 +158,32 @@ class Team {
     // Add agents and tasks to the store, they will be set with the store automatically
     this.store.getState().addAgents(agents);
     this.store.getState().addTasks(tasks);
+  }
+
+  /**
+   * Pauses the team's workflow.
+   * This method temporarily halts the workflow, allowing for manual intervention or adjustments.
+   * @returns {void}
+   */
+  pause() {
+    return this.store.getState().pauseWorkflow();
+  }
+
+  /**
+   * Resumes the team's workflow.
+   * This method continues the workflow after it has been paused.
+   * @returns {void}
+   */
+  resume() {
+    return this.store.getState().resumeWorkflow();
+  }
+  /**
+   * Stops the team's workflow.
+   * This method stops the workflow, preventing any further task execution.
+   * @returns {void}
+   */
+  stop() {
+    return this.store.getState().stopWorkflow();
   }
 
   /**

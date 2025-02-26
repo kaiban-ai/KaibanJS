@@ -8,24 +8,45 @@
  * Integrate this controller to manage the flow of tasks within your application, ensuring tasks are executed in an orderly and efficient manner.
  */
 
-import PQueue from 'p-queue';
-import { TASK_STATUS_enum } from '../utils/enums';
-
+// import PQueue from 'p-queue';
+import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from '../utils/enums';
+// import { logger } from '../utils/logger';
 export const setupWorkflowController = (useTeamStore) => {
-  const taskQueue = new PQueue({ concurrency: 1 });
+  // const taskQueue = new PQueue({ concurrency: 1 });
+  const taskQueue = useTeamStore.getState().taskQueue;
+  useTeamStore.setState({
+    workflowController: {
+      abortController: new AbortController(),
+    },
+  });
 
   // Managing tasks moving to 'DOING'
   useTeamStore.subscribe(
     (state) => state.tasks.filter((t) => t.status === TASK_STATUS_enum.DOING),
     (doingTasks, previousDoingTasks) => {
+      const isResumed =
+        useTeamStore.getState().teamWorkflowStatus ===
+        WORKFLOW_STATUS_enum.RESUMED;
       doingTasks.forEach((task) => {
         if (!previousDoingTasks.find((t) => t.id === task.id)) {
-          taskQueue
-            .add(() => useTeamStore.getState().workOnTask(task.agent, task))
-            .catch((error) => {
-              useTeamStore.getState().handleTaskError({ task, error });
-              useTeamStore.getState().handleWorkflowError(task, error);
-            });
+          if (isResumed) {
+            taskQueue
+              .add(() =>
+                useTeamStore.getState().workOnTaskResume(task.agent, task)
+              )
+              .catch((error) => {
+                useTeamStore.getState().handleTaskError({ task, error });
+                useTeamStore.getState().handleWorkflowError(task, error);
+              });
+          } else {
+            taskQueue
+              .add(() => useTeamStore.getState().workOnTask(task.agent, task))
+              .catch((error) => {
+                useTeamStore.getState().handleTaskError({ task, error });
+                useTeamStore.getState().handleWorkflowError(task, error);
+              });
+          }
+          if (taskQueue.isPaused) taskQueue.start();
         }
       });
     }
