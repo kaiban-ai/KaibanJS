@@ -145,6 +145,8 @@ export class Agent {
  * @property {BaseAgent} agent - The agent to execute the task.
  * @property {boolean} [isDeliverable] - Indicates whether the task is deliverable.
  * @property {object} [outputSchema] - The schema for validating the task output.
+ * @property {string} [referenceId] - A unique identifier used for task dependency management.
+ * @property {boolean} [allowParallelExecution] - Whether this task can be executed in parallel with other tasks. Defaults to false.
  */
 export interface ITaskParams {
   title?: string;
@@ -153,6 +155,8 @@ export interface ITaskParams {
   agent: Agent;
   isDeliverable?: boolean;
   outputSchema?: object;
+  referenceId?: string;
+  allowParallelExecution?: boolean;
 }
 
 /**
@@ -173,6 +177,8 @@ export interface ITaskParams {
  * @property {string | null} interpolatedTaskDescription - The interpolated task description.
  * @property {TStore} store - The store.
  * @property {object | null} outputSchema - The schema for validating the task output.
+ * @property {string | undefined} referenceId - A unique identifier used for task dependency management.
+ * @property {boolean} allowParallelExecution - Whether this task can be executed in parallel with other tasks.
  */
 export class Task {
   id: string;
@@ -189,6 +195,8 @@ export class Task {
   interpolatedTaskDescription: string | null;
   store: TStore;
   outputSchema: object | null;
+  referenceId: string | undefined;
+  allowParallelExecution: boolean;
 
   /**
    * Creates an instance of a Task.
