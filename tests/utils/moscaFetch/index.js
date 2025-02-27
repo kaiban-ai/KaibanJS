@@ -30,12 +30,19 @@ function moscaFetch() {
         if (mock.isRecorder) {
           const response = await originalFetch(input, options);
           const clonedResponse = response.clone();
-          records.push({
-            url: input,
-            method: requestMethod,
-            body: requestBody,
-            response: await clonedResponse.json(), // Assuming JSON response
-          });
+          try {
+            records.push({
+              url: input,
+              method: requestMethod,
+              body: requestBody,
+              response: await clonedResponse.json(), // Assuming JSON response
+            });
+          } catch (e) {
+            console.error(
+              `Failed to register req/res. Error: ${e.message}. Url: ${input}, method: ${requestMethod}, req: ${requestBody}`
+            );
+          }
+
           if (mock.callback) {
             mock.callback({
               request: { url: input, method: requestMethod, body: requestBody },
@@ -68,11 +75,11 @@ function moscaFetch() {
       }
     }
 
-    // console.debug(
-    //   'MoscaFetch -> No mocks or recorders matched:',
-    //   input,
-    //   cleanRequestBody
-    // );
+    console.debug(
+      'MoscaFetch -> No mocks or recorders matched:',
+      input,
+      cleanRequestBody
+    );
 
     // for (const mock of mocks) {
     //   const cleanMockBody = JSON.stringify(mock.body).replace(/\\n\s+/g, '\\n'); // Regular Expression to remove spaces between newlines
@@ -105,13 +112,24 @@ function moscaFetch() {
     const configs = Array.isArray(mockConfigs) ? mockConfigs : [mockConfigs];
 
     configs.forEach((mockConfig) => {
-      if (!mockConfig.url || !mockConfig.method || !mockConfig.response) {
+      if (!mockConfig.url || !mockConfig.method) {
         throw new Error(
-          'Invalid mock configuration: Missing required properties.'
+          `Invalid mock configuration: Missing required properties. Config: ${JSON.stringify(
+            mockConfig
+          )}`
         );
       }
-      mockConfig.isRecorder = false; // Explicitly flag mock configurations as non-recorders
-      mocks.push(mockConfig);
+
+      if (!mockConfig.response) {
+        console.warn(
+          `MoscaFetch -> Warning: No response provided for mock. Config: ${JSON.stringify(
+            mockConfig
+          )}`
+        );
+      } else {
+        mockConfig.isRecorder = false; // Explicitly flag mock configurations as non-recorders
+        mocks.push(mockConfig);
+      }
     });
     mockOptions = options;
 

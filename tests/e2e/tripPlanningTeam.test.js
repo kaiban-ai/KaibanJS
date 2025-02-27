@@ -212,7 +212,13 @@ describe('Trip Planning Team Workflows', () => {
       );
 
       const statusSequence = taskStatusLogs.map((log) => log.taskStatus);
-      expect(statusSequence).toEqual(['DOING', 'PAUSED', 'DOING', 'DONE']);
+      expect(statusSequence).toEqual([
+        'DOING',
+        'PAUSED',
+        'RESUMED',
+        'DOING',
+        'DONE',
+      ]);
 
       // check there is no other task status updates between PAUSED and DOING of the paused task
       const pausedIndex = state.workflowLogs.findIndex(
@@ -238,7 +244,7 @@ describe('Trip Planning Team Workflows', () => {
         (log) => log.logType === 'TaskStatusUpdate'
       );
 
-      expect(taskStatusUpdatesInBetween.length).toBe(0);
+      expect(taskStatusUpdatesInBetween.length).toBe(1); // Just RESUMED status between PAUSED and DOING
 
       // check the metadata of the thinking logs is the same before pause and after resume
       // Get the last thinking log before pause
@@ -348,7 +354,7 @@ describe('Trip Planning Team Workflows', () => {
         (log) => log.logType === 'TaskStatusUpdate'
       );
 
-      expect(taskStatusUpdatesInBetween.length).toBe(0);
+      expect(taskStatusUpdatesInBetween.length).toBe(1); // Just RESUMED status between PAUSED and DOING
 
       // Check the metadata of the thinking logs is the same before pause and after resume
       // Get the last thinking log before pause
@@ -458,7 +464,13 @@ describe('Trip Planning Team Workflows', () => {
       );
 
       const statusSequence = taskStatusLogs.map((log) => log.taskStatus);
-      expect(statusSequence).toEqual(['DOING', 'PAUSED', 'DOING', 'DONE']);
+      expect(statusSequence).toEqual([
+        'DOING',
+        'PAUSED',
+        'RESUMED',
+        'DOING',
+        'DONE',
+      ]);
 
       // check there is no other task status updates between PAUSED and DOING of the paused task
       const pausedIndex = state.workflowLogs.findIndex(
@@ -484,7 +496,7 @@ describe('Trip Planning Team Workflows', () => {
         (log) => log.logType === 'TaskStatusUpdate'
       );
 
-      expect(taskStatusUpdatesInBetween.length).toBe(0);
+      expect(taskStatusUpdatesInBetween.length).toBe(1); // Just RESUMED status between PAUSED and DOING
 
       // check the metadata of the thinking logs is the same before pause and after resume
       // Get the last thinking log before pause

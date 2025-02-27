@@ -63,7 +63,7 @@ const createTeamStore = (initialState = {}) => {
           env: initialState.env || {},
           logLevel: initialState.logLevel,
           flowType: initialState.flowType,
-          workflowExecutionStrategy: undefined,
+          workflowExecutionStrategy: '_deterministic',
           workflowController: initialState.workflowController || {},
 
           // Maximum number of tasks that can be executed in parallel
@@ -146,10 +146,6 @@ const createTeamStore = (initialState = {}) => {
               workflowLogs: [...state.workflowLogs, initialLog],
               teamWorkflowStatus: WORKFLOW_STATUS_enum.RUNNING,
             }));
-
-            if (get().workflowExecutionStrategy) {
-              await get().workflowExecutionStrategy.startExecution(get());
-            }
           },
 
           resetWorkflowStateAction: () => {
@@ -237,7 +233,7 @@ const createTeamStore = (initialState = {}) => {
           // Adjusted method to handle workflow errors
           handleWorkflowError: (task, error) => {
             // Detailed console error logging
-            logger.error(`Workflow Error:`, error.message);
+            logger.error(`Workflow Error:`, error.message, error.stack);
             const stats = get().getWorkflowStats();
             // Prepare the error log with specific workflow context
             const newLog = {
@@ -378,6 +374,25 @@ const createTeamStore = (initialState = {}) => {
             }
           },
           workOnTaskResume: async (agent, task) => {
+            logger.debug(`🔄 Running task: ${getTaskTitleForLogs(task)}`);
+            task.status = TASK_STATUS_enum.DOING;
+            // Add a log entry for the task starting
+            set((state) => {
+              const newLog = get().prepareNewLog({
+                agent,
+                task,
+                logDescription: `Task "${getTaskTitleForLogs(
+                  task
+                )}" running again.`,
+                metadata: {},
+                logType: 'TaskStatusUpdate',
+              });
+              return {
+                ...state,
+                workflowLogs: [...state.workflowLogs, newLog],
+              };
+            });
+
             await agent.workOnTaskResume(task);
           },
           deriveContextFromLogs: (logs, currentTaskId) => {
