@@ -123,7 +123,8 @@ const createTeamStore = (initialState = {}) => {
             get().resetWorkflowStateAction();
 
             if (inputs) {
-              get().setInputs(inputs);
+              // Merge new inputs with existing ones instead of replacing
+              get().setInputs({ ...get().inputs, ...inputs });
             }
 
             // Create a log entry to mark the initiation of the workflow
