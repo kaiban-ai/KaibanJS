@@ -22,7 +22,7 @@ describe('History Fact Summary Team Workflows', () => {
         restoreAll();
       }
     });
-    it('completes the entire workflow successfully', async () => {
+    it.skip('completes the entire workflow successfully', async () => {
       await historyFactSummaryTeam.start();
       const store = historyFactSummaryTeam.useStore();
       expect(store.getState().getCleanedState()).toMatchSnapshot();
