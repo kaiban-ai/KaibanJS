@@ -110,21 +110,6 @@ class BaseAgent {
   workOnTaskResume(_task) {
     throw new Error('workOnTaskResume must be implemented by subclasses.');
   }
-
-  clone() {
-    return new BaseAgent({
-      name: this.name,
-      role: this.role,
-      goal: this.goal,
-      background: this.background,
-      tools: this.tools,
-      llmConfig: this.llmConfig,
-      maxIterations: this.maxIterations,
-      forceFinalAnswer: this.forceFinalAnswer,
-      promptTemplates: this.promptTemplates,
-      llmInstance: this.llmInstance,
-    });
-  }
 }
 
 export { BaseAgent };
