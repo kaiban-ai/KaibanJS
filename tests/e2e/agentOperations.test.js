@@ -36,23 +36,19 @@ describe('Agent Operations Team Workflows', () => {
         mock(openAITeamRecordedRequests);
       }
 
+      const apiKey2 = process.env.OPENAI_API_KEY_2 ?? 'test-api-key-2';
+
       const store = openAITeam.useStore();
       store.getState().setEnv({
-        OPENAI_API_KEY: process.env.OPENAI_API_KEY_2,
+        OPENAI_API_KEY: apiKey2,
       });
 
       // Verify that agents have the updated API key in their llmConfig
       const agentsBeforeStart = store.getState().agents;
       agentsBeforeStart.forEach((agent) => {
-        expect(agent.agentInstance.env.OPENAI_API_KEY).toBe(
-          process.env.OPENAI_API_KEY_2
-        );
-        expect(agent.agentInstance.llmConfig.apiKey).toBe(
-          process.env.OPENAI_API_KEY_2
-        );
-        expect(agent.agentInstance.llmInstance.apiKey).toBe(
-          process.env.OPENAI_API_KEY_2
-        );
+        expect(agent.agentInstance.env.OPENAI_API_KEY).toBe(apiKey2);
+        expect(agent.agentInstance.llmConfig.apiKey).toBe(apiKey2);
+        expect(agent.agentInstance.llmInstance.apiKey).toBe(apiKey2);
       });
 
       // Start the workflow
@@ -62,9 +58,7 @@ describe('Agent Operations Team Workflows', () => {
       fetchCalls
         .filter(([url]) => url.includes('api.openai.com'))
         .forEach(([_, config]) => {
-          expect(config.headers.authorization).toContain(
-            process.env.OPENAI_API_KEY_2
-          );
+          expect(config.headers.authorization).toContain(apiKey2);
         });
 
       // check clean state
@@ -72,15 +66,9 @@ describe('Agent Operations Team Workflows', () => {
 
       const agentsAfterStart = store.getState().agents;
       agentsAfterStart.forEach((agent) => {
-        expect(agent.agentInstance.env.OPENAI_API_KEY).toBe(
-          process.env.OPENAI_API_KEY_2
-        );
-        expect(agent.agentInstance.llmConfig.apiKey).toBe(
-          process.env.OPENAI_API_KEY_2
-        );
-        expect(agent.agentInstance.llmInstance.apiKey).toBe(
-          process.env.OPENAI_API_KEY_2
-        );
+        expect(agent.agentInstance.env.OPENAI_API_KEY).toBe(apiKey2);
+        expect(agent.agentInstance.llmConfig.apiKey).toBe(apiKey2);
+        expect(agent.agentInstance.llmInstance.apiKey).toBe(apiKey2);
       });
 
       // const recordedData = getRecords();
@@ -119,13 +107,14 @@ describe('Agent Operations Team Workflows', () => {
       const workflowPromise = openAITeam.start();
       const store = openAITeam.useStore();
 
+      const apiKey1 = process.env.OPENAI_API_KEY ?? 'test-api-key-1';
+      const apiKey2 = process.env.OPENAI_API_KEY_2 ?? 'test-api-key-2';
+
       const fetchCalls = fetchSpy.mock.calls;
       fetchCalls
         .filter(([url]) => url.includes('api.openai.com'))
         .forEach(([_, config]) => {
-          expect(config.headers.authorization).toContain(
-            process.env.OPENAI_API_KEY
-          );
+          expect(config.headers.authorization).toContain(apiKey1);
         });
 
       let nFetchCallsAfterFirstTask = 0;
@@ -160,21 +149,15 @@ describe('Agent Operations Team Workflows', () => {
 
       // Update environment with new API key
       store.getState().setEnv({
-        OPENAI_API_KEY: process.env.OPENAI_API_KEY_2,
+        OPENAI_API_KEY: apiKey2,
       });
 
       // Verify that agents have the updated API key immediately after update
       const agentsAfterUpdate = store.getState().agents;
       agentsAfterUpdate.forEach((agent) => {
-        expect(agent.agentInstance.env.OPENAI_API_KEY).toBe(
-          process.env.OPENAI_API_KEY_2
-        );
-        expect(agent.agentInstance.llmConfig.apiKey).toBe(
-          process.env.OPENAI_API_KEY_2
-        );
-        expect(agent.agentInstance.llmInstance.apiKey).toBe(
-          process.env.OPENAI_API_KEY_2
-        );
+        expect(agent.agentInstance.env.OPENAI_API_KEY).toBe(apiKey2);
+        expect(agent.agentInstance.llmConfig.apiKey).toBe(apiKey2);
+        expect(agent.agentInstance.llmInstance.apiKey).toBe(apiKey2);
       });
 
       // Wait for workflow completion
@@ -191,9 +174,7 @@ describe('Agent Operations Team Workflows', () => {
       fetchCallsAfterWorkflowCompletion
         .filter(([url]) => url.includes('api.openai.com'))
         .forEach(([_, config]) => {
-          expect(config.headers.authorization).toContain(
-            process.env.OPENAI_API_KEY_2
-          );
+          expect(config.headers.authorization).toContain(apiKey2);
         });
 
       // check clean state
@@ -202,15 +183,9 @@ describe('Agent Operations Team Workflows', () => {
       // Verify that agents still have the updated API key after workflow completion
       const agentsAfterCompletion = store.getState().agents;
       agentsAfterCompletion.forEach((agent) => {
-        expect(agent.agentInstance.env.OPENAI_API_KEY).toBe(
-          process.env.OPENAI_API_KEY_2
-        );
-        expect(agent.agentInstance.llmConfig.apiKey).toBe(
-          process.env.OPENAI_API_KEY_2
-        );
-        expect(agent.agentInstance.llmInstance.apiKey).toBe(
-          process.env.OPENAI_API_KEY_2
-        );
+        expect(agent.agentInstance.env.OPENAI_API_KEY).toBe(apiKey2);
+        expect(agent.agentInstance.llmConfig.apiKey).toBe(apiKey2);
+        expect(agent.agentInstance.llmInstance.apiKey).toBe(apiKey2);
       });
     });
   });
