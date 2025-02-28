@@ -1,4 +1,4 @@
-import { Tool } from 'langchain/tools';
+import { StructuredTool } from 'langchain/tools';
 import type { AGENT_STATUS_enum } from './enums.d.ts';
 
 /**
@@ -21,7 +21,7 @@ export type TAgentTypes = 'ReactChampionAgent';
  * @property {string} role - The role of the agent.
  * @property {string} goal - The goal of the agent.
  * @property {string} background - The background of the agent.
- * @property {Tool[]} [tools] - The tools available to the agent.
+ * @property {StructuredTool []} [tools] - The tools available to the agent.
  * @property {ILLMConfig} [llmConfig] - The language model configuration.
  * @property {number} [maxIterations] - The maximum number of iterations.
  * @property {boolean} [forceFinalAnswer] - Whether to force the final answer.
@@ -31,7 +31,7 @@ export interface IBaseAgentParams {
   role: string;
   goal: string;
   background: string;
-  tools?: Tool[];
+  tools?: StructuredTool[];
   llmConfig?: ILLMConfig;
   maxIterations?: number;
   forceFinalAnswer?: boolean;
@@ -51,7 +51,7 @@ export interface IBaseAgentParams {
  * @property {string} role - The agent's role.
  * @property {string} goal - The agent's goal.
  * @property {string} background - The agent's background.
- * @property {Tool[]} tools - The tools available to the agent.
+ * @property {StructuredTool[]} tools - The tools available to the agent.
  * @property {ILLMConfig} llmConfig - The language model configuration.
  * @property {number} maxIterations - The maximum number of iterations.
  * @property {boolean} forceFinalAnswer - Whether to force the final answer.
@@ -67,7 +67,7 @@ export declare class BaseAgent {
   role: string;
   goal: string;
   background: string;
-  tools: Tool[];
+  tools: StructuredTool[];
   llmConfig: ILLMConfig;
   maxIterations: number;
   forceFinalAnswer: boolean;
