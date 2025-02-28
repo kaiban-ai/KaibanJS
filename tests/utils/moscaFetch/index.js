@@ -31,12 +31,18 @@ function moscaFetch() {
         if (mock.isRecorder) {
           const response = await originalFetch(input, options);
           const clonedResponse = response.clone();
-          records.push({
-            url: input,
-            method: requestMethod,
-            body: requestBody,
-            response: await clonedResponse.json(), // Assuming JSON response
-          });
+
+          try {
+            records.push({
+              url: input,
+              method: requestMethod,
+              body: requestBody,
+              response: await clonedResponse.json(), // Assuming JSON response
+            });
+          } catch (error) {
+            console.warn('Error recording response:', error);
+          }
+
           if (mock.callback) {
             mock.callback({
               request: { url: input, method: requestMethod, body: requestBody },
@@ -61,7 +67,7 @@ function moscaFetch() {
         }
       }
     }
-    //console.log('MoscaFetch -> No mocks or recorders matched:', input);
+    // console.log('MoscaFetch -> No mocks or recorders matched:', input, options);
     return originalFetch(input, options); // Call the original fetch if no mocks or recorders match
   };
 

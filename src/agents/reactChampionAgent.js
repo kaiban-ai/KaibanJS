@@ -31,6 +31,7 @@ import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { logger } from '../utils/logger';
 import { LLMInvocationError } from '../utils/errors';
+
 class ReactChampionAgent extends BaseAgent {
   #executableAgent;
   constructor(config) {
@@ -81,6 +82,29 @@ class ReactChampionAgent extends BaseAgent {
     }
 
     this.interactionsHistory = new ChatMessageHistory();
+  }
+
+  // Add method to update LLM configuration when environment changes
+  updateEnv(env) {
+    this.env = env;
+
+    // Only update if we're using environment-based API keys
+    const apiKey = getApiKey(this.llmConfig, this.env, true);
+    if (apiKey && this.llmConfig.apiKey !== apiKey) {
+      this.llmConfig.apiKey = apiKey;
+
+      // Define a mapping of providers to their corresponding chat classes
+      const providers = {
+        anthropic: ChatAnthropic,
+        google: ChatGoogleGenerativeAI,
+        mistral: ChatMistralAI,
+        openai: ChatOpenAI,
+      };
+
+      // Choose the chat class based on the provider
+      const ChatClass = providers[this.llmConfig.provider] || ChatOpenAI;
+      this.llmInstance = new ChatClass(this.llmConfig);
+    }
   }
 
   async workOnTask(task, inputs, context) {
