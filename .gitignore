@@ -44,3 +44,6 @@ _todo.md
 .eslintcache
 
 server.js
+
+# Generated files from MoscaFetch
+recordedData.json

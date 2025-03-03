@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       OPENAI_API_KEY: 'fake-api-key-so-we-can-use-ci-in-forked-repositories'
+      OPENAI_API_KEY_2: 'fake-api-key-so-we-can-use-ci-in-forked-repositories'
       ANTHROPIC_API_KEY: 'fake-api-key-so-we-can-use-ci-in-forked-repositories'
       GOOGLE_API_KEY: 'fake-api-key-so-we-can-use-ci-in-forked-repositories'
       MISTRAL_API_KEY: 'fake-api-key-so-we-can-use-ci-in-forked-repositories'
