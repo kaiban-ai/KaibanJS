@@ -21,6 +21,50 @@ import { z } from 'zod';
 import ky, { HTTPError } from 'ky';
 import { BrowserPDFLoader } from './rag/loaders/browserPDFLoader';
 
+/**
+ * Input parameters for the PdfSearch tool
+ * @typedef {Object} PdfSearchParams
+ * @property {string} query - The question to ask
+ * @property {string | File} [file] - The pdf file path or file object to process
+ */
+type PdfSearchParams = {
+  query: string;
+  file?: string | File;
+};
+
+/**
+ * Response type for the PdfSearch tool
+ * @typedef {string} RagToolkitAnswerResponse
+ * @example
+ * "The answer to your question is: [answer]"
+ */
+type RagToolkitAnswerResponse = string;
+
+/**
+ * Error type for the PdfSearch tool
+ * @typedef {string} PdfSearchError
+ * @example
+ * "ERROR_MISSING_FILE: No pdf file was provided for analysis. Agent should provide valid pdf file in the 'file' field."
+ */
+type PdfSearchError = string;
+
+/**
+ * Response type for the PdfSearch tool
+ * @typedef {RagToolkitAnswerResponse | PdfSearchError} PdfSearchResponse
+ */
+type PdfSearchResponse = RagToolkitAnswerResponse | PdfSearchError;
+
+/**
+ * Configuration options for the PdfSearch tool
+ * @interface PdfSearchFields
+ * @property {string} OPENAI_API_KEY - The OpenAI API key for authentication
+ * @property {string | File} [file] - The pdf file path or file object to process
+ * @property {any} [chunkOptions] - Chunking options for the RAG model
+ * @property {any} [embeddings] - Embeddings instance for the RAG model
+ * @property {any} [vectorStore] - Vector store instance for the RAG model
+ * @property {any} [llmInstance] - LLM instance for the RAG model
+ * @property {string} [promptQuestionTemplate] - Prompt question template for the RAG model
+ */
 interface PdfSearchFields {
   OPENAI_API_KEY: string;
   file?: string | File;
@@ -30,6 +74,22 @@ interface PdfSearchFields {
   llmInstance?: any;
   promptQuestionTemplate?: string;
 }
+
+/**
+ * PdfSearch tool for performing semantic search within a PDF file
+ *
+ * This tool allows for semantic searching of a query within the content of a text file.
+ * It uses the RAGToolkit to perform the search, which includes a Chunker, Embeddings,
+ * VectorStore, and LLM instance. The tool also supports loading a PDF file from a URL.
+ *
+ * The tool supports the following components:
+ * - A Chunker options, which chunks and processes text for the RAG model
+ * - An Embeddings instance, which handles embeddings for the RAG model
+ * - A VectorStore instance, which stores vectors for the RAG model
+ * - An LLM instance, which handles the language model for the RAG model
+ * - A promptQuestionTemplate, which defines the template for asking questions
+ * - An OpenAI API key, which is used for interacting with the OpenAI API
+ */
 
 export class PdfSearch extends StructuredTool {
   private OPENAI_API_KEY: string;
@@ -49,6 +109,10 @@ export class PdfSearch extends StructuredTool {
     query: z.string().describe('The question to ask.'),
   });
 
+  /**
+   * Constructor for the PdfSearch tool
+   * @param {PdfSearchFields} fields - The configuration fields for the tool
+   */
   constructor(fields: PdfSearchFields) {
     super();
     this.OPENAI_API_KEY = fields.OPENAI_API_KEY;
@@ -77,7 +141,12 @@ export class PdfSearch extends StructuredTool {
     this.httpClient = ky;
   }
 
-  async _call(input: z.infer<typeof this.schema>): Promise<string> {
+  /**
+   * Call the PdfSearch tool
+   * @param {PdfSearchParams} input - The input parameters for the tool
+   * @returns {Promise<PdfSearchResponse>} The response from the tool
+   */
+  async _call(input: PdfSearchParams): Promise<PdfSearchResponse> {
     const { file, query } = input;
     if (file && file !== '') {
       this.file = file;

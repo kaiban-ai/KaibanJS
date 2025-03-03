@@ -22,19 +22,72 @@ import { StructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
 import ky, { HTTPError } from 'ky';
 
+/**
+ * Type for the parameters in TavilySearchResults
+ * @typedef {string} TavilySearchParams
+ * @example
+ * {
+ *   searchQuery: "search query"
+ */
+type TavilySearchParams = {
+  searchQuery: string;
+};
+
+/**
+ * Configuration options for the TavilySearchResults tool
+ * @interface TavilySearchFields
+ * @property {string} apiKey - The API key for the Tavily search engine
+ * @property {number} [maxResults] - The maximum number of results to return
+ */
 interface TavilySearchFields {
   apiKey: string;
   maxResults?: number;
 }
 
-interface TavilyResult {
+/**
+ * Type for the results from the Tavily search engine
+ * @typedef {Object} TavilyResult
+ * @property {string} title - The title of the result
+ * @property {string} url - The URL of the result
+ * @property {string} content - The content of the result
+ * @property {number} score - The score of the result
+ * @property {Object} [key: string]: any - Additional properties of the result
+ */
+type TavilyResult = {
   title: string;
   url: string;
   content: string;
   score: number;
   [key: string]: any;
-}
+};
 
+/**
+ * Type for the error response from the Tavily search engine
+ * @typedef {string} TavilyError
+ * @example
+ * "Invalid API key"
+ */
+type TavilyError = string;
+
+/**
+ * Type for the response from the Tavily search engine
+ * @typedef {TavilyResult[] | TavilyError} TavilyResponse
+ * @example
+ * [
+ *   {
+ *     title: "Tavily Search Results",
+ *     url: "https://tavily.com",
+ *     content: "Tavily is a search engine that provides AI-optimized search capabilities.",
+ *     score: 0.95
+ *   }
+ * ]
+ */
+type TavilyResponse = TavilyResult[] | TavilyError;
+
+/**
+ * TavilySearchResults tool class
+ * @extends StructuredTool
+ */
 export class TavilySearchResults extends StructuredTool {
   private apiKey: string;
   private maxResults: number;
@@ -48,6 +101,9 @@ export class TavilySearchResults extends StructuredTool {
       .describe('The search query to find relevant information.'),
   });
 
+  /**
+   * @param {TavilySearchFields} fields - The fields for the Tavily search engine
+   */
   constructor(fields: TavilySearchFields) {
     super();
     this.apiKey = fields.apiKey;
@@ -55,7 +111,11 @@ export class TavilySearchResults extends StructuredTool {
     this.httpClient = ky;
   }
 
-  async _call(input: z.infer<typeof this.schema>): Promise<string> {
+  /**
+   * @param {TavilySearchParams} input - The input for the Tavily search engine
+   * @returns {Promise<TavilyResponse>} The response from the Tavily search engine
+   */
+  async _call(input: TavilySearchParams): Promise<TavilyResponse> {
     try {
       const jsonData = await this.httpClient
         .post('https://api.tavily.com/search', {

@@ -21,11 +21,55 @@ import { StructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
 import ky, { HTTPError } from 'ky';
 
-interface FirecrawlFields {
+/**
+ * Configuration options for initializing the Firecrawl tool
+ * @example
+ * {
+ *   apiKey: "your-api-key",
+ *   format: "markdown"
+ * }
+ */
+interface FirecrawlToolFields {
   apiKey: string;
   format?: string;
 }
 
+/**
+ * Parameters for making a scraping request
+ * @example
+ * {
+ *   url: "https://example.com/article",
+ *   format: "markdown",
+ *   mode: "scrape"
+ * }
+ */
+interface FirecrawlToolParams {
+  url: string;
+  format?: string;
+  mode?: string;
+}
+
+/** The scraped content returned as a string */
+type FirecrawlToolResponse = string;
+
+/** Error message returned when the scraping fails */
+type FirecrawlToolError = string;
+
+/**
+ * Firecrawl tool for scraping web content and converting it to LLM-ready formats
+ *
+ * @example
+ * ```typescript
+ * const firecrawl = new Firecrawl({
+ *   apiKey: 'your-api-key',
+ *   format: 'markdown'
+ * });
+ *
+ * const content = await firecrawl.call({
+ *   url: 'https://example.com/article'
+ * });
+ * ```
+ */
 export class Firecrawl extends StructuredTool {
   private apiKey: string;
   private format: string;
@@ -37,7 +81,12 @@ export class Firecrawl extends StructuredTool {
     url: z.string().describe('The URL to scrape and retrieve content from.'),
   });
 
-  constructor(fields: FirecrawlFields) {
+  /**
+   * Creates a new instance of the Firecrawl tool
+   *
+   * @param fields - Configuration options for the scraping tool
+   */
+  constructor(fields: FirecrawlToolFields) {
     super();
 
     this.apiKey = fields.apiKey;
@@ -47,7 +96,22 @@ export class Firecrawl extends StructuredTool {
     this.httpClient = ky;
   }
 
-  async _call(input: { url: string }): Promise<string> {
+  /**
+   * Scrapes content from a URL using the Firecrawl API
+   *
+   * @param input - The parameters containing the URL to scrape
+   * @returns A promise that resolves to either the scraped content or an error message
+   *
+   * @example
+   * ```typescript
+   * const content = await firecrawl._call({
+   *   url: 'https://example.com/article'
+   * });
+   * ```
+   */
+  async _call(
+    input: FirecrawlToolParams
+  ): Promise<FirecrawlToolResponse | FirecrawlToolError> {
     try {
       const response = await this.httpClient
         .post('https://api.firecrawl.dev/v1/scrape', {

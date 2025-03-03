@@ -22,6 +22,51 @@ import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { ChatOpenAI } from '@langchain/openai';
 import { RAGToolkit } from './rag/ragToolkit';
 
+/**
+ * Type for the parameters in SimpleRAG
+ * @typedef {string} SimpleRAGParams
+ * @example
+ * {
+ *   content: "content text"
+ */
+type SimpleRAGParams = {
+  query: string;
+  content?: string;
+};
+
+/**
+ * Type for the response in SimpleRAG
+ * @typedef {string} RagToolkitAnswerResponse
+ * @example
+ * "The answer to your question is: [answer]"
+ */
+type RagToolkitAnswerResponse = string;
+
+/**
+ * Type for the error in SimpleRAG
+ * @typedef {string} SimpleRAGError
+ * @example
+ * "ERROR_MISSING_CONTENT: No text content was provided for analysis. Agent should provide content in the 'content' field."
+ */
+type SimpleRAGError = string;
+
+/**
+ * Type for the response in SimpleRAG
+ * @typedef {RagToolkitAnswerResponse | SimpleRAGError} SimpleRAGResponse
+ * @example
+ * "The answer to your question is: [answer]"
+ */
+type SimpleRAGResponse = RagToolkitAnswerResponse | SimpleRAGError;
+
+/**
+/**
+ * Configuration options for the SimpleRAG tool
+ * @interface SimpleRAGFields
+ * @property {string} OPENAI_API_KEY - The OpenAI API key for authentication
+ * @property {string} [content] - The content text to process
+ * @property {any} [chunkOptions] - Chunking options for the RAG model
+ * @property {any} [embeddings] - Embeddings instance for the RAG model
+ */
 interface SimpleRAGFields {
   OPENAI_API_KEY: string;
   content?: string;
@@ -36,6 +81,10 @@ interface SimpleRAGFields {
   promptQuestionTemplate?: string;
 }
 
+/**
+ * SimpleRAG tool class
+ * @extends StructuredTool
+ */
 export class SimpleRAG extends StructuredTool {
   private OPENAI_API_KEY: string;
   private content?: string;
@@ -54,6 +103,10 @@ export class SimpleRAG extends StructuredTool {
     query: z.string().describe('The question to ask.'),
   });
 
+  /**
+   * Constructor for the SimpleRAG tool
+   * @param {SimpleRAGFields} fields - The configuration fields for the tool
+   */
   constructor(fields: SimpleRAGFields) {
     super();
     this.OPENAI_API_KEY = fields.OPENAI_API_KEY;
@@ -76,9 +129,12 @@ export class SimpleRAG extends StructuredTool {
     });
   }
 
-  async _call(input: z.infer<typeof this.schema>): Promise<string> {
-    console.log('from ts');
-
+  /**
+   * Call the SimpleRAG tool
+   * @param {SimpleRAGParams} input - The input parameters for the tool
+   * @returns {Promise<SimpleRAGResponse>} The response from the tool
+   */
+  async _call(input: SimpleRAGParams): Promise<SimpleRAGResponse> {
     const { content, query } = input;
     if (content && content !== '') {
       this.content = content;

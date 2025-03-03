@@ -18,11 +18,59 @@ import { StructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
 import ky, { HTTPError } from 'ky';
 
+/**
+ * Type for the parameters in ZapierWebhook
+ * @typedef {string} ZapierWebhookParams
+ * @example
+ * {
+ *   schema: z.object({
+ *     name: z.string(),
+ *     email: z.string().email(),
+ */
+
+type ZapierWebhookParams = {
+  schema: z.ZodObject<any>;
+};
+
+/**
+ * Response type for the ZapierWebhook tool
+ * @typedef {string} ZapierWebhookResult
+ * @example
+ * "Webhook response success"
+ */
+type ZapierWebhookResult = string;
+
+/**
+ * Error type for the ZapierWebhook tool
+ * @typedef {string} ZapierWebhookError
+ * @example
+ * "API request failed: Client Error (404)"
+ */
+type ZapierWebhookError = string;
+
+/**
+ * Type for the response from the ZapierWebhook tool
+ * @typedef {ZapierWebhookResult | ZapierWebhookError} ZapierWebhookResponse
+ * @example
+ * "Webhook response success"
+ */
+type ZapierWebhookResponse = ZapierWebhookResult | ZapierWebhookError;
+
+/**
+ * Interface for the ZapierWebhook tool
+ * @typedef {Object} ZapierWebhookFields
+ * @property {string} url - The Zapier webhook URL.
+ * @property {z.ZodObject<any>} schema - The schema for the input data using Zod.
+ */
 interface ZapierWebhookFields {
   url: string;
   schema: z.ZodObject<any>;
 }
 
+/**
+ * ZapierWebhook tool class
+ * @extends StructuredTool
+ */
 export class ZapierWebhook extends StructuredTool {
   private url: string;
   private httpClient: typeof ky;
@@ -49,7 +97,7 @@ export class ZapierWebhook extends StructuredTool {
    * @param input - The input data for the webhook.
    * @returns The response from the webhook as a JSON string.
    */
-  async _call(input: z.infer<typeof this.schema>): Promise<string> {
+  async _call(input: ZapierWebhookParams): Promise<ZapierWebhookResponse> {
     try {
       const jsonData = await this.httpClient
         .post(this.url, {

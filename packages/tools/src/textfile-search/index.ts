@@ -23,6 +23,51 @@ import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { ChatOpenAI } from '@langchain/openai';
 import { RAGToolkit } from './rag/ragToolkit';
 
+/**
+ * Type for the parameters in TextFileSearch
+ * @typedef {string} TextFileSearchParams
+ * @example
+ * {
+ *   query: "What is the main idea of the document?"
+ *   file: "path/to/file.txt",
+ * }
+ */
+type TextFileSearchParams = {
+  query: string;
+  file?: string;
+};
+
+/**
+ * Response type for the PdfSearch tool
+ * @typedef {string} RagToolkitAnswerResponse
+ * @example
+ * "The answer to your question is: [answer]"
+ */
+type RagToolkitAnswerResponse = string;
+
+/**
+ * Error type for the TextFileSearch tool
+ * @typedef {string} TextFileSearchError
+ * @example
+ * "ERROR_MISSING_FILE: No file was provided for analysis. Agent should provide valid file in the 'file' field."
+ */
+type TextFileSearchError = string;
+
+/**
+ * Type for the response from the TextFileSearch tool
+ * @typedef {RagToolkitAnswerResponse | TextFileSearchError} TextFileSearchResponse
+ * @example
+ * "The answer to your question is: [answer]"
+ */
+type TextFileSearchResponse = RagToolkitAnswerResponse | TextFileSearchError;
+
+/**
+ * Interface for the TextFileSearch tool
+ * @typedef {Object} TextFileSearchFields
+ * @property {string} OPENAI_API_KEY - The OpenAI API key
+ * @property {string} [file] - The text file (txt) path to process
+ * @property {Object} [chunkOptions] - The chunk options for the RAG model
+ */
 interface TextFileSearchFields {
   OPENAI_API_KEY: string;
   file?: string | File;
@@ -36,6 +81,10 @@ interface TextFileSearchFields {
   promptQuestionTemplate?: string;
 }
 
+/**
+ * TextFileSearch tool class
+ * @extends StructuredTool
+ */
 export class TextFileSearch extends StructuredTool {
   private OPENAI_API_KEY: string;
   private file?: string | File;
@@ -54,6 +103,9 @@ export class TextFileSearch extends StructuredTool {
     query: z.string().describe('The question to ask.'),
   });
 
+  /**
+   * @param {TextFileSearchFields} fields - The fields for the TextFileSearch tool
+   */
   constructor(fields: TextFileSearchFields) {
     super();
     this.OPENAI_API_KEY = fields.OPENAI_API_KEY;
@@ -80,7 +132,11 @@ export class TextFileSearch extends StructuredTool {
     this.httpClient = ky;
   }
 
-  async _call(input: z.infer<typeof this.schema>): Promise<string> {
+  /**
+   * @param {TextFileSearchParams} input - The input for the TextFileSearch tool
+   * @returns {Promise<TextFileSearchResponse>} The response from the TextFileSearch tool
+   */
+  async _call(input: TextFileSearchParams): Promise<TextFileSearchResponse> {
     const { file, query } = input;
     if (file && file !== '') {
       this.file = file;

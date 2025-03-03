@@ -28,20 +28,75 @@ import { StructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
 import ky, { HTTPError } from 'ky';
 
+/**
+ * Configuration options for the Jina URL to Markdown conversion
+ * @interface JinaUrlToMarkdownOptions
+ * @property {string[]} [targetSelector] - CSS selectors to target specific elements for extraction
+ * @property {string} [retainImages] - Image handling strategy ('all', 'none', or specific selectors)
+ * @example
+ * {
+ *   targetSelector: ['article', '.content', '#main'],
+ *   retainImages: 'none'
+ * }
+ */
+type JinaUrlToMarkdownOptions = {
+  targetSelector?: string[];
+  retainImages?: string;
+};
+
+/**
+ * Input parameters for the Jina URL to Markdown tool
+ * @interface JinaUrlToMarkdownInput
+ * @property {string} url - The URL of the webpage to convert to markdown
+ * @example
+ * {
+ *   url: "https://example.com/blog/post"
+ * }
+ */
+type JinaUrlToMarkdownInput = {
+  url: string;
+};
+
+/**
+ * Constructor parameters for the JinaUrlToMarkdown tool
+ * @interface JinaUrlToMarkdownFields
+ * @property {string} [apiKey] - Jina API key for authentication
+ * @property {JinaUrlToMarkdownOptions} [options] - Configuration options for the conversion
+ */
 interface JinaUrlToMarkdownFields {
   apiKey?: string;
-  options?: Record<string, any>;
+  options?: JinaUrlToMarkdownOptions;
 }
 
-interface JinaUrlToMarkdownInput {
-  url: string;
-}
+/**
+ * Successful response containing markdown content
+ * @typedef {string} JinaUrlToMarkdownResult
+ * @example
+ * "# Article Title\n\nThis is the content of the article..."
+ */
+type JinaUrlToMarkdownResult = string;
+
+/**
+ * Error message returned when the conversion fails
+ * @typedef {string} JinaUrlToMarkdownError
+ * @example
+ * "API request failed: Client Error (404)"
+ */
+type JinaUrlToMarkdownError = string;
+
+/**
+ * Response type that can either be markdown content or an error message
+ * @typedef {JinaUrlToMarkdownResult | JinaUrlToMarkdownError} JinaUrlToMarkdownResponse
+ */
+type JinaUrlToMarkdownResponse =
+  | JinaUrlToMarkdownResult
+  | JinaUrlToMarkdownError;
 
 export class JinaUrlToMarkdown extends StructuredTool {
   name = 'jina-url-to-markdown';
   description = `Fetches web content from a specified URL and returns it in Markdown format. Input should be a JSON object with a "url".`;
   apiKey?: string;
-  options: Record<string, any>;
+  options: JinaUrlToMarkdownOptions;
   headers: Record<string, string>;
   schema = z.object({
     url: z.string().describe('The URL to scrape and retrieve content from.'),
@@ -61,7 +116,9 @@ export class JinaUrlToMarkdown extends StructuredTool {
     this.httpClient = ky;
   }
 
-  async _call(input: JinaUrlToMarkdownInput): Promise<string> {
+  async _call(
+    input: JinaUrlToMarkdownInput
+  ): Promise<JinaUrlToMarkdownResponse> {
     try {
       const response = await this.httpClient
         .post(`https://r.jina.ai/`, {
@@ -71,7 +128,7 @@ export class JinaUrlToMarkdown extends StructuredTool {
           },
           headers: this.headers,
         })
-        .json<{ data?: string }>();
+        .json<{ data?: JinaUrlToMarkdownResult }>();
 
       return response?.data || 'The API returned an empty response.';
     } catch (error) {

@@ -23,6 +23,50 @@ import { OpenAIEmbeddings } from '@langchain/openai';
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { ChatOpenAI } from '@langchain/openai';
 import { RAGToolkit } from './rag/ragToolkit';
+
+/**
+ * Type for the parameters in WebsiteSearch
+ * @typedef {string} WebsiteSearchParams
+ * @example
+ * {
+ *   query: "What is the main idea of the website?"
+ *   url: "https://example.com",
+ */
+type WebsiteSearchParams = {
+  query: string;
+  url?: string;
+};
+
+/**
+ * Response type for the WebsiteSearch tool
+ * @typedef {string} RagToolkitAnswerResponse
+ * @example
+ * "The answer to your question is: [answer]"
+ */
+type RagToolkitAnswerResponse = string;
+
+/**
+ * Error type for the WebsiteSearch tool
+ * @typedef {string} WebsiteSearchError
+ * @example
+ * "ERROR_MISSING_URL: No url was provided for analysis. Agent should provide valid url in the 'url' field."
+ */
+type WebsiteSearchError = string;
+
+/**
+ * Type for the response from the WebsiteSearch tool
+ * @typedef {RagToolkitAnswerResponse | WebsiteSearchError} WebsiteSearchResponse
+ * @example
+ * "The answer to your question is: [answer]"
+ */
+type WebsiteSearchResponse = RagToolkitAnswerResponse | WebsiteSearchError;
+
+/**
+ * Interface for the WebsiteSearch tool
+ * @typedef {Object} WebsiteSearchFields
+ * @property {string} OPENAI_API_KEY - The OpenAI API key
+ * @property {string} [url - The URL to process
+ */
 interface WebsiteSearchFields {
   OPENAI_API_KEY: string;
   url?: string;
@@ -36,6 +80,10 @@ interface WebsiteSearchFields {
   promptQuestionTemplate?: string;
 }
 
+/**
+ * WebsiteSearch tool class
+ * @extends StructuredTool
+ */
 export class WebsiteSearch extends StructuredTool {
   private OPENAI_API_KEY: string;
   private url?: string;
@@ -53,6 +101,9 @@ export class WebsiteSearch extends StructuredTool {
     query: z.string().describe('The question to ask.'),
   });
 
+  /**
+   * @param {WebsiteSearchFields} fields - The fields for the WebsiteSearch tool
+   */
   constructor(fields: WebsiteSearchFields) {
     super();
     this.OPENAI_API_KEY = fields.OPENAI_API_KEY;
@@ -79,7 +130,11 @@ export class WebsiteSearch extends StructuredTool {
     );
   }
 
-  async _call(input: z.infer<typeof this.schema>): Promise<string> {
+  /**
+   * @param {WebsiteSearchParams} input - The input for the WebsiteSearch tool
+   * @returns {Promise<WebsiteSearchResponse>} The response from the WebsiteSearch tool
+   */
+  async _call(input: WebsiteSearchParams): Promise<WebsiteSearchResponse> {
     const { url, query } = input;
     if (url && url !== '') {
       this.url = url;

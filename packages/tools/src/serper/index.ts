@@ -34,7 +34,13 @@ import { StructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
 import ky, { HTTPError } from 'ky';
 
-type SearchType =
+/**
+ * Type for the search type in Serper
+ * @typedef {string} SerperSearchType
+ * @example
+ * "search"
+ */
+type SerperSearchType =
   | 'search'
   | 'images'
   | 'videos'
@@ -46,8 +52,13 @@ type SearchType =
   | 'patents'
   | 'webpage';
 
-// Pre-defined types for Serper
-const VALID_TYPES: readonly SearchType[] = [
+/**
+ * Pre-defined types for Serper
+ * @typedef {string[]} ValidTypes
+ * @example
+ * ["search", "images", "videos", "places", "maps", "news", "shopping", "scholar", "patents", "webpage"]
+ */
+const VALID_TYPES: readonly SerperSearchType[] = [
   'search',
   'images',
   'videos',
@@ -60,16 +71,85 @@ const VALID_TYPES: readonly SearchType[] = [
   'webpage',
 ] as const;
 
+/**
+ * Type for the parameters in Serper
+ * @typedef {url: string} SerperWebpageParams
+ * @example
+ * {
+ *   url: "https://example.com"
+ */
+
+type SerperWebpageParams = {
+  url: string;
+};
+
+/**
+ * Type for the parameters in Serper
+ * @typedef {query: string} SerperQueryParams
+ * @example
+ * {
+ *   query: "search query"
+ */
+type SerperQueryParams = {
+  query: string;
+};
+
+/**
+ * Type for the parameters in Serper
+ * @typedef {SerperWebpageParams | SerperQueryParams} SerperParams
+ * @example
+ * {
+ *   url: "https://example.com"
+ */
+type SerperParams = SerperWebpageParams | SerperQueryParams;
+
+/**
+ * Type for the response in Serper
+ * @typedef {Record<string, any>} SerperApiResponse
+ * @example
+ * {
+ *   url: "https://example.com"
+ */
+type SerperApiResponse = Record<string, any>;
+
+/**
+ * Type for the error in Serper
+ * @typedef {string} SerperError
+ * @example
+ * "API request failed: Client Error (404)"
+ */
+type SerperError = string;
+
+/**
+ * Type for the response in Serper
+ * @typedef {SerperApiResponse | SerperError} SerperResponse
+ * @example
+ * {
+ *   url: "https://example.com"
+ */
+type SerperResponse = SerperApiResponse | SerperError;
+
+/**
+ * Configuration options for the Serper tool
+ * @interface SerperFields
+ * @property {string} apiKey - The API key for the Serper tool
+ * @property {SerperSearchType} [type] - The type of search to perform
+ * @property {Record<string, any>} [params] - Additional parameters for the search
+ */
 interface SerperFields {
   apiKey: string;
-  type?: SearchType;
+  type?: SerperSearchType;
   params?: Record<string, any>;
 }
 
+/**
+ * Serper tool for performing Google searches
+ * @extends {StructuredTool}
+ */
 export class Serper extends StructuredTool {
   private apiKey: string;
   private params: Record<string, any>;
-  private type: SearchType;
+  private type: SerperSearchType;
   private httpClient: typeof ky;
   name = 'serper';
   description: string;
@@ -110,9 +190,7 @@ export class Serper extends StructuredTool {
           });
   }
 
-  async _call(
-    input: z.infer<typeof this.schema>
-  ): Promise<Record<string, any> | string> {
+  async _call(input: SerperParams): Promise<SerperResponse> {
     try {
       const url =
         this.type === 'webpage'

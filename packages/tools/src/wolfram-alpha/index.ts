@@ -28,10 +28,51 @@ import { StructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
 import ky, { HTTPError } from 'ky';
 
+/**
+ * Type for the parameters in WolframAlphaTool
+ * @typedef {string} WolframAlphaParams
+ * @example
+ * {
+ *   query : "What is the capital of France?"
+ * }
+ */
+type WolframAlphaParams = {
+  query: string;
+};
+
+/**
+ * Response type for the WolframAlphaTool
+ * @typedef {string} WolframAlphaResult
+ * @example
+ * "The answer to your question is: [answer]"
+ */
+type WolframAlphaResult = string;
+
+/**
+ * Error type for the WolframAlphaTool
+ * @typedef {string} WolframAlphaError
+ * @example
+ * "ERROR_MISSING_APP_ID: No appId was provided for analysis. Agent should provide valid appId in the 'appId' field."
+ */
+type WolframAlphaError = string;
+/**
+ * Type for the response from the WolframAlphaTool
+ * @typedef {WolframAlphaResult | WolframAlphaError} WolframAlphaResponse
+ */
+type WolframAlphaResponse = WolframAlphaResult | WolframAlphaError;
+
+/**
+ * Interface for the WolframAlphaTool
+ * @typedef {Object} WolframAlphaFields
+ * @property {string} appId - The WolframAlpha API key
+ */
 interface WolframAlphaFields {
   appId: string;
 }
-
+/**
+ * WolframAlphaTool class
+ * @extends StructuredTool
+ */
 export class WolframAlphaTool extends StructuredTool {
   private appId: string;
   private httpClient: typeof ky;
@@ -51,9 +92,7 @@ export class WolframAlphaTool extends StructuredTool {
     this.httpClient = ky;
   }
 
-  async _call(
-    input: z.infer<typeof this.schema>
-  ): Promise<Record<string, any> | string> {
+  async _call(input: WolframAlphaParams): Promise<WolframAlphaResponse> {
     try {
       const url = 'https://www.kaibanjs.com/proxy/wolframalpha';
 
@@ -69,7 +108,7 @@ export class WolframAlphaTool extends StructuredTool {
             'Content-Type': 'application/json',
           },
         })
-        .json<Record<string, any>>();
+        .json<WolframAlphaResult>();
 
       return response;
     } catch (error) {

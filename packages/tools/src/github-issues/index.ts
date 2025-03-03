@@ -26,16 +26,42 @@ import { StructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
 import ky, { HTTPError } from 'ky';
 
+/**
+ * Configuration options for the GithubIssues tool
+ * @interface GithubIssuesFields
+ * @property {string} [token] - GitHub personal access token for authentication
+ * @property {number} [limit] - Maximum number of issues to fetch (defaults to 10)
+ */
 interface GithubIssuesFields {
   token?: string;
   limit?: number;
 }
 
-interface RepoInfo {
+/**
+ * Repository information parsed from a GitHub URL
+ * @interface GithubIssuesRepoInfo
+ * @property {string} owner - Repository owner/organization name
+ * @property {string} repo - Repository name
+ * @example
+ * {
+ *   owner: "langchain-ai",
+ *   repo: "langchainjs"
+ * }
+ */
+interface GithubIssuesRepoInfo {
   owner: string;
   repo: string;
 }
 
+/**
+ * Raw GitHub issue data structure returned from the API
+ * @interface GitHubIssue
+ * @property {number} number - Issue number
+ * @property {string} title - Issue title
+ * @property {string} html_url - URL to the issue on GitHub
+ * @property {Array<{name: string}>} labels - Array of label objects
+ * @property {string} [body] - Issue description/body
+ */
 interface GitHubIssue {
   number: number;
   title: string;
@@ -44,6 +70,30 @@ interface GitHubIssue {
   body?: string;
 }
 
+/**
+ * Structured response format for GitHub issues
+ * @interface FormattedResponse
+ * @example
+ * {
+ *   repository: {
+ *     name: "langchainjs",
+ *     url: "https://github.com/langchain-ai/langchainjs",
+ *     owner: "langchain-ai"
+ *   },
+ *   metadata: {
+ *     totalIssues: 5,
+ *     lastUpdated: "2024-03-20",
+ *     limit: 10
+ *   },
+ *   issues: [{
+ *     number: 123,
+ *     title: "Add new feature",
+ *     url: "https://github.com/langchain-ai/langchainjs/issues/123",
+ *     labels: ["enhancement"],
+ *     description: "We should add this new feature..."
+ *   }]
+ * }
+ */
 interface FormattedResponse {
   repository: {
     name: string;
@@ -63,6 +113,19 @@ interface FormattedResponse {
     description: string;
   }>;
 }
+
+/**
+ * Error message returned when the GitHub API request fails
+ * @typedef {string} GithubIssuesError
+ * @example "API request failed: Client Error (404)"
+ */
+type GithubIssuesError = string;
+
+/**
+ * Response type that can either be a formatted response or an error message
+ * @typedef {FormattedResponse | GithubIssuesError} GithubIssuesResponse
+ */
+type GithubIssuesResponse = FormattedResponse | GithubIssuesError;
 
 export class GithubIssues extends StructuredTool {
   private token?: string;
@@ -87,7 +150,7 @@ export class GithubIssues extends StructuredTool {
     this.httpClient = ky;
   }
 
-  async _call(input: { repoUrl: string }): Promise<string | FormattedResponse> {
+  async _call(input: { repoUrl: string }): Promise<GithubIssuesResponse> {
     try {
       const { owner, repo } = this._parseRepoUrl(input.repoUrl);
       const issues = await this._fetchIssues({ owner, repo });
@@ -113,7 +176,7 @@ export class GithubIssues extends StructuredTool {
   private async _fetchIssues({
     owner,
     repo,
-  }: RepoInfo): Promise<GitHubIssue[]> {
+  }: GithubIssuesRepoInfo): Promise<GitHubIssue[]> {
     let page = 1;
     let allIssues: GitHubIssue[] = [];
     const headers: Record<string, string> = {
@@ -157,7 +220,7 @@ export class GithubIssues extends StructuredTool {
 
   private _formatResponse(
     issues: GitHubIssue[],
-    input: RepoInfo
+    input: GithubIssuesRepoInfo
   ): FormattedResponse {
     const { owner, repo } = input;
     const repoUrl = `https://github.com/${owner}/${repo}`;
@@ -184,7 +247,7 @@ export class GithubIssues extends StructuredTool {
     };
   }
 
-  private _parseRepoUrl(url: string): RepoInfo {
+  private _parseRepoUrl(url: string): GithubIssuesRepoInfo {
     try {
       const path = new URL(url).pathname.split('/').filter(Boolean);
       if (path.length < 2) {

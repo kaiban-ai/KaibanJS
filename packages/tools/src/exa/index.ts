@@ -21,8 +21,60 @@ import ky, { HTTPError } from 'ky';
 
 const API_BASE_URL = 'https://api.exa.ai';
 
-type SearchType = 'neural' | 'keyword' | 'auto';
-type Category =
+/**
+ * Structure of an individual search result from Exa
+ * @example
+ * {
+ *   title: "Example Article",
+ *   url: "https://example.com/article",
+ *   snippet: "This is a sample search result...",
+ *   publishedDate: "2024-03-20",
+ *   author: "John Doe"
+ * }
+ */
+type ExaSearchToolResult = {
+  title: string;
+  url: string;
+  snippet: string;
+  publishedDate: string;
+  author: string;
+};
+
+/** Error message returned when the search fails */
+type ExaSearchToolError = string;
+
+/**
+ * Response structure from the Exa search API
+ * @example
+ * {
+ *   results: [{
+ *     title: "Example Article",
+ *     url: "https://example.com/article",
+ *     snippet: "This is a sample search result...",
+ *     publishedDate: "2024-03-20",
+ *     author: "John Doe"
+ *   }]
+ * }
+ */
+type ExaSearchToolResponse =
+  | {
+      [key: string]: any;
+      results: ExaSearchToolResult[];
+    }
+  | ExaSearchToolError;
+
+/**
+ * Type of search to perform
+ * - neural: Semantic search using embeddings
+ * - keyword: Traditional keyword-based search
+ * - auto: Automatically choose between neural and keyword
+ */
+type ExaSearchToolType = 'neural' | 'keyword' | 'auto';
+
+/**
+ * Categories that can be used to filter search results
+ */
+type ExaSearchToolCategory =
   | 'company'
   | 'research paper'
   | 'news'
@@ -32,33 +84,67 @@ type Category =
   | 'song'
   | 'personal site'
   | 'pdf';
-type LiveCrawl = 'never' | 'fallback' | 'always';
 
-interface ContentConfig {
-  text?: {
-    maxCharacters: number;
-    includeHtmlTags: boolean;
-  };
+/**
+ * Live crawling behavior options
+ * - never: Never perform live crawling
+ * - fallback: Only crawl if cached version isn't available
+ * - always: Always perform a fresh crawl
+ */
+type ExaLiveCrawl = 'never' | 'fallback' | 'always';
+
+/**
+ * Configuration for content extraction and processing
+ * @example
+ * {
+ *   text: { maxCharacters: 1000, includeHtmlTags: false },
+ *   highlights: { numSentences: 3, highlightsPerUrl: 2, query: "AI technology" },
+ *   summary: { query: "What are the main points?" },
+ *   subpages: 5,
+ *   livecrawl: "fallback"
+ * }
+ */
+interface ExaContentConfig {
+  text?:
+    | {
+        maxCharacters: number;
+        includeHtmlTags: boolean;
+      }
+    | boolean;
   highlights?: {
     numSentences: number;
     highlightsPerUrl: number;
     query: string;
   };
-  summary?: {
-    query: string;
-  };
+  summary?:
+    | {
+        query: string;
+      }
+    | boolean;
   subpages?: number;
   subpageTarget?: number;
-  livecrawl?: LiveCrawl;
+  livecrawl?: ExaLiveCrawl;
   livecrawlTimeout?: number;
 }
 
-interface ExaSearchFields {
+/**
+ * Configuration options for initializing the Exa search tool
+ * @example
+ * {
+ *   apiKey: "your-api-key",
+ *   type: "neural",
+ *   numResults: 5,
+ *   category: "news",
+ *   includeDomains: ["example.com"],
+ *   startPublishedDate: "2024-01-01"
+ * }
+ */
+interface ExaSearchToolFields {
   apiKey: string;
-  type?: SearchType;
+  type?: ExaSearchToolType;
   useAutoprompt?: boolean;
   numResults?: number;
-  category?: Category;
+  category?: ExaSearchToolCategory;
   startPublishedDate?: string;
   endPublishedDate?: string;
   includeDomains?: string[];
@@ -67,31 +153,43 @@ interface ExaSearchFields {
   excludeText?: string[];
   startCrawlDate?: string;
   endCrawlDate?: string;
-  contents?: ContentConfig;
+  contents?: ExaContentConfig;
 }
 
-interface SearchParams {
+/**
+ * Parameters for performing a search query
+ * @example
+ * {
+ *   query: "Latest developments in artificial intelligence"
+ * }
+ */
+interface ExaSearchToolParams {
   query: string;
-  type: SearchType;
-  useAutoprompt: boolean;
-  category?: Category;
-  numResults: number;
-  includeDomains?: string[];
-  excludeDomains?: string[];
-  startCrawlDate?: string;
-  endCrawlDate?: string;
-  startPublishedDate?: string;
-  endPublishedDate?: string;
-  includeText?: string[];
-  excludeText?: string[];
-  contents?: ContentConfig;
 }
 
+/** Combined type for all possible search parameters */
+type ExaSearchToolParamsKeys = ExaSearchToolParams | ExaSearchToolFields;
+
+/**
+ * ExaSearch tool for performing AI-optimized web searches using the Exa API
+ *
+ * @example
+ * ```typescript
+ * const exaSearch = new ExaSearch({
+ *   apiKey: 'your-api-key',
+ *   type: 'neural',
+ *   numResults: 5,
+ *   category: 'news'
+ * });
+ *
+ * const results = await exaSearch.call({ query: 'Latest AI developments' });
+ * ```
+ */
 export class ExaSearch extends StructuredTool {
   private apiKey: string;
-  private type: SearchType;
+  private type: ExaSearchToolType;
   private useAutoprompt: boolean;
-  private category?: Category;
+  private category?: ExaSearchToolCategory;
   private numResults: number;
   private includeDomains: string[];
   private excludeDomains: string[];
@@ -101,8 +199,9 @@ export class ExaSearch extends StructuredTool {
   private endPublishedDate?: string;
   private includeText: string[];
   private excludeText: string[];
-  private contents?: ContentConfig;
+  private contents?: ExaContentConfig;
   private httpClient: typeof ky;
+
   name = 'exa-search';
   description =
     'A powerful AI-optimized search engine that provides high-quality web data using embeddings-based search.';
@@ -110,7 +209,14 @@ export class ExaSearch extends StructuredTool {
   schema = z.object({
     query: z.string().describe('The search query to look up'),
   });
-  constructor(fields: ExaSearchFields) {
+
+  /**
+   * Creates a new instance of the ExaSearch tool
+   *
+   * @param fields - Configuration options for the search tool
+   * @throws {Error} If an invalid search type is provided
+   */
+  constructor(fields: ExaSearchToolFields) {
     super();
 
     if (fields.type && !['neural', 'keyword', 'auto'].includes(fields.type)) {
@@ -120,6 +226,7 @@ export class ExaSearch extends StructuredTool {
     }
 
     this.apiKey = fields.apiKey;
+    console.log(this.apiKey);
 
     // Configuration parameters in order of API documentation
     this.type = fields.type || 'neural';
@@ -145,9 +252,20 @@ export class ExaSearch extends StructuredTool {
     });
   }
 
-  async _call(input: { query: string }): Promise<unknown> {
+  /**
+   * Performs a search using the Exa API
+   *
+   * @param input - The search parameters containing the query
+   * @returns A promise that resolves to either search results or an error message
+   *
+   * @example
+   * ```typescript
+   * const results = await exaSearch._call({ query: 'AI technology trends' });
+   * ```
+   */
+  async _call(input: ExaSearchToolParams): Promise<ExaSearchToolResponse> {
     try {
-      const searchParams: SearchParams = {
+      const searchParams: ExaSearchToolParamsKeys = {
         query: input.query,
         type: this.type,
         useAutoprompt: this.useAutoprompt,
@@ -167,11 +285,12 @@ export class ExaSearch extends StructuredTool {
       // Remove undefined and empty values
       Object.keys(searchParams).forEach((key) => {
         if (
-          searchParams[key as keyof SearchParams] === undefined ||
-          (Array.isArray(searchParams[key as keyof SearchParams]) &&
-            (searchParams[key as keyof SearchParams] as unknown[]).length === 0)
+          searchParams[key as keyof ExaSearchToolParamsKeys] === undefined ||
+          (Array.isArray(searchParams[key as keyof ExaSearchToolParamsKeys]) &&
+            (searchParams[key as keyof ExaSearchToolParamsKeys] as unknown[])
+              .length === 0)
         ) {
-          delete searchParams[key as keyof SearchParams];
+          delete searchParams[key as keyof ExaSearchToolParamsKeys];
         }
       });
 
@@ -181,7 +300,7 @@ export class ExaSearch extends StructuredTool {
         })
         .json();
 
-      return response;
+      return response as ExaSearchToolResponse;
     } catch (error) {
       if (error instanceof HTTPError) {
         const statusCode = error.response.status;
