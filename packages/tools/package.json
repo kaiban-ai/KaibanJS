@@ -3,74 +3,74 @@
   "version": "0.1.0",
   "description": "A set of tools to work with LLMs and KaibanJS",
   "private": false,
+  "types": "dist/index.d.ts",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.esm.js",
-      "require": "./dist/index.cjs.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs.js"
     },
     "./firecrawl": {
+      "types": "./dist/firecrawl/index.d.ts",
       "import": "./dist/firecrawl/index.esm.js",
-      "require": "./dist/firecrawl/index.cjs.js",
-      "types": "./dist/firecrawl/index.d.ts"
+      "require": "./dist/firecrawl/index.cjs.js"
     },
     "./tavily": {
+      "types": "./dist/tavily/index.d.ts",
       "import": "./dist/tavily/index.esm.js",
-      "require": "./dist/tavily/index.cjs.js",
-      "types": "./dist/tavily/index.d.ts"
+      "require": "./dist/tavily/index.cjs.js"
     },
     "./serper": {
+      "types": "./dist/serper/index.d.ts",
       "import": "./dist/serper/index.esm.js",
-      "require": "./dist/serper/index.cjs.js",
-      "types": "./dist/serper/index.d.ts"
+      "require": "./dist/serper/index.cjs.js"
     },
     "./exa": {
+      "types": "./dist/exa/index.d.ts",
       "import": "./dist/exa/index.esm.js",
-      "require": "./dist/exa/index.cjs.js",
-      "types": "./dist/exa/index.d.ts"
+      "require": "./dist/exa/index.cjs.js"
     },
     "./wolframalpha": {
+      "types": "./dist/wolframalpha/index.d.ts",
       "import": "./dist/wolframalpha/index.esm.js",
-      "require": "./dist/wolframalpha/index.cjs.js",
-      "types": "./dist/wolframalpha/index.d.ts"
+      "require": "./dist/wolframalpha/index.cjs.js"
     },
     "./simple-rag": {
+      "types": "./dist/simple-rag/index.d.ts",
       "import": "./dist/simple-rag/index.esm.js",
-      "require": "./dist/simple-rag/index.cjs.js",
-      "types": "./dist/simple-rag/index.d.ts"
+      "require": "./dist/simple-rag/index.cjs.js"
     },
     "./website-search": {
+      "types": "./dist/website-search/index.d.ts",
       "import": "./dist/website-search/index.esm.js",
-      "require": "./dist/website-search/index.cjs.js",
-      "types": "./dist/website-search/index.d.ts"
+      "require": "./dist/website-search/index.cjs.js"
     },
     "./pdf-search": {
+      "types": "./dist/pdf-search/index.d.ts",
       "import": "./dist/pdf-search/index.esm.js",
-      "require": "./dist/pdf-search/index.cjs.js",
-      "types": "./dist/pdf-search/index.d.ts"
+      "require": "./dist/pdf-search/index.cjs.js"
     },
     "./textfile-search": {
+      "types": "./dist/textfile-search/index.d.ts",
       "import": "./dist/textfile-search/index.esm.js",
-      "require": "./dist/textfile-search/index.cjs.js",
-      "types": "./dist/textfile-search/index.d.ts"
+      "require": "./dist/textfile-search/index.cjs.js"
     },
     "./zapier-webhook": {
+      "types": "./dist/zapier-webhook/index.d.ts",
       "import": "./dist/zapier-webhook/index.esm.js",
-      "require": "./dist/zapier-webhook/index.cjs.js",
-      "types": "./dist/zapier-webhook/index.d.ts"
+      "require": "./dist/zapier-webhook/index.cjs.js"
     },
     "./make-webhook": {
+      "types": "./dist/make-webhook/index.d.ts",
       "import": "./dist/make-webhook/index.esm.js",
-      "require": "./dist/make-webhook/index.cjs.js",
-      "types": "./dist/make-webhook/index.d.ts"
+      "require": "./dist/make-webhook/index.cjs.js"
     },
     "./jina-url-to-markdown": {
+      "types": "./dist/jina-url-to-markdown/index.d.ts",
       "import": "./dist/jina-url-to-markdown/index.esm.js",
-      "require": "./dist/jina-url-to-markdown/index.cjs.js",
-      "types": "./dist/jina-url-to-markdown/index.d.ts"
+      "require": "./dist/jina-url-to-markdown/index.cjs.js"
     }
   },
   "files": [
