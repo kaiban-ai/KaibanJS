@@ -1,5 +1,5 @@
 import { ToolPreviewer } from '../_utils/ToolPreviewer.jsx';
-import { Serper } from './index.js';
+import { Serper } from './index.ts';
 import { Agent, Task, Team } from '../../../../src/index';
 import React from 'react';
 import { AgentWithToolPreviewer } from '../_utils/AgentWithToolPreviewer.jsx';
