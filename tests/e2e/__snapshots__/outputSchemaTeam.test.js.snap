@@ -385,6 +385,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "typeName": "ZodArray",
               },
@@ -412,6 +417,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "figures": ZodArray {
               "_def": {
@@ -449,6 +459,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "typeName": "ZodArray",
               },
@@ -476,6 +491,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "summary": ZodString {
               "_def": {
@@ -508,6 +528,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "time_range": ZodString {
               "_def": {
@@ -540,6 +565,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "title": ZodString {
               "_def": {
@@ -572,6 +602,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "words": ZodNumber {
               "_def": {
@@ -607,6 +642,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "step": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
           },
         },
@@ -639,6 +679,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
             "spa": [Function],
             "superRefine": [Function],
             "transform": [Function],
+            "~standard": {
+              "validate": [Function],
+              "vendor": "zod",
+              "version": 1,
+            },
           },
           "shape": [Function],
           "typeName": "ZodObject",
@@ -670,6 +715,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "spa": [Function],
         "superRefine": [Function],
         "transform": [Function],
+        "~standard": {
+          "validate": [Function],
+          "vendor": "zod",
+          "version": 1,
+        },
       },
       "result": {
         "countries": [
@@ -1094,6 +1144,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -1121,6 +1176,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -1158,6 +1218,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -1185,6 +1250,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -1217,6 +1287,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -1249,6 +1324,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -1281,6 +1361,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -1316,6 +1401,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -1348,6 +1438,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -1379,6 +1474,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [
@@ -1779,6 +1879,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -1806,6 +1911,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -1843,6 +1953,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -1870,6 +1985,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -1902,6 +2022,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -1934,6 +2059,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -1966,6 +2096,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -2001,6 +2136,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -2033,6 +2173,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -2064,6 +2209,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [
@@ -2545,6 +2695,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -2572,6 +2727,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -2609,6 +2769,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -2636,6 +2801,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -2668,6 +2838,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -2700,6 +2875,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -2732,6 +2912,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -2767,6 +2952,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -2799,6 +2989,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -2830,6 +3025,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [
@@ -3095,6 +3295,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                         "spa": [Function],
                         "superRefine": [Function],
                         "transform": [Function],
+                        "~standard": {
+                          "validate": [Function],
+                          "vendor": "zod",
+                          "version": 1,
+                        },
                       },
                       "typeName": "ZodArray",
                     },
@@ -3122,6 +3327,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "figures": ZodArray {
                     "_def": {
@@ -3159,6 +3369,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                         "spa": [Function],
                         "superRefine": [Function],
                         "transform": [Function],
+                        "~standard": {
+                          "validate": [Function],
+                          "vendor": "zod",
+                          "version": 1,
+                        },
                       },
                       "typeName": "ZodArray",
                     },
@@ -3186,6 +3401,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "summary": ZodString {
                     "_def": {
@@ -3218,6 +3438,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "time_range": ZodString {
                     "_def": {
@@ -3250,6 +3475,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "title": ZodString {
                     "_def": {
@@ -3282,6 +3512,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "words": ZodNumber {
                     "_def": {
@@ -3317,6 +3552,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "step": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                 },
               },
@@ -3349,6 +3589,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "shape": [Function],
                 "typeName": "ZodObject",
@@ -3380,6 +3625,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "outputSchemaErrors": undefined,
           },
@@ -3600,6 +3850,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -3627,6 +3882,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -3664,6 +3924,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -3691,6 +3956,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -3723,6 +3993,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -3755,6 +4030,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -3787,6 +4067,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -3822,6 +4107,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -3854,6 +4144,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -3885,6 +4180,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [
@@ -4135,6 +4435,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                       "spa": [Function],
                       "superRefine": [Function],
                       "transform": [Function],
+                      "~standard": {
+                        "validate": [Function],
+                        "vendor": "zod",
+                        "version": 1,
+                      },
                     },
                     "typeName": "ZodArray",
                   },
@@ -4162,6 +4467,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "figures": ZodArray {
                   "_def": {
@@ -4199,6 +4509,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                       "spa": [Function],
                       "superRefine": [Function],
                       "transform": [Function],
+                      "~standard": {
+                        "validate": [Function],
+                        "vendor": "zod",
+                        "version": 1,
+                      },
                     },
                     "typeName": "ZodArray",
                   },
@@ -4226,6 +4541,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "summary": ZodString {
                   "_def": {
@@ -4258,6 +4578,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "time_range": ZodString {
                   "_def": {
@@ -4290,6 +4615,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "title": ZodString {
                   "_def": {
@@ -4322,6 +4652,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "words": ZodNumber {
                   "_def": {
@@ -4357,6 +4692,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "step": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
               },
             },
@@ -4389,6 +4729,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "shape": [Function],
               "typeName": "ZodObject",
@@ -4420,6 +4765,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
             "spa": [Function],
             "superRefine": [Function],
             "transform": [Function],
+            "~standard": {
+              "validate": [Function],
+              "vendor": "zod",
+              "version": 1,
+            },
           },
           "outputSchemaErrors": undefined,
         },
@@ -4639,6 +4989,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -4666,6 +5021,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -4703,6 +5063,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -4730,6 +5095,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -4762,6 +5132,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -4794,6 +5169,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -4826,6 +5206,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -4861,6 +5246,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -4893,6 +5283,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -4924,6 +5319,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [
@@ -5324,6 +5724,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -5351,6 +5756,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -5388,6 +5798,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -5415,6 +5830,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -5447,6 +5867,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -5479,6 +5904,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -5511,6 +5941,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -5546,6 +5981,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -5578,6 +6018,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -5609,6 +6054,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [
@@ -6028,6 +6478,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -6055,6 +6510,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -6092,6 +6552,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -6119,6 +6584,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -6151,6 +6621,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -6183,6 +6658,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -6215,6 +6695,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -6250,6 +6735,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -6282,6 +6772,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -6313,6 +6808,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [
@@ -6743,6 +7243,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -6770,6 +7275,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -6807,6 +7317,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -6834,6 +7349,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -6866,6 +7386,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -6898,6 +7423,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -6930,6 +7460,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -6965,6 +7500,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -6997,6 +7537,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -7028,6 +7573,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [
