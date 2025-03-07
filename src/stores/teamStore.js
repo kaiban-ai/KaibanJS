@@ -64,6 +64,7 @@ const createTeamStore = (initialState = {}) => {
           workflowContext: initialState.workflowContext || '',
           env: initialState.env || {},
           logLevel: initialState.logLevel,
+          insights: initialState.insights || '',
 
           setInputs: (inputs) => set({ inputs }), // Add a new action to update inputs
           setName: (name) => set({ name }), // Add a new action to update inputs

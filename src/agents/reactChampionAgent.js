@@ -382,6 +382,7 @@ class ReactChampionAgent extends BaseAgent {
         ...task,
         description: interpolatedTaskDescription,
       },
+      insights: this.store.getState().insights,
     });
   }
 

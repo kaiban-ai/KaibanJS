@@ -253,6 +253,7 @@ export class Task {
  * @property {string} [logLevel] - The log level for the team.
  * @property {Record<string, string>} [inputs] - The inputs for the team.
  * @property {Record<string, any> | null} [env] - The environment variables for the team.
+ * @property {string} [insights] - The insights for the team.
  */
 export interface ITeamParams {
   name: string;
@@ -261,6 +262,7 @@ export interface ITeamParams {
   logLevel?: string;
   inputs?: Record<string, any>;
   env?: Record<string, any> | null;
+  insights?: string;
 }
 
 /**
