@@ -1,5 +1,5 @@
 import { Tool } from 'langchain/tools';
-import type { AGENT_STATUS_enum } from './enums.d.ts';
+import type { AGENT_STATUS_enum, KANBAN_TOOLS_enum } from './enums.d.ts';
 
 /**
  * ### Store types
@@ -25,6 +25,7 @@ export type TAgentTypes = 'ReactChampionAgent';
  * @property {ILLMConfig} [llmConfig] - The language model configuration.
  * @property {number} [maxIterations] - The maximum number of iterations.
  * @property {boolean} [forceFinalAnswer] - Whether to force the final answer.
+ * @property {KANBAN_TOOLS_enum[]} [kanbanTools] - The kanban tools enabled for the agent.
  */
 export interface IBaseAgentParams {
   name: string;
@@ -36,6 +37,7 @@ export interface IBaseAgentParams {
   maxIterations?: number;
   forceFinalAnswer?: boolean;
   llmInstance?: any;
+  kanbanTools?: KANBAN_TOOLS_enum[];
 }
 
 /**
@@ -55,6 +57,7 @@ export interface IBaseAgentParams {
  * @property {ILLMConfig} llmConfig - The language model configuration.
  * @property {number} maxIterations - The maximum number of iterations.
  * @property {boolean} forceFinalAnswer - Whether to force the final answer.
+ * @property {KANBAN_TOOLS_enum[]} kanbanTools - The kanban tools enabled for the agent.
  */
 export declare class BaseAgent {
   id: string;
@@ -73,6 +76,7 @@ export declare class BaseAgent {
   forceFinalAnswer: boolean;
   llmInstance: any;
   promptTemplates: IPromptTemplates;
+  kanbanTools: KANBAN_TOOLS_enum[];
 
   /**
    * Creates an instance of BaseAgent.
