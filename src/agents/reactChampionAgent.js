@@ -18,7 +18,7 @@
 import { BaseAgent } from './baseAgent';
 import { getApiKey } from '../utils/agents';
 import { getParsedJSON } from '../utils/parser';
-import { AGENT_STATUS_enum } from '../utils/enums';
+import { AGENT_STATUS_enum, KANBAN_TOOLS_enum } from '../utils/enums';
 import { interpolateTaskDescription } from '../utils/tasks';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatAnthropic } from '@langchain/anthropic';
@@ -31,11 +31,20 @@ import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { logger } from '../utils/logger';
 import { LLMInvocationError } from '../utils/errors';
+import { BlockTaskTool } from '../tools/blockTaskTool';
 
 class ReactChampionAgent extends BaseAgent {
   #executableAgent;
   constructor(config) {
     super(config);
+
+    // Handle kanban tools based on configuration
+    const enabledKanbanTools = config.kanbanTools || [];
+
+    // Add kanban tools that are enabled
+    if (enabledKanbanTools.includes(KANBAN_TOOLS_enum.BLOCK_TASK)) {
+      this.tools = [...this.tools, new BlockTaskTool(this)];
+    }
   }
 
   get executableAgent() {
@@ -179,11 +188,13 @@ class ReactChampionAgent extends BaseAgent {
     let iterations = 0;
     const maxAgentIterations = agent.maxIterations; // Define maximum iterations here
     let loopCriticalError = null;
+    let blockReason = null;
 
     while (
       !parsedResultWithFinalAnswer &&
       iterations < maxAgentIterations &&
-      !loopCriticalError
+      !loopCriticalError &&
+      !blockReason
     ) {
       try {
         agent.handleIterationStart({
@@ -201,8 +212,6 @@ class ReactChampionAgent extends BaseAgent {
             iterations,
             maxAgentIterations,
           });
-
-          // "We don't have more time to keep looking for the answer. Please use all the information you have gathered until now and give the finalAnswer right away.";
         }
 
         // pure function that returns the result of the agent thinking
@@ -262,11 +271,24 @@ class ReactChampionAgent extends BaseAgent {
               const tool = this.tools.find((tool) => tool.name === toolName);
               if (tool) {
                 try {
-                  feedbackMessage = await this.executeUsingTool({
+                  const toolResponse = await this.executeUsingTool({
                     agent: agent,
                     task,
                     parsedLLMOutput,
                     tool,
+                  });
+
+                  // Check if the tool result indicates a block action
+                  if (toolResponse?.action === 'BLOCK_TASK') {
+                    blockReason = toolResponse.reason;
+                    break;
+                  }
+
+                  feedbackMessage = this.promptTemplates.TOOL_RESULT_FEEDBACK({
+                    agent,
+                    task,
+                    toolResult: toolResponse,
+                    parsedLLMOutput,
                   });
                 } catch (error) {
                   feedbackMessage = this.handleUsingToolError({
@@ -341,6 +363,22 @@ class ReactChampionAgent extends BaseAgent {
         error:
           'Execution stopped due to a critical error: ' +
           loopCriticalError.message,
+        metadata: { iterations, maxAgentIterations },
+      };
+    } else if (blockReason) {
+      // Handle the block at the agent level before returning
+      agent.store.getState().handleAgentBlockTask({
+        agent,
+        task,
+        reason: blockReason,
+        metadata: {
+          isAgentDecision: true,
+          blockedBy: agent.name,
+        },
+      });
+
+      return {
+        error: `Task blocked: ${blockReason}`,
         metadata: { iterations, maxAgentIterations },
       };
     } else if (parsedResultWithFinalAnswer) {
@@ -659,14 +697,7 @@ class ReactChampionAgent extends BaseAgent {
     agent.handleUsingToolStart({ agent, task, tool, input: toolInput });
     const toolResult = await tool.call(toolInput);
     agent.handleUsingToolEnd({ agent, task, tool, output: toolResult });
-    // console.log(toolResult);
-    const feedbackMessage = this.promptTemplates.TOOL_RESULT_FEEDBACK({
-      agent,
-      task,
-      toolResult,
-      parsedLLMOutput,
-    });
-    return feedbackMessage;
+    return toolResult;
   }
 
   handleUsingToolStart({ agent, task, tool, input }) {
