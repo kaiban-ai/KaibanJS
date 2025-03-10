@@ -146,6 +146,7 @@ class Team {
    * @param {Object} config.inputs - Initial inputs for the team's tasks.
    * @param {Object} config.env - Environment variables for the team.
    * @param {string} config.insights - String containing insights from the team's knowledge base.
+   * @param {boolean} [config.memory=true] - Whether to enable task memory/context between tasks.
    */
   constructor({
     name,
@@ -155,6 +156,7 @@ class Team {
     inputs = {},
     env = null,
     insights = '',
+    memory = true,
   }) {
     this.store = createTeamStore({
       name,
@@ -164,6 +166,7 @@ class Team {
       env,
       logLevel,
       insights,
+      memory,
     });
 
     // Add agents and tasks to the store, they will be set with the store automatically

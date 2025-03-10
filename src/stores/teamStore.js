@@ -21,7 +21,7 @@ import {
 } from '../utils/enums';
 import {
   getTaskTitleForLogs,
-  interpolateTaskDescription,
+  interpolateTaskDescriptionV2,
 } from '../utils/tasks';
 import { logger, setLogLevel } from '../utils/logger';
 import { calculateTotalWorkflowCost } from '../utils/llmCostCalculator';
@@ -64,6 +64,8 @@ const createTeamStore = (initialState = {}) => {
           workflowContext: initialState.workflowContext || '',
           env: initialState.env || {},
           logLevel: initialState.logLevel,
+          memory:
+            initialState.memory !== undefined ? initialState.memory : true,
           insights: initialState.insights || '',
 
           setInputs: (inputs) => set({ inputs }), // Add a new action to update inputs
@@ -297,9 +299,10 @@ const createTeamStore = (initialState = {}) => {
 
               // Execute the task and let the agent report completion
               task.inputs = get().inputs; // Pass the inputs to the task
-              const interpolatedTaskDescription = interpolateTaskDescription(
+              const interpolatedTaskDescription = interpolateTaskDescriptionV2(
                 task.description,
-                get().inputs
+                get().inputs,
+                get().getTaskResults()
               );
               task.interpolatedTaskDescription = interpolatedTaskDescription;
 
@@ -308,11 +311,10 @@ const createTeamStore = (initialState = {}) => {
                 (f) => f.status === FEEDBACK_STATUS_enum.PENDING
               );
 
-              // Derive the current context from workflowLogs, passing the current task ID
-              const currentContext = get().deriveContextFromLogs(
-                get().workflowLogs,
-                task.id
-              );
+              // Derive the current context from workflowLogs only if memory is enabled
+              const currentContext = get().memory
+                ? get().deriveContextFromLogs(get().workflowLogs, task.id)
+                : '';
 
               // Check if the task has pending feedbacks
               if (pendingFeedbacks.length > 0) {
@@ -711,6 +713,40 @@ const createTeamStore = (initialState = {}) => {
               logLevel: get().logLevel,
               // Include other state parts as necessary, cleaned as needed
             };
+          },
+          /**
+           * Collects all completed task results from the workflow logs
+           * @returns {Object} An object mapping task indices to their results (e.g., task1: "result")
+           */
+          getTaskResults: () => {
+            const taskResults = {};
+            const tasks = get().tasks || [];
+            const workflowLogs = get().workflowLogs || [];
+            const taskResultMap = new Map();
+
+            // Iterate through logs to get the most recent result for each task
+            for (const log of workflowLogs) {
+              if (
+                log.logType === 'TaskStatusUpdate' &&
+                log.taskStatus === TASK_STATUS_enum.DONE &&
+                log.task &&
+                log.metadata &&
+                log.metadata.result
+              ) {
+                taskResultMap.set(log.task.id, log.metadata.result);
+              }
+            }
+
+            // Map the results to task1, task2, etc. based on task array order
+            tasks.forEach((task, index) => {
+              const result = taskResultMap.get(task.id);
+              if (result !== undefined) {
+                const key = `task${index + 1}`;
+                taskResults[key] = result;
+              }
+            });
+
+            return taskResults;
           },
         }),
         'teamStore'
