@@ -356,9 +356,11 @@ const createTeamStore = (initialState = {}) => {
                 // Only include tasks that come before the current task in the workflow
                 if (taskIndex !== -1 && taskIndex < currentTaskIndex) {
                   taskResults.set(log.task.id, {
-                    taskDescription: log.task.description,
+                    // TODO: See if we can use the title or description to get the task title
+                    // putting the desciption will contaminate the prompt specially if there are big descriptions
+                    taskDescription: log.task.title || log.task.description,
                     result: log.metadata.result,
-                    index: taskIndex, // Store the index for sorting later
+                    index: taskIndex + 1, // Store the index for sorting later
                   });
                 }
               }
@@ -368,8 +370,8 @@ const createTeamStore = (initialState = {}) => {
             return Array.from(taskResults.values())
               .sort((a, b) => a.index - b.index)
               .map(
-                ({ taskDescription, result }) =>
-                  `Task: ${taskDescription}\nResult: ${
+                ({ taskDescription, result, index }) =>
+                  `Task ${index}: ${taskDescription}\nResult: ${
                     typeof result === 'object' ? JSON.stringify(result) : result
                   }\n`
               )
