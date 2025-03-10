@@ -358,6 +358,7 @@ const createTeamStore = (initialState = {}) => {
                   taskResults.set(log.task.id, {
                     // TODO: See if we can use the title or description to get the task title
                     // putting the desciption will contaminate the prompt specially if there are big descriptions
+                    taskTitle: log.task.title,
                     taskDescription: log.task.title || log.task.description,
                     result: log.metadata.result,
                     index: taskIndex + 1, // Store the index for sorting later
@@ -370,8 +371,10 @@ const createTeamStore = (initialState = {}) => {
             return Array.from(taskResults.values())
               .sort((a, b) => a.index - b.index)
               .map(
-                ({ taskDescription, result, index }) =>
-                  `Task ${index}: ${taskDescription}\nResult: ${
+                ({ taskTitle, taskDescription, result, index }) =>
+                  `Task${
+                    taskTitle ? ' ' + index : ''
+                  }: ${taskDescription}\nResult: ${
                     typeof result === 'object' ? JSON.stringify(result) : result
                   }\n`
               )
