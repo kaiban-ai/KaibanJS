@@ -42,7 +42,10 @@ class ReactChampionAgent extends BaseAgent {
     const enabledKanbanTools = config.kanbanTools || [];
 
     // Add kanban tools that are enabled
-    if (enabledKanbanTools.includes(KANBAN_TOOLS_enum.BLOCK_TASK)) {
+    if (
+      enabledKanbanTools.includes(KANBAN_TOOLS_enum.BLOCK_TASK_TOOL) ||
+      enabledKanbanTools.includes(KANBAN_TOOLS_enum.BLOCK_TASK)
+    ) {
       this.tools = [...this.tools, new BlockTaskTool(this)];
     }
   }

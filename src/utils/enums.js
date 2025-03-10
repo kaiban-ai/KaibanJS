@@ -111,7 +111,10 @@ const FEEDBACK_STATUS_enum = {
 // ───────────────────────────────────────────────────────────────────
 
 const KANBAN_TOOLS_enum = {
-  BLOCK_TASK: 'block-task-tool',
+  BLOCK_TASK: 'block_task',
+  // This was a mistake, we should use the block_task tool instead
+  // just keeping it here for now to avoid breaking changes
+  BLOCK_TASK_TOOL: 'block-task-tool',
 };
 
 export {
