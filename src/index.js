@@ -58,6 +58,10 @@ class Agent {
     this.agentInstance.initialize(store, env);
   }
 
+  updateEnv(env) {
+    this.agentInstance.updateEnv(env);
+  }
+
   // Proxy property access to the underlying agent instance
   get id() {
     return this.agentInstance.id;
@@ -153,8 +157,17 @@ class Team {
    * @param {string} config.logLevel - The logging level for the team's operations.
    * @param {Object} config.inputs - Initial inputs for the team's tasks.
    * @param {Object} config.env - Environment variables for the team.
+   * @param {string} config.insights - String containing insights from the team's knowledge base.
    */
-  constructor({ name, agents, tasks, logLevel, inputs = {}, env = null }) {
+  constructor({
+    name,
+    agents,
+    tasks,
+    logLevel,
+    inputs = {},
+    env = null,
+    insights = '',
+  }) {
     this.store = createTeamStore({
       name,
       agents: [],
@@ -162,6 +175,7 @@ class Team {
       inputs,
       env,
       logLevel,
+      insights,
     });
 
     // Add agents and tasks to the store, they will be set with the store automatically

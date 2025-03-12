@@ -24,7 +24,7 @@ const REACT_CHAMPION_AGENT_DEFAULT_PROMPTS = {
    * @param {Object} params.task - The task object describing the current task.
    * @returns {string} The formatted system message.
    */
-  SYSTEM_MESSAGE: ({ agent, task }) => {
+  SYSTEM_MESSAGE: ({ agent, task, insights }) => {
     const prompt = `You are ${agent.name}.
 
 Your role is: ${agent.role}.
@@ -34,9 +34,19 @@ You are working as part of a team.
 
 For your work you will have available:
 
-- Access to a defined set of tools. 
+${
+  insights
+    ? `- Access to a defined set of tools. \n - Team's knowledge base and experience. You may need to consult this information to complete your current task.`
+    : '- Access to a defined set of tools. '
+}
 - Findings and insights from previous tasks. You must use this information to complete your current task.
-- Must follow a specific format for your output.
+${
+  insights
+    ? `- Must follow a specific format for your output. \n ## Team Knowledge Base and Experience
+Here is the essential knowledge shared by the team:
+${insights}`
+    : '- Must follow a specific format for your output.'
+}
 
 ## Tools available for your use: 
 

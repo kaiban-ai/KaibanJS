@@ -1,0 +1,118 @@
+[
+  {
+    "url": "https://api.openai.com/v1/chat/completions",
+    "method": "POST",
+    "body": {
+      "model": "gpt-4o-mini",
+      "temperature": 1,
+      "top_p": 1,
+      "frequency_penalty": 0,
+      "presence_penalty": 0,
+      "n": 1,
+      "stream": false,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are Alice.\n\nYour role is: Passenger Profile Analyst.\nYour background is: Customer Behavior Analysis and Travel Preferences.\nYour main goal is: Analyze passenger history and preferences to identify key patterns and needs.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n - Team's knowledge base and experience. You may need to consult this information to complete your current task.\n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output. \n ## Team Knowledge Base and Experience\nHere is the essential knowledge shared by the team:\n\nPassenger Profile: Michael Zhang (Frequent Flyer ID: FF-789321)\nTravel History and Preferences (2023):\n1. Consistently books window seats (87% of flights), particularly on row 11 (Booking History #BK-2023-156)\n2. Experienced significant delays on last Dubai trip (Flight DXB-892), filed complaint about lack of updates\n3. Premium meal selection history shows strong preference for Asian Vegetarian meals (ordered on 9 out of 10 long-haul flights)\n4. Always uses airport lounge at Terminal 4 during layovers (average stay: 2.5 hours, Lounge Access Log #LA-567)\n5. Recent feedback (Survey ID: CS-982) indicated dissatisfaction with in-flight entertainment options on Boeing 787 fleet\n\n## Tools available for your use: \n\nNo tools available. You must reply using your internal knowledge.\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\" // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): A detailed analysis of passenger preferences and behavior patterns.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
+        },
+        {
+          "role": "user",
+          "content": "Hi Alice, please complete the following task: Analyze passenger profile: Michael Zhang and identify key preferences and patterns. Consider their past travel history and experiences.. \n        Your expected output should be: \"A detailed analysis of passenger preferences and behavior patterns.\". \n        "
+        }
+      ]
+    },
+    "response": {
+      "id": "chatcmpl-B8Ax6PBv4V5ODsvT2gmETnORAsLsJ",
+      "object": "chat.completion",
+      "created": 1741288424,
+      "model": "gpt-4o-mini-2024-07-18",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n    \"finalAnswer\": \"Michael Zhang exhibits several distinct preferences and patterns in his travel behavior. He predominantly prefers window seats, with an impressive 87% of his bookings reflecting this choice, suggesting a need for personal space and a view during flights. Specifically, he favors row 11, indicating a consistent preference for sitting in a particular section of the aircraft, which could also be linked to either comfort or escape from high foot traffic in the aisles. His meal preferences highlight a strong inclination towards Asian Vegetarian options, which he has selected on 9 out of 10 long-haul flights, revealing a dietary preference that should be noted for future catering choices. However, his recent feedback regarding dissatisfaction with in-flight entertainment on the Boeing 787 fleet suggests there is room for improvement in passenger engagement during the flight. This is further compounded by his recent negative experience with significant delays on his trip to Dubai, where he filed a complaint about insufficient updates. Additionally, Michael routinely utilizes the airport lounge at Terminal 4 during layovers, averaging a stay of 2.5 hours, indicating his preference for comfort and relaxation before flights. Overall, Michael's profile suggests a need for personalized seating and meal options, timely communication regarding flight status to enhance travel satisfaction, and improved in-flight entertainment to meet his expectations.\"\n}",
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 809,
+        "completion_tokens": 263,
+        "total_tokens": 1072,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "service_tier": "default",
+      "system_fingerprint": "fp_06737a9306"
+    }
+  },
+  {
+    "url": "https://api.openai.com/v1/chat/completions",
+    "method": "POST",
+    "body": {
+      "model": "gpt-4o-mini",
+      "temperature": 1,
+      "top_p": 1,
+      "frequency_penalty": 0,
+      "presence_penalty": 0,
+      "n": 1,
+      "stream": false,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are Bob.\n\nYour role is: Travel Experience Specialist.\nYour background is: Personalized Travel Planning and Customer Experience.\nYour main goal is: Create personalized travel recommendations based on passenger profile analysis.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n - Team's knowledge base and experience. You may need to consult this information to complete your current task.\n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output. \n ## Team Knowledge Base and Experience\nHere is the essential knowledge shared by the team:\n\nPassenger Profile: Michael Zhang (Frequent Flyer ID: FF-789321)\nTravel History and Preferences (2023):\n1. Consistently books window seats (87% of flights), particularly on row 11 (Booking History #BK-2023-156)\n2. Experienced significant delays on last Dubai trip (Flight DXB-892), filed complaint about lack of updates\n3. Premium meal selection history shows strong preference for Asian Vegetarian meals (ordered on 9 out of 10 long-haul flights)\n4. Always uses airport lounge at Terminal 4 during layovers (average stay: 2.5 hours, Lounge Access Log #LA-567)\n5. Recent feedback (Survey ID: CS-982) indicated dissatisfaction with in-flight entertainment options on Boeing 787 fleet\n\n## Tools available for your use: \n\nNo tools available. You must reply using your internal knowledge.\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\" // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): Personalized travel recommendations considering passenger history and preferences.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
+        },
+        {
+          "role": "user",
+          "content": "Hi Bob, please complete the following task: Based on the passenger analysis, create personalized travel recommendations for their upcoming London-Dubai flight.. \n        Your expected output should be: \"Personalized travel recommendations considering passenger history and preferences.\". \n        Incorporate the following findings and insights from previous tasks: \"Task: Analyze passenger profile: {passenger_name} and identify key preferences and patterns. Consider their past travel history and experiences.\nResult: Michael Zhang exhibits several distinct preferences and patterns in his travel behavior. He predominantly prefers window seats, with an impressive 87% of his bookings reflecting this choice, suggesting a need for personal space and a view during flights. Specifically, he favors row 11, indicating a consistent preference for sitting in a particular section of the aircraft, which could also be linked to either comfort or escape from high foot traffic in the aisles. His meal preferences highlight a strong inclination towards Asian Vegetarian options, which he has selected on 9 out of 10 long-haul flights, revealing a dietary preference that should be noted for future catering choices. However, his recent feedback regarding dissatisfaction with in-flight entertainment on the Boeing 787 fleet suggests there is room for improvement in passenger engagement during the flight. This is further compounded by his recent negative experience with significant delays on his trip to Dubai, where he filed a complaint about insufficient updates. Additionally, Michael routinely utilizes the airport lounge at Terminal 4 during layovers, averaging a stay of 2.5 hours, indicating his preference for comfort and relaxation before flights. Overall, Michael's profile suggests a need for personalized seating and meal options, timely communication regarding flight status to enhance travel satisfaction, and improved in-flight entertainment to meet his expectations.\n\""
+        }
+      ]
+    },
+    "response": {
+      "id": "chatcmpl-B8AxBF3Us5Wb3nHZlshhInzS9YhDm",
+      "object": "chat.completion",
+      "created": 1741288429,
+      "model": "gpt-4o-mini-2024-07-18",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n    \"finalAnswer\": \"For Michael Zhang's upcoming London-Dubai flight, the following personalized travel recommendations are provided: 1. **Seat Selection**: Reserve a window seat in row 11 to align with his established preference, ensuring he has the comfort and view he desires. 2. **Meal Choice**: Pre-order the Asian Vegetarian meal, as this option has been selected on 9 out of 10 of his long-haul flights, ensuring it meets his dietary preferences. 3. **Flight Status Communication**: Implement proactive communication regarding flight updates, particularly if delays occur, to enhance his travel experience and address previous concerns about lack of updates. 4. **In-Flight Entertainment**: Offer improved in-flight entertainment options on the Boeing 787 fleet to cater to his preference for engaging content during long flights. 5. **Lounge Access**: Ensure lounge access is confirmed for his 2.5-hour average layover at Terminal 4, providing him with a comfortable space to relax before his flight. These tailored recommendations consider Michael's history and preferences, aiming to enhance his overall travel experience.\"\n}",
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1099,
+        "completion_tokens": 231,
+        "total_tokens": 1330,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "service_tier": "default",
+      "system_fingerprint": "fp_06737a9306"
+    }
+  }
+]

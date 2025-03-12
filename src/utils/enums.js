@@ -48,6 +48,7 @@ const AGENT_STATUS_enum = {
   TASK_ABORTED: 'TASK_ABORTED',
   PAUSED: 'PAUSED',
   RESUMED: 'RESUMED',
+  DECIDED_TO_BLOCK_TASK: 'DECIDED_TO_BLOCK_TASK', // Agent has made the decision to block the task
 };
 
 // ──── Task Status Definitions ───────────────────────────────────────
@@ -120,10 +121,22 @@ const WORKFLOW_ACTION_enum = {
   INITIATE: 'INITIATE',
 };
 
+// ──── Kanban Tools ───────────────────────────────────────────────
+//
+// Defines the available kanban tools that can be enabled/disabled
+// These are core tools that provide essential kanban functionality
+//
+// ───────────────────────────────────────────────────────────────────
+
+const KANBAN_TOOLS_enum = {
+  BLOCK_TASK: 'block-task-tool',
+};
+
 export {
   AGENT_STATUS_enum,
   TASK_STATUS_enum,
   WORKFLOW_STATUS_enum,
   FEEDBACK_STATUS_enum,
   WORKFLOW_ACTION_enum,
+  KANBAN_TOOLS_enum,
 };

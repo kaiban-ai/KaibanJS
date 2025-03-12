@@ -30,6 +30,7 @@ function moscaFetch() {
         if (mock.isRecorder) {
           const response = await originalFetch(input, options);
           const clonedResponse = response.clone();
+
           try {
             records.push({
               url: input,
@@ -37,10 +38,8 @@ function moscaFetch() {
               body: requestBody,
               response: await clonedResponse.json(), // Assuming JSON response
             });
-          } catch (e) {
-            console.error(
-              `Failed to register req/res. Error: ${e.message}. Url: ${input}, method: ${requestMethod}, req: ${requestBody}`
-            );
+          } catch (error) {
+            console.warn('Error recording response:', error);
           }
 
           if (mock.callback) {
@@ -74,18 +73,7 @@ function moscaFetch() {
         }
       }
     }
-
-    console.debug(
-      'MoscaFetch -> No mocks or recorders matched:',
-      input,
-      cleanRequestBody
-    );
-
-    // for (const mock of mocks) {
-    //   const cleanMockBody = JSON.stringify(mock.body).replace(/\\n\s+/g, '\\n'); // Regular Expression to remove spaces between newlines
-    //   console.debug('MoscaFetch -> Mock:', mock.url, mock.method, cleanMockBody);
-    // }
-
+    // console.log('MoscaFetch -> No mocks or recorders matched:', input, options);
     return originalFetch(input, options); // Call the original fetch if no mocks or recorders match
   };
 

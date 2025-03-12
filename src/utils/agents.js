@@ -9,8 +9,8 @@
  * Use these utilities to manage agent configurations and preprocess data formats essential for the smooth operation of agents.
  */
 
-function getApiKey(llmConfig, env) {
-  if (llmConfig?.apiKey) return llmConfig.apiKey;
+function getApiKey(llmConfig, env, fromEnvFirst = false) {
+  if (!fromEnvFirst && llmConfig?.apiKey) return llmConfig.apiKey;
 
   const apiKeys = {
     anthropic: env.ANTHROPIC_API_KEY,
@@ -18,7 +18,7 @@ function getApiKey(llmConfig, env) {
     mistral: env.MISTRAL_API_KEY,
     openai: env.OPENAI_API_KEY,
   };
-  return apiKeys[llmConfig?.provider];
+  return apiKeys[llmConfig?.provider] || llmConfig?.apiKey;
 }
 
 // Utility function to replace placeholders in the agent prompt.

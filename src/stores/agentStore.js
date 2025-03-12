@@ -448,6 +448,58 @@ const useAgentStore = (set, get) => ({
     }));
     get().handleTaskCompleted({ agent, task, result });
   },
+
+  /**
+   * Handles an agent's decision to block a task.
+   * This method should be called when the agent proactively decides to block a task,
+   * rather than through error handling.
+   *
+   * @param {Object} params - The parameters for blocking a task
+   * @param {Object} params.agent - The agent blocking the task
+   * @param {Object} params.task - The task being blocked
+   * @param {string} params.reason - The reason for blocking the task
+   * @param {Object} [params.metadata] - Additional metadata about the block
+   */
+  handleAgentBlockTask: ({ agent, task, reason, metadata = {} }) => {
+    // Update agent status to indicate it's blocking a task
+    agent.status = AGENT_STATUS_enum.DECIDED_TO_BLOCK_TASK;
+
+    // Create a log entry for the agent's block decision
+    const blockLog = get().prepareNewLog({
+      agent,
+      task,
+      logDescription: `🚫 Agent ${agent.name} decided to block task: ${reason}`,
+      metadata: {
+        // Standard block metadata
+        isAgentDecision: true,
+        blockReason: reason,
+        blockedBy: metadata.blockedBy || agent.name,
+        // Include any additional metadata
+        ...metadata,
+      },
+      logType: 'AgentStatusUpdate',
+      agentStatus: agent.status,
+    });
+
+    // Log the block decision with metadata for debugging
+    logger.warn(`🚫 Agent ${agent.name} has decided to block task:`, {
+      reason,
+      metadata: blockLog.metadata,
+    });
+
+    // Update the workflow logs
+    set((state) => ({
+      workflowLogs: [...state.workflowLogs, blockLog],
+    }));
+
+    // Create an error object to maintain compatibility with existing block handling
+    const blockError = new Error(reason);
+    blockError.isAgentDecision = true;
+    blockError.metadata = metadata;
+
+    // Trigger the task blocked handler
+    get().handleTaskBlocked({ task, error: blockError });
+  },
 });
 
 export { useAgentStore };

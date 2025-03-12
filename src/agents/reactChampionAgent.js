@@ -18,7 +18,7 @@
 import { BaseAgent } from './baseAgent';
 import { getApiKey } from '../utils/agents';
 import { getParsedJSON } from '../utils/parser';
-import { AGENT_STATUS_enum } from '../utils/enums';
+import { AGENT_STATUS_enum, KANBAN_TOOLS_enum } from '../utils/enums';
 import { interpolateTaskDescription } from '../utils/tasks';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatAnthropic } from '@langchain/anthropic';
@@ -31,6 +31,8 @@ import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { logger } from '../utils/logger';
 import { LLMInvocationError } from '../utils/errors';
+import { BlockTaskTool } from '../tools/blockTaskTool';
+
 import { WORKFLOW_STATUS_enum } from '../utils/enums';
 import { AbortError } from '../utils/errors';
 
@@ -38,6 +40,14 @@ class ReactChampionAgent extends BaseAgent {
   #executableAgent;
   constructor(config) {
     super(config);
+
+    // Handle kanban tools based on configuration
+    const enabledKanbanTools = config.kanbanTools || [];
+
+    // Add kanban tools that are enabled
+    if (enabledKanbanTools.includes(KANBAN_TOOLS_enum.BLOCK_TASK)) {
+      this.tools = [...this.tools, new BlockTaskTool(this)];
+    }
   }
 
   get executableAgent() {
@@ -85,6 +95,30 @@ class ReactChampionAgent extends BaseAgent {
     this.interactionsHistory = new ChatMessageHistory();
     this.lastFeedbackMessage = null;
   }
+
+  // Add method to update LLM configuration when environment changes
+  updateEnv(env) {
+    this.env = env;
+
+    // Only update if we're using environment-based API keys
+    const apiKey = getApiKey(this.llmConfig, this.env, true);
+    if (apiKey && this.llmConfig.apiKey !== apiKey) {
+      this.llmConfig.apiKey = apiKey;
+
+      // Define a mapping of providers to their corresponding chat classes
+      const providers = {
+        anthropic: ChatAnthropic,
+        google: ChatGoogleGenerativeAI,
+        mistral: ChatMistralAI,
+        openai: ChatOpenAI,
+      };
+
+      // Choose the chat class based on the provider
+      const ChatClass = providers[this.llmConfig.provider] || ChatOpenAI;
+      this.llmInstance = new ChatClass(this.llmConfig);
+    }
+  }
+
   async workOnTaskResume(task) {
     const lastFeedbackMessage = this.lastFeedbackMessage;
     return await this.agenticLoop(
@@ -166,11 +200,13 @@ class ReactChampionAgent extends BaseAgent {
     let iterations = 0;
     const maxAgentIterations = agent.maxIterations; // Define maximum iterations here
     let loopCriticalError = null;
+    let blockReason = null;
 
     while (
       !parsedResultWithFinalAnswer &&
       iterations < maxAgentIterations &&
-      !loopCriticalError
+      !loopCriticalError &&
+      !blockReason
     ) {
       // Save the feedback message as the last feedback message
       this.lastFeedbackMessage = feedbackMessage;
@@ -204,8 +240,6 @@ class ReactChampionAgent extends BaseAgent {
             iterations,
             maxAgentIterations,
           });
-
-          // "We don't have more time to keep looking for the answer. Please use all the information you have gathered until now and give the finalAnswer right away.";
         }
 
         // pure function that returns the result of the agent thinking
@@ -265,11 +299,24 @@ class ReactChampionAgent extends BaseAgent {
               const tool = this.tools.find((tool) => tool.name === toolName);
               if (tool) {
                 try {
-                  feedbackMessage = await this.executeUsingTool({
+                  const toolResponse = await this.executeUsingTool({
                     agent: agent,
                     task,
                     parsedLLMOutput,
                     tool,
+                  });
+
+                  // Check if the tool result indicates a block action
+                  if (toolResponse?.action === 'BLOCK_TASK') {
+                    blockReason = toolResponse.reason;
+                    break;
+                  }
+
+                  feedbackMessage = this.promptTemplates.TOOL_RESULT_FEEDBACK({
+                    agent,
+                    task,
+                    toolResult: toolResponse,
+                    parsedLLMOutput,
                   });
                 } catch (error) {
                   if (error instanceof AbortError) {
@@ -353,6 +400,22 @@ class ReactChampionAgent extends BaseAgent {
           loopCriticalError.message,
         metadata: { iterations, maxAgentIterations },
       };
+    } else if (blockReason) {
+      // Handle the block at the agent level before returning
+      agent.store.getState().handleAgentBlockTask({
+        agent,
+        task,
+        reason: blockReason,
+        metadata: {
+          isAgentDecision: true,
+          blockedBy: agent.name,
+        },
+      });
+
+      return {
+        error: `Task blocked: ${blockReason}`,
+        metadata: { iterations, maxAgentIterations },
+      };
     } else if (parsedResultWithFinalAnswer) {
       this.handleTaskCompleted({
         agent: agent,
@@ -392,6 +455,7 @@ class ReactChampionAgent extends BaseAgent {
         ...task,
         description: interpolatedTaskDescription,
       },
+      insights: this.store.getState().insights,
     });
   }
 
@@ -715,14 +779,15 @@ class ReactChampionAgent extends BaseAgent {
     this.store.getState().trackPromise(this.id, promiseObj);
 
     try {
-      const result = await toolPromise;
-      agent.handleUsingToolEnd({ agent, task, tool, output: result });
-      return this.promptTemplates.TOOL_RESULT_FEEDBACK({
-        agent,
-        task,
-        toolResult: result,
-        parsedLLMOutput,
-      });
+      const toolResult = await toolPromise;
+      agent.handleUsingToolEnd({ agent, task, tool, output: toolResult });
+      // return this.promptTemplates.TOOL_RESULT_FEEDBACK({
+      //   agent,
+      //   task,
+      //   toolResult: result,
+      //   parsedLLMOutput,
+      // });
+      return toolResult;
     } catch (error) {
       if (error instanceof AbortError) {
         throw error;

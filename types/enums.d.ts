@@ -133,3 +133,13 @@ export declare enum WORKFLOW_ACTION_enum {
   RESUME = 'RESUME',
   INITIATE = 'INITIATE',
 }
+
+/**
+ * ### Kanban Tools
+ * @enum {string}
+ * @readonly
+ * @property {string} BLOCK_TASK - Tool for blocking tasks that cannot or should not proceed.
+ */
+export declare enum KANBAN_TOOLS_enum {
+  BLOCK_TASK = 'block-task-tool',
+}

@@ -68,10 +68,19 @@ const createTeamStore = (initialState = {}) => {
 
           // Maximum number of tasks that can be executed in parallel
           maxConcurrency: initialState.maxConcurrency || 5,
+          insights: initialState.insights || '',
 
           setInputs: (inputs) => set({ inputs }), // Add a new action to update inputs
           setName: (name) => set({ name }), // Add a new action to update inputs
-          setEnv: (env) => set({ env }), // Add a new action to update inputs
+          setEnv: (env) => {
+            // Update the environment in the store
+            set({ env });
+            // Update all agents with the new environment
+            const agents = get().agents;
+            agents.forEach((agent) => {
+              agent.agentInstance.updateEnv(env);
+            });
+          },
 
           addAgents: (agents) => {
             const { env } = get();

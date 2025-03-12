@@ -1,0 +1,176 @@
+[
+  {
+    "url": "https://api.openai.com/v1/chat/completions",
+    "method": "POST",
+    "body": {
+      "model": "gpt-4o-mini",
+      "temperature": 1,
+      "top_p": 1,
+      "frequency_penalty": 0,
+      "presence_penalty": 0,
+      "n": 1,
+      "stream": false,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are Alice.\n\nYour role is: Feedback Analyst.\nYour background is: Expert in customer feedback analysis and sentiment analysis.\nYour main goal is: Analyze customer feedback and identify key patterns and sentiments.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\nNo tools available. You must reply using your internal knowledge.\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\" // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): Analysis of key themes and sentiments from customer feedback.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
+        },
+        {
+          "role": "user",
+          "content": "Hi Alice, please complete the following task: Analyze the customer feedback and identify common themes, sentiments, and patterns.\n  Feedback data: \n      Customer 1: \"The new mobile app is much faster than before, but the search function is still confusing.\"\n      Customer 2: \"Great customer service, the support team resolved my issue in minutes!\"\n      Customer 3: \"Prices are a bit high compared to competitors, but quality is worth it.\"\n      Customer 4: \"Would love to see more color options for the product.\"\n      Customer 5: \"The checkout process is smooth, but shipping takes too long.\"\n    . \n        Your expected output should be: \"Analysis of key themes and sentiments from customer feedback.\". \n        "
+        }
+      ]
+    },
+    "response": {
+      "id": "chatcmpl-B5j9gTOoLAbgyMQMgnHjt2DUi81Fd",
+      "object": "chat.completion",
+      "created": 1740704916,
+      "model": "gpt-4o-mini-2024-07-18",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n    \"finalAnswer\": \"The analysis of customer feedback reveals several key themes and sentiments. Firstly, there is a positive sentiment towards the performance of the new mobile app, indicating that customers appreciate its speed, but there is a mixed sentiment regarding the search function, which is seen as confusing. Secondly, customer service receives high praise, with feedback emphasizing the quick resolution of issues. In terms of product offerings, customers express a desire for more color options, showcasing a theme of customization. Additionally, while some customers feel that prices are high compared to competitors, they acknowledge the quality as worth the cost. Lastly, the checkout process is noted as smooth; however, there is a concern regarding shipping times, indicating a need for improvement in logistics. Overall, the main themes identified include app performance, customer service quality, product variety, pricing perceptions, and shipping efficiency.\"\n}",
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 708,
+        "completion_tokens": 174,
+        "total_tokens": 882,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "service_tier": "default",
+      "system_fingerprint": "fp_06737a9306"
+    }
+  },
+  {
+    "url": "https://api.openai.com/v1/chat/completions",
+    "method": "POST",
+    "body": {
+      "model": "gpt-4o-mini",
+      "temperature": 1,
+      "top_p": 1,
+      "frequency_penalty": 0,
+      "presence_penalty": 0,
+      "n": 1,
+      "stream": false,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are Bob.\n\nYour role is: Insight Generator.\nYour background is: Specialist in converting customer feedback into business recommendations.\nYour main goal is: Generate actionable insights from analyzed feedback.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\nNo tools available. You must reply using your internal knowledge.\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\" // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): List of actionable insights and recommendations.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
+        },
+        {
+          "role": "user",
+          "content": "Hi Bob, please complete the following task: Based on the analyzed feedback, generate actionable business insights and recommendations.\n  Focus on practical improvements and opportunities.. \n        Your expected output should be: \"List of actionable insights and recommendations.\". \n        Incorporate the following findings and insights from previous tasks: \"Task: Analyze the customer feedback and identify common themes, sentiments, and patterns.\n  Feedback data: {feedbackData}\nResult: The analysis of customer feedback reveals several key themes and sentiments. Firstly, there is a positive sentiment towards the performance of the new mobile app, indicating that customers appreciate its speed, but there is a mixed sentiment regarding the search function, which is seen as confusing. Secondly, customer service receives high praise, with feedback emphasizing the quick resolution of issues. In terms of product offerings, customers express a desire for more color options, showcasing a theme of customization. Additionally, while some customers feel that prices are high compared to competitors, they acknowledge the quality as worth the cost. Lastly, the checkout process is noted as smooth; however, there is a concern regarding shipping times, indicating a need for improvement in logistics. Overall, the main themes identified include app performance, customer service quality, product variety, pricing perceptions, and shipping efficiency.\n\""
+        }
+      ]
+    },
+    "response": {
+      "id": "chatcmpl-B5j9iLoZZeAkjfpYTJA9s4mhXze9r",
+      "object": "chat.completion",
+      "created": 1740704918,
+      "model": "gpt-4o-mini-2024-07-18",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n    \"finalAnswer\": \"1. Improve the search function within the mobile app to enhance user experience and reduce confusion among customers. Consider user testing or feedback sessions to identify specific pain points. 2. Leverage the positive feedback on customer service by showcasing this strength in marketing materials to attract new customers. Highlight quick resolution times in promotional campaigns. 3. Expand product offerings to include additional color options, catering to customer desires for customization and potentially increasing sales. 4. Conduct a competitive pricing analysis to ensure that pricing remains competitive while emphasizing the quality of products to justify higher prices to customers. 5. Review logistics and shipping processes to decrease shipping times, as this has been cited as a concern. Explore partnerships with courier services or invest in better inventory management systems to streamline delivery.\"\n}",
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 804,
+        "completion_tokens": 160,
+        "total_tokens": 964,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "service_tier": "default",
+      "system_fingerprint": "fp_06737a9306"
+    }
+  },
+  {
+    "url": "https://api.openai.com/v1/chat/completions",
+    "method": "POST",
+    "body": {
+      "model": "gpt-4o-mini",
+      "temperature": 1,
+      "top_p": 1,
+      "frequency_penalty": 0,
+      "presence_penalty": 0,
+      "n": 1,
+      "stream": false,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are Charlie.\n\nYour role is: Summary Writer.\nYour background is: Professional writer specializing in business communications.\nYour main goal is: Create clear and concise summary reports from insights.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\nNo tools available. You must reply using your internal knowledge.\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\" // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): Executive summary with key findings and recommendations.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
+        },
+        {
+          "role": "user",
+          "content": "Hi Charlie, please complete the following task: Create a concise executive summary that outlines the key findings and recommendations.\n  Include both the main patterns found and the suggested actions.. \n        Your expected output should be: \"Executive summary with key findings and recommendations.\". \n        Incorporate the following findings and insights from previous tasks: \"Task: Analyze the customer feedback and identify common themes, sentiments, and patterns.\n  Feedback data: {feedbackData}\nResult: The analysis of customer feedback reveals several key themes and sentiments. Firstly, there is a positive sentiment towards the performance of the new mobile app, indicating that customers appreciate its speed, but there is a mixed sentiment regarding the search function, which is seen as confusing. Secondly, customer service receives high praise, with feedback emphasizing the quick resolution of issues. In terms of product offerings, customers express a desire for more color options, showcasing a theme of customization. Additionally, while some customers feel that prices are high compared to competitors, they acknowledge the quality as worth the cost. Lastly, the checkout process is noted as smooth; however, there is a concern regarding shipping times, indicating a need for improvement in logistics. Overall, the main themes identified include app performance, customer service quality, product variety, pricing perceptions, and shipping efficiency.\n\nTask: Based on the analyzed feedback, generate actionable business insights and recommendations.\n  Focus on practical improvements and opportunities.\nResult: 1. Improve the search function within the mobile app to enhance user experience and reduce confusion among customers. Consider user testing or feedback sessions to identify specific pain points. 2. Leverage the positive feedback on customer service by showcasing this strength in marketing materials to attract new customers. Highlight quick resolution times in promotional campaigns. 3. Expand product offerings to include additional color options, catering to customer desires for customization and potentially increasing sales. 4. Conduct a competitive pricing analysis to ensure that pricing remains competitive while emphasizing the quality of products to justify higher prices to customers. 5. Review logistics and shipping processes to decrease shipping times, as this has been cited as a concern. Explore partnerships with courier services or invest in better inventory management systems to streamline delivery.\n\""
+        }
+      ]
+    },
+    "response": {
+      "id": "chatcmpl-B5j9lmeH1f3xm4RZOLUESIhjAcukg",
+      "object": "chat.completion",
+      "created": 1740704921,
+      "model": "gpt-4o-mini-2024-07-18",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n    \"finalAnswer\": \"Executive Summary: The analysis of customer feedback reveals substantial insights into customer sentiments and areas for improvement. Key findings indicate a positive reception towards the performance of the new mobile app, particularly its speed, although the search function is perceived as confusing. Customer service has garnered high praise for quick issue resolutions, while there's a demand for increased product variety through more color options. Although some customers regard prices as high compared to competitors, they also recognize the quality of the products as justifying the cost. Furthermore, while the checkout process is noted as smooth, shipping times have raised concerns. \\n\\nRecommendations include: 1) Enhance the app's search functionality to minimize confusion; consider user testing to pinpoint issues. 2) Utilize the favorable customer service feedback in marketing efforts to attract new clientele, emphasizing rapid resolution times. 3) Expand the color range of product offerings to meet customer requests for customization. 4) Perform a competitive pricing analysis to align prices with market standards, while highlighting product quality to justify premium pricing. 5) Improve logistics and shipping procedures to address concerns regarding delivery times, potentially through partnerships with courier services or investments in inventory management solutions.\"\n}",
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 987,
+        "completion_tokens": 239,
+        "total_tokens": 1226,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "service_tier": "default",
+      "system_fingerprint": "fp_06737a9306"
+    }
+  }
+]

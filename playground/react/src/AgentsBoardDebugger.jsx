@@ -50,6 +50,8 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
     workflowContext,
     provideFeedback,
     validateTask,
+    insights,
+    setInsights,
   } = useTeamStore((state) => ({
     agents: state.agents,
     tasks: state.tasks,
@@ -61,6 +63,8 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
     workflowContext: state.workflowContext,
     provideFeedback: state.provideFeedback,
     validateTask: state.validateTask,
+    insights: state.insights,
+    setInsights: state.setInsights,
   }));
 
   const [openSystemMessage, setOpenSystemMessage] = useState({});
@@ -133,6 +137,15 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
           value={JSON.stringify(inputs, null, 2)}
           onChange={(e) => setInputs(JSON.parse(e.target.value))}
           placeholder="Enter JSON input"
+        />
+
+        <h2 className="sectionTitle">Team Insights</h2>
+        <textarea
+          className="inputTextarea"
+          value={insights || ''}
+          onChange={(e) => setInsights(e.target.value)}
+          placeholder="Enter team insights"
+          style={{ minHeight: '200px' }}
         />
 
         <div className="actionWrapper">
