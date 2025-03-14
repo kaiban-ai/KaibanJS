@@ -45,6 +45,7 @@ const AGENT_STATUS_enum = {
   ITERATION_END: 'ITERATION_END',
   AGENTIC_LOOP_ERROR: 'AGENTIC_LOOP_ERROR',
   WEIRD_LLM_OUTPUT: 'WEIRD_LLM_OUTPUT',
+  DECIDED_TO_BLOCK_TASK: 'DECIDED_TO_BLOCK_TASK', // Agent has made the decision to block the task
   TASK_ABORTED: 'TASK_ABORTED',
   PAUSED: 'PAUSED',
   RESUMED: 'RESUMED',
@@ -113,6 +114,17 @@ const FEEDBACK_STATUS_enum = {
   PROCESSED: 'PROCESSED',
 };
 
+// ──── Kanban Tools ───────────────────────────────────────────────
+//
+// Defines the available kanban tools that can be enabled/disabled
+// These are core tools that provide essential kanban functionality
+//
+// ───────────────────────────────────────────────────────────────────
+
+const KANBAN_TOOLS_enum = {
+  BLOCK_TASK: 'block-task-tool',
+};
+
 const WORKFLOW_ACTION_enum = {
   STOP: 'STOP',
   PAUSE: 'PAUSE',
@@ -125,5 +137,6 @@ export {
   TASK_STATUS_enum,
   WORKFLOW_STATUS_enum,
   FEEDBACK_STATUS_enum,
+  KANBAN_TOOLS_enum,
   WORKFLOW_ACTION_enum,
 };

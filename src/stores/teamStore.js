@@ -62,6 +62,7 @@ const createTeamStore = (initialState = {}) => {
           workflowContext: initialState.workflowContext || '',
           env: initialState.env || {},
           logLevel: initialState.logLevel,
+          insights: initialState.insights || '',
           flowType: initialState.flowType,
           workflowExecutionStrategy: '_deterministic',
           workflowController: initialState.workflowController || {},
@@ -71,7 +72,15 @@ const createTeamStore = (initialState = {}) => {
 
           setInputs: (inputs) => set({ inputs }), // Add a new action to update inputs
           setName: (name) => set({ name }), // Add a new action to update inputs
-          setEnv: (env) => set({ env }), // Add a new action to update inputs
+          setEnv: (env) => {
+            // Update the environment in the store
+            set({ env });
+            // Update all agents with the new environment
+            const agents = get().agents;
+            agents.forEach((agent) => {
+              agent.agentInstance.updateEnv(env);
+            });
+          },
 
           addAgents: (agents) => {
             const { env } = get();

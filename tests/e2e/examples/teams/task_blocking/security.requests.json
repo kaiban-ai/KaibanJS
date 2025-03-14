@@ -1,0 +1,126 @@
+[
+  {
+    "url": "https://api.openai.com/v1/chat/completions",
+    "method": "POST",
+    "body": {
+      "model": "gpt-4o-mini",
+      "temperature": 1,
+      "top_p": 1,
+      "frequency_penalty": 0,
+      "presence_penalty": 0,
+      "n": 1,
+      "stream": false,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are Security Validator.\n\nYour role is: Security Clearance Checker.\nYour background is: Expert in security protocols and access control management.\nYour main goal is: Validate security requirements and block tasks that lack proper authorization\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\nblock_task: Use this tool to block the current task when you cannot or should not proceed. Provide a clear reason for blocking. Tool Input Schema: {\"type\":\"object\",\"properties\":{\"reason\":{\"type\":\"string\",\"description\":\"The reason for blocking the task\"}},\"required\":[\"reason\"],\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"}\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\" // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): undefined\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
+        },
+        {
+          "role": "user",
+          "content": "Hi Security Validator, please complete the following task: You are tasked with reviewing a request to access highly sensitive data. \n  The request lacks proper authorization credentials and security clearance documentation.\n  As a security validator, you must assess this situation and take appropriate action.\n  \n  Given the missing security credentials, you should block this task using the block_task tool\n  and provide a clear explanation of why access cannot be granted.. \n        Your expected output should be: \"undefined\". \n        "
+        }
+      ]
+    },
+    "response": {
+      "id": "chatcmpl-B8bthC577HjYwHOhmSDFaDrItRLiv",
+      "object": "chat.completion",
+      "created": 1741392001,
+      "model": "gpt-4o-mini-2024-07-18",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n   \"reason\": \"The request lacks proper authorization credentials and security clearance documentation, making it impossible to grant access to highly sensitive data.\"\n}",
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 716,
+        "completion_tokens": 30,
+        "total_tokens": 746,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "service_tier": "default",
+      "system_fingerprint": "fp_06737a9306"
+    }
+  },
+  {
+    "url": "https://api.openai.com/v1/chat/completions",
+    "method": "POST",
+    "body": {
+      "model": "gpt-4o-mini",
+      "temperature": 1,
+      "top_p": 1,
+      "frequency_penalty": 0,
+      "presence_penalty": 0,
+      "n": 1,
+      "stream": false,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are Security Validator.\n\nYour role is: Security Clearance Checker.\nYour background is: Expert in security protocols and access control management.\nYour main goal is: Validate security requirements and block tasks that lack proper authorization\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\nblock_task: Use this tool to block the current task when you cannot or should not proceed. Provide a clear reason for blocking. Tool Input Schema: {\"type\":\"object\",\"properties\":{\"reason\":{\"type\":\"string\",\"description\":\"The reason for blocking the task\"}},\"required\":[\"reason\"],\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"}\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\" // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\"\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): undefined\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
+        },
+        {
+          "role": "user",
+          "content": "Hi Security Validator, please complete the following task: You are tasked with reviewing a request to access highly sensitive data. \n  The request lacks proper authorization credentials and security clearance documentation.\n  As a security validator, you must assess this situation and take appropriate action.\n  \n  Given the missing security credentials, you should block this task using the block_task tool\n  and provide a clear explanation of why access cannot be granted.. \n        Your expected output should be: \"undefined\". \n        "
+        },
+        {
+          "role": "assistant",
+          "content": "{\n   \"reason\": \"The request lacks proper authorization credentials and security clearance documentation, making it impossible to grant access to highly sensitive data.\"\n}"
+        },
+        {
+          "role": "user",
+          "content": "Your latest response does not match the way you are expected to output information. Please correct it."
+        }
+      ]
+    },
+    "response": {
+      "id": "chatcmpl-B8btifoc4hlp5ELNxpIBmpZI0eFy3",
+      "object": "chat.completion",
+      "created": 1741392002,
+      "model": "gpt-4o-mini-2024-07-18",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n   \"thought\": \"The request lacks proper authorization credentials and security clearance documentation, which means I need to block the task.\",\n   \"action\": \"block_task\",\n   \"actionInput\": {\"reason\":\"The request lacks proper authorization credentials and security clearance documentation, making it impossible to grant access to highly sensitive data.\"}\n}",
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 772,
+        "completion_tokens": 67,
+        "total_tokens": 839,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "service_tier": "default",
+      "system_fingerprint": "fp_06737a9306"
+    }
+  }
+]
