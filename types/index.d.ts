@@ -182,6 +182,8 @@ export class Agent {
  * @property {boolean} [isDeliverable] - Indicates whether the task is deliverable.
  * @property {boolean} [externalValidationRequired] - Indicates whether external validation is required.
  * @property {object | null} [outputSchema] - The schema for validating the task output.
+ * @property {string} [referenceId] - A unique identifier used for task dependency management.
+ * @property {boolean} [allowParallelExecution] - Whether this task can be executed in parallel with other tasks. Defaults to false.
  */
 export interface ITaskParams {
   title?: string;
@@ -191,6 +193,8 @@ export interface ITaskParams {
   isDeliverable?: boolean;
   externalValidationRequired?: boolean;
   outputSchema?: object | null;
+  referenceId?: string;
+  allowParallelExecution?: boolean;
 }
 
 /**
@@ -212,6 +216,8 @@ export interface ITaskParams {
  * @property {boolean} externalValidationRequired - Indicates whether external validation is required.
  * @property {object | null} outputSchema - The schema for validating the task output.
  * @property {TStore | undefined} store - The store.
+ * @property {string | undefined} referenceId - A unique identifier used for task dependency management.
+ * @property {boolean} allowParallelExecution - Whether this task can be executed in parallel with other tasks.
  */
 export class Task {
   id: string;
@@ -230,6 +236,8 @@ export class Task {
   externalValidationRequired: boolean;
   outputSchema: object | null;
   store?: TStore;
+  referenceId: string | undefined;
+  allowParallelExecution: boolean;
 
   /**
    * Creates an instance of a Task.
