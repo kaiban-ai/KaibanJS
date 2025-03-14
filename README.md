@@ -253,6 +253,7 @@ _KaibanJS supports all LangchainJS-compatible tools, offering a versatile approa
 Enable sophisticated workflows by passing results between tasks, allowing agents to build upon each other's work. This feature is essential for creating complex, multi-step processes where each task's output becomes input for subsequent tasks.
 
 In this example, a content creation team demonstrates how tasks can share and build upon results, creating a seamless workflow from research to final content production.
+
 </p>
 
 ```js
@@ -262,21 +263,21 @@ import { Agent, Task, Team } from 'kaibanjs';
 const researchTask = new Task({
   description: 'Research the topic: {topic}',
   expectedOutput: 'Key research points in JSON format',
-  agent: researcher
+  agent: researcher,
 });
 
 const writingTask = new Task({
   description: `Write an article using this research data: {taskResult:task1}
                Focus on key insights and maintain professional tone.`,
   expectedOutput: 'Draft article in markdown format',
-  agent: writer
+  agent: writer,
 });
 
 const editingTask = new Task({
   description: `Edit and improve this article: {taskResult:task2}
                Enhance clarity and engagement.`,
   expectedOutput: 'Final polished article',
-  agent: editor
+  agent: editor,
 });
 
 // Create a team with the tasks
@@ -284,7 +285,7 @@ const team = new Team({
   name: 'Content Creation Team',
   agents: [researcher, writer, editor],
   tasks: [researchTask, writingTask, editingTask],
-  inputs: { topic: 'AI Trends 2024' }
+  inputs: { topic: 'AI Trends 2024' },
 });
 ```
 
@@ -299,6 +300,7 @@ _Task results are automatically passed between tasks using the `{taskResult:task
 KaibanJS provides sophisticated memory management at the team level, giving you control over how task results flow through your workflows. This feature allows you to optimize performance and manage context in complex multi-agent systems.
 
 Here's an example of configuring team memory:
+
 </p>
 
 ```js
@@ -306,7 +308,7 @@ const team = new Team({
   name: 'Content Creation Team',
   agents: [researcher, writer, editor],
   tasks: [researchTask, writingTask, editingTask],
-  memory: true,  // Enable automatic access to all previous task results
+  memory: true, // Enable automatic access to all previous task results
 });
 
 // Or disable memory for explicit result management
@@ -314,7 +316,7 @@ const performanceTeam = new Team({
   name: 'High-Performance Team',
   agents: [analyst, processor],
   tasks: [analysisTask, processingTask],
-  memory: false,  // Require explicit result references
+  memory: false, // Require explicit result references
 });
 ```
 
