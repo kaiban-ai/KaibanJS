@@ -1,18 +1,4 @@
 const { Agent, Task, Team } = require('kaibanjs');
-const {
-  TavilySearchResults,
-} = require('@langchain/community/tools/tavily_search');
-// const {calculator} = require('@agentic/stdlib/calculator');
-// const { createLangChainTools } = require('@agentic/stdlib/langchain');
-
-// Define tools
-const searchInternetTool = new TavilySearchResults({
-  maxResults: 3,
-  apiKey: process.env.TAVILY_API_KEY,
-});
-
-// const searchInternet = createLangChainTools(rawSearchInternetTool)[0];
-// const calculatorTool = createLangChainTools(calculator)[0];
 
 // Define agents with exact roles, goals, and backgrounds from Python example
 const eventManagerAgent = new Agent({
@@ -41,7 +27,6 @@ const venueCoordinatorAgent = new Agent({
   goal: 'Confirm venue availability, arrange setup, and handle issues.',
   background: `Knowledge of venue layouts, policies, and equipment setup.`,
   type: 'ReactChampionAgent',
-  tools: [searchInternetTool],
 });
 
 const venueCoordinatorAgent1 = new Agent({
@@ -50,7 +35,6 @@ const venueCoordinatorAgent1 = new Agent({
   goal: 'Confirm venue availability, arrange setup, and handle issues.',
   background: `Knowledge of venue layouts, policies, and equipment setup.`,
   type: 'ReactChampionAgent',
-  tools: [searchInternetTool],
 });
 
 const cateringAgent = new Agent({
@@ -59,7 +43,6 @@ const cateringAgent = new Agent({
   goal: `Deliver a catering plan and coordinate with vendors`,
   background: `Experience with catering contracts, menu planning, and dietary requirements`,
   type: 'ReactChampionAgent',
-  tools: [searchInternetTool],
 });
 
 const cateringAgent1 = new Agent({
@@ -68,7 +51,6 @@ const cateringAgent1 = new Agent({
   goal: `Deliver a catering plan and coordinate with vendors`,
   background: `Experience with catering contracts, menu planning, and dietary requirements`,
   type: 'ReactChampionAgent',
-  tools: [searchInternetTool],
 });
 
 const marketingAgent = new Agent({
@@ -77,7 +59,6 @@ const marketingAgent = new Agent({
   goal: `Drive attendance and manage guest lists`,
   background: `Skilled in social media marketing, email campaigns, and analytics`,
   type: 'ReactChampionAgent',
-  tools: [searchInternetTool],
 });
 
 const marketingAgent1 = new Agent({
@@ -86,7 +67,6 @@ const marketingAgent1 = new Agent({
   goal: `Drive attendance and manage guest lists`,
   background: `Skilled in social media marketing, email campaigns, and analytics`,
   type: 'ReactChampionAgent',
-  tools: [searchInternetTool],
 });
 
 const marketingAgent2 = new Agent({
@@ -95,7 +75,6 @@ const marketingAgent2 = new Agent({
   goal: `Drive attendance and manage guest lists`,
   background: `Skilled in social media marketing, email campaigns, and analytics`,
   type: 'ReactChampionAgent',
-  tools: [searchInternetTool],
 });
 
 // Define tasks with dynamic input placeholders
