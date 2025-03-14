@@ -25,7 +25,7 @@ import { calculateTotalWorkflowCost } from '../utils/llmCostCalculator';
 import { logger, setLogLevel } from '../utils/logger';
 import {
   getTaskTitleForLogs,
-  interpolateTaskDescription,
+  interpolateTaskDescriptionV2,
 } from '../utils/tasks';
 import { initializeTelemetry } from '../utils/telemetry';
 
@@ -62,6 +62,8 @@ const createTeamStore = (initialState = {}) => {
           workflowContext: initialState.workflowContext || '',
           env: initialState.env || {},
           logLevel: initialState.logLevel,
+          memory:
+            initialState.memory !== undefined ? initialState.memory : true,
           insights: initialState.insights || '',
           flowType: initialState.flowType,
           workflowExecutionStrategy: '_deterministic',
@@ -350,9 +352,10 @@ const createTeamStore = (initialState = {}) => {
 
               // Execute the task and let the agent report completion
               task.inputs = get().inputs; // Pass the inputs to the task
-              const interpolatedTaskDescription = interpolateTaskDescription(
+              const interpolatedTaskDescription = interpolateTaskDescriptionV2(
                 task.description,
-                get().inputs
+                get().inputs,
+                get().getTaskResults()
               );
               task.interpolatedTaskDescription = interpolatedTaskDescription;
 
@@ -361,13 +364,7 @@ const createTeamStore = (initialState = {}) => {
                 (f) => f.status === FEEDBACK_STATUS_enum.PENDING
               );
 
-              // // Derive the current context from workflowLogs, passing the current task ID
-              // const currentContext = get().deriveContextFromLogs(
-              //   get().workflowLogs,
-              //   task.id
-              // );
-
-              const currentContext = context;
+              const currentContext = get().memory ? context : '';
 
               // Check if the task has pending feedbacks
               if (pendingFeedbacks.length > 0) {
@@ -432,9 +429,12 @@ const createTeamStore = (initialState = {}) => {
                 // Only include tasks that come before the current task in the workflow
                 if (taskIndex !== -1 && taskIndex < currentTaskIndex) {
                   taskResults.set(log.task.id, {
-                    taskDescription: log.task.description,
+                    // TODO: See if we can use the title or description to get the task title
+                    // putting the desciption will contaminate the prompt specially if there are big descriptions
+                    taskTitle: log.task.title,
+                    taskDescription: log.task.title || log.task.description,
                     result: log.metadata.result,
-                    index: taskIndex, // Store the index for sorting later
+                    index: taskIndex + 1, // Store the index for sorting later
                   });
                 }
               }
@@ -444,8 +444,10 @@ const createTeamStore = (initialState = {}) => {
             return Array.from(taskResults.values())
               .sort((a, b) => a.index - b.index)
               .map(
-                ({ taskDescription, result }) =>
-                  `Task: ${taskDescription}\nResult: ${
+                ({ taskTitle, taskDescription, result, index }) =>
+                  `Task${
+                    taskTitle ? ' ' + index : ''
+                  }: ${taskDescription}\nResult: ${
                     typeof result === 'object' ? JSON.stringify(result) : result
                   }\n`
               )
@@ -804,6 +806,40 @@ const createTeamStore = (initialState = {}) => {
               logLevel: get().logLevel,
               // Include other state parts as necessary, cleaned as needed
             };
+          },
+          /**
+           * Collects all completed task results from the workflow logs
+           * @returns {Object} An object mapping task indices to their results (e.g., task1: "result")
+           */
+          getTaskResults: () => {
+            const taskResults = {};
+            const tasks = get().tasks || [];
+            const workflowLogs = get().workflowLogs || [];
+            const taskResultMap = new Map();
+
+            // Iterate through logs to get the most recent result for each task
+            for (const log of workflowLogs) {
+              if (
+                log.logType === 'TaskStatusUpdate' &&
+                log.taskStatus === TASK_STATUS_enum.DONE &&
+                log.task &&
+                log.metadata &&
+                log.metadata.result
+              ) {
+                taskResultMap.set(log.task.id, log.metadata.result);
+              }
+            }
+
+            // Map the results to task1, task2, etc. based on task array order
+            tasks.forEach((task, index) => {
+              const result = taskResultMap.get(task.id);
+              if (result !== undefined) {
+                const key = `task${index + 1}`;
+                taskResults[key] = result;
+              }
+            });
+
+            return taskResults;
           },
         }),
         'teamStore'
