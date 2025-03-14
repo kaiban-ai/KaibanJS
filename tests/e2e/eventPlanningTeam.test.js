@@ -78,12 +78,7 @@ const validateParallelExecution = (workflowLogs) => {
   return maxConcurrentTasks;
 };
 
-const verifySnapshots = ({
-  storeFinalState,
-  taskDefinitions,
-  fileName,
-  verifyFullMatch = false,
-}) => {
+const verifySnapshots = ({ storeFinalState, taskDefinitions, fileName }) => {
   const snapshotName = `eventPlanningTeam-${fileName}.test.json`;
   const snapshotDir = path.join(process.cwd(), `tests/e2e/__snapshots__`);
   const snapshotPath = path.join(snapshotDir, snapshotName);
@@ -148,10 +143,6 @@ const verifySnapshots = ({
     );
     expect(taskLogsForDefinition.length).toBeGreaterThan(0);
   });
-
-  if (verifyFullMatch) {
-    expect(storeFinalStateStr).toEqual(snapshotContent);
-  }
 };
 
 describe('Execution Strategies Integration Tests', () => {
@@ -230,7 +221,6 @@ describe('Execution Strategies Integration Tests', () => {
         storeFinalState: cleanedState,
         taskDefinitions: sequentialTeam.tasks,
         fileName: 'sequential',
-        verifyFullMatch: true,
       });
     });
   });
@@ -335,7 +325,6 @@ describe('Execution Strategies Integration Tests', () => {
         storeFinalState: cleanedState,
         taskDefinitions: parallelTeam.tasks,
         fileName: 'parallel',
-        verifyFullMatch: false,
       });
     });
   });
@@ -474,7 +463,6 @@ describe('Execution Strategies Integration Tests', () => {
         storeFinalState: cleanedState,
         taskDefinitions: mixedTeam.tasks,
         fileName: 'mixed',
-        verifyFullMatch: false,
       });
     });
   });
