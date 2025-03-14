@@ -19,7 +19,7 @@ import { BaseAgent } from './baseAgent';
 import { getApiKey } from '../utils/agents';
 import { getParsedJSON } from '../utils/parser';
 import { AGENT_STATUS_enum, KANBAN_TOOLS_enum } from '../utils/enums';
-import { interpolateTaskDescription } from '../utils/tasks';
+import { interpolateTaskDescriptionV2 } from '../utils/tasks';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatAnthropic } from '@langchain/anthropic';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
@@ -42,7 +42,10 @@ class ReactChampionAgent extends BaseAgent {
     const enabledKanbanTools = config.kanbanTools || [];
 
     // Add kanban tools that are enabled
-    if (enabledKanbanTools.includes(KANBAN_TOOLS_enum.BLOCK_TASK)) {
+    if (
+      enabledKanbanTools.includes(KANBAN_TOOLS_enum.BLOCK_TASK_TOOL) ||
+      enabledKanbanTools.includes(KANBAN_TOOLS_enum.BLOCK_TASK)
+    ) {
       this.tools = [...this.tools, new BlockTaskTool(this)];
     }
   }
@@ -144,9 +147,10 @@ class ReactChampionAgent extends BaseAgent {
   }
 
   prepareAgentForTask(task, inputs, context) {
-    const interpolatedDescription = interpolateTaskDescription(
+    const interpolatedDescription = interpolateTaskDescriptionV2(
       task.description,
-      inputs
+      inputs,
+      this.store.getState().getTaskResults()
     );
     const systemMessage = this.buildSystemMessage(
       this,

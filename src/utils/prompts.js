@@ -82,7 +82,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -90,7 +90,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -98,7 +98,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }

@@ -28,4 +28,37 @@ function interpolateTaskDescription(description, inputs) {
   return result;
 }
 
-export { getTaskTitleForLogs, interpolateTaskDescription };
+/**
+ * Enhanced version of interpolateTaskDescription that supports both input values and task results.
+ * @param {string} description - The description template containing placeholders
+ * @param {Object} inputs - Object containing input values to interpolate
+ * @param {Object} taskResults - Object containing task results to interpolate
+ * @returns {string} - The interpolated description
+ */
+function interpolateTaskDescriptionV2(
+  description,
+  inputs = {},
+  taskResults = {}
+) {
+  let result = description;
+
+  // Replace input placeholders
+  for (const key in inputs) {
+    const placeholder = `{${key}}`;
+    result = result.replace(new RegExp(placeholder, 'g'), inputs[key]);
+  }
+
+  // Replace task result placeholders
+  for (const key in taskResults) {
+    const placeholder = `{taskResult:${key}}`;
+    result = result.replace(new RegExp(placeholder, 'g'), taskResults[key]);
+  }
+
+  return result;
+}
+
+export {
+  getTaskTitleForLogs,
+  interpolateTaskDescription,
+  interpolateTaskDescriptionV2,
+};

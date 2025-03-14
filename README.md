@@ -34,7 +34,7 @@
 
 ## Kanban for AI Agents? 🤖📋
 
-**KaibanJS** is inspired by the tried-and-true [Kanban methodology](<https://en.wikipedia.org/wiki/Kanban_(development)>), which is well-known for helping teams organize and manage their work. We’ve adapted these concepts to meet the **unique challenges of AI agent management**.
+**KaibanJS** is inspired by the tried-and-true [Kanban methodology](<https://en.wikipedia.org/wiki/Kanban_(development)>), which is well-known for helping teams organize and manage their work. We've adapted these concepts to meet the **unique challenges of AI agent management**.
 
 If you've used tools like Trello, Jira, or ClickUp, you'll be familiar with how Kanban helps manage tasks. Now, KaibanJS uses that same system to help you manage AI agents and their tasks in real time.
 
@@ -171,7 +171,7 @@ Watch this video to learn more about the concepts: [KaibanJS Concepts](https://y
 
 Kanban boards are excellent tools for showcasing team workflows in real time, providing a clear and interactive snapshot of each member's progress.
 
-> We’ve adapted this concept for AI agents.
+> We've adapted this concept for AI agents.
 
 Now, you can visualize the workflow of your AI agents as team members, with tasks moving from "To Do" to "Done" right before your eyes. This visual representation simplifies understanding and managing complex AI operations, making it accessible to anyone, anywhere.
 
@@ -243,6 +243,84 @@ const peterAtlas = new Agent({
 ```
 
 _KaibanJS supports all LangchainJS-compatible tools, offering a versatile approach to tool integration. For further details, visit the [documentation](https://github.com/kaiban-ai/KaibanJS)._
+
+</details>
+
+<details style="margin-bottom:10px;">
+  <summary><b style="color:black;">Task Result Passing</b></summary>
+
+<p style="margin-top:10px;">
+Enable sophisticated workflows by passing results between tasks, allowing agents to build upon each other's work. This feature is essential for creating complex, multi-step processes where each task's output becomes input for subsequent tasks.
+
+In this example, a content creation team demonstrates how tasks can share and build upon results, creating a seamless workflow from research to final content production.
+
+</p>
+
+```js
+import { Agent, Task, Team } from 'kaibanjs';
+
+// Define tasks with result passing
+const researchTask = new Task({
+  description: 'Research the topic: {topic}',
+  expectedOutput: 'Key research points in JSON format',
+  agent: researcher,
+});
+
+const writingTask = new Task({
+  description: `Write an article using this research data: {taskResult:task1}
+               Focus on key insights and maintain professional tone.`,
+  expectedOutput: 'Draft article in markdown format',
+  agent: writer,
+});
+
+const editingTask = new Task({
+  description: `Edit and improve this article: {taskResult:task2}
+               Enhance clarity and engagement.`,
+  expectedOutput: 'Final polished article',
+  agent: editor,
+});
+
+// Create a team with the tasks
+const team = new Team({
+  name: 'Content Creation Team',
+  agents: [researcher, writer, editor],
+  tasks: [researchTask, writingTask, editingTask],
+  inputs: { topic: 'AI Trends 2024' },
+});
+```
+
+_Task results are automatically passed between tasks using the `{taskResult:taskN}` syntax, where N represents the task's position in the workflow (1-based indexing). For more details and advanced usage, visit our [Task Result Passing Guide](https://docs.kaibanjs.com/how-to/Task-Result-Passing)._
+
+</details>
+
+<details style="margin-bottom:10px;">
+  <summary><b style="color:black;">Memory Management</b></summary>
+
+<p style="margin-top:10px;">
+KaibanJS provides sophisticated memory management at the team level, giving you control over how task results flow through your workflows. This feature allows you to optimize performance and manage context in complex multi-agent systems.
+
+Here's an example of configuring team memory:
+
+</p>
+
+```js
+const team = new Team({
+  name: 'Content Creation Team',
+  agents: [researcher, writer, editor],
+  tasks: [researchTask, writingTask, editingTask],
+  memory: true, // Enable automatic access to all previous task results
+});
+
+// Or disable memory for explicit result management
+const performanceTeam = new Team({
+  name: 'High-Performance Team',
+  agents: [analyst, processor],
+  tasks: [analysisTask, processingTask],
+  memory: false, // Require explicit result references
+});
+```
+
+_For detailed information about memory management, visit our [documentation](https://docs.kaibanjs.com/core-concepts/08-Memory)._
 
 </details>
 
@@ -344,7 +422,7 @@ _For a deeper dive into state management with KaibanJS, visit the [documentation
 <p style="margin-top:10px;">
 Easily add AI capabilities to your NextJS, React, Vue, Angular, and Node.js projects.
 
-KaibanJS is designed for seamless integration across a diverse range of JavaScript environments. Whether you’re enhancing user interfaces in React, Vue, or Angular, building scalable applications with NextJS, or implementing server-side solutions in Node.js, the framework integrates smoothly into your existing workflow.
+KaibanJS is designed for seamless integration across a diverse range of JavaScript environments. Whether you're enhancing user interfaces in React, Vue, or Angular, building scalable applications with NextJS, or implementing server-side solutions in Node.js, the framework integrates smoothly into your existing workflow.
 
 </p>
 
