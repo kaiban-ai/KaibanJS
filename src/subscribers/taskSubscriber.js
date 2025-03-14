@@ -47,7 +47,9 @@ const subscribeTaskStatusUpdates = (useStore) => {
               break;
             case TASK_STATUS_enum.DOING:
             case TASK_STATUS_enum.BLOCKED:
+            case TASK_STATUS_enum.PAUSED:
             case TASK_STATUS_enum.REVISE:
+            case TASK_STATUS_enum.RESUMED:
             case TASK_STATUS_enum.AWAITING_VALIDATION:
             case TASK_STATUS_enum.VALIDATED:
             case TASK_STATUS_enum.TODO:

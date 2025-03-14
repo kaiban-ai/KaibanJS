@@ -119,7 +119,7 @@ export const useTaskStore = (set, get) => ({
         tasks: state.tasks.map((t) =>
           t.id === task.id
             ? {
-                ...t,
+                ...task,
                 ...stats,
                 status: TASK_STATUS_enum.AWAITING_VALIDATION,
                 result: result,
@@ -135,13 +135,12 @@ export const useTaskStore = (set, get) => ({
         error: new Error('Task awaiting validation'),
       });
     } else {
-      task.status = TASK_STATUS_enum.DONE;
       const modelCode = agent.llmConfig.model; // Assuming this is where the model code is stored
       // Calculate costs directly using stats
       const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
       const taskLog = get().prepareNewLog({
         agent,
-        task,
+        task: { ...task, status: TASK_STATUS_enum.DONE },
         logDescription: `Task completed: ${getTaskTitleForLogs(task)}.`,
         metadata: {
           ...stats,
@@ -159,7 +158,7 @@ export const useTaskStore = (set, get) => ({
         tasks: state.tasks.map((t) =>
           t.id === task.id
             ? {
-                ...t,
+                ...task,
                 ...stats,
                 status: TASK_STATUS_enum.DONE,
                 result: result,
@@ -169,8 +168,8 @@ export const useTaskStore = (set, get) => ({
         ),
       }));
 
-      // This logic is here cause if put it in a subscriber, it will create race conditions
-      // that will create a a non deterministic behavior for the Application State
+      task.status = TASK_STATUS_enum.DONE;
+
       const tasks = get().tasks;
       const allTasksDone = tasks.every(
         (t) => t.status === TASK_STATUS_enum.DONE
@@ -286,5 +285,123 @@ export const useTaskStore = (set, get) => ({
       workflowLogs: [...state.workflowLogs, taskLog],
     }));
     get().handleWorkflowBlocked({ task, error });
+  },
+  handleTaskAborted: ({ task, error }) => {
+    //create task log
+    const stats = get().getTaskStats(task, get);
+    const modelCode = task.agent.llmConfig.model; // Assuming this is where the model code is stored
+    // Calculate costs directly using stats
+    const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
+
+    const taskLog = get().prepareNewLog({
+      agent: task.agent,
+      task,
+      logDescription: `Task aborted: ${getTaskTitleForLogs(task)}, Reason: ${
+        error.message
+      }`,
+      metadata: {
+        ...stats,
+        costDetails,
+        error,
+      },
+      logType: 'TaskStatusUpdate',
+    });
+    // create pretty error
+    const prettyError = new PrettyError({
+      name: 'TASK STOPPED',
+      message: 'Task manually stopped by user.',
+      recommendedAction:
+        'Enable logLevel: "debug" during team initialization to obtain more detailed logs and facilitate troubleshooting.',
+      rootError: error,
+      context: { task, error },
+    });
+    logger.warn(prettyError.prettyMessage);
+    logger.debug(prettyError.context);
+
+    set((state) => ({
+      workflowLogs: [...state.workflowLogs, taskLog],
+    }));
+  },
+  handleTaskPaused: ({ task, error }) => {
+    const stats = get().getTaskStats(task, get);
+    // task.status = TASK_STATUS_enum.PAUSED;
+    const modelCode = task.agent.llmConfig.model; // Assuming this is where the model code is stored
+    // Calculate costs directly using stats
+    const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
+
+    const updatedFeedbackHistory = task.feedbackHistory.map((f) =>
+      f.status === FEEDBACK_STATUS_enum.PENDING
+        ? { ...f, status: FEEDBACK_STATUS_enum.PROCESSED }
+        : f
+    );
+
+    const taskLog = get().prepareNewLog({
+      agent: task.agent,
+      task: { ...task, status: TASK_STATUS_enum.PAUSED },
+      logDescription: `⏸️ Task "${getTaskTitleForLogs(task)}" paused | Agent ${
+        task.agent.name
+      } has temporarily suspended work`,
+      metadata: {
+        ...stats,
+        costDetails,
+        error,
+      },
+      logType: 'TaskStatusUpdate',
+    });
+
+    const prettyError = new PrettyError({
+      name: 'TASK PAUSED',
+      message: `Task "${task.description}" has been paused. Agent ${task.agent.name} will resume work when workflow continues.`,
+      recommendedAction:
+        'Use resume() to continue workflow execution, or enable logLevel: "debug" for more detailed logs.',
+      rootError: error,
+      context: { task, error },
+    });
+
+    logger.warn(prettyError.prettyMessage);
+    logger.debug(prettyError.context);
+    set((state) => ({
+      tasks: state.tasks.map((t) =>
+        t.id === task.id
+          ? {
+              ...t,
+              ...stats,
+              status: TASK_STATUS_enum.PAUSED,
+              feedbackHistory: updatedFeedbackHistory,
+            }
+          : t
+      ),
+      workflowLogs: [...state.workflowLogs, taskLog],
+    }));
+  },
+  handleTaskResumed: ({ task }) => {
+    const taskLog = get().prepareNewLog({
+      agent: task.agent,
+      task: { ...task, status: TASK_STATUS_enum.RESUMED },
+      logDescription: `🔄 Task resumed: ${getTaskTitleForLogs(task)} | Agent: ${
+        task.agent.name
+      } is continuing work`,
+      metadata: {},
+      logType: 'TaskStatusUpdate',
+    });
+
+    const prettyError = new PrettyError({
+      name: 'TASK RESUMED',
+      message: `Task "${task.description}" has been resumed after being paused. Agent ${task.agent.name} will continue working on it.`,
+      context: { task },
+    });
+
+    logger.debug(prettyError.context);
+    set((state) => ({
+      tasks: state.tasks.map((t) =>
+        t.id === task.id
+          ? {
+              ...t,
+              status: TASK_STATUS_enum.RESUMED,
+            }
+          : t
+      ),
+      workflowLogs: [...state.workflowLogs, taskLog],
+    }));
   },
 });

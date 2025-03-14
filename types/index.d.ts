@@ -182,6 +182,8 @@ export class Agent {
  * @property {boolean} [isDeliverable] - Indicates whether the task is deliverable.
  * @property {boolean} [externalValidationRequired] - Indicates whether external validation is required.
  * @property {object | null} [outputSchema] - The schema for validating the task output.
+ * @property {string} [referenceId] - A unique identifier used for task dependency management.
+ * @property {boolean} [allowParallelExecution] - Whether this task can be executed in parallel with other tasks. Defaults to false.
  */
 export interface ITaskParams {
   title?: string;
@@ -191,6 +193,8 @@ export interface ITaskParams {
   isDeliverable?: boolean;
   externalValidationRequired?: boolean;
   outputSchema?: object | null;
+  referenceId?: string;
+  allowParallelExecution?: boolean;
 }
 
 /**
@@ -211,6 +215,8 @@ export interface ITaskParams {
  * @property {string | null} interpolatedTaskDescription - The interpolated task description.
  * @property {boolean} externalValidationRequired - Indicates whether external validation is required.
  * @property {object | null} outputSchema - The schema for validating the task output.
+ * @property {string | undefined} referenceId - A unique identifier used for task dependency management.
+ * @property {boolean} allowParallelExecution - Whether this task can be executed in parallel with other tasks.
  * @property {TStore | undefined} store - The store.
  */
 export class Task {
@@ -229,6 +235,8 @@ export class Task {
   feedbackHistory: any[];
   externalValidationRequired: boolean;
   outputSchema: object | null;
+  referenceId: string | undefined;
+  allowParallelExecution: boolean;
   store?: TStore;
 
   /**
