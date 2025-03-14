@@ -133,10 +133,6 @@ const verifySnapshots = ({
       return currentLogStr === snapshotLogStr;
     });
 
-    if (!logExists) {
-      console.log(currentLog);
-    }
-
     return logExists;
   });
   expect(logsExistInBoth).toBe(true);
