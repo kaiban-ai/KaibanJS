@@ -73,6 +73,26 @@ export const AgentWithToolPreviewer = ({ team }) => {
     }
   };
 
+  const handlePauseResume = async () => {
+    try {
+      if (teamWorkflowStatus === 'PAUSED') {
+        team.resume();
+      } else {
+        team.pause();
+      }
+    } catch (error) {
+      console.error('Error pausing/resuming workflow:', error);
+    }
+  };
+
+  const handleStop = async () => {
+    try {
+      team.stop();
+    } catch (error) {
+      console.error('Error stopping workflow:', error);
+    }
+  };
+
   if (!agents || agents.length === 0) {
     return <div className="no-team-message">No agents available</div>;
   }
@@ -130,13 +150,34 @@ export const AgentWithToolPreviewer = ({ team }) => {
               rows={5}
               spellCheck="false"
             />
-            <button
-              className={`start-button ${teamWorkflowStatus.toLowerCase()}`}
-              onClick={handleStartTeam}
-              disabled={teamWorkflowStatus === 'RUNNING'}
-            >
-              {teamWorkflowStatus === 'RUNNING' ? 'Running...' : 'Start Team'}
-            </button>
+            <div className="workflow-buttons">
+              <button
+                className={`start-button ${teamWorkflowStatus.toLowerCase()}`}
+                onClick={handleStartTeam}
+                disabled={
+                  teamWorkflowStatus === 'RUNNING' ||
+                  teamWorkflowStatus === 'PAUSED'
+                }
+              >
+                {teamWorkflowStatus === 'RUNNING' ? 'Running...' : 'Start Team'}
+              </button>
+
+              <button
+                className={`pause-resume-button ${teamWorkflowStatus.toLowerCase()}`}
+                onClick={handlePauseResume}
+                disabled={!['RUNNING', 'PAUSED'].includes(teamWorkflowStatus)}
+              >
+                {teamWorkflowStatus === 'PAUSED' ? 'Resume' : 'Pause'}
+              </button>
+
+              <button
+                className={`stop-button ${teamWorkflowStatus.toLowerCase()}`}
+                onClick={handleStop}
+                disabled={!['RUNNING', 'PAUSED'].includes(teamWorkflowStatus)}
+              >
+                Stop
+              </button>
+            </div>
           </div>
 
           <div className="workflow-status">

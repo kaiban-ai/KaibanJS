@@ -6,6 +6,7 @@ exports[`Task Blocking Team Workflows Using Security Validation Agent blocks the
     {
       "agentInstance": {
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -21,6 +22,7 @@ exports[`Task Blocking Team Workflows Using Security Validation Agent blocks the
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -175,6 +177,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {
           "background": "Expert in security protocols and access control management",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -190,6 +193,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -348,13 +352,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "externalValidationRequired": false,
       "feedbackHistory": [],
       "id": "[REDACTED]",
-      "inputs": {},
-      "interpolatedTaskDescription": "You are tasked with reviewing a request to access highly sensitive data. 
-  The request lacks proper authorization credentials and security clearance documentation.
-  As a security validator, you must assess this situation and take appropriate action.
-  
-  Given the missing security credentials, you should block this task using the block_task tool
-  and provide a clear explanation of why access cannot be granted.",
+      "interpolatedTaskDescription": null,
       "isDeliverable": false,
       "iterationCount": 2,
       "llmUsageStats": {
@@ -396,6 +394,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {
           "background": "Expert in security protocols and access control management",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -411,6 +410,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -570,6 +570,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -585,6 +586,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -767,6 +769,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -782,6 +785,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -933,6 +937,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -948,6 +953,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1130,6 +1136,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -1145,6 +1152,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -1382,6 +1390,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -1397,6 +1406,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1579,6 +1589,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -1594,6 +1605,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -1755,6 +1767,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -1770,6 +1783,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1952,6 +1966,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -1967,6 +1982,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2119,6 +2135,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -2134,6 +2151,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2316,6 +2334,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -2331,6 +2350,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2482,6 +2502,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -2497,6 +2518,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2679,6 +2701,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -2694,6 +2717,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2845,6 +2869,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -2860,6 +2885,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3042,6 +3068,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -3057,6 +3084,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3304,6 +3332,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -3319,6 +3348,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3501,6 +3531,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -3516,6 +3547,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3683,6 +3715,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -3698,6 +3731,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3880,6 +3914,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -3895,6 +3930,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -4056,6 +4092,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -4071,6 +4108,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4253,6 +4291,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -4268,6 +4307,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -4422,6 +4462,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -4437,6 +4478,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4619,6 +4661,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -4634,6 +4677,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -4785,6 +4829,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -4800,6 +4845,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4982,6 +5028,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -4997,6 +5044,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -5149,6 +5197,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -5164,6 +5213,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5346,6 +5396,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {
           "background": "Expert in security protocols and access control management",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -5361,6 +5412,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -5534,6 +5586,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -5549,6 +5602,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5731,6 +5785,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {
           "background": "Expert in security protocols and access control management",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -5746,6 +5801,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -5920,6 +5976,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -5935,6 +5992,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,

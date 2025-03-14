@@ -46,6 +46,8 @@ export default [
       '@typescript-eslint/no-require-imports': 'off',
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
+      'jest/no-focused-tests': 'off',
+      'jest/no-disabled-tests': 'off',
     },
   },
 ];

@@ -66,6 +66,12 @@ const subscribeWorkflowStatusUpdates = (useStore) => {
                   'Workflow is blocked due to one or more blocked tasks.',
               });
               break;
+            case WORKFLOW_STATUS_enum.RESUMED:
+              logPrettyWorkflowStatus({
+                status: 'Resumed',
+                message: 'Workflow has been resumed.',
+              });
+              break;
             default:
               console.warn(
                 `Encountered an unexpected workflow status: ${newLog.workflowStatus}`
