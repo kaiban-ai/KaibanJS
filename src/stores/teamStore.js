@@ -364,6 +364,7 @@ const createTeamStore = (initialState = {}) => {
                 (f) => f.status === FEEDBACK_STATUS_enum.PENDING
               );
 
+              // Derive the current context from workflowLogs only if memory is enabled
               const currentContext = get().memory ? context : '';
 
               // Check if the task has pending feedbacks
