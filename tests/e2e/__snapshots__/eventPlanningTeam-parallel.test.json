@@ -17,12 +17,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -30,9 +25,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -83,12 +76,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -96,9 +84,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -149,12 +135,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -162,9 +143,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -215,12 +194,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -228,9 +202,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -281,12 +253,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -294,9 +261,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -347,12 +312,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -360,9 +320,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -413,12 +371,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -426,9 +379,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -479,12 +430,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -492,9 +438,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -545,12 +489,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -558,9 +497,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -618,12 +555,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -631,9 +563,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -713,12 +643,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -726,9 +651,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -769,9 +692,7 @@
       "result": "Venue name: Preferred Venue; Address: 123 Event Rd, Celebration City, State, Zip. Confirmation details: Availability confirmed for June 15, 2024. Cost estimate: $2,500 for the day, including setup and basic equipment. Notes on policies: No outside food or drink allowed; special arrangements may be necessary if local community events impact access to the venue.",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "selectEventDateTask"
-      ],
+      "dependencies": ["selectEventDateTask"],
       "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -810,12 +731,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -823,9 +739,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -866,9 +780,7 @@
       "result": "The final answer to the Task: Number of confirmed guests: 75. Guest list with contact details: 1) John Doe - johndoe@example.com, 2) Jane Smith - janesmith@example.com, 3) Mike Johnson - mikejohnson@example.com. Special dietary or accessibility requirements: 1) John Doe - vegetarian, 2) Jane Smith - requires wheelchair access.",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "selectEventDateTask"
-      ],
+      "dependencies": ["selectEventDateTask"],
       "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -907,12 +819,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -920,9 +827,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -963,10 +868,7 @@
       "result": "{\"menu\":{\"appetizers\":[\"Bruschetta with tomato and basil\",\"Stuffed mushrooms (vegetarian)\",\"Mini quinoa salad cups (vegan)\"],\"main_courses\":[\"Grilled chicken with lemon herb sauce\",\"Vegetable lasagna (vegetarian)\",\"Stuffed bell peppers with quinoa and black beans (vegan)\"],\"desserts\":[\"Chocolate mousse cups\",\"Fruit tartlets (gluten-free)\",\"Mini cheesecakes\"],\"beverages\":[\"Red and white wine\",\"Assorted soft drinks and juices\",\"Coffee and tea\"]},\"vendor\":{\"name\":\"Culinary Creations Catering\",\"contract_details\":{\"estimated_cost\":4500,\"deposit_required\":1000,\"cancellation_policy\":\"Full refund if canceled 30 days prior, 50% refund if canceled 14 days prior.\"}},\"total_cost_estimate\":4500,\"notes\":{\"special_arrangements\":[\"John Doe: Vegetarian meal will be provided.\",\"Jane Smith: Ensure seating is accessible and close to exits.\"]}}",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "selectEventDateTask",
-        "finalizeGuestListTask"
-      ],
+      "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
       "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1005,12 +907,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -1018,9 +915,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1061,10 +956,7 @@
       "result": "{\"marketingPlan\":{\"eventDetails\":{\"date\":\"June 15, 2024\",\"venue\":\"Preferred Venue\",\"address\":\"123 Event Rd, Celebration City, State, Zip\",\"cost\":\"$2,500\"},\"strategies\":{\"socialMedia\":{\"platforms\":[\"Facebook\",\"Instagram\",\"Twitter\",\"LinkedIn\"],\"contentPlan\":[{\"type\":\"teaser posts\",\"timeline\":\"Start 6 weeks prior to the event (May 4, 2024)\",\"frequency\":\"2 posts/week\"},{\"type\":\"behind-the-scenes videos\",\"timeline\":\"4 weeks prior to the event (May 18, 2024)\",\"frequency\":\"1 video/week\"},{\"type\":\"guest highlights\",\"timeline\":\"3 weeks prior to the event (May 25, 2024)\",\"frequency\":\"1 post/week\"},{\"type\":\"event countdown\",\"timeline\":\"1 week before the event (June 8, 2024)\",\"frequency\":\"Daily posts\"},{\"type\":\"live coverage\",\"timeline\":\"Event day (June 15, 2024)\",\"details\":\"Live tweets and Instagram stories\"}]},\"emailCampaign\":{\"targetAudience\":[\"previous attendees\",\"local businesses\",\"community members\"],\"contentPlan\":[{\"type\":\"save the date email\",\"sendDate\":\"May 1, 2024\"},{\"type\":\"event details email\",\"sendDate\":\"May 15, 2024\"},{\"type\":\"reminder email\",\"sendDate\":\"June 5, 2024\"},{\"type\":\"last chance to register email\",\"sendDate\":\"June 12, 2024\"}]},\"PRStrategies\":{\"releaseTimeline\":[{\"type\":\"press release announcement\",\"releaseDate\":\"May 10, 2024\"},{\"type\":\"follow-up with local media\",\"timeline\":\"May 20, 2024\"}],\"partnerships\":{\"localInfluencers\":{\"goal\":\"Leverage their networks for wider reach\",\"outreachStart\":\"April 2024\"},\"strategicAlliances\":{\"localBusinesses\":\"Partner for mutual promotion and sponsorships\"}}}},\"monitoring\":{\"communityEvents\":{\"action\":\"Research local event calendars leading up to the event to avoid conflicts\",\"timeline\":\"Ongoing until event day (June 15, 2024)\"}}}}",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "selectEventDateTask",
-        "bookVenueTask"
-      ],
+      "dependencies": ["selectEventDateTask", "bookVenueTask"],
       "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1103,12 +995,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -1116,9 +1003,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1159,10 +1044,7 @@
       "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"timeline\":{\"8:00 AM\":\"Venue access for setup begins.\",\"9:00 AM\":\"Culinary Creations Catering arrives for food setup.\",\"10:00 AM\":\"AV equipment setup and testing.\",\"12:00 PM\":\"Final walkthrough before guests arrive.\",\"1:00 PM\":\"Event start.\"}},\"checklist\":[\"Confirm venue setup time with staff.\",\"Ensure all necessary equipment is available (AV setup, chairs, tables).\",\"Verify catering arrival time and menu requirements.\",\"Prepare special dietary arrangements for John Doe and Jane Smith.\",\"Monitor local community events for potential access issues.\"],\"special_arrangements\":{\"notes\":[\"John Doe will receive a vegetarian meal.\",\"Jane Smith's seating must be accessible and close to exits.\",\"Keep in mind potential disruptions from local community events.\"]}}",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "bookVenueTask",
-        "createCateringPlanTask"
-      ],
+      "dependencies": ["bookVenueTask", "createCateringPlanTask"],
       "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1201,12 +1083,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -1214,9 +1091,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1257,9 +1132,7 @@
       "result": "Marketing Campaign Execution Report:\n\n1. **Event Details**:\n   - **Date**: June 15, 2024\n   - **Venue**: Preferred Venue\n   - **Address**: 123 Event Rd, Celebration City, State, Zip\n   - **Cost**: $2,500 for the day (includes setup and basic equipment)\n\n2. **Social Media Strategy**:\n   - **Platforms**: Facebook, Instagram, Twitter, LinkedIn\n   - **Content Plan**:\n     - Teaser Posts: Start on May 4, 2024 (2 posts/week)\n     - Behind-the-Scenes Videos: From May 18, 2024 (1 video/week)\n     - Guest Highlights: Starting May 25, 2024 (1 post/week)\n     - Event Countdown: Daily posts from June 8, 2024\n     - Live Coverage: Live tweets and Instagram stories on event day (June 15, 2024)\n\n3. **Email Campaign**:\n   - **Target Audience**: Previous attendees, local businesses, community members\n   - **Content Plan**:\n     - Save the Date Email: Send on May 1, 2024\n     - Event Details Email: Send on May 15, 2024\n     - Reminder Email: Send on June 5, 2024\n     - Last Chance to Register Email: Send on June 12, 2024\n\n4. **PR Strategies**:\n   - Press Release Announcement: Scheduled for May 10, 2024\n   - Follow-up with Local Media: Timeline set for May 20, 2024\n   - **Partnerships**:\n     - Local Influencers: Outreach begins in April 2024 to leverage their networks for wider reach\n     - Strategic Alliances with Local Businesses for mutual promotion and sponsorships\n\n5. **Monitoring**:\n   - **Community Events**: Ongoing research of local event calendars leading up to June 15, 2024, to avoid potential conflicts. This is crucial as local community events may impact access to the venue.\n\n**Notes on Campaign Performance or Feedback**:\n- The selected date aligns well with stakeholders and venue availability, minimizing conflicts with major holidays, but community events let us remain vigilant to potential disruptions.\n- The marketing strategies are comprehensive and target a variety of platforms and audiences, ensuring a wider reach and engagement leading up to the event.",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "setupMarketingCampaignTask"
-      ],
+      "dependencies": ["setupMarketingCampaignTask"],
       "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1298,12 +1171,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -1311,9 +1179,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1416,12 +1282,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -1429,9 +1290,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -1498,12 +1357,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -1511,9 +1365,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1584,12 +1436,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -1597,9 +1444,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -1665,12 +1510,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -1678,9 +1518,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -1744,12 +1582,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -1757,9 +1590,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -1825,12 +1656,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -1838,9 +1664,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -1912,12 +1736,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -1925,9 +1744,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -1993,12 +1810,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -2006,9 +1818,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -2080,12 +1890,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -2093,9 +1898,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2161,12 +1964,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -2174,9 +1972,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -2241,12 +2037,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -2254,9 +2045,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2322,12 +2111,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -2335,9 +2119,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -2401,12 +2183,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -2414,9 +2191,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2482,12 +2257,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -2495,9 +2265,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -2562,12 +2330,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -2575,9 +2338,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2643,12 +2404,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -2656,9 +2412,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -2734,12 +2488,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -2747,9 +2496,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2790,9 +2537,7 @@
         "result": "Venue name: Preferred Venue; Address: 123 Event Rd, Celebration City, State, Zip. Confirmation details: Availability confirmed for June 15, 2024. Cost estimate: $2,500 for the day, including setup and basic equipment. Notes on policies: No outside food or drink allowed; special arrangements may be necessary if local community events impact access to the venue.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -2818,12 +2563,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -2831,9 +2571,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -2904,12 +2642,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -2917,9 +2650,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2960,9 +2691,7 @@
         "result": "Venue name: Preferred Venue; Address: 123 Event Rd, Celebration City, State, Zip. Confirmation details: Availability confirmed for June 15, 2024. Cost estimate: $2,500 for the day, including setup and basic equipment. Notes on policies: No outside food or drink allowed; special arrangements may be necessary if local community events impact access to the venue.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -2987,12 +2716,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -3000,9 +2724,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -3066,12 +2788,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -3079,9 +2796,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3122,9 +2837,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 75. Guest list with contact details: 1) John Doe - johndoe@example.com, 2) Jane Smith - janesmith@example.com, 3) Mike Johnson - mikejohnson@example.com. Special dietary or accessibility requirements: 1) John Doe - vegetarian, 2) Jane Smith - requires wheelchair access.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -3150,12 +2863,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -3163,9 +2871,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -3236,12 +2942,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -3249,9 +2950,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3292,9 +2991,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 75. Guest list with contact details: 1) John Doe - johndoe@example.com, 2) Jane Smith - janesmith@example.com, 3) Mike Johnson - mikejohnson@example.com. Special dietary or accessibility requirements: 1) John Doe - vegetarian, 2) Jane Smith - requires wheelchair access.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -3319,12 +3016,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -3332,9 +3024,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -3398,12 +3088,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -3411,9 +3096,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3454,9 +3137,7 @@
         "result": "Venue name: Preferred Venue; Address: 123 Event Rd, Celebration City, State, Zip. Confirmation details: Availability confirmed for June 15, 2024. Cost estimate: $2,500 for the day, including setup and basic equipment. Notes on policies: No outside food or drink allowed; special arrangements may be necessary if local community events impact access to the venue.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -3481,12 +3162,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -3494,9 +3170,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -3568,12 +3242,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -3581,9 +3250,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3624,9 +3291,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 75. Guest list with contact details: 1) John Doe - johndoe@example.com, 2) Jane Smith - janesmith@example.com, 3) Mike Johnson - mikejohnson@example.com. Special dietary or accessibility requirements: 1) John Doe - vegetarian, 2) Jane Smith - requires wheelchair access.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -3651,12 +3316,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -3664,9 +3324,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -3738,12 +3396,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -3751,9 +3404,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3794,9 +3445,7 @@
         "result": "Venue name: Preferred Venue; Address: 123 Event Rd, Celebration City, State, Zip. Confirmation details: Availability confirmed for June 15, 2024. Cost estimate: $2,500 for the day, including setup and basic equipment. Notes on policies: No outside food or drink allowed; special arrangements may be necessary if local community events impact access to the venue.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -3821,12 +3470,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -3834,9 +3478,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -3908,12 +3550,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -3921,9 +3558,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3964,9 +3599,7 @@
         "result": "Venue name: Preferred Venue; Address: 123 Event Rd, Celebration City, State, Zip. Confirmation details: Availability confirmed for June 15, 2024. Cost estimate: $2,500 for the day, including setup and basic equipment. Notes on policies: No outside food or drink allowed; special arrangements may be necessary if local community events impact access to the venue.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -3991,12 +3624,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -4004,9 +3632,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -4071,12 +3697,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -4084,9 +3705,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4127,9 +3746,7 @@
         "result": "Venue name: Preferred Venue; Address: 123 Event Rd, Celebration City, State, Zip. Confirmation details: Availability confirmed for June 15, 2024. Cost estimate: $2,500 for the day, including setup and basic equipment. Notes on policies: No outside food or drink allowed; special arrangements may be necessary if local community events impact access to the venue.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4154,12 +3771,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -4167,9 +3779,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -4233,12 +3843,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -4246,9 +3851,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4289,9 +3892,7 @@
         "result": "Venue name: Preferred Venue; Address: 123 Event Rd, Celebration City, State, Zip. Confirmation details: Availability confirmed for June 15, 2024. Cost estimate: $2,500 for the day, including setup and basic equipment. Notes on policies: No outside food or drink allowed; special arrangements may be necessary if local community events impact access to the venue.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4316,12 +3917,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -4329,9 +3925,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -4396,12 +3990,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -4409,9 +3998,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4452,9 +4039,7 @@
         "result": "Venue name: Preferred Venue; Address: 123 Event Rd, Celebration City, State, Zip. Confirmation details: Availability confirmed for June 15, 2024. Cost estimate: $2,500 for the day, including setup and basic equipment. Notes on policies: No outside food or drink allowed; special arrangements may be necessary if local community events impact access to the venue.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4479,12 +4064,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -4492,9 +4072,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -4570,12 +4148,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -4583,9 +4156,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4626,10 +4197,7 @@
         "result": "{\"marketingPlan\":{\"eventDetails\":{\"date\":\"June 15, 2024\",\"venue\":\"Preferred Venue\",\"address\":\"123 Event Rd, Celebration City, State, Zip\",\"cost\":\"$2,500\"},\"strategies\":{\"socialMedia\":{\"platforms\":[\"Facebook\",\"Instagram\",\"Twitter\",\"LinkedIn\"],\"contentPlan\":[{\"type\":\"teaser posts\",\"timeline\":\"Start 6 weeks prior to the event (May 4, 2024)\",\"frequency\":\"2 posts/week\"},{\"type\":\"behind-the-scenes videos\",\"timeline\":\"4 weeks prior to the event (May 18, 2024)\",\"frequency\":\"1 video/week\"},{\"type\":\"guest highlights\",\"timeline\":\"3 weeks prior to the event (May 25, 2024)\",\"frequency\":\"1 post/week\"},{\"type\":\"event countdown\",\"timeline\":\"1 week before the event (June 8, 2024)\",\"frequency\":\"Daily posts\"},{\"type\":\"live coverage\",\"timeline\":\"Event day (June 15, 2024)\",\"details\":\"Live tweets and Instagram stories\"}]},\"emailCampaign\":{\"targetAudience\":[\"previous attendees\",\"local businesses\",\"community members\"],\"contentPlan\":[{\"type\":\"save the date email\",\"sendDate\":\"May 1, 2024\"},{\"type\":\"event details email\",\"sendDate\":\"May 15, 2024\"},{\"type\":\"reminder email\",\"sendDate\":\"June 5, 2024\"},{\"type\":\"last chance to register email\",\"sendDate\":\"June 12, 2024\"}]},\"PRStrategies\":{\"releaseTimeline\":[{\"type\":\"press release announcement\",\"releaseDate\":\"May 10, 2024\"},{\"type\":\"follow-up with local media\",\"timeline\":\"May 20, 2024\"}],\"partnerships\":{\"localInfluencers\":{\"goal\":\"Leverage their networks for wider reach\",\"outreachStart\":\"April 2024\"},\"strategicAlliances\":{\"localBusinesses\":\"Partner for mutual promotion and sponsorships\"}}}},\"monitoring\":{\"communityEvents\":{\"action\":\"Research local event calendars leading up to the event to avoid conflicts\",\"timeline\":\"Ongoing until event day (June 15, 2024)\"}}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4655,12 +4223,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -4668,9 +4231,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -4741,12 +4302,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -4754,9 +4310,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4797,10 +4351,7 @@
         "result": "{\"marketingPlan\":{\"eventDetails\":{\"date\":\"June 15, 2024\",\"venue\":\"Preferred Venue\",\"address\":\"123 Event Rd, Celebration City, State, Zip\",\"cost\":\"$2,500\"},\"strategies\":{\"socialMedia\":{\"platforms\":[\"Facebook\",\"Instagram\",\"Twitter\",\"LinkedIn\"],\"contentPlan\":[{\"type\":\"teaser posts\",\"timeline\":\"Start 6 weeks prior to the event (May 4, 2024)\",\"frequency\":\"2 posts/week\"},{\"type\":\"behind-the-scenes videos\",\"timeline\":\"4 weeks prior to the event (May 18, 2024)\",\"frequency\":\"1 video/week\"},{\"type\":\"guest highlights\",\"timeline\":\"3 weeks prior to the event (May 25, 2024)\",\"frequency\":\"1 post/week\"},{\"type\":\"event countdown\",\"timeline\":\"1 week before the event (June 8, 2024)\",\"frequency\":\"Daily posts\"},{\"type\":\"live coverage\",\"timeline\":\"Event day (June 15, 2024)\",\"details\":\"Live tweets and Instagram stories\"}]},\"emailCampaign\":{\"targetAudience\":[\"previous attendees\",\"local businesses\",\"community members\"],\"contentPlan\":[{\"type\":\"save the date email\",\"sendDate\":\"May 1, 2024\"},{\"type\":\"event details email\",\"sendDate\":\"May 15, 2024\"},{\"type\":\"reminder email\",\"sendDate\":\"June 5, 2024\"},{\"type\":\"last chance to register email\",\"sendDate\":\"June 12, 2024\"}]},\"PRStrategies\":{\"releaseTimeline\":[{\"type\":\"press release announcement\",\"releaseDate\":\"May 10, 2024\"},{\"type\":\"follow-up with local media\",\"timeline\":\"May 20, 2024\"}],\"partnerships\":{\"localInfluencers\":{\"goal\":\"Leverage their networks for wider reach\",\"outreachStart\":\"April 2024\"},\"strategicAlliances\":{\"localBusinesses\":\"Partner for mutual promotion and sponsorships\"}}}},\"monitoring\":{\"communityEvents\":{\"action\":\"Research local event calendars leading up to the event to avoid conflicts\",\"timeline\":\"Ongoing until event day (June 15, 2024)\"}}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4825,12 +4376,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -4838,9 +4384,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -4904,12 +4448,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -4917,9 +4456,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4960,10 +4497,7 @@
         "result": "{\"marketingPlan\":{\"eventDetails\":{\"date\":\"June 15, 2024\",\"venue\":\"Preferred Venue\",\"address\":\"123 Event Rd, Celebration City, State, Zip\",\"cost\":\"$2,500\"},\"strategies\":{\"socialMedia\":{\"platforms\":[\"Facebook\",\"Instagram\",\"Twitter\",\"LinkedIn\"],\"contentPlan\":[{\"type\":\"teaser posts\",\"timeline\":\"Start 6 weeks prior to the event (May 4, 2024)\",\"frequency\":\"2 posts/week\"},{\"type\":\"behind-the-scenes videos\",\"timeline\":\"4 weeks prior to the event (May 18, 2024)\",\"frequency\":\"1 video/week\"},{\"type\":\"guest highlights\",\"timeline\":\"3 weeks prior to the event (May 25, 2024)\",\"frequency\":\"1 post/week\"},{\"type\":\"event countdown\",\"timeline\":\"1 week before the event (June 8, 2024)\",\"frequency\":\"Daily posts\"},{\"type\":\"live coverage\",\"timeline\":\"Event day (June 15, 2024)\",\"details\":\"Live tweets and Instagram stories\"}]},\"emailCampaign\":{\"targetAudience\":[\"previous attendees\",\"local businesses\",\"community members\"],\"contentPlan\":[{\"type\":\"save the date email\",\"sendDate\":\"May 1, 2024\"},{\"type\":\"event details email\",\"sendDate\":\"May 15, 2024\"},{\"type\":\"reminder email\",\"sendDate\":\"June 5, 2024\"},{\"type\":\"last chance to register email\",\"sendDate\":\"June 12, 2024\"}]},\"PRStrategies\":{\"releaseTimeline\":[{\"type\":\"press release announcement\",\"releaseDate\":\"May 10, 2024\"},{\"type\":\"follow-up with local media\",\"timeline\":\"May 20, 2024\"}],\"partnerships\":{\"localInfluencers\":{\"goal\":\"Leverage their networks for wider reach\",\"outreachStart\":\"April 2024\"},\"strategicAlliances\":{\"localBusinesses\":\"Partner for mutual promotion and sponsorships\"}}}},\"monitoring\":{\"communityEvents\":{\"action\":\"Research local event calendars leading up to the event to avoid conflicts\",\"timeline\":\"Ongoing until event day (June 15, 2024)\"}}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4988,12 +4522,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -5001,9 +4530,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5075,12 +4602,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -5088,9 +4610,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5131,9 +4651,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 75. Guest list with contact details: 1) John Doe - johndoe@example.com, 2) Jane Smith - janesmith@example.com, 3) Mike Johnson - mikejohnson@example.com. Special dietary or accessibility requirements: 1) John Doe - vegetarian, 2) Jane Smith - requires wheelchair access.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5158,12 +4676,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -5171,9 +4684,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5245,12 +4756,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -5258,9 +4764,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5301,9 +4805,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 75. Guest list with contact details: 1) John Doe - johndoe@example.com, 2) Jane Smith - janesmith@example.com, 3) Mike Johnson - mikejohnson@example.com. Special dietary or accessibility requirements: 1) John Doe - vegetarian, 2) Jane Smith - requires wheelchair access.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5328,12 +4830,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -5341,9 +4838,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5408,12 +4903,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -5421,9 +4911,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5464,9 +4952,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 75. Guest list with contact details: 1) John Doe - johndoe@example.com, 2) Jane Smith - janesmith@example.com, 3) Mike Johnson - mikejohnson@example.com. Special dietary or accessibility requirements: 1) John Doe - vegetarian, 2) Jane Smith - requires wheelchair access.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5491,12 +4977,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -5504,9 +4985,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5570,12 +5049,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -5583,9 +5057,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5626,9 +5098,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 75. Guest list with contact details: 1) John Doe - johndoe@example.com, 2) Jane Smith - janesmith@example.com, 3) Mike Johnson - mikejohnson@example.com. Special dietary or accessibility requirements: 1) John Doe - vegetarian, 2) Jane Smith - requires wheelchair access.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5653,12 +5123,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -5666,9 +5131,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5733,12 +5196,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -5746,9 +5204,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5789,9 +5245,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 75. Guest list with contact details: 1) John Doe - johndoe@example.com, 2) Jane Smith - janesmith@example.com, 3) Mike Johnson - mikejohnson@example.com. Special dietary or accessibility requirements: 1) John Doe - vegetarian, 2) Jane Smith - requires wheelchair access.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5816,12 +5270,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -5829,9 +5278,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5907,12 +5354,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -5920,9 +5362,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5963,10 +5403,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Bruschetta with tomato and basil\",\"Stuffed mushrooms (vegetarian)\",\"Mini quinoa salad cups (vegan)\"],\"main_courses\":[\"Grilled chicken with lemon herb sauce\",\"Vegetable lasagna (vegetarian)\",\"Stuffed bell peppers with quinoa and black beans (vegan)\"],\"desserts\":[\"Chocolate mousse cups\",\"Fruit tartlets (gluten-free)\",\"Mini cheesecakes\"],\"beverages\":[\"Red and white wine\",\"Assorted soft drinks and juices\",\"Coffee and tea\"]},\"vendor\":{\"name\":\"Culinary Creations Catering\",\"contract_details\":{\"estimated_cost\":4500,\"deposit_required\":1000,\"cancellation_policy\":\"Full refund if canceled 30 days prior, 50% refund if canceled 14 days prior.\"}},\"total_cost_estimate\":4500,\"notes\":{\"special_arrangements\":[\"John Doe: Vegetarian meal will be provided.\",\"Jane Smith: Ensure seating is accessible and close to exits.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5992,12 +5429,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -6005,9 +5437,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -6078,12 +5508,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -6091,9 +5516,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6134,10 +5557,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Bruschetta with tomato and basil\",\"Stuffed mushrooms (vegetarian)\",\"Mini quinoa salad cups (vegan)\"],\"main_courses\":[\"Grilled chicken with lemon herb sauce\",\"Vegetable lasagna (vegetarian)\",\"Stuffed bell peppers with quinoa and black beans (vegan)\"],\"desserts\":[\"Chocolate mousse cups\",\"Fruit tartlets (gluten-free)\",\"Mini cheesecakes\"],\"beverages\":[\"Red and white wine\",\"Assorted soft drinks and juices\",\"Coffee and tea\"]},\"vendor\":{\"name\":\"Culinary Creations Catering\",\"contract_details\":{\"estimated_cost\":4500,\"deposit_required\":1000,\"cancellation_policy\":\"Full refund if canceled 30 days prior, 50% refund if canceled 14 days prior.\"}},\"total_cost_estimate\":4500,\"notes\":{\"special_arrangements\":[\"John Doe: Vegetarian meal will be provided.\",\"Jane Smith: Ensure seating is accessible and close to exits.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6162,12 +5582,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -6175,9 +5590,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -6241,12 +5654,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -6254,9 +5662,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6297,10 +5703,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Bruschetta with tomato and basil\",\"Stuffed mushrooms (vegetarian)\",\"Mini quinoa salad cups (vegan)\"],\"main_courses\":[\"Grilled chicken with lemon herb sauce\",\"Vegetable lasagna (vegetarian)\",\"Stuffed bell peppers with quinoa and black beans (vegan)\"],\"desserts\":[\"Chocolate mousse cups\",\"Fruit tartlets (gluten-free)\",\"Mini cheesecakes\"],\"beverages\":[\"Red and white wine\",\"Assorted soft drinks and juices\",\"Coffee and tea\"]},\"vendor\":{\"name\":\"Culinary Creations Catering\",\"contract_details\":{\"estimated_cost\":4500,\"deposit_required\":1000,\"cancellation_policy\":\"Full refund if canceled 30 days prior, 50% refund if canceled 14 days prior.\"}},\"total_cost_estimate\":4500,\"notes\":{\"special_arrangements\":[\"John Doe: Vegetarian meal will be provided.\",\"Jane Smith: Ensure seating is accessible and close to exits.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6325,12 +5728,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -6338,9 +5736,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -6412,12 +5808,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -6425,9 +5816,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6468,10 +5857,7 @@
         "result": "{\"marketingPlan\":{\"eventDetails\":{\"date\":\"June 15, 2024\",\"venue\":\"Preferred Venue\",\"address\":\"123 Event Rd, Celebration City, State, Zip\",\"cost\":\"$2,500\"},\"strategies\":{\"socialMedia\":{\"platforms\":[\"Facebook\",\"Instagram\",\"Twitter\",\"LinkedIn\"],\"contentPlan\":[{\"type\":\"teaser posts\",\"timeline\":\"Start 6 weeks prior to the event (May 4, 2024)\",\"frequency\":\"2 posts/week\"},{\"type\":\"behind-the-scenes videos\",\"timeline\":\"4 weeks prior to the event (May 18, 2024)\",\"frequency\":\"1 video/week\"},{\"type\":\"guest highlights\",\"timeline\":\"3 weeks prior to the event (May 25, 2024)\",\"frequency\":\"1 post/week\"},{\"type\":\"event countdown\",\"timeline\":\"1 week before the event (June 8, 2024)\",\"frequency\":\"Daily posts\"},{\"type\":\"live coverage\",\"timeline\":\"Event day (June 15, 2024)\",\"details\":\"Live tweets and Instagram stories\"}]},\"emailCampaign\":{\"targetAudience\":[\"previous attendees\",\"local businesses\",\"community members\"],\"contentPlan\":[{\"type\":\"save the date email\",\"sendDate\":\"May 1, 2024\"},{\"type\":\"event details email\",\"sendDate\":\"May 15, 2024\"},{\"type\":\"reminder email\",\"sendDate\":\"June 5, 2024\"},{\"type\":\"last chance to register email\",\"sendDate\":\"June 12, 2024\"}]},\"PRStrategies\":{\"releaseTimeline\":[{\"type\":\"press release announcement\",\"releaseDate\":\"May 10, 2024\"},{\"type\":\"follow-up with local media\",\"timeline\":\"May 20, 2024\"}],\"partnerships\":{\"localInfluencers\":{\"goal\":\"Leverage their networks for wider reach\",\"outreachStart\":\"April 2024\"},\"strategicAlliances\":{\"localBusinesses\":\"Partner for mutual promotion and sponsorships\"}}}},\"monitoring\":{\"communityEvents\":{\"action\":\"Research local event calendars leading up to the event to avoid conflicts\",\"timeline\":\"Ongoing until event day (June 15, 2024)\"}}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6496,12 +5882,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -6509,9 +5890,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -6583,12 +5962,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -6596,9 +5970,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6639,10 +6011,7 @@
         "result": "{\"marketingPlan\":{\"eventDetails\":{\"date\":\"June 15, 2024\",\"venue\":\"Preferred Venue\",\"address\":\"123 Event Rd, Celebration City, State, Zip\",\"cost\":\"$2,500\"},\"strategies\":{\"socialMedia\":{\"platforms\":[\"Facebook\",\"Instagram\",\"Twitter\",\"LinkedIn\"],\"contentPlan\":[{\"type\":\"teaser posts\",\"timeline\":\"Start 6 weeks prior to the event (May 4, 2024)\",\"frequency\":\"2 posts/week\"},{\"type\":\"behind-the-scenes videos\",\"timeline\":\"4 weeks prior to the event (May 18, 2024)\",\"frequency\":\"1 video/week\"},{\"type\":\"guest highlights\",\"timeline\":\"3 weeks prior to the event (May 25, 2024)\",\"frequency\":\"1 post/week\"},{\"type\":\"event countdown\",\"timeline\":\"1 week before the event (June 8, 2024)\",\"frequency\":\"Daily posts\"},{\"type\":\"live coverage\",\"timeline\":\"Event day (June 15, 2024)\",\"details\":\"Live tweets and Instagram stories\"}]},\"emailCampaign\":{\"targetAudience\":[\"previous attendees\",\"local businesses\",\"community members\"],\"contentPlan\":[{\"type\":\"save the date email\",\"sendDate\":\"May 1, 2024\"},{\"type\":\"event details email\",\"sendDate\":\"May 15, 2024\"},{\"type\":\"reminder email\",\"sendDate\":\"June 5, 2024\"},{\"type\":\"last chance to register email\",\"sendDate\":\"June 12, 2024\"}]},\"PRStrategies\":{\"releaseTimeline\":[{\"type\":\"press release announcement\",\"releaseDate\":\"May 10, 2024\"},{\"type\":\"follow-up with local media\",\"timeline\":\"May 20, 2024\"}],\"partnerships\":{\"localInfluencers\":{\"goal\":\"Leverage their networks for wider reach\",\"outreachStart\":\"April 2024\"},\"strategicAlliances\":{\"localBusinesses\":\"Partner for mutual promotion and sponsorships\"}}}},\"monitoring\":{\"communityEvents\":{\"action\":\"Research local event calendars leading up to the event to avoid conflicts\",\"timeline\":\"Ongoing until event day (June 15, 2024)\"}}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6667,12 +6036,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -6680,9 +6044,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -6747,12 +6109,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -6760,9 +6117,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6803,10 +6158,7 @@
         "result": "{\"marketingPlan\":{\"eventDetails\":{\"date\":\"June 15, 2024\",\"venue\":\"Preferred Venue\",\"address\":\"123 Event Rd, Celebration City, State, Zip\",\"cost\":\"$2,500\"},\"strategies\":{\"socialMedia\":{\"platforms\":[\"Facebook\",\"Instagram\",\"Twitter\",\"LinkedIn\"],\"contentPlan\":[{\"type\":\"teaser posts\",\"timeline\":\"Start 6 weeks prior to the event (May 4, 2024)\",\"frequency\":\"2 posts/week\"},{\"type\":\"behind-the-scenes videos\",\"timeline\":\"4 weeks prior to the event (May 18, 2024)\",\"frequency\":\"1 video/week\"},{\"type\":\"guest highlights\",\"timeline\":\"3 weeks prior to the event (May 25, 2024)\",\"frequency\":\"1 post/week\"},{\"type\":\"event countdown\",\"timeline\":\"1 week before the event (June 8, 2024)\",\"frequency\":\"Daily posts\"},{\"type\":\"live coverage\",\"timeline\":\"Event day (June 15, 2024)\",\"details\":\"Live tweets and Instagram stories\"}]},\"emailCampaign\":{\"targetAudience\":[\"previous attendees\",\"local businesses\",\"community members\"],\"contentPlan\":[{\"type\":\"save the date email\",\"sendDate\":\"May 1, 2024\"},{\"type\":\"event details email\",\"sendDate\":\"May 15, 2024\"},{\"type\":\"reminder email\",\"sendDate\":\"June 5, 2024\"},{\"type\":\"last chance to register email\",\"sendDate\":\"June 12, 2024\"}]},\"PRStrategies\":{\"releaseTimeline\":[{\"type\":\"press release announcement\",\"releaseDate\":\"May 10, 2024\"},{\"type\":\"follow-up with local media\",\"timeline\":\"May 20, 2024\"}],\"partnerships\":{\"localInfluencers\":{\"goal\":\"Leverage their networks for wider reach\",\"outreachStart\":\"April 2024\"},\"strategicAlliances\":{\"localBusinesses\":\"Partner for mutual promotion and sponsorships\"}}}},\"monitoring\":{\"communityEvents\":{\"action\":\"Research local event calendars leading up to the event to avoid conflicts\",\"timeline\":\"Ongoing until event day (June 15, 2024)\"}}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6831,12 +6183,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -6844,9 +6191,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -6910,12 +6255,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -6923,9 +6263,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6966,10 +6304,7 @@
         "result": "{\"marketingPlan\":{\"eventDetails\":{\"date\":\"June 15, 2024\",\"venue\":\"Preferred Venue\",\"address\":\"123 Event Rd, Celebration City, State, Zip\",\"cost\":\"$2,500\"},\"strategies\":{\"socialMedia\":{\"platforms\":[\"Facebook\",\"Instagram\",\"Twitter\",\"LinkedIn\"],\"contentPlan\":[{\"type\":\"teaser posts\",\"timeline\":\"Start 6 weeks prior to the event (May 4, 2024)\",\"frequency\":\"2 posts/week\"},{\"type\":\"behind-the-scenes videos\",\"timeline\":\"4 weeks prior to the event (May 18, 2024)\",\"frequency\":\"1 video/week\"},{\"type\":\"guest highlights\",\"timeline\":\"3 weeks prior to the event (May 25, 2024)\",\"frequency\":\"1 post/week\"},{\"type\":\"event countdown\",\"timeline\":\"1 week before the event (June 8, 2024)\",\"frequency\":\"Daily posts\"},{\"type\":\"live coverage\",\"timeline\":\"Event day (June 15, 2024)\",\"details\":\"Live tweets and Instagram stories\"}]},\"emailCampaign\":{\"targetAudience\":[\"previous attendees\",\"local businesses\",\"community members\"],\"contentPlan\":[{\"type\":\"save the date email\",\"sendDate\":\"May 1, 2024\"},{\"type\":\"event details email\",\"sendDate\":\"May 15, 2024\"},{\"type\":\"reminder email\",\"sendDate\":\"June 5, 2024\"},{\"type\":\"last chance to register email\",\"sendDate\":\"June 12, 2024\"}]},\"PRStrategies\":{\"releaseTimeline\":[{\"type\":\"press release announcement\",\"releaseDate\":\"May 10, 2024\"},{\"type\":\"follow-up with local media\",\"timeline\":\"May 20, 2024\"}],\"partnerships\":{\"localInfluencers\":{\"goal\":\"Leverage their networks for wider reach\",\"outreachStart\":\"April 2024\"},\"strategicAlliances\":{\"localBusinesses\":\"Partner for mutual promotion and sponsorships\"}}}},\"monitoring\":{\"communityEvents\":{\"action\":\"Research local event calendars leading up to the event to avoid conflicts\",\"timeline\":\"Ongoing until event day (June 15, 2024)\"}}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6994,12 +6329,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -7007,9 +6337,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -7074,12 +6402,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -7087,9 +6410,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7130,10 +6451,7 @@
         "result": "{\"marketingPlan\":{\"eventDetails\":{\"date\":\"June 15, 2024\",\"venue\":\"Preferred Venue\",\"address\":\"123 Event Rd, Celebration City, State, Zip\",\"cost\":\"$2,500\"},\"strategies\":{\"socialMedia\":{\"platforms\":[\"Facebook\",\"Instagram\",\"Twitter\",\"LinkedIn\"],\"contentPlan\":[{\"type\":\"teaser posts\",\"timeline\":\"Start 6 weeks prior to the event (May 4, 2024)\",\"frequency\":\"2 posts/week\"},{\"type\":\"behind-the-scenes videos\",\"timeline\":\"4 weeks prior to the event (May 18, 2024)\",\"frequency\":\"1 video/week\"},{\"type\":\"guest highlights\",\"timeline\":\"3 weeks prior to the event (May 25, 2024)\",\"frequency\":\"1 post/week\"},{\"type\":\"event countdown\",\"timeline\":\"1 week before the event (June 8, 2024)\",\"frequency\":\"Daily posts\"},{\"type\":\"live coverage\",\"timeline\":\"Event day (June 15, 2024)\",\"details\":\"Live tweets and Instagram stories\"}]},\"emailCampaign\":{\"targetAudience\":[\"previous attendees\",\"local businesses\",\"community members\"],\"contentPlan\":[{\"type\":\"save the date email\",\"sendDate\":\"May 1, 2024\"},{\"type\":\"event details email\",\"sendDate\":\"May 15, 2024\"},{\"type\":\"reminder email\",\"sendDate\":\"June 5, 2024\"},{\"type\":\"last chance to register email\",\"sendDate\":\"June 12, 2024\"}]},\"PRStrategies\":{\"releaseTimeline\":[{\"type\":\"press release announcement\",\"releaseDate\":\"May 10, 2024\"},{\"type\":\"follow-up with local media\",\"timeline\":\"May 20, 2024\"}],\"partnerships\":{\"localInfluencers\":{\"goal\":\"Leverage their networks for wider reach\",\"outreachStart\":\"April 2024\"},\"strategicAlliances\":{\"localBusinesses\":\"Partner for mutual promotion and sponsorships\"}}}},\"monitoring\":{\"communityEvents\":{\"action\":\"Research local event calendars leading up to the event to avoid conflicts\",\"timeline\":\"Ongoing until event day (June 15, 2024)\"}}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7158,12 +6476,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -7171,9 +6484,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -7249,12 +6560,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -7262,9 +6568,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7305,9 +6609,7 @@
         "result": "Marketing Campaign Execution Report:\n\n1. **Event Details**:\n   - **Date**: June 15, 2024\n   - **Venue**: Preferred Venue\n   - **Address**: 123 Event Rd, Celebration City, State, Zip\n   - **Cost**: $2,500 for the day (includes setup and basic equipment)\n\n2. **Social Media Strategy**:\n   - **Platforms**: Facebook, Instagram, Twitter, LinkedIn\n   - **Content Plan**:\n     - Teaser Posts: Start on May 4, 2024 (2 posts/week)\n     - Behind-the-Scenes Videos: From May 18, 2024 (1 video/week)\n     - Guest Highlights: Starting May 25, 2024 (1 post/week)\n     - Event Countdown: Daily posts from June 8, 2024\n     - Live Coverage: Live tweets and Instagram stories on event day (June 15, 2024)\n\n3. **Email Campaign**:\n   - **Target Audience**: Previous attendees, local businesses, community members\n   - **Content Plan**:\n     - Save the Date Email: Send on May 1, 2024\n     - Event Details Email: Send on May 15, 2024\n     - Reminder Email: Send on June 5, 2024\n     - Last Chance to Register Email: Send on June 12, 2024\n\n4. **PR Strategies**:\n   - Press Release Announcement: Scheduled for May 10, 2024\n   - Follow-up with Local Media: Timeline set for May 20, 2024\n   - **Partnerships**:\n     - Local Influencers: Outreach begins in April 2024 to leverage their networks for wider reach\n     - Strategic Alliances with Local Businesses for mutual promotion and sponsorships\n\n5. **Monitoring**:\n   - **Community Events**: Ongoing research of local event calendars leading up to June 15, 2024, to avoid potential conflicts. This is crucial as local community events may impact access to the venue.\n\n**Notes on Campaign Performance or Feedback**:\n- The selected date aligns well with stakeholders and venue availability, minimizing conflicts with major holidays, but community events let us remain vigilant to potential disruptions.\n- The marketing strategies are comprehensive and target a variety of platforms and audiences, ensuring a wider reach and engagement leading up to the event.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7333,12 +6635,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -7346,9 +6643,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -7419,12 +6714,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -7432,9 +6722,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7475,9 +6763,7 @@
         "result": "Marketing Campaign Execution Report:\n\n1. **Event Details**:\n   - **Date**: June 15, 2024\n   - **Venue**: Preferred Venue\n   - **Address**: 123 Event Rd, Celebration City, State, Zip\n   - **Cost**: $2,500 for the day (includes setup and basic equipment)\n\n2. **Social Media Strategy**:\n   - **Platforms**: Facebook, Instagram, Twitter, LinkedIn\n   - **Content Plan**:\n     - Teaser Posts: Start on May 4, 2024 (2 posts/week)\n     - Behind-the-Scenes Videos: From May 18, 2024 (1 video/week)\n     - Guest Highlights: Starting May 25, 2024 (1 post/week)\n     - Event Countdown: Daily posts from June 8, 2024\n     - Live Coverage: Live tweets and Instagram stories on event day (June 15, 2024)\n\n3. **Email Campaign**:\n   - **Target Audience**: Previous attendees, local businesses, community members\n   - **Content Plan**:\n     - Save the Date Email: Send on May 1, 2024\n     - Event Details Email: Send on May 15, 2024\n     - Reminder Email: Send on June 5, 2024\n     - Last Chance to Register Email: Send on June 12, 2024\n\n4. **PR Strategies**:\n   - Press Release Announcement: Scheduled for May 10, 2024\n   - Follow-up with Local Media: Timeline set for May 20, 2024\n   - **Partnerships**:\n     - Local Influencers: Outreach begins in April 2024 to leverage their networks for wider reach\n     - Strategic Alliances with Local Businesses for mutual promotion and sponsorships\n\n5. **Monitoring**:\n   - **Community Events**: Ongoing research of local event calendars leading up to June 15, 2024, to avoid potential conflicts. This is crucial as local community events may impact access to the venue.\n\n**Notes on Campaign Performance or Feedback**:\n- The selected date aligns well with stakeholders and venue availability, minimizing conflicts with major holidays, but community events let us remain vigilant to potential disruptions.\n- The marketing strategies are comprehensive and target a variety of platforms and audiences, ensuring a wider reach and engagement leading up to the event.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7502,12 +6788,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -7515,9 +6796,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -7581,12 +6860,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -7594,9 +6868,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7637,9 +6909,7 @@
         "result": "Marketing Campaign Execution Report:\n\n1. **Event Details**:\n   - **Date**: June 15, 2024\n   - **Venue**: Preferred Venue\n   - **Address**: 123 Event Rd, Celebration City, State, Zip\n   - **Cost**: $2,500 for the day (includes setup and basic equipment)\n\n2. **Social Media Strategy**:\n   - **Platforms**: Facebook, Instagram, Twitter, LinkedIn\n   - **Content Plan**:\n     - Teaser Posts: Start on May 4, 2024 (2 posts/week)\n     - Behind-the-Scenes Videos: From May 18, 2024 (1 video/week)\n     - Guest Highlights: Starting May 25, 2024 (1 post/week)\n     - Event Countdown: Daily posts from June 8, 2024\n     - Live Coverage: Live tweets and Instagram stories on event day (June 15, 2024)\n\n3. **Email Campaign**:\n   - **Target Audience**: Previous attendees, local businesses, community members\n   - **Content Plan**:\n     - Save the Date Email: Send on May 1, 2024\n     - Event Details Email: Send on May 15, 2024\n     - Reminder Email: Send on June 5, 2024\n     - Last Chance to Register Email: Send on June 12, 2024\n\n4. **PR Strategies**:\n   - Press Release Announcement: Scheduled for May 10, 2024\n   - Follow-up with Local Media: Timeline set for May 20, 2024\n   - **Partnerships**:\n     - Local Influencers: Outreach begins in April 2024 to leverage their networks for wider reach\n     - Strategic Alliances with Local Businesses for mutual promotion and sponsorships\n\n5. **Monitoring**:\n   - **Community Events**: Ongoing research of local event calendars leading up to June 15, 2024, to avoid potential conflicts. This is crucial as local community events may impact access to the venue.\n\n**Notes on Campaign Performance or Feedback**:\n- The selected date aligns well with stakeholders and venue availability, minimizing conflicts with major holidays, but community events let us remain vigilant to potential disruptions.\n- The marketing strategies are comprehensive and target a variety of platforms and audiences, ensuring a wider reach and engagement leading up to the event.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7664,12 +6934,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -7677,9 +6942,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -7751,12 +7014,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -7764,9 +7022,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7807,10 +7063,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Bruschetta with tomato and basil\",\"Stuffed mushrooms (vegetarian)\",\"Mini quinoa salad cups (vegan)\"],\"main_courses\":[\"Grilled chicken with lemon herb sauce\",\"Vegetable lasagna (vegetarian)\",\"Stuffed bell peppers with quinoa and black beans (vegan)\"],\"desserts\":[\"Chocolate mousse cups\",\"Fruit tartlets (gluten-free)\",\"Mini cheesecakes\"],\"beverages\":[\"Red and white wine\",\"Assorted soft drinks and juices\",\"Coffee and tea\"]},\"vendor\":{\"name\":\"Culinary Creations Catering\",\"contract_details\":{\"estimated_cost\":4500,\"deposit_required\":1000,\"cancellation_policy\":\"Full refund if canceled 30 days prior, 50% refund if canceled 14 days prior.\"}},\"total_cost_estimate\":4500,\"notes\":{\"special_arrangements\":[\"John Doe: Vegetarian meal will be provided.\",\"Jane Smith: Ensure seating is accessible and close to exits.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7835,12 +7088,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -7848,9 +7096,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -7922,12 +7168,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -7935,9 +7176,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7978,10 +7217,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Bruschetta with tomato and basil\",\"Stuffed mushrooms (vegetarian)\",\"Mini quinoa salad cups (vegan)\"],\"main_courses\":[\"Grilled chicken with lemon herb sauce\",\"Vegetable lasagna (vegetarian)\",\"Stuffed bell peppers with quinoa and black beans (vegan)\"],\"desserts\":[\"Chocolate mousse cups\",\"Fruit tartlets (gluten-free)\",\"Mini cheesecakes\"],\"beverages\":[\"Red and white wine\",\"Assorted soft drinks and juices\",\"Coffee and tea\"]},\"vendor\":{\"name\":\"Culinary Creations Catering\",\"contract_details\":{\"estimated_cost\":4500,\"deposit_required\":1000,\"cancellation_policy\":\"Full refund if canceled 30 days prior, 50% refund if canceled 14 days prior.\"}},\"total_cost_estimate\":4500,\"notes\":{\"special_arrangements\":[\"John Doe: Vegetarian meal will be provided.\",\"Jane Smith: Ensure seating is accessible and close to exits.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8006,12 +7242,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -8019,9 +7250,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -8086,12 +7315,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -8099,9 +7323,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8142,10 +7364,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Bruschetta with tomato and basil\",\"Stuffed mushrooms (vegetarian)\",\"Mini quinoa salad cups (vegan)\"],\"main_courses\":[\"Grilled chicken with lemon herb sauce\",\"Vegetable lasagna (vegetarian)\",\"Stuffed bell peppers with quinoa and black beans (vegan)\"],\"desserts\":[\"Chocolate mousse cups\",\"Fruit tartlets (gluten-free)\",\"Mini cheesecakes\"],\"beverages\":[\"Red and white wine\",\"Assorted soft drinks and juices\",\"Coffee and tea\"]},\"vendor\":{\"name\":\"Culinary Creations Catering\",\"contract_details\":{\"estimated_cost\":4500,\"deposit_required\":1000,\"cancellation_policy\":\"Full refund if canceled 30 days prior, 50% refund if canceled 14 days prior.\"}},\"total_cost_estimate\":4500,\"notes\":{\"special_arrangements\":[\"John Doe: Vegetarian meal will be provided.\",\"Jane Smith: Ensure seating is accessible and close to exits.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8170,12 +7389,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -8183,9 +7397,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -8249,12 +7461,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -8262,9 +7469,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8305,10 +7510,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Bruschetta with tomato and basil\",\"Stuffed mushrooms (vegetarian)\",\"Mini quinoa salad cups (vegan)\"],\"main_courses\":[\"Grilled chicken with lemon herb sauce\",\"Vegetable lasagna (vegetarian)\",\"Stuffed bell peppers with quinoa and black beans (vegan)\"],\"desserts\":[\"Chocolate mousse cups\",\"Fruit tartlets (gluten-free)\",\"Mini cheesecakes\"],\"beverages\":[\"Red and white wine\",\"Assorted soft drinks and juices\",\"Coffee and tea\"]},\"vendor\":{\"name\":\"Culinary Creations Catering\",\"contract_details\":{\"estimated_cost\":4500,\"deposit_required\":1000,\"cancellation_policy\":\"Full refund if canceled 30 days prior, 50% refund if canceled 14 days prior.\"}},\"total_cost_estimate\":4500,\"notes\":{\"special_arrangements\":[\"John Doe: Vegetarian meal will be provided.\",\"Jane Smith: Ensure seating is accessible and close to exits.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8333,12 +7535,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -8346,9 +7543,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -8413,12 +7608,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -8426,9 +7616,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8469,10 +7657,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Bruschetta with tomato and basil\",\"Stuffed mushrooms (vegetarian)\",\"Mini quinoa salad cups (vegan)\"],\"main_courses\":[\"Grilled chicken with lemon herb sauce\",\"Vegetable lasagna (vegetarian)\",\"Stuffed bell peppers with quinoa and black beans (vegan)\"],\"desserts\":[\"Chocolate mousse cups\",\"Fruit tartlets (gluten-free)\",\"Mini cheesecakes\"],\"beverages\":[\"Red and white wine\",\"Assorted soft drinks and juices\",\"Coffee and tea\"]},\"vendor\":{\"name\":\"Culinary Creations Catering\",\"contract_details\":{\"estimated_cost\":4500,\"deposit_required\":1000,\"cancellation_policy\":\"Full refund if canceled 30 days prior, 50% refund if canceled 14 days prior.\"}},\"total_cost_estimate\":4500,\"notes\":{\"special_arrangements\":[\"John Doe: Vegetarian meal will be provided.\",\"Jane Smith: Ensure seating is accessible and close to exits.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8497,12 +7682,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -8510,9 +7690,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -8588,12 +7766,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -8601,9 +7774,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8644,10 +7815,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"timeline\":{\"8:00 AM\":\"Venue access for setup begins.\",\"9:00 AM\":\"Culinary Creations Catering arrives for food setup.\",\"10:00 AM\":\"AV equipment setup and testing.\",\"12:00 PM\":\"Final walkthrough before guests arrive.\",\"1:00 PM\":\"Event start.\"}},\"checklist\":[\"Confirm venue setup time with staff.\",\"Ensure all necessary equipment is available (AV setup, chairs, tables).\",\"Verify catering arrival time and menu requirements.\",\"Prepare special dietary arrangements for John Doe and Jane Smith.\",\"Monitor local community events for potential access issues.\"],\"special_arrangements\":{\"notes\":[\"John Doe will receive a vegetarian meal.\",\"Jane Smith's seating must be accessible and close to exits.\",\"Keep in mind potential disruptions from local community events.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8673,12 +7841,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -8686,9 +7849,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -8759,12 +7920,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -8772,9 +7928,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8815,10 +7969,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"timeline\":{\"8:00 AM\":\"Venue access for setup begins.\",\"9:00 AM\":\"Culinary Creations Catering arrives for food setup.\",\"10:00 AM\":\"AV equipment setup and testing.\",\"12:00 PM\":\"Final walkthrough before guests arrive.\",\"1:00 PM\":\"Event start.\"}},\"checklist\":[\"Confirm venue setup time with staff.\",\"Ensure all necessary equipment is available (AV setup, chairs, tables).\",\"Verify catering arrival time and menu requirements.\",\"Prepare special dietary arrangements for John Doe and Jane Smith.\",\"Monitor local community events for potential access issues.\"],\"special_arrangements\":{\"notes\":[\"John Doe will receive a vegetarian meal.\",\"Jane Smith's seating must be accessible and close to exits.\",\"Keep in mind potential disruptions from local community events.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8843,12 +7994,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -8856,9 +8002,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -8922,12 +8066,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -8935,9 +8074,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8978,10 +8115,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"timeline\":{\"8:00 AM\":\"Venue access for setup begins.\",\"9:00 AM\":\"Culinary Creations Catering arrives for food setup.\",\"10:00 AM\":\"AV equipment setup and testing.\",\"12:00 PM\":\"Final walkthrough before guests arrive.\",\"1:00 PM\":\"Event start.\"}},\"checklist\":[\"Confirm venue setup time with staff.\",\"Ensure all necessary equipment is available (AV setup, chairs, tables).\",\"Verify catering arrival time and menu requirements.\",\"Prepare special dietary arrangements for John Doe and Jane Smith.\",\"Monitor local community events for potential access issues.\"],\"special_arrangements\":{\"notes\":[\"John Doe will receive a vegetarian meal.\",\"Jane Smith's seating must be accessible and close to exits.\",\"Keep in mind potential disruptions from local community events.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9006,12 +8140,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -9019,9 +8148,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -9093,12 +8220,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -9106,9 +8228,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9149,9 +8269,7 @@
         "result": "Marketing Campaign Execution Report:\n\n1. **Event Details**:\n   - **Date**: June 15, 2024\n   - **Venue**: Preferred Venue\n   - **Address**: 123 Event Rd, Celebration City, State, Zip\n   - **Cost**: $2,500 for the day (includes setup and basic equipment)\n\n2. **Social Media Strategy**:\n   - **Platforms**: Facebook, Instagram, Twitter, LinkedIn\n   - **Content Plan**:\n     - Teaser Posts: Start on May 4, 2024 (2 posts/week)\n     - Behind-the-Scenes Videos: From May 18, 2024 (1 video/week)\n     - Guest Highlights: Starting May 25, 2024 (1 post/week)\n     - Event Countdown: Daily posts from June 8, 2024\n     - Live Coverage: Live tweets and Instagram stories on event day (June 15, 2024)\n\n3. **Email Campaign**:\n   - **Target Audience**: Previous attendees, local businesses, community members\n   - **Content Plan**:\n     - Save the Date Email: Send on May 1, 2024\n     - Event Details Email: Send on May 15, 2024\n     - Reminder Email: Send on June 5, 2024\n     - Last Chance to Register Email: Send on June 12, 2024\n\n4. **PR Strategies**:\n   - Press Release Announcement: Scheduled for May 10, 2024\n   - Follow-up with Local Media: Timeline set for May 20, 2024\n   - **Partnerships**:\n     - Local Influencers: Outreach begins in April 2024 to leverage their networks for wider reach\n     - Strategic Alliances with Local Businesses for mutual promotion and sponsorships\n\n5. **Monitoring**:\n   - **Community Events**: Ongoing research of local event calendars leading up to June 15, 2024, to avoid potential conflicts. This is crucial as local community events may impact access to the venue.\n\n**Notes on Campaign Performance or Feedback**:\n- The selected date aligns well with stakeholders and venue availability, minimizing conflicts with major holidays, but community events let us remain vigilant to potential disruptions.\n- The marketing strategies are comprehensive and target a variety of platforms and audiences, ensuring a wider reach and engagement leading up to the event.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9176,12 +8294,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -9189,9 +8302,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -9263,12 +8374,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -9276,9 +8382,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9319,9 +8423,7 @@
         "result": "Marketing Campaign Execution Report:\n\n1. **Event Details**:\n   - **Date**: June 15, 2024\n   - **Venue**: Preferred Venue\n   - **Address**: 123 Event Rd, Celebration City, State, Zip\n   - **Cost**: $2,500 for the day (includes setup and basic equipment)\n\n2. **Social Media Strategy**:\n   - **Platforms**: Facebook, Instagram, Twitter, LinkedIn\n   - **Content Plan**:\n     - Teaser Posts: Start on May 4, 2024 (2 posts/week)\n     - Behind-the-Scenes Videos: From May 18, 2024 (1 video/week)\n     - Guest Highlights: Starting May 25, 2024 (1 post/week)\n     - Event Countdown: Daily posts from June 8, 2024\n     - Live Coverage: Live tweets and Instagram stories on event day (June 15, 2024)\n\n3. **Email Campaign**:\n   - **Target Audience**: Previous attendees, local businesses, community members\n   - **Content Plan**:\n     - Save the Date Email: Send on May 1, 2024\n     - Event Details Email: Send on May 15, 2024\n     - Reminder Email: Send on June 5, 2024\n     - Last Chance to Register Email: Send on June 12, 2024\n\n4. **PR Strategies**:\n   - Press Release Announcement: Scheduled for May 10, 2024\n   - Follow-up with Local Media: Timeline set for May 20, 2024\n   - **Partnerships**:\n     - Local Influencers: Outreach begins in April 2024 to leverage their networks for wider reach\n     - Strategic Alliances with Local Businesses for mutual promotion and sponsorships\n\n5. **Monitoring**:\n   - **Community Events**: Ongoing research of local event calendars leading up to June 15, 2024, to avoid potential conflicts. This is crucial as local community events may impact access to the venue.\n\n**Notes on Campaign Performance or Feedback**:\n- The selected date aligns well with stakeholders and venue availability, minimizing conflicts with major holidays, but community events let us remain vigilant to potential disruptions.\n- The marketing strategies are comprehensive and target a variety of platforms and audiences, ensuring a wider reach and engagement leading up to the event.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9346,12 +8448,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -9359,9 +8456,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -9426,12 +8521,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -9439,9 +8529,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9482,9 +8570,7 @@
         "result": "Marketing Campaign Execution Report:\n\n1. **Event Details**:\n   - **Date**: June 15, 2024\n   - **Venue**: Preferred Venue\n   - **Address**: 123 Event Rd, Celebration City, State, Zip\n   - **Cost**: $2,500 for the day (includes setup and basic equipment)\n\n2. **Social Media Strategy**:\n   - **Platforms**: Facebook, Instagram, Twitter, LinkedIn\n   - **Content Plan**:\n     - Teaser Posts: Start on May 4, 2024 (2 posts/week)\n     - Behind-the-Scenes Videos: From May 18, 2024 (1 video/week)\n     - Guest Highlights: Starting May 25, 2024 (1 post/week)\n     - Event Countdown: Daily posts from June 8, 2024\n     - Live Coverage: Live tweets and Instagram stories on event day (June 15, 2024)\n\n3. **Email Campaign**:\n   - **Target Audience**: Previous attendees, local businesses, community members\n   - **Content Plan**:\n     - Save the Date Email: Send on May 1, 2024\n     - Event Details Email: Send on May 15, 2024\n     - Reminder Email: Send on June 5, 2024\n     - Last Chance to Register Email: Send on June 12, 2024\n\n4. **PR Strategies**:\n   - Press Release Announcement: Scheduled for May 10, 2024\n   - Follow-up with Local Media: Timeline set for May 20, 2024\n   - **Partnerships**:\n     - Local Influencers: Outreach begins in April 2024 to leverage their networks for wider reach\n     - Strategic Alliances with Local Businesses for mutual promotion and sponsorships\n\n5. **Monitoring**:\n   - **Community Events**: Ongoing research of local event calendars leading up to June 15, 2024, to avoid potential conflicts. This is crucial as local community events may impact access to the venue.\n\n**Notes on Campaign Performance or Feedback**:\n- The selected date aligns well with stakeholders and venue availability, minimizing conflicts with major holidays, but community events let us remain vigilant to potential disruptions.\n- The marketing strategies are comprehensive and target a variety of platforms and audiences, ensuring a wider reach and engagement leading up to the event.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9509,12 +8595,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -9522,9 +8603,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -9588,12 +8667,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -9601,9 +8675,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9644,9 +8716,7 @@
         "result": "Marketing Campaign Execution Report:\n\n1. **Event Details**:\n   - **Date**: June 15, 2024\n   - **Venue**: Preferred Venue\n   - **Address**: 123 Event Rd, Celebration City, State, Zip\n   - **Cost**: $2,500 for the day (includes setup and basic equipment)\n\n2. **Social Media Strategy**:\n   - **Platforms**: Facebook, Instagram, Twitter, LinkedIn\n   - **Content Plan**:\n     - Teaser Posts: Start on May 4, 2024 (2 posts/week)\n     - Behind-the-Scenes Videos: From May 18, 2024 (1 video/week)\n     - Guest Highlights: Starting May 25, 2024 (1 post/week)\n     - Event Countdown: Daily posts from June 8, 2024\n     - Live Coverage: Live tweets and Instagram stories on event day (June 15, 2024)\n\n3. **Email Campaign**:\n   - **Target Audience**: Previous attendees, local businesses, community members\n   - **Content Plan**:\n     - Save the Date Email: Send on May 1, 2024\n     - Event Details Email: Send on May 15, 2024\n     - Reminder Email: Send on June 5, 2024\n     - Last Chance to Register Email: Send on June 12, 2024\n\n4. **PR Strategies**:\n   - Press Release Announcement: Scheduled for May 10, 2024\n   - Follow-up with Local Media: Timeline set for May 20, 2024\n   - **Partnerships**:\n     - Local Influencers: Outreach begins in April 2024 to leverage their networks for wider reach\n     - Strategic Alliances with Local Businesses for mutual promotion and sponsorships\n\n5. **Monitoring**:\n   - **Community Events**: Ongoing research of local event calendars leading up to June 15, 2024, to avoid potential conflicts. This is crucial as local community events may impact access to the venue.\n\n**Notes on Campaign Performance or Feedback**:\n- The selected date aligns well with stakeholders and venue availability, minimizing conflicts with major holidays, but community events let us remain vigilant to potential disruptions.\n- The marketing strategies are comprehensive and target a variety of platforms and audiences, ensuring a wider reach and engagement leading up to the event.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9671,12 +8741,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -9684,9 +8749,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -9751,12 +8814,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -9764,9 +8822,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9807,9 +8863,7 @@
         "result": "Marketing Campaign Execution Report:\n\n1. **Event Details**:\n   - **Date**: June 15, 2024\n   - **Venue**: Preferred Venue\n   - **Address**: 123 Event Rd, Celebration City, State, Zip\n   - **Cost**: $2,500 for the day (includes setup and basic equipment)\n\n2. **Social Media Strategy**:\n   - **Platforms**: Facebook, Instagram, Twitter, LinkedIn\n   - **Content Plan**:\n     - Teaser Posts: Start on May 4, 2024 (2 posts/week)\n     - Behind-the-Scenes Videos: From May 18, 2024 (1 video/week)\n     - Guest Highlights: Starting May 25, 2024 (1 post/week)\n     - Event Countdown: Daily posts from June 8, 2024\n     - Live Coverage: Live tweets and Instagram stories on event day (June 15, 2024)\n\n3. **Email Campaign**:\n   - **Target Audience**: Previous attendees, local businesses, community members\n   - **Content Plan**:\n     - Save the Date Email: Send on May 1, 2024\n     - Event Details Email: Send on May 15, 2024\n     - Reminder Email: Send on June 5, 2024\n     - Last Chance to Register Email: Send on June 12, 2024\n\n4. **PR Strategies**:\n   - Press Release Announcement: Scheduled for May 10, 2024\n   - Follow-up with Local Media: Timeline set for May 20, 2024\n   - **Partnerships**:\n     - Local Influencers: Outreach begins in April 2024 to leverage their networks for wider reach\n     - Strategic Alliances with Local Businesses for mutual promotion and sponsorships\n\n5. **Monitoring**:\n   - **Community Events**: Ongoing research of local event calendars leading up to June 15, 2024, to avoid potential conflicts. This is crucial as local community events may impact access to the venue.\n\n**Notes on Campaign Performance or Feedback**:\n- The selected date aligns well with stakeholders and venue availability, minimizing conflicts with major holidays, but community events let us remain vigilant to potential disruptions.\n- The marketing strategies are comprehensive and target a variety of platforms and audiences, ensuring a wider reach and engagement leading up to the event.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9834,12 +8888,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -9847,9 +8896,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -9925,12 +8972,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -9938,9 +8980,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9981,10 +9021,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"timeline\":{\"8:00 AM\":\"Venue access for setup begins.\",\"9:00 AM\":\"Culinary Creations Catering arrives for food setup.\",\"10:00 AM\":\"AV equipment setup and testing.\",\"12:00 PM\":\"Final walkthrough before guests arrive.\",\"1:00 PM\":\"Event start.\"}},\"checklist\":[\"Confirm venue setup time with staff.\",\"Ensure all necessary equipment is available (AV setup, chairs, tables).\",\"Verify catering arrival time and menu requirements.\",\"Prepare special dietary arrangements for John Doe and Jane Smith.\",\"Monitor local community events for potential access issues.\"],\"special_arrangements\":{\"notes\":[\"John Doe will receive a vegetarian meal.\",\"Jane Smith's seating must be accessible and close to exits.\",\"Keep in mind potential disruptions from local community events.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -10009,12 +9046,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -10022,9 +9054,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10096,12 +9126,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -10109,9 +9134,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -10152,10 +9175,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"timeline\":{\"8:00 AM\":\"Venue access for setup begins.\",\"9:00 AM\":\"Culinary Creations Catering arrives for food setup.\",\"10:00 AM\":\"AV equipment setup and testing.\",\"12:00 PM\":\"Final walkthrough before guests arrive.\",\"1:00 PM\":\"Event start.\"}},\"checklist\":[\"Confirm venue setup time with staff.\",\"Ensure all necessary equipment is available (AV setup, chairs, tables).\",\"Verify catering arrival time and menu requirements.\",\"Prepare special dietary arrangements for John Doe and Jane Smith.\",\"Monitor local community events for potential access issues.\"],\"special_arrangements\":{\"notes\":[\"John Doe will receive a vegetarian meal.\",\"Jane Smith's seating must be accessible and close to exits.\",\"Keep in mind potential disruptions from local community events.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -10180,12 +9200,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -10193,9 +9208,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10260,12 +9273,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -10273,9 +9281,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -10316,10 +9322,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"timeline\":{\"8:00 AM\":\"Venue access for setup begins.\",\"9:00 AM\":\"Culinary Creations Catering arrives for food setup.\",\"10:00 AM\":\"AV equipment setup and testing.\",\"12:00 PM\":\"Final walkthrough before guests arrive.\",\"1:00 PM\":\"Event start.\"}},\"checklist\":[\"Confirm venue setup time with staff.\",\"Ensure all necessary equipment is available (AV setup, chairs, tables).\",\"Verify catering arrival time and menu requirements.\",\"Prepare special dietary arrangements for John Doe and Jane Smith.\",\"Monitor local community events for potential access issues.\"],\"special_arrangements\":{\"notes\":[\"John Doe will receive a vegetarian meal.\",\"Jane Smith's seating must be accessible and close to exits.\",\"Keep in mind potential disruptions from local community events.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -10344,12 +9347,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -10357,9 +9355,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10423,12 +9419,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -10436,9 +9427,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -10479,10 +9468,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"timeline\":{\"8:00 AM\":\"Venue access for setup begins.\",\"9:00 AM\":\"Culinary Creations Catering arrives for food setup.\",\"10:00 AM\":\"AV equipment setup and testing.\",\"12:00 PM\":\"Final walkthrough before guests arrive.\",\"1:00 PM\":\"Event start.\"}},\"checklist\":[\"Confirm venue setup time with staff.\",\"Ensure all necessary equipment is available (AV setup, chairs, tables).\",\"Verify catering arrival time and menu requirements.\",\"Prepare special dietary arrangements for John Doe and Jane Smith.\",\"Monitor local community events for potential access issues.\"],\"special_arrangements\":{\"notes\":[\"John Doe will receive a vegetarian meal.\",\"Jane Smith's seating must be accessible and close to exits.\",\"Keep in mind potential disruptions from local community events.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -10507,12 +9493,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -10520,9 +9501,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10587,12 +9566,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -10600,9 +9574,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -10643,10 +9615,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"timeline\":{\"8:00 AM\":\"Venue access for setup begins.\",\"9:00 AM\":\"Culinary Creations Catering arrives for food setup.\",\"10:00 AM\":\"AV equipment setup and testing.\",\"12:00 PM\":\"Final walkthrough before guests arrive.\",\"1:00 PM\":\"Event start.\"}},\"checklist\":[\"Confirm venue setup time with staff.\",\"Ensure all necessary equipment is available (AV setup, chairs, tables).\",\"Verify catering arrival time and menu requirements.\",\"Prepare special dietary arrangements for John Doe and Jane Smith.\",\"Monitor local community events for potential access issues.\"],\"special_arrangements\":{\"notes\":[\"John Doe will receive a vegetarian meal.\",\"Jane Smith's seating must be accessible and close to exits.\",\"Keep in mind potential disruptions from local community events.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -10671,12 +9640,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -10684,9 +9648,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10762,12 +9724,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -10775,9 +9732,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -10847,12 +9802,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "provider": "openai",
               "model": "gpt-4o-mini",
@@ -10860,9 +9810,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -10933,12 +9881,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -10946,9 +9889,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11017,12 +9958,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -11030,9 +9966,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -11096,12 +10030,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -11109,9 +10038,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11180,12 +10107,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -11193,9 +10115,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -11267,12 +10187,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -11280,9 +10195,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11351,12 +10264,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -11364,9 +10272,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -11438,12 +10344,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -11451,9 +10352,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11522,12 +10421,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -11535,9 +10429,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -11602,12 +10494,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -11615,9 +10502,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11686,12 +10571,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -11699,9 +10579,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -11765,12 +10643,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -11778,9 +10651,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11849,12 +10720,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -11862,9 +10728,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -11929,12 +10793,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "provider": "openai",
                 "model": "gpt-4o-mini",
@@ -11942,9 +10801,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -12013,12 +10870,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "provider": "openai",
             "model": "gpt-4o-mini",
@@ -12026,9 +10878,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
