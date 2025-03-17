@@ -11,7 +11,6 @@
  */
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
-import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
 import { useAgentStore } from './agentStore';
 import { useTaskStore } from './taskStore';
 import { useWorkflowLoopStore } from './workflowLoopStore';
@@ -170,12 +169,7 @@ const createTeamStore = (initialState = {}) => {
               }));
 
               get().agents.forEach((agent) => {
-                agent.setStatus('INITIAL');
-                // Update status using agent's method
-                agent.agentInstance.interactionsHistory =
-                  new ChatMessageHistory();
-                agent.agentInstance.lastFeedbackMessage = null;
-                agent.agentInstance.currentIterations = 0;
+                agent.reset();
               });
 
               const resetAgents = [...state.agents];

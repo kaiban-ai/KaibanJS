@@ -905,6 +905,13 @@ class ReactChampionAgent extends BaseAgent {
       maxAgentIterations,
     });
   }
+
+  reset() {
+    super.reset();
+    this.currentIterations = 0;
+    this.lastFeedbackMessage = null;
+    this.interactionsHistory = new ChatMessageHistory();
+  }
 }
 
 export { ReactChampionAgent };

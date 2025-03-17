@@ -72,6 +72,12 @@ const subscribeWorkflowStatusUpdates = (useStore) => {
                 message: 'Workflow has been resumed.',
               });
               break;
+            case WORKFLOW_STATUS_enum.PAUSED:
+              logPrettyWorkflowStatus({
+                status: 'Paused',
+                message: 'Workflow has been paused.',
+              });
+              break;
             default:
               console.warn(
                 `Encountered an unexpected workflow status: ${newLog.workflowStatus}`

@@ -62,6 +62,10 @@ class Agent {
     this.agentInstance.updateEnv(env);
   }
 
+  reset() {
+    this.agentInstance.reset();
+  }
+
   // Proxy property access to the underlying agent instance
   get id() {
     return this.agentInstance.id;
