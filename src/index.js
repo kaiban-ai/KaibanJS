@@ -19,7 +19,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { createTeamStore } from './stores';
 import { ReactChampionAgent } from './agents';
+import { subscribeTaskStatusUpdates } from './subscribers/taskSubscriber';
+import { subscribeWorkflowStatusUpdates } from './subscribers/teamSubscriber';
 import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from './utils/enums';
+import { subscribeDeterministicExecution } from './subscribers/deterministicExecutionSubscriber';
 
 class Agent {
   constructor({ type, ...config }) {
@@ -39,6 +42,9 @@ class Agent {
   workOnTask(task, inputs, context) {
     return this.agentInstance.workOnTask(task, inputs, context);
   }
+  workOnTaskResume(task) {
+    return this.agentInstance.workOnTaskResume(task);
+  }
 
   workOnFeedback(task, inputs, context) {
     return this.agentInstance.workOnFeedback(task, inputs, context);
@@ -54,6 +60,10 @@ class Agent {
 
   updateEnv(env) {
     this.agentInstance.updateEnv(env);
+  }
+
+  reset() {
+    this.agentInstance.reset();
   }
 
   // Proxy property access to the underlying agent instance
@@ -100,14 +110,18 @@ class Agent {
 class Task {
   constructor({
     title = '',
+    id = uuidv4(),
     description,
     expectedOutput,
     agent,
+    dependencies = [],
     isDeliverable = false,
     externalValidationRequired = false,
     outputSchema = null,
+    allowParallelExecution = false,
+    referenceId = undefined,
   }) {
-    this.id = uuidv4();
+    this.id = id;
     this.title = title; // Title is now optional with a default empty string
     this.description = description;
     this.isDeliverable = isDeliverable;
@@ -116,12 +130,14 @@ class Task {
     this.result = null;
     this.stats = null;
     this.duration = null;
-    this.dependencies = [];
+    this.dependencies = dependencies;
     this.interpolatedTaskDescription = null;
     this.feedbackHistory = []; // Initialize feedbackHistory as an empty array
     this.externalValidationRequired = externalValidationRequired;
     this.outputSchema = outputSchema; // Zod Schema
     this.expectedOutput = expectedOutput;
+    this.allowParallelExecution = allowParallelExecution;
+    this.referenceId = referenceId;
   }
 
   setStore(store) {
@@ -172,6 +188,41 @@ class Team {
     // Add agents and tasks to the store, they will be set with the store automatically
     this.store.getState().addAgents(agents);
     this.store.getState().addTasks(tasks);
+
+    // Subscribe to task updates: Used mainly for logging purposes
+    subscribeTaskStatusUpdates(this.store);
+
+    // Subscribe to WorkflowStatus updates: Used mainly for loggin purposes
+    subscribeWorkflowStatusUpdates(this.store);
+
+    // Subscribe to Deterministic Execution: Used to execute tasks in a deterministic order
+    subscribeDeterministicExecution(this.store);
+  }
+
+  /**
+   * Pauses the team's workflow.
+   * This method temporarily halts the workflow, allowing for manual intervention or adjustments.
+   * @returns {void}
+   */
+  pause() {
+    return this.store.getState().pauseWorkflow();
+  }
+
+  /**
+   * Resumes the team's workflow.
+   * This method continues the workflow after it has been paused.
+   * @returns {void}
+   */
+  resume() {
+    return this.store.getState().resumeWorkflow();
+  }
+  /**
+   * Stops the team's workflow.
+   * This method stops the workflow, preventing any further task execution.
+   * @returns {void}
+   */
+  stop() {
+    return this.store.getState().stopWorkflow();
   }
 
   /**

@@ -1,32 +1,31 @@
 const fs = require('fs');
-
 function moscaFetch() {
   let originalFetch = globalThis.fetch; // Save the original fetch function
   // Step 1: Define your custom fetch function
   // Define your custom fetch function
   let myCustomFetch = async (input, options) => {
-    //console.log('MoscaFetch -> Using custom fetch for:', input);
-    for (const mock of mocks) {
-      let { body: requestBody, method: requestMethod = 'GET' } = options || {};
-      requestMethod = requestMethod.toUpperCase();
-      try {
-        requestBody = requestBody ? JSON.parse(requestBody) : undefined;
-      } catch {
-        // requestBody remains unchanged if it's not JSON
-      }
+    // console.log('MoscaFetch -> Using custom fetch for:', input);
+    let { body: requestBody, method: requestMethod = 'GET' } = options || {};
+    let cleanRequestBody = requestBody;
+    requestMethod = requestMethod.toUpperCase();
+    try {
+      requestBody = requestBody ? JSON.parse(requestBody) : undefined;
 
+      cleanRequestBody = JSON.stringify(requestBody).replace(/\\n\s+/g, '\\n'); // Regular Expression to remove spaces between newlines
+    } catch {
+      // requestBody remains unchanged if it's not JSON
+    }
+
+    for (const mock of mocks) {
       const urlMatches = mock.url === '*' || input === mock.url;
       const methodMatches =
         mock.method === '*' || mock.method.toUpperCase() === requestMethod;
 
-      const cleanRequestBody = JSON.stringify(requestBody).replace(
-        /\\n\s+/g,
-        '\\n'
-      ); // Regular Expression to remove spaces between newlines
       const cleanMockBody = JSON.stringify(mock.body).replace(/\\n\s+/g, '\\n'); // Regular Expression to remove spaces between newlines
 
       const bodyMatches =
         mock.body === '*' || cleanRequestBody === cleanMockBody;
+
       if (urlMatches && methodMatches && bodyMatches) {
         if (mock.isRecorder) {
           const response = await originalFetch(input, options);
@@ -63,6 +62,13 @@ function moscaFetch() {
               status: mockResponse.status,
             });
           }
+
+          if (mockOptions && mockOptions.delay) {
+            await new Promise((resolve) =>
+              setTimeout(resolve, mockOptions.delay)
+            );
+          }
+
           return Promise.resolve(mockResponse);
         }
       }
@@ -81,20 +87,40 @@ function moscaFetch() {
 
   let mocks = [];
   let records = [];
+  let mockOptions = {};
 
-  function mock(mockConfigs) {
+  /**
+   * @param {Array<Object>} mockConfigs - An array of mock configurations.
+   * @param {Object} options - Additional options for the mock.
+   * @param {number} options.delay - The delay in milliseconds before returning the mock response.
+   *
+   */
+  function mock(mockConfigs, options) {
     // Ensure the input is always treated as an array, even if it's a single object
     const configs = Array.isArray(mockConfigs) ? mockConfigs : [mockConfigs];
 
     configs.forEach((mockConfig) => {
-      if (!mockConfig.url || !mockConfig.method || !mockConfig.response) {
+      if (!mockConfig.url || !mockConfig.method) {
         throw new Error(
-          'Invalid mock configuration: Missing required properties.'
+          `Invalid mock configuration: Missing required properties. Config: ${JSON.stringify(
+            mockConfig
+          )}`
         );
       }
-      mockConfig.isRecorder = false; // Explicitly flag mock configurations as non-recorders
-      mocks.push(mockConfig);
+
+      if (!mockConfig.response) {
+        console.warn(
+          `MoscaFetch -> Warning: No response provided for mock. Config: ${JSON.stringify(
+            mockConfig
+          )}`
+        );
+      } else {
+        mockConfig.isRecorder = false; // Explicitly flag mock configurations as non-recorders
+        mocks.push(mockConfig);
+      }
     });
+    mockOptions = options;
+
     ensureFetchIsMocked();
   }
 
