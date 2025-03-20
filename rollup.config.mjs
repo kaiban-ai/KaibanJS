@@ -1,9 +1,9 @@
 import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 import commonjs from '@rollup/plugin-commonjs';
-import babel from '@rollup/plugin-babel';
 import terser from '@rollup/plugin-terser';
 import { dts } from 'rollup-plugin-dts';
+import typescript from '@rollup/plugin-typescript';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 const isTest = process.env.TEST_ENV === 'mocked-llm-apis';
@@ -19,7 +19,8 @@ function generateConfig(format) {
 
   if (isDTS) {
     return {
-      input: './types/index.d.ts',
+      // Generate .d.ts declaration files
+      input: 'dist/types/index.d.ts',
       output: [
         {
           file: 'dist/bundle.d.ts',
@@ -31,12 +32,12 @@ function generateConfig(format) {
   }
 
   return {
-    input: 'src/index.js',
+    input: 'src/index.ts',
     output: {
       file: `dist/bundle.${ext}`,
       format: format,
       inlineDynamicImports: true,
-      sourcemap: isDevelopment, // Only generate sourcemaps in development
+      sourcemap: isDevelopment,
       name: format === 'umd' ? 'KaibanJS' : undefined,
     },
     external: external,
@@ -45,6 +46,14 @@ function generateConfig(format) {
         browser: true,
         preferBuiltins: false,
         mainFields: ['browser', 'module', 'main'],
+        extensions: ['.ts', '.tsx'],
+      }),
+      typescript({
+        tsconfig: './tsconfig.json',
+        sourceMap: isDevelopment,
+        declaration: true,
+        declarationDir: 'dist/types',
+        exclude: ['**/__tests__/**', '**/types/**'],
       }),
       commonjs(),
       ...(isTest
@@ -55,10 +64,6 @@ function generateConfig(format) {
             }),
           ]
         : []),
-      babel({
-        babelHelpers: 'bundled',
-        exclude: 'node_modules/**',
-      }),
       ...(!isDevelopment ? [terser()] : []),
     ],
   };

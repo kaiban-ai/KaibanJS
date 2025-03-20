@@ -12,7 +12,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { AGENT_STATUS_enum } from '../utils/enums';
 import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from '../utils/prompts';
-import { Task } from '../index';
+import { Task } from '..';
 import { BaseTool } from '../tools/baseTool';
 import { TeamStore } from '../stores';
 /** LLM configuration options */
@@ -38,12 +38,6 @@ export interface LLMConfig {
   endpoint?: string;
   /** API key */
   apiKey?: string;
-}
-
-/** Store interface */
-export interface Store {
-  // Define store methods as needed
-  [key: string]: unknown;
 }
 
 /** Environment variables */
@@ -232,7 +226,9 @@ export abstract class BaseAgent {
    * @param inputs - Optional task inputs
    * @param context - Optional task context
    */
-  abstract workOnTask(task: Task, inputs?: any, context?: any): Promise<any>;
+  async workOnTask(_task: Task, _inputs?: any, _context?: any): Promise<any> {
+    throw new Error('Not implemented');
+  }
 
   /**
    * Resume work on a task
