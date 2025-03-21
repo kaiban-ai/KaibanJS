@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { KanbanTool } from './kanbanTool';
 import { BaseAgent } from '../agents/baseAgent';
+import { ToolResult } from './baseTool';
 
 /**
  * Tool for blocking tasks when they cannot or should not proceed.
@@ -22,9 +23,7 @@ export class BlockTaskTool extends KanbanTool {
     super(agent);
   }
 
-  async _call(
-    input: Record<string, unknown>
-  ): Promise<Record<string, unknown>> {
+  async _call(input: Record<string, unknown>): Promise<ToolResult> {
     const { reason } = input;
     return {
       action: 'BLOCK_TASK',

@@ -15,6 +15,7 @@ import {
 } from './enums';
 import { CostResult, LLMUsageStats } from './llmCostCalculator';
 import { ParsedLLMOutput, ThinkingResult } from './llm.types';
+import { TaskResult } from '../stores/taskStore.types';
 
 // Common types used across different metadata
 export type Feedback = {
@@ -30,18 +31,19 @@ export type LLMOutput = {
   outputSchemaErrors?: ZodError;
 };
 
-// Specific metadata types for different workflow statuses
-export type BaseMetadata = {
+// Base metadata type
+export type WorkflowBaseMetadata = {
   message?: string;
 };
 
-export type InitialMetadata = BaseMetadata & {
+// Workflow-specific metadata types
+export type WorkflowInitialMetadata = WorkflowBaseMetadata & {
   message: string;
   inputs: Record<string, unknown>;
 };
 
-export type FinishedMetadata = BaseMetadata & {
-  result: string | Record<string, unknown>;
+export type WorkflowFinishedMetadata = WorkflowBaseMetadata & {
+  result: TaskResult | null;
   teamName: string;
   taskCount: number;
   agentCount: number;
@@ -53,7 +55,7 @@ export type FinishedMetadata = BaseMetadata & {
   costDetails: CostResult;
 };
 
-export type ErrorMetadata = BaseMetadata & {
+export type WorkflowErrorMetadata = WorkflowBaseMetadata & {
   error: Error;
   teamName: string;
   taskCount: number;
@@ -61,78 +63,94 @@ export type ErrorMetadata = BaseMetadata & {
   errorStack?: string;
 };
 
-export type OperationErrorMetadata = BaseMetadata & {
+export type WorkflowOperationErrorMetadata = WorkflowBaseMetadata & {
   error: Error;
   message?: string;
   errorStack?: string;
 };
 
-export type BlockedMetadata = BaseMetadata & {
+export type WorkflowBlockedMetadata = WorkflowBaseMetadata & {
   error: Error;
   teamName: string;
   taskCount: number;
   agentCount: number;
 };
 
-export type StoppingMetadata = BaseMetadata & {
+export type WorkflowStoppingMetadata = WorkflowBaseMetadata & {
   message: string;
   previousStatus: WORKFLOW_STATUS_enum;
 };
 
-export type StoppedMetadata = BaseMetadata & {
+export type WorkflowStoppedMetadata = WorkflowBaseMetadata & {
   message: string;
   previousStatus: WORKFLOW_STATUS_enum;
   tasksReset: number;
 };
 
-export type ResumedMetadata = BaseMetadata & {
+export type WorkflowResumedMetadata = WorkflowBaseMetadata & {
   message: string;
   resumedAt: string;
   previousStatus: WORKFLOW_STATUS_enum;
 };
 
-export type RunningMetadata = BaseMetadata & {
+export type WorkflowRunningMetadata = WorkflowBaseMetadata & {
   message?: string;
   inputs?: Record<string, unknown>;
   feedback?: Feedback;
 };
 
+export type WorkflowPausedMetadata = WorkflowBaseMetadata & {
+  error?: Error;
+};
+
+export type WorkflowResumeMetadata = WorkflowBaseMetadata & {
+  error?: Error;
+};
+
 // Agent-specific metadata types
-export type AgentIterationMetadata = BaseMetadata & {
+export type AgentIterationMetadata = WorkflowBaseMetadata & {
   iterations: number;
   maxAgentIterations: number;
 };
 
-export type AgentBlockMetadata = BaseMetadata & {
+export type AgentBlockMetadata = WorkflowBaseMetadata & {
   isAgentDecision: boolean;
   blockReason: string;
   blockedBy: string;
 };
 
-export type AgentActionMetadata = BaseMetadata & {
-  output: ParsedLLMOutput | ThinkingResult | Record<string, unknown>;
+export type AgentActionMetadata = WorkflowBaseMetadata & {
+  output: ThinkingResult;
   tool: string;
   toolName: string;
   thought: string;
 };
 
+export type AgentPausedMetadata = WorkflowBaseMetadata & {
+  error?: Error;
+};
+
+export type AgentResumedMetadata = WorkflowBaseMetadata & {
+  error?: Error;
+};
+
 // Task-specific metadata types
-export type TaskCompletionMetadata = BaseMetadata & {
-  result: string | Record<string, unknown>;
-  output?: ParsedLLMOutput | ThinkingResult | Record<string, unknown>;
+export type TaskCompletionMetadata = WorkflowBaseMetadata & {
+  result: TaskResult;
+  output?: ThinkingResult;
   llmUsageStats: LLMUsageStats;
   iterationCount: number;
   duration: number;
   costDetails: CostResult;
 };
 
-export type TaskValidationMetadata = BaseMetadata & {
-  output: ParsedLLMOutput | ThinkingResult | Record<string, unknown>;
+export type TaskValidationMetadata = WorkflowBaseMetadata & {
+  output: ParsedLLMOutput | ThinkingResult | TaskResult;
   feedback?: Feedback;
 };
 
 // Base workflow log interface with required fields and generic metadata
-export interface BaseWorkflowLog<T extends BaseMetadata> {
+export interface BaseWorkflowLog<T extends WorkflowBaseMetadata> {
   timestamp: number;
   logDescription: string;
   logType: 'WorkflowStatusUpdate' | 'AgentStatusUpdate' | 'TaskStatusUpdate';
@@ -140,7 +158,7 @@ export interface BaseWorkflowLog<T extends BaseMetadata> {
   metadata: T;
 }
 
-export type WorkflowExecutionLog<T extends BaseMetadata> =
+export type WorkflowExecutionLog<T extends WorkflowBaseMetadata> =
   BaseWorkflowLog<T> & {
     task: Task;
     agent: Agent;
@@ -149,20 +167,25 @@ export type WorkflowExecutionLog<T extends BaseMetadata> =
   };
 
 // Workflow status update logs with specific metadata types
-export type WorkflowInitialLog = BaseWorkflowLog<InitialMetadata>;
-export type WorkflowFinishedLog = BaseWorkflowLog<FinishedMetadata>;
-export type WorkflowResumedLog = BaseWorkflowLog<ResumedMetadata>;
-export type WorkflowStoppingLog = BaseWorkflowLog<StoppingMetadata>;
-export type WorkflowStoppedLog = BaseWorkflowLog<StoppedMetadata>;
-export type WorkflowErrorLog = BaseWorkflowLog<ErrorMetadata>;
-export type WorkflowOperationErrorLog = BaseWorkflowLog<OperationErrorMetadata>;
-export type WorkflowRunningLog = BaseWorkflowLog<RunningMetadata>;
-export type WorkflowBlockedLog = BaseWorkflowLog<BlockedMetadata>;
+export type WorkflowInitialLog = BaseWorkflowLog<WorkflowInitialMetadata>;
+export type WorkflowFinishedLog = BaseWorkflowLog<WorkflowFinishedMetadata>;
+export type WorkflowResumedLog = BaseWorkflowLog<WorkflowResumedMetadata>;
+export type WorkflowStoppingLog = BaseWorkflowLog<WorkflowStoppingMetadata>;
+export type WorkflowStoppedLog = BaseWorkflowLog<WorkflowStoppedMetadata>;
+export type WorkflowErrorLog = BaseWorkflowLog<WorkflowErrorMetadata>;
+export type WorkflowOperationErrorLog =
+  BaseWorkflowLog<WorkflowOperationErrorMetadata>;
+export type WorkflowRunningLog = BaseWorkflowLog<WorkflowRunningMetadata>;
+export type WorkflowBlockedLog = BaseWorkflowLog<WorkflowBlockedMetadata>;
+export type WorkflowPausedLog = BaseWorkflowLog<WorkflowPausedMetadata>;
+export type WorkflowResumeLog = BaseWorkflowLog<WorkflowResumeMetadata>;
 
 // Agent status update logs with specific metadata types
 export type AgentIterationLog = WorkflowExecutionLog<AgentIterationMetadata>;
 export type AgentBlockLog = WorkflowExecutionLog<AgentBlockMetadata>;
 export type AgentActionLog = WorkflowExecutionLog<AgentActionMetadata>;
+export type AgentPausedLog = WorkflowExecutionLog<AgentPausedMetadata>;
+export type AgentResumedLog = WorkflowExecutionLog<AgentResumedMetadata>;
 
 // Task status update logs with specific metadata types
 export type TaskCompletionLog = WorkflowExecutionLog<TaskCompletionMetadata>;
@@ -178,19 +201,9 @@ export type WorkflowStatusLog =
   | WorkflowStoppedLog
   | WorkflowResumedLog
   | WorkflowRunningLog
-  | WorkflowStoppingLog;
-
-export type PausedMetadata = BaseMetadata & {
-  error?: Error;
-};
-
-export type ResumeMetadata = BaseMetadata & {
-  error?: Error;
-};
-
-// Agent-specific metadata types
-export type AgentPausedLog = WorkflowExecutionLog<PausedMetadata>;
-export type AgentResumedLog = WorkflowExecutionLog<ResumeMetadata>;
+  | WorkflowStoppingLog
+  | WorkflowPausedLog
+  | WorkflowResumeLog;
 
 // Update AgentStatusLog type
 export type AgentStatusLog =
@@ -234,7 +247,7 @@ export interface WorkflowStats {
  */
 export interface WorkflowResult {
   status: string;
-  result: any;
+  result: unknown;
   stats: WorkflowStats | null;
 }
 

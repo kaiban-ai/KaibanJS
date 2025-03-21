@@ -1,4 +1,5 @@
-import { ZodSchema, ZodError } from 'zod';
+import { LLMResult } from '@langchain/core/outputs';
+import { ZodError, ZodSchema } from 'zod';
 /** Supported LLM providers */
 export type LLMProvider = string;
 export type ModelCode = string;
@@ -30,3 +31,5 @@ export type ThinkingResult = {
     outputTokens: number;
   };
 };
+
+export type LLMOutput = LLMResult;

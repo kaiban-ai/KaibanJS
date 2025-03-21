@@ -8,102 +8,112 @@
  * @module prompts
  */
 
-import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import { Agent } from '../index';
+import { ZodError, ZodSchema } from 'zod';
+import { ParsedLLMOutput } from './llm.types';
 import { Task } from '../index';
+import { BaseAgent } from '../agents/baseAgent';
 
-/** Parameters for generating system messages */
-export type SystemMessageParams = {
-  /** Agent instance */
-  agent: Agent;
-  /** Current task */
+// Type for common prompt parameters
+interface BasePromptParams {
+  agent: BaseAgent;
   task: Task;
-  /** Team insights and knowledge base */
+}
+
+// Types for specific prompt parameters
+interface SystemMessageParams extends BasePromptParams {
   insights?: string;
-};
+}
 
-/** Parameters for generating initial messages */
-export type InitialMessageParams = {
-  /** Agent instance */
-  agent: Agent;
-  /** Current task */
-  task: Task;
-  /** Additional context from previous tasks */
+interface InitialMessageParams extends BasePromptParams {
   context?: string;
-};
+}
 
-/** Parameters for generating invalid JSON feedback */
-export type InvalidJsonFeedbackParams = {
-  /** Agent instance */
-  agent: Agent;
-  /** Current task */
-  task: Task;
-  /** Invalid LLM output */
+interface InvalidJsonFeedbackParams extends BasePromptParams {
   llmOutput: string;
-};
+}
 
-/** Parameters for generating invalid output schema feedback */
-export type InvalidOutputSchemaFeedbackParams = {
-  /** Agent instance */
-  agent: Agent;
-  /** Current task */
-  task: Task;
-  /** Invalid LLM output */
+interface InvalidOutputSchemaParams extends BasePromptParams {
   llmOutput: string;
-  /** Expected output schema */
-  outputSchema: z.ZodType;
-  /** Schema validation error */
-  outputSchemaError: Error;
-};
+  outputSchema: ZodSchema;
+  outputSchemaError?: ZodError;
+}
 
-/** Parameters for generating thought with self-question feedback */
-export type ThoughtWithSelfQuestionFeedbackParams = {
-  /** Agent instance */
-  agent: Agent;
-  /** Current task */
-  task: Task;
-  /** Agent's thought */
-  thought: string;
-  /** Self-question posed by agent */
+interface ThoughtWithSelfQuestionParams extends BasePromptParams {
   question: string;
-  /** Parsed LLM output */
-  parsedLLMOutput: unknown;
-};
-
-/** Parameters for generating thought feedback */
-export type ThoughtFeedbackParams = {
-  /** Agent instance */
-  agent: Agent;
-  /** Current task */
-  task: Task;
-  /** Agent's thought */
   thought: string;
-  /** Parsed LLM output */
-  parsedLLMOutput: unknown;
-};
+  parsedLLMOutput: ParsedLLMOutput;
+}
 
-/** Parameters for generating self-question feedback */
-export type SelfQuestionFeedbackParams = {
-  /** Agent instance */
-  agent: Agent;
-  /** Current task */
-  task: Task;
-  /** Self-question posed by agent */
+interface SelfQuestionFeedbackParams extends BasePromptParams {
   question: string;
-  /** Parsed LLM output */
-  parsedLLMOutput: unknown;
-};
+  parsedLLMOutput: ParsedLLMOutput;
+}
+
+interface ThoughtFeedbackParams extends BasePromptParams {
+  thought: string;
+  parsedLLMOutput: ParsedLLMOutput;
+}
+
+interface ToolResultParams extends BasePromptParams {
+  toolResult: unknown;
+  parsedLLMOutput: ParsedLLMOutput;
+}
+
+interface ToolErrorParams extends BasePromptParams {
+  toolName: string;
+  error: Error;
+  parsedLLMOutput: ParsedLLMOutput;
+}
+
+interface ForceFinalAnswerParams extends BasePromptParams {
+  iterations: number;
+  maxAgentIterations: number;
+}
+
+interface WorkOnFeedbackParams extends BasePromptParams {
+  feedback: string;
+}
+
+interface ObservationParams extends BasePromptParams {
+  parsedLLMOutput: ParsedLLMOutput;
+}
+
+interface WeirdOutputParams extends BasePromptParams {
+  parsedLLMOutput: ParsedLLMOutput;
+}
+
+// Define the DefaultPrompts type
+export interface DefaultPrompts {
+  SYSTEM_MESSAGE: (params: SystemMessageParams) => string;
+  INITIAL_MESSAGE: (params: InitialMessageParams) => string;
+  INVALID_JSON_FEEDBACK: (params: InvalidJsonFeedbackParams) => string;
+  INVALID_OUTPUT_SCHEMA_FEEDBACK: (params: InvalidOutputSchemaParams) => string;
+  THOUGHT_WITH_SELF_QUESTION_FEEDBACK: (
+    params: ThoughtWithSelfQuestionParams
+  ) => string;
+  THOUGHT_FEEDBACK: (params: ThoughtFeedbackParams) => string;
+  SELF_QUESTION_FEEDBACK: (params: SelfQuestionFeedbackParams) => string;
+  TOOL_RESULT_FEEDBACK: (params: ToolResultParams) => string;
+  TOOL_ERROR_FEEDBACK: (params: ToolErrorParams) => string;
+  TOOL_NOT_EXIST_FEEDBACK: (params: ToolErrorParams) => string;
+  OBSERVATION_FEEDBACK: (params: ObservationParams) => string;
+  WEIRD_OUTPUT_FEEDBACK: (params: WeirdOutputParams) => string;
+  FORCE_FINAL_ANSWER_FEEDBACK: (params: ForceFinalAnswerParams) => string;
+  WORK_ON_FEEDBACK_FEEDBACK: (params: WorkOnFeedbackParams) => string;
+}
 
 /** Default prompt templates for the ReactChampionAgent */
-export const REACT_CHAMPION_AGENT_DEFAULT_PROMPTS = {
+export const REACT_CHAMPION_AGENT_DEFAULT_PROMPTS: DefaultPrompts = {
   /**
    * Generates the system message that sets up the initial context and instructions for the agent.
    * This message defines the agent's role, capabilities, and the format of its responses.
-   * @param params - Parameters for generating the system message
-   * @returns Formatted system message
+   * @param {Object} params - The parameters for generating the system message.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @returns {string} The formatted system message.
    */
-  SYSTEM_MESSAGE: ({ agent, task, insights }: SystemMessageParams): string => {
+  SYSTEM_MESSAGE: ({ agent, task, insights }: SystemMessageParams) => {
     const prompt = `You are ${agent.name}.
 
 Your role is: ${agent.role}.
@@ -209,14 +219,16 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${
 `;
     return prompt;
   },
-
   /**
    * Generates the initial message that provides the task description to the agent.
    * This message kickstarts the agent's work on a specific task.
-   * @param params - Parameters for generating the initial message
-   * @returns Formatted initial message
+   * @param {Object} params - The parameters for generating the initial message.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @param {string} params.context - Additional context or background information for the task.
+   * @returns {string} The formatted initial message.
    */
-  INITIAL_MESSAGE: ({ agent, task, context }: InitialMessageParams): string => {
+  INITIAL_MESSAGE: ({ agent, task, context }: InitialMessageParams) => {
     const prompt = `Hi ${agent.name}, please complete the following task: ${
       task.description
     }. 
@@ -236,44 +248,54 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${
         }`;
     return prompt;
   },
-
   /**
    * Generates feedback when the agent's response is not in valid JSON format.
    * This prompt asks the agent to correct its output format.
-   * @param _params - Unused parameters for generating the invalid JSON feedback
-   * @returns Formatted feedback message
+   * @param {Object} params - The parameters for generating the invalid JSON feedback.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @param {string} params.llmOutput - The invalid output that was received.
+   * @returns {string} The formatted feedback message.
    */
-  INVALID_JSON_FEEDBACK: (_params: InvalidJsonFeedbackParams): string => {
+  INVALID_JSON_FEEDBACK: (_params: InvalidJsonFeedbackParams) => {
     // eslint-disable-next-line no-useless-escape
     const prompt = `You returned an invalid JSON object. Please format your answer as a valid JSON object. Just the JSON object not comments or anything else. E.g: {\"finalAnswer\": \"The final answer\"}`;
     return prompt;
   },
-
   /**
-   * Generates feedback when the agent's response does not match the expected schema.
-   * This prompt asks the agent to correct its output format to match the schema.
-   * @param params - Parameters for generating the invalid output schema feedback
-   * @returns Formatted feedback message
+   * Generates feedback when the agent's response is not in valid JSON format.
+   * This prompt asks the agent to correct its output format.
+   * @param {Object} params - The parameters for generating the invalid JSON feedback.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @param {string} params.llmOutput - The invalid output that was received.
+   * @param {Object} params.outputSchema - The expected output schema for the task.
+   * @param {Object} params.outputSchemaError - The error object for the output schema validation.
+   * @returns {string} The formatted feedback message.
    */
   INVALID_OUTPUT_SCHEMA_FEEDBACK: ({
     outputSchema,
     outputSchemaError,
-  }: InvalidOutputSchemaFeedbackParams): string => {
-    const prompt = `You returned an invalid JSON object with following error ${outputSchemaError.toString()}. Please format your answer adhere to this JSON schema ${JSON.stringify(
+  }: InvalidOutputSchemaParams) => {
+    const prompt = `You returned an invalid JSON object with following error ${outputSchemaError?.toString()}. Please format your answer adhere to this JSON schema ${JSON.stringify(
       zodToJsonSchema(outputSchema)
     )}.`;
     return prompt;
   },
-
   /**
    * Generates feedback for a thought that includes a self-question.
    * This prompt encourages the agent to answer its own question.
-   * @param params - Parameters for generating the thought with self-question feedback
-   * @returns Formatted feedback message
+   * @param {Object} params - The parameters for generating the thought with self-question feedback.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @param {string} params.thought - The agent's thought.
+   * @param {string} params.question - The self-question posed by the agent.
+   * @param {string} params.parsedLLMOutput - The parsed LLM output.
+   * @returns {string} The formatted feedback message.
    */
   THOUGHT_WITH_SELF_QUESTION_FEEDBACK: ({
     question,
-  }: ThoughtWithSelfQuestionFeedbackParams): string => {
+  }: ThoughtWithSelfQuestionParams) => {
     const prompt = `Awesome, please answer yourself the question: ${question}.`;
     return prompt;
   },
@@ -281,22 +303,135 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${
   /**
    * Generates feedback for a general thought from the agent.
    * This prompt encourages the agent to continue its line of thinking.
-   * @param _params - Unused parameters for generating the thought feedback
-   * @returns Formatted feedback message
+   * @param {Object} params - The parameters for generating the thought feedback.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @param {string} params.thought - The agent's thought.
+   * @param {string} params.parsedLLMOutput - The parsed LLM output.
+   * @returns {string} The formatted feedback message.
    */
-  THOUGHT_FEEDBACK: (_params: ThoughtFeedbackParams): string => {
+  THOUGHT_FEEDBACK: (_params: ThoughtFeedbackParams) => {
     const prompt = `Your thoughts are great, let's keep going.`;
+    return prompt;
+  },
+  /**
+   * Generates feedback for a self-question from the agent.
+   * This prompt encourages the agent to answer its own question.
+   * @param {Object} params - The parameters for generating the self-question feedback.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @param {string} params.question - The self-question posed by the agent.
+   * @param {string} params.parsedLLMOutput - The parsed LLM output.
+   * @returns {string} The formatted feedback message.
+   */
+  SELF_QUESTION_FEEDBACK: (_params: SelfQuestionFeedbackParams) => {
+    const prompt = `Awesome, please answer yourself the question.`;
+    return prompt;
+  },
+  /**
+   * Generates feedback after a tool has been used, providing the result to the agent.
+   * @param {Object} params - The parameters for generating the tool result feedback.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @param {string} params.toolResult - The result returned by the tool.
+   * @param {string} params.parsedLLMOutput - The parsed LLM output.
+   * @returns {string} The formatted feedback message.
+   */
+  TOOL_RESULT_FEEDBACK: ({ toolResult }: ToolResultParams) => {
+    const prompt = `You got this result from the tool: ${JSON.stringify(
+      toolResult
+    )}`;
+    return prompt;
+  },
+  /**
+   * Generates feedback when an error occurs while using a tool.
+   * This prompt informs the agent about the error and suggests trying again or using a different method.
+   * @param {Object} params - The parameters for generating the tool error feedback.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @param {string} params.toolName - The name of the tool that caused the error.
+   * @param {string} params.error - The error message.
+   * @param {string} params.parsedLLMOutput - The parsed LLM output.
+   * @returns {string} The formatted feedback message.
+   */
+  TOOL_ERROR_FEEDBACK: ({ toolName }: ToolErrorParams) => {
+    const prompt = `An error occurred while using the tool ${toolName}. Please try again or use a different method.`;
     return prompt;
   },
 
   /**
-   * Generates feedback for a self-question from the agent.
-   * This prompt encourages the agent to answer its own question.
-   * @param _params - Unused parameters for generating the self-question feedback
-   * @returns Formatted feedback message
+   * Generates feedback when the agent tries to use a non-existent tool.
+   * This prompt informs the agent that the tool doesn't exist and suggests finding another way to accomplish the task.
+   * @param {Object} params - The parameters for generating the non-existent tool feedback.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @param {string} params.toolName - The name of the non-existent tool.
+   * @param {string} params.parsedLLMOutput - The parsed LLM output.
+   * @returns {string} The formatted feedback message.
    */
-  SELF_QUESTION_FEEDBACK: (_params: SelfQuestionFeedbackParams): string => {
-    const prompt = `Awesome, please answer yourself the question.`;
+  TOOL_NOT_EXIST_FEEDBACK: ({ toolName }: ToolErrorParams) => {
+    const prompt = `Hey, the tool ${toolName} does not exist. Please find another way.`;
+    return prompt;
+  },
+  /**
+   * Generates feedback for an observation made by the agent.
+   * This prompt encourages the agent to continue towards finding a final answer.
+   * @param {Object} params - The parameters for generating the observation feedback.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @param {string} params.parsedLLMOutput - The parsed LLM output.
+   * @returns {string} The formatted feedback message.
+   */
+  OBSERVATION_FEEDBACK: (_params: ObservationParams) => {
+    const prompt = `Great observation. Please keep going. Let's get to the final answer.`;
+    return prompt;
+  },
+
+  /**
+   * Generates feedback when the agent's output doesn't match the expected format.
+   * This Agent uses a JSON format to return its output and sometimes it returns a non-JSON output.
+   * This prompt asks the agent to correct its output.
+   * @param {Object} params - The parameters for generating the unexpected output feedback.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @param {string} params.output - The unexpected output from the agent.
+   * @returns {string} The formatted feedback message.
+   */
+
+  WEIRD_OUTPUT_FEEDBACK: (_params: WeirdOutputParams) => {
+    const prompt = `Your latest response does not match the way you are expected to output information. Please correct it.`;
+    return prompt;
+  },
+
+  /**
+   * Forces the agent to return the final answer.
+   * Sometimes the agent's have enough information to answer the question but it keeps asking itself questions and not answering.
+   * This prompt forces the agent to return the final answer with the information it has gathered until now.
+   * @param {Object} params - The parameters for generating the unexpected output feedback.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @param {number} params.iterations - The number of iterations the agent has gone through.
+   * @param {number} params.maxAgentIterations - The maximum number of iterations the agent is allowed to go through.
+   * @returns {string} The formatted feedback message.
+   */
+  FORCE_FINAL_ANSWER_FEEDBACK: (_params: ForceFinalAnswerParams) => {
+    const prompt = `We don't have more time to keep looking for the answer. Please use all the information you have gathered until now and give the finalAnswer right away.`;
+    return prompt;
+  },
+
+  /**
+   * Provides feedback to the agent based on the feedback received.
+   * This prompt allows the agent to address any issues or concerns raised in the feedback.
+   * FEEDBACK_FEEDBACK -> It's like inception, but with less Leonardo DiCaprio :D
+   * @param {Object} params - The parameters for generating the feedback.
+   * @param {Object} params.agent - The agent object containing its properties.
+   * @param {Object} params.task - The task object describing the current task.
+   * @param {string} params.feedback - The feedback received from the previous agent.
+   * @returns {string} The formatted feedback message.
+   */
+
+  WORK_ON_FEEDBACK_FEEDBACK: ({ feedback }: WorkOnFeedbackParams) => {
+    const prompt = `Here is some feedback for you to address: ${feedback}`;
     return prompt;
   },
 } as const;

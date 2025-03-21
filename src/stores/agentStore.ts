@@ -8,53 +8,32 @@
  * Employ this store to handle state updates for agents dynamically throughout the lifecycle of their tasks and interactions.
  */
 
-import { AGENT_STATUS_enum, TASK_STATUS_enum } from '../utils/enums';
-import { logger } from '../utils/logger';
 import { StateCreator } from 'zustand';
+import { Agent, Task } from '..';
+import { AGENT_STATUS_enum, TASK_STATUS_enum } from '../utils/enums';
+import { TaskBlockError } from '../utils/errors';
+import { logger } from '../utils/logger';
+import {
+  AgentActionLog,
+  AgentActionMetadata,
+  AgentBlockLog,
+  AgentBlockMetadata,
+  AgentIterationLog,
+  AgentIterationMetadata,
+  TaskCompletionLog,
+  TaskCompletionMetadata,
+  TaskValidationLog,
+  TaskValidationMetadata,
+  WorkflowLog,
+  WorkflowStatusLog,
+} from '../utils/workflowLogs.types';
 import { AgentStoreState } from './agentStore.types';
 import { CombinedStoresState } from './teamStore.types';
-import {
-  WorkflowLog,
-  AgentActionLog,
-  AgentIterationLog,
-  AgentBlockLog,
-  TaskCompletionLog,
-  TaskValidationLog,
-  WorkflowStatusLog,
-  AgentActionMetadata,
-  AgentIterationMetadata,
-  AgentBlockMetadata,
-  TaskCompletionMetadata,
-  TaskValidationMetadata,
-} from '../utils/workflowLogs.types';
-import { ParsedLLMOutput, ThinkingResult } from '../utils/llm.types';
 import { LLMInvocationError } from '../utils/errors';
-import { Agent, Task } from '..';
-
-type ToolOutput = {
-  action?: string;
-  reason?: string;
-  result?: any;
-  [key: string]: any;
-};
-
-type WorkflowMetadata = {
-  output?: ToolOutput | ParsedLLMOutput | ThinkingResult;
-  tool?: string;
-  toolName?: string;
-  error?: Error | LLMInvocationError;
-  iterations?: number;
-  maxAgentIterations?: number;
-  result?: any;
-  isAgentDecision?: boolean;
-  blockReason?: string;
-  blockedBy?: string;
-};
 
 interface AgentTaskParams {
   agent: Agent;
   task: Task;
-  error?: Error;
 }
 
 export const useAgentStore: StateCreator<
@@ -242,7 +221,15 @@ export const useAgentStore: StateCreator<
     set((state) => ({
       workflowLogs: [...state.workflowLogs, newLog],
     }));
-    get().handleTaskBlocked({ task, error });
+    get().handleTaskBlocked({
+      task,
+      error: new TaskBlockError(
+        error.message,
+        error.originalError?.message || '',
+        agent.name,
+        false
+      ),
+    });
   },
 
   handleAgentIssuesParsingLLMOutput: ({ agent, task, output, error }) => {
@@ -351,7 +338,10 @@ export const useAgentStore: StateCreator<
     logger.info(
       `🛠️✅ ${AGENT_STATUS_enum.USING_TOOL_END}: Agent ${agent.name} - got results from tool:${tool.name}`
     );
-    logger.debug(`Tool Output:`, output);
+    logger.debug(
+      `Tool Output:`,
+      typeof output === 'string' ? output : JSON.stringify(output)
+    );
     set((state) => ({
       workflowLogs: [...state.workflowLogs, newLog],
     }));
@@ -441,7 +431,15 @@ export const useAgentStore: StateCreator<
     set((state) => ({
       workflowLogs: [...state.workflowLogs, newLog],
     }));
-    get().handleTaskBlocked({ task, error });
+    get().handleTaskBlocked({
+      task,
+      error: new TaskBlockError(
+        error.message,
+        error.originalError?.message || '',
+        agent.name,
+        false
+      ),
+    });
   },
 
   handleAgentTaskAborted: ({ agent, task, error }) => {
@@ -457,7 +455,7 @@ export const useAgentStore: StateCreator<
       `🛑 ${AGENT_STATUS_enum.TASK_ABORTED}: Agent ${agent.name} - Task Aborted.`
     );
     set((state) => ({ workflowLogs: [...state.workflowLogs, newLog] }));
-    get().handleTaskAborted({ task, error });
+    get().handleTaskAborted({ task, error: error as LLMInvocationError });
   },
 
   handleAgentMaxIterationsError: ({
@@ -482,7 +480,15 @@ export const useAgentStore: StateCreator<
     set((state) => ({
       workflowLogs: [...state.workflowLogs, newLog],
     }));
-    get().handleTaskBlocked({ task, error });
+    get().handleTaskBlocked({
+      task,
+      error: new TaskBlockError(
+        error.message,
+        error.originalError?.message || '',
+        agent.name,
+        false
+      ),
+    });
   },
 
   handleAgentTaskCompleted: ({
@@ -496,7 +502,7 @@ export const useAgentStore: StateCreator<
     const agentLog = get().prepareNewLog({
       task,
       logDescription: `🏁 Agent ${agent.name} - ${AGENT_STATUS_enum.TASK_COMPLETED}`,
-      metadata: { result, iterations, maxAgentIterations } as WorkflowMetadata,
+      metadata: { result, iterations, maxAgentIterations },
       logType: 'AgentStatusUpdate',
       agentStatus: agent.status,
     });
@@ -506,10 +512,10 @@ export const useAgentStore: StateCreator<
     set((state) => ({
       workflowLogs: [...state.workflowLogs, agentLog],
     }));
-    get().handleTaskCompleted({ agent, task, result });
+    get().handleTaskCompleted({ task, result });
   },
 
-  handleAgentBlockTask: ({ agent, task, reason, metadata = {} }) => {
+  handleAgentBlockTask: ({ agent, task, reason, metadata }) => {
     agent.status = AGENT_STATUS_enum.DECIDED_TO_BLOCK_TASK;
     const blockLog = get().prepareNewLog({
       task,
@@ -518,8 +524,7 @@ export const useAgentStore: StateCreator<
         isAgentDecision: true,
         blockReason: reason,
         blockedBy: metadata.blockedBy || agent.name,
-        ...metadata,
-      } as WorkflowMetadata,
+      } as AgentBlockMetadata,
       logType: 'AgentStatusUpdate',
       agentStatus: agent.status,
     });
@@ -533,20 +538,23 @@ export const useAgentStore: StateCreator<
       workflowLogs: [...state.workflowLogs, blockLog],
     }));
 
-    const blockError = new Error(reason);
-    (blockError as any).isAgentDecision = true;
-    (blockError as any).metadata = metadata;
+    const blockError = new TaskBlockError(
+      `Task blocked: ${reason}`,
+      reason,
+      metadata.blockedBy || agent.name,
+      true
+    );
 
     get().handleTaskBlocked({ task, error: blockError });
   },
 
-  handleAgentTaskPaused: ({ agent, task, error }: AgentTaskParams) => {
+  handleAgentTaskPaused: ({ agent, task }: AgentTaskParams) => {
     agent.status = AGENT_STATUS_enum.PAUSED;
     const newLog = get().prepareNewLog({
       agent,
       task,
       logDescription: `🛑 Agent ${agent.name} - ${AGENT_STATUS_enum.PAUSED}`,
-      metadata: { error },
+      metadata: {},
       logType: 'AgentStatusUpdate',
       agentStatus: AGENT_STATUS_enum.PAUSED,
       taskStatus: TASK_STATUS_enum.PAUSED,
@@ -556,16 +564,16 @@ export const useAgentStore: StateCreator<
       `🛑 ${AGENT_STATUS_enum.PAUSED}: Agent ${agent.name} - Paused.`
     );
     set((state) => ({ workflowLogs: [...state.workflowLogs, newLog] }));
-    get().handleTaskPaused({ task, error });
+    get().handleTaskPaused({ task });
   },
 
-  handleAgentTaskResumed: ({ agent, task, error }: AgentTaskParams) => {
+  handleAgentTaskResumed: ({ agent, task }: AgentTaskParams) => {
     agent.status = AGENT_STATUS_enum.RESUMED;
     const newLog = get().prepareNewLog({
       agent,
       task,
       logDescription: `🔄 Agent ${agent.name} - ${AGENT_STATUS_enum.RESUMED}`,
-      metadata: { error },
+      metadata: {},
       logType: 'AgentStatusUpdate',
       agentStatus: AGENT_STATUS_enum.RESUMED,
       taskStatus: TASK_STATUS_enum.RESUMED,

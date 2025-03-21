@@ -13,32 +13,40 @@
  * @packageDocumentation
  */
 
-import { BaseAgent, BaseAgentParams } from './baseAgent';
-import { getApiKey } from '../utils/agents';
-import { getParsedJSON } from '../utils/parser';
-import { AGENT_STATUS_enum, KANBAN_TOOLS_enum } from '../utils/enums';
-import { interpolateTaskDescriptionV2 } from '../utils/tasks';
-import { ChatOpenAI } from '@langchain/openai';
 import { ChatAnthropic } from '@langchain/anthropic';
+import {
+  AIMessageChunk,
+  BaseMessage,
+  SystemMessage,
+} from '@langchain/core/messages';
+import { StringOutputParser } from '@langchain/core/output_parsers';
+import { ChatGeneration } from '@langchain/core/outputs';
+import { ChatPromptTemplate } from '@langchain/core/prompts';
+import { RunnableWithMessageHistory } from '@langchain/core/runnables';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { ChatMistralAI } from '@langchain/mistralai';
-import { BaseMessage, SystemMessage } from '@langchain/core/messages';
-import { StringOutputParser } from '@langchain/core/output_parsers';
-import { RunnableWithMessageHistory } from '@langchain/core/runnables';
+import { ChatOpenAI } from '@langchain/openai';
 import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
-import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { logger } from '../utils/logger';
-import { LLMInvocationError } from '../utils/errors';
-import { BlockTaskTool } from '../tools/blockTaskTool';
-import { WORKFLOW_STATUS_enum } from '../utils/enums';
-import { AbortError } from '../utils/errors';
 import { Task } from '..';
 import { TeamStore } from '../stores';
-import { ParsedLLMOutput, ThinkingResult } from '../utils/llm.types';
-import { BaseTool } from '../tools/baseTool';
+import { BaseTool, ToolResult } from '../tools/baseTool';
+import { BlockTaskTool } from '../tools/blockTaskTool';
+import { getApiKey } from '../utils/agents';
+import {
+  AGENT_STATUS_enum,
+  KANBAN_TOOLS_enum,
+  WORKFLOW_STATUS_enum,
+} from '../utils/enums';
+import { AbortError, LLMInvocationError } from '../utils/errors';
+import { LLMOutput, ParsedLLMOutput, ThinkingResult } from '../utils/llm.types';
+import { logger } from '../utils/logger';
+import { getParsedJSON } from '../utils/parser';
+import { interpolateTaskDescriptionV2 } from '../utils/tasks';
+import { BaseAgent, BaseAgentParams, Env } from './baseAgent';
+import { TaskResult } from '../stores/taskStore.types';
 
 type AgentLoopResult = {
-  result?: any;
+  result?: unknown;
   error?: string;
   metadata: {
     iterations: number;
@@ -47,7 +55,7 @@ type AgentLoopResult = {
 };
 
 type PromiseObject = {
-  promise: Promise<any>;
+  promise: Promise<unknown>;
   reject: (error: Error) => void;
 };
 
@@ -56,7 +64,7 @@ type PromiseObject = {
  * @class
  */
 export class ReactChampionAgent extends BaseAgent {
-  protected executableAgent?: RunnableWithMessageHistory<unknown, unknown>;
+  protected executableAgent: RunnableWithMessageHistory<unknown, unknown>;
   protected llmInstance?:
     | ChatOpenAI
     | ChatAnthropic
@@ -82,6 +90,12 @@ export class ReactChampionAgent extends BaseAgent {
     this.forceFinalAnswer = config.forceFinalAnswer || false;
     this.interactionsHistory = new ChatMessageHistory();
     this.lastFeedbackMessage = null;
+    this.executableAgent = new RunnableWithMessageHistory<unknown, unknown>({
+      runnable: new ChatOpenAI(this.llmConfig),
+      getMessageHistory: () => this.interactionsHistory,
+      inputMessagesKey: 'feedbackMessage',
+      historyMessagesKey: 'chat_history',
+    });
   }
 
   /**
@@ -89,7 +103,7 @@ export class ReactChampionAgent extends BaseAgent {
    * @param store - The agent store instance
    * @param env - Environment configuration
    */
-  initialize(store: TeamStore, env: any): void {
+  initialize(store: TeamStore, env: Env): void {
     // Set up API key and check configuration
     this.store = store;
     this.env = env;
@@ -159,7 +173,7 @@ export class ReactChampionAgent extends BaseAgent {
    * Updates the agent's environment configuration
    * @param env - New environment configuration
    */
-  updateEnv(env: any): void {
+  updateEnv(env: Env): void {
     this.env = env;
 
     // Only update if we're using environment-based API keys
@@ -197,7 +211,11 @@ export class ReactChampionAgent extends BaseAgent {
    * @param inputs - Task inputs
    * @param context - Task context
    */
-  async workOnTask(task: Task, inputs: any, context: any) {
+  async workOnTask(
+    task: Task,
+    inputs: Record<string, unknown>,
+    context: string
+  ) {
     const config = this.prepareAgentForTask(task, inputs, context);
     this.executableAgent = config.executableAgent;
     return await this.agenticLoop(
@@ -234,7 +252,11 @@ export class ReactChampionAgent extends BaseAgent {
    * @param inputs - Task inputs
    * @param context - Task context
    */
-  prepareAgentForTask(task: Task, inputs: any, context: any) {
+  prepareAgentForTask(
+    task: Task,
+    inputs: Record<string, unknown>,
+    context: string
+  ) {
     if (!this.llmInstance) {
       throw new Error('LLM instance is not initialized');
     }
@@ -290,7 +312,7 @@ export class ReactChampionAgent extends BaseAgent {
   async agenticLoop(
     agent: ReactChampionAgent,
     task: Task,
-    ExecutableAgent: any,
+    ExecutableAgent: RunnableWithMessageHistory<unknown, unknown>,
     initialMessage: string | null
   ): Promise<AgentLoopResult> {
     let feedbackMessage = initialMessage;
@@ -563,7 +585,7 @@ export class ReactChampionAgent extends BaseAgent {
               handleChatModelStart: async (_, messages) => {
                 await agent.handleThinkingStart({ agent, task, messages });
               },
-              handleLLMEnd: async (output: any) => {
+              handleLLMEnd: async (output: LLMOutput) => {
                 const result = await agent.handleThinkingEnd({
                   agent,
                   task,
@@ -622,7 +644,7 @@ export class ReactChampionAgent extends BaseAgent {
   /**
    * Determines the type of action based on parsed LLM output
    */
-  determineActionType(parsedResult: any): string {
+  determineActionType(parsedResult: ParsedLLMOutput): string {
     if (parsedResult === null) {
       return AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT;
     } else if (
@@ -671,7 +693,7 @@ export class ReactChampionAgent extends BaseAgent {
     agent: ReactChampionAgent,
     task: Task,
     interpolatedTaskDescription: string,
-    context: any
+    context?: string
   ): string {
     return this.promptTemplates.INITIAL_MESSAGE({
       agent,
@@ -718,7 +740,7 @@ export class ReactChampionAgent extends BaseAgent {
     agent: ReactChampionAgent;
     task: Task;
     messages: BaseMessage[][];
-  }): Promise<any[]> {
+  }): Promise<unknown[]> {
     const { agent, task, messages } = params;
     try {
       const transformedMessages = messages.flatMap((subArray) =>
@@ -746,20 +768,17 @@ export class ReactChampionAgent extends BaseAgent {
   async handleThinkingEnd(params: {
     agent: ReactChampionAgent;
     task: Task;
-    output: any;
+    output: LLMOutput;
   }): Promise<ThinkingResult> {
     const { agent, task, output } = params;
     try {
       const agentResultParser = new StringOutputParser();
-      if (
-        !output.generations ||
-        !output.generations[0] ||
-        !output.generations[0][0].message
-      ) {
+      const generations = output.generations as ChatGeneration[][];
+      if (!generations || !generations[0] || !generations[0][0].message) {
         throw new Error('Invalid output structure');
       }
 
-      const { message } = output.generations[0][0];
+      const message = generations[0][0].message as AIMessageChunk;
       const parsedResult = await agentResultParser.invoke(message);
       const parsedLLMOutput: ParsedLLMOutput = {
         ...getParsedJSON(parsedResult),
@@ -891,7 +910,7 @@ export class ReactChampionAgent extends BaseAgent {
     let feedbackMessage = this.promptTemplates.THOUGHT_FEEDBACK({
       agent,
       task,
-      thought: parsedLLMOutput.thought,
+      thought: parsedLLMOutput.thought ?? '',
       parsedLLMOutput,
     });
     if (
@@ -906,7 +925,7 @@ export class ReactChampionAgent extends BaseAgent {
         this.promptTemplates.THOUGHT_WITH_SELF_QUESTION_FEEDBACK({
           agent,
           task,
-          thought: parsedLLMOutput.thought,
+          thought: parsedLLMOutput.thought ?? '',
           question: actionAsString,
           parsedLLMOutput,
         });
@@ -926,7 +945,7 @@ export class ReactChampionAgent extends BaseAgent {
     return this.promptTemplates.SELF_QUESTION_FEEDBACK({
       agent,
       task,
-      question: parsedLLMOutput.thought,
+      question: parsedLLMOutput.thought ?? '',
       parsedLLMOutput,
     });
   }
@@ -936,7 +955,12 @@ export class ReactChampionAgent extends BaseAgent {
     task: Task;
     parsedLLMOutput: ParsedLLMOutput;
     tool: BaseTool;
-  }): Promise<any> {
+  }): Promise<{
+    result: string;
+    error?: LLMInvocationError;
+    reason?: string;
+    action: string;
+  }> {
     const { agent, task, parsedLLMOutput, tool } = params;
     const toolInput = parsedLLMOutput.actionInput ?? {};
     agent.handleUsingToolStart({ agent, task, tool, input: toolInput });
@@ -954,28 +978,40 @@ export class ReactChampionAgent extends BaseAgent {
     this.store?.getState()?.trackPromise(this.id, promiseObj);
 
     try {
-      const result = await toolPromise;
+      const result: string = (await toolPromise) as string;
       agent.handleUsingToolEnd({
         agent,
         task,
         tool,
         output: { toolResult: result },
       });
-      return result;
+      return {
+        result,
+        action: tool.name,
+      };
     } catch (error) {
       if (error instanceof AbortError) {
         throw error;
       }
-      return this.handleUsingToolError({
+
+      const e = new LLMInvocationError(
+        `Error executing tool: ${error}`,
+        error as Error
+      );
+      this.handleUsingToolError({
         agent,
         task,
         parsedLLMOutput,
         tool,
-        error: new LLMInvocationError(
-          `Error executing tool: ${error}`,
-          error as Error
-        ),
+        error: e,
       });
+
+      return {
+        result: '',
+        error: e,
+        reason: e.message,
+        action: tool.name,
+      };
     } finally {
       this.store?.getState()?.removePromise(this.id, promiseObj);
     }
@@ -995,7 +1031,7 @@ export class ReactChampionAgent extends BaseAgent {
     agent: ReactChampionAgent;
     task: Task;
     tool: BaseTool;
-    output: Record<string, unknown>;
+    output: ToolResult;
   }): void {
     const { agent, task, tool, output } = params;
     agent.store?.getState()?.handleAgentToolEnd({ agent, task, tool, output });
@@ -1013,7 +1049,7 @@ export class ReactChampionAgent extends BaseAgent {
     return this.promptTemplates.TOOL_ERROR_FEEDBACK({
       agent,
       task,
-      toolName: parsedLLMOutput.action,
+      toolName: parsedLLMOutput.action ?? tool.name,
       error,
       parsedLLMOutput,
     });
@@ -1032,7 +1068,8 @@ export class ReactChampionAgent extends BaseAgent {
     return this.promptTemplates.TOOL_NOT_EXIST_FEEDBACK({
       agent,
       task,
-      toolName: parsedLLMOutput.action,
+      toolName: parsedLLMOutput.action ?? toolName,
+      error: new LLMInvocationError(`Tool ${toolName} does not exist`),
       parsedLLMOutput,
     });
   }
@@ -1121,7 +1158,7 @@ export class ReactChampionAgent extends BaseAgent {
   handleTaskCompleted(params: {
     agent: ReactChampionAgent;
     task: Task;
-    parsedResultWithFinalAnswer: any;
+    parsedResultWithFinalAnswer: ParsedLLMOutput;
     iterations: number;
     maxAgentIterations: number;
   }): void {
@@ -1135,7 +1172,7 @@ export class ReactChampionAgent extends BaseAgent {
     agent.store?.getState()?.handleAgentTaskCompleted({
       agent,
       task,
-      result: parsedResultWithFinalAnswer.finalAnswer,
+      result: parsedResultWithFinalAnswer.finalAnswer as TaskResult,
       iterations,
       maxAgentIterations,
     });

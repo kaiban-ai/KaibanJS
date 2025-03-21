@@ -7,7 +7,6 @@ import {
 import { PrettyError } from '../utils/errors';
 import { calculateTaskCost, LLMUsageStats } from '../utils/llmCostCalculator';
 import { logger } from '../utils/logger';
-import { oget } from '../utils/objectUtils';
 import { getTaskTitleForLogs } from '../utils/tasks';
 import {
   AgentActionLog,
@@ -57,16 +56,10 @@ export const useTaskStore: StateCreator<
           agentStatusLog.agentStatus === AGENT_STATUS_enum.THINKING_END &&
           agentStatusLog.metadata?.output
         ) {
-          llmUsageStats.inputTokens += oget(
-            agentStatusLog.metadata.output,
-            'llmUsageStats.inputTokens',
-            0
-          );
-          llmUsageStats.outputTokens += oget(
-            agentStatusLog.metadata.output,
-            'llmUsageStats.outputTokens',
-            0
-          );
+          llmUsageStats.inputTokens +=
+            agentStatusLog.metadata.output.llmUsageStats.inputTokens;
+          llmUsageStats.outputTokens +=
+            agentStatusLog.metadata.output.llmUsageStats.outputTokens;
           llmUsageStats.callsCount += 1;
         }
         if (agentStatusLog.agentStatus === AGENT_STATUS_enum.THINKING_ERROR) {
@@ -93,7 +86,7 @@ export const useTaskStore: StateCreator<
     };
   },
 
-  handleTaskCompleted: ({ agent, task, result }) => {
+  handleTaskCompleted: ({ task, result }) => {
     const stats = get().getTaskStats(task);
     task.result = result;
 
@@ -109,7 +102,7 @@ export const useTaskStore: StateCreator<
       task.status !== TASK_STATUS_enum.VALIDATED
     ) {
       task.status = TASK_STATUS_enum.AWAITING_VALIDATION;
-      const modelCode = agent.llmConfig.model;
+      const modelCode = task.agent.llmConfig.model;
       const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
       const taskLog = get().prepareNewLog({
         task,
@@ -141,7 +134,7 @@ export const useTaskStore: StateCreator<
 
       get().handleWorkflowBlocked(new Error('Task awaiting validation'));
     } else {
-      const modelCode = agent.llmConfig.model;
+      const modelCode = task.agent.llmConfig.model;
       const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
       const taskLog = get().prepareNewLog({
         task: { ...task, status: TASK_STATUS_enum.DONE },
@@ -324,7 +317,7 @@ export const useTaskStore: StateCreator<
     }));
   },
 
-  handleTaskPaused: ({ task, error }) => {
+  handleTaskPaused: ({ task }) => {
     const stats = get().getTaskStats(task);
     const modelCode = task.agent.llmConfig.model;
     const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
@@ -343,7 +336,6 @@ export const useTaskStore: StateCreator<
       metadata: {
         ...stats,
         costDetails,
-        error,
       },
       logType: 'TaskStatusUpdate',
     });
@@ -353,8 +345,7 @@ export const useTaskStore: StateCreator<
       message: `Task "${task.description}" has been paused. Agent ${task.agent.name} will resume work when workflow continues.`,
       recommendedAction:
         'Use resume() to continue workflow execution, or enable logLevel: "debug" for more detailed logs.',
-      rootError: error,
-      context: { task, error },
+      context: { task },
     });
 
     logger.warn(prettyError.prettyMessage);

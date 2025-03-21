@@ -149,3 +149,28 @@ export class WorkflowError extends Error {
     this.name = 'WorkflowError';
   }
 }
+
+export class AgentBlockError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AgentBlockError';
+  }
+}
+
+export class TaskBlockError extends Error {
+  public blockReason: string;
+  public blockedBy: string;
+  public isAgentDecision: boolean;
+  constructor(
+    message: string,
+    blockReason: string,
+    blockedBy: string,
+    isAgentDecision: boolean
+  ) {
+    super(message);
+    this.name = 'TaskBlockError';
+    this.blockReason = blockReason;
+    this.blockedBy = blockedBy;
+    this.isAgentDecision = isAgentDecision;
+  }
+}

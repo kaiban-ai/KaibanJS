@@ -16,6 +16,8 @@ export type LLMConfig = {
   apiKey?: string;
   /** LLM service provider */
   provider: LLMProvider;
+  /** LLM model */
+  model: string;
 };
 
 /** Agent attributes for prompt templates */

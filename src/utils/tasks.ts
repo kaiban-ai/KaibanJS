@@ -57,8 +57,8 @@ export function interpolateTaskDescription(
  */
 export function interpolateTaskDescriptionV2(
   description: string,
-  inputs: KeyValuePairs = {},
-  taskResults: KeyValuePairs = {}
+  inputs: Record<string, unknown> = {},
+  taskResults: Record<string, unknown> = {}
 ): string {
   let result = description;
 

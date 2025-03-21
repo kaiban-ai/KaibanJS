@@ -17,21 +17,29 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { ReactChampionAgent } from './agents';
+import { BaseAgent, Env, ReactChampionAgent } from './agents';
 import { subscribeTaskStatusUpdates } from './subscribers/taskSubscriber';
 import { subscribeWorkflowStatusUpdates } from './subscribers/teamSubscriber';
-import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from './utils/enums';
+import {
+  AGENT_STATUS_enum,
+  TASK_STATUS_enum,
+  WORKFLOW_STATUS_enum,
+} from './utils/enums';
 import { subscribeDeterministicExecution } from './subscribers/deterministicExecutionSubscriber';
-import { StoreApi, UseBoundStore } from 'zustand';
-import { TeamStore } from './stores/teamStore.types';
+import { CombinedStoresState, TeamStore } from './stores/teamStore.types';
 import { createTeamStore } from './stores';
-import { ZodSchema } from 'zod';
+import { z, ZodSchema } from 'zod';
 import { oget } from './utils/objectUtils';
 import {
+  WorkflowBlockedLog,
   WorkflowFinishedLog,
   WorkflowResult,
   WorkflowStats,
 } from './utils/workflowLogs.types';
+import { BaseTool } from './tools/baseTool';
+import { LLMConfig } from './utils/agents';
+import { DefaultPrompts } from './utils/prompts';
+import { TaskFeedback, TaskResult, TaskStats } from './stores/taskStore.types';
 
 /**
  * Interface for Agent configuration
@@ -42,12 +50,11 @@ interface AgentConfig {
   role: string;
   goal: string;
   background: string;
-  tools?: any[];
-  llmConfig?: Record<string, any>;
+  tools?: BaseTool[];
+  llmConfig?: LLMConfig;
   maxIterations?: number;
   forceFinalAnswer?: boolean;
-  promptTemplates?: Record<string, any>;
-  [key: string]: any;
+  promptTemplates?: DefaultPrompts;
 }
 
 /**
@@ -62,7 +69,7 @@ interface TaskConfig {
   dependencies?: string[];
   isDeliverable?: boolean;
   externalValidationRequired?: boolean;
-  outputSchema?: any;
+  outputSchema?: ZodSchema;
   allowParallelExecution?: boolean;
   referenceId?: string;
 }
@@ -75,14 +82,14 @@ interface TeamConfig {
   agents: Agent[];
   tasks: Task[];
   logLevel?: string;
-  inputs?: Record<string, any>;
-  env?: Record<string, any>;
+  inputs?: Record<string, unknown>;
+  env?: Env;
   insights?: string;
   memory?: boolean;
 }
 
 export class Agent {
-  agentInstance: any;
+  agentInstance: BaseAgent;
   type: string;
 
   constructor({ type, ...config }: AgentConfig) {
@@ -90,7 +97,7 @@ export class Agent {
     this.type = type || 'ReactChampionAgent';
   }
 
-  createAgent(type: string | undefined, config: AgentConfig): any {
+  createAgent(type: string | undefined, config: AgentConfig): BaseAgent {
     switch (type) {
       case 'ReactChampionAgent':
         return new ReactChampionAgent(config);
@@ -99,27 +106,35 @@ export class Agent {
     }
   }
 
-  workOnTask(task: any, inputs: any, context: any): Promise<void> {
+  workOnTask(
+    task: Task,
+    inputs: Record<string, unknown>,
+    context: string
+  ): Promise<unknown> {
     return this.agentInstance.workOnTask(task, inputs, context);
   }
 
-  workOnTaskResume(task: any): Promise<void> {
+  workOnTaskResume(task: Task): Promise<void> {
     return this.agentInstance.workOnTaskResume(task);
   }
 
-  workOnFeedback(task: any, inputs: any, context: any): Promise<void> {
-    return this.agentInstance.workOnFeedback(task, inputs, context);
+  workOnFeedback(
+    task: Task,
+    feedbackList: Array<{ content: string }>,
+    context: string
+  ): Promise<unknown> {
+    return this.agentInstance.workOnFeedback(task, feedbackList, context);
   }
 
-  setStatus(status: string): void {
+  setStatus(status: AGENT_STATUS_enum): void {
     this.agentInstance.setStatus(status);
   }
 
-  initialize(store: any, env: any): void {
+  initialize(store: TeamStore, env: Env): void {
     this.agentInstance.initialize(store, env);
   }
 
-  updateEnv(env: any): void {
+  updateEnv(env: Env): void {
     this.agentInstance.updateEnv(env);
   }
 
@@ -148,7 +163,7 @@ export class Agent {
     return this.agentInstance.background;
   }
 
-  get tools(): any[] {
+  get tools(): BaseTool[] {
     return this.agentInstance.tools;
   }
 
@@ -156,11 +171,11 @@ export class Agent {
     return this.agentInstance.status;
   }
 
-  set status(status: string) {
+  set status(status: AGENT_STATUS_enum) {
     this.agentInstance.setStatus(status);
   }
 
-  get llmConfig(): any {
+  get llmConfig(): LLMConfig {
     return this.agentInstance.llmConfig;
   }
 
@@ -172,7 +187,7 @@ export class Agent {
     return this.agentInstance.forceFinalAnswer;
   }
 
-  get promptTemplates(): Record<string, any> {
+  get promptTemplates(): DefaultPrompts {
     return this.agentInstance.promptTemplates;
   }
 }
@@ -184,18 +199,18 @@ export class Task {
   isDeliverable: boolean;
   agent: Agent;
   status: string;
-  result: any;
-  stats: any;
-  duration: any;
+  result: TaskResult | null;
+  stats: TaskStats | null;
+  duration: number | null;
   dependencies: string[];
   interpolatedTaskDescription: string | null;
-  feedbackHistory: any[];
+  feedbackHistory: TaskFeedback[];
   externalValidationRequired: boolean;
   outputSchema: ZodSchema;
   expectedOutput: string;
   allowParallelExecution: boolean;
   referenceId?: string;
-  inputs?: Record<string, any>;
+  inputs?: Record<string, unknown>;
   store?: TeamStore;
 
   constructor({
@@ -207,7 +222,7 @@ export class Task {
     dependencies = [],
     isDeliverable = false,
     externalValidationRequired = false,
-    outputSchema = null,
+    outputSchema = z.any(),
     allowParallelExecution = false,
     referenceId = undefined,
   }: TaskConfig) {
@@ -297,7 +312,7 @@ export class Team {
 
   /**
    * Stops the team's workflow.
-   * This method stops the workflow, preventing any further task execution.
+   * This method stops the workflow, preventing unknown further task execution.
    */
   stop(): Promise<void> {
     return this.store.getState().stopWorkflow();
@@ -310,10 +325,10 @@ export class Team {
    * @param inputs - Optional inputs to override or supplement the initial inputs.
    * @returns A promise that resolves when the workflow completes or rejects on error.
    */
-  async start(inputs: Record<string, any> = {}): Promise<WorkflowResult> {
+  async start(inputs: Record<string, unknown> = {}): Promise<WorkflowResult> {
     return new Promise((resolve, reject) => {
       const unsubscribe = this.store.subscribe(
-        (state: any) => state.teamWorkflowStatus,
+        (state: CombinedStoresState) => state.teamWorkflowStatus,
         // @ts-expect-error: Zustand subscribe overload is not properly typed
         (status: string) => {
           const state = this.store.getState();
@@ -363,7 +378,7 @@ export class Team {
    *
    * @returns The store object.
    */
-  getStore(): UseBoundStore<StoreApi<any>> {
+  getStore(): TeamStore {
     return this.store;
   }
 
@@ -374,7 +389,7 @@ export class Team {
    *
    * @returns The store object.
    */
-  useStore(): UseBoundStore<StoreApi<any>> {
+  useStore(): TeamStore {
     return this.store;
   }
 
@@ -386,29 +401,37 @@ export class Team {
    * @returns Unsubscribe function
    */
   subscribeToChanges(
-    listener: (changes: Record<string, any>) => void,
+    listener: (changes: Record<string, unknown>) => void,
     properties: string[] = []
   ): () => void {
     if (properties.length === 0) {
       // No specific properties, return global subscription
-      return this.store.subscribe(listener);
+      return this.store.subscribe((_state: CombinedStoresState) =>
+        listener({})
+      );
     }
 
     let currentValues = properties.reduce(
       (acc, prop) => ({
         ...acc,
-        [prop]: oget(this.store.getState(), prop),
+        [prop]: oget(
+          this.store.getState() as unknown as Record<string, unknown>,
+          prop
+        ),
       }),
-      {} as Record<string, any>
+      {} as Record<string, unknown>
     );
 
     return this.store.subscribe(() => {
       const state = this.store.getState();
       let hasChanged = false;
-      const newValues: Record<string, any> = {};
+      const newValues: Record<string, unknown> = {};
 
       properties.forEach((prop) => {
-        const newValue = oget(state, prop);
+        const newValue = oget(
+          state as unknown as Record<string, unknown>,
+          prop
+        );
         if (newValue !== currentValues[prop]) {
           hasChanged = true;
           newValues[prop] = newValue;
@@ -453,7 +476,7 @@ export class Team {
    */
   onWorkflowStatusChange(callback: (status: string) => void): () => void {
     return this.store.subscribe(
-      (state: any) => state.teamWorkflowStatus,
+      (state: CombinedStoresState) => state.teamWorkflowStatus,
       // @ts-expect-error: Zustand subscribe overload is not properly typed
       callback
     );
@@ -487,7 +510,7 @@ export class Team {
    *
    * @returns The workflow result if finished, null otherwise.
    */
-  getWorkflowResult(): any {
+  getWorkflowResult(): unknown {
     const state = this.store.getState();
     if (state.teamWorkflowStatus === WORKFLOW_STATUS_enum.FINISHED) {
       return state.workflowResult;
@@ -517,10 +540,10 @@ export class Team {
 
     // Find the log entry for when the workflow was marked as finished or blocked
     const completionLog = logs.find(
-      (log: any) =>
+      (log) =>
         log.logType === 'WorkflowStatusUpdate' &&
         (log.workflowStatus === 'FINISHED' || log.workflowStatus === 'BLOCKED')
-    );
+    ) as WorkflowFinishedLog | WorkflowBlockedLog | null;
 
     // Check if a completion log exists and return the specified statistics
     if (completionLog) {

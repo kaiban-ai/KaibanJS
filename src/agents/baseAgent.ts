@@ -11,10 +11,13 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { AGENT_STATUS_enum } from '../utils/enums';
-import { REACT_CHAMPION_AGENT_DEFAULT_PROMPTS } from '../utils/prompts';
 import { Task } from '..';
 import { BaseTool } from '../tools/baseTool';
 import { TeamStore } from '../stores';
+import {
+  DefaultPrompts,
+  REACT_CHAMPION_AGENT_DEFAULT_PROMPTS,
+} from '../utils/prompts';
 /** LLM configuration options */
 export interface LLMConfig {
   /** LLM service provider */
@@ -67,7 +70,7 @@ export interface BaseAgentParams {
   /** Whether to force a final answer */
   forceFinalAnswer?: boolean;
   /** Custom prompt templates */
-  promptTemplates?: Record<string, unknown>;
+  promptTemplates?: DefaultPrompts;
   /** Environment variables */
   env?: Env;
   /** Kanban tools to enable */
@@ -91,21 +94,22 @@ export abstract class BaseAgent {
   readonly maxIterations: number;
   /** Store instance */
   protected store: TeamStore | null;
-  /** Available tools */
-  protected tools: BaseTool[];
   /** Environment variables */
   protected env: Env;
-  /** LLM configuration */
-  protected llmConfig: LLMConfig;
-  /** System message for LLM */
-  protected llmSystemMessage: string | null;
-  /** Whether to force a final answer */
-  protected forceFinalAnswer: boolean;
-  /** Prompt templates */
-  protected promptTemplates: Record<string, (params: any) => string>;
 
+  /** System message for LLM */
+  llmSystemMessage: string | null;
+  /** Whether to force a final answer */
+  forceFinalAnswer: boolean;
+  /** Prompt templates */
+  promptTemplates: DefaultPrompts;
+
+  /** LLM configuration */
+  llmConfig: LLMConfig;
   /** Current agent status */
   status: AGENT_STATUS_enum;
+  /** Available tools */
+  tools: BaseTool[];
 
   /**
    * Creates a new BaseAgent instance
@@ -121,7 +125,7 @@ export abstract class BaseAgent {
     llmConfig = {},
     maxIterations = 10,
     forceFinalAnswer = true,
-    promptTemplates = {},
+    promptTemplates,
     env = {},
   }: BaseAgentParams) {
     this.id = id;
@@ -148,11 +152,17 @@ export abstract class BaseAgent {
 
     this.llmSystemMessage = null;
     this.forceFinalAnswer = forceFinalAnswer;
+    this.promptTemplates =
+      promptTemplates || REACT_CHAMPION_AGENT_DEFAULT_PROMPTS;
+  }
 
-    // Initialize promptTemplates
-    this.promptTemplates = { ...REACT_CHAMPION_AGENT_DEFAULT_PROMPTS };
-    // Allow custom prompts to override defaults
-    Object.assign(this.promptTemplates, promptTemplates);
+  initialize(store: TeamStore, env: Env): void {
+    this.store = store;
+    this.env = env;
+  }
+
+  updateEnv(env: Env): void {
+    this.env = env;
   }
 
   /**
@@ -226,9 +236,24 @@ export abstract class BaseAgent {
    * @param inputs - Optional task inputs
    * @param context - Optional task context
    */
-  async workOnTask(_task: Task, _inputs?: any, _context?: any): Promise<any> {
+  async workOnTask(
+    _task: Task,
+    _inputs?: unknown,
+    _context?: unknown
+  ): Promise<unknown> {
     throw new Error('Not implemented');
   }
+
+  /**
+   * Process feedback for a task
+   * @param task - The task to process feedback for
+   * @param feedbackList - The feedback list
+   */
+  abstract workOnFeedback(
+    _task: Task,
+    _feedbackList: Array<{ content: string }>,
+    _context: string
+  ): Promise<unknown>;
 
   /**
    * Resume work on a task

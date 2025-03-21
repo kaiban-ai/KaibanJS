@@ -5,7 +5,7 @@ export interface WorkflowLoopStoreVariables {
 }
 
 export interface PromiseObject {
-  promise: Promise<any>;
+  promise: Promise<unknown>;
   reject: (error: Error) => void;
 }
 

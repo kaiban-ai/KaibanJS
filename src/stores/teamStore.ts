@@ -48,6 +48,7 @@ import {
   AgentStatusLog,
   AgentActionLog,
 } from '../utils/workflowLogs.types';
+import { Env } from '../agents/baseAgent';
 
 // Initialize telemetry with default values
 const td = initializeTelemetry();
@@ -92,9 +93,9 @@ const createTeamStore = (
     workflowController: initialState.workflowController || {},
     maxConcurrency: initialState.maxConcurrency || 5,
 
-    setInputs: (inputs: Record<string, any>) => set({ inputs }),
+    setInputs: (inputs: Record<string, unknown>) => set({ inputs }),
     setName: (name: string) => set({ name }),
-    setEnv: (env: Record<string, any>) => {
+    setEnv: (env: Env) => {
       set({ env });
       const agents = get().agents;
       agents.forEach((agent) => {
@@ -134,7 +135,7 @@ const createTeamStore = (
       set({ workflowExecutionStrategy: strategy });
     },
 
-    startWorkflow: async (inputs?: Record<string, any>) => {
+    startWorkflow: async (inputs?: Record<string, unknown>) => {
       logger.info(`🚀 Team *${get().name}* is starting to work.`);
       td.signal('workflow_started');
       get().resetWorkflowStateAction();
@@ -371,7 +372,7 @@ const createTeamStore = (
         {
           taskTitle: string;
           taskDescription: string;
-          result: any;
+          result: unknown;
           index: number;
         }
       >();
@@ -516,7 +517,6 @@ const createTeamStore = (
       }));
 
       get().handleTaskCompleted({
-        agent: updatedTask.agent,
         task: updatedTask,
         result: updatedTask.result,
       });
@@ -630,10 +630,10 @@ const createTeamStore = (
     },
 
     getTaskResults: () => {
-      const taskResults: Record<string, any> = {};
+      const taskResults: Record<string, unknown> = {};
       const tasks = get().tasks || [];
       const workflowLogs = get().workflowLogs || [];
-      const taskResultMap = new Map<string, any>();
+      const taskResultMap = new Map<string, unknown>();
 
       for (const log of workflowLogs) {
         if (

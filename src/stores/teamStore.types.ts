@@ -1,44 +1,40 @@
-import { Task, Agent } from '..';
-import { WORKFLOW_STATUS_enum, TASK_STATUS_enum } from '../utils/enums';
-import { TaskStoreState } from './taskStore.types';
+import { StoreApi, UseBoundStore } from 'zustand';
+import { Agent, Task } from '..';
+import { Env } from '../agents/baseAgent';
+import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from '../utils/enums';
+import { WorkflowLog, WorkflowStats } from '../utils/workflowLogs.types';
 import { AgentStoreState } from './agentStore.types';
+import { TaskResult, TaskStoreState } from './taskStore.types';
 import { WorkflowLoopState } from './workflowLoopStore.types';
-import { StoreApi } from 'zustand';
-import { UseBoundStore } from 'zustand';
-import {
-  WorkflowLog,
-  WorkflowResult,
-  WorkflowStats,
-} from '../utils/workflowLogs.types';
 
 export interface TeamStoreState {
   teamWorkflowStatus: WORKFLOW_STATUS_enum;
-  workflowResult: WorkflowResult | null;
+  workflowResult: TaskResult | null;
   name: string;
   agents: Agent[];
   tasks: Task[];
   workflowLogs: WorkflowLog[];
-  inputs: Record<string, any>;
+  inputs: Record<string, unknown>;
   workflowContext: string;
-  env: Record<string, any>;
+  env: Env;
   logLevel?: string;
   memory: boolean;
   insights: string;
   flowType?: string;
   workflowExecutionStrategy: string;
-  workflowController: Record<string, any>;
+  workflowController: Record<string, unknown>;
   maxConcurrency: number;
 }
 
 export interface TeamStoreActions {
-  setInputs: (inputs: Record<string, any>) => void;
+  setInputs: (inputs: Record<string, unknown>) => void;
   setName: (name: string) => void;
-  setEnv: (env: Record<string, any>) => void;
+  setEnv: (env: Env) => void;
   addAgents: (agents: Agent[]) => void;
   addTasks: (tasks: Task[]) => void;
   updateTaskStatus: (taskId: string, status: TASK_STATUS_enum) => void;
   setWorkflowExecutionStrategy: (strategy: string) => void;
-  startWorkflow: (inputs?: Record<string, any>) => Promise<void>;
+  startWorkflow: (inputs?: Record<string, unknown>) => Promise<void>;
   resetWorkflowStateAction: () => void;
   finishWorkflowAction: () => void;
   setTeamWorkflowStatus: (status: WORKFLOW_STATUS_enum) => void;
@@ -52,7 +48,7 @@ export interface TeamStoreActions {
   validateTask: (taskId: string) => Promise<void | null>;
   clearAll: () => void;
   getWorkflowStats: () => WorkflowStats;
-  getTaskResults: () => Record<string, any>;
+  getTaskResults: () => Record<string, unknown>;
 }
 
 export type CombinedStoresState = TaskStoreState &

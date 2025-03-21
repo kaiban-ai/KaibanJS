@@ -2,24 +2,42 @@
  * Gets the value at path of object. If the resolved value is undefined,
  * returns the defaultValue.
  */
-export function oget(
-  object: any,
-  path: string | string[],
-  defaultValue?: any
-): any {
-  if (!object) return defaultValue;
+// export function oget(
+//   object: unknown,
+//   path: string | string[],
+//   defaultValue?: unknown
+// ): unknown {
+//   if (!object) return defaultValue;
 
-  const keys = Array.isArray(path) ? path : path.split('.');
-  let result = object;
+//   const keys = Array.isArray(path) ? path : path.split('.');
+//   let result = object;
+
+//   for (const key of keys) {
+//     if (result === null || result === undefined) {
+//       return defaultValue;
+//     }
+//     result = result[key] as unknown;
+//   }
+
+//   return result === undefined ? defaultValue : result;
+// }
+
+export function oget<T>(
+  obj: Record<string, unknown>,
+  path: string,
+  defaultValue?: T
+): T | undefined {
+  const keys = path.split('.');
+  let result: any = obj;
 
   for (const key of keys) {
-    if (result === null || result === undefined) {
+    if (result && typeof result === 'object' && key in result) {
+      result = result[key];
+    } else {
       return defaultValue;
     }
-    result = result[key];
   }
-
-  return result === undefined ? defaultValue : result;
+  return result as T;
 }
 
 /**
@@ -27,73 +45,21 @@ export function oget(
  * Arrays are created for missing index properties while objects are created for all
  * other missing properties.
  */
-export function oset(object: any, path: string | string[], value: any): any {
-  if (!object) return object;
-
-  const keys = Array.isArray(path) ? path : path.split('.');
-  let current = object;
-
-  for (let i = 0; i < keys.length - 1; i++) {
-    const key = keys[i];
-
-    if (!(key in current)) {
-      // Create array if next key is numeric, otherwise create object
-      current[key] = /^\d+$/.test(keys[i + 1]) ? [] : {};
-    }
-
-    current = current[key];
-  }
-
-  const lastKey = keys[keys.length - 1];
-  current[lastKey] = value;
-
-  return object;
-}
-
-/**
- * Checks if path exists in object
- */
-export function has(object: any, path: string | string[]): boolean {
-  if (!object) return false;
-
-  const keys = Array.isArray(path) ? path : path.split('.');
-  let current = object;
-
-  for (const key of keys) {
-    if (!current || typeof current !== 'object') {
-      return false;
-    }
-    if (!(key in current)) {
-      return false;
-    }
-    current = current[key];
-  }
-
-  return true;
-}
-
-/**
- * Removes the property at path of object
- */
-export function unset(object: any, path: string | string[]): boolean {
-  if (!object) return false;
-
-  const keys = Array.isArray(path) ? path : path.split('.');
-  let current = object;
+export function oset(
+  obj: Record<string, unknown>,
+  path: string,
+  value: unknown
+): void {
+  const keys = path.split('.');
+  let current: Record<string, unknown> = obj;
 
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
-    if (!current[key]) {
-      return false;
+
+    if (!(key in current) || typeof current[key] !== 'object') {
+      current[key] = {};
     }
-    current = current[key];
+    current = current[key] as Record<string, unknown>;
   }
-
-  const lastKey = keys[keys.length - 1];
-  if (!(lastKey in current)) {
-    return false;
-  }
-
-  delete current[lastKey];
-  return true;
+  current[keys[keys.length - 1]] = value;
 }

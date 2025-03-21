@@ -1,16 +1,17 @@
-import { Task, Agent } from '..';
+import { Agent, Task } from '..';
 import { BaseAgent } from '../agents';
-import { BaseTool } from '../tools/baseTool';
+import { BaseTool, ToolResult } from '../tools/baseTool';
 import { AGENT_STATUS_enum, TASK_STATUS_enum } from '../utils/enums';
 import { LLMInvocationError, StopAbortError } from '../utils/errors';
-import { WorkflowLog } from '../utils/workflowLogs.types';
 import { ParsedLLMOutput, ThinkingResult } from '../utils/llm.types';
+import { WorkflowLog } from '../utils/workflowLogs.types';
+import { TaskResult } from './taskStore.types';
 
 export interface AgentStoreState {
   prepareNewLog: (params: {
     task?: Task;
     agent?: Agent;
-    metadata: Record<string, any>;
+    metadata: Record<string, unknown>;
     logType: 'WorkflowStatusUpdate' | 'AgentStatusUpdate' | 'TaskStatusUpdate';
     agentStatus?: AGENT_STATUS_enum;
     taskStatus?: TASK_STATUS_enum;
@@ -83,7 +84,7 @@ export interface AgentStoreState {
     agent: BaseAgent;
     task: Task;
     tool: BaseTool;
-    output: Record<string, unknown>;
+    output: ToolResult;
   }) => void;
   handleAgentToolError: (params: {
     agent: BaseAgent;
@@ -123,7 +124,7 @@ export interface AgentStoreState {
   handleAgentTaskCompleted: (params: {
     agent: BaseAgent;
     task: Task;
-    result: any;
+    result: TaskResult;
     iterations: number;
     maxAgentIterations: number;
   }) => void;
@@ -131,17 +132,16 @@ export interface AgentStoreState {
     agent: BaseAgent;
     task: Task;
     reason: string;
-    metadata?: any;
+    metadata: {
+      isAgentDecision: boolean;
+      blockedBy: string;
+    };
   }) => void;
   handleAgentTaskAborted: (params: {
     agent: Agent;
     task: Task;
-    error: StopAbortError;
+    error: StopAbortError | LLMInvocationError;
   }) => void;
-  handleAgentTaskPaused: (params: {
-    agent: Agent;
-    task: Task;
-    error?: Error;
-  }) => void;
+  handleAgentTaskPaused: (params: { agent: Agent; task: Task }) => void;
   handleAgentTaskResumed: (params: { agent: Agent; task: Task }) => void;
 }
