@@ -88,22 +88,32 @@ export class PrettyError extends Error {
     this.context = context;
     this.location = location;
     Error.captureStackTrace(this, this.constructor);
-    this.prettyMessage = this.createPrettyMessage();
+    this.prettyMessage = PrettyError.createPrettyMessage(
+      name,
+      message,
+      rootError,
+      recommendedAction
+    );
   }
 
   /**
    * Creates a standardized error message incorporating all relevant information
    * @returns Formatted and informative error message
    */
-  private createPrettyMessage(): string {
-    let msg = `${this.name}: ${this.message}\n`;
+  public static createPrettyMessage(
+    name: string,
+    message: string,
+    rootError: Error | null,
+    recommendedAction: string | null
+  ): string {
+    let msg = `${name}: ${message}\n`;
 
-    if (this.rootError?.message) {
-      msg += `Details: ${this.rootError.message}\n\n`;
+    if (rootError?.message) {
+      msg += `Details: ${rootError.message}\n\n`;
     }
 
-    if (this.recommendedAction) {
-      msg += `Recommended Action: ${this.recommendedAction}\n`;
+    if (recommendedAction) {
+      msg += `Recommended Action: ${recommendedAction}\n`;
     }
 
     return msg;

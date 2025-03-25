@@ -10,10 +10,11 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { AGENT_STATUS_enum } from '../utils/enums';
 import { Task } from '..';
-import { BaseTool } from '../tools/baseTool';
 import { TeamStore } from '../stores';
+import { BaseTool } from '../tools/baseTool';
+import { AGENT_STATUS_enum } from '../utils/enums';
+import { AgentLoopResult } from '../utils/llm.types';
 import {
   DefaultPrompts,
   REACT_CHAMPION_AGENT_DEFAULT_PROMPTS,
@@ -152,8 +153,10 @@ export abstract class BaseAgent {
 
     this.llmSystemMessage = null;
     this.forceFinalAnswer = forceFinalAnswer;
-    this.promptTemplates =
-      promptTemplates || REACT_CHAMPION_AGENT_DEFAULT_PROMPTS;
+
+    this.promptTemplates = { ...REACT_CHAMPION_AGENT_DEFAULT_PROMPTS };
+    // Allow custom prompts to override defaults
+    Object.assign(this.promptTemplates, promptTemplates);
   }
 
   initialize(store: TeamStore, env: Env): void {
@@ -238,9 +241,9 @@ export abstract class BaseAgent {
    */
   async workOnTask(
     _task: Task,
-    _inputs?: unknown,
-    _context?: unknown
-  ): Promise<unknown> {
+    _inputs?: Record<string, unknown>,
+    _context?: string
+  ): Promise<AgentLoopResult> {
     throw new Error('Not implemented');
   }
 
@@ -253,7 +256,7 @@ export abstract class BaseAgent {
     _task: Task,
     _feedbackList: Array<{ content: string }>,
     _context: string
-  ): Promise<unknown>;
+  ): Promise<AgentLoopResult>;
 
   /**
    * Resume work on a task
@@ -266,5 +269,18 @@ export abstract class BaseAgent {
    */
   reset(): void {
     this.setStatus(AGENT_STATUS_enum.INITIAL);
+  }
+
+  getCleanedAgent(): Partial<BaseAgent> {
+    const { id: _, env: __, ...rest } = this;
+    return {
+      ...rest,
+      id: '[REDACTED]',
+      env: '[REDACTED]',
+      llmConfig: {
+        ...this.llmConfig,
+        apiKey: '[REDACTED]',
+      },
+    };
   }
 }

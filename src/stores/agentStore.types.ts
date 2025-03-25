@@ -1,22 +1,11 @@
-import { Agent, Task } from '..';
+import { Task } from '..';
 import { BaseAgent } from '../agents';
 import { BaseTool, ToolResult } from '../tools/baseTool';
-import { AGENT_STATUS_enum, TASK_STATUS_enum } from '../utils/enums';
 import { LLMInvocationError, StopAbortError } from '../utils/errors';
 import { ParsedLLMOutput, ThinkingResult } from '../utils/llm.types';
-import { WorkflowLog } from '../utils/workflowLogs.types';
 import { TaskResult } from './taskStore.types';
 
 export interface AgentStoreState {
-  prepareNewLog: (params: {
-    task?: Task;
-    agent?: Agent;
-    metadata: Record<string, unknown>;
-    logType: 'WorkflowStatusUpdate' | 'AgentStatusUpdate' | 'TaskStatusUpdate';
-    agentStatus?: AGENT_STATUS_enum;
-    taskStatus?: TASK_STATUS_enum;
-    logDescription: string;
-  }) => WorkflowLog;
   handleAgentIterationStart: (params: {
     agent: BaseAgent;
     task: Task;
@@ -138,10 +127,10 @@ export interface AgentStoreState {
     };
   }) => void;
   handleAgentTaskAborted: (params: {
-    agent: Agent;
+    agent: BaseAgent;
     task: Task;
     error: StopAbortError | LLMInvocationError;
   }) => void;
-  handleAgentTaskPaused: (params: { agent: Agent; task: Task }) => void;
-  handleAgentTaskResumed: (params: { agent: Agent; task: Task }) => void;
+  handleAgentTaskPaused: (params: { task: Task }) => void;
+  handleAgentTaskResumed: (params: { task: Task }) => void;
 }

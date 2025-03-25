@@ -1,13 +1,12 @@
 import { WORKFLOW_ACTION_enum } from '../utils/enums';
+import { ToolCallingPromise } from '../utils/llm.types';
+import { ThinkingPromise } from '../utils/llm.types';
 
 export interface WorkflowLoopStoreVariables {
   activePromises: Map<string, Set<PromiseObject>>;
 }
 
-export interface PromiseObject {
-  promise: Promise<unknown>;
-  reject: (error: Error) => void;
-}
+export type PromiseObject = ThinkingPromise | ToolCallingPromise;
 
 export interface WorkflowLoopStoreVariables {
   activePromises: Map<string, Set<PromiseObject>>;

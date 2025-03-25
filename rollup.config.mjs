@@ -14,12 +14,19 @@ function generateConfig(format) {
   const isCJS = format === 'cjs';
   const ext = isESM ? 'mjs' : isCJS ? 'cjs' : 'js';
   const external = isESM
-    ? ['react', 'react-dom', 'uuid', 'pino', 'pino-pretty']
+    ? [
+        'react',
+        'react-dom',
+        'uuid',
+        'pino',
+        'pino-pretty',
+        'p-queue',
+        'p-timeout',
+      ]
     : ['uuid', 'pino', 'pino-pretty'];
 
   if (isDTS) {
     return {
-      // Generate .d.ts declaration files
       input: 'dist/types/index.d.ts',
       output: [
         {
@@ -40,14 +47,8 @@ function generateConfig(format) {
       sourcemap: isDevelopment,
       name: format === 'umd' ? 'KaibanJS' : undefined,
     },
-    external: external,
+    external,
     plugins: [
-      resolve({
-        browser: true,
-        preferBuiltins: false,
-        mainFields: ['browser', 'module', 'main'],
-        extensions: ['.ts', '.tsx'],
-      }),
       typescript({
         tsconfig: './tsconfig.json',
         sourceMap: isDevelopment,
@@ -55,7 +56,13 @@ function generateConfig(format) {
         declarationDir: 'dist/types',
         exclude: ['**/__tests__/**', '**/types/**'],
       }),
+      resolve({
+        browser: true,
+        preferBuiltins: false,
+        mainFields: ['browser', 'module', 'main'],
+      }),
       commonjs(),
+      // nodePolyfills(), // Correctly named polyfill plugin for Node.js
       ...(isTest
         ? [
             replace({
@@ -66,12 +73,21 @@ function generateConfig(format) {
         : []),
       ...(!isDevelopment ? [terser()] : []),
     ],
+    onwarn(warning, warn) {
+      if (warning.code === 'THIS_IS_UNDEFINED') return;
+      warn(warning);
+    },
   };
 }
 
-export default [
-  generateConfig('cjs'),
-  generateConfig('es'),
-  generateConfig('umd'),
-  generateConfig('dts'),
+const configurations = [
+  generateConfig('cjs'), // Node.js CommonJS
 ];
+
+if (!isTest) {
+  configurations.push(generateConfig('umd'));
+  configurations.push(generateConfig('dts'));
+  configurations.push(generateConfig('es'));
+}
+
+export default configurations;

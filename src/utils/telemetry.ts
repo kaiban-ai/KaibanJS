@@ -97,7 +97,8 @@ export function initializeTelemetry(
     tdInstance = new TelemetryDeck({
       appID,
       clientUser,
-      subtleCrypto: getSubtleCrypto,
+      // @ts-expect-error - getSubtleCrypto is not typed
+      subtleCrypto: getSubtleCrypto(),
     });
   }
   return tdInstance;

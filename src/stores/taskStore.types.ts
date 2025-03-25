@@ -1,4 +1,5 @@
 import { Task } from '..';
+import { BaseAgent } from '../agents/baseAgent';
 import { LLMInvocationError, TaskBlockError } from '../utils/errors';
 import { LLMUsageStats } from '../utils/llmCostCalculator';
 
@@ -21,10 +22,15 @@ export type TaskResult = string | Record<string, unknown>;
 type TaskStoreActions = {
   getTaskStats: (task: Task) => TaskStats;
   handleTaskCompleted: (params: {
+    agent: BaseAgent;
     task: Task;
     result: TaskResult | null;
   }) => void;
-  handleTaskError: (params: { task: Task; error: Error }) => void;
+  handleTaskError: (params: {
+    agent: BaseAgent;
+    task: Task;
+    error: Error;
+  }) => void;
   handleTaskBlocked: (params: { task: Task; error: TaskBlockError }) => void;
   handleTaskAborted: (params: {
     task: Task;

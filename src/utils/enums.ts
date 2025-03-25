@@ -90,6 +90,8 @@ export enum TASK_STATUS_enum {
   AWAITING_VALIDATION = 'AWAITING_VALIDATION',
   /** Task has been validated */
   VALIDATED = 'VALIDATED',
+  /** Task has been aborted */
+  ABORTED = 'ABORTED',
 }
 
 /**

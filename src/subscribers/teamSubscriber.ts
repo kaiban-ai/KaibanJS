@@ -88,7 +88,9 @@ const subscribeWorkflowStatusUpdates = (useStore: TeamStore): void => {
               break;
             default:
               console.warn(
-                `Encountered an unexpected workflow status: ${newLog.workflowStatus}`
+                `Encountered an unexpected workflow status: ${
+                  (newLog as WorkflowLog)?.workflowStatus
+                }`
               );
               break;
           }

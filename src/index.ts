@@ -28,7 +28,7 @@ import {
 import { subscribeDeterministicExecution } from './subscribers/deterministicExecutionSubscriber';
 import { CombinedStoresState, TeamStore } from './stores/teamStore.types';
 import { createTeamStore } from './stores';
-import { z, ZodSchema } from 'zod';
+import { ZodSchema } from 'zod';
 import { oget } from './utils/objectUtils';
 import {
   WorkflowBlockedLog,
@@ -40,6 +40,7 @@ import { BaseTool } from './tools/baseTool';
 import { LLMConfig } from './utils/agents';
 import { DefaultPrompts } from './utils/prompts';
 import { TaskFeedback, TaskResult, TaskStats } from './stores/taskStore.types';
+import { AgentLoopResult } from './utils/llm.types';
 
 /**
  * Interface for Agent configuration
@@ -69,7 +70,7 @@ interface TaskConfig {
   dependencies?: string[];
   isDeliverable?: boolean;
   externalValidationRequired?: boolean;
-  outputSchema?: ZodSchema;
+  outputSchema?: ZodSchema | null;
   allowParallelExecution?: boolean;
   referenceId?: string;
 }
@@ -110,7 +111,7 @@ export class Agent {
     task: Task,
     inputs: Record<string, unknown>,
     context: string
-  ): Promise<unknown> {
+  ): Promise<AgentLoopResult> {
     return this.agentInstance.workOnTask(task, inputs, context);
   }
 
@@ -122,7 +123,7 @@ export class Agent {
     task: Task,
     feedbackList: Array<{ content: string }>,
     context: string
-  ): Promise<unknown> {
+  ): Promise<AgentLoopResult> {
     return this.agentInstance.workOnFeedback(task, feedbackList, context);
   }
 
@@ -206,7 +207,7 @@ export class Task {
   interpolatedTaskDescription: string | null;
   feedbackHistory: TaskFeedback[];
   externalValidationRequired: boolean;
-  outputSchema: ZodSchema;
+  outputSchema: ZodSchema | null;
   expectedOutput: string;
   allowParallelExecution: boolean;
   referenceId?: string;
@@ -222,7 +223,7 @@ export class Task {
     dependencies = [],
     isDeliverable = false,
     externalValidationRequired = false,
-    outputSchema = z.any(),
+    outputSchema = null,
     allowParallelExecution = false,
     referenceId = undefined,
   }: TaskConfig) {

@@ -29,6 +29,7 @@ import { ChatOpenAI } from '@langchain/openai';
 import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
 import { Task } from '..';
 import { TeamStore } from '../stores';
+import { TaskResult } from '../stores/taskStore.types';
 import { BaseTool, ToolResult } from '../tools/baseTool';
 import { BlockTaskTool } from '../tools/blockTaskTool';
 import { getApiKey } from '../utils/agents';
@@ -38,33 +39,25 @@ import {
   WORKFLOW_STATUS_enum,
 } from '../utils/enums';
 import { AbortError, LLMInvocationError } from '../utils/errors';
-import { LLMOutput, ParsedLLMOutput, ThinkingResult } from '../utils/llm.types';
+import {
+  AgentLoopResult,
+  LLMOutput,
+  ParsedLLMOutput,
+  ThinkingPromise,
+  ThinkingResult,
+  ToolCallingPromise,
+} from '../utils/llm.types';
 import { logger } from '../utils/logger';
 import { getParsedJSON } from '../utils/parser';
 import { interpolateTaskDescriptionV2 } from '../utils/tasks';
-import { BaseAgent, BaseAgentParams, Env } from './baseAgent';
-import { TaskResult } from '../stores/taskStore.types';
-
-type AgentLoopResult = {
-  result?: unknown;
-  error?: string;
-  metadata: {
-    iterations: number;
-    maxAgentIterations: number;
-  };
-};
-
-type PromiseObject = {
-  promise: Promise<unknown>;
-  reject: (error: Error) => void;
-};
+import { BaseAgent, BaseAgentParams, Env, LLMConfig } from './baseAgent';
 
 /**
  * ReactChampionAgent class that extends BaseAgent to implement enhanced ReAct pattern
  * @class
  */
 export class ReactChampionAgent extends BaseAgent {
-  protected executableAgent: RunnableWithMessageHistory<unknown, unknown>;
+  protected executableAgent?: RunnableWithMessageHistory<unknown, unknown>;
   protected llmInstance?:
     | ChatOpenAI
     | ChatAnthropic
@@ -87,15 +80,8 @@ export class ReactChampionAgent extends BaseAgent {
       this.tools = [...this.tools, new BlockTaskTool(this)];
     }
 
-    this.forceFinalAnswer = config.forceFinalAnswer || false;
     this.interactionsHistory = new ChatMessageHistory();
     this.lastFeedbackMessage = null;
-    this.executableAgent = new RunnableWithMessageHistory<unknown, unknown>({
-      runnable: new ChatOpenAI(this.llmConfig),
-      getMessageHistory: () => this.interactionsHistory,
-      inputMessagesKey: 'feedbackMessage',
-      historyMessagesKey: 'chat_history',
-    });
   }
 
   /**
@@ -121,26 +107,24 @@ export class ReactChampionAgent extends BaseAgent {
       // Define a mapping of providers to their corresponding chat classes
       const providerFactories: Record<
         string,
-        () =>
-          | ChatOpenAI
-          | ChatAnthropic
-          | ChatGoogleGenerativeAI
-          | ChatMistralAI
+        (
+          llmConfig: LLMConfig
+        ) => ChatOpenAI | ChatAnthropic | ChatGoogleGenerativeAI | ChatMistralAI
       > = {
-        anthropic: () => new ChatAnthropic(this.llmConfig),
-        google: () => new ChatGoogleGenerativeAI(this.llmConfig),
-        mistral: () => new ChatMistralAI(this.llmConfig),
-        openai: () => new ChatOpenAI(this.llmConfig),
-        default: () => new ChatOpenAI(this.llmConfig),
+        anthropic: (llmConfig: LLMConfig) => new ChatAnthropic(llmConfig),
+        google: (llmConfig: LLMConfig) => new ChatGoogleGenerativeAI(llmConfig),
+        mistral: (llmConfig: LLMConfig) => new ChatMistralAI(llmConfig),
+        openai: (llmConfig: LLMConfig) => new ChatOpenAI(llmConfig),
+        default: (llmConfig: LLMConfig) => new ChatOpenAI(llmConfig),
       };
 
       // Choose the chat class based on the provider
       const provider = this.llmConfig.provider;
       const providerFactory =
         providerFactories[provider] || providerFactories.default;
-      this.llmInstance = providerFactory();
+      this.llmInstance = providerFactory(this.llmConfig);
     } else {
-      const extractedLlmConfig = {
+      const extractedLlmConfig: LLMConfig = {
         ...this.llmInstance.lc_kwargs,
         provider:
           this.llmInstance.lc_namespace[
@@ -153,6 +137,7 @@ export class ReactChampionAgent extends BaseAgent {
     }
     this.interactionsHistory = new ChatMessageHistory();
     this.lastFeedbackMessage = null;
+    this.executableAgent = undefined;
   }
 
   /**
@@ -184,24 +169,22 @@ export class ReactChampionAgent extends BaseAgent {
       // Define a mapping of providers to their corresponding chat classes
       const providerFactories: Record<
         string,
-        () =>
-          | ChatOpenAI
-          | ChatAnthropic
-          | ChatGoogleGenerativeAI
-          | ChatMistralAI
+        (
+          llmConfig: LLMConfig
+        ) => ChatOpenAI | ChatAnthropic | ChatGoogleGenerativeAI | ChatMistralAI
       > = {
-        anthropic: () => new ChatAnthropic(this.llmConfig),
-        google: () => new ChatGoogleGenerativeAI(this.llmConfig),
-        mistral: () => new ChatMistralAI(this.llmConfig),
-        openai: () => new ChatOpenAI(this.llmConfig),
-        default: () => new ChatOpenAI(this.llmConfig),
+        anthropic: (llmConfig: LLMConfig) => new ChatAnthropic(llmConfig),
+        google: (llmConfig: LLMConfig) => new ChatGoogleGenerativeAI(llmConfig),
+        mistral: (llmConfig: LLMConfig) => new ChatMistralAI(llmConfig),
+        openai: (llmConfig: LLMConfig) => new ChatOpenAI(llmConfig),
+        default: (llmConfig: LLMConfig) => new ChatOpenAI(llmConfig),
       };
 
       // Choose the chat class based on the provider
       const provider = this.llmConfig.provider;
       const providerFactory =
         providerFactories[provider] || providerFactories.default;
-      this.llmInstance = providerFactory();
+      this.llmInstance = providerFactory(this.llmConfig);
     }
   }
 
@@ -215,7 +198,7 @@ export class ReactChampionAgent extends BaseAgent {
     task: Task,
     inputs: Record<string, unknown>,
     context: string
-  ) {
+  ): Promise<AgentLoopResult> {
     const config = this.prepareAgentForTask(task, inputs, context);
     this.executableAgent = config.executableAgent;
     return await this.agenticLoop(
@@ -231,7 +214,10 @@ export class ReactChampionAgent extends BaseAgent {
    * @param task - The task to process feedback for
    * @param feedbackList - List of feedback items
    */
-  async workOnFeedback(task: Task, feedbackList: Array<{ content: string }>) {
+  async workOnFeedback(
+    task: Task,
+    feedbackList: Array<{ content: string }>
+  ): Promise<AgentLoopResult> {
     const feedbackString = feedbackList.map((f) => f.content).join(', ');
     const feedbackMessage = this.promptTemplates.WORK_ON_FEEDBACK_FEEDBACK({
       agent: this,
@@ -312,9 +298,13 @@ export class ReactChampionAgent extends BaseAgent {
   async agenticLoop(
     agent: ReactChampionAgent,
     task: Task,
-    ExecutableAgent: RunnableWithMessageHistory<unknown, unknown>,
+    ExecutableAgent: RunnableWithMessageHistory<unknown, unknown> | undefined,
     initialMessage: string | null
   ): Promise<AgentLoopResult> {
+    if (!ExecutableAgent) {
+      throw new Error('Executable agent is not initialized');
+    }
+
     let feedbackMessage = initialMessage;
     let parsedResultWithFinalAnswer = null;
     let iterations = 0;
@@ -561,114 +551,6 @@ export class ReactChampionAgent extends BaseAgent {
   }
 
   /**
-   * Executes the thinking process for the agent
-   */
-  async executeThinking(
-    agent: ReactChampionAgent,
-    task: Task,
-    ExecutableAgent: RunnableWithMessageHistory<unknown, unknown>,
-    feedbackMessage: string | null
-  ): Promise<ThinkingResult> {
-    const promiseObj: PromiseObject = {} as PromiseObject;
-    let rejectFn: (error: Error) => void;
-    const abortController = new AbortController();
-
-    const thinkingPromise = new Promise<ThinkingResult>((resolve, reject) => {
-      rejectFn = reject;
-
-      ExecutableAgent.invoke(
-        { feedbackMessage },
-        {
-          configurable: { sessionId: task.id },
-          callbacks: [
-            {
-              handleChatModelStart: async (_, messages) => {
-                await agent.handleThinkingStart({ agent, task, messages });
-              },
-              handleLLMEnd: async (output: LLMOutput) => {
-                const result = await agent.handleThinkingEnd({
-                  agent,
-                  task,
-                  output,
-                });
-                resolve(result);
-              },
-            },
-          ],
-          // @ts-expect-error: signal is not properly included in the type
-          signal: abortController.signal,
-        }
-      ).catch((error: Error) => {
-        if (error.name === 'AbortError') {
-          reject(new AbortError('Task was cancelled'));
-        } else {
-          logger.error(
-            `LLM_INVOCATION_ERROR: Error during LLM API call for Agent: ${agent.name}, Task: ${task.id}. Details:`,
-            error
-          );
-          reject(
-            new LLMInvocationError(
-              `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
-              error
-            )
-          );
-        }
-      });
-    });
-
-    Object.assign(promiseObj, {
-      promise: thinkingPromise,
-      reject: (e: Error) => {
-        abortController.abort();
-        rejectFn(e);
-      },
-    });
-
-    this.store?.getState()?.trackPromise(this.id, promiseObj);
-
-    try {
-      return await thinkingPromise;
-    } catch (error) {
-      if (error instanceof AbortError) {
-        throw error;
-      }
-      throw new LLMInvocationError(
-        `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
-        error as Error
-      );
-    } finally {
-      this.store?.getState()?.removePromise(this.id, promiseObj);
-    }
-  }
-
-  /**
-   * Determines the type of action based on parsed LLM output
-   */
-  determineActionType(parsedResult: ParsedLLMOutput): string {
-    if (parsedResult === null) {
-      return AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT;
-    } else if (
-      parsedResult.finalAnswer &&
-      parsedResult.outputSchema &&
-      !parsedResult.isValidOutput
-    ) {
-      return AGENT_STATUS_enum.OUTPUT_SCHEMA_VALIDATION_ERROR;
-    } else if (parsedResult.finalAnswer) {
-      return AGENT_STATUS_enum.FINAL_ANSWER;
-    } else if (parsedResult.action === 'self_question') {
-      return parsedResult.thought
-        ? AGENT_STATUS_enum.THOUGHT
-        : AGENT_STATUS_enum.SELF_QUESTION;
-    } else if (parsedResult.action) {
-      return AGENT_STATUS_enum.EXECUTING_ACTION;
-    } else if (parsedResult.observation) {
-      return AGENT_STATUS_enum.OBSERVATION;
-    } else {
-      return AGENT_STATUS_enum.WEIRD_LLM_OUTPUT;
-    }
-  }
-
-  /**
    * Builds the system message for the agent
    */
   buildSystemMessage(
@@ -703,6 +585,33 @@ export class ReactChampionAgent extends BaseAgent {
       },
       context,
     });
+  }
+
+  /**
+   * Determines the type of action based on parsed LLM output
+   */
+  determineActionType(parsedResult: ParsedLLMOutput): string {
+    if (parsedResult === null) {
+      return AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT;
+    } else if (
+      parsedResult.finalAnswer &&
+      parsedResult.outputSchema &&
+      !parsedResult.isValidOutput
+    ) {
+      return AGENT_STATUS_enum.OUTPUT_SCHEMA_VALIDATION_ERROR;
+    } else if (parsedResult.finalAnswer) {
+      return AGENT_STATUS_enum.FINAL_ANSWER;
+    } else if (parsedResult.action === 'self_question') {
+      return parsedResult.thought
+        ? AGENT_STATUS_enum.THOUGHT
+        : AGENT_STATUS_enum.SELF_QUESTION;
+    } else if (parsedResult.action) {
+      return AGENT_STATUS_enum.EXECUTING_ACTION;
+    } else if (parsedResult.observation) {
+      return AGENT_STATUS_enum.OBSERVATION;
+    } else {
+      return AGENT_STATUS_enum.WEIRD_LLM_OUTPUT;
+    }
   }
 
   // Handler methods
@@ -826,6 +735,87 @@ export class ReactChampionAgent extends BaseAgent {
   }): void {
     const { agent, task, error } = params;
     agent.store?.getState()?.handleAgentThinkingError({ agent, task, error });
+  }
+
+  /**
+   * Executes the thinking process for the agent
+   */
+  async executeThinking(
+    agent: ReactChampionAgent,
+    task: Task,
+    ExecutableAgent: RunnableWithMessageHistory<unknown, unknown>,
+    feedbackMessage: string | null
+  ): Promise<ThinkingResult> {
+    const promiseObj: ThinkingPromise = {} as ThinkingPromise;
+    let rejectFn: (error: Error) => void;
+    const abortController = new AbortController();
+
+    const thinkingPromise = new Promise<ThinkingResult>((resolve, reject) => {
+      rejectFn = reject;
+
+      ExecutableAgent.invoke(
+        { feedbackMessage },
+        {
+          configurable: { sessionId: task.id },
+          callbacks: [
+            {
+              handleChatModelStart: async (_, messages) => {
+                await agent.handleThinkingStart({ agent, task, messages });
+              },
+              handleLLMEnd: async (output: LLMOutput) => {
+                const result = await agent.handleThinkingEnd({
+                  agent,
+                  task,
+                  output,
+                });
+                resolve(result);
+              },
+            },
+          ],
+          // @ts-expect-error: signal is not properly included in the type
+          signal: abortController.signal,
+        }
+      ).catch((error: Error) => {
+        if (error.name === 'AbortError') {
+          reject(new AbortError('Task was cancelled'));
+        } else {
+          logger.error(
+            `LLM_INVOCATION_ERROR: Error during LLM API call for Agent: ${agent.name}, Task: ${task.id}. Details:`,
+            error
+          );
+          reject(
+            new LLMInvocationError(
+              `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
+              error
+            )
+          );
+        }
+      });
+    });
+
+    Object.assign(promiseObj, {
+      promise: thinkingPromise,
+      reject: (e: Error) => {
+        abortController.abort();
+        rejectFn(e);
+      },
+    });
+
+    this.store?.getState()?.trackPromise(this.id, promiseObj);
+
+    try {
+      return await thinkingPromise;
+    } catch (error) {
+      if (error instanceof AbortError) {
+        throw error;
+      }
+      throw new LLMInvocationError(
+        `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
+        error as Error
+      );
+    } finally {
+      this.store?.getState()?.removePromise(this.id, promiseObj);
+    }
   }
 
   handleIssuesParsingLLMOutput(params: {
@@ -965,7 +955,7 @@ export class ReactChampionAgent extends BaseAgent {
     const toolInput = parsedLLMOutput.actionInput ?? {};
     agent.handleUsingToolStart({ agent, task, tool, input: toolInput });
 
-    const promiseObj: PromiseObject = {} as PromiseObject;
+    const promiseObj: ToolCallingPromise = {} as ToolCallingPromise;
     let rejectFn: (error: Error) => void = () => {};
 
     const toolPromise = new Promise((resolve, reject) => {
@@ -1130,7 +1120,7 @@ export class ReactChampionAgent extends BaseAgent {
   }): void {
     const { agent, task, error } = params;
     agent.store?.getState()?.handleAgentTaskAborted({
-      agent: task.agent,
+      agent,
       task,
       error,
     });
@@ -1176,5 +1166,25 @@ export class ReactChampionAgent extends BaseAgent {
       iterations,
       maxAgentIterations,
     });
+  }
+
+  getCleanedAgent(): Partial<BaseAgent> {
+    const { executableAgent: _, ...rest } = this;
+
+    return {
+      ...rest,
+      id: '[REDACTED]',
+      env: '[REDACTED]',
+      llmConfig: {
+        ...this.llmConfig,
+        apiKey: '[REDACTED]',
+      },
+    };
+  }
+
+  reset() {
+    super.reset();
+    this.lastFeedbackMessage = null;
+    this.interactionsHistory = new ChatMessageHistory();
   }
 }

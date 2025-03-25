@@ -1,14 +1,14 @@
-import PQueue from 'p-queue';
 import { DepGraph } from 'dependency-graph';
-import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from '../utils/enums';
+import PQueue from 'p-queue';
+import { Task } from '..';
 import { CombinedStoresState, TeamStore } from '../stores';
+import { TASK_STATUS_enum, WORKFLOW_STATUS_enum } from '../utils/enums';
 import {
   TaskCompletionLog,
   TaskStatusLog,
   WorkflowLog,
   WorkflowStatusLog,
 } from '../utils/workflowLogs.types';
-import { Task } from '..';
 
 export type DependencyResult = {
   taskId: string;
@@ -148,13 +148,18 @@ export const subscribeDeterministicExecution = (teamStore: TeamStore): void => {
             ? _resumeTask(teamStoreState, task)
             : _executeTask(teamStoreState, task)
           ).catch((error) => {
-            teamStoreState.handleTaskError({ task, error });
+            teamStoreState.handleTaskError({
+              agent: task.agent.agentInstance,
+              task,
+              error,
+            });
             teamStoreState.handleWorkflowError(error);
           }),
         { priority: highPriority ? 1 : 0 }
       )
-      .catch((error) => {
-        throw new Error('Error queuing task: ' + error.message);
+      .catch((error: unknown) => {
+        console.error('Error queuing task: ' + error);
+        // throw new Error('Error queuing task: ' + error.message);
       });
   };
 

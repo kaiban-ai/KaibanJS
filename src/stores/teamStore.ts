@@ -11,9 +11,8 @@
  */
 import { create, StateCreator } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
-import { useAgentStore } from './agentStore';
-import { useTaskStore } from './taskStore';
-import { useWorkflowLoopStore } from './workflowLoopStore';
+import { Agent, Task } from '..';
+import { Env } from '../agents/baseAgent';
 import {
   AGENT_STATUS_enum,
   FEEDBACK_STATUS_enum,
@@ -31,24 +30,39 @@ import {
 } from '../utils/tasks';
 import { initializeTelemetry } from '../utils/telemetry';
 import {
+  AgentActionLog,
+  AgentStatusLog,
+  TaskCompletionLog,
+  TaskFeedbackLog,
+  TaskResumedLog,
+  TaskStartedLog,
+  TaskStatusLog,
+  TaskValidatedLog,
+  WorkflowBlockedLog,
+  WorkflowErrorLog,
+  WorkflowFinishedLog,
+  WorkflowInitialLog,
+  WorkflowLog,
+  WorkflowLogMetadata,
+  WorkflowRunningLog,
+  WorkflowStoppedLog,
+} from '../utils/workflowLogs.types';
+import { useAgentStore } from './agentStore';
+import { useTaskStore } from './taskStore';
+import { TaskResult } from './taskStore.types';
+import {
+  CleanedAgent,
+  CleanedFeedback,
+  CleanedMetadata,
+  CleanedTask,
+  CleanedTeamState,
+  CleanedWorkflowLog,
   CombinedStoresState,
+  NewLogParams,
   TeamStore,
   TeamStoreState,
 } from './teamStore.types';
-import { Task, Agent } from '..';
-import {
-  WorkflowLog,
-  WorkflowFinishedLog,
-  WorkflowErrorLog,
-  WorkflowBlockedLog,
-  WorkflowStoppedLog,
-  WorkflowInitialLog,
-  TaskStatusLog,
-  TaskCompletionLog,
-  AgentStatusLog,
-  AgentActionLog,
-} from '../utils/workflowLogs.types';
-import { Env } from '../agents/baseAgent';
+import { useWorkflowLoopStore } from './workflowLoopStore';
 
 // Initialize telemetry with default values
 const td = initializeTelemetry();
@@ -144,16 +158,15 @@ const createTeamStore = (
         get().setInputs({ ...get().inputs, ...inputs });
       }
 
-      const initialLog: WorkflowInitialLog = {
-        timestamp: Date.now(),
-        logDescription: `Workflow initiated for team *${get().name}*.`,
-        logType: 'WorkflowStatusUpdate',
-        workflowStatus: WORKFLOW_STATUS_enum.RUNNING,
+      const initialLog = get().prepareNewLog<WorkflowInitialLog>({
         metadata: {
           message: 'Workflow has been initialized with input settings.',
           inputs: inputs || {},
         },
-      };
+        logDescription: `Workflow initiated for team *${get().name}*.`,
+        logType: 'WorkflowStatusUpdate',
+        workflowStatus: WORKFLOW_STATUS_enum.RUNNING,
+      });
 
       set((state) => ({
         ...state,
@@ -203,18 +216,17 @@ const createTeamStore = (
         deliverableTask ? deliverableTask.result : lastTaskResult
       );
 
-      const newLog: WorkflowFinishedLog = {
-        timestamp: Date.now(),
+      const newLog = get().prepareNewLog<WorkflowFinishedLog>({
+        metadata: {
+          result: deliverableTask ? deliverableTask.result : lastTaskResult,
+          ...stats,
+        },
         logDescription: `Workflow finished with result: ${
           deliverableTask ? deliverableTask.result : lastTaskResult
         }`,
         logType: 'WorkflowStatusUpdate',
         workflowStatus: WORKFLOW_STATUS_enum.FINISHED,
-        metadata: {
-          result: deliverableTask ? deliverableTask.result : lastTaskResult,
-          ...stats,
-        },
-      };
+      });
 
       set((state) => ({
         ...state,
@@ -232,18 +244,17 @@ const createTeamStore = (
     handleWorkflowError: (error: Error) => {
       logger.error(`Workflow Error:`, error.message, error.stack);
 
-      const newLog: WorkflowErrorLog = {
-        timestamp: Date.now(),
+      const stats = get().getWorkflowStats();
+
+      const newLog = get().prepareNewLog<WorkflowErrorLog>({
+        metadata: {
+          error,
+          ...stats,
+        },
         logDescription: `Workflow error encountered: ${error.message}`,
         logType: 'WorkflowStatusUpdate',
         workflowStatus: WORKFLOW_STATUS_enum.ERRORED,
-        metadata: {
-          error,
-          teamName: get().name,
-          taskCount: get().tasks.length,
-          agentCount: get().agents.length,
-        },
-      };
+      });
 
       set((state) => ({
         ...state,
@@ -255,18 +266,17 @@ const createTeamStore = (
     handleWorkflowBlocked: (error: Error) => {
       logger.warn(`WORKFLOW BLOCKED:`, error.message);
 
-      const newLog: WorkflowBlockedLog = {
-        timestamp: Date.now(),
-        logDescription: `Workflow blocked: ${error.message}`,
-        logType: 'WorkflowStatusUpdate',
-        workflowStatus: WORKFLOW_STATUS_enum.BLOCKED,
+      const stats = get().getWorkflowStats();
+
+      const newLog = get().prepareNewLog<WorkflowBlockedLog>({
         metadata: {
           error,
-          teamName: get().name,
-          taskCount: get().tasks.length,
-          agentCount: get().agents.length,
+          ...stats,
         },
-      };
+        workflowStatus: WORKFLOW_STATUS_enum.BLOCKED,
+        logDescription: `Workflow blocked: ${error.message}`,
+        logType: 'WorkflowStatusUpdate',
+      });
 
       set((state) => ({
         ...state,
@@ -278,17 +288,16 @@ const createTeamStore = (
     handleWorkflowAborted: (error: Error) => {
       logger.warn(`WORKFLOW ABORTED:`, error.message);
 
-      const newLog: WorkflowStoppedLog = {
-        timestamp: Date.now(),
-        logDescription: `Workflow aborted: ${error.message}`,
-        logType: 'WorkflowStatusUpdate',
-        workflowStatus: WORKFLOW_STATUS_enum.STOPPED,
+      const newLog = get().prepareNewLog<WorkflowStoppedLog>({
         metadata: {
           message: error.message,
           previousStatus: get().teamWorkflowStatus,
           tasksReset: get().tasks.length,
         },
-      };
+        logDescription: `Workflow aborted: ${error.message}`,
+        logType: 'WorkflowStatusUpdate',
+        workflowStatus: WORKFLOW_STATUS_enum.STOPPED,
+      });
 
       set((state) => ({
         ...state,
@@ -303,13 +312,15 @@ const createTeamStore = (
         task.status = TASK_STATUS_enum.DOING;
 
         set((state) => {
-          const newLog = get().prepareNewLog({
-            agent,
+          const newLog = get().prepareNewLog<TaskStartedLog>({
             task,
+            agent,
             logDescription: `Task: ${getTaskTitleForLogs(task)} started.`,
-            metadata: {},
             logType: 'TaskStatusUpdate',
+            taskStatus: TASK_STATUS_enum.DOING,
+            metadata: {},
           });
+
           return {
             ...state,
             workflowLogs: [...state.workflowLogs, newLog],
@@ -347,13 +358,14 @@ const createTeamStore = (
       task.status = TASK_STATUS_enum.DOING;
 
       set((state) => {
-        const newLog = get().prepareNewLog({
-          agent,
+        const newLog = get().prepareNewLog<TaskResumedLog>({
           task,
+          agent,
           logDescription: `Task "${getTaskTitleForLogs(task)}" running again.`,
-          metadata: {},
           logType: 'TaskStatusUpdate',
+          taskStatus: TASK_STATUS_enum.DOING,
         });
+
         return {
           ...state,
           workflowLogs: [...state.workflowLogs, newLog],
@@ -372,7 +384,7 @@ const createTeamStore = (
         {
           taskTitle: string;
           taskDescription: string;
-          result: unknown;
+          result: TaskResult;
           index: number;
         }
       >();
@@ -437,17 +449,14 @@ const createTeamStore = (
         timestamp: Date.now(),
       };
 
-      const newWorkflowLog: WorkflowLog = {
-        task,
-        agent: task.agent,
-        timestamp: Date.now(),
-        logDescription: `Workflow running again due to feedback on task.`,
-        workflowStatus: WORKFLOW_STATUS_enum.RUNNING,
+      const newWorkflowLog = get().prepareNewLog<WorkflowRunningLog>({
         metadata: {
           feedback: newFeedback,
         },
+        logDescription: `Workflow running again due to feedback on task.`,
         logType: 'WorkflowStatusUpdate',
-      };
+        workflowStatus: WORKFLOW_STATUS_enum.RUNNING,
+      });
 
       const updatedTask = {
         ...task,
@@ -455,16 +464,16 @@ const createTeamStore = (
         status: TASK_STATUS_enum.REVISE,
       };
 
-      const newTaskLog = get().prepareNewLog({
-        agent: updatedTask.agent,
+      const newTaskLog = get().prepareNewLog<TaskFeedbackLog>({
         task: updatedTask,
-        logDescription: `Task with feedback: ${getTaskTitleForLogs(
-          updatedTask
-        )}.`,
         metadata: {
           feedback: newFeedback,
         },
+        logDescription: `Task with feedback: ${getTaskTitleForLogs(
+          updatedTask
+        )}.`,
         logType: 'TaskStatusUpdate',
+        taskStatus: TASK_STATUS_enum.REVISE,
       });
 
       set((state) => ({
@@ -492,17 +501,13 @@ const createTeamStore = (
         status: TASK_STATUS_enum.VALIDATED,
       };
 
-      const newWorkflowLog: WorkflowLog = {
-        task: updatedTask,
-        agent: updatedTask.agent,
-        timestamp: Date.now(),
-        logDescription: `Workflow running cause a task was validated.`,
-        workflowStatus: WORKFLOW_STATUS_enum.RUNNING,
+      const newWorkflowLog = get().prepareNewLog<WorkflowRunningLog>({
         metadata: {},
+        logDescription: `Workflow running cause a task was validated.`,
         logType: 'WorkflowStatusUpdate',
-      };
+      });
 
-      const newTaskLog = get().prepareNewLog({
+      const newTaskLog = get().prepareNewLog<TaskValidatedLog>({
         task: updatedTask,
         metadata: {},
         logDescription: `Task validated: ${getTaskTitleForLogs(updatedTask)}.`,
@@ -517,6 +522,7 @@ const createTeamStore = (
       }));
 
       get().handleTaskCompleted({
+        agent: updatedTask.agent.agentInstance,
         task: updatedTask,
         result: updatedTask.result,
       });
@@ -629,11 +635,110 @@ const createTeamStore = (
       };
     },
 
+    getCleanedState(): CleanedTeamState {
+      // Function to clean individual agent data
+      const cleanAgent = (agent: Agent): CleanedAgent => {
+        const { agentInstance } = agent;
+        const cleanedAgentInstance = agentInstance.getCleanedAgent();
+
+        return {
+          ...agent,
+          id: '[REDACTED]', // Clean sensitive ID at the root level
+          env: '[REDACTED]', // Clean sensitive Env in agent
+          llmConfig: {
+            ...agentInstance.llmConfig,
+            apiKey: '[REDACTED]',
+          }, // Provide an empty object if llmConfig is undefined at the root level
+          agentInstance: cleanedAgentInstance,
+        };
+      };
+
+      // Function to clean individual task data
+      const cleanTask = (task: Task): CleanedTask => {
+        const { allowParallelExecution = false, referenceId, ...rest } = task;
+        const cleanedTask: CleanedTask = {
+          ...rest,
+          id: '[REDACTED]', // Clean sensitive ID
+          agent: task.agent ? cleanAgent(task.agent) : null, // Clean the nested agent if exists
+          duration: '[REDACTED]',
+          endTime: '[REDACTED]',
+          startTime: '[REDACTED]',
+          feedbackHistory: task.feedbackHistory
+            ? task.feedbackHistory.map(
+                (feedback): CleanedFeedback => ({
+                  ...feedback,
+                  timestamp: '[REDACTED]', // Redact the timestamp
+                })
+              )
+            : [],
+        };
+
+        if (allowParallelExecution) {
+          cleanedTask.allowParallelExecution = allowParallelExecution;
+        }
+
+        if (referenceId) {
+          cleanedTask.referenceId = referenceId;
+        }
+
+        return cleanedTask;
+      };
+
+      // Function to clean log metadata
+      const cleanMetadata = (metadata: WorkflowLogMetadata): CleanedMetadata =>
+        ({
+          ...metadata,
+          duration: '[REDACTED]',
+          endTime: '[REDACTED]',
+          startTime: '[REDACTED]',
+          feedback:
+            'feedback' in metadata
+              ? metadata.feedback
+                ? {
+                    ...(metadata.feedback as Record<string, unknown>),
+                    timestamp: '[REDACTED]',
+                  }
+                : {}
+              : {},
+        } as CleanedMetadata);
+
+      // Clone and clean agents
+      const cleanedAgents = get().agents.map(cleanAgent);
+
+      // Clone and clean tasks, including the nested agents
+      const cleanedTasks = get().tasks.map(cleanTask);
+
+      // Clone and clean workflowLogs, including the potential agents and tasks
+      const cleanedWorkflowLogs = get().workflowLogs.map(
+        (log): CleanedWorkflowLog => ({
+          ...log,
+          agent:
+            'agent' in log ? (log.agent ? cleanAgent(log.agent) : null) : null,
+          task: 'task' in log ? (log.task ? cleanTask(log.task) : null) : null,
+          timestamp: '[REDACTED]',
+          metadata: cleanMetadata(log.metadata as Record<string, unknown>),
+        })
+      );
+
+      // Return only the parts of the state necessary for the snapshot or further processing
+      return {
+        teamWorkflowStatus: get().teamWorkflowStatus,
+        workflowResult: get().workflowResult,
+        name: get().name,
+        agents: cleanedAgents,
+        tasks: cleanedTasks,
+        workflowLogs: cleanedWorkflowLogs,
+        inputs: get().inputs,
+        workflowContext: get().workflowContext,
+        logLevel: get().logLevel,
+      };
+    },
+
     getTaskResults: () => {
-      const taskResults: Record<string, unknown> = {};
+      const taskResults: Record<string, TaskResult> = {};
       const tasks = get().tasks || [];
       const workflowLogs = get().workflowLogs || [];
-      const taskResultMap = new Map<string, unknown>();
+      const taskResultMap = new Map<string, TaskResult>();
 
       for (const log of workflowLogs) {
         if (
@@ -654,6 +759,47 @@ const createTeamStore = (
       });
 
       return taskResults;
+    },
+
+    prepareNewLog: <T extends WorkflowLog>({
+      agent,
+      task,
+      logDescription,
+      workflowStatus,
+      taskStatus,
+      agentStatus,
+      metadata,
+      logType,
+    }: NewLogParams<T>): T => {
+      const timestamp = Date.now();
+
+      let newLog: T = {
+        timestamp,
+        logDescription,
+        metadata,
+        logType,
+      } as T;
+
+      if (agent && task) {
+        newLog = {
+          ...newLog,
+          task,
+          agent,
+          agentName: agent.name || 'Unknown Agent',
+          taskTitle: task ? getTaskTitleForLogs(task) : 'Untitled Task',
+          taskStatus: taskStatus || task.status,
+          agentStatus: agentStatus || agent.status,
+        } as T;
+      }
+
+      if (workflowStatus) {
+        newLog = {
+          ...newLog,
+          workflowStatus,
+        } as T;
+      }
+
+      return newLog;
     },
   });
 

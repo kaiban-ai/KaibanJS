@@ -98,7 +98,7 @@ export const useWorkflowLoopStore: StateCreator<
 
       // handle task paused for each task
       tasksToPause.forEach((task) => {
-        get().handleAgentTaskPaused({ agent: task.agent, task });
+        get().handleAgentTaskPaused({ task });
       });
 
       logger.info('⏸️ Workflow paused - Taking a breather! 🛑');
@@ -128,16 +128,13 @@ export const useWorkflowLoopStore: StateCreator<
     );
 
     pausedTasks.forEach((task) => {
-      get().handleAgentTaskResumed({ agent: task.agent, task });
+      get().handleAgentTaskResumed({ task });
     });
 
     logger.info('🔄 Workflow resumed - Back in action! 🚀');
 
-    const resumeLog: WorkflowResumedLog = {
-      timestamp: Date.now(),
-      logDescription: `🔄 Workflow resumed for team "${
-        get().name
-      }" - All paused tasks will continue execution`,
+    const resumeLog = get().prepareNewLog<WorkflowResumedLog>({
+      logType: 'WorkflowStatusUpdate',
       workflowStatus: WORKFLOW_STATUS_enum.RESUMED,
       metadata: {
         message:
@@ -145,8 +142,10 @@ export const useWorkflowLoopStore: StateCreator<
         resumedAt: new Date().toISOString(),
         previousStatus: WORKFLOW_STATUS_enum.PAUSED,
       },
-      logType: 'WorkflowStatusUpdate',
-    };
+      logDescription: `🔄 Workflow resumed for team "${
+        get().name
+      }" - All paused tasks will continue execution`,
+    });
 
     set({
       teamWorkflowStatus: WORKFLOW_STATUS_enum.RUNNING,
@@ -169,16 +168,15 @@ export const useWorkflowLoopStore: StateCreator<
 
     try {
       // Update state to stopping and log the transition
-      const stoppingLog: WorkflowStoppingLog = {
-        timestamp: Date.now(),
-        logDescription: 'Workflow stopping - Aborting all running tasks...',
+      const stoppingLog = get().prepareNewLog<WorkflowStoppingLog>({
+        logType: 'WorkflowStatusUpdate',
         workflowStatus: WORKFLOW_STATUS_enum.STOPPING,
         metadata: {
           previousStatus: currentStatus,
           message: 'Workflow stop operation initiated',
         },
-        logType: 'WorkflowStatusUpdate',
-      };
+        logDescription: 'Workflow stopping - Aborting all running tasks...',
+      });
 
       set((state) => ({
         teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPING,
@@ -200,25 +198,24 @@ export const useWorkflowLoopStore: StateCreator<
       );
       tasksToAbort.forEach((task) => {
         get().handleAgentTaskAborted({
-          agent: task.agent,
+          agent: task.agent.agentInstance,
           task,
           error: new StopAbortError(),
         });
       });
 
       // Final state update to stopped
-      const stoppedLog: WorkflowStoppedLog = {
-        timestamp: Date.now(),
-        logDescription:
-          'Workflow stopped successfully - All tasks reset to TODO state.',
+      const stoppedLog = get().prepareNewLog<WorkflowStoppedLog>({
+        logType: 'WorkflowStatusUpdate',
         workflowStatus: WORKFLOW_STATUS_enum.STOPPED,
         metadata: {
           message: 'Workflow stop operation completed successfully',
           previousStatus: currentStatus,
           tasksReset: tasks.length,
         },
-        logType: 'WorkflowStatusUpdate',
-      };
+        logDescription:
+          'Workflow stopped successfully - All tasks reset to TODO state.',
+      });
 
       set((state) => ({
         teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED,
@@ -241,16 +238,15 @@ export const useWorkflowLoopStore: StateCreator<
       logger.error('❌ Error stopping workflow:', errorMessage);
 
       // Single state update for error case
-      const errorLog: WorkflowOperationErrorLog = {
-        timestamp: Date.now(),
-        logDescription: `Error stopping workflow: ${errorMessage}`,
+      const errorLog = get().prepareNewLog<WorkflowOperationErrorLog>({
+        logType: 'WorkflowStatusUpdate',
         workflowStatus: WORKFLOW_STATUS_enum.STOPPED,
         metadata: {
           error: new Error(errorMessage),
           message: 'Workflow stop operation failed',
         },
-        logType: 'WorkflowStatusUpdate',
-      };
+        logDescription: `Error stopping workflow: ${errorMessage}`,
+      });
 
       set((state) => ({
         teamWorkflowStatus: WORKFLOW_STATUS_enum.STOPPED,

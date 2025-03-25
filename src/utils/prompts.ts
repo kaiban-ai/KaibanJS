@@ -13,6 +13,7 @@ import { ZodError, ZodSchema } from 'zod';
 import { ParsedLLMOutput } from './llm.types';
 import { Task } from '../index';
 import { BaseAgent } from '../agents/baseAgent';
+import { ToolResult } from '../tools/baseTool';
 
 // Type for common prompt parameters
 interface BasePromptParams {
@@ -35,7 +36,7 @@ interface InvalidJsonFeedbackParams extends BasePromptParams {
 
 interface InvalidOutputSchemaParams extends BasePromptParams {
   llmOutput: string;
-  outputSchema: ZodSchema;
+  outputSchema: ZodSchema | null;
   outputSchemaError?: ZodError;
 }
 
@@ -56,7 +57,7 @@ interface ThoughtFeedbackParams extends BasePromptParams {
 }
 
 interface ToolResultParams extends BasePromptParams {
-  toolResult: unknown;
+  toolResult: ToolResult;
   parsedLLMOutput: ParsedLLMOutput;
 }
 
@@ -277,9 +278,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): ${
     outputSchema,
     outputSchemaError,
   }: InvalidOutputSchemaParams) => {
-    const prompt = `You returned an invalid JSON object with following error ${outputSchemaError?.toString()}. Please format your answer adhere to this JSON schema ${JSON.stringify(
-      zodToJsonSchema(outputSchema)
-    )}.`;
+    const prompt = `You returned an invalid JSON object with following error ${outputSchemaError?.toString()}. Please format your answer adhere to this JSON schema ${
+      outputSchema ? JSON.stringify(zodToJsonSchema(outputSchema)) : ''
+    }`;
     return prompt;
   },
   /**
