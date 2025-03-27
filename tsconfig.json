@@ -7,8 +7,9 @@
     "moduleResolution": "Bundler",
     // "allowImportingTsExtensions": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "target": "ES2020"
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "types/**/*.d.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]
 }

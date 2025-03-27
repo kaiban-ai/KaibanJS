@@ -101,7 +101,8 @@ const main = async () => {
       aboutMe:
         'My name is Will, I have been a Javascript Developer for 3 years. I know React, NextJS, and REDUX. My latest job was as a Junior Developer at Disney creating UIs for the main landing page.',
     }, // Initial input for the first task
-    env: { OPENAI_API_KEY: process.env.OPENAI_API_KEY },
+    env: { OPENAI_API_KEY: process.env.OPENAI_API_KEY || '' },
+    logLevel: 'debug',
   });
 
   // ──── Listening to Changes────────────────────────────────────────────
