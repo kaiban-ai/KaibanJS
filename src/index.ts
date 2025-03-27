@@ -332,7 +332,7 @@ export class Team {
       const unsubscribe = this.store.subscribe(
         (state: CombinedStoresState) => state.teamWorkflowStatus,
         // @ts-expect-error: Zustand subscribe overload is not properly typed
-        (status: string) => {
+        (status: WORKFLOW_STATUS_enum) => {
           const state = this.store.getState();
           switch (status) {
             case WORKFLOW_STATUS_enum.FINISHED:
