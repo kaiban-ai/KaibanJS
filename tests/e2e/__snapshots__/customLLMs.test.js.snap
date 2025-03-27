@@ -21,6 +21,7 @@ exports[`Custom LLMs Instances Workflows Using OpenAI Intance initializes the te
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "callbacks": undefined,
@@ -107,6 +108,7 @@ exports[`Custom LLMs Instances Workflows Using OpenAI Intance initializes the te
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": null,
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "callbacks": undefined,
@@ -203,6 +205,7 @@ exports[`Custom LLMs Instances Workflows Using OpenAI Intance initializes the te
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "callbacks": undefined,
@@ -310,6 +313,7 @@ exports[`Custom LLMs Instances Workflows Using OpenAI Intance initializes the te
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": null,
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "callbacks": undefined,

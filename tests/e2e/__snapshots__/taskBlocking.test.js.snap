@@ -6,6 +6,7 @@ exports[`Task Blocking Team Workflows Using Security Validation Agent blocks the
     {
       "agentInstance": {
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -21,6 +22,7 @@ exports[`Task Blocking Team Workflows Using Security Validation Agent blocks the
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -85,7 +87,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -93,7 +95,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -101,7 +103,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -175,6 +177,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {
           "background": "Expert in security protocols and access control management",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -190,6 +193,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -254,7 +258,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -262,7 +266,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -270,7 +274,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -348,13 +352,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "externalValidationRequired": false,
       "feedbackHistory": [],
       "id": "[REDACTED]",
-      "inputs": {},
-      "interpolatedTaskDescription": "You are tasked with reviewing a request to access highly sensitive data. 
-  The request lacks proper authorization credentials and security clearance documentation.
-  As a security validator, you must assess this situation and take appropriate action.
-  
-  Given the missing security credentials, you should block this task using the block_task tool
-  and provide a clear explanation of why access cannot be granted.",
+      "interpolatedTaskDescription": null,
       "isDeliverable": false,
       "iterationCount": 2,
       "llmUsageStats": {
@@ -396,6 +394,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {
           "background": "Expert in security protocols and access control management",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -411,6 +410,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -475,7 +475,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -483,7 +483,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -491,7 +491,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -570,6 +570,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -585,6 +586,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -649,7 +651,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -657,7 +659,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -665,7 +667,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -767,6 +769,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -782,6 +785,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -846,7 +850,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -854,7 +858,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -862,7 +866,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -933,6 +937,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -948,6 +953,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1012,7 +1018,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -1020,7 +1026,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1028,7 +1034,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1130,6 +1136,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -1145,6 +1152,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -1209,7 +1217,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -1217,7 +1225,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1225,7 +1233,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1324,7 +1332,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -1332,7 +1340,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1340,7 +1348,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1382,6 +1390,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -1397,6 +1406,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1461,7 +1471,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -1469,7 +1479,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1477,7 +1487,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1579,6 +1589,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -1594,6 +1605,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -1658,7 +1670,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -1666,7 +1678,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1674,7 +1686,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1755,6 +1767,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -1770,6 +1783,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1834,7 +1848,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -1842,7 +1856,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1850,7 +1864,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1952,6 +1966,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -1967,6 +1982,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2031,7 +2047,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -2039,7 +2055,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2047,7 +2063,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2119,6 +2135,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -2134,6 +2151,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2198,7 +2216,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -2206,7 +2224,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2214,7 +2232,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2316,6 +2334,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -2331,6 +2350,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2395,7 +2415,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -2403,7 +2423,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2411,7 +2431,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2482,6 +2502,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -2497,6 +2518,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2561,7 +2583,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -2569,7 +2591,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2577,7 +2599,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2679,6 +2701,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -2694,6 +2717,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2758,7 +2782,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -2766,7 +2790,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2774,7 +2798,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2845,6 +2869,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -2860,6 +2885,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2924,7 +2950,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -2932,7 +2958,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2940,7 +2966,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -3042,6 +3068,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -3057,6 +3084,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3121,7 +3149,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -3129,7 +3157,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -3137,7 +3165,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -3236,7 +3264,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -3244,7 +3272,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -3252,7 +3280,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -3304,6 +3332,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -3319,6 +3348,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3383,7 +3413,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -3391,7 +3421,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -3399,7 +3429,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -3501,6 +3531,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -3516,6 +3547,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3580,7 +3612,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -3588,7 +3620,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -3596,7 +3628,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -3683,6 +3715,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -3698,6 +3731,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3762,7 +3796,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -3770,7 +3804,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -3778,7 +3812,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -3880,6 +3914,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -3895,6 +3930,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3959,7 +3995,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -3967,7 +4003,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -3975,7 +4011,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -4056,6 +4092,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -4071,6 +4108,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4135,7 +4173,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -4143,7 +4181,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -4151,7 +4189,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -4253,6 +4291,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -4268,6 +4307,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -4332,7 +4372,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -4340,7 +4380,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -4348,7 +4388,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -4422,6 +4462,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -4437,6 +4478,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4501,7 +4543,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -4509,7 +4551,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -4517,7 +4559,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -4619,6 +4661,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -4634,6 +4677,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -4698,7 +4742,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -4706,7 +4750,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -4714,7 +4758,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -4785,6 +4829,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -4800,6 +4845,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4864,7 +4910,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -4872,7 +4918,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -4880,7 +4926,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -4982,6 +5028,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {},
         "background": "Expert in security protocols and access control management",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -4997,6 +5044,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -5061,7 +5109,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -5069,7 +5117,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5077,7 +5125,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5149,6 +5197,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -5164,6 +5213,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5228,7 +5278,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -5236,7 +5286,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5244,7 +5294,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5346,6 +5396,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {
           "background": "Expert in security protocols and access control management",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -5361,6 +5412,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -5425,7 +5477,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -5433,7 +5485,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5441,7 +5493,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5534,6 +5586,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -5549,6 +5602,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5613,7 +5667,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -5621,7 +5675,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5629,7 +5683,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5731,6 +5785,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "agent": {
         "agentInstance": {
           "background": "Expert in security protocols and access control management",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -5746,6 +5801,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -5810,7 +5866,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -5818,7 +5874,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5826,7 +5882,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5920,6 +5976,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "agent": {
           "agentInstance": {
             "background": "Expert in security protocols and access control management",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Validate security requirements and block tasks that lack proper authorization",
@@ -5935,6 +5992,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5999,7 +6057,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -6007,7 +6065,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -6015,7 +6073,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }

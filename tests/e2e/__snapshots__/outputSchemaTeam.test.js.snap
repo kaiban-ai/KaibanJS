@@ -6,6 +6,7 @@ exports[`History Fact Summary Team Workflows Using OpenAI Agents completes the e
     {
       "agentInstance": {
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -21,6 +22,9 @@ exports[`History Fact Summary Team Workflows Using OpenAI Agents completes the e
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -85,7 +89,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -93,7 +97,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -101,7 +105,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -167,6 +171,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {
           "background": "Writer",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Write a summary about any given historical fact.",
@@ -182,6 +187,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -246,7 +254,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -254,7 +262,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -262,7 +270,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -385,6 +393,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "typeName": "ZodArray",
               },
@@ -412,6 +425,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "figures": ZodArray {
               "_def": {
@@ -449,6 +467,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "typeName": "ZodArray",
               },
@@ -476,6 +499,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "summary": ZodString {
               "_def": {
@@ -508,6 +536,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "time_range": ZodString {
               "_def": {
@@ -540,6 +573,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "title": ZodString {
               "_def": {
@@ -572,6 +610,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "words": ZodNumber {
               "_def": {
@@ -607,6 +650,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "step": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
           },
         },
@@ -639,6 +687,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
             "spa": [Function],
             "superRefine": [Function],
             "transform": [Function],
+            "~standard": {
+              "validate": [Function],
+              "vendor": "zod",
+              "version": 1,
+            },
           },
           "shape": [Function],
           "typeName": "ZodObject",
@@ -670,6 +723,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "spa": [Function],
         "superRefine": [Function],
         "transform": [Function],
+        "~standard": {
+          "validate": [Function],
+          "vendor": "zod",
+          "version": 1,
+        },
       },
       "result": {
         "countries": [
@@ -720,6 +778,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {
           "background": "Writer",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Write a summary about any given historical fact.",
@@ -735,6 +794,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
             "lc": 1,
             "type": "not_implemented",
           },
+          "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
             "maxRetries": 1,
@@ -799,7 +861,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -807,7 +869,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -815,7 +877,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -884,6 +946,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -899,6 +962,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -963,7 +1029,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -971,7 +1037,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -979,7 +1045,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1094,6 +1160,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -1121,6 +1192,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -1158,6 +1234,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -1185,6 +1266,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -1217,6 +1303,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -1249,6 +1340,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -1281,6 +1377,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -1316,6 +1417,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -1348,6 +1454,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -1379,6 +1490,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [
@@ -1413,6 +1529,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -1428,6 +1545,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -1492,7 +1612,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -1500,7 +1620,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1508,7 +1628,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1569,6 +1689,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -1584,6 +1705,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -1648,7 +1772,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -1656,7 +1780,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1664,7 +1788,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -1779,6 +1903,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -1806,6 +1935,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -1843,6 +1977,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -1870,6 +2009,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -1902,6 +2046,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -1934,6 +2083,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -1966,6 +2120,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -2001,6 +2160,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -2033,6 +2197,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -2064,6 +2233,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [
@@ -2098,6 +2272,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -2113,6 +2288,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2177,7 +2355,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -2185,7 +2363,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2193,7 +2371,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2282,7 +2460,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -2290,7 +2468,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2298,7 +2476,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2335,6 +2513,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -2350,6 +2529,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -2414,7 +2596,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -2422,7 +2604,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2430,7 +2612,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2545,6 +2727,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -2572,6 +2759,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -2609,6 +2801,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -2636,6 +2833,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -2668,6 +2870,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -2700,6 +2907,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -2732,6 +2944,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -2767,6 +2984,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -2799,6 +3021,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -2830,6 +3057,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [
@@ -2864,6 +3096,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -2879,6 +3112,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -2943,7 +3179,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -2951,7 +3187,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -2959,7 +3195,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -3095,6 +3331,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                         "spa": [Function],
                         "superRefine": [Function],
                         "transform": [Function],
+                        "~standard": {
+                          "validate": [Function],
+                          "vendor": "zod",
+                          "version": 1,
+                        },
                       },
                       "typeName": "ZodArray",
                     },
@@ -3122,6 +3363,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "figures": ZodArray {
                     "_def": {
@@ -3159,6 +3405,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                         "spa": [Function],
                         "superRefine": [Function],
                         "transform": [Function],
+                        "~standard": {
+                          "validate": [Function],
+                          "vendor": "zod",
+                          "version": 1,
+                        },
                       },
                       "typeName": "ZodArray",
                     },
@@ -3186,6 +3437,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "summary": ZodString {
                     "_def": {
@@ -3218,6 +3474,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "time_range": ZodString {
                     "_def": {
@@ -3250,6 +3511,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "title": ZodString {
                     "_def": {
@@ -3282,6 +3548,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "words": ZodNumber {
                     "_def": {
@@ -3317,6 +3588,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "step": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                 },
               },
@@ -3349,6 +3625,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "shape": [Function],
                 "typeName": "ZodObject",
@@ -3380,6 +3661,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "outputSchemaErrors": undefined,
           },
@@ -3390,6 +3676,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -3405,6 +3692,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -3469,7 +3759,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -3477,7 +3767,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -3485,7 +3775,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -3600,6 +3890,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -3627,6 +3922,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -3664,6 +3964,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -3691,6 +3996,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -3723,6 +4033,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -3755,6 +4070,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -3787,6 +4107,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -3822,6 +4147,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -3854,6 +4184,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -3885,6 +4220,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [
@@ -3919,6 +4259,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -3934,6 +4275,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -3998,7 +4342,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -4006,7 +4350,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -4014,7 +4358,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -4135,6 +4479,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                       "spa": [Function],
                       "superRefine": [Function],
                       "transform": [Function],
+                      "~standard": {
+                        "validate": [Function],
+                        "vendor": "zod",
+                        "version": 1,
+                      },
                     },
                     "typeName": "ZodArray",
                   },
@@ -4162,6 +4511,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "figures": ZodArray {
                   "_def": {
@@ -4199,6 +4553,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                       "spa": [Function],
                       "superRefine": [Function],
                       "transform": [Function],
+                      "~standard": {
+                        "validate": [Function],
+                        "vendor": "zod",
+                        "version": 1,
+                      },
                     },
                     "typeName": "ZodArray",
                   },
@@ -4226,6 +4585,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "summary": ZodString {
                   "_def": {
@@ -4258,6 +4622,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "time_range": ZodString {
                   "_def": {
@@ -4290,6 +4659,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "title": ZodString {
                   "_def": {
@@ -4322,6 +4696,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "spa": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
                 "words": ZodNumber {
                   "_def": {
@@ -4357,6 +4736,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "step": [Function],
                   "superRefine": [Function],
                   "transform": [Function],
+                  "~standard": {
+                    "validate": [Function],
+                    "vendor": "zod",
+                    "version": 1,
+                  },
                 },
               },
             },
@@ -4389,6 +4773,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "shape": [Function],
               "typeName": "ZodObject",
@@ -4420,6 +4809,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
             "spa": [Function],
             "superRefine": [Function],
             "transform": [Function],
+            "~standard": {
+              "validate": [Function],
+              "vendor": "zod",
+              "version": 1,
+            },
           },
           "outputSchemaErrors": undefined,
         },
@@ -4429,6 +4823,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -4444,6 +4839,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -4508,7 +4906,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -4516,7 +4914,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -4524,7 +4922,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -4639,6 +5037,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -4666,6 +5069,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -4703,6 +5111,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -4730,6 +5143,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -4762,6 +5180,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -4794,6 +5217,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -4826,6 +5254,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -4861,6 +5294,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -4893,6 +5331,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -4924,6 +5367,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [
@@ -4958,6 +5406,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -4973,6 +5422,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -5037,7 +5489,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -5045,7 +5497,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5053,7 +5505,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5114,6 +5566,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -5129,6 +5582,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5193,7 +5649,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -5201,7 +5657,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5209,7 +5665,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5324,6 +5780,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -5351,6 +5812,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -5388,6 +5854,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -5415,6 +5886,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -5447,6 +5923,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -5479,6 +5960,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -5511,6 +5997,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -5546,6 +6037,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -5578,6 +6074,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -5609,6 +6110,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [
@@ -5643,6 +6149,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -5658,6 +6165,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -5722,7 +6232,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -5730,7 +6240,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5738,7 +6248,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5818,6 +6328,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -5833,6 +6344,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -5897,7 +6411,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -5905,7 +6419,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -5913,7 +6427,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -6028,6 +6542,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -6055,6 +6574,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -6092,6 +6616,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -6119,6 +6648,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -6151,6 +6685,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -6183,6 +6722,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -6215,6 +6759,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -6250,6 +6799,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -6282,6 +6836,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -6313,6 +6872,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [
@@ -6347,6 +6911,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "agent": {
         "agentInstance": {},
         "background": "Writer",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Write a summary about any given historical fact.",
@@ -6362,6 +6927,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "lc": 1,
           "type": "not_implemented",
         },
+        "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
           "maxRetries": 1,
@@ -6426,7 +6994,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -6434,7 +7002,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -6442,7 +7010,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -6533,6 +7101,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "agent": {
           "agentInstance": {
             "background": "Writer",
+            "currentIterations": 0,
             "env": "[REDACTED]",
             "forceFinalAnswer": true,
             "goal": "Write a summary about any given historical fact.",
@@ -6548,6 +7117,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "not_implemented",
             },
+            "lastFeedbackMessage": "Hi Clark Kent, please complete the following task: Write detailed summaries about Normandy landings, giving dates, historical figures involved, motives, and repercussions of the fact.. 
+        Your expected output should be: "A well-structured and detailed summary about historical fact, add metadata like title, epoch of fact, historical figures, countries and number of words", adhere to this JSON schema: {"type":"object","properties":{"title":{"type":"string","description":"The title for historical fact summary"},"summary":{"type":"string","description":"The historical fact summary"},"time_range":{"type":"string","description":"Range of years in which the historical fact occurs. example: \\"1815-1816\\" "},"figures":{"type":"array","items":{"type":"string"},"description":"List of historical figures involved in the historical fact"},"countries":{"type":"array","items":{"type":"string"},"description":"List of countries involved in the historical fact"},"words":{"type":"number","description":"Number of words in the summary"}},"required":["title","summary","time_range","figures","countries","words"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}.". 
+        ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
               "maxRetries": 1,
@@ -6612,7 +7184,7 @@ Below is the explanation of each one:
 ### Thought + (Action or Self Question)
 
 {
-   "thought": "your thoughts about what to do next" // it could be an action or ask yourself a follow up question
+   "thought": "your thoughts about what to do next", // it could be an action or ask yourself a follow up question
    "action":  "you decide what action to take based on your previous thought", // the action could be a self follow up question or decide to use a tool from the available tools to use,
    "actionInput": the input to the action, just a simple JSON object, enclosed in curly braces, using \\" to wrap keys and values. Remember to use the Tool Schema.
 }
@@ -6620,7 +7192,7 @@ Below is the explanation of each one:
 Examples: 
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "tavily_search_results_json",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -6628,7 +7200,7 @@ Examples:
 other
 
 {
-   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information."
+   "thought": "To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.",
    "action": "self_question",
    "actionInput": {"query":"Copa America 2024 winner"}
 }
@@ -6743,6 +7315,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -6770,6 +7347,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "figures": ZodArray {
                 "_def": {
@@ -6807,6 +7389,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                     "spa": [Function],
                     "superRefine": [Function],
                     "transform": [Function],
+                    "~standard": {
+                      "validate": [Function],
+                      "vendor": "zod",
+                      "version": 1,
+                    },
                   },
                   "typeName": "ZodArray",
                 },
@@ -6834,6 +7421,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "summary": ZodString {
                 "_def": {
@@ -6866,6 +7458,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "time_range": ZodString {
                 "_def": {
@@ -6898,6 +7495,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "title": ZodString {
                 "_def": {
@@ -6930,6 +7532,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "spa": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
               "words": ZodNumber {
                 "_def": {
@@ -6965,6 +7572,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "step": [Function],
                 "superRefine": [Function],
                 "transform": [Function],
+                "~standard": {
+                  "validate": [Function],
+                  "vendor": "zod",
+                  "version": 1,
+                },
               },
             },
           },
@@ -6997,6 +7609,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "spa": [Function],
               "superRefine": [Function],
               "transform": [Function],
+              "~standard": {
+                "validate": [Function],
+                "vendor": "zod",
+                "version": 1,
+              },
             },
             "shape": [Function],
             "typeName": "ZodObject",
@@ -7028,6 +7645,11 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "spa": [Function],
           "superRefine": [Function],
           "transform": [Function],
+          "~standard": {
+            "validate": [Function],
+            "vendor": "zod",
+            "version": 1,
+          },
         },
         "result": {
           "countries": [

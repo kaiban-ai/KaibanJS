@@ -19,7 +19,7 @@ import { BaseAgent } from './baseAgent';
 import { getApiKey } from '../utils/agents';
 import { getParsedJSON } from '../utils/parser';
 import { AGENT_STATUS_enum, KANBAN_TOOLS_enum } from '../utils/enums';
-import { interpolateTaskDescription } from '../utils/tasks';
+import { interpolateTaskDescriptionV2 } from '../utils/tasks';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatAnthropic } from '@langchain/anthropic';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
@@ -33,6 +33,9 @@ import { logger } from '../utils/logger';
 import { LLMInvocationError } from '../utils/errors';
 import { BlockTaskTool } from '../tools/blockTaskTool';
 
+import { WORKFLOW_STATUS_enum } from '../utils/enums';
+import { AbortError } from '../utils/errors';
+
 class ReactChampionAgent extends BaseAgent {
   #executableAgent;
   constructor(config) {
@@ -42,7 +45,10 @@ class ReactChampionAgent extends BaseAgent {
     const enabledKanbanTools = config.kanbanTools || [];
 
     // Add kanban tools that are enabled
-    if (enabledKanbanTools.includes(KANBAN_TOOLS_enum.BLOCK_TASK)) {
+    if (
+      enabledKanbanTools.includes(KANBAN_TOOLS_enum.BLOCK_TASK_TOOL) ||
+      enabledKanbanTools.includes(KANBAN_TOOLS_enum.BLOCK_TASK)
+    ) {
       this.tools = [...this.tools, new BlockTaskTool(this)];
     }
   }
@@ -89,10 +95,18 @@ class ReactChampionAgent extends BaseAgent {
       };
       this.llmConfig = extractedLlmConfig;
     }
-
     this.interactionsHistory = new ChatMessageHistory();
+    this.lastFeedbackMessage = null;
   }
-
+  async workOnTaskResume(task) {
+    const lastFeedbackMessage = this.lastFeedbackMessage;
+    return await this.agenticLoop(
+      this,
+      task,
+      this.#executableAgent,
+      lastFeedbackMessage
+    );
+  }
   // Add method to update LLM configuration when environment changes
   updateEnv(env) {
     this.env = env;
@@ -144,9 +158,10 @@ class ReactChampionAgent extends BaseAgent {
   }
 
   prepareAgentForTask(task, inputs, context) {
-    const interpolatedDescription = interpolateTaskDescription(
+    const interpolatedDescription = interpolateTaskDescriptionV2(
       task.description,
-      inputs
+      inputs,
+      this.store.getState().getTaskResults()
     );
     const systemMessage = this.buildSystemMessage(
       this,
@@ -177,7 +192,7 @@ class ReactChampionAgent extends BaseAgent {
 
     return {
       executableAgent: chainAgentWithHistory,
-      initialFeedbackMessage: feedbackMessage,
+      initialFeedbackMessage: this.lastFeedbackMessage || feedbackMessage,
     };
   }
 
@@ -196,6 +211,22 @@ class ReactChampionAgent extends BaseAgent {
       !loopCriticalError &&
       !blockReason
     ) {
+      // Save the feedback message as the last feedback message
+      this.lastFeedbackMessage = feedbackMessage;
+
+      // Check workflow status
+      const workflowStatus = agent.store.getState().teamWorkflowStatus;
+
+      if (
+        workflowStatus === WORKFLOW_STATUS_enum.STOPPED ||
+        workflowStatus === WORKFLOW_STATUS_enum.STOPPING
+      ) {
+        return {
+          result: parsedResultWithFinalAnswer,
+          metadata: { iterations, maxAgentIterations },
+        };
+      }
+
       try {
         agent.handleIterationStart({
           agent: agent,
@@ -291,6 +322,9 @@ class ReactChampionAgent extends BaseAgent {
                     parsedLLMOutput,
                   });
                 } catch (error) {
+                  if (error instanceof AbortError) {
+                    throw error;
+                  }
                   feedbackMessage = this.handleUsingToolError({
                     agent: agent,
                     task,
@@ -328,6 +362,10 @@ class ReactChampionAgent extends BaseAgent {
             break;
         }
       } catch (error) {
+        if (error instanceof AbortError) {
+          // this.handleTaskAborted({ agent, task, error });
+          break;
+        }
         // Check if the error is of type 'LLMInvocationError'
         if (error.name === 'LLMInvocationError') {
           // Handle specific LLMInvocationError
@@ -548,45 +586,80 @@ class ReactChampionAgent extends BaseAgent {
   }
 
   async executeThinking(agent, task, ExecutableAgent, feedbackMessage) {
-    return new Promise((resolve, reject) => {
+    const promiseObj = {};
+    let rejectFn; // Declare reject function outside Promise
+    // Create an AbortController for this invocation
+    const abortController = new AbortController();
+    const thinkingPromise = new Promise((resolve, reject) => {
+      rejectFn = reject; // Capture the reject function
+
       ExecutableAgent.invoke(
         { feedbackMessage },
         {
-          configurable: { sessionId: 'foo-bar-baz' },
+          configurable: { sessionId: task.id },
           callbacks: [
             {
-              handleChatModelStart: (llm, messages) => {
-                agent
-                  .handleThinkingStart({ agent, task, messages })
-                  .catch((error) => {
-                    reject(error);
-                  });
+              handleChatModelStart: async (llm, messages) => {
+                await agent.handleThinkingStart({ agent, task, messages });
               },
-
               handleLLMEnd: async (output) => {
-                agent
-                  .handleThinkingEnd({ agent, task, output })
-                  .then((thinkingResult) => resolve(thinkingResult))
-                  .catch((error) => {
-                    reject(error);
-                  });
+                const result = await agent.handleThinkingEnd({
+                  agent,
+                  task,
+                  output,
+                });
+                resolve(result);
               },
             },
-          ],
+          ], // Add the signal to the options
+          signal: abortController.signal,
         }
       ).catch((error) => {
-        logger.error(
-          `LLM_INVOCATION_ERROR: Error during LLM API call for Agent: ${agent.name}, Task: ${task.id}. Details:`,
-          error
-        );
-        reject(
-          new LLMInvocationError(
-            `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
+        if (error.name === 'AbortError') {
+          reject(new AbortError('Task was cancelled'));
+        } else {
+          logger.error(
+            `LLM_INVOCATION_ERROR: Error during LLM API call for Agent: ${agent.name}, Task: ${task.id}. Details:`,
             error
-          )
-        );
+          );
+          reject(
+            new LLMInvocationError(
+              `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
+              error
+            )
+          );
+        }
       });
     });
+
+    // Assign both the promise and the captured reject function
+    Object.assign(promiseObj, {
+      promise: thinkingPromise,
+      // reject: rejectFn,
+      reject: (e) => {
+        abortController.abort();
+        rejectFn(e);
+      },
+    });
+
+    // Track promise in store
+    this.store.getState().trackPromise(this.id, promiseObj);
+
+    try {
+      return await thinkingPromise;
+    } catch (error) {
+      // Ensure we properly handle and rethrow the error
+      if (error instanceof AbortError) {
+        throw error; // Rethrow AbortError
+      }
+      // Wrap unexpected errors
+      throw new LLMInvocationError(
+        `LLM API Error during executeThinking for Agent: ${agent.name}, Task: ${task.id}`,
+        error
+      );
+    } finally {
+      this.store.getState().removePromise(this.id, promiseObj);
+    }
   }
 
   handleIssuesParsingLLMOutput({ agent, task, output }) {
@@ -692,12 +765,40 @@ class ReactChampionAgent extends BaseAgent {
   }
 
   async executeUsingTool({ agent, task, parsedLLMOutput, tool }) {
-    // If the tool exists, use it
     const toolInput = parsedLLMOutput.actionInput;
     agent.handleUsingToolStart({ agent, task, tool, input: toolInput });
-    const toolResult = await tool.call(toolInput);
-    agent.handleUsingToolEnd({ agent, task, tool, output: toolResult });
-    return toolResult;
+
+    const promiseObj = {};
+    let rejectFn; // Declare reject function outside Promise
+
+    const toolPromise = new Promise((resolve, reject) => {
+      rejectFn = reject; // Capture the reject function
+      tool.call(toolInput).then(resolve).catch(reject);
+    });
+
+    // Track promise in store
+    Object.assign(promiseObj, { promise: toolPromise, reject: rejectFn });
+
+    this.store.getState().trackPromise(this.id, promiseObj);
+
+    try {
+      const result = await toolPromise;
+      agent.handleUsingToolEnd({ agent, task, tool, output: result });
+      return result;
+    } catch (error) {
+      if (error instanceof AbortError) {
+        throw error;
+      }
+      return this.handleUsingToolError({
+        agent,
+        task,
+        parsedLLMOutput,
+        tool,
+        error,
+      });
+    } finally {
+      this.store.getState().removePromise(this.id, promiseObj);
+    }
   }
 
   handleUsingToolStart({ agent, task, tool, input }) {
@@ -709,7 +810,6 @@ class ReactChampionAgent extends BaseAgent {
 
   handleUsingToolError({ agent, task, parsedLLMOutput, tool, error }) {
     agent.store.getState().handleAgentToolError({ agent, task, tool, error });
-    // console.error(`Error occurred while using the tool ${parsedLLMOutput.action}:`, error);
     const feedbackMessage = this.promptTemplates.TOOL_ERROR_FEEDBACK({
       agent,
       task,
@@ -773,6 +873,10 @@ class ReactChampionAgent extends BaseAgent {
     });
   }
 
+  handleTaskAborted({ agent, task, error }) {
+    agent.store.getState().handleAgentTaskAborted({ agent, task, error });
+  }
+
   handleMaxIterationsError({ agent, task, iterations, maxAgentIterations }) {
     const error = new Error(
       `Agent ${agent.name} reached the maximum number of iterations: [${maxAgentIterations}] without finding a final answer.`
@@ -800,6 +904,13 @@ class ReactChampionAgent extends BaseAgent {
       iterations,
       maxAgentIterations,
     });
+  }
+
+  reset() {
+    super.reset();
+    this.currentIterations = 0;
+    this.lastFeedbackMessage = null;
+    this.interactionsHistory = new ChatMessageHistory();
   }
 }
 

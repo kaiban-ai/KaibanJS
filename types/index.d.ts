@@ -182,6 +182,8 @@ export class Agent {
  * @property {boolean} [isDeliverable] - Indicates whether the task is deliverable.
  * @property {boolean} [externalValidationRequired] - Indicates whether external validation is required.
  * @property {object | null} [outputSchema] - The schema for validating the task output.
+ * @property {string} [referenceId] - A unique identifier used for task dependency management.
+ * @property {boolean} [allowParallelExecution] - Whether this task can be executed in parallel with other tasks. Defaults to false.
  */
 export interface ITaskParams {
   title?: string;
@@ -191,6 +193,8 @@ export interface ITaskParams {
   isDeliverable?: boolean;
   externalValidationRequired?: boolean;
   outputSchema?: object | null;
+  referenceId?: string;
+  allowParallelExecution?: boolean;
 }
 
 /**
@@ -212,6 +216,8 @@ export interface ITaskParams {
  * @property {boolean} externalValidationRequired - Indicates whether external validation is required.
  * @property {object | null} outputSchema - The schema for validating the task output.
  * @property {TStore | undefined} store - The store.
+ * @property {string | undefined} referenceId - A unique identifier used for task dependency management.
+ * @property {boolean} allowParallelExecution - Whether this task can be executed in parallel with other tasks.
  */
 export class Task {
   id: string;
@@ -230,6 +236,8 @@ export class Task {
   externalValidationRequired: boolean;
   outputSchema: object | null;
   store?: TStore;
+  referenceId: string | undefined;
+  allowParallelExecution: boolean;
 
   /**
    * Creates an instance of a Task.
@@ -245,15 +253,16 @@ export class Task {
 }
 
 /**
- * ### Team parameters
+ * Team configuration parameters
  * @interface ITeamParams
- * @property {string} name - The name of the team.
- * @property {BaseAgent[]} [agents] - The agents in the team.
- * @property {Task[]} [tasks] - The tasks for the team.
- * @property {string} [logLevel] - The log level for the team.
- * @property {Record<string, string>} [inputs] - The inputs for the team.
- * @property {Record<string, any> | null} [env] - The environment variables for the team.
- * @property {string} [insights] - The insights for the team.
+ * @property {string} name - The name of the team
+ * @property {Agent[]} agents - The list of agents in the team
+ * @property {Task[]} tasks - The list of tasks for the team to work on
+ * @property {string} [logLevel] - The logging level for the team's operations
+ * @property {Object} [inputs] - Initial inputs for the team's tasks
+ * @property {Object} [env] - Environment variables for the team
+ * @property {string} [insights] - String containing insights from the team's knowledge base
+ * @property {boolean} [memory] - Whether to enable task memory/context between tasks (default: true)
  */
 export interface ITeamParams {
   name: string;
@@ -261,8 +270,9 @@ export interface ITeamParams {
   tasks: Task[];
   logLevel?: string;
   inputs?: Record<string, any>;
-  env?: Record<string, any> | null;
+  env?: Record<string, any>;
   insights?: string;
+  memory?: boolean;
 }
 
 /**

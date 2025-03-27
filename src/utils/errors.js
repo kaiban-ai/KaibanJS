@@ -67,4 +67,35 @@ class PrettyError extends Error {
   }
 }
 
-export { LLMInvocationError, PrettyError };
+class AbortError extends Error {
+  constructor(message = 'Operation was aborted') {
+    super(message);
+    this.name = 'AbortError';
+  }
+}
+class StopAbortError extends AbortError {
+  constructor(message = 'Operation was aborted and  stopped') {
+    super(message);
+    this.name = 'StopAbortError';
+  }
+}
+class PauseAbortError extends AbortError {
+  constructor(message = 'Operation was aborted and paused') {
+    super(message);
+    this.name = 'PauseAbortError';
+  }
+}
+class WorkflowError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'WorkflowError';
+  }
+}
+export {
+  LLMInvocationError,
+  PrettyError,
+  AbortError,
+  StopAbortError,
+  PauseAbortError,
+  WorkflowError,
+};

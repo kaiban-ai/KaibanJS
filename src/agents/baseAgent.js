@@ -106,6 +106,14 @@ class BaseAgent {
   workOnTask(_task) {
     throw new Error('workOnTask must be implemented by subclasses.');
   }
+
+  workOnTaskResume(_task) {
+    throw new Error('workOnTaskResume must be implemented by subclasses.');
+  }
+
+  reset() {
+    this.setStatus(AGENT_STATUS_enum.INITIAL);
+  }
 }
 
 export { BaseAgent };
