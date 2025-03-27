@@ -1,5 +1,19 @@
 import { StateCreator } from 'zustand';
 import {
+  AgentActionLog,
+  AgentStatusLog,
+  TaskAbortedLog,
+  TaskAwaitingValidationLog,
+  TaskBlockedLog,
+  TaskCompletionLog,
+  TaskErrorLog,
+  TaskFeedbackLog,
+  TaskPausedLog,
+  TaskResumedLog,
+  TaskStatusLog,
+  TaskValidatedLog,
+} from '../types/logs';
+import {
   AGENT_STATUS_enum,
   FEEDBACK_STATUS_enum,
   TASK_STATUS_enum,
@@ -9,18 +23,9 @@ import { calculateTaskCost, LLMUsageStats } from '../utils/llmCostCalculator';
 import { logger } from '../utils/logger';
 import { getTaskTitleForLogs } from '../utils/tasks';
 import {
-  AgentActionLog,
-  AgentStatusLog,
-  TaskAbortedLog,
-  TaskAwaitingValidationLog,
-  TaskBlockedLog,
-  TaskCompletionLog,
-  TaskErrorLog,
-  TaskPausedLog,
-  TaskResumedLog,
-  TaskStatusLog,
-} from '../utils/workflowLogs.types';
-import { TaskStoreState } from './taskStore.types';
+  NewTaskStatusUpdateLogParams,
+  TaskStoreState,
+} from './taskStore.types';
 import { CombinedStoresState } from './teamStore.types';
 
 export const useTaskStore: StateCreator<
@@ -112,20 +117,21 @@ export const useTaskStore: StateCreator<
       const modelCode = task.agent.llmConfig.model;
       const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
 
-      const taskLog = get().prepareNewLog<TaskAwaitingValidationLog>({
-        task,
-        agent,
-        logDescription: `Task awaiting validation: ${getTaskTitleForLogs(
-          task
-        )}. Awaiting validation.`,
-        metadata: {
-          ...stats,
-          costDetails,
-          result: result || { success: false, message: 'No result provided' },
-        },
-        logType: 'TaskStatusUpdate',
-        taskStatus: TASK_STATUS_enum.AWAITING_VALIDATION,
-      });
+      const taskLog =
+        get().prepareTaskStatusUpdateLog<TaskAwaitingValidationLog>({
+          task,
+          agent,
+          logDescription: `Task awaiting validation: ${getTaskTitleForLogs(
+            task
+          )}. Awaiting validation.`,
+          metadata: {
+            ...stats,
+            costDetails,
+            result: result || { success: false, message: 'No result provided' },
+          },
+          logType: 'TaskStatusUpdate',
+          taskStatus: TASK_STATUS_enum.AWAITING_VALIDATION,
+        });
 
       set((state) => ({
         tasks: state.tasks.map((t) =>
@@ -142,12 +148,12 @@ export const useTaskStore: StateCreator<
         workflowLogs: [...state.workflowLogs, taskLog],
       }));
 
-      get().handleWorkflowBlocked(new Error('Task awaiting validation'));
+      get().handleWorkflowBlocked(task, new Error('Task awaiting validation'));
     } else {
       const modelCode = task.agent.llmConfig.model;
       const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
 
-      const taskLog = get().prepareNewLog<TaskCompletionLog>({
+      const taskLog = get().prepareTaskStatusUpdateLog<TaskCompletionLog>({
         agent,
         task: { ...task, status: TASK_STATUS_enum.DONE },
         logDescription: `Task completed: ${getTaskTitleForLogs(task)}.`,
@@ -192,7 +198,7 @@ export const useTaskStore: StateCreator<
     }
   },
 
-  handleTaskError: ({ agent, task, error }) => {
+  handleTaskError: ({ task, error }) => {
     const stats = get().getTaskStats(task);
     task.status = TASK_STATUS_enum.BLOCKED;
     const modelCode = task.agent.llmConfig.model;
@@ -203,9 +209,9 @@ export const useTaskStore: StateCreator<
         : f
     );
 
-    const taskLog = get().prepareNewLog<TaskErrorLog>({
+    const taskLog = get().prepareTaskStatusUpdateLog<TaskErrorLog>({
       task,
-      agent,
+      agent: task.agent,
       logDescription: `Task error: ${getTaskTitleForLogs(task)}, Error: ${
         error.message
       }`,
@@ -257,7 +263,7 @@ export const useTaskStore: StateCreator<
         : f
     );
 
-    const taskLog = get().prepareNewLog<TaskBlockedLog>({
+    const taskLog = get().prepareTaskStatusUpdateLog<TaskBlockedLog>({
       agent: task.agent,
       task,
       logDescription: `Task blocked: ${getTaskTitleForLogs(task)}, Reason: ${
@@ -298,7 +304,7 @@ export const useTaskStore: StateCreator<
       workflowLogs: [...state.workflowLogs, taskLog],
     }));
 
-    get().handleWorkflowBlocked(error);
+    get().handleWorkflowBlocked(task, error);
   },
 
   handleTaskAborted: ({ task, error }) => {
@@ -306,7 +312,7 @@ export const useTaskStore: StateCreator<
     const modelCode = task.agent.llmConfig.model;
     const costDetails = calculateTaskCost(modelCode, stats.llmUsageStats);
 
-    const taskLog = get().prepareNewLog<TaskAbortedLog>({
+    const taskLog = get().prepareTaskStatusUpdateLog<TaskAbortedLog>({
       agent: task.agent,
       task,
       logDescription: `Task aborted: ${getTaskTitleForLogs(task)}, Reason: ${
@@ -349,7 +355,7 @@ export const useTaskStore: StateCreator<
         : f
     );
 
-    const taskLog = get().prepareNewLog<TaskPausedLog>({
+    const taskLog = get().prepareTaskStatusUpdateLog<TaskPausedLog>({
       agent: task.agent,
       task,
       logDescription: `⏸️ Task "${getTaskTitleForLogs(task)}" paused | Agent ${
@@ -390,7 +396,7 @@ export const useTaskStore: StateCreator<
   },
 
   handleTaskResumed: ({ task }) => {
-    const taskLog = get().prepareNewLog<TaskResumedLog>({
+    const taskLog = get().prepareTaskStatusUpdateLog<TaskResumedLog>({
       agent: task.agent,
       task,
       logDescription: `🔄 Task resumed: ${getTaskTitleForLogs(task)} | Agent: ${
@@ -420,5 +426,85 @@ export const useTaskStore: StateCreator<
       ),
       workflowLogs: [...state.workflowLogs, taskLog],
     }));
+  },
+  handleTaskRevised: ({ task, feedback }) => {
+    const newTaskLog = get().prepareTaskStatusUpdateLog<TaskFeedbackLog>({
+      task,
+      agent: task.agent,
+      metadata: {
+        feedback,
+      },
+      logDescription: `Task with feedback: ${getTaskTitleForLogs(task)}.`,
+      logType: 'TaskStatusUpdate',
+      taskStatus: TASK_STATUS_enum.REVISE,
+    });
+
+    set((state) => ({
+      tasks: state.tasks.map((t) => (t.id === task.id ? task : t)),
+      workflowLogs: [...state.workflowLogs, newTaskLog],
+    }));
+  },
+
+  handleTaskValidated: ({ task }) => {
+    const newTaskLog = get().prepareTaskStatusUpdateLog<TaskValidatedLog>({
+      task,
+      agent: task.agent,
+      metadata: {},
+      logDescription: `Task validated: ${getTaskTitleForLogs(task)}.`,
+      logType: 'TaskStatusUpdate',
+      taskStatus: TASK_STATUS_enum.VALIDATED,
+    });
+
+    set((state) => ({
+      tasks: state.tasks.map((t) => (t.id === task.id ? task : t)),
+      workflowLogs: [...state.workflowLogs, newTaskLog],
+    }));
+
+    get().handleTaskCompleted({
+      agent: task.agent,
+      task,
+      result: task.result,
+    });
+  },
+
+  prepareTaskStatusUpdateLog: <T extends TaskStatusLog>({
+    agent,
+    task,
+    logDescription,
+    workflowStatus,
+    taskStatus,
+    agentStatus,
+    metadata,
+    logType = 'TaskStatusUpdate' as T['logType'],
+  }: NewTaskStatusUpdateLogParams<T>): T => {
+    const timestamp = Date.now();
+
+    let newLog: T = {
+      timestamp,
+      logDescription,
+      metadata,
+      logType,
+    } as T;
+
+    if (agent && task) {
+      newLog = {
+        ...newLog,
+        task,
+        agent,
+        agentName: agent.name || 'Unknown Agent',
+        taskTitle: task ? getTaskTitleForLogs(task) : 'Untitled Task',
+        taskStatus: taskStatus || task.status,
+        agentStatus: agentStatus || agent.status,
+      } as T;
+    }
+
+    if (workflowStatus) {
+      newLog = {
+        ...newLog,
+        workflowStatus,
+      } as T;
+    }
+
+    return newLog;
   },
 });

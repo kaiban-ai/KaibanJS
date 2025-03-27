@@ -16,7 +16,8 @@ import {
 import { CostResult, LLMUsageStats } from './llmCostCalculator';
 import { ParsedLLMOutput, ThinkingResult } from './llm.types';
 import { TaskResult } from '../stores/taskStore.types';
-import { ToolResult } from '../tools/baseTool';
+import { BaseTool, ToolResult } from '../tools/baseTool';
+import { BaseAgent } from '../agents/baseAgent';
 
 // Common types used across different metadata
 export type Feedback = {
@@ -40,7 +41,7 @@ export type WorkflowBaseMetadata = {
 // Workflow-specific metadata types
 export type WorkflowInitialMetadata = WorkflowBaseMetadata & {
   message: string;
-  inputs: Record<string, unknown>;
+  inputs?: Record<string, unknown> | null;
 };
 
 export type WorkflowFinishedMetadata = WorkflowBaseMetadata & {
@@ -57,18 +58,18 @@ export type WorkflowFinishedMetadata = WorkflowBaseMetadata & {
 };
 
 export type WorkflowErrorMetadata = WorkflowBaseMetadata & {
-  error: Error;
+  error: string;
   errorStack?: string;
 } & WorkflowStats;
 
 export type WorkflowOperationErrorMetadata = WorkflowBaseMetadata & {
-  error: Error;
+  error: string;
   message?: string;
   errorStack?: string;
 };
 
 export type WorkflowBlockedMetadata = WorkflowBaseMetadata & {
-  error: Error;
+  error: string;
 } & WorkflowStats;
 
 export type WorkflowStoppingMetadata = WorkflowBaseMetadata & {
@@ -157,13 +158,16 @@ export type AgentIssuesParsingLLMOutputMetadata = WorkflowBaseMetadata & {
 };
 
 export type AgentToolStartMetadata = WorkflowBaseMetadata & {
-  tool: string;
+  tool: BaseTool;
   input?: string | Record<string, unknown>;
 };
 
 export type AgentToolEndMetadata = WorkflowBaseMetadata & {
   output: ToolResult;
-  tool: string;
+};
+
+export type AgentToolDoesNotExistMetadata = WorkflowBaseMetadata & {
+  toolName: string;
 };
 
 export type AgentToolErrorMetadata = WorkflowBaseMetadata & {
@@ -173,7 +177,7 @@ export type AgentToolErrorMetadata = WorkflowBaseMetadata & {
 
 export type AgentActionMetadata = WorkflowBaseMetadata & {
   output: ThinkingResult;
-  tool: string;
+  tool: BaseTool;
   toolName: string;
   thought: string;
 };
@@ -188,6 +192,12 @@ export type AgentResumedMetadata = WorkflowBaseMetadata & {
 
 export type AgentTaskAbortedMetadata = WorkflowBaseMetadata & {
   error: Error;
+};
+
+export type AgentTaskCompletedMetadata = WorkflowBaseMetadata & {
+  result: TaskResult;
+  iterations: number;
+  maxAgentIterations: number;
 };
 
 // Task-specific metadata types
@@ -248,17 +258,22 @@ export interface BaseWorkflowLog {
   timestamp: number;
   logDescription: string;
   logType: 'WorkflowStatusUpdate' | 'AgentStatusUpdate' | 'TaskStatusUpdate';
+  workflowStatus?: WORKFLOW_STATUS_enum;
 }
 
 export interface BaseAgentLog extends BaseWorkflowLog {
   task: Task;
+  agent: BaseAgent;
+  taskStatus: TASK_STATUS_enum;
+  agentStatus: AGENT_STATUS_enum;
+}
+
+export interface BaseTaskLog extends BaseWorkflowLog {
+  task: Task;
   agent: Agent;
   taskStatus?: TASK_STATUS_enum;
   agentStatus?: AGENT_STATUS_enum;
-  workflowStatus?: WORKFLOW_STATUS_enum;
 }
-
-export type BaseTaskLog = BaseAgentLog;
 
 // Workflow status update logs
 export interface WorkflowInitialLog extends BaseWorkflowLog {
@@ -418,6 +433,12 @@ export interface AgentToolErrorLog extends BaseAgentLog {
   metadata: AgentToolErrorMetadata;
 }
 
+export interface AgentToolDoesNotExistLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentToolDoesNotExistMetadata;
+}
+
 export interface AgentPausedLog extends BaseAgentLog {
   logType: 'AgentStatusUpdate';
   agentStatus: AGENT_STATUS_enum;
@@ -434,6 +455,12 @@ export interface AgentTaskAbortedLog extends BaseAgentLog {
   logType: 'AgentStatusUpdate';
   agentStatus: AGENT_STATUS_enum;
   metadata: AgentTaskAbortedMetadata;
+}
+
+export interface AgentTaskCompletedLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentTaskCompletedMetadata;
 }
 
 // Task status update logs
@@ -520,11 +547,16 @@ export type AgentStatusLog =
   | AgentObservationLog
   | AgentWeirdLLMOutputLog
   | AgentThinkingErrorLog
+  | AgentToolDoesNotExistLog
+  | AgentToolErrorLog
+  | AgentToolStartLog
+  | AgentToolEndLog
   | AgentBlockLog
   | AgentActionLog
   | AgentPausedLog
   | AgentResumedLog
-  | AgentTaskAbortedLog;
+  | AgentTaskAbortedLog
+  | AgentTaskCompletedLog;
 
 export type TaskStatusLog =
   | TaskStartedLog

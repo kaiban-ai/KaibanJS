@@ -63,3 +63,8 @@ export function oset(
   }
   current[keys[keys.length - 1]] = value;
 }
+
+export function isEmpty(obj: Record<string, unknown> | undefined): boolean {
+  if (!obj) return true;
+  return Object.keys(obj).length === 0;
+}

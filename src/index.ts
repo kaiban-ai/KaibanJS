@@ -35,7 +35,7 @@ import {
   WorkflowFinishedLog,
   WorkflowResult,
   WorkflowStats,
-} from './utils/workflowLogs.types';
+} from './types/logs';
 import { BaseTool } from './tools/baseTool';
 import { LLMConfig } from './utils/agents';
 import { DefaultPrompts } from './utils/prompts';

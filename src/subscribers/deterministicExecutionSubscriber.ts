@@ -8,7 +8,7 @@ import {
   TaskStatusLog,
   WorkflowLog,
   WorkflowStatusLog,
-} from '../utils/workflowLogs.types';
+} from '../types/logs';
 
 export type DependencyResult = {
   taskId: string;

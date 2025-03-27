@@ -8,7 +8,8 @@
     // "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "target": "ES2020"
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]
 }

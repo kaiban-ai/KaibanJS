@@ -15,7 +15,7 @@ import {
 import { WORKFLOW_STATUS_enum } from '../utils/enums';
 import { TeamStore } from '../stores';
 import { CombinedStoresState } from '../stores/teamStore.types';
-import { WorkflowLog, WorkflowFinishedLog } from '../utils/workflowLogs.types';
+import { WorkflowLog, WorkflowFinishedLog } from '../types/logs';
 
 /**
  * Subscribes to workflow status updates and logs them appropriately.
@@ -89,7 +89,7 @@ const subscribeWorkflowStatusUpdates = (useStore: TeamStore): void => {
             default:
               console.warn(
                 `Encountered an unexpected workflow status: ${
-                  (newLog as WorkflowLog)?.workflowStatus
+                  (newLog as WorkflowLog).workflowStatus
                 }`
               );
               break;

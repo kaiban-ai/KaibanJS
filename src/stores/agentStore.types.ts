@@ -1,9 +1,26 @@
-import { Task } from '..';
+import { Agent, Task } from '..';
 import { BaseAgent } from '../agents';
 import { BaseTool, ToolResult } from '../tools/baseTool';
+import { AgentStatusLog } from '../types/logs';
+import {
+  AGENT_STATUS_enum,
+  TASK_STATUS_enum,
+  WORKFLOW_STATUS_enum,
+} from '../utils/enums';
 import { LLMInvocationError, StopAbortError } from '../utils/errors';
 import { ParsedLLMOutput, ThinkingResult } from '../utils/llm.types';
 import { TaskResult } from './taskStore.types';
+
+export type NewAgentStatusUpdateLogParams<T extends AgentStatusLog> = {
+  agent: BaseAgent | Agent;
+  task: Task;
+  logDescription: string;
+  workflowStatus?: WORKFLOW_STATUS_enum;
+  taskStatus?: TASK_STATUS_enum;
+  agentStatus?: AGENT_STATUS_enum;
+  metadata: T['metadata'];
+  logType?: T['logType'];
+};
 
 export interface AgentStoreState {
   handleAgentIterationStart: (params: {
@@ -133,4 +150,7 @@ export interface AgentStoreState {
   }) => void;
   handleAgentTaskPaused: (params: { task: Task }) => void;
   handleAgentTaskResumed: (params: { task: Task }) => void;
+  prepareAgentStatusUpdateLog: <T extends AgentStatusLog>(
+    params: NewAgentStatusUpdateLogParams<T>
+  ) => T;
 }

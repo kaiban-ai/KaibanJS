@@ -6,7 +6,7 @@ import {
   TASK_STATUS_enum,
   WORKFLOW_STATUS_enum,
 } from '../utils/enums';
-import { WorkflowLog, WorkflowStats } from '../utils/workflowLogs.types';
+import { WorkflowLog, WorkflowStats } from '../types/logs';
 import { AgentStoreState } from './agentStore.types';
 import { TaskResult, TaskStoreState } from './taskStore.types';
 import { WorkflowLoopState } from './workflowLoopStore.types';
@@ -19,6 +19,13 @@ export type CleanedAgent = Omit<Partial<Agent>, 'agentInstance'> & {
   env: string;
   llmConfig: CleanedLLMConfig;
   agentInstance: Partial<BaseAgent>;
+};
+
+export type CleanedBaseAgent = Omit<
+  Partial<BaseAgent>,
+  'llmConfig' | 'executableAgent'
+> & {
+  llmConfig: CleanedLLMConfig;
 };
 
 export type CleanedFeedback = {
@@ -55,7 +62,7 @@ export type CleanedMetadata = {
 export type CleanedWorkflowLog = Omit<WorkflowLog, 'timestamp' | 'metadata'> & {
   timestamp: string;
   metadata: CleanedMetadata;
-  agent?: CleanedAgent | null;
+  agent?: CleanedAgent | CleanedBaseAgent | null;
   task?: CleanedTask | null;
 };
 
@@ -103,8 +110,8 @@ export interface TeamStoreActions {
   finishWorkflowAction: () => void;
   setTeamWorkflowStatus: (status: WORKFLOW_STATUS_enum) => void;
   handleWorkflowError: (error: Error) => void;
-  handleWorkflowBlocked: (error: Error) => void;
-  handleWorkflowAborted: (error: Error) => void;
+  handleWorkflowBlocked: (task: Task, error: Error) => void;
+  handleWorkflowAborted: (task: Task, error: Error) => void;
   workOnTask: (agent: Agent, task: Task, context: string) => Promise<void>;
   workOnTaskResume: (agent: Agent, task: Task) => Promise<void>;
   deriveContextFromLogs: (logs: WorkflowLog[], currentTaskId: string) => string;
@@ -113,12 +120,14 @@ export interface TeamStoreActions {
   clearAll: () => void;
   getWorkflowStats: () => WorkflowStats;
   getTaskResults: () => Record<string, unknown>;
-  prepareNewLog: <T extends WorkflowLog>(params: NewLogParams<T>) => T;
+  prepareWorkflowStatusUpdateLog: <T extends WorkflowLog>(
+    params: NewLogParams<T>
+  ) => T;
 }
 
 export type NewLogParams<T extends WorkflowLog> = {
   task?: Task;
-  agent?: Agent | BaseAgent;
+  agent?: Agent;
   logDescription: string;
   workflowStatus?: WORKFLOW_STATUS_enum;
   taskStatus?: TASK_STATUS_enum;

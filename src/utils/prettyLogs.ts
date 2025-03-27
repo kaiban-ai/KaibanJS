@@ -12,7 +12,7 @@ import ansis from 'ansis';
 import { logger } from './logger';
 import { CostResult, LLMUsageStats } from './llmCostCalculator';
 import { Task } from '..';
-import { WorkflowFinishedLog } from './workflowLogs.types';
+import { WorkflowFinishedLog } from '../types/logs';
 
 /** Task completion log parameters */
 export type TaskCompletionParams = {

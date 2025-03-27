@@ -15,11 +15,7 @@ import {
   logPrettyTaskStatus,
 } from '../utils/prettyLogs';
 import { TeamStore } from '../stores';
-import {
-  TaskCompletionLog,
-  TaskStatusLog,
-  WorkflowLog,
-} from '../utils/workflowLogs.types';
+import { TaskCompletionLog, TaskStatusLog, WorkflowLog } from '../types/logs';
 
 /**
  * Subscribes to task status updates in the store and logs them appropriately.

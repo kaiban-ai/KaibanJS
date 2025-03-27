@@ -66,6 +66,9 @@ export class ReactChampionAgent extends BaseAgent {
   protected interactionsHistory: ChatMessageHistory;
   protected lastFeedbackMessage: string | null;
 
+  // TODO: Check if this is needed
+  protected currentIterations: number;
+
   constructor(config: BaseAgentParams) {
     super(config);
 
@@ -82,6 +85,7 @@ export class ReactChampionAgent extends BaseAgent {
 
     this.interactionsHistory = new ChatMessageHistory();
     this.lastFeedbackMessage = null;
+    this.currentIterations = 0;
   }
 
   /**
@@ -419,7 +423,7 @@ export class ReactChampionAgent extends BaseAgent {
                   feedbackMessage = this.promptTemplates.TOOL_RESULT_FEEDBACK({
                     agent,
                     task,
-                    toolResult: toolResponse,
+                    toolResult: toolResponse.result,
                     parsedLLMOutput,
                   });
                 } catch (error: unknown) {
@@ -515,7 +519,7 @@ export class ReactChampionAgent extends BaseAgent {
       });
 
       return {
-        error: `Task blocked: ${blockReason}`,
+        error: blockReason,
         metadata: { iterations, maxAgentIterations },
       };
     } else if (parsedResultWithFinalAnswer) {
@@ -689,12 +693,7 @@ export class ReactChampionAgent extends BaseAgent {
 
       const message = generations[0][0].message as AIMessageChunk;
       const parsedResult = await agentResultParser.invoke(message);
-      const parsedLLMOutput: ParsedLLMOutput = {
-        ...getParsedJSON(parsedResult),
-        outputSchema: task.outputSchema,
-        isValidOutput: false,
-        outputSchemaErrors: undefined,
-      };
+      const parsedLLMOutput: ParsedLLMOutput = getParsedJSON(parsedResult);
 
       if (task.outputSchema && parsedLLMOutput.finalAnswer) {
         parsedLLMOutput.outputSchema = task.outputSchema;
@@ -968,16 +967,34 @@ export class ReactChampionAgent extends BaseAgent {
     this.store?.getState()?.trackPromise(this.id, promiseObj);
 
     try {
-      const result: string = (await toolPromise) as string;
+      const toolResult: ToolResult = (await toolPromise) as ToolResult;
       agent.handleUsingToolEnd({
         agent,
         task,
         tool,
-        output: { toolResult: result },
+        output: toolResult,
       });
+      const action =
+        typeof toolResult === 'object' && 'action' in toolResult
+          ? (toolResult.action as string)
+          : tool.name;
+      const result =
+        typeof toolResult === 'object' && 'result' in toolResult
+          ? (toolResult.result as string)
+          : (toolResult as string);
+      const error =
+        typeof toolResult === 'object' && 'error' in toolResult
+          ? (toolResult.error as LLMInvocationError)
+          : undefined;
+      const reason =
+        typeof toolResult === 'object' && 'reason' in toolResult
+          ? (toolResult.reason as string)
+          : undefined;
       return {
         result,
-        action: tool.name,
+        error,
+        reason,
+        action,
       };
     } catch (error) {
       if (error instanceof AbortError) {
@@ -1185,6 +1202,7 @@ export class ReactChampionAgent extends BaseAgent {
   reset() {
     super.reset();
     this.lastFeedbackMessage = null;
+    this.currentIterations = 0;
     this.interactionsHistory = new ChatMessageHistory();
   }
 }

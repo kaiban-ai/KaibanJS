@@ -190,26 +190,6 @@ export type AgentTaskAbortedMetadata = WorkflowBaseMetadata & {
   error: Error;
 };
 
-export type AgentBaseMetadata =
-  | AgentIterationMetadata
-  | AgentBlockMetadata
-  | AgentStartThinkingMetadata
-  | AgentEndThinkingMetadata
-  | AgentThoughtMetadata
-  | AgentObservationMetadata
-  | AgentWeirdLLMOutputMetadata
-  | AgentFinalAnswerMetadata
-  | AgentThinkingErrorMetadata
-  | AgentLoopErrorMetadata
-  | AgentIssuesParsingLLMOutputMetadata
-  | AgentToolStartMetadata
-  | AgentToolEndMetadata
-  | AgentToolErrorMetadata
-  | AgentActionMetadata
-  | AgentPausedMetadata
-  | AgentResumedMetadata
-  | AgentTaskAbortedMetadata;
-
 // Task-specific metadata types
 export type TaskStartedMetadata = WorkflowBaseMetadata;
 
@@ -243,12 +223,6 @@ export type TaskBlockedMetadata = WorkflowBaseMetadata & {
   llmUsageStats: LLMUsageStats;
 };
 
-export type AgentTaskBlockedMetadata = WorkflowBaseMetadata & {
-  error: Error;
-  costDetails: CostResult;
-  llmUsageStats: LLMUsageStats;
-};
-
 export type TaskAbortedMetadata = WorkflowBaseMetadata & {
   error: Error;
   costDetails: CostResult;
@@ -269,87 +243,261 @@ export type TaskFeedbackMetadata = WorkflowBaseMetadata & {
 
 export type TaskValidatedMetadata = WorkflowBaseMetadata;
 
-export type TaskBaseMetadata =
-  | TaskStartedMetadata
-  | TaskCompletionMetadata
-  | TaskAwaitingValidationMetadata
-  | TaskErrorMetadata
-  | TaskBlockedMetadata
-  | TaskAbortedMetadata
-  | TaskPausedMetadata
-  | TaskResumedMetadata
-  | TaskFeedbackMetadata
-  | TaskValidatedMetadata;
-
-// Base workflow log interface with required fields and generic metadata
-export interface BaseWorkflowLog<T extends WorkflowBaseMetadata> {
+// Base log interfaces
+export interface BaseWorkflowLog {
   timestamp: number;
   logDescription: string;
   logType: 'WorkflowStatusUpdate' | 'AgentStatusUpdate' | 'TaskStatusUpdate';
-  workflowStatus?: WORKFLOW_STATUS_enum;
-  metadata: T;
 }
 
-export type BaseAgentLog<T extends WorkflowBaseMetadata> =
-  BaseWorkflowLog<T> & {
-    task: Task;
-    agent: Agent;
-    taskStatus?: TASK_STATUS_enum;
-    agentStatus?: AGENT_STATUS_enum;
-  };
+export interface BaseAgentLog extends BaseWorkflowLog {
+  task: Task;
+  agent: Agent;
+  taskStatus?: TASK_STATUS_enum;
+  agentStatus?: AGENT_STATUS_enum;
+  workflowStatus?: WORKFLOW_STATUS_enum;
+}
 
-export type BaseTaskLog<T extends WorkflowBaseMetadata> = BaseAgentLog<T>;
+export type BaseTaskLog = BaseAgentLog;
 
-// Workflow status update logs with specific metadata types
-export type WorkflowInitialLog = BaseWorkflowLog<WorkflowInitialMetadata>;
-export type WorkflowFinishedLog = BaseWorkflowLog<WorkflowFinishedMetadata>;
-export type WorkflowResumedLog = BaseWorkflowLog<WorkflowResumedMetadata>;
-export type WorkflowStoppingLog = BaseWorkflowLog<WorkflowStoppingMetadata>;
-export type WorkflowStoppedLog = BaseWorkflowLog<WorkflowStoppedMetadata>;
-export type WorkflowErrorLog = BaseWorkflowLog<WorkflowErrorMetadata>;
-export type WorkflowOperationErrorLog =
-  BaseWorkflowLog<WorkflowOperationErrorMetadata>;
-export type WorkflowRunningLog = BaseWorkflowLog<WorkflowRunningMetadata>;
-export type WorkflowBlockedLog = BaseWorkflowLog<WorkflowBlockedMetadata>;
-export type WorkflowPausedLog = BaseWorkflowLog<WorkflowPausedMetadata>;
-export type WorkflowResumeLog = BaseWorkflowLog<WorkflowResumeMetadata>;
+// Workflow status update logs
+export interface WorkflowInitialLog extends BaseWorkflowLog {
+  logType: 'WorkflowStatusUpdate';
+  workflowStatus: WORKFLOW_STATUS_enum;
+  metadata: WorkflowInitialMetadata;
+}
 
-// Agent status update logs with specific metadata types
-export type AgentIterationLog = BaseAgentLog<AgentIterationMetadata>;
-export type AgentBlockLog = BaseAgentLog<AgentBlockMetadata>;
-export type AgentActionLog = BaseAgentLog<AgentActionMetadata>;
-export type AgentStartThinkingLog = BaseAgentLog<AgentStartThinkingMetadata>;
-export type AgentEndThinkingLog = BaseAgentLog<AgentEndThinkingMetadata>;
-export type AgentFinalAnswerLog = BaseAgentLog<AgentFinalAnswerMetadata>;
-export type AgentThoughtLog = BaseAgentLog<AgentThoughtMetadata>;
-export type AgentObservationLog = BaseAgentLog<AgentObservationMetadata>;
-export type AgentWeirdLLMOutputLog = BaseAgentLog<AgentWeirdLLMOutputMetadata>;
-export type AgentThinkingErrorLog = BaseAgentLog<AgentThinkingErrorMetadata>;
-export type AgentLoopErrorLog = BaseAgentLog<AgentLoopErrorMetadata>;
-export type AgentIssuesParsingLLMOutputLog =
-  BaseAgentLog<AgentIssuesParsingLLMOutputMetadata>;
-export type AgentToolStartLog = BaseAgentLog<AgentToolStartMetadata>;
-export type AgentToolEndLog = BaseAgentLog<AgentToolEndMetadata>;
-export type AgentToolErrorLog = BaseAgentLog<AgentToolErrorMetadata>;
-export type AgentPausedLog = BaseAgentLog<AgentPausedMetadata>;
-export type AgentResumedLog = BaseAgentLog<AgentResumedMetadata>;
-export type AgentTaskAbortedLog = BaseAgentLog<AgentTaskAbortedMetadata>;
-export type AgentTaskBlockedLog = BaseAgentLog<AgentTaskBlockedMetadata>;
+export interface WorkflowFinishedLog extends BaseWorkflowLog {
+  logType: 'WorkflowStatusUpdate';
+  workflowStatus: WORKFLOW_STATUS_enum;
+  metadata: WorkflowFinishedMetadata;
+}
 
-// Task status update logs with specific metadata types
-export type TaskStartedLog = BaseTaskLog<TaskStartedMetadata>;
-export type TaskCompletionLog = BaseTaskLog<TaskCompletionMetadata>;
-export type TaskAwaitingValidationLog =
-  BaseTaskLog<TaskAwaitingValidationMetadata>;
-export type TaskErrorLog = BaseTaskLog<TaskErrorMetadata>;
-export type TaskBlockedLog = BaseTaskLog<TaskBlockedMetadata>;
-export type TaskAbortedLog = BaseTaskLog<TaskAbortedMetadata>;
-export type TaskPausedLog = BaseTaskLog<TaskPausedMetadata>;
-export type TaskResumedLog = BaseTaskLog<TaskResumedMetadata>;
-export type TaskFeedbackLog = BaseTaskLog<TaskFeedbackMetadata>;
-export type TaskValidatedLog = BaseTaskLog<TaskValidatedMetadata>;
+export interface WorkflowResumedLog extends BaseWorkflowLog {
+  logType: 'WorkflowStatusUpdate';
+  workflowStatus: WORKFLOW_STATUS_enum;
+  metadata: WorkflowResumedMetadata;
+}
 
-// Union type for all workflow logs
+export interface WorkflowStoppingLog extends BaseWorkflowLog {
+  logType: 'WorkflowStatusUpdate';
+  workflowStatus: WORKFLOW_STATUS_enum;
+  metadata: WorkflowStoppingMetadata;
+}
+
+export interface WorkflowStoppedLog extends BaseWorkflowLog {
+  logType: 'WorkflowStatusUpdate';
+  workflowStatus: WORKFLOW_STATUS_enum;
+  metadata: WorkflowStoppedMetadata;
+}
+
+export interface WorkflowErrorLog extends BaseWorkflowLog {
+  logType: 'WorkflowStatusUpdate';
+  workflowStatus: WORKFLOW_STATUS_enum;
+  metadata: WorkflowErrorMetadata;
+}
+
+export interface WorkflowOperationErrorLog extends BaseWorkflowLog {
+  logType: 'WorkflowStatusUpdate';
+  workflowStatus: WORKFLOW_STATUS_enum;
+  metadata: WorkflowOperationErrorMetadata;
+}
+
+export interface WorkflowRunningLog extends BaseWorkflowLog {
+  logType: 'WorkflowStatusUpdate';
+  workflowStatus: WORKFLOW_STATUS_enum;
+  metadata: WorkflowRunningMetadata;
+}
+
+export interface WorkflowBlockedLog extends BaseWorkflowLog {
+  logType: 'WorkflowStatusUpdate';
+  workflowStatus: WORKFLOW_STATUS_enum;
+  metadata: WorkflowBlockedMetadata;
+}
+
+export interface WorkflowPausedLog extends BaseWorkflowLog {
+  logType: 'WorkflowStatusUpdate';
+  workflowStatus: WORKFLOW_STATUS_enum;
+  metadata: WorkflowPausedMetadata;
+}
+
+export interface WorkflowResumeLog extends BaseWorkflowLog {
+  logType: 'WorkflowStatusUpdate';
+  workflowStatus: WORKFLOW_STATUS_enum;
+  metadata: WorkflowResumeMetadata;
+}
+
+// Agent status update logs
+export interface AgentIterationLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentIterationMetadata;
+}
+
+export interface AgentBlockLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentBlockMetadata;
+}
+
+export interface AgentActionLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentActionMetadata;
+}
+
+export interface AgentStartThinkingLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentStartThinkingMetadata;
+}
+
+export interface AgentEndThinkingLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentEndThinkingMetadata;
+}
+
+export interface AgentFinalAnswerLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentFinalAnswerMetadata;
+}
+
+export interface AgentThoughtLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentThoughtMetadata;
+}
+
+export interface AgentObservationLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentObservationMetadata;
+}
+
+export interface AgentWeirdLLMOutputLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentWeirdLLMOutputMetadata;
+}
+
+export interface AgentThinkingErrorLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentThinkingErrorMetadata;
+}
+
+export interface AgentLoopErrorLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentLoopErrorMetadata;
+}
+
+export interface AgentIssuesParsingLLMOutputLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentIssuesParsingLLMOutputMetadata;
+}
+
+export interface AgentToolStartLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentToolStartMetadata;
+}
+
+export interface AgentToolEndLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentToolEndMetadata;
+}
+
+export interface AgentToolErrorLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentToolErrorMetadata;
+}
+
+export interface AgentPausedLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentPausedMetadata;
+}
+
+export interface AgentResumedLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentResumedMetadata;
+}
+
+export interface AgentTaskAbortedLog extends BaseAgentLog {
+  logType: 'AgentStatusUpdate';
+  agentStatus: AGENT_STATUS_enum;
+  metadata: AgentTaskAbortedMetadata;
+}
+
+// Task status update logs
+export interface TaskStartedLog extends BaseTaskLog {
+  logType: 'TaskStatusUpdate';
+  taskStatus: TASK_STATUS_enum;
+  metadata: TaskStartedMetadata;
+}
+
+export interface TaskCompletionLog extends BaseTaskLog {
+  logType: 'TaskStatusUpdate';
+  taskStatus: TASK_STATUS_enum;
+  metadata: TaskCompletionMetadata;
+}
+
+export interface TaskAwaitingValidationLog extends BaseTaskLog {
+  logType: 'TaskStatusUpdate';
+  taskStatus: TASK_STATUS_enum;
+  metadata: TaskAwaitingValidationMetadata;
+}
+
+export interface TaskErrorLog extends BaseTaskLog {
+  logType: 'TaskStatusUpdate';
+  taskStatus: TASK_STATUS_enum;
+  metadata: TaskErrorMetadata;
+}
+
+export interface TaskBlockedLog extends BaseTaskLog {
+  logType: 'TaskStatusUpdate';
+  taskStatus: TASK_STATUS_enum;
+  metadata: TaskBlockedMetadata;
+}
+
+export interface TaskAbortedLog extends BaseTaskLog {
+  logType: 'TaskStatusUpdate';
+  taskStatus: TASK_STATUS_enum;
+  metadata: TaskAbortedMetadata;
+}
+
+export interface TaskPausedLog extends BaseTaskLog {
+  logType: 'TaskStatusUpdate';
+  taskStatus: TASK_STATUS_enum;
+  metadata: TaskPausedMetadata;
+}
+
+export interface TaskResumedLog extends BaseTaskLog {
+  logType: 'TaskStatusUpdate';
+  taskStatus: TASK_STATUS_enum;
+  metadata: TaskResumedMetadata;
+}
+
+export interface TaskFeedbackLog extends BaseTaskLog {
+  logType: 'TaskStatusUpdate';
+  taskStatus: TASK_STATUS_enum;
+  metadata: TaskFeedbackMetadata;
+}
+
+export interface TaskValidatedLog extends BaseTaskLog {
+  logType: 'TaskStatusUpdate';
+  taskStatus: TASK_STATUS_enum;
+  metadata: TaskValidatedMetadata;
+}
+
+// Union types for all workflow logs
 export type WorkflowStatusLog =
   | WorkflowInitialLog
   | WorkflowFinishedLog
@@ -363,7 +511,6 @@ export type WorkflowStatusLog =
   | WorkflowPausedLog
   | WorkflowResumeLog;
 
-// Update AgentStatusLog type
 export type AgentStatusLog =
   | AgentIterationLog
   | AgentStartThinkingLog
@@ -393,10 +540,7 @@ export type TaskStatusLog =
 
 export type WorkflowLog = WorkflowStatusLog | AgentStatusLog | TaskStatusLog;
 
-export type WorkflowLogMetadata =
-  | WorkflowBaseMetadata
-  | AgentBaseMetadata
-  | TaskBaseMetadata;
+export type WorkflowLogMetadata = WorkflowBaseMetadata;
 
 /**
  * Interface for workflow statistics

@@ -9,9 +9,6 @@
  */
 
 import { StateCreator } from 'zustand';
-import { AGENT_STATUS_enum } from '../utils/enums';
-import { TaskBlockError } from '../utils/errors';
-import { logger } from '../utils/logger';
 import {
   AgentBlockLog,
   AgentEndThinkingLog,
@@ -23,16 +20,25 @@ import {
   AgentPausedLog,
   AgentResumedLog,
   AgentStartThinkingLog,
+  AgentStatusLog,
   AgentTaskAbortedLog,
+  AgentTaskCompletedLog,
   AgentThinkingErrorLog,
   AgentThoughtLog,
+  AgentToolDoesNotExistLog,
   AgentToolEndLog,
   AgentToolErrorLog,
   AgentToolStartLog,
   AgentWeirdLLMOutputLog,
-  TaskCompletionLog,
-} from '../utils/workflowLogs.types';
-import { AgentStoreState } from './agentStore.types';
+} from '../types/logs';
+import { AGENT_STATUS_enum } from '../utils/enums';
+import { TaskBlockError } from '../utils/errors';
+import { logger } from '../utils/logger';
+import { getTaskTitleForLogs } from '../utils/tasks';
+import {
+  AgentStoreState,
+  NewAgentStatusUpdateLogParams,
+} from './agentStore.types';
 import { CombinedStoresState } from './teamStore.types';
 
 export const useAgentStore: StateCreator<
@@ -48,7 +54,7 @@ export const useAgentStore: StateCreator<
     maxAgentIterations,
   }) => {
     agent.status = AGENT_STATUS_enum.ITERATION_START;
-    const newLog = get().prepareNewLog<AgentIterationLog>({
+    const newLog = get().prepareAgentStatusUpdateLog<AgentIterationLog>({
       agent,
       task,
       logDescription: `🏁 Agent ${agent.name} - ${
@@ -73,8 +79,8 @@ export const useAgentStore: StateCreator<
     maxAgentIterations,
   }) => {
     agent.status = AGENT_STATUS_enum.ITERATION_END;
-    const newLog = get().prepareNewLog<AgentIterationLog>({
-      agent: task.agent,
+    const newLog = get().prepareAgentStatusUpdateLog<AgentIterationLog>({
+      agent,
       task,
       logDescription: `🔄 Agent ${agent.name} - ${AGENT_STATUS_enum.ITERATION_END}`,
       metadata: { iterations, maxAgentIterations },
@@ -89,8 +95,8 @@ export const useAgentStore: StateCreator<
 
   handleAgentThinkingStart: ({ agent, task, messages }) => {
     agent.status = AGENT_STATUS_enum.THINKING;
-    const newLog = get().prepareNewLog<AgentStartThinkingLog>({
-      agent: task.agent,
+    const newLog = get().prepareAgentStatusUpdateLog<AgentStartThinkingLog>({
+      agent,
       task,
       logDescription: `🤔 Agent ${agent.name} starts thinking...`,
       metadata: { messages },
@@ -108,8 +114,8 @@ export const useAgentStore: StateCreator<
 
   handleAgentThinkingEnd: ({ agent, task, output }) => {
     agent.status = AGENT_STATUS_enum.THINKING_END;
-    const newLog = get().prepareNewLog<AgentEndThinkingLog>({
-      agent: task.agent,
+    const newLog = get().prepareAgentStatusUpdateLog<AgentEndThinkingLog>({
+      agent,
       task,
       logDescription: `🤔 Agent ${agent.name} finished thinking.`,
       metadata: { output },
@@ -127,8 +133,8 @@ export const useAgentStore: StateCreator<
   handleAgentThinkingError: ({ agent, task, error }) => {
     const errorToLog = error.originalError || error;
     agent.status = AGENT_STATUS_enum.THINKING_ERROR;
-    const newLog = get().prepareNewLog<AgentThinkingErrorLog>({
-      agent: task.agent,
+    const newLog = get().prepareAgentStatusUpdateLog<AgentThinkingErrorLog>({
+      agent,
       task,
       logDescription: `🛑 Agent ${agent.name} encountered an error during ${AGENT_STATUS_enum.THINKING}.`,
       metadata: { error: errorToLog },
@@ -159,13 +165,14 @@ export const useAgentStore: StateCreator<
 
   handleAgentIssuesParsingLLMOutput: ({ agent, task, output, error }) => {
     agent.status = AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT;
-    const newLog = get().prepareNewLog<AgentIssuesParsingLLMOutputLog>({
-      agent: task.agent,
-      task,
-      logDescription: `😡 Agent ${agent.name} found some ${AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT}. ${error.message}`,
-      metadata: { output, error },
-      logType: 'AgentStatusUpdate',
-    });
+    const newLog =
+      get().prepareAgentStatusUpdateLog<AgentIssuesParsingLLMOutputLog>({
+        agent,
+        task,
+        logDescription: `😡 Agent ${agent.name} found some ${AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT}. ${error.message}`,
+        metadata: { output, error },
+        logType: 'AgentStatusUpdate',
+      });
 
     logger.debug(
       `😡 ${AGENT_STATUS_enum.ISSUES_PARSING_LLM_OUTPUT}: Agent ${agent.name} found issues parsing the LLM output. ${error.message}`
@@ -175,13 +182,14 @@ export const useAgentStore: StateCreator<
 
   handleAgentIssuesParsingSchemaOutput: ({ agent, task, output, error }) => {
     agent.status = AGENT_STATUS_enum.ISSUES_PARSING_SCHEMA_OUTPUT;
-    const newLog = get().prepareNewLog<AgentIssuesParsingLLMOutputLog>({
-      agent,
-      task,
-      logDescription: `😡 Agent ${agent.name} found some ${AGENT_STATUS_enum.ISSUES_PARSING_SCHEMA_OUTPUT}. ${error.message}`,
-      metadata: { output, error },
-      logType: 'AgentStatusUpdate',
-    });
+    const newLog =
+      get().prepareAgentStatusUpdateLog<AgentIssuesParsingLLMOutputLog>({
+        agent,
+        task,
+        logDescription: `😡 Agent ${agent.name} found some ${AGENT_STATUS_enum.ISSUES_PARSING_SCHEMA_OUTPUT}. ${error.message}`,
+        metadata: { output, error },
+        logType: 'AgentStatusUpdate',
+      });
 
     logger.debug(
       `😡 ${AGENT_STATUS_enum.ISSUES_PARSING_SCHEMA_OUTPUT}: Agent ${agent.name} found issues parsing the Schema output. ${error.message}`
@@ -192,7 +200,7 @@ export const useAgentStore: StateCreator<
 
   handleAgentFinalAnswer: ({ agent, task, output }) => {
     agent.status = AGENT_STATUS_enum.FINAL_ANSWER;
-    const newLog = get().prepareNewLog<AgentFinalAnswerLog>({
+    const newLog = get().prepareAgentStatusUpdateLog<AgentFinalAnswerLog>({
       agent,
       task,
       logDescription: `🥳 Agent ${agent.name} got the ${AGENT_STATUS_enum.FINAL_ANSWER}`,
@@ -208,7 +216,7 @@ export const useAgentStore: StateCreator<
 
   handleAgentThought: ({ agent, task, output }) => {
     agent.status = AGENT_STATUS_enum.THOUGHT;
-    const newLog = get().prepareNewLog<AgentThoughtLog>({
+    const newLog = get().prepareAgentStatusUpdateLog<AgentThoughtLog>({
       agent,
       task,
       logDescription: `💭 Agent ${agent.name} ${AGENT_STATUS_enum.THOUGHT}.`,
@@ -225,7 +233,7 @@ export const useAgentStore: StateCreator<
 
   handleAgentSelfQuestion: ({ agent, task, output }) => {
     agent.status = AGENT_STATUS_enum.SELF_QUESTION;
-    const newLog = get().prepareNewLog<AgentThoughtLog>({
+    const newLog = get().prepareAgentStatusUpdateLog<AgentThoughtLog>({
       agent,
       task,
       logDescription: `❓Agent ${agent.name} have a ${AGENT_STATUS_enum.SELF_QUESTION}`,
@@ -241,11 +249,12 @@ export const useAgentStore: StateCreator<
 
   handleAgentToolStart: ({ agent, task, tool, input }) => {
     agent.status = AGENT_STATUS_enum.USING_TOOL;
-    const newLog = get().prepareNewLog<AgentToolStartLog>({
+    const newLog = get().prepareAgentStatusUpdateLog<AgentToolStartLog>({
       agent,
       task,
       logDescription: `🛠️⏳ Agent ${agent.name} is ${AGENT_STATUS_enum.USING_TOOL} ${tool.name}...`,
-      metadata: { tool: tool.name, input },
+      metadata: { tool: tool, input },
+      // metadata: { tool: tool.name, input },
       logType: 'AgentStatusUpdate',
     });
 
@@ -258,16 +267,17 @@ export const useAgentStore: StateCreator<
 
   handleAgentToolEnd: ({ agent, task, output, tool }) => {
     agent.status = AGENT_STATUS_enum.USING_TOOL_END;
-    const newLog = get().prepareNewLog<AgentToolEndLog>({
+    const newLog = get().prepareAgentStatusUpdateLog<AgentToolEndLog>({
       agent,
       task,
-      logDescription: `🛠️✅ ${AGENT_STATUS_enum.USING_TOOL_END}: Agent ${agent.name} - got results from tool:${tool.name}`,
-      metadata: { output, tool: tool.name },
+      logDescription: `🛠️✅ ${AGENT_STATUS_enum.USING_TOOL_END}: Agent ${agent.name} - got  results from tool:${tool.name}`,
+      metadata: { output },
+      // metadata: { output, tool: tool.name },
       logType: 'AgentStatusUpdate',
     });
 
     logger.info(
-      `🛠️✅ ${AGENT_STATUS_enum.USING_TOOL_END}: Agent ${agent.name} - got results from tool:${tool.name}`
+      `🛠️✅ ${AGENT_STATUS_enum.USING_TOOL_END}: Agent ${agent.name} - got  results from tool:${tool.name}`
     );
     logger.debug(
       `Tool Output:`,
@@ -280,11 +290,12 @@ export const useAgentStore: StateCreator<
 
   handleAgentToolError: ({ agent, task, tool, error }) => {
     agent.status = AGENT_STATUS_enum.USING_TOOL_ERROR;
-    const newLog = get().prepareNewLog<AgentToolErrorLog>({
+    const newLog = get().prepareAgentStatusUpdateLog<AgentToolErrorLog>({
       agent,
       task,
       logDescription: 'Error during tool use',
       metadata: { error, tool: tool.name },
+      // metadata: { error, tool: tool.name },
       logType: 'AgentStatusUpdate',
     });
 
@@ -297,11 +308,12 @@ export const useAgentStore: StateCreator<
 
   handleAgentToolDoesNotExist: ({ agent, task, toolName }) => {
     agent.status = AGENT_STATUS_enum.USING_TOOL_ERROR;
-    const newLog = get().prepareNewLog<AgentToolErrorLog>({
+    const newLog = get().prepareAgentStatusUpdateLog<AgentToolDoesNotExistLog>({
       agent,
       task,
       logDescription: `🛠️🚫 Agent ${agent.name} - Oops... it seems that the tool:${toolName} ${AGENT_STATUS_enum.TOOL_DOES_NOT_EXIST}.`,
-      metadata: { tool: toolName, error: new Error('Tool does not exist') },
+      metadata: { toolName },
+      // metadata: { tool: toolName, error: new Error('Tool does not exist') },
       logType: 'AgentStatusUpdate',
     });
 
@@ -313,7 +325,7 @@ export const useAgentStore: StateCreator<
 
   handleAgentObservation: ({ agent, task, output }) => {
     agent.status = AGENT_STATUS_enum.OBSERVATION;
-    const newLog = get().prepareNewLog<AgentObservationLog>({
+    const newLog = get().prepareAgentStatusUpdateLog<AgentObservationLog>({
       agent,
       task,
       logDescription: `🔍 Agent ${agent.name} - ${AGENT_STATUS_enum.OBSERVATION}`,
@@ -330,7 +342,7 @@ export const useAgentStore: StateCreator<
 
   handleWeirdOutput: ({ agent, task, output }) => {
     agent.status = AGENT_STATUS_enum.WEIRD_LLM_OUTPUT;
-    const newLog = get().prepareNewLog<AgentWeirdLLMOutputLog>({
+    const newLog = get().prepareAgentStatusUpdateLog<AgentWeirdLLMOutputLog>({
       agent,
       task,
       logDescription: `🤔 Agent ${agent.name} - ${AGENT_STATUS_enum.WEIRD_LLM_OUTPUT}`,
@@ -352,7 +364,7 @@ export const useAgentStore: StateCreator<
     maxAgentIterations,
   }) => {
     agent.status = AGENT_STATUS_enum.AGENTIC_LOOP_ERROR;
-    const newLog = get().prepareNewLog<AgentLoopErrorLog>({
+    const newLog = get().prepareAgentStatusUpdateLog<AgentLoopErrorLog>({
       agent,
       task,
       logDescription: `🚨 Agent ${agent.name} - ${AGENT_STATUS_enum.AGENTIC_LOOP_ERROR} | Iterations: ${iterations}/${maxAgentIterations}`,
@@ -381,7 +393,7 @@ export const useAgentStore: StateCreator<
   handleAgentTaskAborted: ({ task, error }) => {
     task.agent.setStatus(AGENT_STATUS_enum.TASK_ABORTED);
 
-    const newLog = get().prepareNewLog<AgentTaskAbortedLog>({
+    const newLog = get().prepareWorkflowStatusUpdateLog<AgentTaskAbortedLog>({
       agent: task.agent,
       task,
       logDescription: `🛑 Agent ${task.agent.name} - ${AGENT_STATUS_enum.TASK_ABORTED}`,
@@ -397,7 +409,7 @@ export const useAgentStore: StateCreator<
 
   handleAgentTaskPaused: ({ task }) => {
     task.agent.setStatus(AGENT_STATUS_enum.PAUSED);
-    const newLog = get().prepareNewLog<AgentPausedLog>({
+    const newLog = get().prepareAgentStatusUpdateLog<AgentPausedLog>({
       agent: task.agent,
       task,
       logDescription: `🛑 Agent ${task.agent.name} - ${AGENT_STATUS_enum.PAUSED}`,
@@ -405,6 +417,7 @@ export const useAgentStore: StateCreator<
         message: 'Task paused by agent',
       },
       logType: 'AgentStatusUpdate',
+      agentStatus: AGENT_STATUS_enum.PAUSED,
     });
 
     logger.info(
@@ -416,7 +429,7 @@ export const useAgentStore: StateCreator<
 
   handleAgentTaskResumed: ({ task }) => {
     task.agent.setStatus(AGENT_STATUS_enum.RESUMED);
-    const newLog = get().prepareNewLog<AgentResumedLog>({
+    const newLog = get().prepareWorkflowStatusUpdateLog<AgentResumedLog>({
       agent: task.agent,
       task,
       logDescription: `🔄 Agent ${task.agent.name} - ${AGENT_STATUS_enum.RESUMED}`,
@@ -441,7 +454,7 @@ export const useAgentStore: StateCreator<
     maxAgentIterations = -1,
   }) => {
     agent.status = AGENT_STATUS_enum.MAX_ITERATIONS_ERROR;
-    const newLog = get().prepareNewLog<AgentLoopErrorLog>({
+    const newLog = get().prepareAgentStatusUpdateLog<AgentLoopErrorLog>({
       agent,
       task,
       logDescription: `🛑 Agent ${agent.name} - ${AGENT_STATUS_enum.MAX_ITERATIONS_ERROR} | Iterations: ${iterations}`,
@@ -449,7 +462,6 @@ export const useAgentStore: StateCreator<
         error,
         iterations,
         maxAgentIterations,
-        message: `Max iterations (${maxAgentIterations}) reached`,
       },
       logType: 'AgentStatusUpdate',
     });
@@ -479,26 +491,16 @@ export const useAgentStore: StateCreator<
     maxAgentIterations,
   }) => {
     agent.status = AGENT_STATUS_enum.TASK_COMPLETED;
-    const startTime = task.stats?.startTime || Date.now() - 1000; // Default to 1 second if no start time
-    const newLog = get().prepareNewLog<TaskCompletionLog>({
+    const newLog = get().prepareAgentStatusUpdateLog<AgentTaskCompletedLog>({
       agent,
       task,
       logDescription: `🏁 Agent ${agent.name} - ${AGENT_STATUS_enum.TASK_COMPLETED}`,
       metadata: {
         result,
-        llmUsageStats: {
-          inputTokens: 0,
-          outputTokens: 0,
-          callsCount: 0,
-          callsErrorCount: 0,
-          parsingErrors: 0,
-        },
-        iterationCount: iterations,
-        duration: Date.now() - startTime,
-        costDetails: { costInputTokens: 0, costOutputTokens: 0, totalCost: 0 },
-        message: `Task completed after ${iterations} iterations (max: ${maxAgentIterations})`,
+        iterations,
+        maxAgentIterations,
       },
-      logType: 'TaskStatusUpdate',
+      logType: 'AgentStatusUpdate',
     });
 
     logger.info(
@@ -512,7 +514,7 @@ export const useAgentStore: StateCreator<
 
   handleAgentBlockTask: ({ agent, task, reason, metadata }) => {
     agent.status = AGENT_STATUS_enum.DECIDED_TO_BLOCK_TASK;
-    const newLog = get().prepareNewLog<AgentBlockLog>({
+    const newLog = get().prepareAgentStatusUpdateLog<AgentBlockLog>({
       agent,
       task,
       logDescription: `🚫 Agent ${agent.name} decided to block task: ${reason}`,
@@ -520,7 +522,6 @@ export const useAgentStore: StateCreator<
         isAgentDecision: true,
         blockReason: reason,
         blockedBy: metadata.blockedBy || agent.name,
-        message: reason,
       },
       logType: 'AgentStatusUpdate',
     });
@@ -535,12 +536,52 @@ export const useAgentStore: StateCreator<
     }));
 
     const blockError = new TaskBlockError(
-      `Task blocked: ${reason}`,
+      reason,
       reason,
       metadata.blockedBy || agent.name,
       true
     );
 
     get().handleTaskBlocked({ task, error: blockError });
+  },
+  prepareAgentStatusUpdateLog: <T extends AgentStatusLog>({
+    agent,
+    task,
+    logDescription,
+    workflowStatus,
+    taskStatus,
+    agentStatus,
+    metadata,
+    logType = 'AgentStatusUpdate' as T['logType'],
+  }: NewAgentStatusUpdateLogParams<T>): T => {
+    const timestamp = Date.now();
+
+    let newLog: T = {
+      timestamp,
+      logDescription,
+      metadata,
+      logType,
+    } as T;
+
+    if (agent && task) {
+      newLog = {
+        ...newLog,
+        task,
+        agent,
+        agentName: agent.name || 'Unknown Agent',
+        taskTitle: task ? getTaskTitleForLogs(task) : 'Untitled Task',
+        taskStatus: taskStatus || task.status,
+        agentStatus: agentStatus || agent.status,
+      } as T;
+    }
+
+    if (workflowStatus) {
+      newLog = {
+        ...newLog,
+        workflowStatus,
+      } as T;
+    }
+
+    return newLog;
   },
 });

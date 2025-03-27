@@ -176,6 +176,7 @@ export abstract class BaseAgent {
   protected normalizeLlmConfig(llmConfig: Partial<LLMConfig>): LLMConfig {
     const { provider = 'openai', apiBaseUrl } = llmConfig;
     const normalizedConfig: LLMConfig = {
+      ...llmConfig,
       provider,
       model: llmConfig.model || 'gpt-4o-mini',
       maxRetries: llmConfig.maxRetries || 1,
@@ -271,16 +272,5 @@ export abstract class BaseAgent {
     this.setStatus(AGENT_STATUS_enum.INITIAL);
   }
 
-  getCleanedAgent(): Partial<BaseAgent> {
-    const { id: _, env: __, ...rest } = this;
-    return {
-      ...rest,
-      id: '[REDACTED]',
-      env: '[REDACTED]',
-      llmConfig: {
-        ...this.llmConfig,
-        apiKey: '[REDACTED]',
-      },
-    };
-  }
+  abstract getCleanedAgent(): Partial<BaseAgent>;
 }
