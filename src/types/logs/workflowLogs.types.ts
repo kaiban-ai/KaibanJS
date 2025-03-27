@@ -1,143 +1,120 @@
 import { TaskResult } from '../../stores/taskStore.types';
 import { WORKFLOW_STATUS_enum } from '../../utils/enums';
 import { CostResult, LLMUsageStats } from '../../utils/llmCostCalculator';
-import {
-  BaseWorkflowLog,
-  Feedback,
-  WorkflowBaseMetadata,
-  WorkflowStats,
-} from './common';
-
-// Workflow-specific metadata types
-export type WorkflowInitialMetadata = WorkflowBaseMetadata & {
-  message: string;
-  inputs?: Record<string, unknown> | null;
-};
-
-export type WorkflowFinishedMetadata = WorkflowBaseMetadata & {
-  result: TaskResult | null;
-  teamName: string;
-  taskCount: number;
-  agentCount: number;
-  startTime: number;
-  endTime: number;
-  duration: number;
-  llmUsageStats: LLMUsageStats;
-  iterationCount: number;
-  costDetails: CostResult;
-};
-
-export type WorkflowErrorMetadata = WorkflowBaseMetadata & {
-  error: string;
-  errorStack?: string;
-} & WorkflowStats;
-
-export type WorkflowOperationErrorMetadata = WorkflowBaseMetadata & {
-  error: string;
-  message?: string;
-  errorStack?: string;
-};
-
-export type WorkflowBlockedMetadata = WorkflowBaseMetadata & {
-  error: string;
-} & WorkflowStats;
-
-export type WorkflowStoppingMetadata = WorkflowBaseMetadata & {
-  message: string;
-  previousStatus: WORKFLOW_STATUS_enum;
-};
-
-export type WorkflowStoppedMetadata = WorkflowBaseMetadata & {
-  message: string;
-  previousStatus: WORKFLOW_STATUS_enum;
-  tasksReset: number;
-};
-
-export type WorkflowResumedMetadata = WorkflowBaseMetadata & {
-  message: string;
-  resumedAt: string;
-  previousStatus: WORKFLOW_STATUS_enum;
-};
-
-export type WorkflowRunningMetadata = WorkflowBaseMetadata & {
-  message?: string;
-  inputs?: Record<string, unknown>;
-  feedback?: Feedback;
-};
-
-export type WorkflowPausedMetadata = WorkflowBaseMetadata & {
-  error?: Error;
-};
-
-export type WorkflowResumeMetadata = WorkflowBaseMetadata & {
-  error?: Error;
-};
+import { BaseWorkflowLog, Feedback, WorkflowStats } from './common';
 
 // Workflow status update logs
 export interface WorkflowInitialLog extends BaseWorkflowLog {
   logType: 'WorkflowStatusUpdate';
   workflowStatus: WORKFLOW_STATUS_enum;
-  metadata: WorkflowInitialMetadata;
+  metadata: {
+    message: string;
+    inputs?: Record<string, unknown> | null;
+  };
 }
 
 export interface WorkflowFinishedLog extends BaseWorkflowLog {
   logType: 'WorkflowStatusUpdate';
   workflowStatus: WORKFLOW_STATUS_enum;
-  metadata: WorkflowFinishedMetadata;
+  metadata: {
+    message?: string;
+    result: TaskResult | null;
+    teamName: string;
+    taskCount: number;
+    agentCount: number;
+    startTime: number;
+    endTime: number;
+    duration: number;
+    llmUsageStats: LLMUsageStats;
+    iterationCount: number;
+    costDetails: CostResult;
+  };
 }
 
 export interface WorkflowResumedLog extends BaseWorkflowLog {
   logType: 'WorkflowStatusUpdate';
   workflowStatus: WORKFLOW_STATUS_enum;
-  metadata: WorkflowResumedMetadata;
+  metadata: {
+    message: string;
+    resumedAt: string;
+    previousStatus: WORKFLOW_STATUS_enum;
+  };
 }
 
 export interface WorkflowStoppingLog extends BaseWorkflowLog {
   logType: 'WorkflowStatusUpdate';
   workflowStatus: WORKFLOW_STATUS_enum;
-  metadata: WorkflowStoppingMetadata;
+  metadata: {
+    message: string;
+    previousStatus: WORKFLOW_STATUS_enum;
+  };
 }
 
 export interface WorkflowStoppedLog extends BaseWorkflowLog {
   logType: 'WorkflowStatusUpdate';
   workflowStatus: WORKFLOW_STATUS_enum;
-  metadata: WorkflowStoppedMetadata;
+  metadata: {
+    message: string;
+    previousStatus: WORKFLOW_STATUS_enum;
+    tasksReset: number;
+  };
 }
 
 export interface WorkflowErrorLog extends BaseWorkflowLog {
   logType: 'WorkflowStatusUpdate';
   workflowStatus: WORKFLOW_STATUS_enum;
-  metadata: WorkflowErrorMetadata;
+  metadata: {
+    message?: string;
+    error: string;
+    errorStack?: string;
+  } & WorkflowStats;
 }
 
 export interface WorkflowOperationErrorLog extends BaseWorkflowLog {
   logType: 'WorkflowStatusUpdate';
   workflowStatus: WORKFLOW_STATUS_enum;
-  metadata: WorkflowOperationErrorMetadata;
+  metadata: {
+    message?: string;
+    error: string;
+    errorStack?: string;
+  };
 }
 
 export interface WorkflowRunningLog extends BaseWorkflowLog {
   logType: 'WorkflowStatusUpdate';
   workflowStatus: WORKFLOW_STATUS_enum;
-  metadata: WorkflowRunningMetadata;
+  metadata: {
+    message?: string;
+    inputs?: Record<string, unknown>;
+    feedback?: Feedback;
+  };
 }
 
 export interface WorkflowBlockedLog extends BaseWorkflowLog {
   logType: 'WorkflowStatusUpdate';
   workflowStatus: WORKFLOW_STATUS_enum;
-  metadata: WorkflowBlockedMetadata;
+  metadata: {
+    message?: string;
+    error: string;
+  } & WorkflowStats;
 }
 
 export interface WorkflowPausedLog extends BaseWorkflowLog {
   logType: 'WorkflowStatusUpdate';
   workflowStatus: WORKFLOW_STATUS_enum;
-  metadata: WorkflowPausedMetadata;
+  metadata: {
+    message?: string;
+    error?: Error;
+  };
 }
 
 export interface WorkflowResumeLog extends BaseWorkflowLog {
   logType: 'WorkflowStatusUpdate';
   workflowStatus: WORKFLOW_STATUS_enum;
-  metadata: WorkflowResumeMetadata;
+  metadata: {
+    message?: string;
+    error?: Error;
+  };
 }
 
 export type WorkflowStatusLog =
