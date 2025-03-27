@@ -13,6 +13,7 @@ import { logger } from './logger';
 import { CostResult, LLMUsageStats } from './llmCostCalculator';
 import { Task } from '..';
 import { WorkflowFinishedLog } from '../types/logs';
+import { WORKFLOW_STATUS_enum } from './enums';
 
 /** Task completion log parameters */
 export type TaskCompletionParams = {
@@ -57,7 +58,7 @@ export type TaskStatusParams = {
 /** Workflow status log parameters */
 export type WorkflowStatusParams = {
   /** Current workflow status */
-  status: string;
+  status: WORKFLOW_STATUS_enum;
   /** Status message */
   message: string;
 };

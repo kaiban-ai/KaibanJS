@@ -3,6 +3,7 @@ import { Agent, Task } from '..';
 import { BaseAgent, Env, LLMConfig } from '../agents/baseAgent';
 import {
   AGENT_STATUS_enum,
+  FEEDBACK_STATUS_enum,
   TASK_STATUS_enum,
   WORKFLOW_STATUS_enum,
 } from '../utils/enums';
@@ -30,7 +31,7 @@ export type CleanedBaseAgent = Omit<
 
 export type CleanedFeedback = {
   content: string;
-  status: string;
+  status: FEEDBACK_STATUS_enum;
   timestamp: string;
 };
 

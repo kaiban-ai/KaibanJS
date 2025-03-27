@@ -1,11 +1,12 @@
 import { ZodError, ZodSchema } from 'zod';
+import { FEEDBACK_STATUS_enum, WORKFLOW_STATUS_enum } from '../../utils/enums';
 import { ParsedLLMOutput } from '../../utils/llm.types';
 import { CostResult, LLMUsageStats } from '../../utils/llmCostCalculator';
 
 // Common types used across different metadata
 export type Feedback = {
   content: string;
-  status: string;
+  status: FEEDBACK_STATUS_enum;
   timestamp: number;
 };
 
@@ -52,7 +53,7 @@ export interface WorkflowStats {
 
 // Common result interface
 export interface WorkflowResult {
-  status: string;
+  status: WORKFLOW_STATUS_enum;
   result: unknown | null;
   stats: WorkflowStats | null;
 }

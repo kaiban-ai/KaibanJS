@@ -37,7 +37,7 @@ import {
   WorkflowStats,
 } from './types/logs';
 import { BaseTool } from './tools/baseTool';
-import { LLMConfig } from './utils/agents';
+import { LangChainChatModel, LLMConfig } from './utils/agents';
 import { DefaultPrompts } from './utils/prompts';
 import { TaskFeedback, TaskResult, TaskStats } from './stores/taskStore.types';
 import { AgentLoopResult } from './utils/llm.types';
@@ -56,6 +56,7 @@ interface AgentConfig {
   maxIterations?: number;
   forceFinalAnswer?: boolean;
   promptTemplates?: DefaultPrompts;
+  llmInstance?: LangChainChatModel;
 }
 
 /**
@@ -199,7 +200,7 @@ export class Task {
   description: string;
   isDeliverable: boolean;
   agent: Agent;
-  status: string;
+  status: TASK_STATUS_enum;
   result: TaskResult | null;
   stats: TaskStats | null;
   duration: number | null;

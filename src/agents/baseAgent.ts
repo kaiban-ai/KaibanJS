@@ -19,6 +19,7 @@ import {
   DefaultPrompts,
   REACT_CHAMPION_AGENT_DEFAULT_PROMPTS,
 } from '../utils/prompts';
+import { LangChainChatModel } from '../utils/agents';
 /** LLM configuration options */
 export interface LLMConfig {
   /** LLM service provider */
@@ -76,6 +77,8 @@ export interface BaseAgentParams {
   env?: Env;
   /** Kanban tools to enable */
   kanbanTools?: string[];
+  /** LLM instance */
+  llmInstance?: LangChainChatModel;
 }
 
 /** Base agent class */

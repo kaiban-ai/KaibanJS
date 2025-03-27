@@ -1,6 +1,6 @@
 import { Agent, Task } from '..';
 import { BaseAgent } from '../agents/baseAgent';
-import { TASK_STATUS_enum } from '../utils/enums';
+import { FEEDBACK_STATUS_enum, TASK_STATUS_enum } from '../utils/enums';
 import { WORKFLOW_STATUS_enum } from '../utils/enums';
 import { AGENT_STATUS_enum } from '../utils/enums';
 import { LLMInvocationError, TaskBlockError } from '../utils/errors';
@@ -16,7 +16,7 @@ export type TaskStats = {
 
 export type TaskFeedback = {
   content: string;
-  status: string;
+  status: FEEDBACK_STATUS_enum;
   timestamp: number;
 };
 

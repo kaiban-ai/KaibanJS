@@ -32,7 +32,7 @@ import { TeamStore } from '../stores';
 import { TaskResult } from '../stores/taskStore.types';
 import { BaseTool, ToolResult } from '../tools/baseTool';
 import { BlockTaskTool } from '../tools/blockTaskTool';
-import { getApiKey } from '../utils/agents';
+import { getApiKey, LangChainChatModel } from '../utils/agents';
 import {
   AGENT_STATUS_enum,
   KANBAN_TOOLS_enum,
@@ -58,11 +58,7 @@ import { BaseAgent, BaseAgentParams, Env, LLMConfig } from './baseAgent';
  */
 export class ReactChampionAgent extends BaseAgent {
   protected executableAgent?: RunnableWithMessageHistory<unknown, unknown>;
-  protected llmInstance?:
-    | ChatOpenAI
-    | ChatAnthropic
-    | ChatGoogleGenerativeAI
-    | ChatMistralAI;
+  protected llmInstance?: LangChainChatModel;
   protected interactionsHistory: ChatMessageHistory;
   protected lastFeedbackMessage: string | null;
 
@@ -83,6 +79,7 @@ export class ReactChampionAgent extends BaseAgent {
       this.tools = [...this.tools, new BlockTaskTool(this)];
     }
 
+    this.llmInstance = config.llmInstance;
     this.interactionsHistory = new ChatMessageHistory();
     this.lastFeedbackMessage = null;
     this.currentIterations = 0;
@@ -126,18 +123,18 @@ export class ReactChampionAgent extends BaseAgent {
       const provider = this.llmConfig.provider;
       const providerFactory =
         providerFactories[provider] || providerFactories.default;
-      this.llmInstance = providerFactory(this.llmConfig);
+      this.llmInstance = providerFactory(this.llmConfig) as LangChainChatModel;
     } else {
-      const extractedLlmConfig: LLMConfig = {
+      const extractedLlmConfig: Record<string, unknown> = {
         ...this.llmInstance.lc_kwargs,
         provider:
           this.llmInstance.lc_namespace[
             this.llmInstance.lc_namespace.length - 1
           ],
-        model: this.llmInstance.lc_kwargs.model || 'gpt-4o-mini',
-        maxRetries: this.llmInstance.lc_kwargs.maxRetries || 1,
       };
-      this.llmConfig = extractedLlmConfig;
+
+      // FIXME: This is a hack to accept a custom LLMConfig from the user
+      this.llmConfig = extractedLlmConfig as unknown as LLMConfig;
     }
     this.interactionsHistory = new ChatMessageHistory();
     this.lastFeedbackMessage = null;
@@ -188,7 +185,7 @@ export class ReactChampionAgent extends BaseAgent {
       const provider = this.llmConfig.provider;
       const providerFactory =
         providerFactories[provider] || providerFactories.default;
-      this.llmInstance = providerFactory(this.llmConfig);
+      this.llmInstance = providerFactory(this.llmConfig) as LangChainChatModel;
     }
   }
 

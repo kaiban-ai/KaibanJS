@@ -7,6 +7,7 @@
  * @module agents
  */
 
+import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { Env } from '../agents/baseAgent';
 import { LLMProvider } from './llm.types';
 
@@ -19,6 +20,8 @@ export type LLMConfig = {
   /** LLM model */
   model: string;
 };
+
+export type LangChainChatModel = BaseChatModel;
 
 /** Agent attributes for prompt templates */
 export type AgentAttributes = {
