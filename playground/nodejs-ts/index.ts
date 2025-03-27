@@ -1,7 +1,6 @@
 // Assuming kaibanjs is a local module or a placeholder for demonstration purposes
 // This file is now a typescript file and all the types are included in the module
-import { Agent, Task, Team } from 'kaibanjs';
-import type { IAgentParams, ITaskParams } from 'kaibanjs';
+import { Agent, Task, Team, AgentConfig, TaskConfig } from 'kaibanjs';
 import * as dotenv from 'dotenv';
 
 dotenv.config({ path: './.env.local' });
@@ -22,7 +21,7 @@ const main = async () => {
   // ────────────────────────────────────────────────────────
 
   // We create an list of different agents based on our needs.
-  const AgentParams: Record<string, IAgentParams> = {
+  const AgentParams: Record<string, AgentConfig> = {
     profileAnalyst: {
       name: 'Ivy',
       role: 'Profile Analyst',
@@ -59,7 +58,7 @@ const main = async () => {
   // ────────────────────────────────────────────────────────
 
   // We create a list of different tasks that we would like to perform
-  const taskParams: Record<string, ITaskParams> = {
+  const taskParams: Record<string, TaskConfig> = {
     processing: {
       title: 'Process User Input',
       description: `Extract relevant details such as name, experience, skills, and job history from the user's 'aboutMe' input. 

@@ -45,7 +45,7 @@ import { AgentLoopResult } from './utils/llm.types';
 /**
  * Interface for Agent configuration
  */
-interface AgentConfig {
+export interface AgentConfig {
   type?: string;
   name: string;
   role: string;
@@ -62,7 +62,7 @@ interface AgentConfig {
 /**
  * Interface for Task configuration
  */
-interface TaskConfig {
+export interface TaskConfig {
   title?: string;
   id?: string;
   description: string;
@@ -79,7 +79,7 @@ interface TaskConfig {
 /**
  * Interface for Team configuration
  */
-interface TeamConfig {
+export interface TeamConfig {
   name: string;
   agents: Agent[];
   tasks: Task[];
