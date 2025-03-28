@@ -45,7 +45,7 @@ import { AgentLoopResult } from './utils/llm.types';
 /**
  * Interface for Agent configuration
  */
-export interface AgentConfig {
+export interface IAgentParams {
   type?: string;
   name: string;
   role: string;
@@ -62,7 +62,7 @@ export interface AgentConfig {
 /**
  * Interface for Task configuration
  */
-export interface TaskConfig {
+export interface ITaskParams {
   title?: string;
   id?: string;
   description: string;
@@ -79,7 +79,7 @@ export interface TaskConfig {
 /**
  * Interface for Team configuration
  */
-export interface TeamConfig {
+export interface ITeamParams {
   name: string;
   agents: Agent[];
   tasks: Task[];
@@ -94,12 +94,12 @@ export class Agent {
   agentInstance: BaseAgent;
   type: string;
 
-  constructor({ type, ...config }: AgentConfig) {
+  constructor({ type, ...config }: IAgentParams) {
     this.agentInstance = this.createAgent(type, config);
     this.type = type || 'ReactChampionAgent';
   }
 
-  createAgent(type: string | undefined, config: AgentConfig): BaseAgent {
+  createAgent(type: string | undefined, config: IAgentParams): BaseAgent {
     switch (type) {
       case 'ReactChampionAgent':
         return new ReactChampionAgent(config);
@@ -227,7 +227,7 @@ export class Task {
     outputSchema = null,
     allowParallelExecution = false,
     referenceId = undefined,
-  }: TaskConfig) {
+  }: ITaskParams) {
     this.id = id;
     this.title = title; // Title is now optional with a default empty string
     this.description = description;
@@ -270,7 +270,7 @@ export class Team {
     env = {},
     insights = '',
     memory = true,
-  }: TeamConfig) {
+  }: ITeamParams) {
     this.store = createTeamStore({
       name,
       agents: [],
