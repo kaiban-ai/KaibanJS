@@ -6,6 +6,7 @@ exports[`Custom LLMs Instances Workflows Using OpenAI Intance initializes the te
     {
       "agentInstance": {
         "background": "Data Processor",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Extract structured information from conversational user input.",
@@ -92,6 +93,7 @@ exports[`Custom LLMs Instances Workflows Using OpenAI Intance initializes the te
         "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+        "currentIterations": 0,
         "env": "[REDACTED]",
         "forceFinalAnswer": true,
         "goal": "Craft compelling, well-structured resumes 
@@ -190,6 +192,7 @@ exports[`Custom LLMs Instances Workflows Using OpenAI Intance initializes the te
       "agent": {
         "agentInstance": {
           "background": "Data Processor",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Extract structured information from conversational user input.",
@@ -297,6 +300,7 @@ exports[`Custom LLMs Instances Workflows Using OpenAI Intance initializes the te
           "background": "Extensive experience in recruiting, 
     copywriting, and human resources, enabling 
     effective resume design that stands out to employers.",
+          "currentIterations": 0,
           "env": "[REDACTED]",
           "forceFinalAnswer": true,
           "goal": "Craft compelling, well-structured resumes 

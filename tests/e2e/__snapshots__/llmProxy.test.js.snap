@@ -40391,7 +40391,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "metadata": {
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
-        "error": [Error: Agent Mary reached the maximum number of iterations: [10] without finding a final answer.],
+        "error": [LLMInvocationError: Agent Mary reached the maximum number of iterations: [10] without finding a final answer.],
         "feedback": {},
         "iterations": 10,
         "maxAgentIterations": 10,
@@ -40778,7 +40778,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         },
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
-        "error": [Error: Agent Mary reached the maximum number of iterations: [10] without finding a final answer.],
+        "error": [TaskBlockError: Agent Mary reached the maximum number of iterations: [10] without finding a final answer.],
         "feedback": {},
         "iterationCount": 10,
         "llmUsageStats": {

@@ -119,17 +119,64 @@ const verifySnapshots = ({ storeFinalState, taskDefinitions, fileName }) => {
     snapshotContentObj.workflowLogs.length
   );
 
+  // Helper function to deeply compare two JSON objects
+  const deepCompareJSON = (obj1, obj2) => {
+    // Handle non-object types
+    if (typeof obj1 !== 'object' || typeof obj2 !== 'object') {
+      const equal = obj1 === obj2;
+      if (!equal) {
+        // console.log('equal', equal, obj1, obj2);
+      }
+      return equal;
+    }
+
+    // Handle null
+    if (obj1 === null || obj2 === null) {
+      const equal = obj1 === obj2;
+      if (!equal) {
+        // console.log('equal null', equal, obj1, obj2);
+      }
+      return equal;
+    }
+
+    // Get keys of both objects
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+
+    // Check if number of keys is same
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+
+    // Check each key-value pair recursively
+    return keys1.every((key) => {
+      if (!Object.keys(obj2).includes(key)) {
+        console.log('key', key);
+        return false;
+      }
+      return deepCompareJSON(obj1[key], obj2[key]);
+    });
+  };
+
   // Verify all logs exist in both states regardless of order
   const logsExistInBoth = storeFinalState.workflowLogs.every((currentLog) => {
     const logExists = snapshotContentObj.workflowLogs.some((snapshotLog) => {
       const currentLogStr = JSON.stringify(currentLog);
       const snapshotLogStr = JSON.stringify(snapshotLog);
 
-      return currentLogStr === snapshotLogStr;
+      const parsedCurrentLog = JSON.parse(currentLogStr);
+      const parsedSnapshotLog = JSON.parse(snapshotLogStr);
+
+      return deepCompareJSON(parsedCurrentLog, parsedSnapshotLog);
     });
+
+    if (!logExists) {
+      console.log('Log does not exist in snapshot:', currentLog);
+    }
 
     return logExists;
   });
+
   expect(logsExistInBoth).toBe(true);
 
   // Verify task definitions match the logs
