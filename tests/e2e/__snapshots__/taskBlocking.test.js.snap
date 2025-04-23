@@ -5570,7 +5570,7 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         },
         "duration": "[REDACTED]",
         "endTime": "[REDACTED]",
-        "error": [Error: The request lacks proper authorization credentials and security clearance documentation, making it impossible to grant access to highly sensitive data.],
+        "error": [TaskBlockError: The request lacks proper authorization credentials and security clearance documentation, making it impossible to grant access to highly sensitive data.],
         "feedback": {},
         "iterationCount": 2,
         "llmUsageStats": {
