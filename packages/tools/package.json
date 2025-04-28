@@ -115,7 +115,7 @@
   "license": "MIT",
   "dependencies": {
     "@langchain/community": "^0.2.19",
-    "@langchain/core": "0.2.16",
+    "@langchain/core": "0.2.36",
     "@langchain/openai": "^0.2.2",
     "cheerio": "^1.0.0",
     "ky": "^1.7.2",

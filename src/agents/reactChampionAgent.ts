@@ -768,7 +768,6 @@ export class ReactChampionAgent extends BaseAgent {
               },
             },
           ],
-          // @ts-expect-error: signal is not properly included in the type
           signal: abortController.signal,
         }
       ).catch((error: Error) => {
