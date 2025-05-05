@@ -47,12 +47,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -64,9 +59,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -129,12 +122,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -146,9 +134,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -211,12 +197,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -228,9 +209,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -293,12 +272,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -310,9 +284,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -375,12 +347,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -392,9 +359,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -457,12 +422,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -474,9 +434,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -539,12 +497,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -556,9 +509,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -621,12 +572,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -638,9 +584,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -703,12 +647,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -720,9 +659,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -792,12 +729,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -809,9 +741,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -902,12 +832,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -919,9 +844,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -944,9 +867,7 @@
       "result": "Venue name: The Grand Event Hall, Address: 123 Celebration Lane, Springfield, IL. Confirmation details: The venue is available for the selected date of June 15, 2024, with no scheduling conflicts. Cost estimate: $5000 for a full day rental, including basic equipment setup. Notes on policies or special arrangements: A deposit of 50% is required upon booking, and cancellations must be made at least 30 days in advance for a full refund.",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "selectEventDateTask"
-      ],
+      "dependencies": ["selectEventDateTask"],
       "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1014,12 +935,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -1031,9 +947,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1056,9 +970,7 @@
       "result": "Number of confirmed guests: 45. Guest list with contact details: John Doe - john@example.com, Jane Smith - jane@example.com, VIP contact: Michael Johnson - michael@vip.com. Special dietary or accessibility requirements: 3 vegan meals, 2 gluten-free meals, 1 wheelchair access request.",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "selectEventDateTask"
-      ],
+      "dependencies": ["selectEventDateTask"],
       "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1126,12 +1038,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -1143,9 +1050,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1168,10 +1073,7 @@
       "result": "{\"detailedMenu\":[{\"course\":\"Appetizers\",\"items\":[\"Stuffed Mushroom Caps\",\"Bruschetta with Tomato & Basil\",\"Vegetable Spring Rolls (Vegan)\"]},{\"course\":\"Main Course\",\"items\":[\"Grilled Chicken with Lemon Herb Sauce\",\"Pan-Seared Salmon with Dill Sauce\",\"Vegan Mushroom Stroganoff\",\"Gluten-Free Quinoa Salad with Roasted Vegetables\"]},{\"course\":\"Desserts\",\"items\":[\"Chocolate Mousse\",\"Fruit Tart (Gluten-Free)\",\"Vegan Chocolate Cake\"]},{\"course\":\"Beverages\",\"items\":[\"Mineral Water\",\"Assorted Sodas\",\"Red and White Wine\",\"Coffee and Tea\"]}],\"vendorName\":\"Gourmet Catering Inc.\",\"contractDetails\":{\"contact\":\"Sarah Thompson\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\",\"contractDate\":\"May 1, 2024\",\"paymentTerms\":\"50% deposit upon signing, balance due two weeks before event.\"},\"totalCostEstimate\":\"$2200\",\"notesOnSpecialArrangements\":[\"3 vegan meals have been confirmed to be prepared separately to avoid cross-contamination.\",\"2 gluten-free meals will be noted for the kitchen staff to ensure no gluten is present in the meal preparation.\",\"The venue has wheelchair-accessible dining areas confirmed for the guest who requested it.\"]}",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "selectEventDateTask",
-        "finalizeGuestListTask"
-      ],
+      "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
       "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1239,12 +1141,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -1256,9 +1153,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1281,10 +1176,7 @@
       "result": "Marketing Plan for the Event on June 15, 2024\n\n**Key Strategies:**\n1. **Social Media Strategy:**\n   - Platforms: Focus on Instagram, Facebook, and LinkedIn.\n   - Content Plan: \n     - Pre-event countdown posts starting 6 weeks prior, featuring sneak peeks of the venue, speakers, and activities.\n     - Weekly engagement posts (polls, contests) to increase awareness and boost excitement.\n     - Live updates during the event for real-time engagement.\n   - Paid Ads: Allocate budget for targeted ads 4 weeks before the event to reach a wider audience.\n   - Engagement: Create a dedicated event hashtag to encourage posts from attendees and partners.\n\n2. **Email Marketing Strategy:**\n   - Target Audience: Segment audience into previous attendees, prospects, and partners.\n   - Campaign Timeline: \n     - Save the Date email: Send immediately to all segments.\n     - Monthly newsletters with updates and reminders until 2 weeks before the event.\n     - Last-minute reminder one week before and a final push 2 days before the event.\n   - Content: Highlight key speakers, agenda, venue details, and early bird registration offers (if applicable).\n\n3. **Public Relations Strategy:**\n   - Press Release: Issue a press release detailing the event, including date, venue, and keynote speakers 8 weeks prior to the event.\n   - Media Outreach: Identify and contact relevant local news outlets, blogs, and influencers to secure coverage leading up to the event.\n   - Partnerships: Collaborate with local businesses and organizations for cross-promotion and sponsorship opportunities.\n\n**Timelines:**\n- 8 weeks prior: Issue press release and begin media outreach.\n- 6 weeks prior: Start social media countdown and first email campaign.\n- 4 weeks prior: Launch paid social media ads.\n- 2 weeks prior: Weekly content updates on all platforms, reminder emails.\n- 1 week prior: Final push for registrations and logistics confirmation with stakeholders.\n- Event Day (June 15, 2024): Execute live updates and engage attendees on social media.\n- Post-Event: Thank you emails to attendees and stakeholders, feedback survey sent to participants.",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "selectEventDateTask",
-        "bookVenueTask"
-      ],
+      "dependencies": ["selectEventDateTask", "bookVenueTask"],
       "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1352,12 +1244,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -1369,9 +1256,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1394,10 +1279,7 @@
       "result": "{\"venueSetupSchedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Arrival of catering staff and equipment setup\"},{\"time\":\"9:00 AM\",\"activity\":\"Setup of tables and chairs\"},{\"time\":\"10:00 AM\",\"activity\":\"AV equipment testing\"},{\"time\":\"11:00 AM\",\"activity\":\"Final touches on decorations\"},{\"time\":\"12:00 PM\",\"activity\":\"Guest arrival and welcome\"},{\"time\":\"1:00 PM\",\"activity\":\"Lunch service\"},{\"time\":\"2:00 PM\",\"activity\":\"Event program begins\"},{\"time\":\"5:00 PM\",\"activity\":\"Event concludes and cleanup starts\"}]},\"checklist\":[\"Confirm final guest count.\",\"Verify menu and dietary requirements with the catering vendor.\",\"Ensure AV equipment and setup are aligned with event needs.\",\"Check venue accessibility for guests requiring special accommodations.\",\"Confirm any special arrangements with venue staff.\"],\"specialNotes\":{\"lastMinuteDetails\":[\"Re-confirm with VIP guests about their attendance 1 week prior to the event.\",\"Monitor any local events that may influence attendance.\"],\"dietaryRequirements\":{\"veganMeals\":3,\"glutenFreeMeals\":2,\"wheelchairAccess\":1},\"vendorContact\":{\"name\":\"Gourmet Catering Inc.\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\"},\"overallCost\":{\"venueRental\":\"$5000\",\"catering\":\"$2200\"}}}",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "bookVenueTask",
-        "createCateringPlanTask"
-      ],
+      "dependencies": ["bookVenueTask", "createCateringPlanTask"],
       "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1465,12 +1347,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -1482,9 +1359,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1507,9 +1382,7 @@
       "result": "Marketing Campaign Execution Report:\n\n**Event Date:** June 15, 2024\n\n**Venue:** The Grand Event Hall, 123 Celebration Lane, Springfield, IL\n\n**Marketing Strategies Executed:**\n1. **Social Media Strategy:** \n   - Platforms utilized: Instagram, Facebook, LinkedIn. \n   - Pre-event countdown posts initiated 6 weeks prior, showcasing the venue, speakers, and activities. \n   - Weekly engagement posts rolled out, including polls and contests.\n   - Paid ads launched 4 weeks before the event to broaden outreach.\n   - Establishment of a dedicated event hashtag for attendee interactions.\n\n2. **Email Marketing Strategy:** \n   - Segmented the audience effectively into previous attendees, prospects, and partners. \n   - Sent a 'Save the Date' email immediately, followed by monthly newsletters. \n   - One week and two days before the event, final reminder emails were executed focusing on key content.\n\n3. **Public Relations Strategy:** \n   - Press release disseminated 8 weeks before the event, including all vital event details.\n   - Conducted media outreach to secure coverage with local news outlets and influencers.\n   - Initiated partnerships with local businesses for cross-promotional activities.\n\n**Campaign Performance Notes:**\n- Engagement metrics from social media showed a steady increase in followers and interactions, especially during contest period. \n- Email open rates and click-through rates exceeded industry averages, indicating successful targeting.\n- Positive responses from media outreach; several outlets confirmed coverage leading up to the event.\n\n**Feedback:**\n- Continuous monitoring of potential conflicts with local events has been confirmed, ensuring no changes to the projected timeline. Stakeholders reaffirmed their commitment to availability. \n- Encourage ongoing cross-promotions and community engagement leading up to the event. \n\nOverall, the marketing campaign was executed successfully, adhering to the established timelines and strategies.",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "setupMarketingCampaignTask"
-      ],
+      "dependencies": ["setupMarketingCampaignTask"],
       "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1577,12 +1450,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -1594,9 +1462,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1718,12 +1584,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -1735,9 +1596,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -1815,12 +1674,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -1832,9 +1686,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1919,12 +1771,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -1936,9 +1783,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2000,12 +1845,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -2017,9 +1857,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -2112,12 +1950,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -2129,9 +1962,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2193,12 +2024,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -2210,9 +2036,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -2305,12 +2129,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -2322,9 +2141,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2386,12 +2203,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -2403,9 +2215,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -2491,12 +2301,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -2508,9 +2313,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2572,12 +2375,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -2589,9 +2387,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -2676,12 +2472,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -2693,9 +2484,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2757,12 +2546,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -2774,9 +2558,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -2862,12 +2644,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -2879,9 +2656,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2943,12 +2718,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -2960,9 +2730,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -3059,12 +2827,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -3076,9 +2839,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3140,12 +2901,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -3157,9 +2913,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -3242,12 +2996,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -3259,9 +3008,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3284,9 +3031,7 @@
         "result": "Venue name: The Grand Event Hall, Address: 123 Celebration Lane, Springfield, IL. Confirmation details: The venue is available for the selected date of June 15, 2024, with no scheduling conflicts. Cost estimate: $5000 for a full day rental, including basic equipment setup. Notes on policies or special arrangements: A deposit of 50% is required upon booking, and cancellations must be made at least 30 days in advance for a full refund.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -3341,12 +3086,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -3358,9 +3098,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -3445,12 +3183,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -3462,9 +3195,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3487,9 +3218,7 @@
         "result": "Venue name: The Grand Event Hall, Address: 123 Celebration Lane, Springfield, IL. Confirmation details: The venue is available for the selected date of June 15, 2024, with no scheduling conflicts. Cost estimate: $5000 for a full day rental, including basic equipment setup. Notes on policies or special arrangements: A deposit of 50% is required upon booking, and cancellations must be made at least 30 days in advance for a full refund.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -3528,12 +3257,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -3545,9 +3269,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -3640,12 +3362,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -3657,9 +3374,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3682,9 +3397,7 @@
         "result": "Venue name: The Grand Event Hall, Address: 123 Celebration Lane, Springfield, IL. Confirmation details: The venue is available for the selected date of June 15, 2024, with no scheduling conflicts. Cost estimate: $5000 for a full day rental, including basic equipment setup. Notes on policies or special arrangements: A deposit of 50% is required upon booking, and cancellations must be made at least 30 days in advance for a full refund.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -3723,12 +3436,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -3740,9 +3448,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -3835,12 +3541,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -3852,9 +3553,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3877,9 +3576,7 @@
         "result": "Venue name: The Grand Event Hall, Address: 123 Celebration Lane, Springfield, IL. Confirmation details: The venue is available for the selected date of June 15, 2024, with no scheduling conflicts. Cost estimate: $5000 for a full day rental, including basic equipment setup. Notes on policies or special arrangements: A deposit of 50% is required upon booking, and cancellations must be made at least 30 days in advance for a full refund.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -3918,12 +3615,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -3935,9 +3627,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -4023,12 +3713,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -4040,9 +3725,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4065,9 +3748,7 @@
         "result": "Venue name: The Grand Event Hall, Address: 123 Celebration Lane, Springfield, IL. Confirmation details: The venue is available for the selected date of June 15, 2024, with no scheduling conflicts. Cost estimate: $5000 for a full day rental, including basic equipment setup. Notes on policies or special arrangements: A deposit of 50% is required upon booking, and cancellations must be made at least 30 days in advance for a full refund.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4106,12 +3787,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -4123,9 +3799,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -4210,12 +3884,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -4227,9 +3896,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4252,9 +3919,7 @@
         "result": "Venue name: The Grand Event Hall, Address: 123 Celebration Lane, Springfield, IL. Confirmation details: The venue is available for the selected date of June 15, 2024, with no scheduling conflicts. Cost estimate: $5000 for a full day rental, including basic equipment setup. Notes on policies or special arrangements: A deposit of 50% is required upon booking, and cancellations must be made at least 30 days in advance for a full refund.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4293,12 +3958,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -4310,9 +3970,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -4398,12 +4056,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -4415,9 +4068,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4440,9 +4091,7 @@
         "result": "Venue name: The Grand Event Hall, Address: 123 Celebration Lane, Springfield, IL. Confirmation details: The venue is available for the selected date of June 15, 2024, with no scheduling conflicts. Cost estimate: $5000 for a full day rental, including basic equipment setup. Notes on policies or special arrangements: A deposit of 50% is required upon booking, and cancellations must be made at least 30 days in advance for a full refund.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4481,12 +4130,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -4498,9 +4142,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -4597,12 +4239,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -4614,9 +4251,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4639,9 +4274,7 @@
         "result": "Venue name: The Grand Event Hall, Address: 123 Celebration Lane, Springfield, IL. Confirmation details: The venue is available for the selected date of June 15, 2024, with no scheduling conflicts. Cost estimate: $5000 for a full day rental, including basic equipment setup. Notes on policies or special arrangements: A deposit of 50% is required upon booking, and cancellations must be made at least 30 days in advance for a full refund.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4680,12 +4313,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -4697,9 +4325,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -4782,12 +4408,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -4799,9 +4420,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4824,9 +4443,7 @@
         "result": "Number of confirmed guests: 45. Guest list with contact details: John Doe - john@example.com, Jane Smith - jane@example.com, VIP contact: Michael Johnson - michael@vip.com. Special dietary or accessibility requirements: 3 vegan meals, 2 gluten-free meals, 1 wheelchair access request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4881,12 +4498,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -4898,9 +4510,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -4985,12 +4595,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -5002,9 +4607,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5027,9 +4630,7 @@
         "result": "Number of confirmed guests: 45. Guest list with contact details: John Doe - john@example.com, Jane Smith - jane@example.com, VIP contact: Michael Johnson - michael@vip.com. Special dietary or accessibility requirements: 3 vegan meals, 2 gluten-free meals, 1 wheelchair access request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5068,12 +4669,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -5085,9 +4681,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5180,12 +4774,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -5197,9 +4786,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5222,9 +4809,7 @@
         "result": "Number of confirmed guests: 45. Guest list with contact details: John Doe - john@example.com, Jane Smith - jane@example.com, VIP contact: Michael Johnson - michael@vip.com. Special dietary or accessibility requirements: 3 vegan meals, 2 gluten-free meals, 1 wheelchair access request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5263,12 +4848,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -5280,9 +4860,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5375,12 +4953,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -5392,9 +4965,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5417,9 +4988,7 @@
         "result": "Number of confirmed guests: 45. Guest list with contact details: John Doe - john@example.com, Jane Smith - jane@example.com, VIP contact: Michael Johnson - michael@vip.com. Special dietary or accessibility requirements: 3 vegan meals, 2 gluten-free meals, 1 wheelchair access request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5458,12 +5027,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -5475,9 +5039,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5563,12 +5125,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -5580,9 +5137,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5605,9 +5160,7 @@
         "result": "Number of confirmed guests: 45. Guest list with contact details: John Doe - john@example.com, Jane Smith - jane@example.com, VIP contact: Michael Johnson - michael@vip.com. Special dietary or accessibility requirements: 3 vegan meals, 2 gluten-free meals, 1 wheelchair access request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5646,12 +5199,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -5663,9 +5211,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5750,12 +5296,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -5767,9 +5308,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5792,9 +5331,7 @@
         "result": "Number of confirmed guests: 45. Guest list with contact details: John Doe - john@example.com, Jane Smith - jane@example.com, VIP contact: Michael Johnson - michael@vip.com. Special dietary or accessibility requirements: 3 vegan meals, 2 gluten-free meals, 1 wheelchair access request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5833,12 +5370,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -5850,9 +5382,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5938,12 +5468,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -5955,9 +5480,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5980,9 +5503,7 @@
         "result": "Number of confirmed guests: 45. Guest list with contact details: John Doe - john@example.com, Jane Smith - jane@example.com, VIP contact: Michael Johnson - michael@vip.com. Special dietary or accessibility requirements: 3 vegan meals, 2 gluten-free meals, 1 wheelchair access request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6021,12 +5542,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -6038,9 +5554,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -6137,12 +5651,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -6154,9 +5663,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6179,9 +5686,7 @@
         "result": "Number of confirmed guests: 45. Guest list with contact details: John Doe - john@example.com, Jane Smith - jane@example.com, VIP contact: Michael Johnson - michael@vip.com. Special dietary or accessibility requirements: 3 vegan meals, 2 gluten-free meals, 1 wheelchair access request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6220,12 +5725,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -6237,9 +5737,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -6322,12 +5820,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -6339,9 +5832,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6364,10 +5855,7 @@
         "result": "{\"detailedMenu\":[{\"course\":\"Appetizers\",\"items\":[\"Stuffed Mushroom Caps\",\"Bruschetta with Tomato & Basil\",\"Vegetable Spring Rolls (Vegan)\"]},{\"course\":\"Main Course\",\"items\":[\"Grilled Chicken with Lemon Herb Sauce\",\"Pan-Seared Salmon with Dill Sauce\",\"Vegan Mushroom Stroganoff\",\"Gluten-Free Quinoa Salad with Roasted Vegetables\"]},{\"course\":\"Desserts\",\"items\":[\"Chocolate Mousse\",\"Fruit Tart (Gluten-Free)\",\"Vegan Chocolate Cake\"]},{\"course\":\"Beverages\",\"items\":[\"Mineral Water\",\"Assorted Sodas\",\"Red and White Wine\",\"Coffee and Tea\"]}],\"vendorName\":\"Gourmet Catering Inc.\",\"contractDetails\":{\"contact\":\"Sarah Thompson\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\",\"contractDate\":\"May 1, 2024\",\"paymentTerms\":\"50% deposit upon signing, balance due two weeks before event.\"},\"totalCostEstimate\":\"$2200\",\"notesOnSpecialArrangements\":[\"3 vegan meals have been confirmed to be prepared separately to avoid cross-contamination.\",\"2 gluten-free meals will be noted for the kitchen staff to ensure no gluten is present in the meal preparation.\",\"The venue has wheelchair-accessible dining areas confirmed for the guest who requested it.\"]}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6422,12 +5910,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -6439,9 +5922,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -6526,12 +6007,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -6543,9 +6019,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6568,10 +6042,7 @@
         "result": "{\"detailedMenu\":[{\"course\":\"Appetizers\",\"items\":[\"Stuffed Mushroom Caps\",\"Bruschetta with Tomato & Basil\",\"Vegetable Spring Rolls (Vegan)\"]},{\"course\":\"Main Course\",\"items\":[\"Grilled Chicken with Lemon Herb Sauce\",\"Pan-Seared Salmon with Dill Sauce\",\"Vegan Mushroom Stroganoff\",\"Gluten-Free Quinoa Salad with Roasted Vegetables\"]},{\"course\":\"Desserts\",\"items\":[\"Chocolate Mousse\",\"Fruit Tart (Gluten-Free)\",\"Vegan Chocolate Cake\"]},{\"course\":\"Beverages\",\"items\":[\"Mineral Water\",\"Assorted Sodas\",\"Red and White Wine\",\"Coffee and Tea\"]}],\"vendorName\":\"Gourmet Catering Inc.\",\"contractDetails\":{\"contact\":\"Sarah Thompson\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\",\"contractDate\":\"May 1, 2024\",\"paymentTerms\":\"50% deposit upon signing, balance due two weeks before event.\"},\"totalCostEstimate\":\"$2200\",\"notesOnSpecialArrangements\":[\"3 vegan meals have been confirmed to be prepared separately to avoid cross-contamination.\",\"2 gluten-free meals will be noted for the kitchen staff to ensure no gluten is present in the meal preparation.\",\"The venue has wheelchair-accessible dining areas confirmed for the guest who requested it.\"]}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6610,12 +6081,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -6627,9 +6093,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -6722,12 +6186,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -6739,9 +6198,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6764,10 +6221,7 @@
         "result": "{\"detailedMenu\":[{\"course\":\"Appetizers\",\"items\":[\"Stuffed Mushroom Caps\",\"Bruschetta with Tomato & Basil\",\"Vegetable Spring Rolls (Vegan)\"]},{\"course\":\"Main Course\",\"items\":[\"Grilled Chicken with Lemon Herb Sauce\",\"Pan-Seared Salmon with Dill Sauce\",\"Vegan Mushroom Stroganoff\",\"Gluten-Free Quinoa Salad with Roasted Vegetables\"]},{\"course\":\"Desserts\",\"items\":[\"Chocolate Mousse\",\"Fruit Tart (Gluten-Free)\",\"Vegan Chocolate Cake\"]},{\"course\":\"Beverages\",\"items\":[\"Mineral Water\",\"Assorted Sodas\",\"Red and White Wine\",\"Coffee and Tea\"]}],\"vendorName\":\"Gourmet Catering Inc.\",\"contractDetails\":{\"contact\":\"Sarah Thompson\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\",\"contractDate\":\"May 1, 2024\",\"paymentTerms\":\"50% deposit upon signing, balance due two weeks before event.\"},\"totalCostEstimate\":\"$2200\",\"notesOnSpecialArrangements\":[\"3 vegan meals have been confirmed to be prepared separately to avoid cross-contamination.\",\"2 gluten-free meals will be noted for the kitchen staff to ensure no gluten is present in the meal preparation.\",\"The venue has wheelchair-accessible dining areas confirmed for the guest who requested it.\"]}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6806,12 +6260,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -6823,9 +6272,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -6918,12 +6365,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -6935,9 +6377,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6960,10 +6400,7 @@
         "result": "{\"detailedMenu\":[{\"course\":\"Appetizers\",\"items\":[\"Stuffed Mushroom Caps\",\"Bruschetta with Tomato & Basil\",\"Vegetable Spring Rolls (Vegan)\"]},{\"course\":\"Main Course\",\"items\":[\"Grilled Chicken with Lemon Herb Sauce\",\"Pan-Seared Salmon with Dill Sauce\",\"Vegan Mushroom Stroganoff\",\"Gluten-Free Quinoa Salad with Roasted Vegetables\"]},{\"course\":\"Desserts\",\"items\":[\"Chocolate Mousse\",\"Fruit Tart (Gluten-Free)\",\"Vegan Chocolate Cake\"]},{\"course\":\"Beverages\",\"items\":[\"Mineral Water\",\"Assorted Sodas\",\"Red and White Wine\",\"Coffee and Tea\"]}],\"vendorName\":\"Gourmet Catering Inc.\",\"contractDetails\":{\"contact\":\"Sarah Thompson\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\",\"contractDate\":\"May 1, 2024\",\"paymentTerms\":\"50% deposit upon signing, balance due two weeks before event.\"},\"totalCostEstimate\":\"$2200\",\"notesOnSpecialArrangements\":[\"3 vegan meals have been confirmed to be prepared separately to avoid cross-contamination.\",\"2 gluten-free meals will be noted for the kitchen staff to ensure no gluten is present in the meal preparation.\",\"The venue has wheelchair-accessible dining areas confirmed for the guest who requested it.\"]}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7002,12 +6439,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -7019,9 +6451,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -7107,12 +6537,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -7124,9 +6549,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7149,10 +6572,7 @@
         "result": "{\"detailedMenu\":[{\"course\":\"Appetizers\",\"items\":[\"Stuffed Mushroom Caps\",\"Bruschetta with Tomato & Basil\",\"Vegetable Spring Rolls (Vegan)\"]},{\"course\":\"Main Course\",\"items\":[\"Grilled Chicken with Lemon Herb Sauce\",\"Pan-Seared Salmon with Dill Sauce\",\"Vegan Mushroom Stroganoff\",\"Gluten-Free Quinoa Salad with Roasted Vegetables\"]},{\"course\":\"Desserts\",\"items\":[\"Chocolate Mousse\",\"Fruit Tart (Gluten-Free)\",\"Vegan Chocolate Cake\"]},{\"course\":\"Beverages\",\"items\":[\"Mineral Water\",\"Assorted Sodas\",\"Red and White Wine\",\"Coffee and Tea\"]}],\"vendorName\":\"Gourmet Catering Inc.\",\"contractDetails\":{\"contact\":\"Sarah Thompson\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\",\"contractDate\":\"May 1, 2024\",\"paymentTerms\":\"50% deposit upon signing, balance due two weeks before event.\"},\"totalCostEstimate\":\"$2200\",\"notesOnSpecialArrangements\":[\"3 vegan meals have been confirmed to be prepared separately to avoid cross-contamination.\",\"2 gluten-free meals will be noted for the kitchen staff to ensure no gluten is present in the meal preparation.\",\"The venue has wheelchair-accessible dining areas confirmed for the guest who requested it.\"]}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7191,12 +6611,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -7208,9 +6623,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -7295,12 +6708,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -7312,9 +6720,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7337,10 +6743,7 @@
         "result": "{\"detailedMenu\":[{\"course\":\"Appetizers\",\"items\":[\"Stuffed Mushroom Caps\",\"Bruschetta with Tomato & Basil\",\"Vegetable Spring Rolls (Vegan)\"]},{\"course\":\"Main Course\",\"items\":[\"Grilled Chicken with Lemon Herb Sauce\",\"Pan-Seared Salmon with Dill Sauce\",\"Vegan Mushroom Stroganoff\",\"Gluten-Free Quinoa Salad with Roasted Vegetables\"]},{\"course\":\"Desserts\",\"items\":[\"Chocolate Mousse\",\"Fruit Tart (Gluten-Free)\",\"Vegan Chocolate Cake\"]},{\"course\":\"Beverages\",\"items\":[\"Mineral Water\",\"Assorted Sodas\",\"Red and White Wine\",\"Coffee and Tea\"]}],\"vendorName\":\"Gourmet Catering Inc.\",\"contractDetails\":{\"contact\":\"Sarah Thompson\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\",\"contractDate\":\"May 1, 2024\",\"paymentTerms\":\"50% deposit upon signing, balance due two weeks before event.\"},\"totalCostEstimate\":\"$2200\",\"notesOnSpecialArrangements\":[\"3 vegan meals have been confirmed to be prepared separately to avoid cross-contamination.\",\"2 gluten-free meals will be noted for the kitchen staff to ensure no gluten is present in the meal preparation.\",\"The venue has wheelchair-accessible dining areas confirmed for the guest who requested it.\"]}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7379,12 +6782,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -7396,9 +6794,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -7484,12 +6880,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -7501,9 +6892,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7526,10 +6915,7 @@
         "result": "{\"detailedMenu\":[{\"course\":\"Appetizers\",\"items\":[\"Stuffed Mushroom Caps\",\"Bruschetta with Tomato & Basil\",\"Vegetable Spring Rolls (Vegan)\"]},{\"course\":\"Main Course\",\"items\":[\"Grilled Chicken with Lemon Herb Sauce\",\"Pan-Seared Salmon with Dill Sauce\",\"Vegan Mushroom Stroganoff\",\"Gluten-Free Quinoa Salad with Roasted Vegetables\"]},{\"course\":\"Desserts\",\"items\":[\"Chocolate Mousse\",\"Fruit Tart (Gluten-Free)\",\"Vegan Chocolate Cake\"]},{\"course\":\"Beverages\",\"items\":[\"Mineral Water\",\"Assorted Sodas\",\"Red and White Wine\",\"Coffee and Tea\"]}],\"vendorName\":\"Gourmet Catering Inc.\",\"contractDetails\":{\"contact\":\"Sarah Thompson\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\",\"contractDate\":\"May 1, 2024\",\"paymentTerms\":\"50% deposit upon signing, balance due two weeks before event.\"},\"totalCostEstimate\":\"$2200\",\"notesOnSpecialArrangements\":[\"3 vegan meals have been confirmed to be prepared separately to avoid cross-contamination.\",\"2 gluten-free meals will be noted for the kitchen staff to ensure no gluten is present in the meal preparation.\",\"The venue has wheelchair-accessible dining areas confirmed for the guest who requested it.\"]}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7568,12 +6954,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -7585,9 +6966,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -7684,12 +7063,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -7701,9 +7075,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7726,10 +7098,7 @@
         "result": "{\"detailedMenu\":[{\"course\":\"Appetizers\",\"items\":[\"Stuffed Mushroom Caps\",\"Bruschetta with Tomato & Basil\",\"Vegetable Spring Rolls (Vegan)\"]},{\"course\":\"Main Course\",\"items\":[\"Grilled Chicken with Lemon Herb Sauce\",\"Pan-Seared Salmon with Dill Sauce\",\"Vegan Mushroom Stroganoff\",\"Gluten-Free Quinoa Salad with Roasted Vegetables\"]},{\"course\":\"Desserts\",\"items\":[\"Chocolate Mousse\",\"Fruit Tart (Gluten-Free)\",\"Vegan Chocolate Cake\"]},{\"course\":\"Beverages\",\"items\":[\"Mineral Water\",\"Assorted Sodas\",\"Red and White Wine\",\"Coffee and Tea\"]}],\"vendorName\":\"Gourmet Catering Inc.\",\"contractDetails\":{\"contact\":\"Sarah Thompson\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\",\"contractDate\":\"May 1, 2024\",\"paymentTerms\":\"50% deposit upon signing, balance due two weeks before event.\"},\"totalCostEstimate\":\"$2200\",\"notesOnSpecialArrangements\":[\"3 vegan meals have been confirmed to be prepared separately to avoid cross-contamination.\",\"2 gluten-free meals will be noted for the kitchen staff to ensure no gluten is present in the meal preparation.\",\"The venue has wheelchair-accessible dining areas confirmed for the guest who requested it.\"]}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7768,12 +7137,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -7785,9 +7149,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -7870,12 +7232,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -7887,9 +7244,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7912,10 +7267,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024\n\n**Key Strategies:**\n1. **Social Media Strategy:**\n   - Platforms: Focus on Instagram, Facebook, and LinkedIn.\n   - Content Plan: \n     - Pre-event countdown posts starting 6 weeks prior, featuring sneak peeks of the venue, speakers, and activities.\n     - Weekly engagement posts (polls, contests) to increase awareness and boost excitement.\n     - Live updates during the event for real-time engagement.\n   - Paid Ads: Allocate budget for targeted ads 4 weeks before the event to reach a wider audience.\n   - Engagement: Create a dedicated event hashtag to encourage posts from attendees and partners.\n\n2. **Email Marketing Strategy:**\n   - Target Audience: Segment audience into previous attendees, prospects, and partners.\n   - Campaign Timeline: \n     - Save the Date email: Send immediately to all segments.\n     - Monthly newsletters with updates and reminders until 2 weeks before the event.\n     - Last-minute reminder one week before and a final push 2 days before the event.\n   - Content: Highlight key speakers, agenda, venue details, and early bird registration offers (if applicable).\n\n3. **Public Relations Strategy:**\n   - Press Release: Issue a press release detailing the event, including date, venue, and keynote speakers 8 weeks prior to the event.\n   - Media Outreach: Identify and contact relevant local news outlets, blogs, and influencers to secure coverage leading up to the event.\n   - Partnerships: Collaborate with local businesses and organizations for cross-promotion and sponsorship opportunities.\n\n**Timelines:**\n- 8 weeks prior: Issue press release and begin media outreach.\n- 6 weeks prior: Start social media countdown and first email campaign.\n- 4 weeks prior: Launch paid social media ads.\n- 2 weeks prior: Weekly content updates on all platforms, reminder emails.\n- 1 week prior: Final push for registrations and logistics confirmation with stakeholders.\n- Event Day (June 15, 2024): Execute live updates and engage attendees on social media.\n- Post-Event: Thank you emails to attendees and stakeholders, feedback survey sent to participants.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7970,12 +7322,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -7987,9 +7334,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -8074,12 +7419,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -8091,9 +7431,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8116,10 +7454,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024\n\n**Key Strategies:**\n1. **Social Media Strategy:**\n   - Platforms: Focus on Instagram, Facebook, and LinkedIn.\n   - Content Plan: \n     - Pre-event countdown posts starting 6 weeks prior, featuring sneak peeks of the venue, speakers, and activities.\n     - Weekly engagement posts (polls, contests) to increase awareness and boost excitement.\n     - Live updates during the event for real-time engagement.\n   - Paid Ads: Allocate budget for targeted ads 4 weeks before the event to reach a wider audience.\n   - Engagement: Create a dedicated event hashtag to encourage posts from attendees and partners.\n\n2. **Email Marketing Strategy:**\n   - Target Audience: Segment audience into previous attendees, prospects, and partners.\n   - Campaign Timeline: \n     - Save the Date email: Send immediately to all segments.\n     - Monthly newsletters with updates and reminders until 2 weeks before the event.\n     - Last-minute reminder one week before and a final push 2 days before the event.\n   - Content: Highlight key speakers, agenda, venue details, and early bird registration offers (if applicable).\n\n3. **Public Relations Strategy:**\n   - Press Release: Issue a press release detailing the event, including date, venue, and keynote speakers 8 weeks prior to the event.\n   - Media Outreach: Identify and contact relevant local news outlets, blogs, and influencers to secure coverage leading up to the event.\n   - Partnerships: Collaborate with local businesses and organizations for cross-promotion and sponsorship opportunities.\n\n**Timelines:**\n- 8 weeks prior: Issue press release and begin media outreach.\n- 6 weeks prior: Start social media countdown and first email campaign.\n- 4 weeks prior: Launch paid social media ads.\n- 2 weeks prior: Weekly content updates on all platforms, reminder emails.\n- 1 week prior: Final push for registrations and logistics confirmation with stakeholders.\n- Event Day (June 15, 2024): Execute live updates and engage attendees on social media.\n- Post-Event: Thank you emails to attendees and stakeholders, feedback survey sent to participants.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8158,12 +7493,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -8175,9 +7505,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -8270,12 +7598,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -8287,9 +7610,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8312,10 +7633,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024\n\n**Key Strategies:**\n1. **Social Media Strategy:**\n   - Platforms: Focus on Instagram, Facebook, and LinkedIn.\n   - Content Plan: \n     - Pre-event countdown posts starting 6 weeks prior, featuring sneak peeks of the venue, speakers, and activities.\n     - Weekly engagement posts (polls, contests) to increase awareness and boost excitement.\n     - Live updates during the event for real-time engagement.\n   - Paid Ads: Allocate budget for targeted ads 4 weeks before the event to reach a wider audience.\n   - Engagement: Create a dedicated event hashtag to encourage posts from attendees and partners.\n\n2. **Email Marketing Strategy:**\n   - Target Audience: Segment audience into previous attendees, prospects, and partners.\n   - Campaign Timeline: \n     - Save the Date email: Send immediately to all segments.\n     - Monthly newsletters with updates and reminders until 2 weeks before the event.\n     - Last-minute reminder one week before and a final push 2 days before the event.\n   - Content: Highlight key speakers, agenda, venue details, and early bird registration offers (if applicable).\n\n3. **Public Relations Strategy:**\n   - Press Release: Issue a press release detailing the event, including date, venue, and keynote speakers 8 weeks prior to the event.\n   - Media Outreach: Identify and contact relevant local news outlets, blogs, and influencers to secure coverage leading up to the event.\n   - Partnerships: Collaborate with local businesses and organizations for cross-promotion and sponsorship opportunities.\n\n**Timelines:**\n- 8 weeks prior: Issue press release and begin media outreach.\n- 6 weeks prior: Start social media countdown and first email campaign.\n- 4 weeks prior: Launch paid social media ads.\n- 2 weeks prior: Weekly content updates on all platforms, reminder emails.\n- 1 week prior: Final push for registrations and logistics confirmation with stakeholders.\n- Event Day (June 15, 2024): Execute live updates and engage attendees on social media.\n- Post-Event: Thank you emails to attendees and stakeholders, feedback survey sent to participants.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8354,12 +7672,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -8371,9 +7684,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -8466,12 +7777,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -8483,9 +7789,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8508,10 +7812,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024\n\n**Key Strategies:**\n1. **Social Media Strategy:**\n   - Platforms: Focus on Instagram, Facebook, and LinkedIn.\n   - Content Plan: \n     - Pre-event countdown posts starting 6 weeks prior, featuring sneak peeks of the venue, speakers, and activities.\n     - Weekly engagement posts (polls, contests) to increase awareness and boost excitement.\n     - Live updates during the event for real-time engagement.\n   - Paid Ads: Allocate budget for targeted ads 4 weeks before the event to reach a wider audience.\n   - Engagement: Create a dedicated event hashtag to encourage posts from attendees and partners.\n\n2. **Email Marketing Strategy:**\n   - Target Audience: Segment audience into previous attendees, prospects, and partners.\n   - Campaign Timeline: \n     - Save the Date email: Send immediately to all segments.\n     - Monthly newsletters with updates and reminders until 2 weeks before the event.\n     - Last-minute reminder one week before and a final push 2 days before the event.\n   - Content: Highlight key speakers, agenda, venue details, and early bird registration offers (if applicable).\n\n3. **Public Relations Strategy:**\n   - Press Release: Issue a press release detailing the event, including date, venue, and keynote speakers 8 weeks prior to the event.\n   - Media Outreach: Identify and contact relevant local news outlets, blogs, and influencers to secure coverage leading up to the event.\n   - Partnerships: Collaborate with local businesses and organizations for cross-promotion and sponsorship opportunities.\n\n**Timelines:**\n- 8 weeks prior: Issue press release and begin media outreach.\n- 6 weeks prior: Start social media countdown and first email campaign.\n- 4 weeks prior: Launch paid social media ads.\n- 2 weeks prior: Weekly content updates on all platforms, reminder emails.\n- 1 week prior: Final push for registrations and logistics confirmation with stakeholders.\n- Event Day (June 15, 2024): Execute live updates and engage attendees on social media.\n- Post-Event: Thank you emails to attendees and stakeholders, feedback survey sent to participants.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8550,12 +7851,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -8567,9 +7863,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -8655,12 +7949,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -8672,9 +7961,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8697,10 +7984,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024\n\n**Key Strategies:**\n1. **Social Media Strategy:**\n   - Platforms: Focus on Instagram, Facebook, and LinkedIn.\n   - Content Plan: \n     - Pre-event countdown posts starting 6 weeks prior, featuring sneak peeks of the venue, speakers, and activities.\n     - Weekly engagement posts (polls, contests) to increase awareness and boost excitement.\n     - Live updates during the event for real-time engagement.\n   - Paid Ads: Allocate budget for targeted ads 4 weeks before the event to reach a wider audience.\n   - Engagement: Create a dedicated event hashtag to encourage posts from attendees and partners.\n\n2. **Email Marketing Strategy:**\n   - Target Audience: Segment audience into previous attendees, prospects, and partners.\n   - Campaign Timeline: \n     - Save the Date email: Send immediately to all segments.\n     - Monthly newsletters with updates and reminders until 2 weeks before the event.\n     - Last-minute reminder one week before and a final push 2 days before the event.\n   - Content: Highlight key speakers, agenda, venue details, and early bird registration offers (if applicable).\n\n3. **Public Relations Strategy:**\n   - Press Release: Issue a press release detailing the event, including date, venue, and keynote speakers 8 weeks prior to the event.\n   - Media Outreach: Identify and contact relevant local news outlets, blogs, and influencers to secure coverage leading up to the event.\n   - Partnerships: Collaborate with local businesses and organizations for cross-promotion and sponsorship opportunities.\n\n**Timelines:**\n- 8 weeks prior: Issue press release and begin media outreach.\n- 6 weeks prior: Start social media countdown and first email campaign.\n- 4 weeks prior: Launch paid social media ads.\n- 2 weeks prior: Weekly content updates on all platforms, reminder emails.\n- 1 week prior: Final push for registrations and logistics confirmation with stakeholders.\n- Event Day (June 15, 2024): Execute live updates and engage attendees on social media.\n- Post-Event: Thank you emails to attendees and stakeholders, feedback survey sent to participants.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8739,12 +8023,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -8756,9 +8035,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -8843,12 +8120,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -8860,9 +8132,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8885,10 +8155,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024\n\n**Key Strategies:**\n1. **Social Media Strategy:**\n   - Platforms: Focus on Instagram, Facebook, and LinkedIn.\n   - Content Plan: \n     - Pre-event countdown posts starting 6 weeks prior, featuring sneak peeks of the venue, speakers, and activities.\n     - Weekly engagement posts (polls, contests) to increase awareness and boost excitement.\n     - Live updates during the event for real-time engagement.\n   - Paid Ads: Allocate budget for targeted ads 4 weeks before the event to reach a wider audience.\n   - Engagement: Create a dedicated event hashtag to encourage posts from attendees and partners.\n\n2. **Email Marketing Strategy:**\n   - Target Audience: Segment audience into previous attendees, prospects, and partners.\n   - Campaign Timeline: \n     - Save the Date email: Send immediately to all segments.\n     - Monthly newsletters with updates and reminders until 2 weeks before the event.\n     - Last-minute reminder one week before and a final push 2 days before the event.\n   - Content: Highlight key speakers, agenda, venue details, and early bird registration offers (if applicable).\n\n3. **Public Relations Strategy:**\n   - Press Release: Issue a press release detailing the event, including date, venue, and keynote speakers 8 weeks prior to the event.\n   - Media Outreach: Identify and contact relevant local news outlets, blogs, and influencers to secure coverage leading up to the event.\n   - Partnerships: Collaborate with local businesses and organizations for cross-promotion and sponsorship opportunities.\n\n**Timelines:**\n- 8 weeks prior: Issue press release and begin media outreach.\n- 6 weeks prior: Start social media countdown and first email campaign.\n- 4 weeks prior: Launch paid social media ads.\n- 2 weeks prior: Weekly content updates on all platforms, reminder emails.\n- 1 week prior: Final push for registrations and logistics confirmation with stakeholders.\n- Event Day (June 15, 2024): Execute live updates and engage attendees on social media.\n- Post-Event: Thank you emails to attendees and stakeholders, feedback survey sent to participants.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8927,12 +8194,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -8944,9 +8206,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -9032,12 +8292,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -9049,9 +8304,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9074,10 +8327,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024\n\n**Key Strategies:**\n1. **Social Media Strategy:**\n   - Platforms: Focus on Instagram, Facebook, and LinkedIn.\n   - Content Plan: \n     - Pre-event countdown posts starting 6 weeks prior, featuring sneak peeks of the venue, speakers, and activities.\n     - Weekly engagement posts (polls, contests) to increase awareness and boost excitement.\n     - Live updates during the event for real-time engagement.\n   - Paid Ads: Allocate budget for targeted ads 4 weeks before the event to reach a wider audience.\n   - Engagement: Create a dedicated event hashtag to encourage posts from attendees and partners.\n\n2. **Email Marketing Strategy:**\n   - Target Audience: Segment audience into previous attendees, prospects, and partners.\n   - Campaign Timeline: \n     - Save the Date email: Send immediately to all segments.\n     - Monthly newsletters with updates and reminders until 2 weeks before the event.\n     - Last-minute reminder one week before and a final push 2 days before the event.\n   - Content: Highlight key speakers, agenda, venue details, and early bird registration offers (if applicable).\n\n3. **Public Relations Strategy:**\n   - Press Release: Issue a press release detailing the event, including date, venue, and keynote speakers 8 weeks prior to the event.\n   - Media Outreach: Identify and contact relevant local news outlets, blogs, and influencers to secure coverage leading up to the event.\n   - Partnerships: Collaborate with local businesses and organizations for cross-promotion and sponsorship opportunities.\n\n**Timelines:**\n- 8 weeks prior: Issue press release and begin media outreach.\n- 6 weeks prior: Start social media countdown and first email campaign.\n- 4 weeks prior: Launch paid social media ads.\n- 2 weeks prior: Weekly content updates on all platforms, reminder emails.\n- 1 week prior: Final push for registrations and logistics confirmation with stakeholders.\n- Event Day (June 15, 2024): Execute live updates and engage attendees on social media.\n- Post-Event: Thank you emails to attendees and stakeholders, feedback survey sent to participants.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9116,12 +8366,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -9133,9 +8378,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -9232,12 +8475,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -9249,9 +8487,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9274,10 +8510,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024\n\n**Key Strategies:**\n1. **Social Media Strategy:**\n   - Platforms: Focus on Instagram, Facebook, and LinkedIn.\n   - Content Plan: \n     - Pre-event countdown posts starting 6 weeks prior, featuring sneak peeks of the venue, speakers, and activities.\n     - Weekly engagement posts (polls, contests) to increase awareness and boost excitement.\n     - Live updates during the event for real-time engagement.\n   - Paid Ads: Allocate budget for targeted ads 4 weeks before the event to reach a wider audience.\n   - Engagement: Create a dedicated event hashtag to encourage posts from attendees and partners.\n\n2. **Email Marketing Strategy:**\n   - Target Audience: Segment audience into previous attendees, prospects, and partners.\n   - Campaign Timeline: \n     - Save the Date email: Send immediately to all segments.\n     - Monthly newsletters with updates and reminders until 2 weeks before the event.\n     - Last-minute reminder one week before and a final push 2 days before the event.\n   - Content: Highlight key speakers, agenda, venue details, and early bird registration offers (if applicable).\n\n3. **Public Relations Strategy:**\n   - Press Release: Issue a press release detailing the event, including date, venue, and keynote speakers 8 weeks prior to the event.\n   - Media Outreach: Identify and contact relevant local news outlets, blogs, and influencers to secure coverage leading up to the event.\n   - Partnerships: Collaborate with local businesses and organizations for cross-promotion and sponsorship opportunities.\n\n**Timelines:**\n- 8 weeks prior: Issue press release and begin media outreach.\n- 6 weeks prior: Start social media countdown and first email campaign.\n- 4 weeks prior: Launch paid social media ads.\n- 2 weeks prior: Weekly content updates on all platforms, reminder emails.\n- 1 week prior: Final push for registrations and logistics confirmation with stakeholders.\n- Event Day (June 15, 2024): Execute live updates and engage attendees on social media.\n- Post-Event: Thank you emails to attendees and stakeholders, feedback survey sent to participants.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9316,12 +8549,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -9333,9 +8561,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -9418,12 +8644,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -9435,9 +8656,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9460,10 +8679,7 @@
         "result": "{\"venueSetupSchedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Arrival of catering staff and equipment setup\"},{\"time\":\"9:00 AM\",\"activity\":\"Setup of tables and chairs\"},{\"time\":\"10:00 AM\",\"activity\":\"AV equipment testing\"},{\"time\":\"11:00 AM\",\"activity\":\"Final touches on decorations\"},{\"time\":\"12:00 PM\",\"activity\":\"Guest arrival and welcome\"},{\"time\":\"1:00 PM\",\"activity\":\"Lunch service\"},{\"time\":\"2:00 PM\",\"activity\":\"Event program begins\"},{\"time\":\"5:00 PM\",\"activity\":\"Event concludes and cleanup starts\"}]},\"checklist\":[\"Confirm final guest count.\",\"Verify menu and dietary requirements with the catering vendor.\",\"Ensure AV equipment and setup are aligned with event needs.\",\"Check venue accessibility for guests requiring special accommodations.\",\"Confirm any special arrangements with venue staff.\"],\"specialNotes\":{\"lastMinuteDetails\":[\"Re-confirm with VIP guests about their attendance 1 week prior to the event.\",\"Monitor any local events that may influence attendance.\"],\"dietaryRequirements\":{\"veganMeals\":3,\"glutenFreeMeals\":2,\"wheelchairAccess\":1},\"vendorContact\":{\"name\":\"Gourmet Catering Inc.\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\"},\"overallCost\":{\"venueRental\":\"$5000\",\"catering\":\"$2200\"}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9518,12 +8734,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -9535,9 +8746,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -9622,12 +8831,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -9639,9 +8843,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9664,10 +8866,7 @@
         "result": "{\"venueSetupSchedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Arrival of catering staff and equipment setup\"},{\"time\":\"9:00 AM\",\"activity\":\"Setup of tables and chairs\"},{\"time\":\"10:00 AM\",\"activity\":\"AV equipment testing\"},{\"time\":\"11:00 AM\",\"activity\":\"Final touches on decorations\"},{\"time\":\"12:00 PM\",\"activity\":\"Guest arrival and welcome\"},{\"time\":\"1:00 PM\",\"activity\":\"Lunch service\"},{\"time\":\"2:00 PM\",\"activity\":\"Event program begins\"},{\"time\":\"5:00 PM\",\"activity\":\"Event concludes and cleanup starts\"}]},\"checklist\":[\"Confirm final guest count.\",\"Verify menu and dietary requirements with the catering vendor.\",\"Ensure AV equipment and setup are aligned with event needs.\",\"Check venue accessibility for guests requiring special accommodations.\",\"Confirm any special arrangements with venue staff.\"],\"specialNotes\":{\"lastMinuteDetails\":[\"Re-confirm with VIP guests about their attendance 1 week prior to the event.\",\"Monitor any local events that may influence attendance.\"],\"dietaryRequirements\":{\"veganMeals\":3,\"glutenFreeMeals\":2,\"wheelchairAccess\":1},\"vendorContact\":{\"name\":\"Gourmet Catering Inc.\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\"},\"overallCost\":{\"venueRental\":\"$5000\",\"catering\":\"$2200\"}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9706,12 +8905,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -9723,9 +8917,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -9818,12 +9010,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -9835,9 +9022,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9860,10 +9045,7 @@
         "result": "{\"venueSetupSchedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Arrival of catering staff and equipment setup\"},{\"time\":\"9:00 AM\",\"activity\":\"Setup of tables and chairs\"},{\"time\":\"10:00 AM\",\"activity\":\"AV equipment testing\"},{\"time\":\"11:00 AM\",\"activity\":\"Final touches on decorations\"},{\"time\":\"12:00 PM\",\"activity\":\"Guest arrival and welcome\"},{\"time\":\"1:00 PM\",\"activity\":\"Lunch service\"},{\"time\":\"2:00 PM\",\"activity\":\"Event program begins\"},{\"time\":\"5:00 PM\",\"activity\":\"Event concludes and cleanup starts\"}]},\"checklist\":[\"Confirm final guest count.\",\"Verify menu and dietary requirements with the catering vendor.\",\"Ensure AV equipment and setup are aligned with event needs.\",\"Check venue accessibility for guests requiring special accommodations.\",\"Confirm any special arrangements with venue staff.\"],\"specialNotes\":{\"lastMinuteDetails\":[\"Re-confirm with VIP guests about their attendance 1 week prior to the event.\",\"Monitor any local events that may influence attendance.\"],\"dietaryRequirements\":{\"veganMeals\":3,\"glutenFreeMeals\":2,\"wheelchairAccess\":1},\"vendorContact\":{\"name\":\"Gourmet Catering Inc.\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\"},\"overallCost\":{\"venueRental\":\"$5000\",\"catering\":\"$2200\"}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9902,12 +9084,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -9919,9 +9096,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10014,12 +9189,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -10031,9 +9201,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -10056,10 +9224,7 @@
         "result": "{\"venueSetupSchedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Arrival of catering staff and equipment setup\"},{\"time\":\"9:00 AM\",\"activity\":\"Setup of tables and chairs\"},{\"time\":\"10:00 AM\",\"activity\":\"AV equipment testing\"},{\"time\":\"11:00 AM\",\"activity\":\"Final touches on decorations\"},{\"time\":\"12:00 PM\",\"activity\":\"Guest arrival and welcome\"},{\"time\":\"1:00 PM\",\"activity\":\"Lunch service\"},{\"time\":\"2:00 PM\",\"activity\":\"Event program begins\"},{\"time\":\"5:00 PM\",\"activity\":\"Event concludes and cleanup starts\"}]},\"checklist\":[\"Confirm final guest count.\",\"Verify menu and dietary requirements with the catering vendor.\",\"Ensure AV equipment and setup are aligned with event needs.\",\"Check venue accessibility for guests requiring special accommodations.\",\"Confirm any special arrangements with venue staff.\"],\"specialNotes\":{\"lastMinuteDetails\":[\"Re-confirm with VIP guests about their attendance 1 week prior to the event.\",\"Monitor any local events that may influence attendance.\"],\"dietaryRequirements\":{\"veganMeals\":3,\"glutenFreeMeals\":2,\"wheelchairAccess\":1},\"vendorContact\":{\"name\":\"Gourmet Catering Inc.\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\"},\"overallCost\":{\"venueRental\":\"$5000\",\"catering\":\"$2200\"}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -10098,12 +9263,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -10115,9 +9275,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10203,12 +9361,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -10220,9 +9373,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -10245,10 +9396,7 @@
         "result": "{\"venueSetupSchedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Arrival of catering staff and equipment setup\"},{\"time\":\"9:00 AM\",\"activity\":\"Setup of tables and chairs\"},{\"time\":\"10:00 AM\",\"activity\":\"AV equipment testing\"},{\"time\":\"11:00 AM\",\"activity\":\"Final touches on decorations\"},{\"time\":\"12:00 PM\",\"activity\":\"Guest arrival and welcome\"},{\"time\":\"1:00 PM\",\"activity\":\"Lunch service\"},{\"time\":\"2:00 PM\",\"activity\":\"Event program begins\"},{\"time\":\"5:00 PM\",\"activity\":\"Event concludes and cleanup starts\"}]},\"checklist\":[\"Confirm final guest count.\",\"Verify menu and dietary requirements with the catering vendor.\",\"Ensure AV equipment and setup are aligned with event needs.\",\"Check venue accessibility for guests requiring special accommodations.\",\"Confirm any special arrangements with venue staff.\"],\"specialNotes\":{\"lastMinuteDetails\":[\"Re-confirm with VIP guests about their attendance 1 week prior to the event.\",\"Monitor any local events that may influence attendance.\"],\"dietaryRequirements\":{\"veganMeals\":3,\"glutenFreeMeals\":2,\"wheelchairAccess\":1},\"vendorContact\":{\"name\":\"Gourmet Catering Inc.\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\"},\"overallCost\":{\"venueRental\":\"$5000\",\"catering\":\"$2200\"}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -10287,12 +9435,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -10304,9 +9447,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10391,12 +9532,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -10408,9 +9544,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -10433,10 +9567,7 @@
         "result": "{\"venueSetupSchedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Arrival of catering staff and equipment setup\"},{\"time\":\"9:00 AM\",\"activity\":\"Setup of tables and chairs\"},{\"time\":\"10:00 AM\",\"activity\":\"AV equipment testing\"},{\"time\":\"11:00 AM\",\"activity\":\"Final touches on decorations\"},{\"time\":\"12:00 PM\",\"activity\":\"Guest arrival and welcome\"},{\"time\":\"1:00 PM\",\"activity\":\"Lunch service\"},{\"time\":\"2:00 PM\",\"activity\":\"Event program begins\"},{\"time\":\"5:00 PM\",\"activity\":\"Event concludes and cleanup starts\"}]},\"checklist\":[\"Confirm final guest count.\",\"Verify menu and dietary requirements with the catering vendor.\",\"Ensure AV equipment and setup are aligned with event needs.\",\"Check venue accessibility for guests requiring special accommodations.\",\"Confirm any special arrangements with venue staff.\"],\"specialNotes\":{\"lastMinuteDetails\":[\"Re-confirm with VIP guests about their attendance 1 week prior to the event.\",\"Monitor any local events that may influence attendance.\"],\"dietaryRequirements\":{\"veganMeals\":3,\"glutenFreeMeals\":2,\"wheelchairAccess\":1},\"vendorContact\":{\"name\":\"Gourmet Catering Inc.\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\"},\"overallCost\":{\"venueRental\":\"$5000\",\"catering\":\"$2200\"}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -10475,12 +9606,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -10492,9 +9618,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10580,12 +9704,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -10597,9 +9716,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -10622,10 +9739,7 @@
         "result": "{\"venueSetupSchedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Arrival of catering staff and equipment setup\"},{\"time\":\"9:00 AM\",\"activity\":\"Setup of tables and chairs\"},{\"time\":\"10:00 AM\",\"activity\":\"AV equipment testing\"},{\"time\":\"11:00 AM\",\"activity\":\"Final touches on decorations\"},{\"time\":\"12:00 PM\",\"activity\":\"Guest arrival and welcome\"},{\"time\":\"1:00 PM\",\"activity\":\"Lunch service\"},{\"time\":\"2:00 PM\",\"activity\":\"Event program begins\"},{\"time\":\"5:00 PM\",\"activity\":\"Event concludes and cleanup starts\"}]},\"checklist\":[\"Confirm final guest count.\",\"Verify menu and dietary requirements with the catering vendor.\",\"Ensure AV equipment and setup are aligned with event needs.\",\"Check venue accessibility for guests requiring special accommodations.\",\"Confirm any special arrangements with venue staff.\"],\"specialNotes\":{\"lastMinuteDetails\":[\"Re-confirm with VIP guests about their attendance 1 week prior to the event.\",\"Monitor any local events that may influence attendance.\"],\"dietaryRequirements\":{\"veganMeals\":3,\"glutenFreeMeals\":2,\"wheelchairAccess\":1},\"vendorContact\":{\"name\":\"Gourmet Catering Inc.\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\"},\"overallCost\":{\"venueRental\":\"$5000\",\"catering\":\"$2200\"}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -10664,12 +9778,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -10681,9 +9790,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10780,12 +9887,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -10797,9 +9899,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -10822,10 +9922,7 @@
         "result": "{\"venueSetupSchedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Arrival of catering staff and equipment setup\"},{\"time\":\"9:00 AM\",\"activity\":\"Setup of tables and chairs\"},{\"time\":\"10:00 AM\",\"activity\":\"AV equipment testing\"},{\"time\":\"11:00 AM\",\"activity\":\"Final touches on decorations\"},{\"time\":\"12:00 PM\",\"activity\":\"Guest arrival and welcome\"},{\"time\":\"1:00 PM\",\"activity\":\"Lunch service\"},{\"time\":\"2:00 PM\",\"activity\":\"Event program begins\"},{\"time\":\"5:00 PM\",\"activity\":\"Event concludes and cleanup starts\"}]},\"checklist\":[\"Confirm final guest count.\",\"Verify menu and dietary requirements with the catering vendor.\",\"Ensure AV equipment and setup are aligned with event needs.\",\"Check venue accessibility for guests requiring special accommodations.\",\"Confirm any special arrangements with venue staff.\"],\"specialNotes\":{\"lastMinuteDetails\":[\"Re-confirm with VIP guests about their attendance 1 week prior to the event.\",\"Monitor any local events that may influence attendance.\"],\"dietaryRequirements\":{\"veganMeals\":3,\"glutenFreeMeals\":2,\"wheelchairAccess\":1},\"vendorContact\":{\"name\":\"Gourmet Catering Inc.\",\"phone\":\"555-123-4567\",\"email\":\"sarah@gourmetcatering.com\"},\"overallCost\":{\"venueRental\":\"$5000\",\"catering\":\"$2200\"}}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -10864,12 +9961,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -10881,9 +9973,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10966,12 +10056,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -10983,9 +10068,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11008,9 +10091,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Event Date:** June 15, 2024\n\n**Venue:** The Grand Event Hall, 123 Celebration Lane, Springfield, IL\n\n**Marketing Strategies Executed:**\n1. **Social Media Strategy:** \n   - Platforms utilized: Instagram, Facebook, LinkedIn. \n   - Pre-event countdown posts initiated 6 weeks prior, showcasing the venue, speakers, and activities. \n   - Weekly engagement posts rolled out, including polls and contests.\n   - Paid ads launched 4 weeks before the event to broaden outreach.\n   - Establishment of a dedicated event hashtag for attendee interactions.\n\n2. **Email Marketing Strategy:** \n   - Segmented the audience effectively into previous attendees, prospects, and partners. \n   - Sent a 'Save the Date' email immediately, followed by monthly newsletters. \n   - One week and two days before the event, final reminder emails were executed focusing on key content.\n\n3. **Public Relations Strategy:** \n   - Press release disseminated 8 weeks before the event, including all vital event details.\n   - Conducted media outreach to secure coverage with local news outlets and influencers.\n   - Initiated partnerships with local businesses for cross-promotional activities.\n\n**Campaign Performance Notes:**\n- Engagement metrics from social media showed a steady increase in followers and interactions, especially during contest period. \n- Email open rates and click-through rates exceeded industry averages, indicating successful targeting.\n- Positive responses from media outreach; several outlets confirmed coverage leading up to the event.\n\n**Feedback:**\n- Continuous monitoring of potential conflicts with local events has been confirmed, ensuring no changes to the projected timeline. Stakeholders reaffirmed their commitment to availability. \n- Encourage ongoing cross-promotions and community engagement leading up to the event. \n\nOverall, the marketing campaign was executed successfully, adhering to the established timelines and strategies.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -11065,12 +10146,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -11082,9 +10158,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -11169,12 +10243,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -11186,9 +10255,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11211,9 +10278,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Event Date:** June 15, 2024\n\n**Venue:** The Grand Event Hall, 123 Celebration Lane, Springfield, IL\n\n**Marketing Strategies Executed:**\n1. **Social Media Strategy:** \n   - Platforms utilized: Instagram, Facebook, LinkedIn. \n   - Pre-event countdown posts initiated 6 weeks prior, showcasing the venue, speakers, and activities. \n   - Weekly engagement posts rolled out, including polls and contests.\n   - Paid ads launched 4 weeks before the event to broaden outreach.\n   - Establishment of a dedicated event hashtag for attendee interactions.\n\n2. **Email Marketing Strategy:** \n   - Segmented the audience effectively into previous attendees, prospects, and partners. \n   - Sent a 'Save the Date' email immediately, followed by monthly newsletters. \n   - One week and two days before the event, final reminder emails were executed focusing on key content.\n\n3. **Public Relations Strategy:** \n   - Press release disseminated 8 weeks before the event, including all vital event details.\n   - Conducted media outreach to secure coverage with local news outlets and influencers.\n   - Initiated partnerships with local businesses for cross-promotional activities.\n\n**Campaign Performance Notes:**\n- Engagement metrics from social media showed a steady increase in followers and interactions, especially during contest period. \n- Email open rates and click-through rates exceeded industry averages, indicating successful targeting.\n- Positive responses from media outreach; several outlets confirmed coverage leading up to the event.\n\n**Feedback:**\n- Continuous monitoring of potential conflicts with local events has been confirmed, ensuring no changes to the projected timeline. Stakeholders reaffirmed their commitment to availability. \n- Encourage ongoing cross-promotions and community engagement leading up to the event. \n\nOverall, the marketing campaign was executed successfully, adhering to the established timelines and strategies.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -11252,12 +10317,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -11269,9 +10329,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -11364,12 +10422,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -11381,9 +10434,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11406,9 +10457,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Event Date:** June 15, 2024\n\n**Venue:** The Grand Event Hall, 123 Celebration Lane, Springfield, IL\n\n**Marketing Strategies Executed:**\n1. **Social Media Strategy:** \n   - Platforms utilized: Instagram, Facebook, LinkedIn. \n   - Pre-event countdown posts initiated 6 weeks prior, showcasing the venue, speakers, and activities. \n   - Weekly engagement posts rolled out, including polls and contests.\n   - Paid ads launched 4 weeks before the event to broaden outreach.\n   - Establishment of a dedicated event hashtag for attendee interactions.\n\n2. **Email Marketing Strategy:** \n   - Segmented the audience effectively into previous attendees, prospects, and partners. \n   - Sent a 'Save the Date' email immediately, followed by monthly newsletters. \n   - One week and two days before the event, final reminder emails were executed focusing on key content.\n\n3. **Public Relations Strategy:** \n   - Press release disseminated 8 weeks before the event, including all vital event details.\n   - Conducted media outreach to secure coverage with local news outlets and influencers.\n   - Initiated partnerships with local businesses for cross-promotional activities.\n\n**Campaign Performance Notes:**\n- Engagement metrics from social media showed a steady increase in followers and interactions, especially during contest period. \n- Email open rates and click-through rates exceeded industry averages, indicating successful targeting.\n- Positive responses from media outreach; several outlets confirmed coverage leading up to the event.\n\n**Feedback:**\n- Continuous monitoring of potential conflicts with local events has been confirmed, ensuring no changes to the projected timeline. Stakeholders reaffirmed their commitment to availability. \n- Encourage ongoing cross-promotions and community engagement leading up to the event. \n\nOverall, the marketing campaign was executed successfully, adhering to the established timelines and strategies.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -11447,12 +10496,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -11464,9 +10508,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -11559,12 +10601,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -11576,9 +10613,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11601,9 +10636,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Event Date:** June 15, 2024\n\n**Venue:** The Grand Event Hall, 123 Celebration Lane, Springfield, IL\n\n**Marketing Strategies Executed:**\n1. **Social Media Strategy:** \n   - Platforms utilized: Instagram, Facebook, LinkedIn. \n   - Pre-event countdown posts initiated 6 weeks prior, showcasing the venue, speakers, and activities. \n   - Weekly engagement posts rolled out, including polls and contests.\n   - Paid ads launched 4 weeks before the event to broaden outreach.\n   - Establishment of a dedicated event hashtag for attendee interactions.\n\n2. **Email Marketing Strategy:** \n   - Segmented the audience effectively into previous attendees, prospects, and partners. \n   - Sent a 'Save the Date' email immediately, followed by monthly newsletters. \n   - One week and two days before the event, final reminder emails were executed focusing on key content.\n\n3. **Public Relations Strategy:** \n   - Press release disseminated 8 weeks before the event, including all vital event details.\n   - Conducted media outreach to secure coverage with local news outlets and influencers.\n   - Initiated partnerships with local businesses for cross-promotional activities.\n\n**Campaign Performance Notes:**\n- Engagement metrics from social media showed a steady increase in followers and interactions, especially during contest period. \n- Email open rates and click-through rates exceeded industry averages, indicating successful targeting.\n- Positive responses from media outreach; several outlets confirmed coverage leading up to the event.\n\n**Feedback:**\n- Continuous monitoring of potential conflicts with local events has been confirmed, ensuring no changes to the projected timeline. Stakeholders reaffirmed their commitment to availability. \n- Encourage ongoing cross-promotions and community engagement leading up to the event. \n\nOverall, the marketing campaign was executed successfully, adhering to the established timelines and strategies.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -11642,12 +10675,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -11659,9 +10687,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -11747,12 +10773,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -11764,9 +10785,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11789,9 +10808,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Event Date:** June 15, 2024\n\n**Venue:** The Grand Event Hall, 123 Celebration Lane, Springfield, IL\n\n**Marketing Strategies Executed:**\n1. **Social Media Strategy:** \n   - Platforms utilized: Instagram, Facebook, LinkedIn. \n   - Pre-event countdown posts initiated 6 weeks prior, showcasing the venue, speakers, and activities. \n   - Weekly engagement posts rolled out, including polls and contests.\n   - Paid ads launched 4 weeks before the event to broaden outreach.\n   - Establishment of a dedicated event hashtag for attendee interactions.\n\n2. **Email Marketing Strategy:** \n   - Segmented the audience effectively into previous attendees, prospects, and partners. \n   - Sent a 'Save the Date' email immediately, followed by monthly newsletters. \n   - One week and two days before the event, final reminder emails were executed focusing on key content.\n\n3. **Public Relations Strategy:** \n   - Press release disseminated 8 weeks before the event, including all vital event details.\n   - Conducted media outreach to secure coverage with local news outlets and influencers.\n   - Initiated partnerships with local businesses for cross-promotional activities.\n\n**Campaign Performance Notes:**\n- Engagement metrics from social media showed a steady increase in followers and interactions, especially during contest period. \n- Email open rates and click-through rates exceeded industry averages, indicating successful targeting.\n- Positive responses from media outreach; several outlets confirmed coverage leading up to the event.\n\n**Feedback:**\n- Continuous monitoring of potential conflicts with local events has been confirmed, ensuring no changes to the projected timeline. Stakeholders reaffirmed their commitment to availability. \n- Encourage ongoing cross-promotions and community engagement leading up to the event. \n\nOverall, the marketing campaign was executed successfully, adhering to the established timelines and strategies.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -11830,12 +10847,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -11847,9 +10859,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -11934,12 +10944,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -11951,9 +10956,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11976,9 +10979,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Event Date:** June 15, 2024\n\n**Venue:** The Grand Event Hall, 123 Celebration Lane, Springfield, IL\n\n**Marketing Strategies Executed:**\n1. **Social Media Strategy:** \n   - Platforms utilized: Instagram, Facebook, LinkedIn. \n   - Pre-event countdown posts initiated 6 weeks prior, showcasing the venue, speakers, and activities. \n   - Weekly engagement posts rolled out, including polls and contests.\n   - Paid ads launched 4 weeks before the event to broaden outreach.\n   - Establishment of a dedicated event hashtag for attendee interactions.\n\n2. **Email Marketing Strategy:** \n   - Segmented the audience effectively into previous attendees, prospects, and partners. \n   - Sent a 'Save the Date' email immediately, followed by monthly newsletters. \n   - One week and two days before the event, final reminder emails were executed focusing on key content.\n\n3. **Public Relations Strategy:** \n   - Press release disseminated 8 weeks before the event, including all vital event details.\n   - Conducted media outreach to secure coverage with local news outlets and influencers.\n   - Initiated partnerships with local businesses for cross-promotional activities.\n\n**Campaign Performance Notes:**\n- Engagement metrics from social media showed a steady increase in followers and interactions, especially during contest period. \n- Email open rates and click-through rates exceeded industry averages, indicating successful targeting.\n- Positive responses from media outreach; several outlets confirmed coverage leading up to the event.\n\n**Feedback:**\n- Continuous monitoring of potential conflicts with local events has been confirmed, ensuring no changes to the projected timeline. Stakeholders reaffirmed their commitment to availability. \n- Encourage ongoing cross-promotions and community engagement leading up to the event. \n\nOverall, the marketing campaign was executed successfully, adhering to the established timelines and strategies.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -12017,12 +11018,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -12034,9 +11030,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -12122,12 +11116,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -12139,9 +11128,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -12164,9 +11151,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Event Date:** June 15, 2024\n\n**Venue:** The Grand Event Hall, 123 Celebration Lane, Springfield, IL\n\n**Marketing Strategies Executed:**\n1. **Social Media Strategy:** \n   - Platforms utilized: Instagram, Facebook, LinkedIn. \n   - Pre-event countdown posts initiated 6 weeks prior, showcasing the venue, speakers, and activities. \n   - Weekly engagement posts rolled out, including polls and contests.\n   - Paid ads launched 4 weeks before the event to broaden outreach.\n   - Establishment of a dedicated event hashtag for attendee interactions.\n\n2. **Email Marketing Strategy:** \n   - Segmented the audience effectively into previous attendees, prospects, and partners. \n   - Sent a 'Save the Date' email immediately, followed by monthly newsletters. \n   - One week and two days before the event, final reminder emails were executed focusing on key content.\n\n3. **Public Relations Strategy:** \n   - Press release disseminated 8 weeks before the event, including all vital event details.\n   - Conducted media outreach to secure coverage with local news outlets and influencers.\n   - Initiated partnerships with local businesses for cross-promotional activities.\n\n**Campaign Performance Notes:**\n- Engagement metrics from social media showed a steady increase in followers and interactions, especially during contest period. \n- Email open rates and click-through rates exceeded industry averages, indicating successful targeting.\n- Positive responses from media outreach; several outlets confirmed coverage leading up to the event.\n\n**Feedback:**\n- Continuous monitoring of potential conflicts with local events has been confirmed, ensuring no changes to the projected timeline. Stakeholders reaffirmed their commitment to availability. \n- Encourage ongoing cross-promotions and community engagement leading up to the event. \n\nOverall, the marketing campaign was executed successfully, adhering to the established timelines and strategies.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -12205,12 +11190,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -12222,9 +11202,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -12321,12 +11299,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -12338,9 +11311,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -12363,9 +11334,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Event Date:** June 15, 2024\n\n**Venue:** The Grand Event Hall, 123 Celebration Lane, Springfield, IL\n\n**Marketing Strategies Executed:**\n1. **Social Media Strategy:** \n   - Platforms utilized: Instagram, Facebook, LinkedIn. \n   - Pre-event countdown posts initiated 6 weeks prior, showcasing the venue, speakers, and activities. \n   - Weekly engagement posts rolled out, including polls and contests.\n   - Paid ads launched 4 weeks before the event to broaden outreach.\n   - Establishment of a dedicated event hashtag for attendee interactions.\n\n2. **Email Marketing Strategy:** \n   - Segmented the audience effectively into previous attendees, prospects, and partners. \n   - Sent a 'Save the Date' email immediately, followed by monthly newsletters. \n   - One week and two days before the event, final reminder emails were executed focusing on key content.\n\n3. **Public Relations Strategy:** \n   - Press release disseminated 8 weeks before the event, including all vital event details.\n   - Conducted media outreach to secure coverage with local news outlets and influencers.\n   - Initiated partnerships with local businesses for cross-promotional activities.\n\n**Campaign Performance Notes:**\n- Engagement metrics from social media showed a steady increase in followers and interactions, especially during contest period. \n- Email open rates and click-through rates exceeded industry averages, indicating successful targeting.\n- Positive responses from media outreach; several outlets confirmed coverage leading up to the event.\n\n**Feedback:**\n- Continuous monitoring of potential conflicts with local events has been confirmed, ensuring no changes to the projected timeline. Stakeholders reaffirmed their commitment to availability. \n- Encourage ongoing cross-promotions and community engagement leading up to the event. \n\nOverall, the marketing campaign was executed successfully, adhering to the established timelines and strategies.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -12404,12 +11373,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -12421,9 +11385,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -12506,12 +11468,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -12523,9 +11480,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -12606,12 +11561,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -12623,9 +11573,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -12710,12 +11658,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -12727,9 +11670,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -12794,12 +11735,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -12811,9 +11747,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -12906,12 +11840,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -12923,9 +11852,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -12990,12 +11917,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -13007,9 +11929,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -13102,12 +12022,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -13119,9 +12034,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -13186,12 +12099,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -13203,9 +12111,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -13291,12 +12197,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -13308,9 +12209,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -13375,12 +12274,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -13392,9 +12286,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -13479,12 +12371,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -13496,9 +12383,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -13563,12 +12448,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -13580,9 +12460,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -13668,12 +12546,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -13685,9 +12558,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -13752,12 +12623,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -13769,9 +12635,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -13868,12 +12732,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -13885,9 +12744,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -13952,12 +12809,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -13969,9 +12821,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },

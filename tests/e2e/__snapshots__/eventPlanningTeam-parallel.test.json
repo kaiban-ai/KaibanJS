@@ -47,12 +47,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -64,9 +59,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -129,12 +122,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -146,9 +134,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -211,12 +197,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -228,9 +209,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -293,12 +272,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -310,9 +284,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -375,12 +347,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -392,9 +359,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -457,12 +422,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -474,9 +434,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -539,12 +497,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -556,9 +509,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -621,12 +572,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -638,9 +584,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -703,12 +647,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -720,9 +659,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -792,12 +729,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -809,9 +741,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -903,12 +833,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -920,9 +845,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -945,9 +868,7 @@
       "result": "Venue name: Preferred Venue, Address: 123 Event St, City, State, ZIP. Confirmation details: The venue is available for the selected date of June 15, 2024, as confirmed by the venue management. Cost estimate: $2,000 for the day, including setup and equipment. Notes on policies: No outside catering allowed, and a refundable security deposit of $500 is required. Additionally, stakeholders should be reminded to book accommodations early due to a nearby festival on June 17, which may affect local logistics.",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "selectEventDateTask"
-      ],
+      "dependencies": ["selectEventDateTask"],
       "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1016,12 +937,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -1033,9 +949,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1058,9 +972,7 @@
       "result": "The final answer to the Task: Number of confirmed guests: 50. Guest list with contact details: [John Doe, john.doe@example.com, VIP; Jane Smith, jane.smith@example.com, Corporate; Alex Brown, alex.brown@example.com, RSVP; etc.]. Special dietary or accessibility requirements: 2 vegan meals, 1 gluten-free meal, and 1 wheelchair accessibility request.",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "selectEventDateTask"
-      ],
+      "dependencies": ["selectEventDateTask"],
       "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1129,12 +1041,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -1146,9 +1053,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1171,10 +1076,7 @@
       "result": "{\"menu\":{\"appetizers\":[\"Stuffed mushrooms with herb cream cheese\",\"Vegetable spring rolls with sweet chili sauce\"],\"main_courses\":[\"Grilled lemon herb chicken\",\"Stuffed bell peppers with quinoa and black beans (Vegan)\",\"Gluten-free pasta primavera\"],\"desserts\":[\"Chocolate mousse\",\"Fresh fruit platter\"],\"beverages\":[\"Assorted soft drinks\",\"Red and white wine\",\"Sparkling and still water\"]},\"vendor\":{\"name\":\"Taste Buds Catering\",\"contract_details\":\"Contract to be finalized by May 1, 2024. Includes service for 50 guests with a focus on dietary restrictions and accommodation requests.\"},\"total_cost_estimate\":\"$3,000 - $3,500 depending on final menu selections and additional services required.\",\"special_arrangements\":{\"vegan_meals\":\"2 vegan options provided in the main course\",\"gluten_free_meal\":\"1 gluten-free option provided in the main course\",\"accessibility_request\":\"Arrangement for wheelchair accessibility to be confirmed with the venue\"}}",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "selectEventDateTask",
-        "finalizeGuestListTask"
-      ],
+      "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
       "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1243,12 +1145,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -1260,9 +1157,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1285,10 +1180,7 @@
       "result": "Marketing Plan for the Event on June 15, 2024:\n\n1. **Social Media Strategy**  \n   - Platforms: Facebook, Instagram, Twitter, LinkedIn  \n   - Content Plan:  \n     - Launch teaser campaign 8 weeks before the event (April 20, 2024).  \n     - Share behind-the-scenes content and stakeholder interviews 6 weeks prior (May 4, 2024).  \n     - Weekly countdown posts starting 4 weeks before (May 18, 2024).  \n     - Live social media coverage during the event (June 15, 2024).\n   - Target Audience: Local community, industry professionals, stakeholders.\n   - Engagement Tactics: Encourage user-generated content with a unique hashtag and run a photo contest related to the event.\n\n2. **Email Marketing Strategy**  \n   - Audience Segmentation:  \n     - Existing contacts (stakeholders, partners, previous attendees)  \n     - New prospects (local businesses, interested parties)\n   - Timeline:  \n     - Initial announcement email 8 weeks prior (April 20, 2024) to save the date.  \n     - Follow-up email with details and registration link 6 weeks prior (May 4, 2024).  \n     - Reminder email 1 week before (June 8, 2024) with booking tips due to nearby festival on June 17.\n   - Content: Focus on event highlights, guest speakers, and logistical information (venue details, accommodation reminders).\n\n3. **Public Relations Strategy**  \n   - Press Release: Distribute a press release 6 weeks before (May 4, 2024) announcing the event, including key details and stakeholder participation.\n   - Partnerships: Collaborate with local media outlets and influencers to promote the event. Seek coverage and previews in local news and online publications.\n   - Community Engagement: Coordination with local businesses and organizations for cross-promotion and sponsorship opportunities. \n\n4. **Logistics and Accommodations**  \n   - Reminder to stakeholders and attendees to book accommodations early due to the nearby festival on June 17 which may affect local logistics.\n   - Venue details are confirmed (Preferred Venue, 123 Event St, City, State, ZIP) with a cost estimate of $2,000, including setup and equipment. A refundable security deposit of $500 is required.\n\n5. **Timelines Summary**  \n   - April 20, 2024: Launch social media teaser campaign, initial email announcement.  \n   - May 4, 2024: Social media behind-the-scenes content, email follow-up, press release distribution.  \n   - May 18, 2024: Start social media countdown posts.  \n   - June 8, 2024: Final email reminder with accommodation tips.  \n   - June 15, 2024: Event day with live social media coverage.",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "selectEventDateTask",
-        "bookVenueTask"
-      ],
+      "dependencies": ["selectEventDateTask", "bookVenueTask"],
       "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1357,12 +1249,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -1374,9 +1261,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1399,10 +1284,7 @@
       "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Venue setup commencement\"},{\"time\":\"10:00 AM\",\"activity\":\"Catering setup and coordination\"},{\"time\":\"12:00 PM\",\"activity\":\"Tech equipment setup and sound check\"},{\"time\":\"2:00 PM\",\"activity\":\"Final touches and guest registration area ready\"},{\"time\":\"5:00 PM\",\"activity\":\"Event begins\"}]},\"checklist\":[\"Confirm venue setup arrangements with staff\",\"Finalize seating arrangement as per guest list of 50 confirmed attendees\",\"Verify catering details from Taste Buds Catering\",\"Confirm special dietary requirements: 2 vegan, 1 gluten-free\",\"Arrange for wheelchair accessibility\",\"Prepare welcome signage and registration materials\"],\"special_arrangements\":{\"notes\":[\"Remind stakeholders about booking accommodations early due to nearby festival on June 17.\",\"Confirm with venue that no outside catering is allowed.\",\"Ensure refundable security deposit of $500 is arranged.\"]}}",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "bookVenueTask",
-        "createCateringPlanTask"
-      ],
+      "dependencies": ["bookVenueTask", "createCateringPlanTask"],
       "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1471,12 +1353,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -1488,9 +1365,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1513,9 +1388,7 @@
       "result": "Marketing Campaign Execution Report:\n\n**Social Media Strategy:**  \n- Launched teaser campaign on April 20, 2024, across Facebook, Instagram, Twitter, and LinkedIn. Engagement has been positive, with initial metrics indicating increased reach and follower interaction.  \n- Behind-the-scenes content and stakeholder interviews shared on May 4, 2024, with good engagement rates noted.  \n- Weekly countdown posts began on May 18, 2024, creating anticipation as we approach the event date.  \n- Live coverage scheduled for June 15, 2024, to maximize real-time engagement.\n\n**Email Marketing Strategy:**  \n- Initial announcement email sent to 3,000 existing contacts on April 20, 2024, resulting in a 30% open rate and 12% click-through rate (CTR) to the registration link.  \n- Follow-up email dispatched on May 4, 2024, with details and registration link, noted a 35% open rate. Continued engagement is expected.\n- Reminder email to be sent on June 8, 2024, emphasizing accommodation tips due to the nearby festival.\n\n**Public Relations Strategy:**  \n- Press release distributed on May 4, 2024, received coverage from three local media outlets, boosting visibility significantly in the community.\n- Partnerships with local influencers and businesses secured to enhance outreach and strengthen event branding.\n\n**Logistics and Accommodations:**  \n- Stakeholders have been reminded to book accommodations early to mitigate complications from the nearby festival on June 17, 2024.\n- Venue confirmed (Preferred Venue, 123 Event St, City, State, ZIP) costs estimated at $2,000 with a refundable security deposit of $500.\n\n**Notes on Campaign Performance:**  \n- Current engagement and registration numbers suggest a promising turnout, but continuous monitoring and adjustments will be necessary as the event date approaches. Ensure timely communications and follow-ups to sustain interest and registration momentum.",
       "stats": null,
       "duration": "[REDACTED]",
-      "dependencies": [
-        "setupMarketingCampaignTask"
-      ],
+      "dependencies": ["setupMarketingCampaignTask"],
       "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
       "feedbackHistory": [],
       "externalValidationRequired": false,
@@ -1584,12 +1457,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -1601,9 +1469,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1726,12 +1592,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -1743,9 +1604,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -1824,12 +1683,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -1841,9 +1695,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -1928,12 +1780,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -1945,9 +1792,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2010,12 +1855,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -2027,9 +1867,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -2122,12 +1960,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -2139,9 +1972,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2204,12 +2035,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -2221,9 +2047,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -2316,12 +2140,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -2333,9 +2152,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2398,12 +2215,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -2415,9 +2227,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -2503,12 +2313,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -2520,9 +2325,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2585,12 +2388,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -2602,9 +2400,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -2689,12 +2485,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -2706,9 +2497,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2771,12 +2560,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -2788,9 +2572,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -2876,12 +2658,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -2893,9 +2670,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -2958,12 +2733,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -2975,9 +2745,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -3074,12 +2842,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -3091,9 +2854,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3156,12 +2917,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -3173,9 +2929,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -3258,12 +3012,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -3275,9 +3024,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3300,9 +3047,7 @@
         "result": "Venue name: Preferred Venue, Address: 123 Event St, City, State, ZIP. Confirmation details: The venue is available for the selected date of June 15, 2024, as confirmed by the venue management. Cost estimate: $2,000 for the day, including setup and equipment. Notes on policies: No outside catering allowed, and a refundable security deposit of $500 is required. Additionally, stakeholders should be reminded to book accommodations early due to a nearby festival on June 17, which may affect local logistics.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -3358,12 +3103,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -3375,9 +3115,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -3462,12 +3200,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -3479,9 +3212,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3504,9 +3235,7 @@
         "result": "Venue name: Preferred Venue, Address: 123 Event St, City, State, ZIP. Confirmation details: The venue is available for the selected date of June 15, 2024, as confirmed by the venue management. Cost estimate: $2,000 for the day, including setup and equipment. Notes on policies: No outside catering allowed, and a refundable security deposit of $500 is required. Additionally, stakeholders should be reminded to book accommodations early due to a nearby festival on June 17, which may affect local logistics.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -3546,12 +3275,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -3563,9 +3287,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -3648,12 +3370,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -3665,9 +3382,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3690,9 +3405,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 50. Guest list with contact details: [John Doe, john.doe@example.com, VIP; Jane Smith, jane.smith@example.com, Corporate; Alex Brown, alex.brown@example.com, RSVP; etc.]. Special dietary or accessibility requirements: 2 vegan meals, 1 gluten-free meal, and 1 wheelchair accessibility request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -3748,12 +3461,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -3765,9 +3473,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -3852,12 +3558,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -3869,9 +3570,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -3894,9 +3593,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 50. Guest list with contact details: [John Doe, john.doe@example.com, VIP; Jane Smith, jane.smith@example.com, Corporate; Alex Brown, alex.brown@example.com, RSVP; etc.]. Special dietary or accessibility requirements: 2 vegan meals, 1 gluten-free meal, and 1 wheelchair accessibility request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -3936,12 +3633,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -3953,9 +3645,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -4048,12 +3738,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -4065,9 +3750,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4090,9 +3773,7 @@
         "result": "Venue name: Preferred Venue, Address: 123 Event St, City, State, ZIP. Confirmation details: The venue is available for the selected date of June 15, 2024, as confirmed by the venue management. Cost estimate: $2,000 for the day, including setup and equipment. Notes on policies: No outside catering allowed, and a refundable security deposit of $500 is required. Additionally, stakeholders should be reminded to book accommodations early due to a nearby festival on June 17, which may affect local logistics.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4132,12 +3813,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -4149,9 +3825,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -4244,12 +3918,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -4261,9 +3930,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4286,9 +3953,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 50. Guest list with contact details: [John Doe, john.doe@example.com, VIP; Jane Smith, jane.smith@example.com, Corporate; Alex Brown, alex.brown@example.com, RSVP; etc.]. Special dietary or accessibility requirements: 2 vegan meals, 1 gluten-free meal, and 1 wheelchair accessibility request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4328,12 +3993,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -4345,9 +4005,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -4440,12 +4098,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -4457,9 +4110,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4482,9 +4133,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 50. Guest list with contact details: [John Doe, john.doe@example.com, VIP; Jane Smith, jane.smith@example.com, Corporate; Alex Brown, alex.brown@example.com, RSVP; etc.]. Special dietary or accessibility requirements: 2 vegan meals, 1 gluten-free meal, and 1 wheelchair accessibility request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4524,12 +4173,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -4541,9 +4185,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -4629,12 +4271,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -4646,9 +4283,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4671,9 +4306,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 50. Guest list with contact details: [John Doe, john.doe@example.com, VIP; Jane Smith, jane.smith@example.com, Corporate; Alex Brown, alex.brown@example.com, RSVP; etc.]. Special dietary or accessibility requirements: 2 vegan meals, 1 gluten-free meal, and 1 wheelchair accessibility request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4713,12 +4346,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -4730,9 +4358,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -4817,12 +4443,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -4834,9 +4455,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -4859,9 +4478,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 50. Guest list with contact details: [John Doe, john.doe@example.com, VIP; Jane Smith, jane.smith@example.com, Corporate; Alex Brown, alex.brown@example.com, RSVP; etc.]. Special dietary or accessibility requirements: 2 vegan meals, 1 gluten-free meal, and 1 wheelchair accessibility request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -4901,12 +4518,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -4918,9 +4530,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5006,12 +4616,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -5023,9 +4628,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5048,9 +4651,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 50. Guest list with contact details: [John Doe, john.doe@example.com, VIP; Jane Smith, jane.smith@example.com, Corporate; Alex Brown, alex.brown@example.com, RSVP; etc.]. Special dietary or accessibility requirements: 2 vegan meals, 1 gluten-free meal, and 1 wheelchair accessibility request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5090,12 +4691,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -5107,9 +4703,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5206,12 +4800,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -5223,9 +4812,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5248,9 +4835,7 @@
         "result": "The final answer to the Task: Number of confirmed guests: 50. Guest list with contact details: [John Doe, john.doe@example.com, VIP; Jane Smith, jane.smith@example.com, Corporate; Alex Brown, alex.brown@example.com, RSVP; etc.]. Special dietary or accessibility requirements: 2 vegan meals, 1 gluten-free meal, and 1 wheelchair accessibility request.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Compile a guest list by integrating RSVPs, VIP requests, and corporate contacts",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5290,12 +4875,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -5307,9 +4887,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5392,12 +4970,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -5409,9 +4982,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5434,10 +5005,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Stuffed mushrooms with herb cream cheese\",\"Vegetable spring rolls with sweet chili sauce\"],\"main_courses\":[\"Grilled lemon herb chicken\",\"Stuffed bell peppers with quinoa and black beans (Vegan)\",\"Gluten-free pasta primavera\"],\"desserts\":[\"Chocolate mousse\",\"Fresh fruit platter\"],\"beverages\":[\"Assorted soft drinks\",\"Red and white wine\",\"Sparkling and still water\"]},\"vendor\":{\"name\":\"Taste Buds Catering\",\"contract_details\":\"Contract to be finalized by May 1, 2024. Includes service for 50 guests with a focus on dietary restrictions and accommodation requests.\"},\"total_cost_estimate\":\"$3,000 - $3,500 depending on final menu selections and additional services required.\",\"special_arrangements\":{\"vegan_meals\":\"2 vegan options provided in the main course\",\"gluten_free_meal\":\"1 gluten-free option provided in the main course\",\"accessibility_request\":\"Arrangement for wheelchair accessibility to be confirmed with the venue\"}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5493,12 +5061,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -5510,9 +5073,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -5597,12 +5158,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -5614,9 +5170,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5639,10 +5193,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Stuffed mushrooms with herb cream cheese\",\"Vegetable spring rolls with sweet chili sauce\"],\"main_courses\":[\"Grilled lemon herb chicken\",\"Stuffed bell peppers with quinoa and black beans (Vegan)\",\"Gluten-free pasta primavera\"],\"desserts\":[\"Chocolate mousse\",\"Fresh fruit platter\"],\"beverages\":[\"Assorted soft drinks\",\"Red and white wine\",\"Sparkling and still water\"]},\"vendor\":{\"name\":\"Taste Buds Catering\",\"contract_details\":\"Contract to be finalized by May 1, 2024. Includes service for 50 guests with a focus on dietary restrictions and accommodation requests.\"},\"total_cost_estimate\":\"$3,000 - $3,500 depending on final menu selections and additional services required.\",\"special_arrangements\":{\"vegan_meals\":\"2 vegan options provided in the main course\",\"gluten_free_meal\":\"1 gluten-free option provided in the main course\",\"accessibility_request\":\"Arrangement for wheelchair accessibility to be confirmed with the venue\"}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5682,12 +5233,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -5699,9 +5245,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5794,12 +5338,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -5811,9 +5350,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -5836,10 +5373,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Stuffed mushrooms with herb cream cheese\",\"Vegetable spring rolls with sweet chili sauce\"],\"main_courses\":[\"Grilled lemon herb chicken\",\"Stuffed bell peppers with quinoa and black beans (Vegan)\",\"Gluten-free pasta primavera\"],\"desserts\":[\"Chocolate mousse\",\"Fresh fruit platter\"],\"beverages\":[\"Assorted soft drinks\",\"Red and white wine\",\"Sparkling and still water\"]},\"vendor\":{\"name\":\"Taste Buds Catering\",\"contract_details\":\"Contract to be finalized by May 1, 2024. Includes service for 50 guests with a focus on dietary restrictions and accommodation requests.\"},\"total_cost_estimate\":\"$3,000 - $3,500 depending on final menu selections and additional services required.\",\"special_arrangements\":{\"vegan_meals\":\"2 vegan options provided in the main course\",\"gluten_free_meal\":\"1 gluten-free option provided in the main course\",\"accessibility_request\":\"Arrangement for wheelchair accessibility to be confirmed with the venue\"}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -5879,12 +5413,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -5896,9 +5425,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -5991,12 +5518,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -6008,9 +5530,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6033,9 +5553,7 @@
         "result": "Venue name: Preferred Venue, Address: 123 Event St, City, State, ZIP. Confirmation details: The venue is available for the selected date of June 15, 2024, as confirmed by the venue management. Cost estimate: $2,000 for the day, including setup and equipment. Notes on policies: No outside catering allowed, and a refundable security deposit of $500 is required. Additionally, stakeholders should be reminded to book accommodations early due to a nearby festival on June 17, which may affect local logistics.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6075,12 +5593,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -6092,9 +5605,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -6180,12 +5691,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -6197,9 +5703,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6222,9 +5726,7 @@
         "result": "Venue name: Preferred Venue, Address: 123 Event St, City, State, ZIP. Confirmation details: The venue is available for the selected date of June 15, 2024, as confirmed by the venue management. Cost estimate: $2,000 for the day, including setup and equipment. Notes on policies: No outside catering allowed, and a refundable security deposit of $500 is required. Additionally, stakeholders should be reminded to book accommodations early due to a nearby festival on June 17, which may affect local logistics.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6264,12 +5766,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -6281,9 +5778,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -6368,12 +5863,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -6385,9 +5875,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6410,9 +5898,7 @@
         "result": "Venue name: Preferred Venue, Address: 123 Event St, City, State, ZIP. Confirmation details: The venue is available for the selected date of June 15, 2024, as confirmed by the venue management. Cost estimate: $2,000 for the day, including setup and equipment. Notes on policies: No outside catering allowed, and a refundable security deposit of $500 is required. Additionally, stakeholders should be reminded to book accommodations early due to a nearby festival on June 17, which may affect local logistics.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6452,12 +5938,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -6469,9 +5950,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -6557,12 +6036,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -6574,9 +6048,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6599,9 +6071,7 @@
         "result": "Venue name: Preferred Venue, Address: 123 Event St, City, State, ZIP. Confirmation details: The venue is available for the selected date of June 15, 2024, as confirmed by the venue management. Cost estimate: $2,000 for the day, including setup and equipment. Notes on policies: No outside catering allowed, and a refundable security deposit of $500 is required. Additionally, stakeholders should be reminded to book accommodations early due to a nearby festival on June 17, which may affect local logistics.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6641,12 +6111,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -6658,9 +6123,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -6757,12 +6220,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -6774,9 +6232,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6799,9 +6255,7 @@
         "result": "Venue name: Preferred Venue, Address: 123 Event St, City, State, ZIP. Confirmation details: The venue is available for the selected date of June 15, 2024, as confirmed by the venue management. Cost estimate: $2,000 for the day, including setup and equipment. Notes on policies: No outside catering allowed, and a refundable security deposit of $500 is required. Additionally, stakeholders should be reminded to book accommodations early due to a nearby festival on June 17, which may affect local logistics.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask"
-        ],
+        "dependencies": ["selectEventDateTask"],
         "interpolatedTaskDescription": "Contact the venue, confirms availability for the selected date, and handles booking formalities",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -6841,12 +6295,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -6858,9 +6307,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -6943,12 +6390,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -6960,9 +6402,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -6985,10 +6425,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024:\n\n1. **Social Media Strategy**  \n   - Platforms: Facebook, Instagram, Twitter, LinkedIn  \n   - Content Plan:  \n     - Launch teaser campaign 8 weeks before the event (April 20, 2024).  \n     - Share behind-the-scenes content and stakeholder interviews 6 weeks prior (May 4, 2024).  \n     - Weekly countdown posts starting 4 weeks before (May 18, 2024).  \n     - Live social media coverage during the event (June 15, 2024).\n   - Target Audience: Local community, industry professionals, stakeholders.\n   - Engagement Tactics: Encourage user-generated content with a unique hashtag and run a photo contest related to the event.\n\n2. **Email Marketing Strategy**  \n   - Audience Segmentation:  \n     - Existing contacts (stakeholders, partners, previous attendees)  \n     - New prospects (local businesses, interested parties)\n   - Timeline:  \n     - Initial announcement email 8 weeks prior (April 20, 2024) to save the date.  \n     - Follow-up email with details and registration link 6 weeks prior (May 4, 2024).  \n     - Reminder email 1 week before (June 8, 2024) with booking tips due to nearby festival on June 17.\n   - Content: Focus on event highlights, guest speakers, and logistical information (venue details, accommodation reminders).\n\n3. **Public Relations Strategy**  \n   - Press Release: Distribute a press release 6 weeks before (May 4, 2024) announcing the event, including key details and stakeholder participation.\n   - Partnerships: Collaborate with local media outlets and influencers to promote the event. Seek coverage and previews in local news and online publications.\n   - Community Engagement: Coordination with local businesses and organizations for cross-promotion and sponsorship opportunities. \n\n4. **Logistics and Accommodations**  \n   - Reminder to stakeholders and attendees to book accommodations early due to the nearby festival on June 17 which may affect local logistics.\n   - Venue details are confirmed (Preferred Venue, 123 Event St, City, State, ZIP) with a cost estimate of $2,000, including setup and equipment. A refundable security deposit of $500 is required.\n\n5. **Timelines Summary**  \n   - April 20, 2024: Launch social media teaser campaign, initial email announcement.  \n   - May 4, 2024: Social media behind-the-scenes content, email follow-up, press release distribution.  \n   - May 18, 2024: Start social media countdown posts.  \n   - June 8, 2024: Final email reminder with accommodation tips.  \n   - June 15, 2024: Event day with live social media coverage.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7044,12 +6481,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -7061,9 +6493,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -7148,12 +6578,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -7165,9 +6590,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7190,10 +6613,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024:\n\n1. **Social Media Strategy**  \n   - Platforms: Facebook, Instagram, Twitter, LinkedIn  \n   - Content Plan:  \n     - Launch teaser campaign 8 weeks before the event (April 20, 2024).  \n     - Share behind-the-scenes content and stakeholder interviews 6 weeks prior (May 4, 2024).  \n     - Weekly countdown posts starting 4 weeks before (May 18, 2024).  \n     - Live social media coverage during the event (June 15, 2024).\n   - Target Audience: Local community, industry professionals, stakeholders.\n   - Engagement Tactics: Encourage user-generated content with a unique hashtag and run a photo contest related to the event.\n\n2. **Email Marketing Strategy**  \n   - Audience Segmentation:  \n     - Existing contacts (stakeholders, partners, previous attendees)  \n     - New prospects (local businesses, interested parties)\n   - Timeline:  \n     - Initial announcement email 8 weeks prior (April 20, 2024) to save the date.  \n     - Follow-up email with details and registration link 6 weeks prior (May 4, 2024).  \n     - Reminder email 1 week before (June 8, 2024) with booking tips due to nearby festival on June 17.\n   - Content: Focus on event highlights, guest speakers, and logistical information (venue details, accommodation reminders).\n\n3. **Public Relations Strategy**  \n   - Press Release: Distribute a press release 6 weeks before (May 4, 2024) announcing the event, including key details and stakeholder participation.\n   - Partnerships: Collaborate with local media outlets and influencers to promote the event. Seek coverage and previews in local news and online publications.\n   - Community Engagement: Coordination with local businesses and organizations for cross-promotion and sponsorship opportunities. \n\n4. **Logistics and Accommodations**  \n   - Reminder to stakeholders and attendees to book accommodations early due to the nearby festival on June 17 which may affect local logistics.\n   - Venue details are confirmed (Preferred Venue, 123 Event St, City, State, ZIP) with a cost estimate of $2,000, including setup and equipment. A refundable security deposit of $500 is required.\n\n5. **Timelines Summary**  \n   - April 20, 2024: Launch social media teaser campaign, initial email announcement.  \n   - May 4, 2024: Social media behind-the-scenes content, email follow-up, press release distribution.  \n   - May 18, 2024: Start social media countdown posts.  \n   - June 8, 2024: Final email reminder with accommodation tips.  \n   - June 15, 2024: Event day with live social media coverage.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7233,12 +6653,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -7250,9 +6665,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -7345,12 +6758,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -7362,9 +6770,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7387,10 +6793,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024:\n\n1. **Social Media Strategy**  \n   - Platforms: Facebook, Instagram, Twitter, LinkedIn  \n   - Content Plan:  \n     - Launch teaser campaign 8 weeks before the event (April 20, 2024).  \n     - Share behind-the-scenes content and stakeholder interviews 6 weeks prior (May 4, 2024).  \n     - Weekly countdown posts starting 4 weeks before (May 18, 2024).  \n     - Live social media coverage during the event (June 15, 2024).\n   - Target Audience: Local community, industry professionals, stakeholders.\n   - Engagement Tactics: Encourage user-generated content with a unique hashtag and run a photo contest related to the event.\n\n2. **Email Marketing Strategy**  \n   - Audience Segmentation:  \n     - Existing contacts (stakeholders, partners, previous attendees)  \n     - New prospects (local businesses, interested parties)\n   - Timeline:  \n     - Initial announcement email 8 weeks prior (April 20, 2024) to save the date.  \n     - Follow-up email with details and registration link 6 weeks prior (May 4, 2024).  \n     - Reminder email 1 week before (June 8, 2024) with booking tips due to nearby festival on June 17.\n   - Content: Focus on event highlights, guest speakers, and logistical information (venue details, accommodation reminders).\n\n3. **Public Relations Strategy**  \n   - Press Release: Distribute a press release 6 weeks before (May 4, 2024) announcing the event, including key details and stakeholder participation.\n   - Partnerships: Collaborate with local media outlets and influencers to promote the event. Seek coverage and previews in local news and online publications.\n   - Community Engagement: Coordination with local businesses and organizations for cross-promotion and sponsorship opportunities. \n\n4. **Logistics and Accommodations**  \n   - Reminder to stakeholders and attendees to book accommodations early due to the nearby festival on June 17 which may affect local logistics.\n   - Venue details are confirmed (Preferred Venue, 123 Event St, City, State, ZIP) with a cost estimate of $2,000, including setup and equipment. A refundable security deposit of $500 is required.\n\n5. **Timelines Summary**  \n   - April 20, 2024: Launch social media teaser campaign, initial email announcement.  \n   - May 4, 2024: Social media behind-the-scenes content, email follow-up, press release distribution.  \n   - May 18, 2024: Start social media countdown posts.  \n   - June 8, 2024: Final email reminder with accommodation tips.  \n   - June 15, 2024: Event day with live social media coverage.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7430,12 +6833,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -7447,9 +6845,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -7542,12 +6938,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -7559,9 +6950,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7584,10 +6973,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Stuffed mushrooms with herb cream cheese\",\"Vegetable spring rolls with sweet chili sauce\"],\"main_courses\":[\"Grilled lemon herb chicken\",\"Stuffed bell peppers with quinoa and black beans (Vegan)\",\"Gluten-free pasta primavera\"],\"desserts\":[\"Chocolate mousse\",\"Fresh fruit platter\"],\"beverages\":[\"Assorted soft drinks\",\"Red and white wine\",\"Sparkling and still water\"]},\"vendor\":{\"name\":\"Taste Buds Catering\",\"contract_details\":\"Contract to be finalized by May 1, 2024. Includes service for 50 guests with a focus on dietary restrictions and accommodation requests.\"},\"total_cost_estimate\":\"$3,000 - $3,500 depending on final menu selections and additional services required.\",\"special_arrangements\":{\"vegan_meals\":\"2 vegan options provided in the main course\",\"gluten_free_meal\":\"1 gluten-free option provided in the main course\",\"accessibility_request\":\"Arrangement for wheelchair accessibility to be confirmed with the venue\"}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7627,12 +7013,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -7644,9 +7025,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -7732,12 +7111,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -7749,9 +7123,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7774,10 +7146,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Stuffed mushrooms with herb cream cheese\",\"Vegetable spring rolls with sweet chili sauce\"],\"main_courses\":[\"Grilled lemon herb chicken\",\"Stuffed bell peppers with quinoa and black beans (Vegan)\",\"Gluten-free pasta primavera\"],\"desserts\":[\"Chocolate mousse\",\"Fresh fruit platter\"],\"beverages\":[\"Assorted soft drinks\",\"Red and white wine\",\"Sparkling and still water\"]},\"vendor\":{\"name\":\"Taste Buds Catering\",\"contract_details\":\"Contract to be finalized by May 1, 2024. Includes service for 50 guests with a focus on dietary restrictions and accommodation requests.\"},\"total_cost_estimate\":\"$3,000 - $3,500 depending on final menu selections and additional services required.\",\"special_arrangements\":{\"vegan_meals\":\"2 vegan options provided in the main course\",\"gluten_free_meal\":\"1 gluten-free option provided in the main course\",\"accessibility_request\":\"Arrangement for wheelchair accessibility to be confirmed with the venue\"}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -7817,12 +7186,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -7834,9 +7198,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -7921,12 +7283,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -7938,9 +7295,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -7963,10 +7318,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Stuffed mushrooms with herb cream cheese\",\"Vegetable spring rolls with sweet chili sauce\"],\"main_courses\":[\"Grilled lemon herb chicken\",\"Stuffed bell peppers with quinoa and black beans (Vegan)\",\"Gluten-free pasta primavera\"],\"desserts\":[\"Chocolate mousse\",\"Fresh fruit platter\"],\"beverages\":[\"Assorted soft drinks\",\"Red and white wine\",\"Sparkling and still water\"]},\"vendor\":{\"name\":\"Taste Buds Catering\",\"contract_details\":\"Contract to be finalized by May 1, 2024. Includes service for 50 guests with a focus on dietary restrictions and accommodation requests.\"},\"total_cost_estimate\":\"$3,000 - $3,500 depending on final menu selections and additional services required.\",\"special_arrangements\":{\"vegan_meals\":\"2 vegan options provided in the main course\",\"gluten_free_meal\":\"1 gluten-free option provided in the main course\",\"accessibility_request\":\"Arrangement for wheelchair accessibility to be confirmed with the venue\"}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8006,12 +7358,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -8023,9 +7370,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -8111,12 +7456,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -8128,9 +7468,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8153,10 +7491,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Stuffed mushrooms with herb cream cheese\",\"Vegetable spring rolls with sweet chili sauce\"],\"main_courses\":[\"Grilled lemon herb chicken\",\"Stuffed bell peppers with quinoa and black beans (Vegan)\",\"Gluten-free pasta primavera\"],\"desserts\":[\"Chocolate mousse\",\"Fresh fruit platter\"],\"beverages\":[\"Assorted soft drinks\",\"Red and white wine\",\"Sparkling and still water\"]},\"vendor\":{\"name\":\"Taste Buds Catering\",\"contract_details\":\"Contract to be finalized by May 1, 2024. Includes service for 50 guests with a focus on dietary restrictions and accommodation requests.\"},\"total_cost_estimate\":\"$3,000 - $3,500 depending on final menu selections and additional services required.\",\"special_arrangements\":{\"vegan_meals\":\"2 vegan options provided in the main course\",\"gluten_free_meal\":\"1 gluten-free option provided in the main course\",\"accessibility_request\":\"Arrangement for wheelchair accessibility to be confirmed with the venue\"}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8196,12 +7531,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -8213,9 +7543,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -8312,12 +7640,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -8329,9 +7652,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8354,10 +7675,7 @@
         "result": "{\"menu\":{\"appetizers\":[\"Stuffed mushrooms with herb cream cheese\",\"Vegetable spring rolls with sweet chili sauce\"],\"main_courses\":[\"Grilled lemon herb chicken\",\"Stuffed bell peppers with quinoa and black beans (Vegan)\",\"Gluten-free pasta primavera\"],\"desserts\":[\"Chocolate mousse\",\"Fresh fruit platter\"],\"beverages\":[\"Assorted soft drinks\",\"Red and white wine\",\"Sparkling and still water\"]},\"vendor\":{\"name\":\"Taste Buds Catering\",\"contract_details\":\"Contract to be finalized by May 1, 2024. Includes service for 50 guests with a focus on dietary restrictions and accommodation requests.\"},\"total_cost_estimate\":\"$3,000 - $3,500 depending on final menu selections and additional services required.\",\"special_arrangements\":{\"vegan_meals\":\"2 vegan options provided in the main course\",\"gluten_free_meal\":\"1 gluten-free option provided in the main course\",\"accessibility_request\":\"Arrangement for wheelchair accessibility to be confirmed with the venue\"}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "finalizeGuestListTask"
-        ],
+        "dependencies": ["selectEventDateTask", "finalizeGuestListTask"],
         "interpolatedTaskDescription": "Based on the guest list, create a menu and select a vendor to meet dietary preferences and budget constraints.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8397,12 +7715,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -8414,9 +7727,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -8499,12 +7810,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -8516,9 +7822,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8541,10 +7845,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Venue setup commencement\"},{\"time\":\"10:00 AM\",\"activity\":\"Catering setup and coordination\"},{\"time\":\"12:00 PM\",\"activity\":\"Tech equipment setup and sound check\"},{\"time\":\"2:00 PM\",\"activity\":\"Final touches and guest registration area ready\"},{\"time\":\"5:00 PM\",\"activity\":\"Event begins\"}]},\"checklist\":[\"Confirm venue setup arrangements with staff\",\"Finalize seating arrangement as per guest list of 50 confirmed attendees\",\"Verify catering details from Taste Buds Catering\",\"Confirm special dietary requirements: 2 vegan, 1 gluten-free\",\"Arrange for wheelchair accessibility\",\"Prepare welcome signage and registration materials\"],\"special_arrangements\":{\"notes\":[\"Remind stakeholders about booking accommodations early due to nearby festival on June 17.\",\"Confirm with venue that no outside catering is allowed.\",\"Ensure refundable security deposit of $500 is arranged.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8600,12 +7901,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -8617,9 +7913,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -8704,12 +7998,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -8721,9 +8010,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8746,10 +8033,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Venue setup commencement\"},{\"time\":\"10:00 AM\",\"activity\":\"Catering setup and coordination\"},{\"time\":\"12:00 PM\",\"activity\":\"Tech equipment setup and sound check\"},{\"time\":\"2:00 PM\",\"activity\":\"Final touches and guest registration area ready\"},{\"time\":\"5:00 PM\",\"activity\":\"Event begins\"}]},\"checklist\":[\"Confirm venue setup arrangements with staff\",\"Finalize seating arrangement as per guest list of 50 confirmed attendees\",\"Verify catering details from Taste Buds Catering\",\"Confirm special dietary requirements: 2 vegan, 1 gluten-free\",\"Arrange for wheelchair accessibility\",\"Prepare welcome signage and registration materials\"],\"special_arrangements\":{\"notes\":[\"Remind stakeholders about booking accommodations early due to nearby festival on June 17.\",\"Confirm with venue that no outside catering is allowed.\",\"Ensure refundable security deposit of $500 is arranged.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8789,12 +8073,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -8806,9 +8085,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -8901,12 +8178,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -8918,9 +8190,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -8943,10 +8213,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Venue setup commencement\"},{\"time\":\"10:00 AM\",\"activity\":\"Catering setup and coordination\"},{\"time\":\"12:00 PM\",\"activity\":\"Tech equipment setup and sound check\"},{\"time\":\"2:00 PM\",\"activity\":\"Final touches and guest registration area ready\"},{\"time\":\"5:00 PM\",\"activity\":\"Event begins\"}]},\"checklist\":[\"Confirm venue setup arrangements with staff\",\"Finalize seating arrangement as per guest list of 50 confirmed attendees\",\"Verify catering details from Taste Buds Catering\",\"Confirm special dietary requirements: 2 vegan, 1 gluten-free\",\"Arrange for wheelchair accessibility\",\"Prepare welcome signage and registration materials\"],\"special_arrangements\":{\"notes\":[\"Remind stakeholders about booking accommodations early due to nearby festival on June 17.\",\"Confirm with venue that no outside catering is allowed.\",\"Ensure refundable security deposit of $500 is arranged.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -8986,12 +8253,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -9003,9 +8265,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -9098,12 +8358,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -9115,9 +8370,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9140,10 +8393,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Venue setup commencement\"},{\"time\":\"10:00 AM\",\"activity\":\"Catering setup and coordination\"},{\"time\":\"12:00 PM\",\"activity\":\"Tech equipment setup and sound check\"},{\"time\":\"2:00 PM\",\"activity\":\"Final touches and guest registration area ready\"},{\"time\":\"5:00 PM\",\"activity\":\"Event begins\"}]},\"checklist\":[\"Confirm venue setup arrangements with staff\",\"Finalize seating arrangement as per guest list of 50 confirmed attendees\",\"Verify catering details from Taste Buds Catering\",\"Confirm special dietary requirements: 2 vegan, 1 gluten-free\",\"Arrange for wheelchair accessibility\",\"Prepare welcome signage and registration materials\"],\"special_arrangements\":{\"notes\":[\"Remind stakeholders about booking accommodations early due to nearby festival on June 17.\",\"Confirm with venue that no outside catering is allowed.\",\"Ensure refundable security deposit of $500 is arranged.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9183,12 +8433,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -9200,9 +8445,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -9288,12 +8531,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -9305,9 +8543,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9330,10 +8566,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Venue setup commencement\"},{\"time\":\"10:00 AM\",\"activity\":\"Catering setup and coordination\"},{\"time\":\"12:00 PM\",\"activity\":\"Tech equipment setup and sound check\"},{\"time\":\"2:00 PM\",\"activity\":\"Final touches and guest registration area ready\"},{\"time\":\"5:00 PM\",\"activity\":\"Event begins\"}]},\"checklist\":[\"Confirm venue setup arrangements with staff\",\"Finalize seating arrangement as per guest list of 50 confirmed attendees\",\"Verify catering details from Taste Buds Catering\",\"Confirm special dietary requirements: 2 vegan, 1 gluten-free\",\"Arrange for wheelchair accessibility\",\"Prepare welcome signage and registration materials\"],\"special_arrangements\":{\"notes\":[\"Remind stakeholders about booking accommodations early due to nearby festival on June 17.\",\"Confirm with venue that no outside catering is allowed.\",\"Ensure refundable security deposit of $500 is arranged.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9373,12 +8606,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -9390,9 +8618,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -9477,12 +8703,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -9494,9 +8715,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9519,10 +8738,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Venue setup commencement\"},{\"time\":\"10:00 AM\",\"activity\":\"Catering setup and coordination\"},{\"time\":\"12:00 PM\",\"activity\":\"Tech equipment setup and sound check\"},{\"time\":\"2:00 PM\",\"activity\":\"Final touches and guest registration area ready\"},{\"time\":\"5:00 PM\",\"activity\":\"Event begins\"}]},\"checklist\":[\"Confirm venue setup arrangements with staff\",\"Finalize seating arrangement as per guest list of 50 confirmed attendees\",\"Verify catering details from Taste Buds Catering\",\"Confirm special dietary requirements: 2 vegan, 1 gluten-free\",\"Arrange for wheelchair accessibility\",\"Prepare welcome signage and registration materials\"],\"special_arrangements\":{\"notes\":[\"Remind stakeholders about booking accommodations early due to nearby festival on June 17.\",\"Confirm with venue that no outside catering is allowed.\",\"Ensure refundable security deposit of $500 is arranged.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9562,12 +8778,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -9579,9 +8790,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -9667,12 +8876,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -9684,9 +8888,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9709,10 +8911,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Venue setup commencement\"},{\"time\":\"10:00 AM\",\"activity\":\"Catering setup and coordination\"},{\"time\":\"12:00 PM\",\"activity\":\"Tech equipment setup and sound check\"},{\"time\":\"2:00 PM\",\"activity\":\"Final touches and guest registration area ready\"},{\"time\":\"5:00 PM\",\"activity\":\"Event begins\"}]},\"checklist\":[\"Confirm venue setup arrangements with staff\",\"Finalize seating arrangement as per guest list of 50 confirmed attendees\",\"Verify catering details from Taste Buds Catering\",\"Confirm special dietary requirements: 2 vegan, 1 gluten-free\",\"Arrange for wheelchair accessibility\",\"Prepare welcome signage and registration materials\"],\"special_arrangements\":{\"notes\":[\"Remind stakeholders about booking accommodations early due to nearby festival on June 17.\",\"Confirm with venue that no outside catering is allowed.\",\"Ensure refundable security deposit of $500 is arranged.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9752,12 +8951,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -9769,9 +8963,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -9868,12 +9060,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -9885,9 +9072,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -9910,10 +9095,7 @@
         "result": "{\"venue_setup_schedule\":{\"date\":\"June 15, 2024\",\"schedule\":[{\"time\":\"8:00 AM\",\"activity\":\"Venue setup commencement\"},{\"time\":\"10:00 AM\",\"activity\":\"Catering setup and coordination\"},{\"time\":\"12:00 PM\",\"activity\":\"Tech equipment setup and sound check\"},{\"time\":\"2:00 PM\",\"activity\":\"Final touches and guest registration area ready\"},{\"time\":\"5:00 PM\",\"activity\":\"Event begins\"}]},\"checklist\":[\"Confirm venue setup arrangements with staff\",\"Finalize seating arrangement as per guest list of 50 confirmed attendees\",\"Verify catering details from Taste Buds Catering\",\"Confirm special dietary requirements: 2 vegan, 1 gluten-free\",\"Arrange for wheelchair accessibility\",\"Prepare welcome signage and registration materials\"],\"special_arrangements\":{\"notes\":[\"Remind stakeholders about booking accommodations early due to nearby festival on June 17.\",\"Confirm with venue that no outside catering is allowed.\",\"Ensure refundable security deposit of $500 is arranged.\"]}}",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "bookVenueTask",
-          "createCateringPlanTask"
-        ],
+        "dependencies": ["bookVenueTask", "createCateringPlanTask"],
         "interpolatedTaskDescription": "Coordinate with venue staff to ensure all necessary preparations are made for the event.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -9953,12 +9135,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -9970,9 +9147,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10065,12 +9240,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -10082,9 +9252,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -10107,10 +9275,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024:\n\n1. **Social Media Strategy**  \n   - Platforms: Facebook, Instagram, Twitter, LinkedIn  \n   - Content Plan:  \n     - Launch teaser campaign 8 weeks before the event (April 20, 2024).  \n     - Share behind-the-scenes content and stakeholder interviews 6 weeks prior (May 4, 2024).  \n     - Weekly countdown posts starting 4 weeks before (May 18, 2024).  \n     - Live social media coverage during the event (June 15, 2024).\n   - Target Audience: Local community, industry professionals, stakeholders.\n   - Engagement Tactics: Encourage user-generated content with a unique hashtag and run a photo contest related to the event.\n\n2. **Email Marketing Strategy**  \n   - Audience Segmentation:  \n     - Existing contacts (stakeholders, partners, previous attendees)  \n     - New prospects (local businesses, interested parties)\n   - Timeline:  \n     - Initial announcement email 8 weeks prior (April 20, 2024) to save the date.  \n     - Follow-up email with details and registration link 6 weeks prior (May 4, 2024).  \n     - Reminder email 1 week before (June 8, 2024) with booking tips due to nearby festival on June 17.\n   - Content: Focus on event highlights, guest speakers, and logistical information (venue details, accommodation reminders).\n\n3. **Public Relations Strategy**  \n   - Press Release: Distribute a press release 6 weeks before (May 4, 2024) announcing the event, including key details and stakeholder participation.\n   - Partnerships: Collaborate with local media outlets and influencers to promote the event. Seek coverage and previews in local news and online publications.\n   - Community Engagement: Coordination with local businesses and organizations for cross-promotion and sponsorship opportunities. \n\n4. **Logistics and Accommodations**  \n   - Reminder to stakeholders and attendees to book accommodations early due to the nearby festival on June 17 which may affect local logistics.\n   - Venue details are confirmed (Preferred Venue, 123 Event St, City, State, ZIP) with a cost estimate of $2,000, including setup and equipment. A refundable security deposit of $500 is required.\n\n5. **Timelines Summary**  \n   - April 20, 2024: Launch social media teaser campaign, initial email announcement.  \n   - May 4, 2024: Social media behind-the-scenes content, email follow-up, press release distribution.  \n   - May 18, 2024: Start social media countdown posts.  \n   - June 8, 2024: Final email reminder with accommodation tips.  \n   - June 15, 2024: Event day with live social media coverage.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -10150,12 +9315,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -10167,9 +9327,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10255,12 +9413,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -10272,9 +9425,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -10297,10 +9448,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024:\n\n1. **Social Media Strategy**  \n   - Platforms: Facebook, Instagram, Twitter, LinkedIn  \n   - Content Plan:  \n     - Launch teaser campaign 8 weeks before the event (April 20, 2024).  \n     - Share behind-the-scenes content and stakeholder interviews 6 weeks prior (May 4, 2024).  \n     - Weekly countdown posts starting 4 weeks before (May 18, 2024).  \n     - Live social media coverage during the event (June 15, 2024).\n   - Target Audience: Local community, industry professionals, stakeholders.\n   - Engagement Tactics: Encourage user-generated content with a unique hashtag and run a photo contest related to the event.\n\n2. **Email Marketing Strategy**  \n   - Audience Segmentation:  \n     - Existing contacts (stakeholders, partners, previous attendees)  \n     - New prospects (local businesses, interested parties)\n   - Timeline:  \n     - Initial announcement email 8 weeks prior (April 20, 2024) to save the date.  \n     - Follow-up email with details and registration link 6 weeks prior (May 4, 2024).  \n     - Reminder email 1 week before (June 8, 2024) with booking tips due to nearby festival on June 17.\n   - Content: Focus on event highlights, guest speakers, and logistical information (venue details, accommodation reminders).\n\n3. **Public Relations Strategy**  \n   - Press Release: Distribute a press release 6 weeks before (May 4, 2024) announcing the event, including key details and stakeholder participation.\n   - Partnerships: Collaborate with local media outlets and influencers to promote the event. Seek coverage and previews in local news and online publications.\n   - Community Engagement: Coordination with local businesses and organizations for cross-promotion and sponsorship opportunities. \n\n4. **Logistics and Accommodations**  \n   - Reminder to stakeholders and attendees to book accommodations early due to the nearby festival on June 17 which may affect local logistics.\n   - Venue details are confirmed (Preferred Venue, 123 Event St, City, State, ZIP) with a cost estimate of $2,000, including setup and equipment. A refundable security deposit of $500 is required.\n\n5. **Timelines Summary**  \n   - April 20, 2024: Launch social media teaser campaign, initial email announcement.  \n   - May 4, 2024: Social media behind-the-scenes content, email follow-up, press release distribution.  \n   - May 18, 2024: Start social media countdown posts.  \n   - June 8, 2024: Final email reminder with accommodation tips.  \n   - June 15, 2024: Event day with live social media coverage.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -10340,12 +9488,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -10357,9 +9500,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10444,12 +9585,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -10461,9 +9597,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -10486,10 +9620,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024:\n\n1. **Social Media Strategy**  \n   - Platforms: Facebook, Instagram, Twitter, LinkedIn  \n   - Content Plan:  \n     - Launch teaser campaign 8 weeks before the event (April 20, 2024).  \n     - Share behind-the-scenes content and stakeholder interviews 6 weeks prior (May 4, 2024).  \n     - Weekly countdown posts starting 4 weeks before (May 18, 2024).  \n     - Live social media coverage during the event (June 15, 2024).\n   - Target Audience: Local community, industry professionals, stakeholders.\n   - Engagement Tactics: Encourage user-generated content with a unique hashtag and run a photo contest related to the event.\n\n2. **Email Marketing Strategy**  \n   - Audience Segmentation:  \n     - Existing contacts (stakeholders, partners, previous attendees)  \n     - New prospects (local businesses, interested parties)\n   - Timeline:  \n     - Initial announcement email 8 weeks prior (April 20, 2024) to save the date.  \n     - Follow-up email with details and registration link 6 weeks prior (May 4, 2024).  \n     - Reminder email 1 week before (June 8, 2024) with booking tips due to nearby festival on June 17.\n   - Content: Focus on event highlights, guest speakers, and logistical information (venue details, accommodation reminders).\n\n3. **Public Relations Strategy**  \n   - Press Release: Distribute a press release 6 weeks before (May 4, 2024) announcing the event, including key details and stakeholder participation.\n   - Partnerships: Collaborate with local media outlets and influencers to promote the event. Seek coverage and previews in local news and online publications.\n   - Community Engagement: Coordination with local businesses and organizations for cross-promotion and sponsorship opportunities. \n\n4. **Logistics and Accommodations**  \n   - Reminder to stakeholders and attendees to book accommodations early due to the nearby festival on June 17 which may affect local logistics.\n   - Venue details are confirmed (Preferred Venue, 123 Event St, City, State, ZIP) with a cost estimate of $2,000, including setup and equipment. A refundable security deposit of $500 is required.\n\n5. **Timelines Summary**  \n   - April 20, 2024: Launch social media teaser campaign, initial email announcement.  \n   - May 4, 2024: Social media behind-the-scenes content, email follow-up, press release distribution.  \n   - May 18, 2024: Start social media countdown posts.  \n   - June 8, 2024: Final email reminder with accommodation tips.  \n   - June 15, 2024: Event day with live social media coverage.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -10529,12 +9660,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -10546,9 +9672,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10634,12 +9758,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -10651,9 +9770,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -10676,10 +9793,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024:\n\n1. **Social Media Strategy**  \n   - Platforms: Facebook, Instagram, Twitter, LinkedIn  \n   - Content Plan:  \n     - Launch teaser campaign 8 weeks before the event (April 20, 2024).  \n     - Share behind-the-scenes content and stakeholder interviews 6 weeks prior (May 4, 2024).  \n     - Weekly countdown posts starting 4 weeks before (May 18, 2024).  \n     - Live social media coverage during the event (June 15, 2024).\n   - Target Audience: Local community, industry professionals, stakeholders.\n   - Engagement Tactics: Encourage user-generated content with a unique hashtag and run a photo contest related to the event.\n\n2. **Email Marketing Strategy**  \n   - Audience Segmentation:  \n     - Existing contacts (stakeholders, partners, previous attendees)  \n     - New prospects (local businesses, interested parties)\n   - Timeline:  \n     - Initial announcement email 8 weeks prior (April 20, 2024) to save the date.  \n     - Follow-up email with details and registration link 6 weeks prior (May 4, 2024).  \n     - Reminder email 1 week before (June 8, 2024) with booking tips due to nearby festival on June 17.\n   - Content: Focus on event highlights, guest speakers, and logistical information (venue details, accommodation reminders).\n\n3. **Public Relations Strategy**  \n   - Press Release: Distribute a press release 6 weeks before (May 4, 2024) announcing the event, including key details and stakeholder participation.\n   - Partnerships: Collaborate with local media outlets and influencers to promote the event. Seek coverage and previews in local news and online publications.\n   - Community Engagement: Coordination with local businesses and organizations for cross-promotion and sponsorship opportunities. \n\n4. **Logistics and Accommodations**  \n   - Reminder to stakeholders and attendees to book accommodations early due to the nearby festival on June 17 which may affect local logistics.\n   - Venue details are confirmed (Preferred Venue, 123 Event St, City, State, ZIP) with a cost estimate of $2,000, including setup and equipment. A refundable security deposit of $500 is required.\n\n5. **Timelines Summary**  \n   - April 20, 2024: Launch social media teaser campaign, initial email announcement.  \n   - May 4, 2024: Social media behind-the-scenes content, email follow-up, press release distribution.  \n   - May 18, 2024: Start social media countdown posts.  \n   - June 8, 2024: Final email reminder with accommodation tips.  \n   - June 15, 2024: Event day with live social media coverage.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -10719,12 +9833,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -10736,9 +9845,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -10835,12 +9942,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -10852,9 +9954,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -10877,10 +9977,7 @@
         "result": "Marketing Plan for the Event on June 15, 2024:\n\n1. **Social Media Strategy**  \n   - Platforms: Facebook, Instagram, Twitter, LinkedIn  \n   - Content Plan:  \n     - Launch teaser campaign 8 weeks before the event (April 20, 2024).  \n     - Share behind-the-scenes content and stakeholder interviews 6 weeks prior (May 4, 2024).  \n     - Weekly countdown posts starting 4 weeks before (May 18, 2024).  \n     - Live social media coverage during the event (June 15, 2024).\n   - Target Audience: Local community, industry professionals, stakeholders.\n   - Engagement Tactics: Encourage user-generated content with a unique hashtag and run a photo contest related to the event.\n\n2. **Email Marketing Strategy**  \n   - Audience Segmentation:  \n     - Existing contacts (stakeholders, partners, previous attendees)  \n     - New prospects (local businesses, interested parties)\n   - Timeline:  \n     - Initial announcement email 8 weeks prior (April 20, 2024) to save the date.  \n     - Follow-up email with details and registration link 6 weeks prior (May 4, 2024).  \n     - Reminder email 1 week before (June 8, 2024) with booking tips due to nearby festival on June 17.\n   - Content: Focus on event highlights, guest speakers, and logistical information (venue details, accommodation reminders).\n\n3. **Public Relations Strategy**  \n   - Press Release: Distribute a press release 6 weeks before (May 4, 2024) announcing the event, including key details and stakeholder participation.\n   - Partnerships: Collaborate with local media outlets and influencers to promote the event. Seek coverage and previews in local news and online publications.\n   - Community Engagement: Coordination with local businesses and organizations for cross-promotion and sponsorship opportunities. \n\n4. **Logistics and Accommodations**  \n   - Reminder to stakeholders and attendees to book accommodations early due to the nearby festival on June 17 which may affect local logistics.\n   - Venue details are confirmed (Preferred Venue, 123 Event St, City, State, ZIP) with a cost estimate of $2,000, including setup and equipment. A refundable security deposit of $500 is required.\n\n5. **Timelines Summary**  \n   - April 20, 2024: Launch social media teaser campaign, initial email announcement.  \n   - May 4, 2024: Social media behind-the-scenes content, email follow-up, press release distribution.  \n   - May 18, 2024: Start social media countdown posts.  \n   - June 8, 2024: Final email reminder with accommodation tips.  \n   - June 15, 2024: Event day with live social media coverage.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "selectEventDateTask",
-          "bookVenueTask"
-        ],
+        "dependencies": ["selectEventDateTask", "bookVenueTask"],
         "interpolatedTaskDescription": "Develop a marketing plan to promote the event, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -10920,12 +10017,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -10937,9 +10029,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -11022,12 +10112,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -11039,9 +10124,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11064,9 +10147,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Social Media Strategy:**  \n- Launched teaser campaign on April 20, 2024, across Facebook, Instagram, Twitter, and LinkedIn. Engagement has been positive, with initial metrics indicating increased reach and follower interaction.  \n- Behind-the-scenes content and stakeholder interviews shared on May 4, 2024, with good engagement rates noted.  \n- Weekly countdown posts began on May 18, 2024, creating anticipation as we approach the event date.  \n- Live coverage scheduled for June 15, 2024, to maximize real-time engagement.\n\n**Email Marketing Strategy:**  \n- Initial announcement email sent to 3,000 existing contacts on April 20, 2024, resulting in a 30% open rate and 12% click-through rate (CTR) to the registration link.  \n- Follow-up email dispatched on May 4, 2024, with details and registration link, noted a 35% open rate. Continued engagement is expected.\n- Reminder email to be sent on June 8, 2024, emphasizing accommodation tips due to the nearby festival.\n\n**Public Relations Strategy:**  \n- Press release distributed on May 4, 2024, received coverage from three local media outlets, boosting visibility significantly in the community.\n- Partnerships with local influencers and businesses secured to enhance outreach and strengthen event branding.\n\n**Logistics and Accommodations:**  \n- Stakeholders have been reminded to book accommodations early to mitigate complications from the nearby festival on June 17, 2024.\n- Venue confirmed (Preferred Venue, 123 Event St, City, State, ZIP) costs estimated at $2,000 with a refundable security deposit of $500.\n\n**Notes on Campaign Performance:**  \n- Current engagement and registration numbers suggest a promising turnout, but continuous monitoring and adjustments will be necessary as the event date approaches. Ensure timely communications and follow-ups to sustain interest and registration momentum.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -11122,12 +10203,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -11139,9 +10215,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -11226,12 +10300,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -11243,9 +10312,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11268,9 +10335,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Social Media Strategy:**  \n- Launched teaser campaign on April 20, 2024, across Facebook, Instagram, Twitter, and LinkedIn. Engagement has been positive, with initial metrics indicating increased reach and follower interaction.  \n- Behind-the-scenes content and stakeholder interviews shared on May 4, 2024, with good engagement rates noted.  \n- Weekly countdown posts began on May 18, 2024, creating anticipation as we approach the event date.  \n- Live coverage scheduled for June 15, 2024, to maximize real-time engagement.\n\n**Email Marketing Strategy:**  \n- Initial announcement email sent to 3,000 existing contacts on April 20, 2024, resulting in a 30% open rate and 12% click-through rate (CTR) to the registration link.  \n- Follow-up email dispatched on May 4, 2024, with details and registration link, noted a 35% open rate. Continued engagement is expected.\n- Reminder email to be sent on June 8, 2024, emphasizing accommodation tips due to the nearby festival.\n\n**Public Relations Strategy:**  \n- Press release distributed on May 4, 2024, received coverage from three local media outlets, boosting visibility significantly in the community.\n- Partnerships with local influencers and businesses secured to enhance outreach and strengthen event branding.\n\n**Logistics and Accommodations:**  \n- Stakeholders have been reminded to book accommodations early to mitigate complications from the nearby festival on June 17, 2024.\n- Venue confirmed (Preferred Venue, 123 Event St, City, State, ZIP) costs estimated at $2,000 with a refundable security deposit of $500.\n\n**Notes on Campaign Performance:**  \n- Current engagement and registration numbers suggest a promising turnout, but continuous monitoring and adjustments will be necessary as the event date approaches. Ensure timely communications and follow-ups to sustain interest and registration momentum.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -11310,12 +10375,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -11327,9 +10387,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -11422,12 +10480,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -11439,9 +10492,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11464,9 +10515,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Social Media Strategy:**  \n- Launched teaser campaign on April 20, 2024, across Facebook, Instagram, Twitter, and LinkedIn. Engagement has been positive, with initial metrics indicating increased reach and follower interaction.  \n- Behind-the-scenes content and stakeholder interviews shared on May 4, 2024, with good engagement rates noted.  \n- Weekly countdown posts began on May 18, 2024, creating anticipation as we approach the event date.  \n- Live coverage scheduled for June 15, 2024, to maximize real-time engagement.\n\n**Email Marketing Strategy:**  \n- Initial announcement email sent to 3,000 existing contacts on April 20, 2024, resulting in a 30% open rate and 12% click-through rate (CTR) to the registration link.  \n- Follow-up email dispatched on May 4, 2024, with details and registration link, noted a 35% open rate. Continued engagement is expected.\n- Reminder email to be sent on June 8, 2024, emphasizing accommodation tips due to the nearby festival.\n\n**Public Relations Strategy:**  \n- Press release distributed on May 4, 2024, received coverage from three local media outlets, boosting visibility significantly in the community.\n- Partnerships with local influencers and businesses secured to enhance outreach and strengthen event branding.\n\n**Logistics and Accommodations:**  \n- Stakeholders have been reminded to book accommodations early to mitigate complications from the nearby festival on June 17, 2024.\n- Venue confirmed (Preferred Venue, 123 Event St, City, State, ZIP) costs estimated at $2,000 with a refundable security deposit of $500.\n\n**Notes on Campaign Performance:**  \n- Current engagement and registration numbers suggest a promising turnout, but continuous monitoring and adjustments will be necessary as the event date approaches. Ensure timely communications and follow-ups to sustain interest and registration momentum.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -11506,12 +10555,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -11523,9 +10567,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -11618,12 +10660,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -11635,9 +10672,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11660,9 +10695,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Social Media Strategy:**  \n- Launched teaser campaign on April 20, 2024, across Facebook, Instagram, Twitter, and LinkedIn. Engagement has been positive, with initial metrics indicating increased reach and follower interaction.  \n- Behind-the-scenes content and stakeholder interviews shared on May 4, 2024, with good engagement rates noted.  \n- Weekly countdown posts began on May 18, 2024, creating anticipation as we approach the event date.  \n- Live coverage scheduled for June 15, 2024, to maximize real-time engagement.\n\n**Email Marketing Strategy:**  \n- Initial announcement email sent to 3,000 existing contacts on April 20, 2024, resulting in a 30% open rate and 12% click-through rate (CTR) to the registration link.  \n- Follow-up email dispatched on May 4, 2024, with details and registration link, noted a 35% open rate. Continued engagement is expected.\n- Reminder email to be sent on June 8, 2024, emphasizing accommodation tips due to the nearby festival.\n\n**Public Relations Strategy:**  \n- Press release distributed on May 4, 2024, received coverage from three local media outlets, boosting visibility significantly in the community.\n- Partnerships with local influencers and businesses secured to enhance outreach and strengthen event branding.\n\n**Logistics and Accommodations:**  \n- Stakeholders have been reminded to book accommodations early to mitigate complications from the nearby festival on June 17, 2024.\n- Venue confirmed (Preferred Venue, 123 Event St, City, State, ZIP) costs estimated at $2,000 with a refundable security deposit of $500.\n\n**Notes on Campaign Performance:**  \n- Current engagement and registration numbers suggest a promising turnout, but continuous monitoring and adjustments will be necessary as the event date approaches. Ensure timely communications and follow-ups to sustain interest and registration momentum.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -11702,12 +10735,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -11719,9 +10747,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -11807,12 +10833,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -11824,9 +10845,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -11849,9 +10868,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Social Media Strategy:**  \n- Launched teaser campaign on April 20, 2024, across Facebook, Instagram, Twitter, and LinkedIn. Engagement has been positive, with initial metrics indicating increased reach and follower interaction.  \n- Behind-the-scenes content and stakeholder interviews shared on May 4, 2024, with good engagement rates noted.  \n- Weekly countdown posts began on May 18, 2024, creating anticipation as we approach the event date.  \n- Live coverage scheduled for June 15, 2024, to maximize real-time engagement.\n\n**Email Marketing Strategy:**  \n- Initial announcement email sent to 3,000 existing contacts on April 20, 2024, resulting in a 30% open rate and 12% click-through rate (CTR) to the registration link.  \n- Follow-up email dispatched on May 4, 2024, with details and registration link, noted a 35% open rate. Continued engagement is expected.\n- Reminder email to be sent on June 8, 2024, emphasizing accommodation tips due to the nearby festival.\n\n**Public Relations Strategy:**  \n- Press release distributed on May 4, 2024, received coverage from three local media outlets, boosting visibility significantly in the community.\n- Partnerships with local influencers and businesses secured to enhance outreach and strengthen event branding.\n\n**Logistics and Accommodations:**  \n- Stakeholders have been reminded to book accommodations early to mitigate complications from the nearby festival on June 17, 2024.\n- Venue confirmed (Preferred Venue, 123 Event St, City, State, ZIP) costs estimated at $2,000 with a refundable security deposit of $500.\n\n**Notes on Campaign Performance:**  \n- Current engagement and registration numbers suggest a promising turnout, but continuous monitoring and adjustments will be necessary as the event date approaches. Ensure timely communications and follow-ups to sustain interest and registration momentum.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -11891,12 +10908,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -11908,9 +10920,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -11995,12 +11005,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -12012,9 +11017,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -12037,9 +11040,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Social Media Strategy:**  \n- Launched teaser campaign on April 20, 2024, across Facebook, Instagram, Twitter, and LinkedIn. Engagement has been positive, with initial metrics indicating increased reach and follower interaction.  \n- Behind-the-scenes content and stakeholder interviews shared on May 4, 2024, with good engagement rates noted.  \n- Weekly countdown posts began on May 18, 2024, creating anticipation as we approach the event date.  \n- Live coverage scheduled for June 15, 2024, to maximize real-time engagement.\n\n**Email Marketing Strategy:**  \n- Initial announcement email sent to 3,000 existing contacts on April 20, 2024, resulting in a 30% open rate and 12% click-through rate (CTR) to the registration link.  \n- Follow-up email dispatched on May 4, 2024, with details and registration link, noted a 35% open rate. Continued engagement is expected.\n- Reminder email to be sent on June 8, 2024, emphasizing accommodation tips due to the nearby festival.\n\n**Public Relations Strategy:**  \n- Press release distributed on May 4, 2024, received coverage from three local media outlets, boosting visibility significantly in the community.\n- Partnerships with local influencers and businesses secured to enhance outreach and strengthen event branding.\n\n**Logistics and Accommodations:**  \n- Stakeholders have been reminded to book accommodations early to mitigate complications from the nearby festival on June 17, 2024.\n- Venue confirmed (Preferred Venue, 123 Event St, City, State, ZIP) costs estimated at $2,000 with a refundable security deposit of $500.\n\n**Notes on Campaign Performance:**  \n- Current engagement and registration numbers suggest a promising turnout, but continuous monitoring and adjustments will be necessary as the event date approaches. Ensure timely communications and follow-ups to sustain interest and registration momentum.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -12079,12 +11080,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -12096,9 +11092,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -12184,12 +11178,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -12201,9 +11190,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -12226,9 +11213,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Social Media Strategy:**  \n- Launched teaser campaign on April 20, 2024, across Facebook, Instagram, Twitter, and LinkedIn. Engagement has been positive, with initial metrics indicating increased reach and follower interaction.  \n- Behind-the-scenes content and stakeholder interviews shared on May 4, 2024, with good engagement rates noted.  \n- Weekly countdown posts began on May 18, 2024, creating anticipation as we approach the event date.  \n- Live coverage scheduled for June 15, 2024, to maximize real-time engagement.\n\n**Email Marketing Strategy:**  \n- Initial announcement email sent to 3,000 existing contacts on April 20, 2024, resulting in a 30% open rate and 12% click-through rate (CTR) to the registration link.  \n- Follow-up email dispatched on May 4, 2024, with details and registration link, noted a 35% open rate. Continued engagement is expected.\n- Reminder email to be sent on June 8, 2024, emphasizing accommodation tips due to the nearby festival.\n\n**Public Relations Strategy:**  \n- Press release distributed on May 4, 2024, received coverage from three local media outlets, boosting visibility significantly in the community.\n- Partnerships with local influencers and businesses secured to enhance outreach and strengthen event branding.\n\n**Logistics and Accommodations:**  \n- Stakeholders have been reminded to book accommodations early to mitigate complications from the nearby festival on June 17, 2024.\n- Venue confirmed (Preferred Venue, 123 Event St, City, State, ZIP) costs estimated at $2,000 with a refundable security deposit of $500.\n\n**Notes on Campaign Performance:**  \n- Current engagement and registration numbers suggest a promising turnout, but continuous monitoring and adjustments will be necessary as the event date approaches. Ensure timely communications and follow-ups to sustain interest and registration momentum.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -12268,12 +11253,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -12285,9 +11265,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -12384,12 +11362,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -12401,9 +11374,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -12426,9 +11397,7 @@
         "result": "Marketing Campaign Execution Report:\n\n**Social Media Strategy:**  \n- Launched teaser campaign on April 20, 2024, across Facebook, Instagram, Twitter, and LinkedIn. Engagement has been positive, with initial metrics indicating increased reach and follower interaction.  \n- Behind-the-scenes content and stakeholder interviews shared on May 4, 2024, with good engagement rates noted.  \n- Weekly countdown posts began on May 18, 2024, creating anticipation as we approach the event date.  \n- Live coverage scheduled for June 15, 2024, to maximize real-time engagement.\n\n**Email Marketing Strategy:**  \n- Initial announcement email sent to 3,000 existing contacts on April 20, 2024, resulting in a 30% open rate and 12% click-through rate (CTR) to the registration link.  \n- Follow-up email dispatched on May 4, 2024, with details and registration link, noted a 35% open rate. Continued engagement is expected.\n- Reminder email to be sent on June 8, 2024, emphasizing accommodation tips due to the nearby festival.\n\n**Public Relations Strategy:**  \n- Press release distributed on May 4, 2024, received coverage from three local media outlets, boosting visibility significantly in the community.\n- Partnerships with local influencers and businesses secured to enhance outreach and strengthen event branding.\n\n**Logistics and Accommodations:**  \n- Stakeholders have been reminded to book accommodations early to mitigate complications from the nearby festival on June 17, 2024.\n- Venue confirmed (Preferred Venue, 123 Event St, City, State, ZIP) costs estimated at $2,000 with a refundable security deposit of $500.\n\n**Notes on Campaign Performance:**  \n- Current engagement and registration numbers suggest a promising turnout, but continuous monitoring and adjustments will be necessary as the event date approaches. Ensure timely communications and follow-ups to sustain interest and registration momentum.",
         "stats": null,
         "duration": "[REDACTED]",
-        "dependencies": [
-          "setupMarketingCampaignTask"
-        ],
+        "dependencies": ["setupMarketingCampaignTask"],
         "interpolatedTaskDescription": "Execute the marketing plan, including social media, email, and PR strategies.",
         "feedbackHistory": [],
         "externalValidationRequired": false,
@@ -12468,12 +11437,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -12485,9 +11449,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -12570,12 +11532,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -12587,9 +11544,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -12671,12 +11626,7 @@
           "llmInstance": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "model": "gpt-4o-mini",
               "max_retries": 1,
@@ -12688,9 +11638,7 @@
               "openai_api_key": {
                 "lc": 1,
                 "type": "secret",
-                "id": [
-                  "OPENAI_API_KEY"
-                ]
+                "id": ["OPENAI_API_KEY"]
               }
             }
           },
@@ -12775,12 +11723,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -12792,9 +11735,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -12860,12 +11801,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -12877,9 +11813,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -12972,12 +11906,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -12989,9 +11918,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -13057,12 +11984,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -13074,9 +11996,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -13169,12 +12089,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -13186,9 +12101,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -13254,12 +12167,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -13271,9 +12179,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -13359,12 +12265,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -13376,9 +12277,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -13444,12 +12343,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -13461,9 +12355,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -13548,12 +12440,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -13565,9 +12452,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -13633,12 +12518,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -13650,9 +12530,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -13738,12 +12616,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -13755,9 +12628,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -13823,12 +12694,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -13840,9 +12706,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
@@ -13939,12 +12803,7 @@
             "llmInstance": {
               "lc": 1,
               "type": "constructor",
-              "id": [
-                "langchain",
-                "chat_models",
-                "openai",
-                "ChatOpenAI"
-              ],
+              "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
               "kwargs": {
                 "model": "gpt-4o-mini",
                 "max_retries": 1,
@@ -13956,9 +12815,7 @@
                 "openai_api_key": {
                   "lc": 1,
                   "type": "secret",
-                  "id": [
-                    "OPENAI_API_KEY"
-                  ]
+                  "id": ["OPENAI_API_KEY"]
                 }
               }
             },
@@ -14024,12 +12881,7 @@
         "llmInstance": {
           "lc": 1,
           "type": "constructor",
-          "id": [
-            "langchain",
-            "chat_models",
-            "openai",
-            "ChatOpenAI"
-          ],
+          "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
           "kwargs": {
             "model": "gpt-4o-mini",
             "max_retries": 1,
@@ -14041,9 +12893,7 @@
             "openai_api_key": {
               "lc": 1,
               "type": "secret",
-              "id": [
-                "OPENAI_API_KEY"
-              ]
+              "id": ["OPENAI_API_KEY"]
             }
           }
         },
