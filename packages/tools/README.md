@@ -49,7 +49,19 @@ Here's a list of all available tools. Click on the tool names to view their deta
 git clone https://github.com/kaiban-ai/KaibanJS.git
 ```
 
-2. Navigate to the tools package:
+2. Install KaibanJS dependencies:
+
+```bash
+npm install
+```
+
+3. Build the package:
+
+```bash
+npm run build
+```
+
+3. Navigate to the tools package:
 
 ```bash
 cd packages/tools

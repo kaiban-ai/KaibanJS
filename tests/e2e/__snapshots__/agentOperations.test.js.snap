@@ -34,9 +34,15 @@ exports[`Agent Operations Team Workflows setEnv operation after first task handl
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -47,8 +53,10 @@ exports[`Agent Operations Team Workflows setEnv operation after first task handl
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -56,7 +64,9 @@ exports[`Agent Operations Team Workflows setEnv operation after first task handl
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -161,9 +171,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
       "id": "[REDACTED]",
       "llmConfig": {
         "apiKey": "[REDACTED]",
+        "frequencyPenalty": 0,
         "maxRetries": 1,
         "model": "gpt-4o-mini",
+        "n": 1,
+        "presencePenalty": 0,
         "provider": "openai",
+        "stream": false,
+        "temperature": 1,
+        "topP": 1,
       },
       "type": "ReactChampionAgent",
     },
@@ -195,9 +211,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -208,8 +230,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -217,7 +241,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -322,9 +348,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
       "id": "[REDACTED]",
       "llmConfig": {
         "apiKey": "[REDACTED]",
+        "frequencyPenalty": 0,
         "maxRetries": 1,
         "model": "gpt-4o-mini",
+        "n": 1,
+        "presencePenalty": 0,
         "provider": "openai",
+        "stream": false,
+        "temperature": 1,
+        "topP": 1,
       },
       "type": "ReactChampionAgent",
     },
@@ -360,9 +392,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -373,8 +411,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -382,7 +422,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -487,9 +529,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
       "id": "[REDACTED]",
       "llmConfig": {
         "apiKey": "[REDACTED]",
+        "frequencyPenalty": 0,
         "maxRetries": 1,
         "model": "gpt-4o-mini",
+        "n": 1,
+        "presencePenalty": 0,
         "provider": "openai",
+        "stream": false,
+        "temperature": 1,
+        "topP": 1,
       },
       "type": "ReactChampionAgent",
     },
@@ -538,9 +586,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
         ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -551,8 +605,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -560,7 +616,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -665,9 +723,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -743,9 +807,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -756,8 +826,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -765,7 +837,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -870,9 +944,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -946,9 +1026,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -959,8 +1045,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -968,7 +1056,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -1073,9 +1163,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -1170,9 +1266,15 @@ Recommendations include: 1) Enhance the search functionality of the mobile app t
         ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -1183,8 +1285,10 @@ Recommendations include: 1) Enhance the search functionality of the mobile app t
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -1192,7 +1296,9 @@ Recommendations include: 1) Enhance the search functionality of the mobile app t
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -1297,9 +1403,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -1345,9 +1457,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -1358,8 +1476,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -1367,7 +1487,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -1472,9 +1594,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -1549,9 +1677,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -1562,8 +1696,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -1571,7 +1707,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -1716,9 +1854,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -1729,8 +1873,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -1738,7 +1884,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -1843,9 +1991,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -1920,9 +2074,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -1933,8 +2093,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -1942,7 +2104,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -2175,9 +2339,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -2188,8 +2358,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -2197,7 +2369,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -2302,9 +2476,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -2379,9 +2559,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -2392,8 +2578,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -2401,7 +2589,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -2556,9 +2746,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -2569,8 +2765,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -2578,7 +2776,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -2683,9 +2883,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -2760,9 +2966,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -2773,8 +2985,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -2782,7 +2996,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -2928,9 +3144,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -2941,8 +3163,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -2950,7 +3174,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -3055,9 +3281,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -3132,9 +3364,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -3145,8 +3383,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -3154,7 +3394,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -3299,9 +3541,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -3312,8 +3560,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -3321,7 +3571,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -3426,9 +3678,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -3503,9 +3761,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -3516,8 +3780,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -3525,7 +3791,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -3671,9 +3939,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -3684,8 +3958,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -3693,7 +3969,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -3798,9 +4076,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -3875,9 +4159,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -3888,8 +4178,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -3897,7 +4189,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -4054,9 +4348,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -4067,8 +4367,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -4076,7 +4378,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -4181,9 +4485,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -4255,9 +4565,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -4268,8 +4584,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -4277,7 +4595,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -4382,9 +4702,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -4427,9 +4753,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -4440,8 +4772,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -4449,7 +4783,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -4554,9 +4890,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -4622,9 +4964,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -4635,8 +4983,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -4644,7 +4994,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -4786,9 +5138,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -4799,8 +5157,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -4808,7 +5168,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -4913,9 +5275,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -4981,9 +5349,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -4994,8 +5368,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -5003,7 +5379,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -5230,9 +5608,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -5243,8 +5627,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -5252,7 +5638,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -5357,9 +5745,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -5425,9 +5819,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -5438,8 +5838,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -5447,7 +5849,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -5620,9 +6024,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -5633,8 +6043,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -5642,7 +6054,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -5747,9 +6161,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -5815,9 +6235,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -5828,8 +6254,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -5837,7 +6265,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -5980,9 +6410,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -5993,8 +6429,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -6002,7 +6440,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -6107,9 +6547,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -6175,9 +6621,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -6188,8 +6640,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -6197,7 +6651,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -6339,9 +6795,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -6352,8 +6814,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -6361,7 +6825,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -6466,9 +6932,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -6534,9 +7006,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -6547,8 +7025,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -6556,7 +7036,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -6699,9 +7181,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -6712,8 +7200,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -6721,7 +7211,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -6826,9 +7318,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -6894,9 +7392,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -6907,8 +7411,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -6916,7 +7422,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -7070,9 +7578,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -7083,8 +7597,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -7092,7 +7608,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -7197,9 +7715,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -7269,9 +7793,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -7282,8 +7812,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -7291,7 +7823,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -7396,9 +7930,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -7445,9 +7985,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -7458,8 +8004,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -7467,7 +8015,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -7572,9 +8122,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -7646,9 +8202,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -7659,8 +8221,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -7668,7 +8232,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -7814,9 +8380,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -7827,8 +8399,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -7836,7 +8410,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -7941,9 +8517,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -8015,9 +8597,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -8028,8 +8616,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -8037,7 +8627,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -8272,9 +8864,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -8285,8 +8883,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -8294,7 +8894,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -8399,9 +9001,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -8473,9 +9081,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -8486,8 +9100,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -8495,7 +9111,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -8653,9 +9271,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -8666,8 +9290,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -8675,7 +9301,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -8780,9 +9408,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -8854,9 +9488,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -8867,8 +9507,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -8876,7 +9518,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -9025,9 +9669,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -9038,8 +9688,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -9047,7 +9699,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -9152,9 +9806,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -9226,9 +9886,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -9239,8 +9905,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -9248,7 +9916,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -9394,9 +10064,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -9407,8 +10083,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -9416,7 +10094,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -9521,9 +10201,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -9595,9 +10281,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -9608,8 +10300,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -9617,7 +10311,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -9766,9 +10462,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -9779,8 +10481,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -9788,7 +10492,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -9893,9 +10599,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -9967,9 +10679,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -9980,8 +10698,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -9989,7 +10709,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -10149,9 +10871,15 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -10162,8 +10890,10 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -10171,7 +10901,9 @@ Result: [{"insight":"Improve the search functionality of the mobile app.","recom
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -10276,9 +11008,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -10393,9 +11131,15 @@ exports[`Agent Operations Team Workflows setEnv operation handles environment up
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -10406,8 +11150,10 @@ exports[`Agent Operations Team Workflows setEnv operation handles environment up
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -10415,7 +11161,9 @@ exports[`Agent Operations Team Workflows setEnv operation handles environment up
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -10520,9 +11268,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
       "id": "[REDACTED]",
       "llmConfig": {
         "apiKey": "[REDACTED]",
+        "frequencyPenalty": 0,
         "maxRetries": 1,
         "model": "gpt-4o-mini",
+        "n": 1,
+        "presencePenalty": 0,
         "provider": "openai",
+        "stream": false,
+        "temperature": 1,
+        "topP": 1,
       },
       "type": "ReactChampionAgent",
     },
@@ -10554,9 +11308,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -10567,8 +11327,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -10576,7 +11338,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -10681,9 +11445,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
       "id": "[REDACTED]",
       "llmConfig": {
         "apiKey": "[REDACTED]",
+        "frequencyPenalty": 0,
         "maxRetries": 1,
         "model": "gpt-4o-mini",
+        "n": 1,
+        "presencePenalty": 0,
         "provider": "openai",
+        "stream": false,
+        "temperature": 1,
+        "topP": 1,
       },
       "type": "ReactChampionAgent",
     },
@@ -10719,9 +11489,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -10732,8 +11508,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -10741,7 +11519,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -10846,9 +11626,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
       "id": "[REDACTED]",
       "llmConfig": {
         "apiKey": "[REDACTED]",
+        "frequencyPenalty": 0,
         "maxRetries": 1,
         "model": "gpt-4o-mini",
+        "n": 1,
+        "presencePenalty": 0,
         "provider": "openai",
+        "stream": false,
+        "temperature": 1,
+        "topP": 1,
       },
       "type": "ReactChampionAgent",
     },
@@ -10897,9 +11683,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
         ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -10910,8 +11702,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -10919,7 +11713,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -11024,9 +11820,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -11102,9 +11904,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -11115,8 +11923,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -11124,7 +11934,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -11229,9 +12041,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -11305,9 +12123,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -11318,8 +12142,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -11327,7 +12153,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -11432,9 +12260,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -11529,9 +12363,15 @@ Recommendations include: 1) Enhance the app's search functionality to minimize c
         ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -11542,8 +12382,10 @@ Recommendations include: 1) Enhance the app's search functionality to minimize c
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -11551,7 +12393,9 @@ Recommendations include: 1) Enhance the app's search functionality to minimize c
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -11656,9 +12500,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -11704,9 +12554,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -11717,8 +12573,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -11726,7 +12584,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -11831,9 +12691,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -11908,9 +12774,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -11921,8 +12793,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -11930,7 +12804,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -12075,9 +12951,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -12088,8 +12970,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -12097,7 +12981,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -12202,9 +13088,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -12279,9 +13171,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -12292,8 +13190,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -12301,7 +13201,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -12534,9 +13436,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -12547,8 +13455,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -12556,7 +13466,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -12661,9 +13573,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -12738,9 +13656,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -12751,8 +13675,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -12760,7 +13686,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -12915,9 +13843,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -12928,8 +13862,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -12937,7 +13873,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -13042,9 +13980,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -13119,9 +14063,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -13132,8 +14082,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -13141,7 +14093,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -13287,9 +14241,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -13300,8 +14260,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -13309,7 +14271,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -13414,9 +14378,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -13491,9 +14461,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -13504,8 +14480,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -13513,7 +14491,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -13658,9 +14638,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -13671,8 +14657,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -13680,7 +14668,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -13785,9 +14775,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -13862,9 +14858,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -13875,8 +14877,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -13884,7 +14888,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -14030,9 +15036,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -14043,8 +15055,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -14052,7 +15066,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -14157,9 +15173,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -14234,9 +15256,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -14247,8 +15275,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -14256,7 +15286,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -14413,9 +15445,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -14426,8 +15464,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -14435,7 +15475,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -14540,9 +15582,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Anal
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -14614,9 +15662,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -14627,8 +15681,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -14636,7 +15692,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -14741,9 +15799,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -14786,9 +15850,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -14799,8 +15869,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -14808,7 +15880,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -14913,9 +15987,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -14981,9 +16061,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -14994,8 +16080,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -15003,7 +16091,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -15145,9 +16235,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -15158,8 +16254,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -15167,7 +16265,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -15272,9 +16372,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -15340,9 +16446,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -15353,8 +16465,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -15362,7 +16476,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -15589,9 +16705,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -15602,8 +16724,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -15611,7 +16735,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -15716,9 +16842,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -15784,9 +16916,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -15797,8 +16935,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -15806,7 +16946,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -15958,9 +17100,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -15971,8 +17119,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -15980,7 +17130,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -16085,9 +17237,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -16153,9 +17311,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -16166,8 +17330,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -16175,7 +17341,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -16318,9 +17486,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -16331,8 +17505,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -16340,7 +17516,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -16445,9 +17623,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -16513,9 +17697,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -16526,8 +17716,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -16535,7 +17727,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -16677,9 +17871,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -16690,8 +17890,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -16699,7 +17901,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -16804,9 +18008,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -16872,9 +18082,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -16885,8 +18101,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -16894,7 +18112,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -17037,9 +18257,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -17050,8 +18276,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -17059,7 +18287,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -17164,9 +18394,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -17232,9 +18468,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -17245,8 +18487,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -17254,7 +18498,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -17408,9 +18654,15 @@ Result: The analysis of customer feedback reveals several key themes and sentime
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -17421,8 +18673,10 @@ Result: The analysis of customer feedback reveals several key themes and sentime
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -17430,7 +18684,9 @@ Result: The analysis of customer feedback reveals several key themes and sentime
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -17535,9 +18791,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): List
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -17607,9 +18869,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -17620,8 +18888,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -17629,7 +18899,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -17734,9 +19006,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -17783,9 +19061,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -17796,8 +19080,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -17805,7 +19091,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -17910,9 +19198,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -17984,9 +19278,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -17997,8 +19297,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -18006,7 +19308,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -18152,9 +19456,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -18165,8 +19475,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -18174,7 +19486,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -18279,9 +19593,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -18353,9 +19673,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -18366,8 +19692,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -18375,7 +19703,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -18610,9 +19940,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -18623,8 +19959,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -18632,7 +19970,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -18737,9 +20077,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -18811,9 +20157,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -18824,8 +20176,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -18833,7 +20187,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -18991,9 +20347,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -19004,8 +20366,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -19013,7 +20377,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -19118,9 +20484,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -19192,9 +20564,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -19205,8 +20583,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -19214,7 +20594,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -19363,9 +20745,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -19376,8 +20764,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -19385,7 +20775,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -19490,9 +20882,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -19564,9 +20962,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -19577,8 +20981,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -19586,7 +20992,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -19732,9 +21140,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -19745,8 +21159,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -19754,7 +21170,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -19859,9 +21277,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -19933,9 +21357,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -19946,8 +21376,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -19955,7 +21387,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -20104,9 +21538,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -20117,8 +21557,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -20126,7 +21568,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -20231,9 +21675,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -20305,9 +21755,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -20318,8 +21774,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -20327,7 +21785,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -20487,9 +21947,15 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -20500,8 +21966,10 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -20509,7 +21977,9 @@ Result: 1. Improve the search function within the mobile app to enhance user exp
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -20614,9 +22084,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Exec
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },

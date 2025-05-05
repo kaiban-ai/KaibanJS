@@ -1,20 +1,26 @@
 [
   {
-    "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent",
+    "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
     "method": "POST",
     "body": {
       "generationConfig": {
-        "candidateCount": 1,
-        "stopSequences": []
+        "stopSequences": [],
+        "temperature": 1,
+        "topP": 1
       },
       "safetySettings": [],
+      "systemInstruction": {
+        "role": "system",
+        "parts": [
+          {
+            "text": "You are Scout.\n\nYour role is: Information Gatherer.\nYour background is: Research.\nYour main goal is: Find up-to-date information about the given sports query.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\ntavily_search_results_json: A search engine optimized for comprehensive, accurate, and trusted results. Useful for when you need to answer questions about current events. Input should be a search query. Tool Input Schema: {\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"string\"}},\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"}\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\", // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): Detailed information about the sports event. Key players, key moments, final score and other usefull information.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
+          }
+        ]
+      },
       "contents": [
         {
           "role": "user",
           "parts": [
-            {
-              "text": "You are Scout.\n\nYour role is: Information Gatherer.\nYour background is: Research.\nYour main goal is: Find up-to-date information about the given sports query.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\ntavily_search_results_json: A search engine optimized for comprehensive, accurate, and trusted results. Useful for when you need to answer questions about current events. Input should be a search query. Tool Input Schema: {\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"string\"}},\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"}\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\", // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): Detailed information about the sports event. Key players, key moments, final score and other usefull information.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
-            },
             {
               "text": "Hi Scout, please complete the following task: Search for detailed information about the sports query: Who won the Copa America in 2024?.. \n        Your expected output should be: \"Detailed information about the sports event. Key players, key moments, final score and other usefull information.\". \n        "
             }
@@ -28,95 +34,309 @@
           "content": {
             "parts": [
               {
-                "text": "```json\n{\n \"thought\": \"To find out who won the Copa America in 2024, I need to search for information about the tournament.\",\n \"action\": \"tavily_search_results_json\",\n \"actionInput\": {\"input\": \"Copa America 2024 winner\"}\n}\n```"
+                "text": "```json\n{\n  \"thought\": \"The Copa America tournament is held in even-numbered years.  2024 is an even year, but the tournament hasn't happened yet. I need to check if there are any news articles about a potential winner or a schedule for the tournament.\",\n  \"action\": \"tavily_search_results_json\",\n  \"actionInput\": {\n    \"input\": \"Copa America 2024 schedule and winner\"\n  }\n}\n```\n"
               }
             ],
             "role": "model"
           },
           "finishReason": "STOP",
-          "index": 0,
-          "safetyRatings": [
-            {
-              "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-              "probability": "NEGLIGIBLE"
-            },
-            {
-              "category": "HARM_CATEGORY_HATE_SPEECH",
-              "probability": "NEGLIGIBLE"
-            },
-            {
-              "category": "HARM_CATEGORY_HARASSMENT",
-              "probability": "NEGLIGIBLE"
-            },
-            {
-              "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-              "probability": "NEGLIGIBLE"
-            }
-          ]
+          "avgLogprobs": -0.21537394042408795
         }
       ],
       "usageMetadata": {
-        "promptTokenCount": 738,
-        "candidatesTokenCount": 70,
-        "totalTokenCount": 808
-      }
+        "promptTokenCount": 737,
+        "candidatesTokenCount": 109,
+        "totalTokenCount": 846,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 737
+          }
+        ],
+        "candidatesTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 109
+          }
+        ]
+      },
+      "modelVersion": "gemini-1.5-flash"
     }
   },
   {
     "url": "https://api.tavily.com/search",
     "method": "POST",
     "body": {
-      "query": "Copa America 2024 winner",
-      "max_results": 3,
-      "api_key": "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"
+      "query": "Copa America 2024 schedule and winner",
+      "max_results": 3
     },
     "response": {
-      "query": "Copa America 2024 winner",
+      "query": "Copa America 2024 schedule and winner",
       "follow_up_questions": null,
       "answer": null,
       "images": [],
       "results": [
         {
+          "title": "2024 Copa América - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/2024_Copa_América",
+          "content": "The 2024 Copa América was the 48th edition of the Copa América, the quadrennial international men's soccer championship organized by South America's football ruling body CONMEBOL.[1] The tournament was held in the United States from June 20 to July 14, 2024, and was co-organized by CONCACAF.[2] The six CONCACAF participants qualified through the 2023–24 CONCACAF Nations League.[2] The teams were the four League A quarter-final winners, and two play-off round winners between the four losing quarter-finalists.[14] Unlike the Copa América Centenario, the United States did not qualify automatically despite being the hosts, but still secured a berth as one of League A quarter-final winners, following a 4–2 aggregate win against Trinidad and Tobago.",
+          "score": 0.8891543,
+          "raw_content": null
+        },
+        {
+          "title": "Copa America 2024 Schedule; Printable Bracket and TV Schedules",
+          "url": "https://sportsbrackets.net/2024/04/24/copa-america-2024-schedule-printable-bracket-and-tv-schedules/",
+          "content": "The Copa America 2024 schedule is out and takes place from June 20- July 14th. We have that as well as the printable bracket for you to use to follow the action. ... The winner of the tournament earns a spot in the 2025 CONMEBOL-UEFA Cup of Champions against the UEFA Euro 2024 winner. The Copa America final is set to take place on July 14th",
+          "score": 0.8719229,
+          "raw_content": null
+        },
+        {
+          "title": "Copa America 2024: Complete Schedule, Dates & Venues - 365Scores",
+          "url": "https://www.365scores.com/news/copa-america-schedule-viewing-guide",
+          "content": "Get the complete Copa America 2024 schedule, including all dates, venues, and match times. Explore detailed team analyses and star player previews in our ultimate guide. ... Historical Context and Previous Copa America Winners Here is a list of the last ten winners of the Copa America tournament: Year: Winners: 2021: Argentina:",
+          "score": 0.76300776,
+          "raw_content": null
+        }
+      ],
+      "response_time": 1.77
+    }
+  },
+  {
+    "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
+    "method": "POST",
+    "body": {
+      "generationConfig": {
+        "stopSequences": [],
+        "temperature": 1,
+        "topP": 1
+      },
+      "safetySettings": [],
+      "systemInstruction": {
+        "role": "system",
+        "parts": [
+          {
+            "text": "You are Scout.\n\nYour role is: Information Gatherer.\nYour background is: Research.\nYour main goal is: Find up-to-date information about the given sports query.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\ntavily_search_results_json: A search engine optimized for comprehensive, accurate, and trusted results. Useful for when you need to answer questions about current events. Input should be a search query. Tool Input Schema: {\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"string\"}},\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"}\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\", // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): Detailed information about the sports event. Key players, key moments, final score and other usefull information.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
+          }
+        ]
+      },
+      "contents": [
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Hi Scout, please complete the following task: Search for detailed information about the sports query: Who won the Copa America in 2024?.. \n        Your expected output should be: \"Detailed information about the sports event. Key players, key moments, final score and other usefull information.\". \n        "
+            }
+          ]
+        },
+        {
+          "role": "model",
+          "parts": [
+            {
+              "text": "```json\n{\n  \"thought\": \"The Copa America tournament is held in even-numbered years.  2024 is an even year, but the tournament hasn't happened yet. I need to check if there are any news articles about a potential winner or a schedule for the tournament.\",\n  \"action\": \"tavily_search_results_json\",\n  \"actionInput\": {\n    \"input\": \"Copa America 2024 schedule and winner\"\n  }\n}\n```\n"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "You got this result from the tool: \"[{\\\"title\\\":\\\"2024 Copa América - Wikipedia\\\",\\\"url\\\":\\\"https://en.wikipedia.org/wiki/2024_Copa_América\\\",\\\"content\\\":\\\"The 2024 Copa América was the 48th edition of the Copa América, the quadrennial international men's soccer championship organized by South America's football ruling body CONMEBOL.[1] The tournament was held in the United States from June 20 to July 14, 2024, and was co-organized by CONCACAF.[2] The six CONCACAF participants qualified through the 2023–24 CONCACAF Nations League.[2] The teams were the four League A quarter-final winners, and two play-off round winners between the four losing quarter-finalists.[14] Unlike the Copa América Centenario, the United States did not qualify automatically despite being the hosts, but still secured a berth as one of League A quarter-final winners, following a 4–2 aggregate win against Trinidad and Tobago.\\\",\\\"score\\\":0.8891543,\\\"raw_content\\\":null},{\\\"title\\\":\\\"Copa America 2024 Schedule; Printable Bracket and TV Schedules\\\",\\\"url\\\":\\\"https://sportsbrackets.net/2024/04/24/copa-america-2024-schedule-printable-bracket-and-tv-schedules/\\\",\\\"content\\\":\\\"The Copa America 2024 schedule is out and takes place from June 20- July 14th. We have that as well as the printable bracket for you to use to follow the action. ... The winner of the tournament earns a spot in the 2025 CONMEBOL-UEFA Cup of Champions against the UEFA Euro 2024 winner. The Copa America final is set to take place on July 14th\\\",\\\"score\\\":0.8719229,\\\"raw_content\\\":null},{\\\"title\\\":\\\"Copa America 2024: Complete Schedule, Dates & Venues - 365Scores\\\",\\\"url\\\":\\\"https://www.365scores.com/news/copa-america-schedule-viewing-guide\\\",\\\"content\\\":\\\"Get the complete Copa America 2024 schedule, including all dates, venues, and match times. Explore detailed team analyses and star player previews in our ultimate guide. ... Historical Context and Previous Copa America Winners Here is a list of the last ten winners of the Copa America tournament: Year: Winners: 2021: Argentina:\\\",\\\"score\\\":0.76300776,\\\"raw_content\\\":null}]\""
+            }
+          ]
+        }
+      ]
+    },
+    "response": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "```json\n{\n  \"observation\": \"The provided text mentions the 2024 Copa America was held in the US from June 20th to July 14th, but it does not state the winner.  The sources focus on the schedule and participants, not the results. I need to refine my search.\",\n  \"isFinalAnswerReady\": false\n}\n```\n"
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "avgLogprobs": -0.2009363978742117
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 1418,
+        "candidatesTokenCount": 83,
+        "totalTokenCount": 1501,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 1418
+          }
+        ],
+        "candidatesTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 83
+          }
+        ]
+      },
+      "modelVersion": "gemini-1.5-flash"
+    }
+  },
+  {
+    "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
+    "method": "POST",
+    "body": {
+      "generationConfig": {
+        "stopSequences": [],
+        "temperature": 1,
+        "topP": 1
+      },
+      "safetySettings": [],
+      "systemInstruction": {
+        "role": "system",
+        "parts": [
+          {
+            "text": "You are Scout.\n\nYour role is: Information Gatherer.\nYour background is: Research.\nYour main goal is: Find up-to-date information about the given sports query.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\ntavily_search_results_json: A search engine optimized for comprehensive, accurate, and trusted results. Useful for when you need to answer questions about current events. Input should be a search query. Tool Input Schema: {\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"string\"}},\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"}\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\", // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): Detailed information about the sports event. Key players, key moments, final score and other usefull information.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
+          }
+        ]
+      },
+      "contents": [
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Hi Scout, please complete the following task: Search for detailed information about the sports query: Who won the Copa America in 2024?.. \n        Your expected output should be: \"Detailed information about the sports event. Key players, key moments, final score and other usefull information.\". \n        "
+            }
+          ]
+        },
+        {
+          "role": "model",
+          "parts": [
+            {
+              "text": "```json\n{\n  \"thought\": \"The Copa America tournament is held in even-numbered years.  2024 is an even year, but the tournament hasn't happened yet. I need to check if there are any news articles about a potential winner or a schedule for the tournament.\",\n  \"action\": \"tavily_search_results_json\",\n  \"actionInput\": {\n    \"input\": \"Copa America 2024 schedule and winner\"\n  }\n}\n```\n"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "You got this result from the tool: \"[{\\\"title\\\":\\\"2024 Copa América - Wikipedia\\\",\\\"url\\\":\\\"https://en.wikipedia.org/wiki/2024_Copa_América\\\",\\\"content\\\":\\\"The 2024 Copa América was the 48th edition of the Copa América, the quadrennial international men's soccer championship organized by South America's football ruling body CONMEBOL.[1] The tournament was held in the United States from June 20 to July 14, 2024, and was co-organized by CONCACAF.[2] The six CONCACAF participants qualified through the 2023–24 CONCACAF Nations League.[2] The teams were the four League A quarter-final winners, and two play-off round winners between the four losing quarter-finalists.[14] Unlike the Copa América Centenario, the United States did not qualify automatically despite being the hosts, but still secured a berth as one of League A quarter-final winners, following a 4–2 aggregate win against Trinidad and Tobago.\\\",\\\"score\\\":0.8891543,\\\"raw_content\\\":null},{\\\"title\\\":\\\"Copa America 2024 Schedule; Printable Bracket and TV Schedules\\\",\\\"url\\\":\\\"https://sportsbrackets.net/2024/04/24/copa-america-2024-schedule-printable-bracket-and-tv-schedules/\\\",\\\"content\\\":\\\"The Copa America 2024 schedule is out and takes place from June 20- July 14th. We have that as well as the printable bracket for you to use to follow the action. ... The winner of the tournament earns a spot in the 2025 CONMEBOL-UEFA Cup of Champions against the UEFA Euro 2024 winner. The Copa America final is set to take place on July 14th\\\",\\\"score\\\":0.8719229,\\\"raw_content\\\":null},{\\\"title\\\":\\\"Copa America 2024: Complete Schedule, Dates & Venues - 365Scores\\\",\\\"url\\\":\\\"https://www.365scores.com/news/copa-america-schedule-viewing-guide\\\",\\\"content\\\":\\\"Get the complete Copa America 2024 schedule, including all dates, venues, and match times. Explore detailed team analyses and star player previews in our ultimate guide. ... Historical Context and Previous Copa America Winners Here is a list of the last ten winners of the Copa America tournament: Year: Winners: 2021: Argentina:\\\",\\\"score\\\":0.76300776,\\\"raw_content\\\":null}]\""
+            }
+          ]
+        },
+        {
+          "role": "model",
+          "parts": [
+            {
+              "text": "```json\n{\n  \"observation\": \"The provided text mentions the 2024 Copa America was held in the US from June 20th to July 14th, but it does not state the winner.  The sources focus on the schedule and participants, not the results. I need to refine my search.\",\n  \"isFinalAnswerReady\": false\n}\n```\n"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "parts": [
+            {
+              "text": "Great observation. Please keep going. Let's get to the final answer."
+            }
+          ]
+        }
+      ]
+    },
+    "response": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "```json\n{\n  \"thought\": \"My previous searches focused on finding the winner directly.  Since the tournament has concluded, I should search for news articles or sports websites that report on the final match and its outcome.\",\n  \"action\": \"tavily_search_results_json\",\n  \"actionInput\": {\n    \"input\": \"Copa America 2024 final result winner\"\n  }\n}\n```\n"
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "avgLogprobs": -0.1138051248365833
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 1517,
+        "candidatesTokenCount": 93,
+        "totalTokenCount": 1610,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 1517
+          }
+        ],
+        "candidatesTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 93
+          }
+        ]
+      },
+      "modelVersion": "gemini-1.5-flash"
+    }
+  },
+  {
+    "url": "https://api.tavily.com/search",
+    "method": "POST",
+    "body": {
+      "query": "Copa America 2024 final result winner",
+      "max_results": 3
+    },
+    "response": {
+      "query": "Copa America 2024 final result winner",
+      "follow_up_questions": null,
+      "answer": null,
+      "images": [],
+      "results": [
+        {
+          "title": "Copa America 2024 final results: Argentina beat Colombia 1-0, Messi ...",
+          "url": "https://apnews.com/article/copa-america-argentina-colombia-score-messi-6753475603a48683a3c4971e451e8263",
+          "content": "Still, Argentina won its second straight Copa America championship, beating Colombia 1-0 Sunday night on Lautaro Martínez’s 112th-minute goal. (AP Photo/Rodrigo Abd)](https://dims.apnews.com/dims4/default/cc273e7/2147483647/strip/true/crop/5616x3741+0+2/resize/599x399!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2F%5B1%2F05%2F%2C%20-41%2C%2029%2C%20109%2C%2058%2C%20113%2C%20-76%2C%20-52%2C%20122%2C%2052%2C%20-24%2C%20-4%2C%20-90%2C%2092%2C%20111%2C%2026%2C%20102%2C%20-36%2C%20-52%2C%20-86%2C%20-98%2C%2077%2C%2013%2C%2062%2C%20-12%2C%20-127%2C%20112%2C%2027%5D%2Fdfa5da27fc6b4114a0e0efba5dcf595d)](https://apnews.com/article/argentina-copa-america-messi-soccer-world-cup-di-maria-144a728c941b2cfc8415092868aa4c84) [![Image 5: Argentina's Lionel Messi sits on the bench after leaving the field injured during the Copa America final soccer match against Colombia in Miami Gardens, Fla., Sunday, July 14, 2024. In a match that started 1 hour, 22 minutes late because of crowd trouble at Hard Rock Stadium, Argentina won its third straight major title following the 2021 Copa America and 2022 World Cup and matched Spain, which won the 2008 and 2012 European Championships around the 2010 World Cup. Argentina also stopped Colombia’s 28-game unbeaten streak dating to a 1-0 loss to Albiceleste in a February 2022 World Cup qualifier, also on a Martínez goal.",
+          "score": 0.90452427,
+          "raw_content": null
+        },
+        {
           "title": "Argentina wins the 2024 Copa América title over Colombia ... - NBC News",
           "url": "https://www.nbcnews.com/news/sports/argentina-wins-2024-copa-america-title-colombia-late-goal-rcna161821",
-          "content": "July 14, 2024, 9:09 PM PDT. By Greg Rosenstein. Argentina won the 2024 Copa América championship 1-0 over Colombia, snatching victory with an extra-time goal in the 112th minute of a scoreless ...",
-          "score": 0.999685,
+          "content": "Argentina wins the 2024 Copa América title over Colombia with a late goal NBC OUT NBC News Now More From NBC NBC News Site Map Follow NBC News Lautaro Martínez, the competition’s leading scorer with five goals, blasted a shot past Colombia goalie Camilo Vargas on a breakaway following a turnover in the 112th minute. Argentina won the 2024 Copa América championship 1-0 over Colombia, snatching victory with an extra-time goal in the 112th minute of a scoreless match. Lautaro Martínez, who was the competition’s leading scorer with five goals, blasted a shot past Colombia goalie Camilo Vargas on a breakaway following a turnover. Greg Rosenstein is the sports editor for NBC News Digital. Your Privacy Choices NBC News Sitemap",
+          "score": 0.82425016,
           "raw_content": null
         },
         {
-          "title": "Argentina tops Colombia in extra time to win Copa America final - NBC 6 ...",
-          "url": "https://www.nbcmiami.com/news/sports/soccer/copa-america-final-score-result-argentina-colombia/3361502/?os=roku&ref=app",
-          "content": "Lautaro Martinez scored the extra-time winner as Argentina beat Colombia in the 2024 Copa America Final Sunday despite Lionel Messi's injury.",
-          "score": 0.99858415,
-          "raw_content": null
-        },
-        {
-          "title": "Argentina beats Colombia to win record-breaking Copa America title",
-          "url": "https://www.nytimes.com/athletic/5637691/2024/07/15/argentina-colombia-result-copa-america-final/",
-          "content": "Jul 15, 2024. A Lionel Messi -less Argentina beat Colombia to win a record-breaking 16th Copa America title after a dramatic final in Miami. Argentina captain Messi was forced off with injury in ...",
-          "score": 0.99845725,
+          "title": "Copa America final score, result: Argentina lift 2024 title as Lautaro ...",
+          "url": "https://www.sportingnews.com/us/soccer/news/copa-america-final-live-score-updates-result-argentina-colombia-messi/aceb14c6c8cf8cb89531f6de",
+          "content": "MIAMI, FL — After an 80-minute delay for crowd trouble outside Hard Rock Stadium, an injury to a tearful Lionel Messi and a brutally physical 90 minutes of regulation time, you could understand why Argentina and Colombia's players were exhausted as extra time began in the 2024 Copa America final. KICKOFF DELAYED: The start of the 2024 Copa America final has been delayed 30 minutes due to the trouble outside the Hard Rock Stadium gates. 2 hours 30 mins before kickoff: Tonight is Angel Di Maria's final match with Argentina before he retires from national team duty. 5 hours before kickoff: Welcome to Hard Rock Stadium in Miami, FL for LIVE coverage from The Sporting News of the 2024 Copa America final!",
+          "score": 0.7593865,
           "raw_content": null
         }
       ],
-      "response_time": 2.27
+      "response_time": 1.74
     }
   },
   {
-    "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent",
+    "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
     "method": "POST",
     "body": {
       "generationConfig": {
-        "candidateCount": 1,
-        "stopSequences": []
+        "stopSequences": [],
+        "temperature": 1,
+        "topP": 1
       },
       "safetySettings": [],
+      "systemInstruction": {
+        "role": "system",
+        "parts": [
+          {
+            "text": "You are Scout.\n\nYour role is: Information Gatherer.\nYour background is: Research.\nYour main goal is: Find up-to-date information about the given sports query.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\ntavily_search_results_json: A search engine optimized for comprehensive, accurate, and trusted results. Useful for when you need to answer questions about current events. Input should be a search query. Tool Input Schema: {\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"string\"}},\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"}\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\", // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): Detailed information about the sports event. Key players, key moments, final score and other usefull information.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
+          }
+        ]
+      },
       "contents": [
         {
           "role": "user",
           "parts": [
-            {
-              "text": "You are Scout.\n\nYour role is: Information Gatherer.\nYour background is: Research.\nYour main goal is: Find up-to-date information about the given sports query.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\ntavily_search_results_json: A search engine optimized for comprehensive, accurate, and trusted results. Useful for when you need to answer questions about current events. Input should be a search query. Tool Input Schema: {\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"string\"}},\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"}\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\", // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): Detailed information about the sports event. Key players, key moments, final score and other usefull information.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
-            },
             {
               "text": "Hi Scout, please complete the following task: Search for detailed information about the sports query: Who won the Copa America in 2024?.. \n        Your expected output should be: \"Detailed information about the sports event. Key players, key moments, final score and other usefull information.\". \n        "
             }
@@ -126,7 +346,7 @@
           "role": "model",
           "parts": [
             {
-              "text": "```json\n{\n \"thought\": \"To find out who won the Copa America in 2024, I need to search for information about the tournament.\",\n \"action\": \"tavily_search_results_json\",\n \"actionInput\": {\"input\": \"Copa America 2024 winner\"}\n}\n```"
+              "text": "```json\n{\n  \"thought\": \"The Copa America tournament is held in even-numbered years.  2024 is an even year, but the tournament hasn't happened yet. I need to check if there are any news articles about a potential winner or a schedule for the tournament.\",\n  \"action\": \"tavily_search_results_json\",\n  \"actionInput\": {\n    \"input\": \"Copa America 2024 schedule and winner\"\n  }\n}\n```\n"
             }
           ]
         },
@@ -134,70 +354,7 @@
           "role": "user",
           "parts": [
             {
-              "text": "You got this result from the tool: \"[{\\\"title\\\":\\\"Argentina wins the 2024 Copa América title over Colombia ... - NBC News\\\",\\\"url\\\":\\\"https://www.nbcnews.com/news/sports/argentina-wins-2024-copa-america-title-colombia-late-goal-rcna161821\\\",\\\"content\\\":\\\"July 14, 2024, 9:09 PM PDT. By Greg Rosenstein. Argentina won the 2024 Copa América championship 1-0 over Colombia, snatching victory with an extra-time goal in the 112th minute of a scoreless ...\\\",\\\"score\\\":0.999685,\\\"raw_content\\\":null},{\\\"title\\\":\\\"Argentina tops Colombia in extra time to win Copa America final - NBC 6 ...\\\",\\\"url\\\":\\\"https://www.nbcmiami.com/news/sports/soccer/copa-america-final-score-result-argentina-colombia/3361502/?os=roku&ref=app\\\",\\\"content\\\":\\\"Lautaro Martinez scored the extra-time winner as Argentina beat Colombia in the 2024 Copa America Final Sunday despite Lionel Messi's injury.\\\",\\\"score\\\":0.99858415,\\\"raw_content\\\":null},{\\\"title\\\":\\\"Argentina beats Colombia to win record-breaking Copa America title\\\",\\\"url\\\":\\\"https://www.nytimes.com/athletic/5637691/2024/07/15/argentina-colombia-result-copa-america-final/\\\",\\\"content\\\":\\\"Jul 15, 2024. A Lionel Messi -less Argentina beat Colombia to win a record-breaking 16th Copa America title after a dramatic final in Miami. Argentina captain Messi was forced off with injury in ...\\\",\\\"score\\\":0.99845725,\\\"raw_content\\\":null}]\""
-            }
-          ]
-        }
-      ]
-    },
-    "response": {
-      "candidates": [
-        {
-          "content": {
-            "parts": [
-              {
-                "text": "```json\n{\n \"observation\": \"I got the following results from the tool: Argentina won the Copa America in 2024, defeating Colombia in the final.  I can extract key information like key players, the final score, and key moments from these results.\",\n \"isFinalAnswerReady\": false\n}\n```"
-              }
-            ],
-            "role": "model"
-          },
-          "finishReason": "STOP",
-          "index": 0,
-          "safetyRatings": [
-            {
-              "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-              "probability": "NEGLIGIBLE"
-            },
-            {
-              "category": "HARM_CATEGORY_HATE_SPEECH",
-              "probability": "NEGLIGIBLE"
-            },
-            {
-              "category": "HARM_CATEGORY_HARASSMENT",
-              "probability": "NEGLIGIBLE"
-            },
-            {
-              "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-              "probability": "NEGLIGIBLE"
-            }
-          ]
-        }
-      ],
-      "usageMetadata": {
-        "promptTokenCount": 1227,
-        "candidatesTokenCount": 69,
-        "totalTokenCount": 1296
-      }
-    }
-  },
-  {
-    "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent",
-    "method": "POST",
-    "body": {
-      "generationConfig": {
-        "candidateCount": 1,
-        "stopSequences": []
-      },
-      "safetySettings": [],
-      "contents": [
-        {
-          "role": "user",
-          "parts": [
-            {
-              "text": "You are Scout.\n\nYour role is: Information Gatherer.\nYour background is: Research.\nYour main goal is: Find up-to-date information about the given sports query.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\ntavily_search_results_json: A search engine optimized for comprehensive, accurate, and trusted results. Useful for when you need to answer questions about current events. Input should be a search query. Tool Input Schema: {\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"string\"}},\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"}\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\", // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): Detailed information about the sports event. Key players, key moments, final score and other usefull information.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
-            },
-            {
-              "text": "Hi Scout, please complete the following task: Search for detailed information about the sports query: Who won the Copa America in 2024?.. \n        Your expected output should be: \"Detailed information about the sports event. Key players, key moments, final score and other usefull information.\". \n        "
+              "text": "You got this result from the tool: \"[{\\\"title\\\":\\\"2024 Copa América - Wikipedia\\\",\\\"url\\\":\\\"https://en.wikipedia.org/wiki/2024_Copa_América\\\",\\\"content\\\":\\\"The 2024 Copa América was the 48th edition of the Copa América, the quadrennial international men's soccer championship organized by South America's football ruling body CONMEBOL.[1] The tournament was held in the United States from June 20 to July 14, 2024, and was co-organized by CONCACAF.[2] The six CONCACAF participants qualified through the 2023–24 CONCACAF Nations League.[2] The teams were the four League A quarter-final winners, and two play-off round winners between the four losing quarter-finalists.[14] Unlike the Copa América Centenario, the United States did not qualify automatically despite being the hosts, but still secured a berth as one of League A quarter-final winners, following a 4–2 aggregate win against Trinidad and Tobago.\\\",\\\"score\\\":0.8891543,\\\"raw_content\\\":null},{\\\"title\\\":\\\"Copa America 2024 Schedule; Printable Bracket and TV Schedules\\\",\\\"url\\\":\\\"https://sportsbrackets.net/2024/04/24/copa-america-2024-schedule-printable-bracket-and-tv-schedules/\\\",\\\"content\\\":\\\"The Copa America 2024 schedule is out and takes place from June 20- July 14th. We have that as well as the printable bracket for you to use to follow the action. ... The winner of the tournament earns a spot in the 2025 CONMEBOL-UEFA Cup of Champions against the UEFA Euro 2024 winner. The Copa America final is set to take place on July 14th\\\",\\\"score\\\":0.8719229,\\\"raw_content\\\":null},{\\\"title\\\":\\\"Copa America 2024: Complete Schedule, Dates & Venues - 365Scores\\\",\\\"url\\\":\\\"https://www.365scores.com/news/copa-america-schedule-viewing-guide\\\",\\\"content\\\":\\\"Get the complete Copa America 2024 schedule, including all dates, venues, and match times. Explore detailed team analyses and star player previews in our ultimate guide. ... Historical Context and Previous Copa America Winners Here is a list of the last ten winners of the Copa America tournament: Year: Winners: 2021: Argentina:\\\",\\\"score\\\":0.76300776,\\\"raw_content\\\":null}]\""
             }
           ]
         },
@@ -205,118 +362,7 @@
           "role": "model",
           "parts": [
             {
-              "text": "```json\n{\n \"thought\": \"To find out who won the Copa America in 2024, I need to search for information about the tournament.\",\n \"action\": \"tavily_search_results_json\",\n \"actionInput\": {\"input\": \"Copa America 2024 winner\"}\n}\n```"
-            }
-          ]
-        },
-        {
-          "role": "user",
-          "parts": [
-            {
-              "text": "You got this result from the tool: \"[{\\\"title\\\":\\\"Argentina wins the 2024 Copa América title over Colombia ... - NBC News\\\",\\\"url\\\":\\\"https://www.nbcnews.com/news/sports/argentina-wins-2024-copa-america-title-colombia-late-goal-rcna161821\\\",\\\"content\\\":\\\"July 14, 2024, 9:09 PM PDT. By Greg Rosenstein. Argentina won the 2024 Copa América championship 1-0 over Colombia, snatching victory with an extra-time goal in the 112th minute of a scoreless ...\\\",\\\"score\\\":0.999685,\\\"raw_content\\\":null},{\\\"title\\\":\\\"Argentina tops Colombia in extra time to win Copa America final - NBC 6 ...\\\",\\\"url\\\":\\\"https://www.nbcmiami.com/news/sports/soccer/copa-america-final-score-result-argentina-colombia/3361502/?os=roku&ref=app\\\",\\\"content\\\":\\\"Lautaro Martinez scored the extra-time winner as Argentina beat Colombia in the 2024 Copa America Final Sunday despite Lionel Messi's injury.\\\",\\\"score\\\":0.99858415,\\\"raw_content\\\":null},{\\\"title\\\":\\\"Argentina beats Colombia to win record-breaking Copa America title\\\",\\\"url\\\":\\\"https://www.nytimes.com/athletic/5637691/2024/07/15/argentina-colombia-result-copa-america-final/\\\",\\\"content\\\":\\\"Jul 15, 2024. A Lionel Messi -less Argentina beat Colombia to win a record-breaking 16th Copa America title after a dramatic final in Miami. Argentina captain Messi was forced off with injury in ...\\\",\\\"score\\\":0.99845725,\\\"raw_content\\\":null}]\""
-            }
-          ]
-        },
-        {
-          "role": "model",
-          "parts": [
-            {
-              "text": "```json\n{\n \"observation\": \"I got the following results from the tool: Argentina won the Copa America in 2024, defeating Colombia in the final.  I can extract key information like key players, the final score, and key moments from these results.\",\n \"isFinalAnswerReady\": false\n}\n```"
-            }
-          ]
-        },
-        {
-          "role": "user",
-          "parts": [
-            {
-              "text": "Great observation. Please keep going. Let's get to the final answer."
-            }
-          ]
-        }
-      ]
-    },
-    "response": {
-      "candidates": [
-        {
-          "content": {
-            "parts": [
-              {
-                "text": "```json\n{\n \"thought\": \"I can now compile the final answer using the information from the search results.\",\n \"action\": \"self_question\",\n \"actionInput\": {\"query\": \"What is a detailed summary of the 2024 Copa America, including key players, moments, the final score, and other relevant information?\"}\n}\n```"
-              }
-            ],
-            "role": "model"
-          },
-          "finishReason": "STOP",
-          "index": 0,
-          "safetyRatings": [
-            {
-              "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-              "probability": "NEGLIGIBLE"
-            },
-            {
-              "category": "HARM_CATEGORY_HATE_SPEECH",
-              "probability": "NEGLIGIBLE"
-            },
-            {
-              "category": "HARM_CATEGORY_HARASSMENT",
-              "probability": "NEGLIGIBLE"
-            },
-            {
-              "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-              "probability": "NEGLIGIBLE"
-            }
-          ]
-        }
-      ],
-      "usageMetadata": {
-        "promptTokenCount": 1314,
-        "candidatesTokenCount": 77,
-        "totalTokenCount": 1391
-      }
-    }
-  },
-  {
-    "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent",
-    "method": "POST",
-    "body": {
-      "generationConfig": {
-        "candidateCount": 1,
-        "stopSequences": []
-      },
-      "safetySettings": [],
-      "contents": [
-        {
-          "role": "user",
-          "parts": [
-            {
-              "text": "You are Scout.\n\nYour role is: Information Gatherer.\nYour background is: Research.\nYour main goal is: Find up-to-date information about the given sports query.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\ntavily_search_results_json: A search engine optimized for comprehensive, accurate, and trusted results. Useful for when you need to answer questions about current events. Input should be a search query. Tool Input Schema: {\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"string\"}},\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"}\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\", // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): Detailed information about the sports event. Key players, key moments, final score and other usefull information.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
-            },
-            {
-              "text": "Hi Scout, please complete the following task: Search for detailed information about the sports query: Who won the Copa America in 2024?.. \n        Your expected output should be: \"Detailed information about the sports event. Key players, key moments, final score and other usefull information.\". \n        "
-            }
-          ]
-        },
-        {
-          "role": "model",
-          "parts": [
-            {
-              "text": "```json\n{\n \"thought\": \"To find out who won the Copa America in 2024, I need to search for information about the tournament.\",\n \"action\": \"tavily_search_results_json\",\n \"actionInput\": {\"input\": \"Copa America 2024 winner\"}\n}\n```"
-            }
-          ]
-        },
-        {
-          "role": "user",
-          "parts": [
-            {
-              "text": "You got this result from the tool: \"[{\\\"title\\\":\\\"Argentina wins the 2024 Copa América title over Colombia ... - NBC News\\\",\\\"url\\\":\\\"https://www.nbcnews.com/news/sports/argentina-wins-2024-copa-america-title-colombia-late-goal-rcna161821\\\",\\\"content\\\":\\\"July 14, 2024, 9:09 PM PDT. By Greg Rosenstein. Argentina won the 2024 Copa América championship 1-0 over Colombia, snatching victory with an extra-time goal in the 112th minute of a scoreless ...\\\",\\\"score\\\":0.999685,\\\"raw_content\\\":null},{\\\"title\\\":\\\"Argentina tops Colombia in extra time to win Copa America final - NBC 6 ...\\\",\\\"url\\\":\\\"https://www.nbcmiami.com/news/sports/soccer/copa-america-final-score-result-argentina-colombia/3361502/?os=roku&ref=app\\\",\\\"content\\\":\\\"Lautaro Martinez scored the extra-time winner as Argentina beat Colombia in the 2024 Copa America Final Sunday despite Lionel Messi's injury.\\\",\\\"score\\\":0.99858415,\\\"raw_content\\\":null},{\\\"title\\\":\\\"Argentina beats Colombia to win record-breaking Copa America title\\\",\\\"url\\\":\\\"https://www.nytimes.com/athletic/5637691/2024/07/15/argentina-colombia-result-copa-america-final/\\\",\\\"content\\\":\\\"Jul 15, 2024. A Lionel Messi -less Argentina beat Colombia to win a record-breaking 16th Copa America title after a dramatic final in Miami. Argentina captain Messi was forced off with injury in ...\\\",\\\"score\\\":0.99845725,\\\"raw_content\\\":null}]\""
-            }
-          ]
-        },
-        {
-          "role": "model",
-          "parts": [
-            {
-              "text": "```json\n{\n \"observation\": \"I got the following results from the tool: Argentina won the Copa America in 2024, defeating Colombia in the final.  I can extract key information like key players, the final score, and key moments from these results.\",\n \"isFinalAnswerReady\": false\n}\n```"
+              "text": "```json\n{\n  \"observation\": \"The provided text mentions the 2024 Copa America was held in the US from June 20th to July 14th, but it does not state the winner.  The sources focus on the schedule and participants, not the results. I need to refine my search.\",\n  \"isFinalAnswerReady\": false\n}\n```\n"
             }
           ]
         },
@@ -332,7 +378,7 @@
           "role": "model",
           "parts": [
             {
-              "text": "```json\n{\n \"thought\": \"I can now compile the final answer using the information from the search results.\",\n \"action\": \"self_question\",\n \"actionInput\": {\"query\": \"What is a detailed summary of the 2024 Copa America, including key players, moments, the final score, and other relevant information?\"}\n}\n```"
+              "text": "```json\n{\n  \"thought\": \"My previous searches focused on finding the winner directly.  Since the tournament has concluded, I should search for news articles or sports websites that report on the final match and its outcome.\",\n  \"action\": \"tavily_search_results_json\",\n  \"actionInput\": {\n    \"input\": \"Copa America 2024 final result winner\"\n  }\n}\n```\n"
             }
           ]
         },
@@ -340,7 +386,7 @@
           "role": "user",
           "parts": [
             {
-              "text": "Awesome, please answer yourself the question: {\"query\":\"What is a detailed summary of the 2024 Copa America, including key players, moments, the final score, and other relevant information?\"}."
+              "text": "You got this result from the tool: \"[{\\\"title\\\":\\\"Copa America 2024 final results: Argentina beat Colombia 1-0, Messi ...\\\",\\\"url\\\":\\\"https://apnews.com/article/copa-america-argentina-colombia-score-messi-6753475603a48683a3c4971e451e8263\\\",\\\"content\\\":\\\"Still, Argentina won its second straight Copa America championship, beating Colombia 1-0 Sunday night on Lautaro Martínez’s 112th-minute goal. (AP Photo/Rodrigo Abd)](https://dims.apnews.com/dims4/default/cc273e7/2147483647/strip/true/crop/5616x3741+0+2/resize/599x399!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2F%5B1%2F05%2F%2C%20-41%2C%2029%2C%20109%2C%2058%2C%20113%2C%20-76%2C%20-52%2C%20122%2C%2052%2C%20-24%2C%20-4%2C%20-90%2C%2092%2C%20111%2C%2026%2C%20102%2C%20-36%2C%20-52%2C%20-86%2C%20-98%2C%2077%2C%2013%2C%2062%2C%20-12%2C%20-127%2C%20112%2C%2027%5D%2Fdfa5da27fc6b4114a0e0efba5dcf595d)](https://apnews.com/article/argentina-copa-america-messi-soccer-world-cup-di-maria-144a728c941b2cfc8415092868aa4c84) [![Image 5: Argentina's Lionel Messi sits on the bench after leaving the field injured during the Copa America final soccer match against Colombia in Miami Gardens, Fla., Sunday, July 14, 2024. In a match that started 1 hour, 22 minutes late because of crowd trouble at Hard Rock Stadium, Argentina won its third straight major title following the 2021 Copa America and 2022 World Cup and matched Spain, which won the 2008 and 2012 European Championships around the 2010 World Cup. Argentina also stopped Colombia’s 28-game unbeaten streak dating to a 1-0 loss to Albiceleste in a February 2022 World Cup qualifier, also on a Martínez goal.\\\",\\\"score\\\":0.90452427,\\\"raw_content\\\":null},{\\\"title\\\":\\\"Argentina wins the 2024 Copa América title over Colombia ... - NBC News\\\",\\\"url\\\":\\\"https://www.nbcnews.com/news/sports/argentina-wins-2024-copa-america-title-colombia-late-goal-rcna161821\\\",\\\"content\\\":\\\"Argentina wins the 2024 Copa América title over Colombia with a late goal NBC OUT NBC News Now More From NBC NBC News Site Map Follow NBC News Lautaro Martínez, the competition’s leading scorer with five goals, blasted a shot past Colombia goalie Camilo Vargas on a breakaway following a turnover in the 112th minute. Argentina won the 2024 Copa América championship 1-0 over Colombia, snatching victory with an extra-time goal in the 112th minute of a scoreless match. Lautaro Martínez, who was the competition’s leading scorer with five goals, blasted a shot past Colombia goalie Camilo Vargas on a breakaway following a turnover. Greg Rosenstein is the sports editor for NBC News Digital. Your Privacy Choices NBC News Sitemap\\\",\\\"score\\\":0.82425016,\\\"raw_content\\\":null},{\\\"title\\\":\\\"Copa America final score, result: Argentina lift 2024 title as Lautaro ...\\\",\\\"url\\\":\\\"https://www.sportingnews.com/us/soccer/news/copa-america-final-live-score-updates-result-argentina-colombia-messi/aceb14c6c8cf8cb89531f6de\\\",\\\"content\\\":\\\"MIAMI, FL — After an 80-minute delay for crowd trouble outside Hard Rock Stadium, an injury to a tearful Lionel Messi and a brutally physical 90 minutes of regulation time, you could understand why Argentina and Colombia's players were exhausted as extra time began in the 2024 Copa America final. KICKOFF DELAYED: The start of the 2024 Copa America final has been delayed 30 minutes due to the trouble outside the Hard Rock Stadium gates. 2 hours 30 mins before kickoff: Tonight is Angel Di Maria's final match with Argentina before he retires from national team duty. 5 hours before kickoff: Welcome to Hard Rock Stadium in Miami, FL for LIVE coverage from The Sporting News of the 2024 Copa America final!\\\",\\\"score\\\":0.7593865,\\\"raw_content\\\":null}]\""
             }
           ]
         }
@@ -352,58 +398,59 @@
           "content": {
             "parts": [
               {
-                "text": "```json\n{\n\"finalAnswer\": \"Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.\"\n}\n```\n\n"
+                "text": "```json\n{\n  \"finalAnswer\": \"Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time.  Lautaro Martínez scored the winning goal in the 112th minute.  The match was delayed by 80 minutes due to crowd trouble outside Hard Rock Stadium in Miami.  Lionel Messi played in the match but was injured and substituted.  Martínez was the tournament's top scorer with five goals.\"\n}\n```\n"
               }
             ],
             "role": "model"
           },
           "finishReason": "STOP",
-          "index": 0,
-          "safetyRatings": [
-            {
-              "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-              "probability": "NEGLIGIBLE"
-            },
-            {
-              "category": "HARM_CATEGORY_HATE_SPEECH",
-              "probability": "NEGLIGIBLE"
-            },
-            {
-              "category": "HARM_CATEGORY_HARASSMENT",
-              "probability": "NEGLIGIBLE"
-            },
-            {
-              "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-              "probability": "NEGLIGIBLE"
-            }
-          ]
+          "avgLogprobs": -0.07233955813389198
         }
       ],
       "usageMetadata": {
-        "promptTokenCount": 1435,
-        "candidatesTokenCount": 219,
-        "totalTokenCount": 1654
-      }
+        "promptTokenCount": 2875,
+        "candidatesTokenCount": 102,
+        "totalTokenCount": 2977,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 2875
+          }
+        ],
+        "candidatesTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 102
+          }
+        ]
+      },
+      "modelVersion": "gemini-1.5-flash"
     }
   },
   {
-    "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent",
+    "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
     "method": "POST",
     "body": {
       "generationConfig": {
-        "candidateCount": 1,
-        "stopSequences": []
+        "stopSequences": [],
+        "temperature": 1,
+        "topP": 1
       },
       "safetySettings": [],
+      "systemInstruction": {
+        "role": "system",
+        "parts": [
+          {
+            "text": "You are Writer.\n\nYour role is: Content Creator.\nYour background is: Journalism.\nYour main goal is: Generate a comprehensive articles about any sports event.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\nNo tools available. You must reply using your internal knowledge.\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\", // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): A well-structured and engaging sports article. With a title, introduction, body, and conclusion. Min 4 paragrahps long.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
+          }
+        ]
+      },
       "contents": [
         {
           "role": "user",
           "parts": [
             {
-              "text": "You are Writer.\n\nYour role is: Content Creator.\nYour background is: Journalism.\nYour main goal is: Generate a comprehensive articles about any sports event.\nYou are working as part of a team.\n\nFor your work you will have available:\n\n- Access to a defined set of tools. \n- Findings and insights from previous tasks. You must use this information to complete your current task.\n- Must follow a specific format for your output.\n\n## Tools available for your use: \n\nNo tools available. You must reply using your internal knowledge.\n\n**Important:** You ONLY have access to the tools above, and should NEVER make up tools that are not listed here.\n\n## Format of your output\n\nYou will return just one of the following:\n\n- Thought + (Action or Self Question)\nOR\n- Observation\nOR\n- Final Answer\n\nBelow is the explanation of each one:\n\n### Thought + (Action or Self Question)\n\n{\n   \"thought\": \"your thoughts about what to do next\", // it could be an action or ask yourself a follow up question\n   \"action\":  \"you decide what action to take based on your previous thought\", // the action could be a self follow up question or decide to use a tool from the available tools to use,\n   \"actionInput\": the input to the action, just a simple JSON object, enclosed in curly braces, using \\\" to wrap keys and values. Remember to use the Tool Schema.\n}\n\nExamples: \n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"tavily_search_results_json\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\nother\n\n{\n   \"thought\": \"To find out who won the Copa America in 2024, I need to search for the most recent and relevant information.\",\n   \"action\": \"self_question\",\n   \"actionInput\": {\"query\":\"Copa America 2024 winner\"}\n}\n\n### Observation\n\n{\n   \"observation\":  \"Reflect about the result of the action. (E.g:  I got the following results from the tool Can I get the Final Answer from there?)\", \n    \"isFinalAnswerReady\": false // If you have the final answer or not\n}\n\n### Final Answer\n\nIMPORTANT: (Please respect the expected output requirements from the user): A well-structured and engaging sports article. With a title, introduction, body, and conclusion. Min 4 paragrahps long.\n\n{\n    \"finalAnswer\": \"The final answer to the Task.\"\n}\n\n**IMPORTANT**: You must return a valid JSON object. As if you were returning a JSON object from a function.\n"
-            },
-            {
-              "text": "Hi Writer, please complete the following task: Using the gathered information, write a detailed article about the sport event.. \n        Your expected output should be: \"A well-structured and engaging sports article. With a title, introduction, body, and conclusion. Min 4 paragrahps long.\". \n        Incorporate the following findings and insights from previous tasks: \"Task: Search for detailed information about the sports query: {sportsQuery}.\nResult: Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time during a thrilling final held in Miami. This victory marks Argentina's 16th Copa América title, further solidifying their dominance in the tournament's history. \\n\\nKey moments include Lautaro Martinez's game-winning goal in the 112th minute, securing the victory for Argentina. The match was intensely contested, remaining scoreless until the final moments of extra time.  \\n\\nDespite the absence of their captain, Lionel Messi, who was forced to withdraw due to injury, Argentina displayed resilience and determination. Lautaro Martinez stepped up in Messi's absence, emerging as a key player for Argentina throughout the tournament.  \\n\\nThis Copa America will be remembered for Argentina's unwavering pursuit of victory, even without their talismanic leader, Lionel Messi. It was a testament to the team's depth and the emergence of players like Martinez on the international stage.\n\""
+              "text": "Hi Writer, please complete the following task: Using the gathered information, write a detailed article about the sport event.. \n        Your expected output should be: \"A well-structured and engaging sports article. With a title, introduction, body, and conclusion. Min 4 paragrahps long.\". \n        Incorporate the following findings and insights from previous tasks: \"Task: Search for detailed information about the sports query: {sportsQuery}.\nResult: Argentina won the 2024 Copa América, defeating Colombia 1-0 in extra time.  Lautaro Martínez scored the winning goal in the 112th minute.  The match was delayed by 80 minutes due to crowd trouble outside Hard Rock Stadium in Miami.  Lionel Messi played in the match but was injured and substituted.  Martínez was the tournament's top scorer with five goals.\n\""
             }
           ]
         }
@@ -415,38 +462,33 @@
           "content": {
             "parts": [
               {
-                "text": "```json\n{\n \"finalAnswer\": \"# Argentina Conquers Copa América Once Again: A Triumph of Resilience\n\nThe 2024 Copa América concluded in dramatic fashion with Argentina clinching their 16th title, defeating a valiant Colombia 1-0 in extra time. The final, held in Miami, was a tense affair, with both teams battling fiercely for South American supremacy. In the end, it was La Albiceleste who emerged victorious, demonstrating their enduring quality and determination, even in the absence of their talismanic captain, Lionel Messi. \n\nThe match was a tight and cagey affair for much of the 90 minutes. Both sides showed attacking intent but struggled to break down the opposing defense.  Argentina, missing the creative spark of Messi, who was sidelined due to injury, looked to Angel Di Maria and Lautaro Martinez to lead the line. Colombia, spearheaded by the dangerous Luis Diaz, sought to exploit any potential vulnerability in the Argentine backline.  However, clear-cut chances were scarce as the game remained goalless at the end of regulation time.\n\nExtra time saw Argentina increase the pressure, their desire for victory palpable.  Finally, in the 112th minute, the breakthrough came. A well-worked move saw the ball fall to Lautaro Martinez inside the box, and the Inter Milan striker made no mistake, firing the ball past the Colombian goalkeeper to send the Argentine fans into raptures. \n\nThis victory marks Argentina's 16th Copa América title, further solidifying their position as the most successful team in the tournament's history. It was a hard-fought and well-deserved win, showcasing the team's resilience and ability to perform under pressure. The absence of Messi, undoubtedly a huge blow, seemed to galvanize the team, with players stepping up and taking responsibility in his absence. Lautaro Martinez, in particular, rose to the occasion, proving himself a worthy successor to Messi as Argentina's attacking spearhead. This Copa América will be remembered as a testament to the collective strength and unwavering spirit of Argentine football. \n\"\n}\n```"
+                "text": "```json\n{\n  \"finalAnswer\": \"Argentina Triumphs in Tumultuous Copa América Final\\n\\nArgentina claimed victory in a dramatic and controversial 2024 Copa América final, edging out Colombia 1-0 in extra time after a match marred by significant delays.  The hard-fought win, secured by Lautaro Martínez's 112th-minute goal, cemented Argentina's dominance in South American football, despite a turbulent journey to the title.\\n\\nThe match, held at the Hard Rock Stadium in Miami, was overshadowed by significant crowd trouble outside the venue.  Eighty precious minutes were lost due to security concerns and the need to restore order before the game could safely resume.  This unprecedented delay added a layer of tension to an already high-stakes encounter, testing the players' endurance and nerves.  The atmosphere inside the stadium, while enthusiastic, was undoubtedly impacted by the events unfolding outside.\\n\\nLionel Messi, despite being crucial to Argentina's success throughout the tournament, suffered an injury during the match and was forced to leave the field prematurely.  This injury added to the sense of uncertainty surrounding the outcome and further elevated the importance of Martínez's game-winning goal.  Martínez's performance throughout the tournament was exceptional, earning him the top scorer award with an impressive five goals.  His decisive strike in the extra time period ultimately secured the championship for Argentina.\\n\\nArgentina's victory in the 2024 Copa América is a testament to the team's resilience and ability to overcome adversity.  While the match was overshadowed by external factors, Argentina's triumph remains a powerful symbol of their unwavering commitment and exceptional skill.  The game will be remembered not only for the thrilling victory but also for the remarkable challenges faced and overcome, leaving a lasting impression on the history of the Copa América.\"\n}\n```\n"
               }
             ],
             "role": "model"
           },
           "finishReason": "STOP",
-          "index": 0,
-          "safetyRatings": [
-            {
-              "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-              "probability": "NEGLIGIBLE"
-            },
-            {
-              "category": "HARM_CATEGORY_HATE_SPEECH",
-              "probability": "NEGLIGIBLE"
-            },
-            {
-              "category": "HARM_CATEGORY_HARASSMENT",
-              "probability": "NEGLIGIBLE"
-            },
-            {
-              "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-              "probability": "NEGLIGIBLE"
-            }
-          ]
+          "avgLogprobs": -0.458085010961159
         }
       ],
       "usageMetadata": {
-        "promptTokenCount": 906,
-        "candidatesTokenCount": 437,
-        "totalTokenCount": 1343
-      }
+        "promptTokenCount": 786,
+        "candidatesTokenCount": 388,
+        "totalTokenCount": 1174,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 786
+          }
+        ],
+        "candidatesTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 388
+          }
+        ]
+      },
+      "modelVersion": "gemini-1.5-flash"
     }
   }
 ]

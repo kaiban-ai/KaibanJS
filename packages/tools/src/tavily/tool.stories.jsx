@@ -1,6 +1,6 @@
 import { ToolPreviewer } from '../_utils/ToolPreviewer.jsx';
 import { TavilySearchResults } from './index.ts';
-import { Agent, Task, Team } from '../../../../src/index';
+import { Agent, Task, Team } from '../../../../';
 import React from 'react';
 import { AgentWithToolPreviewer } from '../_utils/AgentWithToolPreviewer.jsx';
 
@@ -32,6 +32,10 @@ const searchResearcher = new Agent({
   goal: 'Perform web searches and analyze the results',
   tools: [tavilyTool],
   maxIterations: 5,
+  llmConfig: {
+    provider: 'google',
+    model: 'gemini-1.5-pro',
+  },
 });
 
 // Create a research task
@@ -53,6 +57,7 @@ const team = new Team({
   },
   env: {
     OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY,
+    GOOGLE_API_KEY: import.meta.env.VITE_GOOGLE_API_KEY,
   },
 });
 

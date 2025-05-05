@@ -27,9 +27,15 @@ exports[`History Fact Summary Team Workflows Using OpenAI Agents completes the e
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -40,8 +46,10 @@ exports[`History Fact Summary Team Workflows Using OpenAI Agents completes the e
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -49,7 +57,9 @@ exports[`History Fact Summary Team Workflows Using OpenAI Agents completes the e
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -154,9 +164,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
       "id": "[REDACTED]",
       "llmConfig": {
         "apiKey": "[REDACTED]",
+        "frequencyPenalty": 0,
         "maxRetries": 1,
         "model": "gpt-4o-mini",
+        "n": 1,
+        "presencePenalty": 0,
         "provider": "openai",
+        "stream": false,
+        "temperature": 1,
+        "topP": 1,
       },
       "type": "ReactChampionAgent",
     },
@@ -192,9 +208,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -205,8 +227,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -214,7 +238,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -319,9 +345,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -799,9 +831,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -812,8 +850,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -821,7 +861,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -926,9 +968,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -967,9 +1015,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -980,8 +1034,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -989,7 +1045,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -1094,9 +1152,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -1550,9 +1614,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -1563,8 +1633,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -1572,7 +1644,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -1710,9 +1784,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -1723,8 +1803,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -1732,7 +1814,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -1837,9 +1921,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -2293,9 +2383,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -2306,8 +2402,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -2315,7 +2413,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -2534,9 +2634,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -2547,8 +2653,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -2556,7 +2664,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -2661,9 +2771,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -3117,9 +3233,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -3130,8 +3252,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -3139,7 +3263,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -3697,9 +3823,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -3710,8 +3842,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -3719,7 +3853,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -3824,9 +3960,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -4280,9 +4422,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -4293,8 +4441,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -4302,7 +4452,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -4844,9 +4996,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -4857,8 +5015,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -4866,7 +5026,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -4971,9 +5133,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -5427,9 +5595,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -5440,8 +5614,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -5449,7 +5625,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -5587,9 +5765,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -5600,8 +5784,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -5609,7 +5795,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -5714,9 +5902,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -6170,9 +6364,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -6183,8 +6383,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -6192,7 +6394,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -6349,9 +6553,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -6362,8 +6572,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -6371,7 +6583,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -6476,9 +6690,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -6932,9 +7152,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -6945,8 +7171,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -6954,7 +7182,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -7122,9 +7352,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -7135,8 +7371,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -7144,7 +7382,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -7249,9 +7489,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A we
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },

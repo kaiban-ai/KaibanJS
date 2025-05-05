@@ -33,7 +33,7 @@ export interface LLMConfig {
   /** API configuration object */
   configuration?: {
     /** Base path for API requests */
-    basePath: string;
+    baseURL: string;
   };
   /** Anthropic API URL */
   anthropicApiUrl?: string;
@@ -43,6 +43,18 @@ export interface LLMConfig {
   endpoint?: string;
   /** API key */
   apiKey?: string;
+  /** temperature */
+  temperature?: number;
+  /** top_p */
+  topP?: number;
+  /** frequency_penalty */
+  frequencyPenalty?: number;
+  /** presence_penalty */
+  presencePenalty?: number;
+  /** n */
+  n?: number;
+  /** stream */
+  stream?: boolean;
 }
 
 /** Environment variables */
@@ -148,6 +160,12 @@ export abstract class BaseAgent {
       provider: 'openai' as const,
       model: 'gpt-4o-mini',
       maxRetries: 1,
+      temperature: 1,
+      topP: 1,
+      n: 1,
+      presencePenalty: 0,
+      frequencyPenalty: 0,
+      stream: false,
       ...llmConfig,
     };
 
@@ -189,7 +207,7 @@ export abstract class BaseAgent {
       switch (provider) {
         case 'openai':
           normalizedConfig.configuration = {
-            basePath: apiBaseUrl,
+            baseURL: apiBaseUrl,
           };
           break;
 

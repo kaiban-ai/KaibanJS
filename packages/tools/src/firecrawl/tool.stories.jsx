@@ -1,7 +1,7 @@
 import { ToolPreviewer } from '../_utils/ToolPreviewer.jsx';
 import { AgentWithToolPreviewer } from '../_utils/AgentWithToolPreviewer.jsx';
 import { Firecrawl } from './index.ts';
-import { Agent, Task, Team } from '../../../../src/index';
+import { Agent, Task, Team } from '../../../../';
 import React from 'react';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
@@ -46,6 +46,10 @@ const webResearcher = new Agent({
   role: 'Web Content Analyzer',
   goal: 'Extract and analyze content from specified websites',
   tools: [firecrawlTool],
+  llmConfig: {
+    provider: 'google',
+    model: 'gemini-1.5-flash',
+  },
 });
 
 // Create a research task
@@ -66,7 +70,8 @@ const team = new Team({
     url: 'https://www.kaibanjs.com',
   },
   env: {
-    OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY,
+    // OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY,
+    GOOGLE_API_KEY: import.meta.env.VITE_GOOGLE_API_KEY,
   },
 });
 

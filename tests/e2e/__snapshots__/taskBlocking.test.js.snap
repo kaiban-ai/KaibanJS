@@ -25,9 +25,15 @@ exports[`Task Blocking Team Workflows Using Security Validation Agent blocks the
         "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -38,8 +44,10 @@ exports[`Task Blocking Team Workflows Using Security Validation Agent blocks the
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -47,7 +55,9 @@ exports[`Task Blocking Team Workflows Using Security Validation Agent blocks the
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -162,9 +172,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
       "id": "[REDACTED]",
       "llmConfig": {
         "apiKey": "[REDACTED]",
+        "frequencyPenalty": 0,
         "maxRetries": 1,
         "model": "gpt-4o-mini",
+        "n": 1,
+        "presencePenalty": 0,
         "provider": "openai",
+        "stream": false,
+        "temperature": 1,
+        "topP": 1,
       },
       "type": "ReactChampionAgent",
     },
@@ -196,9 +212,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -209,8 +231,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -218,7 +242,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -333,9 +359,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -413,9 +445,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -426,8 +464,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -435,7 +475,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -550,9 +592,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -589,9 +637,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -602,8 +656,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -611,7 +667,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -726,9 +784,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -788,9 +852,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -801,8 +871,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -810,7 +882,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -956,9 +1030,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -969,8 +1049,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -978,7 +1060,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -1093,9 +1177,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -1155,9 +1245,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -1168,8 +1264,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -1177,7 +1275,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -1409,9 +1509,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -1422,8 +1528,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -1431,7 +1539,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -1546,9 +1656,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -1608,9 +1724,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -1621,8 +1743,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -1630,7 +1754,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -1786,9 +1912,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -1799,8 +1931,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -1808,7 +1942,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -1923,9 +2059,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -1985,9 +2127,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -1998,8 +2146,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -2007,7 +2157,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -2154,9 +2306,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -2167,8 +2325,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -2176,7 +2336,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -2291,9 +2453,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -2353,9 +2521,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -2366,8 +2540,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -2375,7 +2551,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -2521,9 +2699,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -2534,8 +2718,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -2543,7 +2729,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -2658,9 +2846,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -2720,9 +2914,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -2733,8 +2933,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -2742,7 +2944,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -2888,9 +3092,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -2901,8 +3111,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -2910,7 +3122,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -3025,9 +3239,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -3087,9 +3307,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -3100,8 +3326,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -3109,7 +3337,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -3351,9 +3581,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -3364,8 +3600,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -3373,7 +3611,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -3488,9 +3728,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -3550,9 +3796,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -3563,8 +3815,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -3572,7 +3826,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -3734,9 +3990,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -3747,8 +4009,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -3756,7 +4020,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -3871,9 +4137,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -3933,9 +4205,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -3946,8 +4224,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -3955,7 +4235,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -4111,9 +4393,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -4124,8 +4412,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -4133,7 +4423,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -4248,9 +4540,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -4310,9 +4608,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -4323,8 +4627,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -4332,7 +4638,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -4481,9 +4789,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -4494,8 +4808,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -4503,7 +4819,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -4618,9 +4936,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -4680,9 +5004,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -4693,8 +5023,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -4702,7 +5034,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -4848,9 +5182,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -4861,8 +5201,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -4870,7 +5212,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -4985,9 +5329,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -5047,9 +5397,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -5060,8 +5416,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -5069,7 +5427,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -5216,9 +5576,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -5229,8 +5595,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -5238,7 +5606,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -5353,9 +5723,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -5415,9 +5791,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -5428,8 +5810,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -5437,7 +5821,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -5552,9 +5938,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -5605,9 +5997,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -5618,8 +6016,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -5627,7 +6027,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -5742,9 +6144,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -5804,9 +6212,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -5817,8 +6231,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -5826,7 +6242,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -5941,9 +6359,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -5995,9 +6419,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
             "lastFeedbackMessage": "Your latest response does not match the way you are expected to output information. Please correct it.",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -6008,8 +6438,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -6017,7 +6449,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -6132,9 +6566,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): unde
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
