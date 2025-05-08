@@ -3,7 +3,7 @@ import { ToolPreviewer } from '../_utils/ToolPreviewer.jsx';
 import { AgentWithToolPreviewer } from '../_utils/AgentWithToolPreviewer.jsx';
 import { GithubIssues } from '../github-issues/index.ts';
 import { ZapierWebhook } from './index.ts';
-import { Agent, Task, Team } from '../../../../src/index';
+import { Agent, Task, Team } from '../../../../';
 import React from 'react';
 
 export default {

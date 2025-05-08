@@ -1,7 +1,7 @@
 import { ToolPreviewer } from '../_utils/ToolPreviewer.jsx';
 import { AgentWithToolPreviewer } from '../_utils/AgentWithToolPreviewer.jsx';
 import { JinaUrlToMarkdown } from './index.ts';
-import { Agent, Task, Team } from '../../../../src/index';
+import { Agent, Task, Team } from '../../../../';
 import React from 'react';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export

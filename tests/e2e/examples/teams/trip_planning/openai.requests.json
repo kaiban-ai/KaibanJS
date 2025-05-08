@@ -112,8 +112,7 @@
     "method": "POST",
     "body": {
       "query": "flight costs from New York to Tokyo, Paris, Berlin December 2024; weather forecast for Tokyo, Paris, Berlin December 1-15 2024; cultural attractions in Tokyo, Paris, Berlin",
-      "max_results": 3,
-      "api_key": "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"
+      "max_results": 3
     },
     "response": {
       "query": "flight costs from New York to Tokyo, Paris, Berlin December 2024; weather forecast for Tokyo, Paris, Berlin December 1-15 2024; cultural attractions in Tokyo, Paris, Berlin",
@@ -291,8 +290,7 @@
     "method": "POST",
     "body": {
       "query": "current weather forecast for Tokyo and Paris December 1-15 2024; cultural attractions in Tokyo and Paris",
-      "max_results": 3,
-      "api_key": "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"
+      "max_results": 3
     },
     "response": {
       "query": "current weather forecast for Tokyo and Paris December 1-15 2024; cultural attractions in Tokyo and Paris",

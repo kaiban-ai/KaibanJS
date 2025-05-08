@@ -112,8 +112,7 @@
     "method": "POST",
     "body": {
       "query": "Weather forecast and travel costs for Tokyo, Paris, Berlin from New York December 1 to December 15, 2024",
-      "max_results": 3,
-      "api_key": "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"
+      "max_results": 3
     },
     "response": {
       "query": "Weather forecast and travel costs for Tokyo, Paris, Berlin from New York December 1 to December 15, 2024",
@@ -291,8 +290,7 @@
     "method": "POST",
     "body": {
       "query": "art and culture events in Tokyo, Paris, Berlin from December 1 to December 15, 2024",
-      "max_results": 3,
-      "api_key": "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"
+      "max_results": 3
     },
     "response": {
       "query": "art and culture events in Tokyo, Paris, Berlin from December 1 to December 15, 2024",

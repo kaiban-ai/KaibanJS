@@ -54,8 +54,7 @@
     "method": "POST",
     "body": {
       "query": "Copa America 2024 winner and details",
-      "max_results": 3,
-      "api_key": "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"
+      "max_results": 3
     },
     "response": {
       "query": "Copa America 2024 winner and details",

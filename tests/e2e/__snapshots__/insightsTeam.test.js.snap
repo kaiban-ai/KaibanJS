@@ -27,9 +27,15 @@ exports[`Insights-Driven Team Workflows Using OpenAI Agents with Team Insights c
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -40,8 +46,10 @@ exports[`Insights-Driven Team Workflows Using OpenAI Agents with Team Insights c
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -49,7 +57,9 @@ exports[`Insights-Driven Team Workflows Using OpenAI Agents with Team Insights c
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -165,9 +175,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
       "id": "[REDACTED]",
       "llmConfig": {
         "apiKey": "[REDACTED]",
+        "frequencyPenalty": 0,
         "maxRetries": 1,
         "model": "gpt-4o-mini",
+        "n": 1,
+        "presencePenalty": 0,
         "provider": "openai",
+        "stream": false,
+        "temperature": 1,
+        "topP": 1,
       },
       "type": "ReactChampionAgent",
     },
@@ -197,9 +213,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -210,8 +232,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -219,7 +243,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -335,9 +361,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
       "id": "[REDACTED]",
       "llmConfig": {
         "apiKey": "[REDACTED]",
+        "frequencyPenalty": 0,
         "maxRetries": 1,
         "model": "gpt-4o-mini",
+        "n": 1,
+        "presencePenalty": 0,
         "provider": "openai",
+        "stream": false,
+        "temperature": 1,
+        "topP": 1,
       },
       "type": "ReactChampionAgent",
     },
@@ -373,9 +405,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
         ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -386,8 +424,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -395,7 +435,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -511,9 +553,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -573,9 +621,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -586,8 +640,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -595,7 +651,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -711,9 +769,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -791,9 +855,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
         ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -804,8 +874,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -813,7 +885,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -929,9 +1003,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -970,9 +1050,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -983,8 +1069,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -992,7 +1080,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -1108,9 +1198,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -1164,9 +1260,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -1177,8 +1279,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -1186,7 +1290,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -1335,9 +1441,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -1348,8 +1460,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -1357,7 +1471,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -1473,9 +1589,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -1529,9 +1651,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -1542,8 +1670,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -1551,7 +1681,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -1792,9 +1924,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -1805,8 +1943,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -1814,7 +1954,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -1930,9 +2072,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -1986,9 +2134,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -1999,8 +2153,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -2008,7 +2164,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -2167,9 +2325,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -2180,8 +2344,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -2189,7 +2355,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -2305,9 +2473,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -2361,9 +2535,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -2374,8 +2554,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -2383,7 +2565,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -2533,9 +2717,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -2546,8 +2736,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -2555,7 +2747,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -2671,9 +2865,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -2727,9 +2927,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -2740,8 +2946,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -2749,7 +2957,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -2898,9 +3108,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -2911,8 +3127,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -2920,7 +3138,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -3036,9 +3256,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -3092,9 +3318,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -3105,8 +3337,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -3114,7 +3348,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -3264,9 +3500,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -3277,8 +3519,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -3286,7 +3530,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -3402,9 +3648,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -3458,9 +3710,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -3471,8 +3729,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -3480,7 +3740,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -3641,9 +3903,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -3654,8 +3922,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -3663,7 +3933,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -3779,9 +4051,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A de
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -3837,9 +4115,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -3850,8 +4134,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -3859,7 +4145,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -3975,9 +4263,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -4018,9 +4312,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -4031,8 +4331,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -4040,7 +4342,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -4156,9 +4460,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -4214,9 +4524,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -4227,8 +4543,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -4236,7 +4554,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -4387,9 +4707,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -4400,8 +4726,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -4409,7 +4737,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -4525,9 +4855,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -4583,9 +4919,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -4596,8 +4938,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -4605,7 +4949,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -4850,9 +5196,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -4863,8 +5215,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -4872,7 +5226,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -4988,9 +5344,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -5046,9 +5408,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -5059,8 +5427,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -5068,7 +5438,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -5229,9 +5601,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -5242,8 +5620,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -5251,7 +5631,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -5367,9 +5749,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -5425,9 +5813,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -5438,8 +5832,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -5447,7 +5843,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -5599,9 +5997,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -5612,8 +6016,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -5621,7 +6027,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -5737,9 +6145,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -5795,9 +6209,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -5808,8 +6228,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -5817,7 +6239,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -5968,9 +6392,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -5981,8 +6411,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -5990,7 +6422,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -6106,9 +6540,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -6164,9 +6604,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -6177,8 +6623,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -6186,7 +6634,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -6338,9 +6788,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -6351,8 +6807,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -6360,7 +6818,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -6476,9 +6936,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -6534,9 +7000,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -6547,8 +7019,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -6556,7 +7030,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -6719,9 +7195,15 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -6732,8 +7214,10 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -6741,7 +7225,9 @@ Result: Michael Zhang exhibits several distinct preferences and patterns in his 
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -6857,9 +7343,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Pers
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },

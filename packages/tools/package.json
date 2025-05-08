@@ -114,15 +114,15 @@
   "author": "Kaiban Team",
   "license": "MIT",
   "dependencies": {
-    "@langchain/community": "^0.2.19",
-    "@langchain/core": "0.2.36",
-    "@langchain/openai": "^0.2.2",
+    "@langchain/community": "0.3.41",
+    "@langchain/core": "0.3.49",
+    "@langchain/openai": "^0.5.7",
     "cheerio": "^1.0.0",
     "ky": "^1.7.2",
-    "langchain": "^0.2.10",
+    "langchain": "0.3.24",
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^4.8.69",
-    "zod": "^3.23.8"
+    "zod": "3.24.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.9",

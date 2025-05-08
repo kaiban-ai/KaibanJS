@@ -44,6 +44,29 @@ const RESPONSE_SCHEMA: ParsingSchema = {
 };
 
 /**
+ * Extracts JSON content from a string that might be wrapped in markdown code blocks or LLM response formatting
+ * @param str - The input string to process
+ * @returns The extracted JSON content or the original string if no JSON block is found
+ *
+ * @example
+ * ```typescript
+ * const input = "```json\n{\"key\": \"value\"}\n```";
+ * const result = extractJSONContent(input); // Returns "{\"key\": \"value\"}"
+ * ```
+ */
+function extractJSONContent(str: string): string {
+  // Pattern to match JSON content in markdown code blocks or LLM responses
+  const jsonPattern = /```(?:json)?\s*(\{[\s\S]*?\})\s*```/;
+  const match = str.match(jsonPattern);
+
+  if (match && match[1]) {
+    return match[1].trim();
+  }
+
+  return str;
+}
+
+/**
  * Parses a JSON string into a structured object, with fallback to regex-based parsing
  * @param str - The JSON string to parse
  * @returns Parsed object or empty object if parsing fails
@@ -59,9 +82,11 @@ const RESPONSE_SCHEMA: ParsingSchema = {
  * ```
  */
 export function getParsedJSON(str: string): AgentResponse {
+  const jsonContent = extractJSONContent(str);
+
   try {
     // First attempt to parse the JSON string directly
-    return JSON.parse(str) as AgentResponse;
+    return JSON.parse(jsonContent) as AgentResponse;
   } catch {
     // If JSON parsing fails, fall back to regex extraction
     const result: AgentResponse = {};
@@ -69,7 +94,7 @@ export function getParsedJSON(str: string): AgentResponse {
     // Iterate over each key in the schema to find matches in the input string
     Object.keys(RESPONSE_SCHEMA).forEach((key: string) => {
       const regex = RESPONSE_SCHEMA[key];
-      const match = str.match(regex);
+      const match = jsonContent.match(regex);
 
       if (match) {
         // If the key is found, parse the value appropriately

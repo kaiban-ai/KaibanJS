@@ -37,9 +37,15 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -50,8 +56,10 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -59,7 +67,9 @@ exports[`Resume Creation Team Workflows Using OpenAI Agents completes the entire
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -164,9 +174,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
       "id": "[REDACTED]",
       "llmConfig": {
         "apiKey": "[REDACTED]",
+        "frequencyPenalty": 0,
         "maxRetries": 1,
         "model": "gpt-4o-mini",
+        "n": 1,
+        "presencePenalty": 0,
         "provider": "openai",
+        "stream": false,
+        "temperature": 1,
+        "topP": 1,
       },
       "type": "ReactChampionAgent",
     },
@@ -205,9 +221,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -218,8 +240,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -227,7 +251,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -336,9 +362,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
       "id": "[REDACTED]",
       "llmConfig": {
         "apiKey": "[REDACTED]",
+        "frequencyPenalty": 0,
         "maxRetries": 1,
         "model": "gpt-4o-mini",
+        "n": 1,
+        "presencePenalty": 0,
         "provider": "openai",
+        "stream": false,
+        "temperature": 1,
+        "topP": 1,
       },
       "type": "ReactChampionAgent",
     },
@@ -392,9 +424,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
         ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -405,8 +443,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -414,7 +454,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -519,9 +561,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -610,9 +658,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -623,8 +677,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -632,7 +688,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -741,9 +799,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -884,9 +948,15 @@ Florida International University (FIU)
         ",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -897,8 +967,10 @@ Florida International University (FIU)
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -906,7 +978,9 @@ Florida International University (FIU)
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -1011,9 +1085,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -1062,9 +1142,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -1075,8 +1161,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -1084,7 +1172,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -1189,9 +1279,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -1275,9 +1371,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -1288,8 +1390,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -1297,7 +1401,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -1445,9 +1551,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -1458,8 +1570,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -1467,7 +1581,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -1572,9 +1688,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -1658,9 +1780,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -1671,8 +1799,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -1680,7 +1810,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -1919,9 +2051,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -1932,8 +2070,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -1941,7 +2081,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -2046,9 +2188,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -2132,9 +2280,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -2145,8 +2299,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -2154,7 +2310,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -2341,9 +2499,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -2354,8 +2518,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -2363,7 +2529,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -2468,9 +2636,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -2554,9 +2728,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -2567,8 +2747,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -2576,7 +2758,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -2725,9 +2909,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -2738,8 +2928,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -2747,7 +2939,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -2852,9 +3046,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -2938,9 +3138,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -2951,8 +3157,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -2960,7 +3168,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -3108,9 +3318,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -3121,8 +3337,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -3130,7 +3348,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -3235,9 +3455,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -3321,9 +3547,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -3334,8 +3566,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -3343,7 +3577,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -3492,9 +3728,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -3505,8 +3747,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -3514,7 +3758,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -3619,9 +3865,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -3705,9 +3957,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         ",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -3718,8 +3976,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -3727,7 +3987,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -3887,9 +4149,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
         ",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -3900,8 +4168,10 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -3909,7 +4179,9 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -4014,9 +4286,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): Stru
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -4101,9 +4379,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "llmInstance": {
             "id": [
@@ -4114,8 +4398,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
             ],
             "kwargs": {
               "callbacks": undefined,
+              "frequency_penalty": 0,
               "max_retries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
               "openai_api_key": {
                 "id": [
                   "OPENAI_API_KEY",
@@ -4123,7 +4409,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
                 "lc": 1,
                 "type": "secret",
               },
-              "provider": "openai",
+              "presence_penalty": 0,
+              "temperature": 1,
+              "top_p": 1,
               "verbose": undefined,
             },
             "lc": 1,
@@ -4232,9 +4520,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
         "id": "[REDACTED]",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "type": "ReactChampionAgent",
       },
@@ -4284,9 +4578,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -4297,8 +4597,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -4306,7 +4608,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -4415,9 +4719,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -4535,9 +4845,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -4548,8 +4864,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -4557,7 +4875,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -4710,9 +5030,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -4723,8 +5049,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -4732,7 +5060,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -4841,9 +5171,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -4961,9 +5297,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -4974,8 +5316,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -4983,7 +5327,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -5229,9 +5575,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -5242,8 +5594,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -5251,7 +5605,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -5360,9 +5716,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -5480,9 +5842,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -5493,8 +5861,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -5502,7 +5872,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -5703,9 +6075,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -5716,8 +6094,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -5725,7 +6105,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -5834,9 +6216,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -5954,9 +6342,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -5967,8 +6361,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -5976,7 +6372,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -6168,9 +6566,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -6181,8 +6585,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -6190,7 +6596,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -6299,9 +6707,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -6419,9 +6833,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -6432,8 +6852,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -6441,7 +6863,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -6594,9 +7018,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -6607,8 +7037,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -6616,7 +7048,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -6725,9 +7159,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -6845,9 +7285,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -6858,8 +7304,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -6867,7 +7315,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -7059,9 +7509,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -7072,8 +7528,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -7081,7 +7539,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -7190,9 +7650,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },
@@ -7310,9 +7776,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
         "llmConfig": {
           "apiKey": "[REDACTED]",
+          "frequencyPenalty": 0,
           "maxRetries": 1,
           "model": "gpt-4o-mini",
+          "n": 1,
+          "presencePenalty": 0,
           "provider": "openai",
+          "stream": false,
+          "temperature": 1,
+          "topP": 1,
         },
         "llmInstance": {
           "id": [
@@ -7323,8 +7795,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
           ],
           "kwargs": {
             "callbacks": undefined,
+            "frequency_penalty": 0,
             "max_retries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
             "openai_api_key": {
               "id": [
                 "OPENAI_API_KEY",
@@ -7332,7 +7806,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               "lc": 1,
               "type": "secret",
             },
-            "provider": "openai",
+            "presence_penalty": 0,
+            "temperature": 1,
+            "top_p": 1,
             "verbose": undefined,
           },
           "lc": 1,
@@ -7535,9 +8011,15 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
 "",
             "llmConfig": {
               "apiKey": "[REDACTED]",
+              "frequencyPenalty": 0,
               "maxRetries": 1,
               "model": "gpt-4o-mini",
+              "n": 1,
+              "presencePenalty": 0,
               "provider": "openai",
+              "stream": false,
+              "temperature": 1,
+              "topP": 1,
             },
             "llmInstance": {
               "id": [
@@ -7548,8 +8030,10 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
               ],
               "kwargs": {
                 "callbacks": undefined,
+                "frequency_penalty": 0,
                 "max_retries": 1,
                 "model": "gpt-4o-mini",
+                "n": 1,
                 "openai_api_key": {
                   "id": [
                     "OPENAI_API_KEY",
@@ -7557,7 +8041,9 @@ Result: {"name":"David Llaca","experience":"5 years","skills":["JavaScript","Rea
                   "lc": 1,
                   "type": "secret",
                 },
-                "provider": "openai",
+                "presence_penalty": 0,
+                "temperature": 1,
+                "top_p": 1,
                 "verbose": undefined,
               },
               "lc": 1,
@@ -7666,9 +8152,15 @@ IMPORTANT: (Please respect the expected output requirements from the user): A pr
           "id": "[REDACTED]",
           "llmConfig": {
             "apiKey": "[REDACTED]",
+            "frequencyPenalty": 0,
             "maxRetries": 1,
             "model": "gpt-4o-mini",
+            "n": 1,
+            "presencePenalty": 0,
             "provider": "openai",
+            "stream": false,
+            "temperature": 1,
+            "topP": 1,
           },
           "type": "ReactChampionAgent",
         },

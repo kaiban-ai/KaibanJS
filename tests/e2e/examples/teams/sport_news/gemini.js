@@ -20,7 +20,7 @@ const searchAgent = new Agent({
   tools: [searchTool],
   llmConfig: {
     provider: 'google',
-    model: 'gemini-1.5-pro',
+    model: 'gemini-1.5-flash',
   },
   maxIterations: 15,
 });
@@ -34,7 +34,7 @@ const contentCreator = new Agent({
   tools: [],
   llmConfig: {
     provider: 'google',
-    model: 'gemini-1.5-pro',
+    model: 'gemini-1.5-flash',
   },
   maxIterations: 15,
 });

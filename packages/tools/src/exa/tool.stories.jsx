@@ -1,6 +1,6 @@
 import { ToolPreviewer } from '../_utils/ToolPreviewer.jsx';
 import { ExaSearch } from './index.ts';
-import { Agent, Task, Team } from '../../../../src/index';
+import { Agent, Task, Team } from '../../../../';
 import React from 'react';
 import { AgentWithToolPreviewer } from '../_utils/AgentWithToolPreviewer.jsx';
 

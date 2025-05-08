@@ -22,7 +22,10 @@ function moscaFetch() {
         mock.method === '*' || mock.method.toUpperCase() === requestMethod;
 
       const cleanMockBody = JSON.stringify(mock.body).replace(/\\n\s+/g, '\\n'); // Regular Expression to remove spaces between newlines
+      // console.log(mock.url);
 
+      // console.log('cleanMockBody', cleanMockBody);
+      // console.log('cleanRequestBody', cleanRequestBody);
       const bodyMatches =
         mock.body === '*' || cleanRequestBody === cleanMockBody;
 
@@ -161,14 +164,18 @@ function moscaFetch() {
     }
   }
 
-  function saveRecords(filename = 'recordedData.json') {
+  async function saveRecords(filename = 'recordedData.json') {
     const filePath = `${process.cwd()}/${filename}`;
-    fs.writeFile(filePath, JSON.stringify(records, null, 2), (err) => {
-      if (err) {
-        console.error('Error saving records:', err);
-      } else {
-        console.log(`Records saved successfully to ${filePath}`);
-      }
+
+    return new Promise((resolve) => {
+      fs.writeFile(filePath, JSON.stringify(records, null, 2), (err) => {
+        if (err) {
+          console.error('Error saving records:', err);
+        } else {
+          console.log(`Records saved successfully to ${filePath}`);
+        }
+        resolve();
+      });
     });
   }
 
