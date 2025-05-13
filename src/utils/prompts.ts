@@ -148,7 +148,11 @@ ${
             `${tool.name}: ${
               tool.description
             } Tool Input Schema: ${JSON.stringify(
-              zodToJsonSchema(tool.schema)
+              tool.schema &&
+                typeof tool.schema === 'object' &&
+                '_def' in tool.schema
+                ? zodToJsonSchema(tool.schema)
+                : tool.schema
             )}`
         )
         .join(', ')
