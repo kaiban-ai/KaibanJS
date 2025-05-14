@@ -54,7 +54,7 @@ const webResearcher = new Agent({
 // Create a research task
 const webAnalysisTask = new Task({
   description:
-    'Fetches web content from the followin URL: {url} and provides a structured summary',
+    'Fetches web content from the following URL: {url} and provides a structured summary',
   agent: webResearcher,
   expectedOutput: 'A well-formatted analysis of the website content',
 });

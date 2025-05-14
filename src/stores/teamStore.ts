@@ -815,10 +815,10 @@ const createTeamStore = (
     },
   });
 
-  const subcribeWithSelectorFn =
+  const subscribeWithSelectorFn =
     subscribeWithSelector<CombinedStoresState>(stateCreatorFn);
 
-  const devtoolsFn = devtools(subcribeWithSelectorFn, {
+  const devtoolsFn = devtools(subscribeWithSelectorFn, {
     name: 'teamStore',
   });
 
