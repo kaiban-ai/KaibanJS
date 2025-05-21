@@ -58,6 +58,7 @@ export function getApiKey(
     google: env.GOOGLE_API_KEY,
     mistral: env.MISTRAL_API_KEY,
     openai: env.OPENAI_API_KEY,
+    deepseek: env.DEEPSEEK_API_KEY,
   };
 
   return llmConfig?.provider ? apiKeys[llmConfig.provider] : llmConfig?.apiKey;

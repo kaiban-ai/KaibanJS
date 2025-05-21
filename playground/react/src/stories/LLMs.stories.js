@@ -8,7 +8,7 @@ import teamOllama from '../teams/llms/ollama';
 import teamCohere from '../teams/llms/cohere';
 import teamAzureOpenAI from '../teams/llms/azure_openai';
 import teamGroq from '../teams/llms/groq';
-
+import teamDeepSeek from '../teams/llms/deepseek';
 export default {
   title: 'LLMs/Playground',
   component: AgentsBoardDebugger,
@@ -67,5 +67,12 @@ export const withGroq = {
   args: {
     team: teamGroq,
     title: 'With Groq',
+  },
+};
+
+export const withDeepSeek = {
+  args: {
+    team: teamDeepSeek,
+    title: 'With DeepSeek',
   },
 };
