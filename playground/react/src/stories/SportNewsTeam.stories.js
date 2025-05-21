@@ -3,6 +3,7 @@ import teamOpenAI from '../teams/sport_news/openai';
 import teamAnthropic from '../teams/sport_news/anthropic';
 import teamGemini from '../teams/sport_news/gemini';
 import teamMistral from '../teams/sport_news/mistral';
+import teamDeepSeek from '../teams/sport_news/deepseek';
 
 import '../index.css';
 
@@ -38,5 +39,12 @@ export const withMistral = {
   args: {
     team: teamMistral,
     title: 'With Mistral Model',
+  },
+};
+
+export const withDeepSeek = {
+  args: {
+    team: teamDeepSeek,
+    title: 'With DeepSeek Model',
   },
 };

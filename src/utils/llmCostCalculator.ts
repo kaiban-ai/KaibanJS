@@ -179,6 +179,28 @@ const modelsPricing: ModelPricing[] = [
     features:
       'State-of-the-art Mistral model trained specifically for code tasks',
   },
+  // DeepSeek Models
+  {
+    modelCode: 'deepseek-chat',
+    provider: 'deepseek',
+    inputPricePerMillionTokens: 0.27,
+    outputPricePerMillionTokens: 1.1,
+    features: 'DeepSeek Chat is a powerful and versatile model',
+  },
+  {
+    modelCode: 'deepseek-coder',
+    provider: 'deepseek',
+    inputPricePerMillionTokens: 0.15,
+    outputPricePerMillionTokens: 0.6,
+    features: 'DeepSeek Coder is a powerful and versatile model',
+  },
+  {
+    modelCode: 'deepseek-reasoner',
+    provider: 'deepseek',
+    inputPricePerMillionTokens: 0.55,
+    outputPricePerMillionTokens: 2.2,
+    features: 'DeepSeek Reasoner is a powerful and versatile model',
+  },
 ];
 
 /**
