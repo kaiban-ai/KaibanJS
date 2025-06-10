@@ -1,7 +1,7 @@
 {
-  "name": "@mastra/cue",
+  "name": "@kaibanjs/cue",
   "version": "0.1.0",
-  "description": "A browser-compatible workflow engine for Mastra",
+  "description": "A browser-compatible workflow engine for kaibanjs",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",

@@ -1,6 +1,6 @@
-# @mastra/cue
+# @kaibanjs/cue
 
-A browser-compatible workflow engine for Mastra, inspired by the original workflow implementation but redesigned for better type safety and browser compatibility.
+A browser-compatible workflow engine for kaibanjs, inspired by the original workflow implementation but redesigned for better type safety and browser compatibility.
 
 ## Features
 
@@ -14,7 +14,7 @@ A browser-compatible workflow engine for Mastra, inspired by the original workfl
 ## Installation
 
 ```bash
-npm install @mastra/cue
+npm install @kaibanjs/cue
 ```
 
 ## Usage
@@ -22,7 +22,7 @@ npm install @mastra/cue
 ### Basic Example
 
 ```typescript
-import { Cue } from '@mastra/cue';
+import { Cue } from '@kaibanjs/cue';
 import { z } from 'zod';
 
 // Create blocks
@@ -134,7 +134,7 @@ The context object passed to block execution functions.
 1. **Browser Compatibility**: Uses eventemitter3 instead of Node's EventEmitter
 2. **Type Safety**: Enhanced type safety with Zod schemas
 3. **Simplified API**: Removed dependencies on external services
-4. **Independent**: No dependency on Mastra core services
+4. **Independent**: No dependency on kaibanjs core services
 
 ## TODO
 
