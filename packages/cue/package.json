@@ -1,0 +1,32 @@
+{
+  "name": "@mastra/cue",
+  "version": "0.1.0",
+  "description": "A browser-compatible workflow engine for Mastra",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest",
+    "lint": "eslint src --ext .ts,.tsx",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "dev": "tsx watch src/examples/nested-parallels.ts"
+  },
+  "dependencies": {
+    "eventemitter3": "^5.0.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.5",
+    "tsup": "^8.0.2",
+    "tsx": "^4.19.4",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.2"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
+  }
+}
