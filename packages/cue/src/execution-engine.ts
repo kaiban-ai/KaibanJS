@@ -421,6 +421,14 @@ export class CueExecutionEngine {
         },
       };
 
+      // Log running state before executing the block
+      const runningResult: BlockResult = {
+        status: 'running',
+        output: undefined,
+      };
+      blockResults[block.id] = runningResult;
+      this.store.getState().updateBlockResult(block.id, runningResult);
+
       // Execute the block
       const output = await block.execute(context);
 
@@ -610,7 +618,7 @@ export class CueExecutionEngine {
       };
     }
 
-    return this.executeEntry({
+    const result = await this.executeEntry({
       ...params,
       entry: entry.blocks[matchingIndex]!,
       prevStep: prevStep || {
@@ -623,6 +631,15 @@ export class CueExecutionEngine {
         } as Block<any, any>,
       },
     });
+
+    // Update the block result in the store
+    if (entry.blocks[matchingIndex]?.type === 'block') {
+      this.store
+        .getState()
+        .updateBlockResult(entry.blocks[matchingIndex].block.id, result);
+    }
+
+    return result;
   }
 
   private async executeLoop(params: {
@@ -778,6 +795,11 @@ export class CueExecutionEngine {
           })
         )
       );
+
+      // Log block status updates for each parallel block
+      chunkResults.forEach((result, index) => {
+        this.store.getState().updateBlockResult(entry.block.id, result);
+      });
 
       const hasFailed = chunkResults.some(
         (result) => result.status === 'failed'

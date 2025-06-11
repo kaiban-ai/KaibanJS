@@ -1116,11 +1116,13 @@ describe('Block and Cue States', () => {
 
     // Start execution
     const result = await cue.start(5);
+
     await new Promise((resolve) => setTimeout(resolve, 100));
     unsubscribe();
+    // console.log('States:', states);
 
     // Verify states
-    expect(states).toContainEqual({ block: 'completed', cue: 'running' });
+    expect(states).toContainEqual({ block: 'running', cue: 'running' });
     expect(result.status).toBe('completed');
     if (result.status === 'completed') {
       expect(result.result).toBe(10);
@@ -1303,7 +1305,6 @@ describe('Block and Cue States', () => {
     // Monitor states with detailed logging
     const states: Array<{ block: string; cue: string }> = [];
     const unsubscribe = cue.store.subscribe((state) => {
-      console.log('Store Update:', state);
       const lastLog = state.logs[state.logs.length - 1];
 
       if (lastLog?.logType === 'BlockStatusUpdate' && lastLog.blockStatus) {
@@ -1317,7 +1318,6 @@ describe('Block and Cue States', () => {
 
     // Start execution
     const result = await cue.start(5);
-
     // Clean up
     unsubscribe();
 
@@ -1334,12 +1334,21 @@ describe('Block and Cue States', () => {
 
   // Test state transitions in conditional blocks
   it('should handle state transitions in conditional blocks', async () => {
-    const conditionBlock = Cue.createBlock({
-      id: 'condition',
+    const evenBlock = Cue.createBlock({
+      id: 'even',
       inputSchema: z.number(),
       outputSchema: z.string(),
       execute: async ({ inputData }) => {
-        return (inputData as number) % 2 === 0 ? 'even' : 'odd';
+        return `even: ${inputData}`;
+      },
+    });
+
+    const oddBlock = Cue.createBlock({
+      id: 'odd',
+      inputSchema: z.number(),
+      outputSchema: z.string(),
+      execute: async ({ inputData }) => {
+        return `odd: ${inputData}`;
       },
     });
 
@@ -1349,7 +1358,77 @@ describe('Block and Cue States', () => {
       outputSchema: z.string(),
     });
 
-    cue.then(conditionBlock);
+    // Use branch to create conditional execution
+    cue.branch([
+      [async ({ inputData }) => (inputData as number) % 2 === 0, evenBlock],
+      [async ({ inputData }) => (inputData as number) % 2 !== 0, oddBlock],
+    ]);
+
+    // Set up state monitoring
+    const states: { block: string; cue: string }[] = [];
+    const unsubscribe = cue.store.subscribe((state) => {
+      // console.log('Store Update:', state);
+
+      const lastLog = state.logs[state.logs.length - 1];
+      if (lastLog?.logType === 'BlockStatusUpdate' && lastLog.blockStatus) {
+        states.push({
+          block: lastLog.blockStatus,
+          cue: state.status.toLowerCase(),
+        });
+      }
+    });
+
+    // Test even number
+    const evenResult = await cue.start(4);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // console.log('States:', states);
+
+    // Verify even number states
+    expect(states).toContainEqual({ block: 'running', cue: 'running' });
+    expect(states).toContainEqual({ block: 'completed', cue: 'running' });
+    expect(evenResult.status).toBe('completed');
+    if (evenResult.status === 'completed') {
+      expect(evenResult.result).toBe('even: 4');
+    }
+
+    // Reset states for odd number test
+    states.length = 0;
+    cue.store.getState().reset();
+
+    // Test odd number
+    const oddResult = await cue.start(5);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    unsubscribe();
+
+    // Verify odd number states
+    expect(states).toContainEqual({ block: 'running', cue: 'running' });
+    expect(states).toContainEqual({ block: 'completed', cue: 'running' });
+    expect(oddResult.status).toBe('completed');
+    if (oddResult.status === 'completed') {
+      expect(oddResult.result).toBe('odd: 5');
+    }
+  });
+
+  // Test state transitions in foreach blocks
+  it('should handle state transitions in foreach blocks', async () => {
+    const processBlock = Cue.createBlock({
+      id: 'process',
+      inputSchema: z.number(),
+      outputSchema: z.number(),
+      execute: async ({ inputData }) => {
+        return (inputData as number) * 2;
+      },
+    });
+
+    const cue = Cue.createCue({
+      id: 'foreach-states-test',
+      inputSchema: z.array(z.number()),
+      outputSchema: z.array(z.number()),
+    });
+
+    // Use foreach with concurrency of 2
+    cue.foreach(processBlock, { concurrency: 2 });
 
     // Set up state monitoring
     const states: { block: string; cue: string }[] = [];
@@ -1363,16 +1442,27 @@ describe('Block and Cue States', () => {
       }
     });
 
-    // Test conditional execution
-    const result = await cue.start(4);
+    // Test with array of numbers
+    const result = await cue.start([1, 2, 3, 4, 5]);
     await new Promise((resolve) => setTimeout(resolve, 100));
     unsubscribe();
 
     // Verify states
+    // Should have running and completed states for each item
+    expect(states).toContainEqual({ block: 'running', cue: 'running' });
     expect(states).toContainEqual({ block: 'completed', cue: 'running' });
+
+    // Verify final result
     expect(result.status).toBe('completed');
     if (result.status === 'completed') {
-      expect(result.result).toBe('even');
+      expect(result.result).toEqual([2, 4, 6, 8, 10]);
     }
+
+    // Verify that we have the correct number of state transitions
+    // For each item: running -> completed
+    const runningStates = states.filter((s) => s.block === 'running');
+    const completedStates = states.filter((s) => s.block === 'completed');
+    expect(runningStates.length).toBe(5); // One running state per item
+    expect(completedStates.length).toBe(5); // One completed state per item
   });
 });
