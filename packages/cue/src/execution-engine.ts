@@ -4,7 +4,6 @@ import type {
   BlockContext,
   BlockFlowEntry,
   BlockResult,
-  BlockStatus,
   RuntimeContext,
 } from './types';
 import { useCueStore } from './stores/cueStore';
@@ -321,7 +320,7 @@ export class CueExecutionEngine {
       prevStep.type === 'conditional'
     ) {
       return prevStep.blocks.reduce(
-        (acc: Record<string, any>, block, index) => {
+        (acc: Record<string, any>, block, _index) => {
           if (block.type === 'block') {
             acc[block.block.id] = blockResults[block.block.id]?.output;
           }
@@ -351,13 +350,10 @@ export class CueExecutionEngine {
     resumeData?: any;
   }): Promise<BlockResult> {
     const {
-      cueId,
-      runId,
       block,
       prevStep,
       blockResults,
       executionContext,
-      emitter,
       inputData,
       runtimeContext,
       isResuming,
@@ -480,8 +476,7 @@ export class CueExecutionEngine {
       resumePath: number[];
     };
   }): Promise<BlockResult> {
-    const { entry, blockResults, executionContext, emitter, inputData } =
-      params;
+    const { entry, inputData } = params;
 
     const results = await Promise.all(
       entry.blocks.map((block) =>
@@ -527,18 +522,15 @@ export class CueExecutionEngine {
 
     return {
       status: 'completed',
-      output: results.reduce(
-        (acc, result, index) => {
-          if (result.status === 'completed') {
-            const currentEntry = entry.blocks[index]!;
-            if (currentEntry.type === 'block') {
-              acc[currentEntry.block.id] = result.output;
-            }
+      output: results.reduce((acc, result, index) => {
+        if (result.status === 'completed') {
+          const currentEntry = entry.blocks[index]!;
+          if (currentEntry.type === 'block') {
+            acc[currentEntry.block.id] = result.output;
           }
-          return acc;
-        },
-        {} as Record<string, any>
-      ),
+        }
+        return acc;
+      }, {} as Record<string, any>),
     };
   }
 
@@ -556,14 +548,8 @@ export class CueExecutionEngine {
     inputData: any;
     prevStep?: BlockFlowEntry;
   }): Promise<BlockResult> {
-    const {
-      entry,
-      blockResults,
-      executionContext,
-      emitter,
-      inputData,
-      prevStep,
-    } = params;
+    const { entry, blockResults, executionContext, inputData, prevStep } =
+      params;
 
     // Store the initial input data if it's not already stored
     if (!blockResults.input) {
@@ -663,14 +649,7 @@ export class CueExecutionEngine {
       resumePath: number[];
     };
   }): Promise<BlockResult> {
-    const {
-      entry,
-      blockResults,
-      executionContext,
-      emitter,
-      prevStep,
-      inputData,
-    } = params;
+    const { entry, blockResults, executionContext, inputData } = params;
 
     // Store the initial input data if it's not already stored
     if (!blockResults.input) {
@@ -772,8 +751,7 @@ export class CueExecutionEngine {
       resumePath: number[];
     };
   }): Promise<BlockResult> {
-    const { entry, blockResults, executionContext, emitter, inputData } =
-      params;
+    const { entry, blockResults, inputData } = params;
     if (!Array.isArray(inputData)) {
       return {
         status: 'failed',
@@ -797,7 +775,7 @@ export class CueExecutionEngine {
       );
 
       // Log block status updates for each parallel block
-      chunkResults.forEach((result, index) => {
+      chunkResults.forEach((result) => {
         this.store.getState().updateBlockResult(entry.block.id, result);
       });
 

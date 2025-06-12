@@ -7,7 +7,6 @@ import type {
   CueConfig,
   CueResult,
   SerializedBlockFlowEntry,
-  WatchEvent,
   MappingConfig,
   RuntimeContext,
 } from './types';
@@ -26,7 +25,7 @@ interface ExtendedWatchEvent {
 export class Cue<
   TInput,
   TOutput,
-  TSteps extends Record<string, Block<any, any>>,
+  TSteps extends Record<string, Block<any, any>>
 > implements Block<TInput, TOutput>
 {
   public id: string;
@@ -80,7 +79,7 @@ export class Cue<
   static createCue<
     TInput,
     TOutput,
-    TSteps extends Record<string, Block<any, any>>,
+    TSteps extends Record<string, Block<any, any>>
   >(config: CueConfig<TInput, TOutput, TSteps>): Cue<TInput, TOutput, TSteps> {
     return new Cue(config);
   }
@@ -463,7 +462,7 @@ export class Cue<
       | Block<string, any, TResumeSchema, any>
       | [
           ...Block<string, any, any, any>[],
-          Block<string, any, TResumeSchema, any>,
+          Block<string, any, TResumeSchema, any>
         ]
       | string
       | string[];

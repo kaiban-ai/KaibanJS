@@ -5,7 +5,13 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js"
+    }
+  },
   "scripts": {
     "build": "tsup",
     "test": "vitest",
@@ -14,7 +20,11 @@
     "dev": "tsx watch src/examples/nested-parallels.ts"
   },
   "dependencies": {
-    "eventemitter3": "^5.0.1",
+    "@kaibanjs/tools": "../tools",
+    "@langchain/community": "^0.3.46",
+    "@langchain/core": "^0.3.58",
+    "@langchain/openai": "^0.5.13",
+    "langchain": "^0.3.28",
     "zod": "^3.22.4"
   },
   "devDependencies": {
