@@ -69,12 +69,15 @@ export const subscribeDeterministicExecution = (teamStore: TeamStore): void => {
       const dependency: Task | undefined = teamStoreState.tasks.find(
         (t) => t.id === dependencyId
       );
-      const dependencyResultsLogs = logs.find(
-        (l) =>
-          l.logType === 'TaskStatusUpdate' &&
-          (l as TaskStatusLog).taskStatus === TASK_STATUS_enum.DONE &&
-          (l as TaskStatusLog).task.id === dependencyId
-      ) as TaskCompletionLog | undefined;
+      //Find last log for the dependency, latest is needed because it could be feedback in same task.
+      const dependencyResultsLogs = [...logs]
+        .reverse()
+        .find(
+          (l) =>
+            l.logType === 'TaskStatusUpdate' &&
+            (l as TaskStatusLog).taskStatus === TASK_STATUS_enum.DONE &&
+            (l as TaskStatusLog).task.id === dependencyId
+        ) as TaskCompletionLog | undefined;
 
       if (!dependencyResultsLogs || !dependency) {
         console.warn(
@@ -298,9 +301,24 @@ export const subscribeDeterministicExecution = (teamStore: TeamStore): void => {
         _queueTasksReadyToExecute(state);
         break;
 
-      case TASK_STATUS_enum.REVISE:
+      case TASK_STATUS_enum.REVISE: {
+        const dependencies = contextDepGraph.dependenciesOf(task.id);
+        for (const dependency of dependencies) {
+          const dependencyTask = state.tasks.find((t) => t.id === dependency);
+          if (dependencyTask) {
+            state.updateTaskStatus(dependencyTask.id, TASK_STATUS_enum.TODO);
+          }
+        }
+        _initializeGraph();
+
+        state.tasks.forEach((t) => {
+          if (!dependencies.includes(t.id)) {
+            executionDepGraph.removeNode(t.id);
+          }
+        });
         _queueTask({ teamStoreState: state, task, highPriority: true });
         break;
+      }
 
       case TASK_STATUS_enum.RESUMED:
         _queueTask({ teamStoreState: state, task, resume: true });

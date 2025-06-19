@@ -1,6 +1,6 @@
 {
   "name": "kaibanjs",
-  "version": "0.21.0",
+  "version": "0.21.1",
   "description": "AI Multi-Agent library for Javascript Developers.",
   "main": "./dist/bundle.cjs",
   "types": "./dist/bundle.d.ts",

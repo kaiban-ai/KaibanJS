@@ -298,7 +298,7 @@ export class ReactChampionAgent extends BaseAgent {
 
     return {
       executableAgent: chainAgentWithHistory,
-      initialFeedbackMessage: this.lastFeedbackMessage || feedbackMessage,
+      initialFeedbackMessage: feedbackMessage,
     };
   }
 
