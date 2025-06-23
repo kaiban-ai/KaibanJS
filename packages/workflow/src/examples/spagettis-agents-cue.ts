@@ -7,7 +7,7 @@ import {
   SystemMessagePromptTemplate,
   HumanMessagePromptTemplate,
 } from '@langchain/core/prompts';
-import { Cue } from '../../src/cue';
+import { Workflow } from '../workflow';
 import { z } from 'zod';
 
 require('dotenv').config({ path: './.env' });
@@ -82,14 +82,14 @@ const createSummarizeAgent = async () => {
 
 // Create the workflow
 const createAgentsWorkflow = () => {
-  const cue = Cue.createCue({
+  const workflow = Workflow.createWorkflow({
     id: 'agents-workflow',
     inputSchema: z.string(),
     outputSchema: z.string(),
   });
 
-  // First block: Search Agent
-  const searchBlock = Cue.createBlock({
+  // First step: Search Agent
+  const searchStep = Workflow.createStep({
     id: 'search',
     inputSchema: z.string(),
     outputSchema: z.string(),
@@ -102,8 +102,8 @@ const createAgentsWorkflow = () => {
     },
   });
 
-  // Second block: Summarize Agent
-  const summarizeBlock = Cue.createBlock({
+  // Second step: Summarize Agent
+  const summarizeStep = Workflow.createStep({
     id: 'summarize',
     inputSchema: z.string(),
     outputSchema: z.string(),
@@ -116,10 +116,10 @@ const createAgentsWorkflow = () => {
     },
   });
 
-  // Connect the blocks sequentially
-  cue.then(searchBlock).then(summarizeBlock);
+  // Connect the steps sequentially
+  workflow.then(searchStep).then(summarizeStep);
 
-  return cue;
+  return workflow;
 };
 
 const log = (message: string, data?: any) => {
@@ -129,19 +129,19 @@ const log = (message: string, data?: any) => {
   }
 };
 
-const monitorCue = (cue: Cue<any, any, any>) => {
-  // Monitor overall Cue status
-  cue.watch((event) => {
-    log(`Cue Status Update: ${event.type}`, event.data);
+const monitorWorkflow = (workflow: Workflow<any, any, any>) => {
+  // Monitor overall Workflow status
+  workflow.watch((event) => {
+    log(`Workflow Status Update: ${event.type}`, event.data);
   });
 
-  // Monitor block results
-  const unsubscribe = cue.store.subscribe((state) => {
-    // Log when a new block result is added
+  // Monitor step results
+  const unsubscribe = workflow.store.subscribe((state) => {
+    // Log when a new step result is added
     const lastLog = state.logs[state.logs.length - 1];
-    if (lastLog?.logType === 'BlockStatusUpdate') {
-      log(`Block ${lastLog.blockId} Status: ${lastLog.blockStatus}`, {
-        result: lastLog.blockResult,
+    if (lastLog?.logType === 'StepStatusUpdate') {
+      log(`Step ${lastLog.stepId} Status: ${lastLog.stepStatus}`, {
+        result: lastLog.stepResult,
         executionPath: state.executionPath,
       });
     }
@@ -154,7 +154,7 @@ const monitorCue = (cue: Cue<any, any, any>) => {
 const main = async () => {
   try {
     const workflow = createAgentsWorkflow();
-    const unsubscribeMain = monitorCue(workflow);
+    const unsubscribeMain = monitorWorkflow(workflow);
 
     const result = await workflow.start(
       'What are the latest developments in artificial intelligence on june 2025?'

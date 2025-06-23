@@ -1,6 +1,5 @@
 import { z } from 'zod';
-import { Cue } from '../cue';
-import { CUE_STATUS } from '../stores/cueStore';
+import { Workflow } from '../workflow';
 
 // Create a simple logging utility
 const log = (message: string, data?: any) => {
@@ -11,19 +10,19 @@ const log = (message: string, data?: any) => {
 };
 
 // Create a monitoring utility
-const monitorCue = (cue: Cue<any, any, any>) => {
-  // Monitor overall Cue status
-  cue.watch((event) => {
-    log(`Cue Status Update: ${event.type}`, event.data);
+const monitorWorkflow = (workflow: Workflow<any, any, any>) => {
+  // Monitor overall Workflow status
+  workflow.watch((event) => {
+    log(`Workflow Status Update: ${event.type}`, event.data);
   });
 
-  // Monitor block results
-  const unsubscribe = cue.store.subscribe((state) => {
-    // Log when a new block result is added
+  // Monitor step results
+  const unsubscribe = workflow.store.subscribe((state) => {
+    // Log when a new step result is added
     const lastLog = state.logs[state.logs.length - 1];
-    if (lastLog?.logType === 'BlockStatusUpdate') {
-      log(`Block ${lastLog.blockId} Status: ${lastLog.blockStatus}`, {
-        result: lastLog.blockResult,
+    if (lastLog?.logType === 'StepStatusUpdate') {
+      log(`Step ${lastLog.stepId} Status: ${lastLog.stepStatus}`, {
+        result: lastLog.stepResult,
         executionPath: state.executionPath,
       });
     }
@@ -32,9 +31,9 @@ const monitorCue = (cue: Cue<any, any, any>) => {
   return unsubscribe;
 };
 
-// Create a complex cue with various block patterns
-const complexCue = Cue.createCue({
-  id: 'complex-cue',
+// Create a complex workflow with various step patterns
+const complexWorkflow = Workflow.createWorkflow({
+  id: 'complex-workflow',
   inputSchema: z.object({
     initialValue: z.number(),
     shouldFail: z.boolean().optional(),
@@ -43,12 +42,12 @@ const complexCue = Cue.createCue({
   outputSchema: z.object({
     finalResult: z.number(),
     executionPath: z.array(z.string()),
-    blockResults: z.record(z.any()),
+    stepResults: z.record(z.any()),
   }),
 });
 
-// 1. Initial processing block
-const initialProcessBlock = Cue.createBlock({
+// 1. Initial processing step
+const initialProcessStep = Workflow.createStep({
   id: 'initial-process',
   inputSchema: z.object({
     initialValue: z.number(),
@@ -57,37 +56,37 @@ const initialProcessBlock = Cue.createBlock({
   }),
   outputSchema: z.number(),
   execute: async ({ inputData }) => {
-    log('Executing initial process block', inputData);
+    log('Executing initial process step', inputData);
     await new Promise((resolve) => setTimeout(resolve, 3000)); // Simulating API call
     return inputData.initialValue * 2;
   },
 });
 
-// 2. Parallel processing blocks
-const parallelBlock1 = Cue.createBlock({
+// 2. Parallel processing steps
+const parallelStep1 = Workflow.createStep({
   id: 'parallel-1',
   inputSchema: z.number(),
   outputSchema: z.number(),
   execute: async ({ inputData }) => {
-    log('Executing parallel block 1', inputData);
+    log('Executing parallel step 1', inputData);
     await new Promise((resolve) => setTimeout(resolve, 3000)); // Simulating API call
     return inputData + 10;
   },
 });
 
-const parallelBlock2 = Cue.createBlock({
+const parallelStep2 = Workflow.createStep({
   id: 'parallel-2',
   inputSchema: z.number(),
   outputSchema: z.number(),
   execute: async ({ inputData }) => {
-    log('Executing parallel block 2', inputData);
+    log('Executing parallel step 2', inputData);
     await new Promise((resolve) => setTimeout(resolve, 3000)); // Simulating API call
     return inputData * 3;
   },
 });
 
-// 3. Conditional block
-const conditionalBlock = Cue.createBlock({
+// 3. Conditional step
+const conditionalStep = Workflow.createStep({
   id: 'conditional',
   inputSchema: z.object({
     value: z.number(),
@@ -95,29 +94,29 @@ const conditionalBlock = Cue.createBlock({
   }),
   outputSchema: z.number(),
   execute: async ({ inputData }) => {
-    log('Executing conditional block', inputData);
+    log('Executing conditional step', inputData);
     await new Promise((resolve) => setTimeout(resolve, 3000)); // Simulating API call
     if (inputData.shouldFail) {
-      throw new Error('Conditional block failed as requested');
+      throw new Error('Conditional step failed as requested');
     }
     return inputData.value + 5;
   },
 });
 
-// 4. Loop block
-const loopBlock = Cue.createBlock({
+// 4. Loop step
+const loopStep = Workflow.createStep({
   id: 'loop',
   inputSchema: z.number(),
   outputSchema: z.number(),
   execute: async ({ inputData }) => {
-    log('Executing loop block', inputData);
+    log('Executing loop step', inputData);
     await new Promise((resolve) => setTimeout(resolve, 3000)); // Simulating API call
     return inputData - 2;
   },
 });
 
-// 5. Suspendable block
-const suspendableBlock = Cue.createBlock({
+// 5. Suspendable step
+const suspendableStep = Workflow.createStep({
   id: 'suspendable',
   inputSchema: z.object({
     value: z.number(),
@@ -125,38 +124,38 @@ const suspendableBlock = Cue.createBlock({
   }),
   outputSchema: z.number(),
   execute: async ({ inputData, suspend }) => {
-    log('Executing suspendable block', inputData);
+    log('Executing suspendable step', inputData);
     await new Promise((resolve) => setTimeout(resolve, 3000)); // Simulating API call
     if (inputData.shouldSuspend) {
-      await suspend({ message: 'Block suspended as requested' });
+      await suspend({ message: 'Step suspended as requested' });
     }
     return inputData.value * 2;
   },
 });
 
-// 6. Final processing block
-const finalProcessBlock = Cue.createBlock({
+// 6. Final processing step
+const finalProcessStep = Workflow.createStep({
   id: 'final-process',
   inputSchema: z.any(),
   outputSchema: z.object({
     finalResult: z.number(),
     executionPath: z.array(z.string()),
-    blockResults: z.record(z.any()),
+    stepResults: z.record(z.any()),
   }),
-  execute: async ({ getBlockResult }) => {
-    log('Executing final process block');
+  execute: async ({ getStepResult }) => {
+    log('Executing final process step');
     await new Promise((resolve) => setTimeout(resolve, 3000)); // Simulating API call
     const results = {
       initial:
-        (getBlockResult(initialProcessBlock) as { initialValue: number })
+        (getStepResult(initialProcessStep.id) as { initialValue: number })
           .initialValue * 2,
-      parallel1: getBlockResult(parallelBlock1) as number,
-      parallel2: getBlockResult(parallelBlock2) as number,
+      parallel1: getStepResult(parallelStep1.id) as number,
+      parallel2: getStepResult(parallelStep2.id) as number,
       conditional:
-        (getBlockResult(conditionalBlock) as { value: number }).value + 5,
-      loop: getBlockResult(loopBlock) as number,
+        (getStepResult(conditionalStep.id) as { value: number }).value + 5,
+      loop: getStepResult(loopStep.id) as number,
       suspendable:
-        (getBlockResult(suspendableBlock) as { value: number }).value * 2,
+        (getStepResult(suspendableStep.id) as { value: number }).value * 2,
     };
 
     return {
@@ -169,32 +168,32 @@ const finalProcessBlock = Cue.createBlock({
         'suspendable',
         'final',
       ],
-      blockResults: results,
+      stepResults: results,
     };
   },
 });
 
 // Build the complex flow
-complexCue
-  .then(initialProcessBlock)
-  .parallel([parallelBlock1, parallelBlock2])
-  .then(conditionalBlock)
-  .dowhile(loopBlock, async ({ getBlockResult }) => {
-    const result = getBlockResult(loopBlock);
+complexWorkflow
+  .then(initialProcessStep)
+  .parallel([parallelStep1, parallelStep2])
+  .then(conditionalStep)
+  .dowhile(loopStep, async ({ getStepResult }) => {
+    const result = getStepResult(loopStep.id) as number;
     return result > 0;
   })
-  .then(suspendableBlock)
-  .then(finalProcessBlock);
+  .then(suspendableStep)
+  .then(finalProcessStep);
 
 // Set up monitoring
-const unsubscribe = monitorCue(complexCue);
+const unsubscribe = monitorWorkflow(complexWorkflow);
 
 // Test cases
 async function runTestCases() {
   try {
     // Test case 1: Normal execution
     log('\n=== Test Case 1: Normal Execution ===');
-    const result1 = await complexCue.start({
+    const result1 = await complexWorkflow.start({
       initialValue: 10,
       shouldFail: false,
       shouldSuspend: false,
@@ -204,7 +203,7 @@ async function runTestCases() {
     // Test case 2: With failure
     log('\n=== Test Case 2: With Failure ===');
     try {
-      await complexCue.start({
+      await complexWorkflow.start({
         initialValue: 10,
         shouldFail: true,
         shouldSuspend: false,
@@ -215,7 +214,7 @@ async function runTestCases() {
 
     // Test case 3: With suspension
     log('\n=== Test Case 3: With Suspension ===');
-    const result3 = await complexCue.start({
+    const result3 = await complexWorkflow.start({
       initialValue: 10,
       shouldFail: false,
       shouldSuspend: true,
@@ -223,10 +222,10 @@ async function runTestCases() {
     log('Test Case 3 Result', result3);
 
     // Example of accessing store state directly
-    const finalState = complexCue.store.getState();
+    const finalState = complexWorkflow.store.getState();
     log('Final Store State', {
       status: finalState.status,
-      totalBlocks: finalState.blockResults.size,
+      totalSteps: finalState.stepResults.size,
       executionPath: finalState.executionPath,
       logs: finalState.logs.map((log) => ({
         type: log.logType,

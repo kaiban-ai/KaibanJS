@@ -1,4 +1,4 @@
-# @kaibanjs/cue
+# @kaibanjs/workflow
 
 A browser-compatible workflow engine for kaibanjs, inspired by the original workflow implementation but redesigned for better type safety and browser compatibility.
 
@@ -6,7 +6,7 @@ A browser-compatible workflow engine for kaibanjs, inspired by the original work
 
 - Type-safe workflow definitions using Zod schemas
 - Browser-compatible event handling using eventemitter3
-- Sequential and parallel block execution
+- Sequential and parallel step execution
 - Input/output validation
 - Error handling
 - Execution monitoring through watch events
@@ -14,7 +14,7 @@ A browser-compatible workflow engine for kaibanjs, inspired by the original work
 ## Installation
 
 ```bash
-npm install @kaibanjs/cue
+npm install @kaibanjs/workflow
 ```
 
 ## Usage
@@ -22,11 +22,11 @@ npm install @kaibanjs/cue
 ### Basic Example
 
 ```typescript
-import { Cue } from '@kaibanjs/cue';
+import { Workflow } from '@kaibanjs/workflow';
 import { z } from 'zod';
 
-// Create blocks
-const addBlock = Cue.createBlock({
+// Create steps
+const addStep = Workflow.createStep({
   id: 'add',
   inputSchema: z.object({ a: z.number(), b: z.number() }),
   outputSchema: z.object({ sum: z.number() }),
@@ -35,7 +35,7 @@ const addBlock = Cue.createBlock({
   }),
 });
 
-const multiplyBlock = Cue.createBlock({
+const multiplyStep = Workflow.createStep({
   id: 'multiply',
   inputSchema: z.object({ sum: z.number() }),
   outputSchema: z.object({ result: z.number() }),
@@ -44,32 +44,32 @@ const multiplyBlock = Cue.createBlock({
   }),
 });
 
-// Create cue
-const mathCue = Cue.createCue({
-  id: 'math-cue',
+// Create workflow
+const mathWorkflow = Workflow.createWorkflow({
+  id: 'math-workflow',
   inputSchema: z.object({ a: z.number(), b: z.number() }),
   outputSchema: z.object({ result: z.number() }),
-  blocks: {
-    add: addBlock,
-    multiply: multiplyBlock,
+  steps: {
+    add: addStep,
+    multiply: multiplyStep,
   },
 });
 
-// Execute cue
-const result = await mathCue.start({ a: 2, b: 3 });
+// Execute workflow
+const result = await mathWorkflow.start({ a: 2, b: 3 });
 console.log(result); // { status: 'success', result: { result: 10 } }
 ```
 
 ### Watching Execution
 
 ```typescript
-const unsubscribe = mathCue.watch((event) => {
-  console.log('Current block:', event.payload.currentBlock);
-  console.log('Cue state:', event.payload.cueState);
+const unsubscribe = mathWorkflow.watch((event) => {
+  console.log('Current step:', event.payload.currentStep);
+  console.log('Workflow state:', event.payload.workflowState);
 });
 
-// Execute cue
-await mathCue.start({ a: 2, b: 3 });
+// Execute workflow
+await mathWorkflow.start({ a: 2, b: 3 });
 
 // Clean up
 unsubscribe();
@@ -78,7 +78,7 @@ unsubscribe();
 ### Error Handling
 
 ```typescript
-const result = await mathCue.start({ a: 2, b: 3 });
+const result = await mathWorkflow.start({ a: 2, b: 3 });
 
 if (result.status === 'success') {
   console.log('Success:', result.result);
@@ -89,23 +89,23 @@ if (result.status === 'success') {
 
 ## API Reference
 
-### Cue
+### Workflow
 
 The main class for creating and executing workflows.
 
 #### Static Methods
 
-- `createBlock<TInput, TOutput>(config)`: Creates a new block
-- `createCue<TInput, TOutput, TSteps>(config)`: Creates a new cue
+- `createStep<TInput, TOutput>(config)`: Creates a new step
+- `createWorkflow<TInput, TOutput, TSteps>(config)`: Creates a new workflow
 
 #### Instance Methods
 
-- `start(inputData)`: Starts the cue execution
+- `start(inputData)`: Starts the workflow execution
 - `watch(callback)`: Subscribes to execution events
 
-### Block
+### Step
 
-A unit of work in a cue.
+A unit of work in a workflow.
 
 #### Properties
 
@@ -115,17 +115,17 @@ A unit of work in a cue.
 - `outputSchema`: Zod schema for output validation
 - `resumeSchema`: Optional Zod schema for resume data
 - `suspendSchema`: Optional Zod schema for suspend data
-- `execute`: Async function that performs the block's work
+- `execute`: Async function that performs the step's work
 
-### BlockContext
+### StepContext
 
-The context object passed to block execution functions.
+The context object passed to step execution functions.
 
 #### Properties
 
 - `inputData`: The input data matching the inputSchema
 - `resumeData`: Optional resume data when resuming from suspension
-- `getBlockResult`: Function to access results from other blocks
+- `getStepResult`: Function to access results from other steps
 - `getInitData`: Function to access the initial input data
 - `suspend`: Function to pause execution (for user interaction)
 

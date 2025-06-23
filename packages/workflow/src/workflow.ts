@@ -1,69 +1,74 @@
 import { z } from 'zod';
 import type {
-  Block,
-  BlockContext,
-  BlockFlowEntry,
-  BlockResult,
-  CueConfig,
-  CueResult,
-  SerializedBlockFlowEntry,
+  Step,
+  StepContext,
+  StepFlowEntry,
+  StepResult,
+  WorkflowConfig,
+  WorkflowResult,
+  SerializedStepFlowEntry,
   MappingConfig,
   RuntimeContext,
 } from './types';
-import { CueExecutionEngine } from './execution-engine';
-import { useCueStore, CUE_STATUS, CueStore, CueLog } from './stores/cueStore';
+import { WorkflowExecutionEngine } from './execution-engine';
+import {
+  useWorkflowStore,
+  CUE_STATUS,
+  WorkflowStore,
+  WorkflowLog,
+} from './stores/workflowStore';
 import { StoreApi } from 'zustand';
 
 // Extend WatchEvent type to include data property
 interface ExtendedWatchEvent {
-  type: 'CueStatusUpdate' | 'BlockStatusUpdate';
-  data: CueLog & {
-    blockResults: Record<string, BlockResult>;
+  type: 'WorkflowStatusUpdate' | 'StepStatusUpdate';
+  data: WorkflowLog & {
+    stepResults: Record<string, StepResult>;
   };
 }
 
-export class Cue<
+export class Workflow<
   TInput,
   TOutput,
-  TSteps extends Record<string, Block<any, any>>
-> implements Block<TInput, TOutput>
+  TSteps extends Record<string, Step<any, any>>
+> implements Step<TInput, TOutput>
 {
   public id: string;
   public inputSchema: z.ZodType<TInput>;
   public outputSchema: z.ZodType<TOutput>;
-  private blocks: TSteps;
+  private steps: TSteps;
   private executionGraph: Map<string, Set<string>> = new Map();
-  private currentBlock?: Block<any, any>;
-  private blockResults: Map<string, BlockResult> = new Map();
-  private _blockFlow: BlockFlowEntry[] = [];
-  private _serializedBlockFlow: SerializedBlockFlowEntry[] = [];
+  private currentStep?: Step<any, any>;
+  private stepResults: Map<string, StepResult> = new Map();
+  private _stepFlow: StepFlowEntry[] = [];
+  private _serializedStepFlow: SerializedStepFlowEntry[] = [];
   private retryConfig?: {
     attempts?: number;
     delay?: number;
   };
-  private executionEngine: CueExecutionEngine;
-  public store: StoreApi<CueStore>;
+  private executionEngine: WorkflowExecutionEngine;
+  public store: StoreApi<WorkflowStore>;
 
-  constructor(config: CueConfig<TInput, TOutput, TSteps>) {
+  constructor(config: WorkflowConfig<TInput, TOutput, TSteps>) {
     this.id = config.id;
     this.inputSchema = config.inputSchema;
     this.outputSchema = config.outputSchema;
-    this.blocks = config.blocks || ({} as TSteps);
+    this.steps = config.steps || ({} as TSteps);
     this.retryConfig = config.retryConfig;
-    this.executionEngine = new CueExecutionEngine();
-    this.store = useCueStore;
+    this.executionEngine = new WorkflowExecutionEngine();
+    this.store = useWorkflowStore;
   }
 
-  // Create a new block
-  static createBlock<TInput, TOutput>(config: {
+  // Create a new step
+  static createStep<TInput, TOutput>(config: {
     id: string;
     description?: string;
     inputSchema: z.ZodType<TInput>;
     outputSchema: z.ZodType<TOutput>;
     resumeSchema?: z.ZodType;
     suspendSchema?: z.ZodType;
-    execute: (context: BlockContext<TInput, TOutput>) => Promise<TOutput>;
-  }): Block<TInput, TOutput> {
+    execute: (context: StepContext<TInput, TOutput>) => Promise<TOutput>;
+  }): Step<TInput, TOutput> {
     return {
       id: config.id,
       description: config.description,
@@ -75,51 +80,53 @@ export class Cue<
     };
   }
 
-  // Create a new cue
-  static createCue<
+  // Create a new workflow
+  static createWorkflow<
     TInput,
     TOutput,
-    TSteps extends Record<string, Block<any, any>>
-  >(config: CueConfig<TInput, TOutput, TSteps>): Cue<TInput, TOutput, TSteps> {
-    return new Cue(config);
+    TSteps extends Record<string, Step<any, any>>
+  >(
+    config: WorkflowConfig<TInput, TOutput, TSteps>
+  ): Workflow<TInput, TOutput, TSteps> {
+    return new Workflow(config);
   }
 
-  // Add a block to the execution graph
-  private addToGraph(blockId: string, dependencies: string[] = []) {
-    if (!this.executionGraph.has(blockId)) {
-      this.executionGraph.set(blockId, new Set(dependencies));
+  // Add a step to the execution graph
+  private addToGraph(stepId: string, dependencies: string[] = []) {
+    if (!this.executionGraph.has(stepId)) {
+      this.executionGraph.set(stepId, new Set(dependencies));
     }
   }
 
-  // Set block flow
-  setBlockFlow(blockFlow: BlockFlowEntry[]) {
-    this._blockFlow = blockFlow;
-    this._serializedBlockFlow = this.serializeBlockFlow(blockFlow);
+  // Set step flow
+  setStepFlow(stepFlow: StepFlowEntry[]) {
+    this._stepFlow = stepFlow;
+    this._serializedStepFlow = this.serializeStepFlow(stepFlow);
   }
 
-  // Serialize block flow
-  private serializeBlockFlow(
-    blockFlow: BlockFlowEntry[]
-  ): SerializedBlockFlowEntry[] {
-    return blockFlow.map((entry) => {
+  // Serialize step flow
+  private serializeStepFlow(
+    stepFlow: StepFlowEntry[]
+  ): SerializedStepFlowEntry[] {
+    return stepFlow.map((entry) => {
       switch (entry.type) {
-        case 'block':
+        case 'step':
           return {
-            type: 'block',
-            block: {
-              id: entry.block.id,
-              description: entry.block.description,
+            type: 'step',
+            step: {
+              id: entry.step.id,
+              description: entry.step.description,
             },
           };
         case 'parallel':
           return {
             type: 'parallel',
-            blocks: this.serializeBlockFlow(entry.blocks),
+            steps: this.serializeStepFlow(entry.steps),
           };
         case 'conditional':
           return {
             type: 'conditional',
-            blocks: this.serializeBlockFlow(entry.blocks),
+            steps: this.serializeStepFlow(entry.steps),
             conditions: entry.conditions.map((_, index) => ({
               id: `condition_${index}`,
               fn: 'serialized_condition',
@@ -128,9 +135,9 @@ export class Cue<
         case 'loop':
           return {
             type: 'loop',
-            block: {
-              id: entry.block.id,
-              description: entry.block.description,
+            step: {
+              id: entry.step.id,
+              description: entry.step.description,
             },
             condition: {
               id: 'loop_condition',
@@ -141,9 +148,9 @@ export class Cue<
         case 'foreach':
           return {
             type: 'foreach',
-            block: {
-              id: entry.block.id,
-              description: entry.block.description,
+            step: {
+              id: entry.step.id,
+              description: entry.step.description,
             },
             opts: entry.opts,
           };
@@ -151,37 +158,35 @@ export class Cue<
     });
   }
 
-  // Add a block to the flow
-  then(block: Block<any, any>) {
-    (this.blocks as any)[block.id] = block;
-    this._blockFlow.push({ type: 'block', block });
+  // Add a step to the flow
+  then(step: Step<any, any>) {
+    (this.steps as any)[step.id] = step;
+    this._stepFlow.push({ type: 'step', step });
     return this;
   }
 
-  // Map data between blocks
+  // Map data between steps
   map<TMapping extends MappingConfig<z.ZodType<any>, z.ZodType<any>>>(
-    mappingConfig:
-      | TMapping
-      | ((context: BlockContext<any, any>) => Promise<any>)
+    mappingConfig: TMapping | ((context: StepContext<any, any>) => Promise<any>)
   ) {
     if (typeof mappingConfig === 'function') {
-      const mappingBlock = Cue.createBlock({
+      const mappingStep = Workflow.createStep({
         id: `mapping_${Date.now()}`,
         inputSchema: this.inputSchema,
         outputSchema: this.outputSchema,
         execute: mappingConfig,
       });
 
-      this._blockFlow.push({ type: 'block', block: mappingBlock });
+      this._stepFlow.push({ type: 'step', step: mappingStep });
       return this;
     }
 
-    const mappingBlock = Cue.createBlock({
+    const mappingStep = Workflow.createStep({
       id: `mapping_${Date.now()}`,
       inputSchema: this.inputSchema,
       outputSchema: this.outputSchema,
-      execute: async (context: BlockContext<any, any>) => {
-        const { inputData, getBlockResult, runtimeContext } = context;
+      execute: async (context: StepContext<any, any>) => {
+        const { inputData, getStepResult, runtimeContext } = context;
         const result: Record<string, any> = {};
 
         for (const [key, mapping] of Object.entries(mappingConfig)) {
@@ -202,20 +207,20 @@ export class Cue<
             continue;
           }
 
-          const blockResult = m.initData ? inputData : getBlockResult(m.block);
+          const stepResult = m.initData ? inputData : getStepResult(m.step.id);
 
           if (m.path === '.') {
-            result[key] = blockResult;
+            result[key] = stepResult;
             continue;
           }
 
           const pathParts = m.path.split('.');
-          let value: any = blockResult;
+          let value: any = stepResult;
           for (const part of pathParts) {
             if (typeof value === 'object' && value !== null) {
               value = value[part];
             } else {
-              throw new Error(`Invalid path ${m.path} in block ${m.block.id}`);
+              throw new Error(`Invalid path ${m.path} in step ${m.step.id}`);
             }
           }
 
@@ -226,48 +231,46 @@ export class Cue<
       },
     });
 
-    this._blockFlow.push({ type: 'block', block: mappingBlock });
+    this._stepFlow.push({ type: 'step', step: mappingStep });
     return this;
   }
 
-  // Add parallel blocks
-  parallel(blocks: Block<any, any>[]) {
-    blocks.forEach((block) => {
-      (this.blocks as any)[block.id] = block;
+  // Add parallel steps
+  parallel(steps: Step<any, any>[]) {
+    steps.forEach((step) => {
+      (this.steps as any)[step.id] = step;
     });
-    this._blockFlow.push({
+    this._stepFlow.push({
       type: 'parallel',
-      blocks: blocks.map((block) => ({ type: 'block', block })),
+      steps: steps.map((step) => ({ type: 'step', step })),
     });
     return this;
   }
 
-  // Add conditional blocks
+  // Add conditional steps
   branch(
-    blocks: Array<
-      [(context: BlockContext) => Promise<boolean>, Block<any, any>]
-    >
+    steps: Array<[(context: StepContext) => Promise<boolean>, Step<any, any>]>
   ) {
-    blocks.forEach(([_, block]) => {
-      (this.blocks as any)[block.id] = block;
+    steps.forEach(([_, step]) => {
+      (this.steps as any)[step.id] = step;
     });
-    this._blockFlow.push({
+    this._stepFlow.push({
       type: 'conditional',
-      blocks: blocks.map(([_, block]) => ({ type: 'block', block })),
-      conditions: blocks.map(([condition]) => condition),
+      steps: steps.map(([_, step]) => ({ type: 'step', step })),
+      conditions: steps.map(([condition]) => condition),
     });
     return this;
   }
 
   // Add do-while loop
   dowhile(
-    block: Block<any, any>,
-    condition: (context: BlockContext) => Promise<boolean>
+    step: Step<any, any>,
+    condition: (context: StepContext) => Promise<boolean>
   ) {
-    (this.blocks as any)[block.id] = block;
-    this._blockFlow.push({
+    (this.steps as any)[step.id] = step;
+    this._stepFlow.push({
       type: 'loop',
-      block,
+      step,
       condition,
       loopType: 'dowhile',
     });
@@ -276,13 +279,13 @@ export class Cue<
 
   // Add do-until loop
   dountil(
-    block: Block<any, any>,
-    condition: (context: BlockContext) => Promise<boolean>
+    step: Step<any, any>,
+    condition: (context: StepContext) => Promise<boolean>
   ) {
-    (this.blocks as any)[block.id] = block;
-    this._blockFlow.push({
+    (this.steps as any)[step.id] = step;
+    this._stepFlow.push({
       type: 'loop',
-      block,
+      step,
       condition,
       loopType: 'dountil',
     });
@@ -291,15 +294,15 @@ export class Cue<
 
   // Add foreach loop
   foreach(
-    block: Block<any, any>,
+    step: Step<any, any>,
     opts?: {
       concurrency: number;
     }
   ) {
-    (this.blocks as any)[block.id] = block;
-    this._blockFlow.push({
+    (this.steps as any)[step.id] = step;
+    this._stepFlow.push({
       type: 'foreach',
-      block,
+      step,
       opts: opts || { concurrency: 1 },
     });
     return this;
@@ -308,38 +311,40 @@ export class Cue<
   // Build execution graph
   private buildExecutionGraph(): Map<string, Set<string>> {
     const graph = new Map<string, Set<string>>();
-    this._blockFlow.forEach((entry) => {
+    this._stepFlow.forEach((entry) => {
       switch (entry.type) {
-        case 'block':
-          graph.set(entry.block.id, new Set());
+        case 'step':
+          graph.set(entry.step.id, new Set());
           break;
         case 'parallel':
-          entry.blocks.forEach((blockEntry) => {
-            if (blockEntry.type === 'block') {
-              graph.set(blockEntry.block.id, new Set());
+          entry.steps.forEach((stepEntry) => {
+            if (stepEntry.type === 'step') {
+              graph.set(stepEntry.step.id, new Set());
             }
           });
           break;
         case 'conditional':
-          entry.blocks.forEach((blockEntry) => {
-            if (blockEntry.type === 'block') {
-              graph.set(blockEntry.block.id, new Set());
+          entry.steps.forEach((stepEntry) => {
+            if (stepEntry.type === 'step') {
+              graph.set(stepEntry.step.id, new Set());
             }
           });
           break;
         case 'loop':
-          graph.set(entry.block.id, new Set());
+          graph.set(entry.step.id, new Set());
           break;
         case 'foreach':
-          graph.set(entry.block.id, new Set());
+          graph.set(entry.step.id, new Set());
           break;
       }
     });
     return graph;
   }
 
-  // Start the cue execution
-  async start(inputData: TInput): Promise<CueResult<TInput, TOutput, TSteps>> {
+  // Start the workflow execution
+  async start(
+    inputData: TInput
+  ): Promise<WorkflowResult<TInput, TOutput, TSteps>> {
     try {
       // Reset store state
       this.store.getState().reset();
@@ -351,20 +356,20 @@ export class Cue<
       // Build execution graph
       this.executionGraph = this.buildExecutionGraph();
 
-      // Execute blocks using the execution engine
+      // Execute steps using the execution engine
       const result = await this.executionEngine.execute<
         TInput,
-        CueResult<TInput, TOutput, TSteps>
+        WorkflowResult<TInput, TOutput, TSteps>
       >({
-        cueId: this.id,
+        workflowId: this.id,
         runId: Date.now().toString(),
-        graph: this._blockFlow,
+        graph: this._stepFlow,
         input: validatedInput,
         emitter: {
           emit: async (event: string, data: any) => {
             this.store.getState().addLog({
               timestamp: Date.now(),
-              logType: 'CueStatusUpdate',
+              logType: 'WorkflowStatusUpdate',
               logDescription: event,
               metadata: data,
             });
@@ -373,8 +378,8 @@ export class Cue<
         retryConfig: this.retryConfig,
       });
 
-      // Update block results with the execution results
-      this.blockResults = new Map(Object.entries(result.steps));
+      // Update step results with the execution results
+      this.stepResults = new Map(Object.entries(result.steps));
 
       // Update store with final status
       if (result.status === 'failed') {
@@ -399,14 +404,11 @@ export class Cue<
   // Get all step results
   private getStepsResults() {
     return Object.fromEntries(
-      Array.from(this.blockResults.entries()).map(([id, result]) => [
-        id,
-        result,
-      ])
-    ) as CueResult<TInput, TOutput, TSteps>['steps'];
+      Array.from(this.stepResults.entries()).map(([id, result]) => [id, result])
+    ) as WorkflowResult<TInput, TOutput, TSteps>['steps'];
   }
 
-  // Watch cue execution
+  // Watch workflow execution
   watch(callback: (event: ExtendedWatchEvent) => void) {
     return this.store.subscribe((state) => {
       const lastLog = state.logs[state.logs.length - 1];
@@ -415,31 +417,31 @@ export class Cue<
           type: lastLog.logType,
           data: {
             ...lastLog,
-            blockResults: Object.fromEntries(state.blockResults),
+            stepResults: Object.fromEntries(state.stepResults),
           },
         });
       }
     });
   }
 
-  // Get block flow
-  get blockFlow() {
-    return this._blockFlow;
+  // Get step flow
+  get stepFlow() {
+    return this._stepFlow;
   }
 
-  // Get serialized block flow
-  get serializedBlockFlow() {
-    return this._serializedBlockFlow;
+  // Get serialized step flow
+  get serializedStepFlow() {
+    return this._serializedStepFlow;
   }
 
-  async execute(context: BlockContext<TInput, TOutput>): Promise<TOutput> {
+  async execute(context: StepContext<TInput, TOutput>): Promise<TOutput> {
     const { inputData } = context;
 
-    // Execute the cue using the execution engine
+    // Execute the workflow using the execution engine
     const result = (await this.executionEngine.execute({
-      cueId: this.id,
+      workflowId: this.id,
       runId: `${this.id}-${Date.now()}`,
-      graph: this._blockFlow,
+      graph: this._stepFlow,
       input: inputData,
       emitter: {
         emit: async () => {},
@@ -447,7 +449,7 @@ export class Cue<
       retryConfig: this.retryConfig,
     })) as { status: string; result: TOutput; error?: Error };
 
-    // When used as a block, return just the result value
+    // When used as a step, return just the result value
     if (result.status === 'failed') {
       throw result.error;
     }
@@ -458,50 +460,50 @@ export class Cue<
   // Add resume functionality
   async resume<TResumeSchema extends z.ZodType<any>>(params: {
     resumeData?: z.infer<TResumeSchema>;
-    block:
-      | Block<string, any, TResumeSchema, any>
+    step:
+      | Step<string, any, TResumeSchema, any>
       | [
-          ...Block<string, any, any, any>[],
-          Block<string, any, TResumeSchema, any>
+          ...Step<string, any, any, any>[],
+          Step<string, any, TResumeSchema, any>
         ]
       | string
       | string[];
     runtimeContext?: RuntimeContext;
-  }): Promise<CueResult<TInput, TOutput, TSteps>> {
-    const { resumeData, block, runtimeContext } = params;
+  }): Promise<WorkflowResult<TInput, TOutput, TSteps>> {
+    const { resumeData, step, runtimeContext } = params;
 
-    // Determine which blocks to resume
-    const blocksToResume = Array.isArray(block)
-      ? block.map((b) => (typeof b === 'string' ? b : b.id))
-      : [typeof block === 'string' ? block : block.id];
+    // Determine which steps to resume
+    const stepsToResume = Array.isArray(step)
+      ? step.map((b) => (typeof b === 'string' ? b : b.id))
+      : [typeof step === 'string' ? step : step.id];
 
-    // Check if any of the blocks to resume are actually suspended
-    const hasSuspendedBlocks = blocksToResume.some(
-      (blockId) => this.blockResults.get(blockId)?.status === 'suspended'
+    // Check if any of the steps to resume are actually suspended
+    const hasSuspendedSteps = stepsToResume.some(
+      (stepId) => this.stepResults.get(stepId)?.status === 'suspended'
     );
 
-    if (!hasSuspendedBlocks) {
-      throw new Error('No suspended blocks to resume');
+    if (!hasSuspendedSteps) {
+      throw new Error('No suspended steps to resume');
     }
 
     // Create a new run ID for the resume operation
     const runId = crypto.randomUUID();
 
-    // Execute the cue with resume parameters
+    // Execute the workflow with resume parameters
     const executionResult = await this.executionEngine.execute<
       TInput,
-      CueResult<TInput, TOutput, TSteps>
+      WorkflowResult<TInput, TOutput, TSteps>
     >({
-      cueId: this.id,
+      workflowId: this.id,
       runId,
-      graph: this._blockFlow,
+      graph: this._stepFlow,
       resume: {
-        steps: blocksToResume,
-        blockResults: Object.fromEntries(this.blockResults),
+        steps: stepsToResume,
+        stepResults: Object.fromEntries(this.stepResults),
         resumePayload: resumeData,
-        resumePath: blocksToResume
-          .map((blockId) => {
-            const result = this.blockResults.get(blockId);
+        resumePath: stepsToResume
+          .map((stepId) => {
+            const result = this.stepResults.get(stepId);
             return result?.suspendedPath || [];
           })
           .flat(),
@@ -513,8 +515,8 @@ export class Cue<
       runtimeContext,
     });
 
-    // Update block results with the new execution results
-    this.blockResults = new Map(Object.entries(executionResult.steps));
+    // Update step results with the new execution results
+    this.stepResults = new Map(Object.entries(executionResult.steps));
 
     return executionResult;
   }

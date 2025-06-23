@@ -1,27 +1,22 @@
 import { z } from 'zod';
 
-// Core types for cue workflow system
-export type BlockId = string;
+// Core types for workflow workflow system
+export type StepId = string;
 
-export type BlockStatus = 'running' | 'completed' | 'failed' | 'suspended';
+export type StepStatus = 'running' | 'completed' | 'failed' | 'suspended';
 
-export type BlockResult<
-  TInput = unknown,
-  TResume = unknown,
-  TSuspend = unknown,
-  TOutput = unknown,
-> = {
-  status: BlockStatus;
+export type StepResult<TSuspend = unknown, TOutput = unknown> = {
+  status: StepStatus;
   output?: TOutput | TSuspend;
   error?: Error;
   suspendedPath?: number[];
 };
 
-export type Block<
+export type Step<
   TInput = unknown,
   TOutput = unknown,
   TResume = unknown,
-  TSuspend = unknown,
+  TSuspend = unknown
 > = {
   id: string;
   description?: string;
@@ -29,9 +24,7 @@ export type Block<
   outputSchema: z.ZodType<TOutput>;
   resumeSchema?: z.ZodType<TResume>;
   suspendSchema?: z.ZodType<TSuspend>;
-  execute: (
-    context: BlockContext<TInput, TOutput>
-  ) => Promise<TOutput | TSuspend>;
+  execute: (context: StepContext<TInput>) => Promise<TOutput | TSuspend>;
 };
 
 export type RuntimeContext = {
@@ -42,26 +35,26 @@ export type RuntimeContext = {
   clear: () => void;
 };
 
-export type BlockContext<TInput = any, TOutput = any> = {
+export type StepContext<TInput = any> = {
   inputData: TInput;
-  getBlockResult: <T>(block: Block<T, any>) => T;
+  getStepResult: <T>(stepId: string) => T;
   getInitData: <T>() => T;
   runtimeContext?: RuntimeContext;
   isResuming?: boolean;
   resumeData?: any;
-  suspend: (suspendPayload: any) => Promise<BlockResult>;
+  suspend: (suspendPayload: any) => Promise<StepResult>;
 };
 
-export type CueConfig<
+export type WorkflowConfig<
   TInput,
   TOutput,
-  TSteps extends Record<string, Block<any, any>>,
+  TSteps extends Record<string, Step<any, any>>
 > = {
   id: string;
   description?: string;
   inputSchema: z.ZodType<TInput>;
   outputSchema: z.ZodType<TOutput>;
-  blocks?: TSteps;
+  steps?: TSteps;
   retryConfig?: {
     attempts?: number;
     delay?: number;
@@ -69,60 +62,60 @@ export type CueConfig<
 };
 
 // Flow control types
-export type BlockFlowEntry =
+export type StepFlowEntry =
   | {
-      type: 'block';
-      block: Block<any, any>;
+      type: 'step';
+      step: Step<any, any>;
     }
   | {
       type: 'parallel';
-      blocks: BlockFlowEntry[];
+      steps: StepFlowEntry[];
     }
   | {
       type: 'conditional';
-      blocks: BlockFlowEntry[];
-      conditions: ((context: BlockContext) => Promise<boolean>)[];
+      steps: StepFlowEntry[];
+      conditions: ((context: StepContext) => Promise<boolean>)[];
     }
   | {
       type: 'loop';
-      block: Block<any, any>;
-      condition: (context: BlockContext) => Promise<boolean>;
+      step: Step<any, any>;
+      condition: (context: StepContext) => Promise<boolean>;
       loopType: 'dowhile' | 'dountil';
     }
   | {
       type: 'foreach';
-      block: Block<any, any>;
+      step: Step<any, any>;
       opts: {
         concurrency: number;
       };
     };
 
-export type SerializedBlock = Pick<Block, 'id' | 'description'> & {
+export type SerializedStep = Pick<Step, 'id' | 'description'> & {
   component?: string;
-  serializedBlockFlow?: SerializedBlockFlowEntry[];
+  serializedStepFlow?: SerializedStepFlowEntry[];
   mapConfig?: string;
 };
 
-export type SerializedBlockFlowEntry =
+export type SerializedStepFlowEntry =
   | {
-      type: 'block';
-      block: {
+      type: 'step';
+      step: {
         id: string;
         description?: string;
       };
     }
   | {
       type: 'parallel';
-      blocks: SerializedBlockFlowEntry[];
+      steps: SerializedStepFlowEntry[];
     }
   | {
       type: 'conditional';
-      blocks: SerializedBlockFlowEntry[];
+      steps: SerializedStepFlowEntry[];
       conditions: { id: string; fn: string }[];
     }
   | {
       type: 'loop';
-      block: {
+      step: {
         id: string;
         description?: string;
       };
@@ -131,7 +124,7 @@ export type SerializedBlockFlowEntry =
     }
   | {
       type: 'foreach';
-      block: {
+      step: {
         id: string;
         description?: string;
       };
@@ -140,22 +133,22 @@ export type SerializedBlockFlowEntry =
       };
     };
 
-// Event types for cue execution
+// Event types for workflow execution
 export type WatchEvent = {
   type: 'watch';
   payload: {
-    currentBlock?: {
+    currentStep?: {
       id: string;
-      status: BlockStatus;
+      status: StepStatus;
       output?: any;
       payload?: any;
     };
-    cueState: {
-      status: BlockStatus;
-      blocks: Record<
+    workflowState: {
+      status: StepStatus;
+      steps: Record<
         string,
         {
-          status: BlockStatus;
+          status: StepStatus;
           output?: any;
           payload?: any;
         }
@@ -167,9 +160,9 @@ export type WatchEvent = {
 
 // Utility types
 export type ExtractSchemaType<T extends z.ZodType> = z.infer<T>;
-export type ExtractSchemaFromBlock<
-  T extends Block,
-  K extends keyof T,
+export type ExtractSchemaFromStep<
+  T extends Step,
+  K extends keyof T
 > = T[K] extends z.ZodType ? T[K] : never;
 export type PathsToStringProps<T> = T extends object
   ? {
@@ -183,32 +176,27 @@ export type PathsToStringProps<T> = T extends object
 
 export type ZodPathType<
   T extends z.ZodType,
-  P extends string,
+  P extends string
 > = P extends keyof z.infer<T>
   ? z.ZodType<z.infer<T>[P]>
   : P extends `${infer K}.${infer R}`
-    ? K extends keyof z.infer<T>
-      ? ZodPathType<z.ZodType<z.infer<T>[K]>, R>
-      : never
-    : never;
+  ? K extends keyof z.infer<T>
+    ? ZodPathType<z.ZodType<z.infer<T>[K]>, R>
+    : never
+  : never;
 
 export type DynamicMapping<
   TInput extends z.ZodType<any>,
-  TOutput extends z.ZodType<any>,
+  TOutput extends z.ZodType<any>
 > = {
-  fn: (
-    context: BlockContext<z.infer<TInput>, any>
-  ) => Promise<z.infer<TOutput>>;
+  fn: (context: StepContext<z.infer<TInput>>) => Promise<z.infer<TOutput>>;
   schema: TOutput;
 };
 
-export type MappingConfig<
-  TInput extends z.ZodType<any>,
-  TOutput extends z.ZodType<any>,
-> = {
+export type MappingConfig<TInput extends z.ZodType<any>> = {
   [key: string]:
     | {
-        block: Block<any, any>;
+        step: Step<any, any>;
         path: string;
       }
     | {
@@ -216,31 +204,29 @@ export type MappingConfig<
         schema: z.ZodType<any>;
       }
     | {
-        initData: Block<any, any>;
+        initData: Step<any, any>;
         path: string;
       }
     | {
         runtimeContextPath: string;
         schema: z.ZodType<any>;
       }
-    | ((
-        context: BlockContext<z.infer<TInput>, z.infer<TOutput>>
-      ) => Promise<any>);
+    | ((context: StepContext<z.infer<TInput>>) => Promise<any>);
 };
 
-export type CueResult<TInput, TOutput, TSteps> =
+export type WorkflowResult<TOutput> =
   | {
       status: 'completed';
       result: TOutput;
-      steps: Record<string, BlockResult>;
+      steps: Record<string, StepResult>;
     }
   | {
       status: 'failed';
       error: Error;
-      steps: Record<string, BlockResult>;
+      steps: Record<string, StepResult>;
     }
   | {
       status: 'suspended';
       suspended: [string[], ...string[][]];
-      steps: Record<string, BlockResult>;
+      steps: Record<string, StepResult>;
     };

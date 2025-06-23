@@ -1,13 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { z } from 'zod';
-import type {
-  Block,
-  BlockContext,
-  BlockResult,
-  CueResult,
-  BlockStatus,
-} from '../types';
+import type { Step, StepResult, StepStatus } from '../types';
 
 export enum CUE_STATUS {
   INITIAL = 'INITIAL',
@@ -19,54 +12,54 @@ export enum CUE_STATUS {
   SUSPENDED = 'SUSPENDED',
 }
 
-export interface CueLog {
+export interface WorkflowLog {
   timestamp: number;
-  logType: 'CueStatusUpdate' | 'BlockStatusUpdate';
+  logType: 'WorkflowStatusUpdate' | 'StepStatusUpdate';
   logDescription: string;
   metadata?: Record<string, unknown>;
-  cueStatus?: CUE_STATUS;
-  blockStatus?: BlockStatus;
-  blockId?: string;
-  blockResult?: BlockResult;
+  workflowStatus?: CUE_STATUS;
+  stepStatus?: StepStatus;
+  stepId?: string;
+  stepResult?: StepResult;
 }
 
-export interface CueStoreState {
+export interface WorkflowStoreState {
   status: CUE_STATUS;
-  logs: CueLog[];
-  blockResults: Map<string, BlockResult>;
-  currentBlock?: Block<any, any>;
+  logs: WorkflowLog[];
+  stepResults: Map<string, StepResult>;
+  currentStep?: Step<any, any>;
   executionPath: number[];
   suspendedPaths: Record<string, number[]>;
 }
 
-export interface CueStoreActions {
+export interface WorkflowStoreActions {
   setStatus: (status: CUE_STATUS) => void;
-  addLog: (log: CueLog) => void;
-  updateBlockResult: (blockId: string, result: BlockResult) => void;
-  setCurrentBlock: (block: Block<any, any>) => void;
+  addLog: (log: WorkflowLog) => void;
+  updateStepResult: (stepId: string, result: StepResult) => void;
+  setCurrentStep: (step: Step<any, any>) => void;
   updateExecutionPath: (path: number[]) => void;
   updateSuspendedPaths: (paths: Record<string, number[]>) => void;
   reset: () => void;
 }
 
-export type CueStore = CueStoreState & CueStoreActions;
+export type WorkflowStore = WorkflowStoreState & WorkflowStoreActions;
 
-export const useCueStore = create<CueStore>()(
+export const useWorkflowStore = create<WorkflowStore>()(
   devtools(
-    (set, get) => ({
+    (set) => ({
       status: CUE_STATUS.INITIAL,
       logs: [],
-      blockResults: new Map(),
-      currentBlock: undefined,
+      stepResults: new Map(),
+      currentStep: undefined,
       executionPath: [],
       suspendedPaths: {},
 
       setStatus: (status: CUE_STATUS) => {
-        const log: CueLog = {
+        const log: WorkflowLog = {
           timestamp: Date.now(),
-          logType: 'CueStatusUpdate',
-          logDescription: `Cue status changed to ${status}`,
-          cueStatus: status,
+          logType: 'WorkflowStatusUpdate',
+          logDescription: `Workflow status changed to ${status}`,
+          workflowStatus: status,
         };
         set((state) => ({
           status,
@@ -74,30 +67,30 @@ export const useCueStore = create<CueStore>()(
         }));
       },
 
-      addLog: (log: CueLog) => {
+      addLog: (log: WorkflowLog) => {
         set((state) => ({
           logs: [...state.logs, log],
         }));
       },
 
-      updateBlockResult: (blockId: string, result: BlockResult) => {
-        const log: CueLog = {
+      updateStepResult: (stepId: string, result: StepResult) => {
+        const log: WorkflowLog = {
           timestamp: Date.now(),
-          logType: 'BlockStatusUpdate',
-          logDescription: `Block ${blockId} ${result.status}`,
-          blockStatus: result.status,
-          blockId,
-          blockResult: result,
+          logType: 'StepStatusUpdate',
+          logDescription: `Step ${stepId} ${result.status}`,
+          stepStatus: result.status,
+          stepId,
+          stepResult: result,
         };
 
         set((state) => ({
-          blockResults: new Map(state.blockResults).set(blockId, result),
+          stepResults: new Map(state.stepResults).set(stepId, result),
           logs: [...state.logs, log],
         }));
       },
 
-      setCurrentBlock: (block: Block<any, any>) => {
-        set({ currentBlock: block });
+      setCurrentStep: (step: Step<any, any>) => {
+        set({ currentStep: step });
       },
 
       updateExecutionPath: (path: number[]) => {
@@ -112,15 +105,15 @@ export const useCueStore = create<CueStore>()(
         set({
           status: CUE_STATUS.INITIAL,
           logs: [],
-          blockResults: new Map(),
-          currentBlock: undefined,
+          stepResults: new Map(),
+          currentStep: undefined,
           executionPath: [],
           suspendedPaths: {},
         });
       },
     }),
     {
-      name: 'cueStore',
+      name: 'workflowStore',
     }
   )
 );

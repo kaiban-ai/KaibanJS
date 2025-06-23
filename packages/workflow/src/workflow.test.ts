@@ -1,12 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
-import { Cue } from './cue';
-import type { CueResult } from './types';
+import { createStep, createWorkflow } from './';
 
-describe('Cue', () => {
-  // Test basic block execution
-  it('should execute blocks in sequence', async () => {
-    const addBlock = Cue.createBlock({
+describe('Workflow', () => {
+  // Test basic step execution
+  it('should execute steps in sequence', async () => {
+    const addStep = createStep({
       id: 'add',
       inputSchema: z.object({ a: z.number(), b: z.number() }),
       outputSchema: z.number(),
@@ -16,7 +15,7 @@ describe('Cue', () => {
       },
     });
 
-    const multiplyBlock = Cue.createBlock({
+    const multiplyStep = createStep({
       id: 'multiply',
       inputSchema: z.number(),
       outputSchema: z.number(),
@@ -27,15 +26,15 @@ describe('Cue', () => {
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'math',
       inputSchema: z.object({ a: z.number(), b: z.number() }),
       outputSchema: z.number(),
     });
 
-    cue.then(addBlock).then(multiplyBlock);
+    workflow.then(addStep).then(multiplyStep);
 
-    const result = await cue.start({ a: 2, b: 3 });
+    const result = await workflow.start({ a: 2, b: 3 });
 
     expect(result.status).toBe('completed');
     if (result.status === 'completed') {
@@ -45,7 +44,7 @@ describe('Cue', () => {
 
   // Test error handling
   it('should handle errors gracefully', async () => {
-    const errorBlock = Cue.createBlock({
+    const errorStep = createStep({
       id: 'error',
       inputSchema: z.any(),
       outputSchema: z.any(),
@@ -54,15 +53,15 @@ describe('Cue', () => {
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'error-test',
       inputSchema: z.any(),
       outputSchema: z.any(),
     });
 
-    cue.then(errorBlock);
+    workflow.then(errorStep);
 
-    const result = await cue.start({});
+    const result = await workflow.start({});
     expect(result.status).toBe('failed');
     if (result.status === 'failed') {
       expect(result.error?.message).toBe('Test error');
@@ -71,7 +70,7 @@ describe('Cue', () => {
 
   // Test input/output validation
   it('should validate input and output schemas', async () => {
-    const validationBlock = Cue.createBlock({
+    const validationStep = createStep({
       id: 'validate',
       inputSchema: z.number(),
       outputSchema: z.string(),
@@ -80,20 +79,20 @@ describe('Cue', () => {
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'validation-test',
       inputSchema: z.number(),
       outputSchema: z.string(),
     });
 
-    cue.then(validationBlock);
+    workflow.then(validationStep);
 
     // Test invalid input
-    const reject = await cue.start({} as any);
+    const reject = await workflow.start({} as any);
     expect(reject.status).toBe('failed');
 
     // Test valid input
-    const result = await cue.start(42);
+    const result = await workflow.start(42);
     expect(result.status).toBe('completed');
     if (result.status === 'completed') {
       expect(result.result).toBe('42');
@@ -101,41 +100,41 @@ describe('Cue', () => {
   });
 
   // Test parallel execution
-  it('should execute blocks in parallel', async () => {
-    const block1 = Cue.createBlock({
-      id: 'block1',
+  it('should execute steps in parallel', async () => {
+    const step1 = createStep({
+      id: 'step1',
       inputSchema: z.number(),
       outputSchema: z.number(),
       execute: async ({ inputData }) => (inputData as number) * 2,
     });
 
-    const block2 = Cue.createBlock({
-      id: 'block2',
+    const step2 = createStep({
+      id: 'step2',
       inputSchema: z.number(),
       outputSchema: z.number(),
       execute: async ({ inputData }) => (inputData as number) * 3,
     });
 
-    const sumBlock = Cue.createBlock({
+    const sumStep = createStep({
       id: 'sum',
-      inputSchema: z.number(),
+      inputSchema: z.any(),
       outputSchema: z.number(),
-      execute: async ({ getBlockResult }) => {
-        const result1 = getBlockResult(block1);
-        const result2 = getBlockResult(block2);
+      execute: async ({ getStepResult }): Promise<number> => {
+        const result1 = getStepResult(step1.id) as number;
+        const result2 = getStepResult(step2.id) as number;
         return result1 + result2;
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'parallel-test',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
 
-    cue.parallel([block1, block2]).then(sumBlock);
+    workflow.parallel([step1, step2]).then(sumStep);
 
-    const result = await cue.start(2);
+    const result = await workflow.start(2);
     expect(result.status).toBe('completed');
     if (result.status === 'completed') {
       expect(result.result).toBe(10); // (2*2) + (2*3)
@@ -143,26 +142,26 @@ describe('Cue', () => {
   });
 
   // Test do-while loop
-  it('should execute blocks in a do-while loop', async () => {
-    const counterBlock = Cue.createBlock({
+  it('should execute steps in a do-while loop', async () => {
+    const counterStep = createStep({
       id: 'counter',
       inputSchema: z.number(),
       outputSchema: z.number(),
-      execute: async ({ inputData, getBlockResult }) => {
+      execute: async ({ inputData }) => {
         const result = (inputData as number) + 1;
         return result;
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'dowhile-test',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
 
-    cue.dowhile(counterBlock, async ({ inputData, getBlockResult }) => {
+    workflow.dowhile(counterStep, async ({ getStepResult }) => {
       try {
-        const count = getBlockResult(counterBlock);
+        const count = getStepResult(counterStep.id) as number;
         return count < 3;
       } catch (error) {
         console.error('Error in condition:', error);
@@ -170,7 +169,7 @@ describe('Cue', () => {
       }
     });
 
-    const result = await cue.start(0);
+    const result = await workflow.start(0);
     expect(result.status).toBe('completed');
     if (result.status === 'completed') {
       expect(result.result).toBe(3);
@@ -178,26 +177,26 @@ describe('Cue', () => {
   });
 
   // Test do-until loop
-  it('should execute blocks in a do-until loop', async () => {
-    const counterBlock = Cue.createBlock({
+  it('should execute steps in a do-until loop', async () => {
+    const counterStep = createStep({
       id: 'counter',
       inputSchema: z.number(),
       outputSchema: z.number(),
       execute: async ({ inputData }) => (inputData as number) + 1,
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'dountil-test',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
 
-    cue.dountil(counterBlock, async ({ getBlockResult }) => {
-      const count = getBlockResult(counterBlock);
+    workflow.dountil(counterStep, async ({ getStepResult }) => {
+      const count = getStepResult(counterStep.id) as number;
       return count >= 3;
     });
 
-    const result = await cue.start(0);
+    const result = await workflow.start(0);
     expect(result.status).toBe('completed');
     if (result.status === 'completed') {
       expect(result.result).toBe(3);
@@ -205,8 +204,8 @@ describe('Cue', () => {
   });
 
   // // Test foreach execution
-  it('should execute blocks in a foreach loop', async () => {
-    const processItemBlock = Cue.createBlock({
+  it('should execute steps in a foreach loop', async () => {
+    const processItemStep = createStep({
       id: 'process',
       inputSchema: z.number(),
       outputSchema: z.number(),
@@ -215,15 +214,15 @@ describe('Cue', () => {
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'foreach-test',
       inputSchema: z.array(z.number()),
       outputSchema: z.array(z.number()),
     });
 
-    cue.foreach(processItemBlock, { concurrency: 2 });
+    workflow.foreach(processItemStep, { concurrency: 2 });
 
-    const result = await cue.start([1, 2, 3, 4, 5]);
+    const result = await workflow.start([1, 2, 3, 4, 5]);
     expect(result.status).toBe('completed');
     if (result.status === 'completed') {
       expect(result.result).toEqual([2, 4, 6, 8, 10]);
@@ -231,41 +230,41 @@ describe('Cue', () => {
   });
 
   // // Test conditional execution (if-else)
-  it('should execute blocks conditionally', async () => {
-    const evenBlock = Cue.createBlock({
+  it('should execute steps conditionally', async () => {
+    const evenStep = createStep({
       id: 'even',
       inputSchema: z.number(),
       outputSchema: z.string(),
       execute: async () => 'even',
     });
 
-    const oddBlock = Cue.createBlock({
+    const oddStep = createStep({
       id: 'odd',
       inputSchema: z.number(),
       outputSchema: z.string(),
       execute: async () => 'odd',
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'conditional-test',
       inputSchema: z.number(),
       outputSchema: z.string(),
     });
 
-    cue.branch([
-      [async ({ inputData }) => (inputData as number) % 2 === 0, evenBlock],
-      [async () => true, oddBlock],
+    workflow.branch([
+      [async ({ inputData }) => (inputData as number) % 2 === 0, evenStep],
+      [async () => true, oddStep],
     ]);
 
     // Test even number
-    const evenResult = await cue.start(4);
+    const evenResult = await workflow.start(4);
     expect(evenResult.status).toBe('completed');
     if (evenResult.status === 'completed') {
       expect(evenResult.result).toBe('even');
     }
 
     // Test odd number
-    const oddResult = await cue.start(3);
+    const oddResult = await workflow.start(3);
     expect(oddResult.status).toBe('completed');
     if (oddResult.status === 'completed') {
       expect(oddResult.result).toBe('odd');
@@ -274,8 +273,8 @@ describe('Cue', () => {
 
   // // Test nested execution patterns
   it('should handle nested execution patterns', async () => {
-    // Block that adds two numbers
-    const addBlock = Cue.createBlock({
+    // Step that adds two numbers
+    const addStep = createStep({
       id: 'add',
       inputSchema: z.object({ a: z.number(), b: z.number() }),
       outputSchema: z.number(),
@@ -285,8 +284,8 @@ describe('Cue', () => {
       },
     });
 
-    // Block that multiplies a number by 2
-    const doubleBlock = Cue.createBlock({
+    // Step that multiplies a number by 2
+    const doubleStep = createStep({
       id: 'double',
       inputSchema: z.number(),
       outputSchema: z.number(),
@@ -295,8 +294,8 @@ describe('Cue', () => {
       },
     });
 
-    // Block that increments a number
-    const incrementBlock = Cue.createBlock({
+    // Step that increments a number
+    const incrementStep = createStep({
       id: 'increment',
       inputSchema: z.number(),
       outputSchema: z.number(),
@@ -305,29 +304,29 @@ describe('Cue', () => {
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'nested-test',
       inputSchema: z.object({ a: z.number(), b: z.number() }),
       outputSchema: z.number(),
     });
 
     // Flow: add -> if(sum > 10) -> double : increment
-    cue.then(addBlock).branch([
+    workflow.then(addStep).branch([
       [
-        async ({ getBlockResult }) => {
-          const result = getBlockResult(addBlock);
+        async ({ getStepResult }) => {
+          const result = getStepResult(addStep.id) as number;
           if (typeof result !== 'number') {
-            throw new Error('Expected number from addBlock');
+            throw new Error('Expected number from addStep');
           }
           return result > 10;
         },
-        doubleBlock,
+        doubleStep,
       ],
-      [async () => true, incrementBlock],
+      [async () => true, incrementStep],
     ]);
 
     // Test case 1: a=5, b=6 -> sum=11 > 10 -> double(11)=22
-    const result1 = await cue.start({ a: 5, b: 6 });
+    const result1 = await workflow.start({ a: 5, b: 6 });
 
     expect(result1.status).toBe('completed');
     if (result1.status === 'completed') {
@@ -335,7 +334,7 @@ describe('Cue', () => {
     }
 
     // Test case 2: a=2, b=3 -> sum=5 < 10 -> increment(5)=6
-    const result2 = await cue.start({ a: 2, b: 3 });
+    const result2 = await workflow.start({ a: 2, b: 3 });
     expect(result2.status).toBe('completed');
     if (result2.status === 'completed') {
       expect(result2.result).toBe(6);
@@ -344,41 +343,41 @@ describe('Cue', () => {
 
   // // Test watch events
 
-  // Test nested cues
-  it('should handle nested cues as blocks', async () => {
-    // Create a nested cue that processes a number
-    const nestedCue = Cue.createCue({
-      id: 'nested-cue',
+  // Test nested workflows
+  it('should handle nested workflows as steps', async () => {
+    // Create a nested workflow that processes a number
+    const nestedWorkflow = createWorkflow({
+      id: 'nested-workflow',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
 
-    // Add blocks to the nested cue
-    const doubleBlock = Cue.createBlock({
+    // Add steps to the nested workflow
+    const doubleStep = createStep({
       id: 'double',
       inputSchema: z.number(),
       outputSchema: z.number(),
       execute: async ({ inputData }) => (inputData as number) * 2,
     });
 
-    const incrementBlock = Cue.createBlock({
+    const incrementStep = createStep({
       id: 'increment',
       inputSchema: z.number(),
       outputSchema: z.number(),
       execute: async ({ inputData }) => (inputData as number) + 1,
     });
 
-    nestedCue.then(doubleBlock).then(incrementBlock);
+    nestedWorkflow.then(doubleStep).then(incrementStep);
 
-    // Create the main cue that uses the nested cue
-    const mainCue = Cue.createCue({
-      id: 'main-cue',
+    // Create the main workflow that uses the nested workflow
+    const mainWorkflow = createWorkflow({
+      id: 'main-workflow',
       inputSchema: z.object({ a: z.number(), b: z.number() }),
       outputSchema: z.number(),
     });
 
-    // Add blocks to the main cue
-    const addBlock = Cue.createBlock({
+    // Add steps to the main workflow
+    const addStep = createStep({
       id: 'add',
       inputSchema: z.object({ a: z.number(), b: z.number() }),
       outputSchema: z.number(),
@@ -388,128 +387,130 @@ describe('Cue', () => {
       },
     });
 
-    // Flow: add -> nested-cue -> handle-nested-result
-    mainCue.then(addBlock).then(nestedCue);
+    // Flow: add -> nested-workflow -> handle-nested-result
+    mainWorkflow.then(addStep).then(nestedWorkflow);
 
     // Test case 1: (2 + 3) -> double(5) -> increment(10) = 11
-    const result1 = await mainCue.start({ a: 2, b: 3 });
+    const result1 = await mainWorkflow.start({ a: 2, b: 3 });
     expect(result1.status).toBe('completed');
     if (result1.status === 'completed') {
       expect(result1.result).toBe(11);
     }
 
     // Test case 2: (5 + 5) -> double(10) -> increment(20) = 21
-    const result2 = await mainCue.start({ a: 5, b: 5 });
+    const result2 = await mainWorkflow.start({ a: 5, b: 5 });
     expect(result2.status).toBe('completed');
     if (result2.status === 'completed') {
       expect(result2.result).toBe(21);
     }
   });
 
-  // Test nested cues with conditional execution
-  it('should handle nested cues in conditional execution', async () => {
-    // Create a nested cue for even numbers
-    const evenCue = Cue.createCue({
-      id: 'even-cue',
+  // Test nested workflows with conditional execution
+  it('should handle nested workflows in conditional execution', async () => {
+    // Create a nested workflow for even numbers
+    const evenWorkflow = createWorkflow({
+      id: 'even-workflow',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
 
-    const doubleBlock = Cue.createBlock({
+    const doubleStep = createStep({
       id: 'double',
       inputSchema: z.number(),
       outputSchema: z.number(),
       execute: async ({ inputData }) => (inputData as number) * 2,
     });
 
-    evenCue.then(doubleBlock);
+    evenWorkflow.then(doubleStep);
 
-    // Create a nested cue for odd numbers
-    const oddCue = Cue.createCue({
-      id: 'odd-cue',
+    // Create a nested workflow for odd numbers
+    const oddWorkflow = createWorkflow({
+      id: 'odd-workflow',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
 
-    const tripleBlock = Cue.createBlock({
+    const tripleStep = createStep({
       id: 'triple',
       inputSchema: z.number(),
       outputSchema: z.number(),
       execute: async ({ inputData }) => (inputData as number) * 3,
     });
 
-    oddCue.then(tripleBlock);
+    oddWorkflow.then(tripleStep);
 
-    // Create the main cue
-    const mainCue = Cue.createCue({
-      id: 'main-cue',
+    // Create the main workflow
+    const mainWorkflow = createWorkflow({
+      id: 'main-workflow',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
 
-    // Flow: if(number % 2 === 0) -> even-cue : odd-cue -> handle-nested-result
-    mainCue.branch([
-      [async ({ inputData }) => (inputData as number) % 2 === 0, evenCue],
-      [async () => true, oddCue],
+    // Flow: if(number % 2 === 0) -> even-workflow : odd-workflow -> handle-nested-result
+    mainWorkflow.branch([
+      [async ({ inputData }) => (inputData as number) % 2 === 0, evenWorkflow],
+      [async () => true, oddWorkflow],
     ]);
 
     // Test case 1: 4 (even) -> double(4) = 8
-    const result1 = await mainCue.start(4);
+    const result1 = await mainWorkflow.start(4);
     expect(result1.status).toBe('completed');
     if (result1.status === 'completed') {
       expect(result1.result).toBe(8);
     }
 
     // Test case 2: 5 (odd) -> triple(5) = 15
-    const result2 = await mainCue.start(5);
+    const result2 = await mainWorkflow.start(5);
     expect(result2.status).toBe('completed');
     if (result2.status === 'completed') {
       expect(result2.result).toBe(15);
     }
   });
 
-  // Test nested cues with parallel execution
-  it('should handle nested cues in parallel execution', async () => {
-    // Create a nested cue for processing numbers
-    const processCue = Cue.createCue({
-      id: 'process-cue',
+  // Test nested workflows with parallel execution
+  it('should handle nested workflows in parallel execution', async () => {
+    // Create a nested workflow for processing numbers
+    const processWorkflow = createWorkflow({
+      id: 'process-workflow',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
 
-    const doubleBlock = Cue.createBlock({
+    const doubleStep = createStep({
       id: 'double',
       inputSchema: z.number(),
       outputSchema: z.number(),
       execute: async ({ inputData }) => (inputData as number) * 2,
     });
 
-    processCue.then(doubleBlock);
+    processWorkflow.then(doubleStep);
 
-    // Create the main cue
-    const mainCue = Cue.createCue({
-      id: 'main-cue',
+    // Create the main workflow
+    const mainWorkflow = createWorkflow({
+      id: 'main-workflow',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
 
-    // Create a block to handle nested cue results
-    const handleNestedResultsBlock = Cue.createBlock({
+    // Create a step to handle nested workflow results
+    const handleNestedResultsStep = createStep({
       id: 'handle-nested-results',
       inputSchema: z.any(),
       outputSchema: z.number(),
-      execute: async ({ getBlockResult }) => {
-        const result1 = getBlockResult(processCue);
-        const result2 = getBlockResult(processCue);
-        return result1 + result2;
+      execute: async ({ getStepResult }): Promise<number> => {
+        const step1Result = getStepResult(processWorkflow.id) as number;
+        const step2Result = getStepResult(processWorkflow.id) as number;
+        return step1Result + step2Result;
       },
     });
 
-    // Flow: parallel(process-cue, process-cue) -> handle-nested-results
-    mainCue.parallel([processCue, processCue]).then(handleNestedResultsBlock);
+    // Flow: parallel(process-workflow, process-workflow) -> handle-nested-results
+    mainWorkflow
+      .parallel([processWorkflow, processWorkflow])
+      .then(handleNestedResultsStep);
 
     // Test case: 2 -> parallel(double(2), double(2)) -> sum(4 + 4) = 8
-    const result = await mainCue.start(2);
+    const result = await mainWorkflow.start(2);
     expect(result.status).toBe('completed');
     if (result.status === 'completed') {
       expect(result.result).toBe(8);
@@ -518,9 +519,9 @@ describe('Cue', () => {
 
   // Test map functionality
   describe('map functionality', () => {
-    // Test basic mapping between blocks
-    it('should map data between blocks', async () => {
-      const userBlock = Cue.createBlock({
+    // Test basic mapping between steps
+    it('should map data between steps', async () => {
+      const userStep = createStep({
         id: 'user',
         inputSchema: z.object({ userId: z.string() }),
         outputSchema: z.object({
@@ -539,7 +540,7 @@ describe('Cue', () => {
         }),
       });
 
-      const profileBlock = Cue.createBlock({
+      const profileStep = createStep({
         id: 'profile',
         inputSchema: z.object({
           profile: z.object({
@@ -563,7 +564,7 @@ describe('Cue', () => {
         }),
       });
 
-      const cue = Cue.createCue({
+      const workflow = createWorkflow({
         id: 'mapping-test',
         inputSchema: z.object({ userId: z.string() }),
         outputSchema: z.object({
@@ -575,17 +576,17 @@ describe('Cue', () => {
         }),
       });
 
-      cue
-        .then(userBlock)
+      workflow
+        .then(userStep)
         .map({
           profile: {
-            block: userBlock,
+            step: userStep,
             path: 'user',
           },
         })
-        .then(profileBlock);
+        .then(profileStep);
 
-      const result = await cue.start({ userId: '123' });
+      const result = await workflow.start({ userId: '123' });
       expect(result.status).toBe('completed');
       if (result.status === 'completed') {
         expect(result.result).toEqual({
@@ -600,7 +601,7 @@ describe('Cue', () => {
 
     // Test mapping with static values
     it('should handle static values in mapping', async () => {
-      const processBlock = Cue.createBlock({
+      const processStep = createStep({
         id: 'process',
         inputSchema: z.object({ data: z.string() }),
         outputSchema: z.object({
@@ -619,7 +620,7 @@ describe('Cue', () => {
         }),
       });
 
-      const cue = Cue.createCue({
+      const workflow = createWorkflow({
         id: 'static-mapping-test',
         inputSchema: z.object({ data: z.string() }),
         outputSchema: z.object({
@@ -631,14 +632,14 @@ describe('Cue', () => {
         }),
       });
 
-      cue.then(processBlock).map({
+      workflow.then(processStep).map({
         result: {
-          block: processBlock,
+          step: processStep,
           path: 'result',
         },
       });
 
-      const result = await cue.start({ data: 'test' });
+      const result = await workflow.start({ data: 'test' });
       expect(result.status).toBe('completed');
       if (result.status === 'completed') {
         expect(result.result).toHaveProperty('result.data', 'test');
@@ -649,20 +650,23 @@ describe('Cue', () => {
 
     // Test mapping with function transformation
     it('should handle function transformations in mapping', async () => {
-      type DataBlockOutput = {
+      type DataStepOutput = {
         numbers: number[];
         sum: number;
       };
 
-      const dataBlock = Cue.createBlock({
+      const dataStep = createStep({
         id: 'data',
         inputSchema: z.object({ numbers: z.array(z.number()) }),
         outputSchema: z.object({
           numbers: z.array(z.number()),
           sum: z.number(),
         }),
-        execute: async ({ inputData }): Promise<DataBlockOutput> => {
-          const sum = inputData.numbers.reduce((a, b) => a + b, 0);
+        execute: async ({ inputData }): Promise<DataStepOutput> => {
+          const sum = inputData.numbers.reduce(
+            (a: number, b: number) => a + b,
+            0
+          );
           return {
             numbers: inputData.numbers,
             sum,
@@ -670,7 +674,7 @@ describe('Cue', () => {
         },
       });
 
-      const cue = Cue.createCue({
+      const workflow = createWorkflow({
         id: 'function-mapping-test',
         inputSchema: z.object({ numbers: z.array(z.number()) }),
         outputSchema: z.object({
@@ -682,8 +686,8 @@ describe('Cue', () => {
         }),
       });
 
-      cue.then(dataBlock).map(async ({ getBlockResult }) => {
-        const data = getBlockResult(dataBlock) as DataBlockOutput;
+      workflow.then(dataStep).map(async ({ getStepResult }) => {
+        const data = getStepResult(dataStep.id) as DataStepOutput;
         return {
           result: {
             numbers: data.numbers,
@@ -693,7 +697,7 @@ describe('Cue', () => {
         };
       });
 
-      const result = await cue.start({ numbers: [1, 2, 3, 4, 5] });
+      const result = await workflow.start({ numbers: [1, 2, 3, 4, 5] });
 
       expect(result.status).toBe('completed');
       if (result.status === 'completed') {
@@ -709,7 +713,7 @@ describe('Cue', () => {
 
     // Test mapping with runtime context
     it('should handle runtime context in mapping', async () => {
-      const processBlock = Cue.createBlock({
+      const processStep = createStep({
         id: 'process',
         inputSchema: z.object({ data: z.string() }),
         outputSchema: z.object({
@@ -726,7 +730,7 @@ describe('Cue', () => {
         }),
       });
 
-      const cue = Cue.createCue({
+      const workflow = createWorkflow({
         id: 'context-mapping-test',
         inputSchema: z.object({ data: z.string() }),
         outputSchema: z.object({
@@ -737,14 +741,14 @@ describe('Cue', () => {
         }),
       });
 
-      cue.then(processBlock).map({
+      workflow.then(processStep).map({
         result: {
-          block: processBlock,
+          step: processStep,
           path: 'result',
         },
       });
 
-      const result = await cue.start({ data: 'test' });
+      const result = await workflow.start({ data: 'test' });
       expect(result.status).toBe('completed');
       if (result.status === 'completed') {
         expect(result.result).toEqual({
@@ -758,7 +762,7 @@ describe('Cue', () => {
 
     // Test mapping with nested paths
     it('should handle nested paths in mapping', async () => {
-      const userBlock = Cue.createBlock({
+      const userStep = createStep({
         id: 'user',
         inputSchema: z.object({ userId: z.string() }),
         outputSchema: z.object({
@@ -787,7 +791,7 @@ describe('Cue', () => {
         }),
       });
 
-      const cue = Cue.createCue({
+      const workflow = createWorkflow({
         id: 'nested-mapping-test',
         inputSchema: z.object({ userId: z.string() }),
         outputSchema: z.object({
@@ -798,14 +802,14 @@ describe('Cue', () => {
         }),
       });
 
-      cue.then(userBlock).map({
+      workflow.then(userStep).map({
         location: {
-          block: userBlock,
+          step: userStep,
           path: 'user.profile.address',
         },
       });
 
-      const result = await cue.start({ userId: '123' });
+      const result = await workflow.start({ userId: '123' });
       expect(result.status).toBe('completed');
       if (result.status === 'completed') {
         expect(result.result).toEqual({
@@ -819,8 +823,8 @@ describe('Cue', () => {
   });
 
   // Test suspend and resume functionality
-  it('should handle block suspension and resumption', async () => {
-    const suspendableBlock = Cue.createBlock({
+  it('should handle step suspension and resumption', async () => {
+    const suspendableStep = createStep({
       id: 'suspendable',
       inputSchema: z.object({ value: z.number() }),
       outputSchema: z.object({ result: z.number() }),
@@ -850,16 +854,16 @@ describe('Cue', () => {
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'suspend-test',
       inputSchema: z.object({ value: z.number() }),
       outputSchema: z.object({ result: z.number() }),
     });
 
-    cue.then(suspendableBlock);
+    workflow.then(suspendableStep);
 
     // Test suspension
-    const suspendResult = await cue.start({ value: -1 });
+    const suspendResult = await workflow.start({ value: -1 });
 
     expect(suspendResult.status).toBe('suspended');
     if (suspendResult.status === 'suspended') {
@@ -870,8 +874,8 @@ describe('Cue', () => {
     }
 
     // Test resumption
-    const resumeResult = await cue.resume({
-      block: 'suspendable',
+    const resumeResult = await workflow.resume({
+      step: 'suspendable',
       resumeData: { continue: true, value: 1 },
     });
 
@@ -881,9 +885,9 @@ describe('Cue', () => {
     }
   });
 
-  // Test suspend and resume with multiple blocks
-  it('should handle suspension and resumption in a chain of blocks', async () => {
-    const firstBlock = Cue.createBlock({
+  // Test suspend and resume with multiple steps
+  it('should handle suspension and resumption in a chain of steps', async () => {
+    const firstStep = createStep({
       id: 'first',
       inputSchema: z.object({ value: z.number() }),
       outputSchema: z.object({ result: z.number() }),
@@ -893,7 +897,7 @@ describe('Cue', () => {
       },
     });
 
-    const suspendableBlock = Cue.createBlock({
+    const suspendableStep = createStep({
       id: 'suspendable',
       inputSchema: z.object({ result: z.number() }),
       outputSchema: z.object({ final: z.number() }),
@@ -924,16 +928,16 @@ describe('Cue', () => {
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'chain-suspend-test',
       inputSchema: z.object({ value: z.number() }),
       outputSchema: z.object({ final: z.number() }),
     });
 
-    cue.then(firstBlock).then(suspendableBlock);
+    workflow.then(firstStep).then(suspendableStep);
 
     // Test suspension in chain
-    const suspendResult = await cue.start({ value: -1 });
+    const suspendResult = await workflow.start({ value: -1 });
     expect(suspendResult.status).toBe('suspended');
 
     if (suspendResult.status === 'suspended') {
@@ -944,8 +948,8 @@ describe('Cue', () => {
     }
 
     // Test resumption with continue: false
-    const resumeResult1 = await cue.resume({
-      block: 'suspendable',
+    const resumeResult1 = await workflow.resume({
+      step: 'suspendable',
       resumeData: { continue: false, result: 1 },
     });
     expect(resumeResult1.status).toBe('suspended');
@@ -956,8 +960,8 @@ describe('Cue', () => {
     }
 
     // Test successful resumption
-    const resumeResult2 = await cue.resume({
-      block: 'suspendable',
+    const resumeResult2 = await workflow.resume({
+      step: 'suspendable',
       resumeData: { continue: true, result: 2 },
     });
 
@@ -967,9 +971,9 @@ describe('Cue', () => {
     }
   });
 
-  // // Test suspend and resume with parallel blocks
-  it('should handle suspension and resumption in parallel blocks', async () => {
-    const suspendableBlock1 = Cue.createBlock({
+  // // Test suspend and resume with parallel steps
+  it('should handle suspension and resumption in parallel steps', async () => {
+    const suspendableStep1 = createStep({
       id: 'suspendable1',
       inputSchema: z.number(),
       outputSchema: z.object({ result: z.number() }),
@@ -997,7 +1001,7 @@ describe('Cue', () => {
       },
     });
 
-    const suspendableBlock2 = Cue.createBlock({
+    const suspendableStep2 = createStep({
       id: 'suspendable2',
       inputSchema: z.number(),
       outputSchema: z.object({ result: z.number() }),
@@ -1025,31 +1029,31 @@ describe('Cue', () => {
       },
     });
 
-    const sumBlock = Cue.createBlock({
+    const sumStep = createStep({
       id: 'sum',
       inputSchema: z.any(),
       outputSchema: z.number(),
-      execute: async ({ getBlockResult }): Promise<number> => {
-        const result1 = getBlockResult(suspendableBlock1) as unknown as {
+      execute: async ({ getStepResult }): Promise<number> => {
+        const step1Result = getStepResult(suspendableStep1.id) as {
           result: number;
         };
-        const result2 = getBlockResult(suspendableBlock2) as unknown as {
+        const step2Result = getStepResult(suspendableStep2.id) as {
           result: number;
         };
-        return result1.result + result2.result;
+        return step1Result.result + step2Result.result;
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'parallel-suspend-test',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
 
-    cue.parallel([suspendableBlock1, suspendableBlock2]).then(sumBlock);
+    workflow.parallel([suspendableStep1, suspendableStep2]).then(sumStep);
 
     // Test suspension in parallel
-    const suspendResult = await cue.start(-1);
+    const suspendResult = await workflow.start(-1);
 
     expect(suspendResult.status).toBe('suspended');
     if (suspendResult.status === 'suspended') {
@@ -1062,8 +1066,8 @@ describe('Cue', () => {
     }
 
     // Test resumption with continue: false
-    const resumeResult1 = await cue.resume({
-      block: ['suspendable1', 'suspendable2'],
+    const resumeResult1 = await workflow.resume({
+      step: ['suspendable1', 'suspendable2'],
       resumeData: { continue: true, value: 1 },
     });
 
@@ -1080,12 +1084,12 @@ describe('Cue', () => {
   });
 });
 
-// Test block and cue states
-describe('Block and Cue States', () => {
+// Test step and workflow states
+describe('Step and Workflow States', () => {
   // Test running state
-  it('should track running state of blocks and cue', async () => {
-    const slowBlock = Cue.createBlock({
-      id: 'slow-block',
+  it('should track running state of steps and workflow', async () => {
+    const slowStep = createStep({
+      id: 'slow-step',
       inputSchema: z.number(),
       outputSchema: z.number(),
       execute: async ({ inputData }) => {
@@ -1094,35 +1098,35 @@ describe('Block and Cue States', () => {
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'running-state-test',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
 
-    cue.then(slowBlock);
+    workflow.then(slowStep);
 
     // Set up state monitoring
-    const states: { block: string; cue: string }[] = [];
-    const unsubscribe = cue.store.subscribe((state) => {
+    const states: { step: string; workflow: string }[] = [];
+    const unsubscribe = workflow.store.subscribe((state) => {
       const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.logType === 'BlockStatusUpdate' && lastLog.blockStatus) {
+      if (lastLog?.logType === 'StepStatusUpdate' && lastLog.stepStatus) {
         states.push({
-          block: lastLog.blockStatus,
-          cue: state.status.toLowerCase(),
+          step: lastLog.stepStatus,
+          workflow: state.status.toLowerCase(),
         });
       }
     });
 
     // Start execution
-    const result = await cue.start(5);
+    const result = await workflow.start(5);
 
     await new Promise((resolve) => setTimeout(resolve, 100));
     unsubscribe();
     // console.log('States:', states);
 
     // Verify states
-    expect(states).toContainEqual({ block: 'running', cue: 'running' });
+    expect(states).toContainEqual({ step: 'running', workflow: 'running' });
     expect(result.status).toBe('completed');
     if (result.status === 'completed') {
       expect(result.result).toBe(10);
@@ -1131,7 +1135,7 @@ describe('Block and Cue States', () => {
 
   // Test suspended state
   it('should handle suspended state correctly', async () => {
-    const suspendableBlock = Cue.createBlock({
+    const suspendableStep = createStep({
       id: 'suspendable',
       inputSchema: z.object({ value: z.number() }),
       outputSchema: z.number(),
@@ -1146,33 +1150,33 @@ describe('Block and Cue States', () => {
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'suspended-state-test',
       inputSchema: z.object({ value: z.number() }),
       outputSchema: z.number(),
     });
 
-    cue.then(suspendableBlock);
+    workflow.then(suspendableStep);
 
     // Set up state monitoring
-    const states: { block: string; cue: string }[] = [];
-    const unsubscribe = cue.store.subscribe((state) => {
+    const states: { step: string; workflow: string }[] = [];
+    const unsubscribe = workflow.store.subscribe((state) => {
       const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.logType === 'BlockStatusUpdate' && lastLog.blockStatus) {
+      if (lastLog?.logType === 'StepStatusUpdate' && lastLog.stepStatus) {
         states.push({
-          block: lastLog.blockStatus,
-          cue: state.status.toLowerCase(),
+          step: lastLog.stepStatus,
+          workflow: state.status.toLowerCase(),
         });
       }
     });
 
     // Test suspension
-    const suspendResult = await cue.start({ value: -1 });
+    const suspendResult = await workflow.start({ value: -1 });
     await new Promise((resolve) => setTimeout(resolve, 100));
     unsubscribe();
 
     // Verify states
-    expect(states).toContainEqual({ block: 'suspended', cue: 'running' });
+    expect(states).toContainEqual({ step: 'suspended', workflow: 'running' });
     expect(suspendResult.status).toBe('suspended');
     if (suspendResult.status === 'suspended') {
       expect(suspendResult.steps['suspendable'].output).toEqual({
@@ -1183,7 +1187,7 @@ describe('Block and Cue States', () => {
 
   // Test failed state
   it('should handle failed state correctly', async () => {
-    const failingBlock = Cue.createBlock({
+    const failingStep = createStep({
       id: 'failing',
       inputSchema: z.number(),
       outputSchema: z.number(),
@@ -1195,33 +1199,33 @@ describe('Block and Cue States', () => {
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'failed-state-test',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
 
-    cue.then(failingBlock);
+    workflow.then(failingStep);
 
     // Set up state monitoring
-    const states: { block: string; cue: string }[] = [];
-    const unsubscribe = cue.store.subscribe((state) => {
+    const states: { step: string; workflow: string }[] = [];
+    const unsubscribe = workflow.store.subscribe((state) => {
       const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.logType === 'BlockStatusUpdate' && lastLog.blockStatus) {
+      if (lastLog?.logType === 'StepStatusUpdate' && lastLog.stepStatus) {
         states.push({
-          block: lastLog.blockStatus,
-          cue: state.status.toLowerCase(),
+          step: lastLog.stepStatus,
+          workflow: state.status.toLowerCase(),
         });
       }
     });
 
     // Test failure
-    const failResult = await cue.start(-1);
+    const failResult = await workflow.start(-1);
     await new Promise((resolve) => setTimeout(resolve, 100));
     unsubscribe();
 
     // Verify states
-    expect(states).toContainEqual({ block: 'failed', cue: 'running' });
+    expect(states).toContainEqual({ step: 'failed', workflow: 'running' });
     expect(failResult.status).toBe('failed');
     if (failResult.status === 'failed') {
       expect(failResult.error?.message).toBe('Negative value not allowed');
@@ -1230,7 +1234,7 @@ describe('Block and Cue States', () => {
 
   // Test completed state
   it('should handle completed state correctly', async () => {
-    const successBlock = Cue.createBlock({
+    const successStep = createStep({
       id: 'success',
       inputSchema: z.number(),
       outputSchema: z.number(),
@@ -1239,42 +1243,42 @@ describe('Block and Cue States', () => {
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'completed-state-test',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
 
-    cue.then(successBlock);
+    workflow.then(successStep);
 
     // Set up state monitoring
-    const states: { block: string; cue: string }[] = [];
-    const unsubscribe = cue.store.subscribe((state) => {
+    const states: { step: string; workflow: string }[] = [];
+    const unsubscribe = workflow.store.subscribe((state) => {
       const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.logType === 'BlockStatusUpdate' && lastLog.blockStatus) {
+      if (lastLog?.logType === 'StepStatusUpdate' && lastLog.stepStatus) {
         states.push({
-          block: lastLog.blockStatus,
-          cue: state.status.toLowerCase(),
+          step: lastLog.stepStatus,
+          workflow: state.status.toLowerCase(),
         });
       }
     });
 
     // Test completion
-    const completeResult = await cue.start(5);
+    const completeResult = await workflow.start(5);
     await new Promise((resolve) => setTimeout(resolve, 100));
     unsubscribe();
 
     // Verify states
-    expect(states).toContainEqual({ block: 'completed', cue: 'running' });
+    expect(states).toContainEqual({ step: 'completed', workflow: 'running' });
     expect(completeResult.status).toBe('completed');
     if (completeResult.status === 'completed') {
       expect(completeResult.result).toBe(10);
     }
   });
 
-  // Test state transitions in parallel blocks
-  it('should handle state transitions in parallel blocks', async () => {
-    const parallelBlock1 = Cue.createBlock({
+  // Test state transitions in parallel steps
+  it('should handle state transitions in parallel steps', async () => {
+    const parallelStep1 = createStep({
       id: 'parallel1',
       inputSchema: z.number(),
       outputSchema: z.number(),
@@ -1284,7 +1288,7 @@ describe('Block and Cue States', () => {
       },
     });
 
-    const parallelBlock2 = Cue.createBlock({
+    const parallelStep2 = createStep({
       id: 'parallel2',
       inputSchema: z.number(),
       outputSchema: z.number(),
@@ -1294,35 +1298,35 @@ describe('Block and Cue States', () => {
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'parallel-state-test',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
 
-    cue.parallel([parallelBlock1, parallelBlock2]);
+    workflow.parallel([parallelStep1, parallelStep2]);
 
     // Monitor states with detailed logging
-    const states: Array<{ block: string; cue: string }> = [];
-    const unsubscribe = cue.store.subscribe((state) => {
+    const states: Array<{ step: string; workflow: string }> = [];
+    const unsubscribe = workflow.store.subscribe((state) => {
       const lastLog = state.logs[state.logs.length - 1];
 
-      if (lastLog?.logType === 'BlockStatusUpdate' && lastLog.blockStatus) {
+      if (lastLog?.logType === 'StepStatusUpdate' && lastLog.stepStatus) {
         const stateUpdate = {
-          block: lastLog.blockStatus,
-          cue: state.status.toLowerCase(),
+          step: lastLog.stepStatus,
+          workflow: state.status.toLowerCase(),
         };
         states.push(stateUpdate);
       }
     });
 
     // Start execution
-    const result = await cue.start(5);
+    const result = await workflow.start(5);
     // Clean up
     unsubscribe();
 
     // Verify states
-    expect(states).toContainEqual({ block: 'completed', cue: 'running' });
+    expect(states).toContainEqual({ step: 'completed', workflow: 'running' });
     expect(result.status).toBe('completed');
     if (result.status === 'completed') {
       expect(result.result).toEqual({
@@ -1332,9 +1336,9 @@ describe('Block and Cue States', () => {
     }
   });
 
-  // Test state transitions in conditional blocks
-  it('should handle state transitions in conditional blocks', async () => {
-    const evenBlock = Cue.createBlock({
+  // Test state transitions in conditional steps
+  it('should handle state transitions in conditional steps', async () => {
+    const evenStep = createStep({
       id: 'even',
       inputSchema: z.number(),
       outputSchema: z.string(),
@@ -1343,7 +1347,7 @@ describe('Block and Cue States', () => {
       },
     });
 
-    const oddBlock = Cue.createBlock({
+    const oddStep = createStep({
       id: 'odd',
       inputSchema: z.number(),
       outputSchema: z.string(),
@@ -1352,41 +1356,41 @@ describe('Block and Cue States', () => {
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'conditional-states-test',
       inputSchema: z.number(),
       outputSchema: z.string(),
     });
 
     // Use branch to create conditional execution
-    cue.branch([
-      [async ({ inputData }) => (inputData as number) % 2 === 0, evenBlock],
-      [async ({ inputData }) => (inputData as number) % 2 !== 0, oddBlock],
+    workflow.branch([
+      [async ({ inputData }) => (inputData as number) % 2 === 0, evenStep],
+      [async ({ inputData }) => (inputData as number) % 2 !== 0, oddStep],
     ]);
 
     // Set up state monitoring
-    const states: { block: string; cue: string }[] = [];
-    const unsubscribe = cue.store.subscribe((state) => {
+    const states: { step: string; workflow: string }[] = [];
+    const unsubscribe = workflow.store.subscribe((state) => {
       // console.log('Store Update:', state);
 
       const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.logType === 'BlockStatusUpdate' && lastLog.blockStatus) {
+      if (lastLog?.logType === 'StepStatusUpdate' && lastLog.stepStatus) {
         states.push({
-          block: lastLog.blockStatus,
-          cue: state.status.toLowerCase(),
+          step: lastLog.stepStatus,
+          workflow: state.status.toLowerCase(),
         });
       }
     });
 
     // Test even number
-    const evenResult = await cue.start(4);
+    const evenResult = await workflow.start(4);
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     // console.log('States:', states);
 
     // Verify even number states
-    expect(states).toContainEqual({ block: 'running', cue: 'running' });
-    expect(states).toContainEqual({ block: 'completed', cue: 'running' });
+    expect(states).toContainEqual({ step: 'running', workflow: 'running' });
+    expect(states).toContainEqual({ step: 'completed', workflow: 'running' });
     expect(evenResult.status).toBe('completed');
     if (evenResult.status === 'completed') {
       expect(evenResult.result).toBe('even: 4');
@@ -1394,25 +1398,25 @@ describe('Block and Cue States', () => {
 
     // Reset states for odd number test
     states.length = 0;
-    cue.store.getState().reset();
+    workflow.store.getState().reset();
 
     // Test odd number
-    const oddResult = await cue.start(5);
+    const oddResult = await workflow.start(5);
     await new Promise((resolve) => setTimeout(resolve, 100));
     unsubscribe();
 
     // Verify odd number states
-    expect(states).toContainEqual({ block: 'running', cue: 'running' });
-    expect(states).toContainEqual({ block: 'completed', cue: 'running' });
+    expect(states).toContainEqual({ step: 'running', workflow: 'running' });
+    expect(states).toContainEqual({ step: 'completed', workflow: 'running' });
     expect(oddResult.status).toBe('completed');
     if (oddResult.status === 'completed') {
       expect(oddResult.result).toBe('odd: 5');
     }
   });
 
-  // Test state transitions in foreach blocks
-  it('should handle state transitions in foreach blocks', async () => {
-    const processBlock = Cue.createBlock({
+  // Test state transitions in foreach steps
+  it('should handle state transitions in foreach steps', async () => {
+    const processStep = createStep({
       id: 'process',
       inputSchema: z.number(),
       outputSchema: z.number(),
@@ -1421,36 +1425,36 @@ describe('Block and Cue States', () => {
       },
     });
 
-    const cue = Cue.createCue({
+    const workflow = createWorkflow({
       id: 'foreach-states-test',
       inputSchema: z.array(z.number()),
       outputSchema: z.array(z.number()),
     });
 
     // Use foreach with concurrency of 2
-    cue.foreach(processBlock, { concurrency: 2 });
+    workflow.foreach(processStep, { concurrency: 2 });
 
     // Set up state monitoring
-    const states: { block: string; cue: string }[] = [];
-    const unsubscribe = cue.store.subscribe((state) => {
+    const states: { step: string; workflow: string }[] = [];
+    const unsubscribe = workflow.store.subscribe((state) => {
       const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.logType === 'BlockStatusUpdate' && lastLog.blockStatus) {
+      if (lastLog?.logType === 'StepStatusUpdate' && lastLog.stepStatus) {
         states.push({
-          block: lastLog.blockStatus,
-          cue: state.status.toLowerCase(),
+          step: lastLog.stepStatus,
+          workflow: state.status.toLowerCase(),
         });
       }
     });
 
     // Test with array of numbers
-    const result = await cue.start([1, 2, 3, 4, 5]);
+    const result = await workflow.start([1, 2, 3, 4, 5]);
     await new Promise((resolve) => setTimeout(resolve, 100));
     unsubscribe();
 
     // Verify states
     // Should have running and completed states for each item
-    expect(states).toContainEqual({ block: 'running', cue: 'running' });
-    expect(states).toContainEqual({ block: 'completed', cue: 'running' });
+    expect(states).toContainEqual({ step: 'running', workflow: 'running' });
+    expect(states).toContainEqual({ step: 'completed', workflow: 'running' });
 
     // Verify final result
     expect(result.status).toBe('completed');
@@ -1460,8 +1464,8 @@ describe('Block and Cue States', () => {
 
     // Verify that we have the correct number of state transitions
     // For each item: running -> completed
-    const runningStates = states.filter((s) => s.block === 'running');
-    const completedStates = states.filter((s) => s.block === 'completed');
+    const runningStates = states.filter((s) => s.step === 'running');
+    const completedStates = states.filter((s) => s.step === 'completed');
     expect(runningStates.length).toBe(5); // One running state per item
     expect(completedStates.length).toBe(5); // One completed state per item
   });

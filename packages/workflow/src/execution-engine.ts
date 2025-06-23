@@ -1,15 +1,15 @@
 import { z } from 'zod';
 import type {
-  Block,
-  BlockContext,
-  BlockFlowEntry,
-  BlockResult,
+  Step,
+  StepContext,
+  StepFlowEntry,
+  StepResult,
   RuntimeContext,
 } from './types';
-import { useCueStore } from './stores/cueStore';
+import { useWorkflowStore } from './stores/workflowStore';
 
 export type ExecutionContext = {
-  cueId: string;
+  workflowId: string;
   runId: string;
   executionPath: number[];
   suspendedPaths: Record<string, number[]>;
@@ -19,17 +19,17 @@ export type ExecutionContext = {
   };
 };
 
-export class CueExecutionEngine {
-  private store = useCueStore;
+export class WorkflowExecutionEngine {
+  private store = useWorkflowStore;
 
   async execute<TInput, TOutput>(params: {
-    cueId: string;
+    workflowId: string;
     runId: string;
-    graph: BlockFlowEntry[];
+    graph: StepFlowEntry[];
     input?: TInput;
     resume?: {
       steps: string[];
-      blockResults: Record<string, BlockResult>;
+      stepResults: Record<string, StepResult>;
       resumePayload: any;
       resumePath: number[];
     };
@@ -41,7 +41,7 @@ export class CueExecutionEngine {
     runtimeContext?: RuntimeContext;
   }): Promise<TOutput> {
     const {
-      cueId,
+      workflowId,
       runId,
       graph,
       input,
@@ -52,7 +52,7 @@ export class CueExecutionEngine {
     } = params;
 
     const executionContext: ExecutionContext = {
-      cueId,
+      workflowId,
       runId,
       executionPath: resume?.resumePath || [],
       suspendedPaths: {},
@@ -62,30 +62,29 @@ export class CueExecutionEngine {
       },
     };
 
-    const blockResults: Record<string, BlockResult> =
-      resume?.blockResults || {};
+    const stepResults: Record<string, StepResult> = resume?.stepResults || {};
 
     try {
-      let lastOutput: BlockResult | undefined;
-      let prevStep: BlockFlowEntry | undefined;
+      let lastOutput: StepResult | undefined;
+      let prevStep: StepFlowEntry | undefined;
 
-      // If resuming, find the last executed block
+      // If resuming, find the last executed step
       if (resume) {
-        const lastBlockId = resume.steps[resume.steps.length - 1];
-        const lastBlockResult = blockResults[lastBlockId];
-        if (lastBlockResult) {
-          lastOutput = lastBlockResult;
+        const lastStepId = resume.steps[resume.steps.length - 1];
+        const lastStepResult = stepResults[lastStepId];
+        if (lastStepResult) {
+          lastOutput = lastStepResult;
         }
       }
 
       // Execute each entry in the graph
       for (const entry of graph) {
         const result = await this.executeEntry({
-          cueId,
+          workflowId,
           runId,
           entry,
           prevStep,
-          blockResults,
+          stepResults,
           resume,
           executionContext,
           emitter,
@@ -93,41 +92,41 @@ export class CueExecutionEngine {
           inputData: input,
         });
 
-        // Update store with block result
-        if (entry.type === 'block') {
-          this.store.getState().updateBlockResult(entry.block.id, result);
+        // Update store with step result
+        if (entry.type === 'step') {
+          this.store.getState().updateStepResult(entry.step.id, result);
         }
 
-        // If we're resuming and this is the block we're resuming, update its state
+        // If we're resuming and this is the step we're resuming, update its state
         if (
           resume &&
-          entry.type === 'block' &&
-          resume.steps.includes(entry.block.id)
+          entry.type === 'step' &&
+          resume.steps.includes(entry.step.id)
         ) {
-          const suspendedResult = blockResults[entry.block.id];
+          const suspendedResult = stepResults[entry.step.id];
           if (
             suspendedResult?.status === 'suspended' &&
             result.status !== 'suspended'
           ) {
             // Clear the suspended state from executionContext
-            delete executionContext.suspendedPaths[entry.block.id];
+            delete executionContext.suspendedPaths[entry.step.id];
           }
         }
 
         if (result.status === 'suspended') {
-          // Find all suspended blocks and their information
-          const suspendedBlocks = Object.entries(blockResults)
+          // Find all suspended steps and their information
+          const suspendedSteps = Object.entries(stepResults)
             .filter(([_, result]) => result.status === 'suspended')
-            .map(([blockId, result]) => ({
-              blockId,
+            .map(([stepId, result]) => ({
+              stepId,
               path: result.suspendedPath || [],
               output: result.output,
             }));
 
           return {
             status: 'suspended',
-            steps: blockResults,
-            suspended: suspendedBlocks,
+            steps: stepResults,
+            suspended: suspendedSteps,
           } as any;
         }
 
@@ -135,7 +134,7 @@ export class CueExecutionEngine {
           return {
             status: 'failed',
             error: result.error,
-            steps: blockResults,
+            steps: stepResults,
           } as any;
         }
 
@@ -146,27 +145,27 @@ export class CueExecutionEngine {
       // Format and return the final result
       return this.formatReturnValue(
         emitter,
-        blockResults,
+        stepResults,
         lastOutput!
       ) as TOutput;
     } catch (error) {
       return {
         status: 'failed',
         error: error as Error,
-        steps: blockResults,
+        steps: stepResults,
       } as any;
     }
   }
 
   private async executeEntry(params: {
-    cueId: string;
+    workflowId: string;
     runId: string;
-    entry: BlockFlowEntry;
-    prevStep?: BlockFlowEntry;
-    blockResults: Record<string, BlockResult>;
+    entry: StepFlowEntry;
+    prevStep?: StepFlowEntry;
+    stepResults: Record<string, StepResult>;
     resume?: {
       steps: string[];
-      blockResults: Record<string, BlockResult>;
+      stepResults: Record<string, StepResult>;
       resumePayload: any;
       resumePath: number[];
     };
@@ -174,13 +173,13 @@ export class CueExecutionEngine {
     emitter: { emit: (event: string, data: any) => Promise<void> };
     runtimeContext?: RuntimeContext;
     inputData?: any;
-  }): Promise<BlockResult> {
+  }): Promise<StepResult> {
     const {
-      cueId,
+      workflowId,
       runId,
       entry,
       prevStep,
-      blockResults,
+      stepResults,
       resume,
       executionContext,
       emitter,
@@ -188,15 +187,15 @@ export class CueExecutionEngine {
       inputData,
     } = params;
 
-    // If resuming, check if this is the block to resume
+    // If resuming, check if this is the step to resume
     if (
       resume &&
-      resume.steps.includes(entry.type === 'block' ? entry.block.id : '')
+      resume.steps.includes(entry.type === 'step' ? entry.step.id : '')
     ) {
-      if (entry.type === 'block' && entry.block.resumeSchema) {
-        // Validate resume data against the block's resume schema
+      if (entry.type === 'step' && entry.step.resumeSchema) {
+        // Validate resume data against the step's resume schema
         try {
-          entry.block.resumeSchema.parse(resume.resumePayload);
+          entry.step.resumeSchema.parse(resume.resumePayload);
         } catch (error) {
           return {
             status: 'failed',
@@ -204,33 +203,33 @@ export class CueExecutionEngine {
           };
         }
 
-        // Get the previous block's output as input data for the resumed block
-        const blockInput = this.getBlockOutput(blockResults, prevStep);
+        // Get the previous step's output as input data for the resumed step
+        const stepInput = this.getStepOutput(stepResults, prevStep);
 
-        // If the block was suspended, we need to re-execute it with the same input
-        const suspendedResult = blockResults[entry.block.id];
+        // If the step was suspended, we need to re-execute it with the same input
+        const suspendedResult = stepResults[entry.step.id];
         if (suspendedResult?.status === 'suspended') {
-          const result = await this.executeBlock({
-            cueId,
+          const result = await this.executeStep({
+            workflowId,
             runId,
-            block: entry.block,
+            step: entry.step,
             prevStep,
-            blockResults,
+            stepResults,
             executionContext,
             emitter,
-            inputData: blockInput,
+            inputData: stepInput,
             runtimeContext,
             isResuming: true,
             resumeData: resume.resumePayload,
           });
 
-          // Update the block's result in blockResults
-          blockResults[entry.block.id] = result;
+          // Update the step's result in stepResults
+          stepResults[entry.step.id] = result;
           // console.log({ result });
 
-          // If the block completed successfully, clear its suspended state
+          // If the step completed successfully, clear its suspended state
           if (result.status === 'completed') {
-            delete executionContext.suspendedPaths[entry.block.id];
+            delete executionContext.suspendedPaths[entry.step.id];
           }
 
           return result;
@@ -239,13 +238,13 @@ export class CueExecutionEngine {
     }
 
     switch (entry.type) {
-      case 'block':
-        return this.executeBlock({
-          cueId,
+      case 'step':
+        return this.executeStep({
+          workflowId,
           runId,
-          block: entry.block,
+          step: entry.step,
           prevStep,
-          blockResults,
+          stepResults,
           executionContext,
           emitter,
           inputData,
@@ -253,10 +252,10 @@ export class CueExecutionEngine {
         });
       case 'parallel':
         return this.executeParallel({
-          cueId,
+          workflowId,
           runId,
           entry,
-          blockResults,
+          stepResults,
           resume,
           executionContext,
           emitter,
@@ -264,10 +263,10 @@ export class CueExecutionEngine {
         });
       case 'conditional':
         return this.executeConditional({
-          cueId,
+          workflowId,
           runId,
           entry,
-          blockResults,
+          stepResults,
           executionContext,
           emitter,
           inputData,
@@ -275,19 +274,19 @@ export class CueExecutionEngine {
         });
       case 'loop':
         return this.executeLoop({
-          cueId,
+          workflowId,
           runId,
           entry,
           prevStep: prevStep || {
-            type: 'block',
-            block: {
+            type: 'step',
+            step: {
               id: 'loop',
               execute: async () => {},
               inputSchema: z.any(),
               outputSchema: z.any(),
-            } as Block<any, any>,
+            } as Step<any, any>,
           },
-          blockResults,
+          stepResults,
           resume,
           executionContext,
           emitter,
@@ -295,10 +294,10 @@ export class CueExecutionEngine {
         });
       case 'foreach':
         return this.executeForeach({
-          cueId,
+          workflowId,
           runId,
           entry,
-          blockResults,
+          stepResults,
           resume,
           executionContext,
           emitter,
@@ -307,52 +306,49 @@ export class CueExecutionEngine {
     }
   }
 
-  private getBlockOutput(
-    blockResults: Record<string, BlockResult>,
-    prevStep?: BlockFlowEntry
+  private getStepOutput(
+    stepResults: Record<string, StepResult>,
+    prevStep?: StepFlowEntry
   ): any {
     if (!prevStep) {
-      return blockResults.input;
-    } else if (prevStep.type === 'block') {
-      return blockResults[prevStep.block.id]?.output;
+      return stepResults.input;
+    } else if (prevStep.type === 'step') {
+      return stepResults[prevStep.step.id]?.output;
     } else if (
       prevStep.type === 'parallel' ||
       prevStep.type === 'conditional'
     ) {
-      return prevStep.blocks.reduce(
-        (acc: Record<string, any>, block, _index) => {
-          if (block.type === 'block') {
-            acc[block.block.id] = blockResults[block.block.id]?.output;
-          }
-          return acc;
-        },
-        {}
-      );
+      return prevStep.steps.reduce((acc: Record<string, any>, step, _index) => {
+        if (step.type === 'step') {
+          acc[step.step.id] = stepResults[step.step.id]?.output;
+        }
+        return acc;
+      }, {});
     } else if (prevStep.type === 'loop') {
-      return blockResults[prevStep.block.id]?.output;
+      return stepResults[prevStep.step.id]?.output;
     } else if (prevStep.type === 'foreach') {
-      return blockResults[prevStep.block.id]?.output;
+      return stepResults[prevStep.step.id]?.output;
     }
-    return blockResults.input;
+    return stepResults.input;
   }
 
-  private async executeBlock(params: {
-    cueId: string;
+  private async executeStep(params: {
+    workflowId: string;
     runId: string;
-    block: Block<any, any>;
-    prevStep?: BlockFlowEntry;
-    blockResults: Record<string, BlockResult>;
+    step: Step<any, any>;
+    prevStep?: StepFlowEntry;
+    stepResults: Record<string, StepResult>;
     executionContext: ExecutionContext;
     emitter: { emit: (event: string, data: any) => Promise<void> };
     inputData: any;
     runtimeContext?: RuntimeContext;
     isResuming?: boolean;
     resumeData?: any;
-  }): Promise<BlockResult> {
+  }): Promise<StepResult> {
     const {
-      block,
+      step,
       prevStep,
-      blockResults,
+      stepResults,
       executionContext,
       inputData,
       runtimeContext,
@@ -361,35 +357,35 @@ export class CueExecutionEngine {
     } = params;
 
     try {
-      // Get input data for the block
-      const blockInput = this.getBlockOutput(blockResults, prevStep);
+      // Get input data for the step
+      const stepInput = this.getStepOutput(stepResults, prevStep);
 
       // Store the initial input data if it's not already stored
-      if (!blockResults.input) {
-        blockResults.input = inputData;
+      if (!stepResults.input) {
+        stepResults.input = inputData;
       }
 
       // Si estamos resumiendo, limpiamos el estado suspendido anterior
       if (isResuming) {
-        delete blockResults[block.id];
-        delete executionContext.suspendedPaths[block.id];
+        delete stepResults[step.id];
+        delete executionContext.suspendedPaths[step.id];
       }
 
-      // Create block context
-      const context: BlockContext = {
-        inputData: blockInput || inputData,
-        getBlockResult: <T>(block: Block<T, any>) => {
-          const result = blockResults[block.id];
+      // Create step context
+      const context: StepContext = {
+        inputData: stepInput || inputData,
+        getStepResult: <T>(stepId: string) => {
+          const result = stepResults[stepId];
           if (!result) {
-            throw new Error(`Block result not found for block: ${block.id}`);
+            throw new Error(`Step result not found for step: ${stepId}`);
           }
           if (result.status !== 'completed') {
-            throw new Error(`Block ${block.id} has not completed successfully`);
+            throw new Error(`Step ${stepId} has not completed successfully`);
           }
           return result.output as T;
         },
         getInitData: <T>() => {
-          const initData = blockResults.input;
+          const initData = stepResults.input;
           if (!initData) {
             throw new Error('Initial input data not found');
           }
@@ -399,109 +395,109 @@ export class CueExecutionEngine {
         isResuming,
         resumeData,
         suspend: async (suspendPayload: any) => {
-          // Update execution path with current block index
+          // Update execution path with current step index
           const currentPath = [...executionContext.executionPath];
-          const blockIndex = Object.keys(blockResults).length;
-          currentPath.push(blockIndex);
+          const stepIndex = Object.keys(stepResults).length;
+          currentPath.push(stepIndex);
 
-          const result: BlockResult = {
+          const result: StepResult = {
             status: 'suspended',
             output: suspendPayload,
             suspendedPath: currentPath,
           };
-          // Store the suspended state in both blockResults and executionContext
-          blockResults[block.id] = result;
-          executionContext.suspendedPaths[block.id] = currentPath;
+          // Store the suspended state in both stepResults and executionContext
+          stepResults[step.id] = result;
+          executionContext.suspendedPaths[step.id] = currentPath;
 
           return result;
         },
       };
 
-      // Log running state before executing the block
-      const runningResult: BlockResult = {
+      // Log running state before executing the step
+      const runningResult: StepResult = {
         status: 'running',
         output: undefined,
       };
-      blockResults[block.id] = runningResult;
-      this.store.getState().updateBlockResult(block.id, runningResult);
+      stepResults[step.id] = runningResult;
+      this.store.getState().updateStepResult(step.id, runningResult);
 
-      // Execute the block
-      const output = await block.execute(context);
+      // Execute the step
+      const output = await step.execute(context);
 
-      // Check if the block was suspended during this execution
-      const currentResult = blockResults[block.id];
+      // Check if the step was suspended during this execution
+      const currentResult = stepResults[step.id];
       if (currentResult?.status === 'suspended') {
         return currentResult;
       }
 
       // Si estamos resumiendo y el bloque se completó exitosamente
       if (isResuming) {
-        const result: BlockResult = {
+        const result: StepResult = {
           status: 'completed',
           output,
         };
-        blockResults[block.id] = result;
+        stepResults[step.id] = result;
         return result;
       }
 
-      // If the block didn't suspend, return the result
-      const result: BlockResult = {
+      // If the step didn't suspend, return the result
+      const result: StepResult = {
         status: 'completed',
         output,
       };
-      blockResults[block.id] = result;
+      stepResults[step.id] = result;
       return result;
     } catch (error) {
-      const result: BlockResult = {
+      const result: StepResult = {
         status: 'failed',
         error: error as Error,
       };
-      blockResults[block.id] = result;
+      stepResults[step.id] = result;
       return result;
     }
   }
 
   private async executeParallel(params: {
-    cueId: string;
+    workflowId: string;
     runId: string;
-    entry: { type: 'parallel'; blocks: BlockFlowEntry[] };
-    blockResults: Record<string, BlockResult>;
+    entry: { type: 'parallel'; steps: StepFlowEntry[] };
+    stepResults: Record<string, StepResult>;
     executionContext: ExecutionContext;
     emitter: { emit: (event: string, data: any) => Promise<void> };
     inputData: any;
     resume?: {
       steps: string[];
-      blockResults: Record<string, BlockResult>;
+      stepResults: Record<string, StepResult>;
       resumePayload: any;
       resumePath: number[];
     };
-  }): Promise<BlockResult> {
+  }): Promise<StepResult> {
     const { entry, inputData } = params;
 
     const results = await Promise.all(
-      entry.blocks.map((block) =>
+      entry.steps.map((step) =>
         this.executeEntry({
           ...params,
-          entry: block,
+          entry: step,
           prevStep: {
-            type: 'block',
-            block: {
+            type: 'step',
+            step: {
               id: 'parallel',
               execute: async () => {},
               inputSchema: z.any(),
               outputSchema: z.any(),
-            } as Block<any, any>,
+            } as Step<any, any>,
           },
           inputData,
         })
       )
     );
 
-    // Log block status updates for each parallel block
+    // Log step status updates for each parallel step
     results.forEach((result, index) => {
-      const blockEntry = entry.blocks[index];
-      if (blockEntry.type === 'block') {
-        this.store.getState().updateBlockResult(blockEntry.block.id, result);
+      const stepEntry = entry.steps[index];
+      if (stepEntry.type === 'step') {
+        this.store.getState().updateStepResult(stepEntry.step.id, result);
       }
     });
 
@@ -509,7 +505,7 @@ export class CueExecutionEngine {
     if (hasFailed) {
       return {
         status: 'failed',
-        error: new Error('One or more parallel blocks failed'),
+        error: new Error('One or more parallel steps failed'),
       };
     }
 
@@ -524,9 +520,9 @@ export class CueExecutionEngine {
       status: 'completed',
       output: results.reduce((acc, result, index) => {
         if (result.status === 'completed') {
-          const currentEntry = entry.blocks[index]!;
-          if (currentEntry.type === 'block') {
-            acc[currentEntry.block.id] = result.output;
+          const currentEntry = entry.steps[index]!;
+          if (currentEntry.type === 'step') {
+            acc[currentEntry.step.id] = result.output;
           }
         }
         return acc;
@@ -535,59 +531,59 @@ export class CueExecutionEngine {
   }
 
   private async executeConditional(params: {
-    cueId: string;
+    workflowId: string;
     runId: string;
     entry: {
       type: 'conditional';
-      blocks: BlockFlowEntry[];
-      conditions: ((context: BlockContext) => Promise<boolean>)[];
+      steps: StepFlowEntry[];
+      conditions: ((context: StepContext) => Promise<boolean>)[];
     };
-    blockResults: Record<string, BlockResult>;
+    stepResults: Record<string, StepResult>;
     executionContext: ExecutionContext;
     emitter: { emit: (event: string, data: any) => Promise<void> };
     inputData: any;
-    prevStep?: BlockFlowEntry;
-  }): Promise<BlockResult> {
-    const { entry, blockResults, executionContext, inputData, prevStep } =
+    prevStep?: StepFlowEntry;
+  }): Promise<StepResult> {
+    const { entry, stepResults, executionContext, inputData, prevStep } =
       params;
 
     // Store the initial input data if it's not already stored
-    if (!blockResults.input) {
-      blockResults.input = inputData;
+    if (!stepResults.input) {
+      stepResults.input = inputData;
     }
 
-    const context: BlockContext = {
+    const context: StepContext = {
       inputData,
-      getBlockResult: <T>(block: Block<T, any>) => {
-        const result = blockResults[block.id];
+      getStepResult: <T>(stepId: string) => {
+        const result = stepResults[stepId];
         if (!result) {
-          throw new Error(`Block result not found for block: ${block.id}`);
+          throw new Error(`Step result not found for step: ${stepId}`);
         }
         if (result.status !== 'completed') {
-          throw new Error(`Block ${block.id} has not completed successfully`);
+          throw new Error(`Step ${stepId} has not completed successfully`);
         }
         return result.output as T;
       },
       getInitData: <T>() => {
-        const initData = blockResults.input;
+        const initData = stepResults.input;
         if (!initData) {
           throw new Error('Initial input data not found');
         }
         return initData as T;
       },
       suspend: async (suspendPayload: any) => {
-        // Update execution path with current block index
+        // Update execution path with current step index
         const currentPath = [...executionContext.executionPath];
-        const blockIndex = Object.keys(blockResults).length;
-        currentPath.push(blockIndex);
+        const stepIndex = Object.keys(stepResults).length;
+        currentPath.push(stepIndex);
 
-        const result: BlockResult = {
+        const result: StepResult = {
           status: 'suspended',
           output: suspendPayload,
           suspendedPath: currentPath,
         };
         // Store the suspended state in the execution context
-        executionContext.suspendedPaths[`block_${blockIndex}`] = currentPath;
+        executionContext.suspendedPaths[`step_${stepIndex}`] = currentPath;
         return result;
       },
     };
@@ -606,57 +602,57 @@ export class CueExecutionEngine {
 
     const result = await this.executeEntry({
       ...params,
-      entry: entry.blocks[matchingIndex]!,
+      entry: entry.steps[matchingIndex]!,
       prevStep: prevStep || {
-        type: 'block',
-        block: {
+        type: 'step',
+        step: {
           id: 'conditional',
           execute: async () => {},
           inputSchema: z.any(),
           outputSchema: z.any(),
-        } as Block<any, any>,
+        } as Step<any, any>,
       },
     });
 
-    // Update the block result in the store
-    if (entry.blocks[matchingIndex]?.type === 'block') {
+    // Update the step result in the store
+    if (entry.steps[matchingIndex]?.type === 'step') {
       this.store
         .getState()
-        .updateBlockResult(entry.blocks[matchingIndex].block.id, result);
+        .updateStepResult(entry.steps[matchingIndex].step.id, result);
     }
 
     return result;
   }
 
   private async executeLoop(params: {
-    cueId: string;
+    workflowId: string;
     runId: string;
     entry: {
       type: 'loop';
-      block: Block<any, any>;
-      condition: (context: BlockContext) => Promise<boolean>;
+      step: Step<any, any>;
+      condition: (context: StepContext) => Promise<boolean>;
       loopType: 'dowhile' | 'dountil';
     };
-    prevStep: BlockFlowEntry;
-    blockResults: Record<string, BlockResult>;
+    prevStep: StepFlowEntry;
+    stepResults: Record<string, StepResult>;
     executionContext: ExecutionContext;
     emitter: { emit: (event: string, data: any) => Promise<void> };
     inputData: any;
     resume?: {
       steps: string[];
-      blockResults: Record<string, BlockResult>;
+      stepResults: Record<string, StepResult>;
       resumePayload: any;
       resumePath: number[];
     };
-  }): Promise<BlockResult> {
-    const { entry, blockResults, executionContext, inputData } = params;
+  }): Promise<StepResult> {
+    const { entry, stepResults, executionContext, inputData } = params;
 
     // Store the initial input data if it's not already stored
-    if (!blockResults.input) {
-      blockResults.input = inputData;
+    if (!stepResults.input) {
+      stepResults.input = inputData;
     }
 
-    let result: BlockResult = {
+    let result: StepResult = {
       status: 'completed',
       output: inputData,
     };
@@ -666,12 +662,12 @@ export class CueExecutionEngine {
     let prevOutput = inputData;
 
     do {
-      result = await this.executeBlock({
+      result = await this.executeStep({
         ...params,
-        block: entry.block,
+        step: entry.step,
         prevStep: {
-          type: 'block',
-          block: entry.block,
+          type: 'step',
+          step: entry.step,
         },
         inputData: prevOutput,
       });
@@ -681,41 +677,41 @@ export class CueExecutionEngine {
         return result;
       }
 
-      // Create a new context with updated block results
-      const context: BlockContext = {
+      // Create a new context with updated step results
+      const context: StepContext = {
         inputData: result.output,
-        getBlockResult: <T>(block: Block<T, any>) => {
-          const result = blockResults[block.id];
+        getStepResult: <T>(stepId: string) => {
+          const result = stepResults[stepId];
           if (!result) {
-            throw new Error(`Block result not found for block: ${block.id}`);
+            throw new Error(`Step result not found for step: ${stepId}`);
           }
           if (result.status !== 'completed') {
             throw new Error(
-              `Block ${block.id} did not complete successfully. Status: ${result.status}`
+              `Step ${stepId} did not complete successfully. Status: ${result.status}`
             );
           }
           return result.output as T;
         },
         getInitData: <T>() => {
-          const initData = blockResults.input;
+          const initData = stepResults.input;
           if (!initData) {
             throw new Error('Initial input data not found');
           }
           return initData as T;
         },
         suspend: async (suspendPayload: any) => {
-          // Update execution path with current block index
+          // Update execution path with current step index
           const currentPath = [...executionContext.executionPath];
-          const blockIndex = Object.keys(blockResults).length;
-          currentPath.push(blockIndex);
+          const stepIndex = Object.keys(stepResults).length;
+          currentPath.push(stepIndex);
 
-          const result: BlockResult = {
+          const result: StepResult = {
             status: 'suspended',
             output: suspendPayload,
             suspendedPath: currentPath,
           };
           // Store the suspended state in the execution context
-          executionContext.suspendedPaths[`block_${blockIndex}`] = currentPath;
+          executionContext.suspendedPaths[`step_${stepIndex}`] = currentPath;
           return result;
         },
       };
@@ -731,31 +727,31 @@ export class CueExecutionEngine {
   }
 
   private async executeForeach(params: {
-    cueId: string;
+    workflowId: string;
     runId: string;
     entry: {
       type: 'foreach';
-      block: Block<any, any>;
+      step: Step<any, any>;
       opts: {
         concurrency: number;
       };
     };
-    blockResults: Record<string, BlockResult>;
+    stepResults: Record<string, StepResult>;
     executionContext: ExecutionContext;
     emitter: { emit: (event: string, data: any) => Promise<void> };
     inputData: any;
     resume?: {
       steps: string[];
-      blockResults: Record<string, BlockResult>;
+      stepResults: Record<string, StepResult>;
       resumePayload: any;
       resumePath: number[];
     };
-  }): Promise<BlockResult> {
-    const { entry, blockResults, inputData } = params;
+  }): Promise<StepResult> {
+    const { entry, stepResults, inputData } = params;
     if (!Array.isArray(inputData)) {
       return {
         status: 'failed',
-        error: new Error('Foreach block requires an array input'),
+        error: new Error('Foreach step requires an array input'),
       };
     }
 
@@ -765,18 +761,18 @@ export class CueExecutionEngine {
     for (const chunk of chunks) {
       const chunkResults = await Promise.all(
         chunk.map((item) =>
-          this.executeBlock({
+          this.executeStep({
             ...params,
-            block: entry.block,
-            blockResults: { ...blockResults, input: item },
+            step: entry.step,
+            stepResults: { ...stepResults, input: item },
             inputData: item,
           })
         )
       );
 
-      // Log block status updates for each parallel block
+      // Log step status updates for each parallel step
       chunkResults.forEach((result) => {
-        this.store.getState().updateBlockResult(entry.block.id, result);
+        this.store.getState().updateStepResult(entry.step.id, result);
       });
 
       const hasFailed = chunkResults.some(
@@ -815,13 +811,13 @@ export class CueExecutionEngine {
 
   private formatReturnValue(
     emitter: { emit: (event: string, data: any) => Promise<void> },
-    blockResults: Record<string, BlockResult>,
-    lastOutput: BlockResult,
+    stepResults: Record<string, StepResult>,
+    lastOutput: StepResult,
     error?: Error
   ) {
     const base: any = {
       status: lastOutput.status,
-      steps: blockResults,
+      steps: stepResults,
     };
 
     if (lastOutput.status === 'completed') {
@@ -829,16 +825,16 @@ export class CueExecutionEngine {
     } else if (lastOutput.status === 'failed') {
       base.error = error?.stack ?? error ?? lastOutput.error;
     } else if (lastOutput.status === 'suspended') {
-      // Find all suspended blocks and their information
-      const suspendedBlocks = Object.entries(blockResults)
+      // Find all suspended steps and their information
+      const suspendedSteps = Object.entries(stepResults)
         .filter(([_, result]) => result.status === 'suspended')
-        .map(([blockId, result]) => ({
-          blockId,
+        .map(([stepId, result]) => ({
+          stepId,
           path: result.suspendedPath || [],
           output: result.output,
         }));
 
-      base.suspended = suspendedBlocks;
+      base.suspended = suspendedSteps;
     }
 
     return base;

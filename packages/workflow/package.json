@@ -1,5 +1,5 @@
 {
-  "name": "@kaibanjs/cue",
+  "name": "@kaibanjs/workflow",
   "version": "0.1.0",
   "description": "A browser-compatible workflow engine for kaibanjs",
   "main": "dist/index.js",
