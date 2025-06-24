@@ -80,25 +80,36 @@ mainWorkflow
 const unsubscribeMain = monitorWorkflow(mainWorkflow);
 // const unsubscribeProcess = monitorWorkflow(processWorkflow);
 
-// Test case: 2 -> parallel(double(2), double(2)) -> sum(4 + 4) = 8
-log('Starting execution with input: 2');
-const result = await mainWorkflow.start(2);
+// Main execution function
+async function runNestedParallelsExample() {
+  // Test case: 2 -> parallel(double(2), double(2)) -> sum(4 + 4) = 8
+  log('Starting execution with input: 2');
+  const result = await mainWorkflow.start(2);
 
-log('Final Result', result);
+  log('Final Result', result);
 
-// Example of accessing store state directly
-const mainWorkflowState = mainWorkflow.store.getState();
-log('Main Workflow Final State', {
-  status: mainWorkflowState.status,
-  totalSteps: mainWorkflowState.stepResults.size,
-  executionPath: mainWorkflowState.executionPath,
-  logs: mainWorkflowState.logs.map((log) => ({
-    type: log.logType,
-    description: log.logDescription,
-    timestamp: new Date(log.timestamp).toISOString(),
-  })),
-});
+  // Example of accessing store state directly
+  const mainWorkflowState = mainWorkflow.store.getState();
+  log('Main Workflow Final State', {
+    status: mainWorkflowState.status,
+    totalSteps: mainWorkflowState.stepResults.size,
+    executionPath: mainWorkflowState.executionPath,
+    logs: mainWorkflowState.logs.map((log) => ({
+      type: log.logType,
+      description: log.logDescription,
+      timestamp: new Date(log.timestamp).toISOString(),
+    })),
+  });
 
-// Clean up subscriptions
-unsubscribeMain();
-// unsubscribeProcess();
+  // Clean up subscriptions
+  unsubscribeMain();
+  // unsubscribeProcess();
+}
+
+// Export the function for use in tests or other modules
+export { runNestedParallelsExample, mainWorkflow, processWorkflow };
+
+// Run the example if this file is executed directly
+if (require.main === module) {
+  runNestedParallelsExample().catch(console.error);
+}

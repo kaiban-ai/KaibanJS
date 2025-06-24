@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
-import { createStep, createWorkflow } from './';
+import { createStep, createWorkflow, RunStore } from '..';
 
 describe('Workflow', () => {
   // Test basic step execution
@@ -1097,34 +1097,30 @@ describe('Step and Workflow States', () => {
         return (inputData as number) * 2;
       },
     });
-
     const workflow = createWorkflow({
       id: 'running-state-test',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
-
     workflow.then(slowStep);
-
     // Set up state monitoring
     const states: { step: string; workflow: string }[] = [];
-    const unsubscribe = workflow.store.subscribe((state) => {
+    const unsubscribe = (state: RunStore) => {
       const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.logType === 'StepStatusUpdate' && lastLog.stepStatus) {
+      console.log('log : ', lastLog?.type, lastLog?.stepStatus);
+
+      if (lastLog?.type === 'step' && lastLog.stepStatus) {
         states.push({
           step: lastLog.stepStatus,
           workflow: state.status.toLowerCase(),
         });
       }
-    });
-
+    };
     // Start execution
-    const result = await workflow.start(5);
-
+    const result = await workflow.start(5, unsubscribe);
     await new Promise((resolve) => setTimeout(resolve, 100));
-    unsubscribe();
-    // console.log('States:', states);
 
+    console.log('States:', states);
     // Verify states
     expect(states).toContainEqual({ step: 'running', workflow: 'running' });
     expect(result.status).toBe('completed');
@@ -1132,7 +1128,6 @@ describe('Step and Workflow States', () => {
       expect(result.result).toBe(10);
     }
   });
-
   // Test suspended state
   it('should handle suspended state correctly', async () => {
     const suspendableStep = createStep({
@@ -1149,32 +1144,27 @@ describe('Step and Workflow States', () => {
         return (inputData as { value: number }).value * 2;
       },
     });
-
     const workflow = createWorkflow({
       id: 'suspended-state-test',
       inputSchema: z.object({ value: z.number() }),
       outputSchema: z.number(),
     });
-
     workflow.then(suspendableStep);
-
     // Set up state monitoring
     const states: { step: string; workflow: string }[] = [];
-    const unsubscribe = workflow.store.subscribe((state) => {
+    const unsubscribe = (state: RunStore) => {
       const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.logType === 'StepStatusUpdate' && lastLog.stepStatus) {
+      if (lastLog?.type === 'step' && lastLog.stepStatus) {
         states.push({
           step: lastLog.stepStatus,
           workflow: state.status.toLowerCase(),
         });
       }
-    });
-
+    };
     // Test suspension
-    const suspendResult = await workflow.start({ value: -1 });
+    const suspendResult = await workflow.start({ value: -1 }, unsubscribe);
     await new Promise((resolve) => setTimeout(resolve, 100));
-    unsubscribe();
-
+    // unsubscribe();
     // Verify states
     expect(states).toContainEqual({ step: 'suspended', workflow: 'running' });
     expect(suspendResult.status).toBe('suspended');
@@ -1184,7 +1174,6 @@ describe('Step and Workflow States', () => {
       });
     }
   });
-
   // Test failed state
   it('should handle failed state correctly', async () => {
     const failingStep = createStep({
@@ -1198,32 +1187,27 @@ describe('Step and Workflow States', () => {
         return (inputData as number) * 2;
       },
     });
-
     const workflow = createWorkflow({
       id: 'failed-state-test',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
-
     workflow.then(failingStep);
-
     // Set up state monitoring
     const states: { step: string; workflow: string }[] = [];
-    const unsubscribe = workflow.store.subscribe((state) => {
+    const unsubscribe = (state: RunStore) => {
       const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.logType === 'StepStatusUpdate' && lastLog.stepStatus) {
+      if (lastLog?.type === 'step' && lastLog.stepStatus) {
         states.push({
           step: lastLog.stepStatus,
           workflow: state.status.toLowerCase(),
         });
       }
-    });
-
+    };
     // Test failure
-    const failResult = await workflow.start(-1);
+    const failResult = await workflow.start(-1, unsubscribe);
     await new Promise((resolve) => setTimeout(resolve, 100));
-    unsubscribe();
-
+    // unsubscribe();
     // Verify states
     expect(states).toContainEqual({ step: 'failed', workflow: 'running' });
     expect(failResult.status).toBe('failed');
@@ -1231,7 +1215,6 @@ describe('Step and Workflow States', () => {
       expect(failResult.error?.message).toBe('Negative value not allowed');
     }
   });
-
   // Test completed state
   it('should handle completed state correctly', async () => {
     const successStep = createStep({
@@ -1242,32 +1225,27 @@ describe('Step and Workflow States', () => {
         return (inputData as number) * 2;
       },
     });
-
     const workflow = createWorkflow({
       id: 'completed-state-test',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
-
     workflow.then(successStep);
-
     // Set up state monitoring
     const states: { step: string; workflow: string }[] = [];
-    const unsubscribe = workflow.store.subscribe((state) => {
+    const unsubscribe = (state: RunStore) => {
       const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.logType === 'StepStatusUpdate' && lastLog.stepStatus) {
+      if (lastLog?.type === 'step' && lastLog.stepStatus) {
         states.push({
           step: lastLog.stepStatus,
           workflow: state.status.toLowerCase(),
         });
       }
-    });
-
+    };
     // Test completion
-    const completeResult = await workflow.start(5);
+    const completeResult = await workflow.start(5, unsubscribe);
     await new Promise((resolve) => setTimeout(resolve, 100));
-    unsubscribe();
-
+    // unsubscribe();
     // Verify states
     expect(states).toContainEqual({ step: 'completed', workflow: 'running' });
     expect(completeResult.status).toBe('completed');
@@ -1275,7 +1253,6 @@ describe('Step and Workflow States', () => {
       expect(completeResult.result).toBe(10);
     }
   });
-
   // Test state transitions in parallel steps
   it('should handle state transitions in parallel steps', async () => {
     const parallelStep1 = createStep({
@@ -1287,7 +1264,6 @@ describe('Step and Workflow States', () => {
         return (inputData as number) * 2;
       },
     });
-
     const parallelStep2 = createStep({
       id: 'parallel2',
       inputSchema: z.number(),
@@ -1297,34 +1273,28 @@ describe('Step and Workflow States', () => {
         return (inputData as number) * 3;
       },
     });
-
     const workflow = createWorkflow({
       id: 'parallel-state-test',
       inputSchema: z.number(),
       outputSchema: z.number(),
     });
-
     workflow.parallel([parallelStep1, parallelStep2]);
-
     // Monitor states with detailed logging
     const states: Array<{ step: string; workflow: string }> = [];
-    const unsubscribe = workflow.store.subscribe((state) => {
+    const unsubscribe = (state: RunStore) => {
       const lastLog = state.logs[state.logs.length - 1];
-
-      if (lastLog?.logType === 'StepStatusUpdate' && lastLog.stepStatus) {
+      if (lastLog?.type === 'step' && lastLog.stepStatus) {
         const stateUpdate = {
           step: lastLog.stepStatus,
           workflow: state.status.toLowerCase(),
         };
         states.push(stateUpdate);
       }
-    });
-
+    };
     // Start execution
-    const result = await workflow.start(5);
+    const result = await workflow.start(5, unsubscribe);
     // Clean up
-    unsubscribe();
-
+    // unsubscribe();
     // Verify states
     expect(states).toContainEqual({ step: 'completed', workflow: 'running' });
     expect(result.status).toBe('completed');
@@ -1335,7 +1305,6 @@ describe('Step and Workflow States', () => {
       });
     }
   });
-
   // Test state transitions in conditional steps
   it('should handle state transitions in conditional steps', async () => {
     const evenStep = createStep({
@@ -1346,7 +1315,6 @@ describe('Step and Workflow States', () => {
         return `even: ${inputData}`;
       },
     });
-
     const oddStep = createStep({
       id: 'odd',
       inputSchema: z.number(),
@@ -1355,39 +1323,32 @@ describe('Step and Workflow States', () => {
         return `odd: ${inputData}`;
       },
     });
-
     const workflow = createWorkflow({
       id: 'conditional-states-test',
       inputSchema: z.number(),
       outputSchema: z.string(),
     });
-
     // Use branch to create conditional execution
     workflow.branch([
       [async ({ inputData }) => (inputData as number) % 2 === 0, evenStep],
       [async ({ inputData }) => (inputData as number) % 2 !== 0, oddStep],
     ]);
-
     // Set up state monitoring
     const states: { step: string; workflow: string }[] = [];
-    const unsubscribe = workflow.store.subscribe((state) => {
+    const unsubscribe = (state: RunStore) => {
       // console.log('Store Update:', state);
-
       const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.logType === 'StepStatusUpdate' && lastLog.stepStatus) {
+      if (lastLog?.type === 'step' && lastLog.stepStatus) {
         states.push({
           step: lastLog.stepStatus,
           workflow: state.status.toLowerCase(),
         });
       }
-    });
-
+    };
     // Test even number
-    const evenResult = await workflow.start(4);
+    const evenResult = await workflow.start(4, unsubscribe);
     await new Promise((resolve) => setTimeout(resolve, 100));
-
     // console.log('States:', states);
-
     // Verify even number states
     expect(states).toContainEqual({ step: 'running', workflow: 'running' });
     expect(states).toContainEqual({ step: 'completed', workflow: 'running' });
@@ -1395,16 +1356,13 @@ describe('Step and Workflow States', () => {
     if (evenResult.status === 'completed') {
       expect(evenResult.result).toBe('even: 4');
     }
-
     // Reset states for odd number test
     states.length = 0;
-    workflow.store.getState().reset();
-
+    //  workflow.store.getState().reset();
     // Test odd number
-    const oddResult = await workflow.start(5);
+    const oddResult = await workflow.start(5, unsubscribe);
     await new Promise((resolve) => setTimeout(resolve, 100));
-    unsubscribe();
-
+    // unsubscribe();
     // Verify odd number states
     expect(states).toContainEqual({ step: 'running', workflow: 'running' });
     expect(states).toContainEqual({ step: 'completed', workflow: 'running' });
@@ -1413,7 +1371,6 @@ describe('Step and Workflow States', () => {
       expect(oddResult.result).toBe('odd: 5');
     }
   });
-
   // Test state transitions in foreach steps
   it('should handle state transitions in foreach steps', async () => {
     const processStep = createStep({
@@ -1424,44 +1381,37 @@ describe('Step and Workflow States', () => {
         return (inputData as number) * 2;
       },
     });
-
     const workflow = createWorkflow({
       id: 'foreach-states-test',
       inputSchema: z.array(z.number()),
       outputSchema: z.array(z.number()),
     });
-
     // Use foreach with concurrency of 2
     workflow.foreach(processStep, { concurrency: 2 });
-
     // Set up state monitoring
     const states: { step: string; workflow: string }[] = [];
-    const unsubscribe = workflow.store.subscribe((state) => {
+    const unsubscribe = (state: RunStore) => {
       const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.logType === 'StepStatusUpdate' && lastLog.stepStatus) {
+      if (lastLog?.type === 'step' && lastLog.stepStatus) {
         states.push({
           step: lastLog.stepStatus,
           workflow: state.status.toLowerCase(),
         });
       }
-    });
-
+    };
     // Test with array of numbers
-    const result = await workflow.start([1, 2, 3, 4, 5]);
+    const result = await workflow.start([1, 2, 3, 4, 5], unsubscribe);
     await new Promise((resolve) => setTimeout(resolve, 100));
-    unsubscribe();
-
+    // unsubscribe();
     // Verify states
     // Should have running and completed states for each item
     expect(states).toContainEqual({ step: 'running', workflow: 'running' });
     expect(states).toContainEqual({ step: 'completed', workflow: 'running' });
-
     // Verify final result
     expect(result.status).toBe('completed');
     if (result.status === 'completed') {
       expect(result.result).toEqual([2, 4, 6, 8, 10]);
     }
-
     // Verify that we have the correct number of state transitions
     // For each item: running -> completed
     const runningStates = states.filter((s) => s.step === 'running');

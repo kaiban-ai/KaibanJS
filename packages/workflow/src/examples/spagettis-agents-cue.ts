@@ -166,4 +166,10 @@ const main = async () => {
   }
 };
 
-main();
+// Export for use in tests or other modules
+export { main, createAgentsWorkflow };
+
+// Run the example if this file is executed directly
+if (require.main === module) {
+  main();
+}

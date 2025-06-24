@@ -5,7 +5,7 @@ import type {
   StepFlowEntry,
   StepResult,
   RuntimeContext,
-} from './types';
+} from '../types';
 import { useWorkflowStore } from './stores/workflowStore';
 
 export type ExecutionContext = {

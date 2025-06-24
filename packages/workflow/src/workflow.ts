@@ -3,30 +3,20 @@ import type {
   Step,
   StepContext,
   StepFlowEntry,
-  StepResult,
   WorkflowConfig,
   WorkflowResult,
   SerializedStepFlowEntry,
   MappingConfig,
   RuntimeContext,
 } from './types';
-import { WorkflowExecutionEngine } from './execution-engine';
-import {
-  useWorkflowStore,
-  CUE_STATUS,
-  WorkflowStore,
-  WorkflowLog,
-} from './stores/workflowStore';
-import { StoreApi } from 'zustand';
 
-// Extend WatchEvent type to include data property
-interface ExtendedWatchEvent {
-  type: 'WorkflowStatusUpdate' | 'StepStatusUpdate';
-  data: WorkflowLog & {
-    stepResults: Record<string, StepResult>;
-  };
-}
+import { randomUUID } from 'crypto';
+import { Run } from './run';
+import { RunStore } from './stores/runStore';
 
+/**
+ * Represents a workflow that can be executed
+ */
 export class Workflow<
   TInput,
   TOutput,
@@ -38,16 +28,14 @@ export class Workflow<
   public outputSchema: z.ZodType<TOutput>;
   private steps: TSteps;
   private executionGraph: Map<string, Set<string>> = new Map();
-  private currentStep?: Step<any, any>;
-  private stepResults: Map<string, StepResult> = new Map();
   private _stepFlow: StepFlowEntry[] = [];
   private _serializedStepFlow: SerializedStepFlowEntry[] = [];
   private retryConfig?: {
     attempts?: number;
     delay?: number;
   };
-  private executionEngine: WorkflowExecutionEngine;
-  public store: StoreApi<WorkflowStore>;
+  private _committed: boolean = false;
+  private _runs: Map<string, Run<TInput, TOutput, TSteps>> = new Map();
 
   constructor(config: WorkflowConfig<TInput, TOutput, TSteps>) {
     this.id = config.id;
@@ -55,8 +43,6 @@ export class Workflow<
     this.outputSchema = config.outputSchema;
     this.steps = config.steps || ({} as TSteps);
     this.retryConfig = config.retryConfig;
-    this.executionEngine = new WorkflowExecutionEngine();
-    this.store = useWorkflowStore;
   }
 
   // Create a new step
@@ -67,7 +53,7 @@ export class Workflow<
     outputSchema: z.ZodType<TOutput>;
     resumeSchema?: z.ZodType;
     suspendSchema?: z.ZodType;
-    execute: (context: StepContext<TInput, TOutput>) => Promise<TOutput>;
+    execute: (context: StepContext<TInput>) => Promise<TOutput>;
   }): Step<TInput, TOutput> {
     return {
       id: config.id,
@@ -166,14 +152,14 @@ export class Workflow<
   }
 
   // Map data between steps
-  map<TMapping extends MappingConfig<z.ZodType<any>, z.ZodType<any>>>(
-    mappingConfig: TMapping | ((context: StepContext<any, any>) => Promise<any>)
+  map<TMapping extends MappingConfig<z.ZodType<any>>>(
+    mappingConfig: TMapping | ((context: StepContext<any>) => Promise<any>)
   ) {
     if (typeof mappingConfig === 'function') {
       const mappingStep = Workflow.createStep({
         id: `mapping_${Date.now()}`,
-        inputSchema: this.inputSchema,
-        outputSchema: this.outputSchema,
+        inputSchema: z.any(),
+        outputSchema: z.any(),
         execute: mappingConfig,
       });
 
@@ -183,9 +169,9 @@ export class Workflow<
 
     const mappingStep = Workflow.createStep({
       id: `mapping_${Date.now()}`,
-      inputSchema: this.inputSchema,
-      outputSchema: this.outputSchema,
-      execute: async (context: StepContext<any, any>) => {
+      inputSchema: z.any(),
+      outputSchema: z.any(),
+      execute: async (context: StepContext<any>) => {
         const { inputData, getStepResult, runtimeContext } = context;
         const result: Record<string, any> = {};
 
@@ -341,87 +327,90 @@ export class Workflow<
     return graph;
   }
 
-  // Start the workflow execution
-  async start(
-    inputData: TInput
-  ): Promise<WorkflowResult<TInput, TOutput, TSteps>> {
-    try {
-      // Reset store state
-      this.store.getState().reset();
-      this.store.getState().setStatus(CUE_STATUS.RUNNING);
+  /**
+   * Finalizes the workflow definition and prepares it for execution
+   * This method should be called after all steps have been added to the workflow
+   * @returns A built workflow instance ready for execution
+   */
+  commit() {
+    if (this._stepFlow.length === 0) {
+      throw new Error(
+        'Execution flow of workflow is not defined. Add steps to the workflow via .then(), .branch(), etc.'
+      );
+    }
 
-      // Validate input data
-      const validatedInput = this.inputSchema.parse(inputData);
+    this.executionGraph = this.buildExecutionGraph();
+    this._committed = true;
+    return this;
+  }
 
-      // Build execution graph
-      this.executionGraph = this.buildExecutionGraph();
+  /**
+   * Creates a new workflow run instance
+   * @param options Optional configuration for the run
+   * @returns A Run instance that can be used to execute the workflow
+   */
+  createRun(options?: { runId?: string }): Run<TInput, TOutput, TSteps> {
+    if (this._stepFlow.length === 0) {
+      throw new Error(
+        'Execution flow of workflow is not defined. Add steps to the workflow via .then(), .branch(), etc.'
+      );
+    }
+    if (!this._committed) {
+      throw new Error(
+        'Uncommitted step flow changes detected. Call .commit() to register the steps.'
+      );
+    }
 
-      // Execute steps using the execution engine
-      const result = await this.executionEngine.execute<
-        TInput,
-        WorkflowResult<TInput, TOutput, TSteps>
-      >({
+    const runIdToUse = options?.runId || randomUUID();
+
+    // Return a new Run instance with object parameters
+    const run =
+      this._runs.get(runIdToUse) ??
+      new Run({
         workflowId: this.id,
-        runId: Date.now().toString(),
-        graph: this._stepFlow,
-        input: validatedInput,
-        emitter: {
-          emit: async (event: string, data: any) => {
-            this.store.getState().addLog({
-              timestamp: Date.now(),
-              logType: 'WorkflowStatusUpdate',
-              logDescription: event,
-              metadata: data,
-            });
-          },
-        },
+        runId: runIdToUse,
+        executionGraph: this._stepFlow,
         retryConfig: this.retryConfig,
+        serializedStepGraph: this._serializedStepFlow,
+        cleanup: () => this._runs.delete(runIdToUse),
       });
 
-      // Update step results with the execution results
-      this.stepResults = new Map(Object.entries(result.steps));
+    this._runs.set(runIdToUse, run);
 
-      // Update store with final status
-      if (result.status === 'failed') {
-        this.store.getState().setStatus(CUE_STATUS.FAILED);
-      } else if (result.status === 'suspended') {
-        this.store.getState().setStatus(CUE_STATUS.SUSPENDED);
-      } else {
-        this.store.getState().setStatus(CUE_STATUS.COMPLETED);
-      }
+    return run;
+  }
 
-      return result;
+  get runs() {
+    return this._runs;
+  }
+
+  get committed() {
+    return this._committed;
+  }
+
+  // Start the workflow execution
+  async start(
+    inputData: TInput,
+    subscribe?: (state: RunStore, prevState: RunStore) => void
+  ): Promise<WorkflowResult<TOutput>> {
+    this.commit();
+
+    // Validate input against workflow's input schema
+    try {
+      this.inputSchema.parse(inputData);
     } catch (error) {
-      this.store.getState().setStatus(CUE_STATUS.FAILED);
       return {
         status: 'failed',
         error: error as Error,
-        steps: this.getStepsResults(),
+        steps: {},
       };
     }
-  }
 
-  // Get all step results
-  private getStepsResults() {
-    return Object.fromEntries(
-      Array.from(this.stepResults.entries()).map(([id, result]) => [id, result])
-    ) as WorkflowResult<TInput, TOutput, TSteps>['steps'];
-  }
-
-  // Watch workflow execution
-  watch(callback: (event: ExtendedWatchEvent) => void) {
-    return this.store.subscribe((state) => {
-      const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog) {
-        callback({
-          type: lastLog.logType,
-          data: {
-            ...lastLog,
-            stepResults: Object.fromEntries(state.stepResults),
-          },
-        });
-      }
-    });
+    const run = this.createRun();
+    if (subscribe) {
+      run.store.subscribe(subscribe);
+    }
+    return run.start({ inputData });
   }
 
   // Get step flow
@@ -434,24 +423,20 @@ export class Workflow<
     return this._serializedStepFlow;
   }
 
-  async execute(context: StepContext<TInput, TOutput>): Promise<TOutput> {
+  async execute(context: StepContext<TInput>): Promise<TOutput> {
     const { inputData } = context;
 
-    // Execute the workflow using the execution engine
-    const result = (await this.executionEngine.execute({
-      workflowId: this.id,
-      runId: `${this.id}-${Date.now()}`,
-      graph: this._stepFlow,
-      input: inputData,
-      emitter: {
-        emit: async () => {},
-      },
-      retryConfig: this.retryConfig,
-    })) as { status: string; result: TOutput; error?: Error };
+    // Execute the workflow using a run
+    const run = this.createRun();
+    const result = await run.start({ inputData });
 
     // When used as a step, return just the result value
     if (result.status === 'failed') {
       throw result.error;
+    }
+
+    if (result.status === 'suspended') {
+      throw new Error('Workflow suspended when used as a step');
     }
 
     return result.result;
@@ -469,55 +454,8 @@ export class Workflow<
       | string
       | string[];
     runtimeContext?: RuntimeContext;
-  }): Promise<WorkflowResult<TInput, TOutput, TSteps>> {
-    const { resumeData, step, runtimeContext } = params;
-
-    // Determine which steps to resume
-    const stepsToResume = Array.isArray(step)
-      ? step.map((b) => (typeof b === 'string' ? b : b.id))
-      : [typeof step === 'string' ? step : step.id];
-
-    // Check if any of the steps to resume are actually suspended
-    const hasSuspendedSteps = stepsToResume.some(
-      (stepId) => this.stepResults.get(stepId)?.status === 'suspended'
-    );
-
-    if (!hasSuspendedSteps) {
-      throw new Error('No suspended steps to resume');
-    }
-
-    // Create a new run ID for the resume operation
-    const runId = crypto.randomUUID();
-
-    // Execute the workflow with resume parameters
-    const executionResult = await this.executionEngine.execute<
-      TInput,
-      WorkflowResult<TInput, TOutput, TSteps>
-    >({
-      workflowId: this.id,
-      runId,
-      graph: this._stepFlow,
-      resume: {
-        steps: stepsToResume,
-        stepResults: Object.fromEntries(this.stepResults),
-        resumePayload: resumeData,
-        resumePath: stepsToResume
-          .map((stepId) => {
-            const result = this.stepResults.get(stepId);
-            return result?.suspendedPath || [];
-          })
-          .flat(),
-      },
-      emitter: {
-        emit: async () => {},
-      },
-      retryConfig: this.retryConfig,
-      runtimeContext,
-    });
-
-    // Update step results with the new execution results
-    this.stepResults = new Map(Object.entries(executionResult.steps));
-
-    return executionResult;
+  }): Promise<WorkflowResult<TOutput>> {
+    const run = this.createRun();
+    return run.resume(params);
   }
 }

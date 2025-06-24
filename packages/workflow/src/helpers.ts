@@ -10,7 +10,7 @@ export const createStep = <TInput, TOutput>(config: {
   outputSchema: z.ZodType<TOutput>;
   resumeSchema?: z.ZodType;
   suspendSchema?: z.ZodType;
-  execute: (context: StepContext<TInput, TOutput>) => Promise<TOutput>;
+  execute: (context: StepContext<TInput>) => Promise<TOutput>;
 }): Step<TInput, TOutput> => {
   return {
     id: config.id,

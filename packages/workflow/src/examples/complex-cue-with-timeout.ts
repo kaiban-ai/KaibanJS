@@ -241,3 +241,11 @@ async function runTestCases() {
 
 // Run the test cases
 runTestCases().catch(console.error);
+
+// Export for use in tests or other modules
+export { runTestCases, complexWorkflow };
+
+// Run the example if this file is executed directly
+if (require.main === module) {
+  runTestCases().catch(console.error);
+}
