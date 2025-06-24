@@ -7,8 +7,9 @@ import {
   SystemMessagePromptTemplate,
   HumanMessagePromptTemplate,
 } from '@langchain/core/prompts';
-import { Workflow } from '../workflow';
+import { createWorkflow, createStep } from '../';
 import { z } from 'zod';
+import { Run } from '../run';
 
 require('dotenv').config({ path: './.env' });
 
@@ -22,6 +23,7 @@ const createSearchAgent = async () => {
   const model = new ChatOpenAI({
     modelName: 'gpt-4o-mini',
     temperature: 0,
+    apiKey: process.env.OPENAI_API_KEY || '',
   });
 
   const prompt = ChatPromptTemplate.fromMessages([
@@ -82,14 +84,14 @@ const createSummarizeAgent = async () => {
 
 // Create the workflow
 const createAgentsWorkflow = () => {
-  const workflow = Workflow.createWorkflow({
+  const workflow = createWorkflow({
     id: 'agents-workflow',
     inputSchema: z.string(),
     outputSchema: z.string(),
   });
 
   // First step: Search Agent
-  const searchStep = Workflow.createStep({
+  const searchStep = createStep({
     id: 'search',
     inputSchema: z.string(),
     outputSchema: z.string(),
@@ -103,7 +105,7 @@ const createAgentsWorkflow = () => {
   });
 
   // Second step: Summarize Agent
-  const summarizeStep = Workflow.createStep({
+  const summarizeStep = createStep({
     id: 'summarize',
     inputSchema: z.string(),
     outputSchema: z.string(),
@@ -129,17 +131,17 @@ const log = (message: string, data?: any) => {
   }
 };
 
-const monitorWorkflow = (workflow: Workflow<any, any, any>) => {
+const monitorWorkflow = (run: Run<any, any>) => {
   // Monitor overall Workflow status
-  workflow.watch((event) => {
-    log(`Workflow Status Update: ${event.type}`, event.data);
+  run.store.subscribe((state) => {
+    log(`Workflow Status Update: ${state.status}`, state);
   });
 
   // Monitor step results
-  const unsubscribe = workflow.store.subscribe((state) => {
+  const unsubscribe = run.store.subscribe((state) => {
     // Log when a new step result is added
     const lastLog = state.logs[state.logs.length - 1];
-    if (lastLog?.logType === 'StepStatusUpdate') {
+    if (lastLog?.type === 'step') {
       log(`Step ${lastLog.stepId} Status: ${lastLog.stepStatus}`, {
         result: lastLog.stepResult,
         executionPath: state.executionPath,
@@ -154,11 +156,14 @@ const monitorWorkflow = (workflow: Workflow<any, any, any>) => {
 const main = async () => {
   try {
     const workflow = createAgentsWorkflow();
-    const unsubscribeMain = monitorWorkflow(workflow);
+    workflow.commit();
+    const run = workflow.createRun();
+    const unsubscribeMain = monitorWorkflow(run);
 
-    const result = await workflow.start(
-      'What are the latest developments in artificial intelligence on june 2025?'
-    );
+    const result = await run.start({
+      inputData:
+        'What are the latest developments in artificial intelligence on june 2025?',
+    });
     console.log('Final result:', result);
     unsubscribeMain();
   } catch (error) {

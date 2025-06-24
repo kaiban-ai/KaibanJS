@@ -35,7 +35,7 @@ export class Workflow<
     delay?: number;
   };
   private _committed: boolean = false;
-  private _runs: Map<string, Run<TInput, TOutput, TSteps>> = new Map();
+  private _runs: Map<string, Run<TInput, TOutput>> = new Map();
 
   constructor(config: WorkflowConfig<TInput, TOutput, TSteps>) {
     this.id = config.id;
@@ -349,7 +349,7 @@ export class Workflow<
    * @param options Optional configuration for the run
    * @returns A Run instance that can be used to execute the workflow
    */
-  createRun(options?: { runId?: string }): Run<TInput, TOutput, TSteps> {
+  createRun(options?: { runId?: string }): Run<TInput, TOutput> {
     if (this._stepFlow.length === 0) {
       throw new Error(
         'Execution flow of workflow is not defined. Add steps to the workflow via .then(), .branch(), etc.'
