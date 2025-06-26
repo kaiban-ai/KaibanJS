@@ -45,16 +45,12 @@ export type StepContext<TInput = any> = {
   suspend: (suspendPayload: any) => Promise<StepResult>;
 };
 
-export type WorkflowConfig<
-  TInput,
-  TOutput,
-  TSteps extends Record<string, Step<any, any>>
-> = {
+export type WorkflowConfig<TInput, TOutput> = {
   id: string;
   description?: string;
   inputSchema: z.ZodType<TInput>;
   outputSchema: z.ZodType<TOutput>;
-  steps?: TSteps;
+  // steps?: TSteps;
   retryConfig?: {
     attempts?: number;
     delay?: number;

@@ -41,7 +41,7 @@ export class Workflow<
     this.id = config.id;
     this.inputSchema = config.inputSchema;
     this.outputSchema = config.outputSchema;
-    this.steps = config.steps || ({} as TSteps);
+    this.steps = {} as TSteps;
     this.retryConfig = config.retryConfig;
   }
 
