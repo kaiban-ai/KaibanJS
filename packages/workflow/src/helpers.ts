@@ -27,7 +27,7 @@ export const createWorkflow = <
   TOutput,
   TSteps extends Record<string, Step<any, any>>
 >(
-  config: WorkflowConfig<TInput, TOutput, TSteps>
+  config: WorkflowConfig<TInput, TOutput>
 ): Workflow<TInput, TOutput, TSteps> => {
   return new Workflow(config);
 };

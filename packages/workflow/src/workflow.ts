@@ -37,7 +37,7 @@ export class Workflow<
   private _committed: boolean = false;
   private _runs: Map<string, Run<TInput, TOutput>> = new Map();
 
-  constructor(config: WorkflowConfig<TInput, TOutput, TSteps>) {
+  constructor(config: WorkflowConfig<TInput, TOutput>) {
     this.id = config.id;
     this.inputSchema = config.inputSchema;
     this.outputSchema = config.outputSchema;
@@ -72,7 +72,7 @@ export class Workflow<
     TOutput,
     TSteps extends Record<string, Step<any, any>>
   >(
-    config: WorkflowConfig<TInput, TOutput, TSteps>
+    config: WorkflowConfig<TInput, TOutput>
   ): Workflow<TInput, TOutput, TSteps> {
     return new Workflow(config);
   }
