@@ -7,6 +7,7 @@ import { StringOutputParser } from '@langchain/core/output_parsers';
 import { BaseDocumentLoader } from '@langchain/core/document_loaders/base';
 import { Document } from 'langchain/document';
 import { TextInputLoader } from './loaders/textInputLoader';
+import { VectorStoreRetrieverInput } from '@langchain/core/vectorstores';
 
 interface RAGToolkitOptions {
   embeddings?: OpenAIEmbeddings;
@@ -17,6 +18,7 @@ interface RAGToolkitOptions {
     chunkSize: number;
     chunkOverlap: number;
   };
+  retrieverOptions?: VectorStoreRetrieverInput<MemoryVectorStore>;
   env?: {
     OPENAI_API_KEY: string;
   };
@@ -36,6 +38,7 @@ export class RAGToolkit {
   private promptQuestionTemplate: string;
   private chunkOptions: { chunkSize: number; chunkOverlap: number };
   private loaders: Record<string, LoaderFunction>;
+  private retrieverOptions?: VectorStoreRetrieverInput<MemoryVectorStore>;
 
   constructor(options: RAGToolkitOptions = {}) {
     this.embeddings =
@@ -66,6 +69,7 @@ export class RAGToolkit {
     this.loaders = {
       string: (source: string | File) => new TextInputLoader(source as string),
     };
+    this.retrieverOptions = options.retrieverOptions || undefined;
   }
 
   registerLoader(type: string, loaderFunction: LoaderFunction): void {
@@ -106,12 +110,12 @@ export class RAGToolkit {
   }
 
   async search(query: string): Promise<Document[]> {
-    const retriever = this.vectorStore.asRetriever();
+    const retriever = this.vectorStore.asRetriever(this.retrieverOptions);
     return retriever.invoke(query);
   }
 
   async askQuestion(query: string): Promise<string> {
-    const retriever = this.vectorStore.asRetriever();
+    const retriever = this.vectorStore.asRetriever(this.retrieverOptions);
     const context = await retriever.invoke(query);
 
     const promptTemplate = PromptTemplate.fromTemplate(

@@ -20,7 +20,9 @@ import { z } from 'zod';
 import { OpenAIEmbeddings } from '@langchain/openai';
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { ChatOpenAI } from '@langchain/openai';
-import { RAGToolkit } from './rag/ragToolkit';
+import { RAGToolkit } from '../_utils/rag/ragToolkit';
+import { VectorStoreRetrieverInput } from '@langchain/core/vectorstores';
+// import { RAGToolkit } from './rag/ragToolkit';
 
 /**
  * Type for the parameters in SimpleRAG
@@ -78,6 +80,7 @@ interface SimpleRAGFields {
   embeddings?: OpenAIEmbeddings;
   vectorStore?: MemoryVectorStore;
   llmInstance?: ChatOpenAI;
+  retrieverOptions?: VectorStoreRetrieverInput<MemoryVectorStore>;
   promptQuestionTemplate?: string;
 }
 
@@ -93,6 +96,7 @@ export class SimpleRAG extends StructuredTool {
   private embeddings?: OpenAIEmbeddings;
   private vectorStore?: MemoryVectorStore;
   private llmInstance?: ChatOpenAI;
+  private retrieverOptions?: VectorStoreRetrieverInput<MemoryVectorStore>;
   private promptQuestionTemplate?: string;
   private ragToolkit: RAGToolkit;
   name = 'simple-rag';
@@ -117,7 +121,7 @@ export class SimpleRAG extends StructuredTool {
     this.vectorStore = fields.vectorStore;
     this.llmInstance = fields.llmInstance;
     this.promptQuestionTemplate = fields.promptQuestionTemplate;
-
+    this.retrieverOptions = fields.retrieverOptions;
     this.ragToolkit = new RAGToolkit({
       // loaderOptions: this.loaderOptions,
       chunkOptions: this.chunkOptions,
@@ -126,6 +130,7 @@ export class SimpleRAG extends StructuredTool {
       llmInstance: this.llmInstance,
       promptQuestionTemplate: this.promptQuestionTemplate,
       env: { OPENAI_API_KEY: this.OPENAI_API_KEY },
+      retrieverOptions: this.retrieverOptions,
     });
   }
 

@@ -102,6 +102,9 @@ export const Default = {
     callParams: {
       query: 'What is Kaiban?',
       content,
+      retrieverOptions: {
+        k: 10,
+      },
     },
   },
 };
