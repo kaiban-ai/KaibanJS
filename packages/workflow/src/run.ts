@@ -1,16 +1,22 @@
 import { z } from 'zod';
 import { Step, StepFlowEntry, WorkflowResult, RuntimeContext } from './types';
 import { RunExecutionEngineWithQueue as RunExecutionEngine } from './runExecutionEngineWithQueue';
-import { createRunStore, RUN_STATUS } from './stores/runStore';
+import {
+  createRunStore,
+  RUN_STATUS,
+  WorkflowEvent,
+  RunLog,
+} from './stores/runStore';
+import { WorkflowEventType } from './stores/runStore';
 import type { RunStore } from './stores/runStore';
 import type { StoreApi } from 'zustand';
 
 // Custom event type for Run instances
-export interface RunEvent {
-  type: 'start' | 'finish' | 'step-update' | 'status-change';
-  payload: Record<string, any>;
-  eventTimestamp: Date;
-}
+// export interface RunEvent {
+//   type: 'start' | 'finish' | 'step-update' | 'status-change';
+//   payload: Record<string, any>;
+//   eventTimestamp: Date;
+// }
 
 /**
  * Represents a workflow run that can be executed
@@ -54,9 +60,8 @@ export class Run<TInput, TOutput> {
    */
   public store: StoreApi<RunStore>;
 
-  #closeStreamAction?: () => Promise<void>;
+  #closeStreamAction?: (status?: RUN_STATUS) => Promise<void>;
   #executionResults?: Promise<WorkflowResult<TOutput>>;
-
   protected cleanup?: () => void;
 
   constructor(params: {
@@ -78,7 +83,11 @@ export class Run<TInput, TOutput> {
     this.cleanup = params.cleanup;
 
     // Create run-specific store
-    this.store = createRunStore(this.runId, this.workflowId);
+    this.store = createRunStore(
+      this.runId,
+      this.workflowId,
+      this.executionGraph
+    );
 
     // Create execution engine with the store
     this.executionEngine = new RunExecutionEngine(this.store);
@@ -99,12 +108,13 @@ export class Run<TInput, TOutput> {
     try {
       // Reset run state in the store
       this.store.getState().reset();
+
+      // Set initial status and emit workflow state
       this.store.getState().setStatus(RUN_STATUS.RUNNING);
 
       // Note: Input validation should be done at the workflow level
       // The Run class doesn't have access to the workflow's inputSchema
       // This will be handled by the workflow's start method
-      // this.executionEngine.start();
       const result = await this.executionEngine.execute<TInput, TOutput>({
         workflowId: this.workflowId,
         runId: this.runId,
@@ -114,7 +124,7 @@ export class Run<TInput, TOutput> {
         runtimeContext: runtimeContext ?? this.createRuntimeContext(),
       });
 
-      // Update final status based on result
+      // Update final status based on result (the execution engine already emits the final state)
       if (result.status === 'failed') {
         this.store.getState().setStatus(RUN_STATUS.FAILED);
       } else if (result.status === 'suspended') {
@@ -123,16 +133,12 @@ export class Run<TInput, TOutput> {
         this.store.getState().setStatus(RUN_STATUS.COMPLETED);
       }
 
-      // Update step results with the execution results
-      Object.entries(result.steps).forEach(([stepId, stepResult]) => {
-        this.store.getState().updateStepResult(stepId, stepResult);
-      });
-
       this.cleanup?.();
 
       return result;
     } catch (error) {
       this.store.getState().setStatus(RUN_STATUS.FAILED);
+
       throw error;
     }
   }
@@ -146,10 +152,13 @@ export class Run<TInput, TOutput> {
     inputData,
     runtimeContext,
   }: { inputData?: TInput; runtimeContext?: RuntimeContext } = {}): {
-    stream: ReadableStream<RunEvent>;
+    stream: ReadableStream<WorkflowEvent>;
     getWorkflowState: () => Promise<WorkflowResult<TOutput>>;
   } {
-    const { readable, writable } = new TransformStream<RunEvent, RunEvent>();
+    const { readable, writable } = new TransformStream<
+      WorkflowEvent,
+      WorkflowEvent
+    >();
 
     const writer = writable.getWriter();
     const unwatch = this.watch(async (event) => {
@@ -158,26 +167,26 @@ export class Run<TInput, TOutput> {
       } catch {
         unwatch();
       }
-    }, 'watch-v2');
+    }, undefined);
 
-    this.#closeStreamAction = async () => {
-      const finishEvent: RunEvent = {
-        type: 'finish',
-        payload: { runId: this.runId },
-        eventTimestamp: new Date(),
-      };
-
-      this.store.getState().addWatchEvent({
-        type: 'watch',
+    this.#closeStreamAction = async (
+      status: RUN_STATUS = RUN_STATUS.COMPLETED
+    ) => {
+      const finishEvent: WorkflowEvent = {
+        type: WorkflowEventType.WorkflowStatusUpdate,
         payload: {
-          currentStep: undefined,
           workflowState: {
-            status: 'completed',
-            steps: {},
+            status,
+            result: undefined,
+            error: undefined,
           },
         },
-        eventTimestamp: new Date(),
-      });
+        timestamp: Date.now(),
+        runId: this.runId,
+        workflowId: this.workflowId,
+        description: 'Workflow Stream completed',
+      };
+
       unwatch();
 
       try {
@@ -190,27 +199,12 @@ export class Run<TInput, TOutput> {
       }
     };
 
-    // const startEvent: RunEvent = {
-    //   type: 'start',
-    //   payload: { runId: this.runId },
-    //   eventTimestamp: new Date(),
-    // };
-
-    this.store.getState().addWatchEvent({
-      type: 'watch',
-      payload: {
-        currentStep: undefined,
-        workflowState: {
-          status: 'running',
-          steps: {},
-        },
-      },
-      eventTimestamp: new Date(),
-    });
     this.#executionResults = this.start({ inputData, runtimeContext }).then(
       (result) => {
         if (result.status !== 'suspended') {
           this.#closeStreamAction?.().catch(() => {});
+        } else {
+          this.#closeStreamAction?.(RUN_STATUS.SUSPENDED)?.catch(() => {});
         }
 
         return result;
@@ -223,61 +217,63 @@ export class Run<TInput, TOutput> {
     };
   }
 
-  watch(
-    cb: (event: RunEvent) => void,
-    type: 'watch' | 'watch-v2' = 'watch'
+  /**
+   * Subscribe to workflow events using the new simplified API
+   * @param callback Function to call when events occur
+   * @returns Unsubscribe function
+   */
+  subscribe(callback: (event: RunStore) => void): () => void {
+    return this.store.subscribe(callback);
+  }
+
+  /**
+   * Subscribe to specific state property changes
+   * @param selector Function to select specific state property
+   * @param callback Function to call when the selected property changes
+   * @returns Unsubscribe function
+   */
+  subscribeToState<T>(
+    selector: (state: RunStore) => T,
+    callback: (value: T, previousValue: T | undefined) => void
   ): () => void {
-    // Subscribe to the run store for changes
-    const unsubscribe = this.store.subscribe((state: RunStore) => {
-      const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.type === 'watch' && lastLog.watchEvent) {
-        if (type === 'watch-v2') {
-          // Transform WatchEvent to RunEvent
-          const runEvent: RunEvent = {
-            type: 'step-update',
-            payload: {
-              currentStep: state.currentStep
-                ? {
-                    id: state.currentStep.id,
-                    status: lastLog.stepStatus || 'running',
-                    output: lastLog.stepResult?.output,
-                    payload: lastLog.stepResult,
-                  }
-                : undefined,
-              workflowState: {
-                status: state.status,
-                steps: Object.fromEntries(state.stepResults),
-              },
-            },
-            eventTimestamp: new Date(lastLog.timestamp),
-          };
-          cb(runEvent);
-        } else {
-          // For legacy watch type, transform the event
-          const runEvent: RunEvent = {
-            type: 'step-update',
-            payload: {
-              currentStep: state.currentStep
-                ? {
-                    id: state.currentStep.id,
-                    status: lastLog.stepStatus || 'running',
-                    output: lastLog.stepResult?.output,
-                    payload: lastLog.stepResult,
-                  }
-                : undefined,
-              workflowState: {
-                status: state.status,
-                steps: Object.fromEntries(state.stepResults),
-              },
-            },
-            eventTimestamp: new Date(lastLog.timestamp),
-          };
-          cb(runEvent);
-        }
+    let previousValue: T | undefined;
+
+    return this.store.subscribe((state) => {
+      const currentValue = selector(state);
+      if (currentValue !== previousValue) {
+        callback(currentValue, previousValue);
+        previousValue = currentValue;
       }
     });
+  }
 
-    return unsubscribe;
+  /**
+   * Subscribe to logs changes
+   * @param callback Function to call when logs change
+   * @returns Unsubscribe function
+   */
+  subscribeToLogs(callback: (logs: RunLog[]) => void): () => void {
+    return this.subscribeToState((state) => state.logs, callback);
+  }
+
+  /**
+   * Legacy watch method for backward compatibility
+   * @param cb Callback function
+   * @param type Event type ('WorkflowStatusUpdate' or 'StepStatusUpdate')
+   * @returns Unsubscribe function
+   */
+
+  watch(callback: (event: WorkflowEvent) => void, type?: WorkflowEventType) {
+    return this.subscribeToState(
+      (state) => state.events,
+      (events) => {
+        const lastEvent = events[events.length - 1];
+
+        if (lastEvent && (type === undefined || lastEvent?.type === type)) {
+          callback(lastEvent);
+        }
+      }
+    );
   }
 
   async resume<TResumeSchema extends z.ZodType<any>>(params: {
@@ -296,7 +292,7 @@ export class Run<TInput, TOutput> {
       Array.isArray(params.step) ? params.step : [params.step]
     ).map((step) => (typeof step === 'string' ? step : step?.id));
 
-    // Update status to resumed
+    // Update status to resumed and emit workflow state
     this.store.getState().setStatus(RUN_STATUS.RESUMED);
 
     const executionResultPromise = this.executionEngine
@@ -317,11 +313,7 @@ export class Run<TInput, TOutput> {
         runtimeContext: params.runtimeContext ?? this.createRuntimeContext(),
       })
       .then((result) => {
-        if (result.status !== 'suspended') {
-          this.#closeStreamAction?.().catch(() => {});
-        }
-
-        // Update final status
+        // Update final status (the execution engine already emits the final state)
         if (result.status === 'failed') {
           this.store.getState().setStatus(RUN_STATUS.FAILED);
         } else if (result.status === 'suspended') {
@@ -342,8 +334,8 @@ export class Run<TInput, TOutput> {
    * Returns the current state of the workflow run
    * @returns The current state of the workflow run
    */
-  getState(): Record<string, any> {
-    return this.store.getState().state;
+  getState(): RunStore {
+    return this.store.getState();
   }
 
   updateState(state: Record<string, any>) {

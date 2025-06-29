@@ -129,7 +129,32 @@ export type SerializedStepFlowEntry =
       };
     };
 
-// Event types for workflow execution
+// Simplified event types for the new implementation
+export interface WorkflowEvent {
+  type: 'WorkflowStatusUpdate' | 'StepStatusUpdate';
+  timestamp: number;
+  runId: string;
+  workflowId: string;
+  payload: {
+    workflowStatus?: string;
+    workflowState?: {
+      status: StepStatus;
+      steps: Record<string, any>;
+      result?: any;
+      error?: any;
+    };
+    stepId?: string;
+    stepStatus?: StepStatus;
+    stepResult?: StepResult;
+  };
+  metadata?: {
+    suspendReason?: string;
+    resumeData?: any;
+    executionPath?: number[];
+  };
+}
+
+// Legacy event types for backward compatibility
 export type WatchEvent = {
   type: 'watch';
   payload: {
@@ -197,6 +222,10 @@ export type MappingConfig<TInput extends z.ZodType<any>> = {
       }
     | {
         value: any;
+        schema: z.ZodType<any>;
+      }
+    | {
+        fn: (context: StepContext<z.infer<TInput>>) => Promise<any>;
         schema: z.ZodType<any>;
       }
     | {

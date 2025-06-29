@@ -17,7 +17,8 @@
     "test": "vitest",
     "lint": "eslint src --ext .ts,.tsx",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "dev": "tsx watch src/examples/nested-parallels.ts"
+    "dev": "tsx watch src/examples/spagettis-agents-workflow.ts",
+    "snapshot-demo": "tsx src/examples/snapshot-example.tsx"
   },
   "dependencies": {
     "@kaibanjs/tools": "../tools",

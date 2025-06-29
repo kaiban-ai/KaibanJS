@@ -7,6 +7,7 @@ import type {
   WorkflowResult,
 } from './types';
 import type { RunStore } from './stores/runStore';
+import { RUN_STATUS, WorkflowEventType } from './stores/runStore';
 import type { StoreApi } from 'zustand';
 import PQueue from 'p-queue';
 
@@ -70,6 +71,21 @@ export class RunExecutionEngineWithQueue {
     const stepResults: Record<string, StepResult> = resume?.stepResults || {};
 
     try {
+      // Set initial status and emit workflow state
+
+      this.store.getState().setStatus(RUN_STATUS.RUNNING);
+      this.store.getState().emitWorkflowStatusUpdate({
+        type: WorkflowEventType.WorkflowStatusUpdate,
+        payload: {
+          workflowState: {
+            status: RUN_STATUS.RUNNING,
+            result: undefined,
+            error: undefined,
+          },
+        },
+        description: 'Workflow started',
+      });
+
       let lastOutput: StepResult | undefined;
       let prevStep: StepFlowEntry | undefined;
 
@@ -161,11 +177,6 @@ export class RunExecutionEngineWithQueue {
           { priority: 0 }
         );
 
-        // Update store with step result
-        if (entry.type === 'step') {
-          this.store.getState().updateStepResult(entry.step.id, result);
-        }
-
         // If we're resuming and this is the step we're resuming, update its state
         if (
           resume &&
@@ -192,6 +203,20 @@ export class RunExecutionEngineWithQueue {
               output: result.output,
             }));
 
+          // Emit suspended workflow state
+          this.store.getState().setStatus(RUN_STATUS.SUSPENDED);
+          this.store.getState().emitWorkflowStatusUpdate({
+            type: WorkflowEventType.WorkflowStatusUpdate,
+            payload: {
+              workflowState: {
+                status: RUN_STATUS.SUSPENDED,
+                result: undefined,
+                error: undefined,
+              },
+            },
+            description: 'Workflow suspended',
+          });
+
           return {
             status: 'suspended',
             steps: stepResults,
@@ -200,6 +225,20 @@ export class RunExecutionEngineWithQueue {
         }
 
         if (result.status === 'failed') {
+          // Emit failed workflow state
+          this.store.getState().setStatus(RUN_STATUS.FAILED);
+          this.store.getState().emitWorkflowStatusUpdate({
+            type: WorkflowEventType.WorkflowStatusUpdate,
+            payload: {
+              workflowState: {
+                status: RUN_STATUS.FAILED,
+                result: undefined,
+                error: result.error,
+              },
+            },
+            description: 'Workflow inside failed',
+          });
+
           return {
             status: 'failed',
             error: result.error,
@@ -212,11 +251,39 @@ export class RunExecutionEngineWithQueue {
       }
 
       // Format and return the final result
-      return this.formatReturnValue(
+      const finalResult = this.formatReturnValue(
         stepResults,
         lastOutput!
       ) as WorkflowResult<TOutput>;
+
+      // Emit completed workflow state
+      this.store.getState().setStatus(RUN_STATUS.COMPLETED);
+      this.store.getState().emitWorkflowStatusUpdate({
+        type: WorkflowEventType.WorkflowStatusUpdate,
+        payload: {
+          workflowState: {
+            status: RUN_STATUS.COMPLETED,
+            result: finalResult,
+          },
+        },
+        description: 'Workflow completed',
+      });
+
+      return finalResult;
     } catch (error) {
+      // Emit failed workflow state
+      this.store.getState().setStatus(RUN_STATUS.FAILED);
+      this.store.getState().emitWorkflowStatusUpdate({
+        type: WorkflowEventType.WorkflowStatusUpdate,
+        payload: {
+          workflowState: {
+            status: RUN_STATUS.FAILED,
+            result: undefined,
+            error: error as Error,
+          },
+        },
+        description: 'Workflow failed',
+      });
       return {
         status: 'failed',
         error: error as Error,
@@ -383,6 +450,7 @@ export class RunExecutionEngineWithQueue {
     try {
       // Set current step in store
       this.store.getState().setCurrentStep(step);
+
       // Log running state before executing the step
       const runningResult: StepResult = {
         status: 'running',
@@ -390,6 +458,15 @@ export class RunExecutionEngineWithQueue {
       };
       stepResults[step.id] = runningResult;
       this.store.getState().updateStepResult(step.id, runningResult);
+      this.store.getState().emitStepStatusUpdate({
+        type: WorkflowEventType.StepStatusUpdate,
+        description: `Step ${step.id} running`,
+        payload: {
+          stepStatus: 'running',
+          stepResult: runningResult,
+          stepId: step.id,
+        },
+      });
 
       // Get input for this step
       const stepInput = isResuming
@@ -401,10 +478,22 @@ export class RunExecutionEngineWithQueue {
         try {
           step.inputSchema.parse(stepInput);
         } catch (error) {
-          return {
+          const failedResult: StepResult = {
             status: 'failed',
             error: error as Error,
           };
+          stepResults[step.id] = failedResult;
+          this.store.getState().updateStepResult(step.id, failedResult);
+          this.store.getState().emitStepStatusUpdate({
+            type: WorkflowEventType.StepStatusUpdate,
+            description: `Step ${step.id} failed`,
+            payload: {
+              stepStatus: 'failed',
+              stepResult: failedResult,
+              stepId: step.id,
+            },
+          });
+          return failedResult;
         }
       }
 
@@ -446,6 +535,16 @@ export class RunExecutionEngineWithQueue {
         'status' in output &&
         output.status === 'suspended'
       ) {
+        this.store.getState().updateStepResult(step.id, output);
+        this.store.getState().emitStepStatusUpdate({
+          type: WorkflowEventType.StepStatusUpdate,
+          description: `Step ${step.id} suspended`,
+          payload: {
+            stepStatus: 'suspended',
+            stepResult: output,
+            stepId: step.id,
+          },
+        });
         return output as StepResult;
       }
 
@@ -454,10 +553,22 @@ export class RunExecutionEngineWithQueue {
       try {
         validatedOutput = step.outputSchema.parse(output);
       } catch (error) {
-        return {
+        const failedResult: StepResult = {
           status: 'failed',
           error: error as Error,
         };
+        stepResults[step.id] = failedResult;
+        this.store.getState().updateStepResult(step.id, failedResult);
+        this.store.getState().emitStepStatusUpdate({
+          type: WorkflowEventType.StepStatusUpdate,
+          description: `Step ${step.id} failed`,
+          payload: {
+            stepStatus: 'failed',
+            stepResult: failedResult,
+            stepId: step.id,
+          },
+        });
+        return failedResult;
       }
 
       const result: StepResult = {
@@ -466,10 +577,34 @@ export class RunExecutionEngineWithQueue {
       };
 
       stepResults[step.id] = result;
+
+      this.store.getState().updateStepResult(step.id, result);
+      this.store.getState().emitStepStatusUpdate({
+        type: WorkflowEventType.StepStatusUpdate,
+        description: `Step ${step.id} completed`,
+        payload: {
+          stepStatus: 'completed',
+          stepResult: result,
+          stepId: step.id,
+        },
+      });
+
       return result;
     } catch (error) {
       // Check if this is a suspend exception
       if (error instanceof Error && error.message === 'SUSPEND_STEP') {
+        this.store
+          .getState()
+          .updateStepResult(step.id, (error as any).suspendedResult);
+        this.store.getState().emitStepStatusUpdate({
+          type: WorkflowEventType.StepStatusUpdate,
+          description: `Step ${step.id} suspended`,
+          payload: {
+            stepStatus: 'suspended',
+            stepResult: (error as any).suspendedResult,
+            stepId: step.id,
+          },
+        });
         return (error as any).suspendedResult as StepResult;
       }
 
@@ -478,6 +613,17 @@ export class RunExecutionEngineWithQueue {
         error: error as Error,
       };
       stepResults[step.id] = result;
+      this.store.getState().updateStepResult(step.id, result);
+      this.store.getState().emitStepStatusUpdate({
+        type: WorkflowEventType.StepStatusUpdate,
+        description: `Step ${step.id} failed`,
+        payload: {
+          stepStatus: 'failed',
+          stepResult: result,
+          stepId: step.id,
+        },
+      });
+
       return result;
     } finally {
       // Clear current step

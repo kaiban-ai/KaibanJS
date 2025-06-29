@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { z } from 'zod';
 import { createStep, createWorkflow } from './';
 // import { Run } from './run';
-import type { RunStore } from './stores/runStore';
+import type { WorkflowEvent } from './stores/runStore';
 
 describe('Run-based Workflow', () => {
   it('should execute steps in sequence', async () => {
@@ -686,11 +686,15 @@ describe('Run-based Workflow', () => {
       }),
     });
 
-    workflow.then(processStep).map({
-      result: {
-        step: processStep,
-        path: 'result',
-      },
+    workflow.then(processStep).map(async ({ getStepResult }) => {
+      const data = getStepResult(processStep.id) as any;
+      return {
+        result: {
+          data: data.result.data,
+          timestamp: data.result.timestamp,
+          version: data.result.version,
+        },
+      };
     });
     workflow.commit();
 
@@ -1099,7 +1103,16 @@ describe('State Monitoring and Observability', () => {
       inputSchema: z.number(),
       outputSchema: z.number(),
       execute: async ({ inputData }) => {
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
         return (inputData as number) * 2;
+      },
+    });
+    const fastStep = createStep({
+      id: 'fast-step',
+      inputSchema: z.number(),
+      outputSchema: z.number(),
+      execute: async ({ inputData }) => {
+        return (inputData as number) * 4;
       },
     });
 
@@ -1109,26 +1122,25 @@ describe('State Monitoring and Observability', () => {
       outputSchema: z.number(),
     });
 
-    workflow.then(slowStep);
+    workflow.then(slowStep).then(fastStep);
     workflow.commit();
 
     const run = workflow.createRun();
 
-    // Set up state monitoring
+    // Set up state monitoring using run.watch
     const states: { stepStatus: string; workflowStatus: string }[] = [];
-    const unsubscribe = run.store.subscribe((state: RunStore) => {
-      const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.type === 'step' && lastLog.stepStatus) {
+    const unsubscribe = run.watch((event: WorkflowEvent) => {
+      if (event.type === 'StepStatusUpdate' && event.payload.stepStatus) {
         states.push({
-          stepStatus: lastLog.stepStatus,
-          workflowStatus: state.status.toLowerCase(),
+          stepStatus: event.payload.stepStatus,
+          workflowStatus:
+            event.payload.workflowState?.status?.toLowerCase() || 'unknown',
         });
       }
     });
 
     // Start execution
     const result = await run.start({ inputData: 5 });
-    // await new Promise((resolve) => setTimeout(resolve, 100));
     unsubscribe();
 
     // Verify states - check for completed state since execution is fast
@@ -1138,11 +1150,11 @@ describe('State Monitoring and Observability', () => {
     });
     expect(states).toContainEqual({
       stepStatus: 'completed',
-      workflowStatus: 'completed',
+      workflowStatus: 'running',
     });
     expect(result.status).toBe('completed');
     if (result.status === 'completed') {
-      expect(result.result).toBe(10);
+      expect(result.result).toBe(40);
     }
   });
 
@@ -1173,21 +1185,20 @@ describe('State Monitoring and Observability', () => {
 
     const run = workflow.createRun();
 
-    // Set up state monitoring
+    // Set up state monitoring using run.watch
     const states: { stepStatus: string; workflowStatus: string }[] = [];
-    const unsubscribe = run.store.subscribe((state: RunStore) => {
-      const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.type === 'step' && lastLog.stepStatus) {
+    const unsubscribe = run.watch((event: WorkflowEvent) => {
+      if (event.type === 'StepStatusUpdate' && event.payload.stepStatus) {
         states.push({
-          stepStatus: lastLog.stepStatus,
-          workflowStatus: state.status.toLowerCase(),
+          stepStatus: event.payload.stepStatus,
+          workflowStatus:
+            event.payload.workflowState?.status?.toLowerCase() || 'unknown',
         });
       }
     });
 
     // Test suspension
     const suspendResult = await run.start({ inputData: { value: -1 } });
-    // await new Promise((resolve) => setTimeout(resolve, 100));
     unsubscribe();
 
     // Verify states
@@ -1227,21 +1238,20 @@ describe('State Monitoring and Observability', () => {
 
     const run = workflow.createRun();
 
-    // Set up state monitoring
+    // Set up state monitoring using run.watch
     const states: { stepStatus: string; workflowStatus: string }[] = [];
-    const unsubscribe = run.store.subscribe((state: RunStore) => {
-      const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.type === 'step' && lastLog.stepStatus) {
+    const unsubscribe = run.watch((event: WorkflowEvent) => {
+      if (event.type === 'StepStatusUpdate' && event.payload.stepStatus) {
         states.push({
-          stepStatus: lastLog.stepStatus,
-          workflowStatus: state.status.toLowerCase(),
+          stepStatus: event.payload.stepStatus,
+          workflowStatus:
+            event.payload.workflowState?.status?.toLowerCase() || 'unknown',
         });
       }
     });
 
     // Test failure
     const failResult = await run.start({ inputData: -1 });
-    // await new Promise((resolve) => setTimeout(resolve, 100));
     unsubscribe();
 
     // Verify states
@@ -1276,21 +1286,21 @@ describe('State Monitoring and Observability', () => {
 
     const run = workflow.createRun();
 
-    // Set up state monitoring
-    const states: { stepStatus: string; workflowStatus: string }[] = [];
-    const unsubscribe = run.store.subscribe((state: RunStore) => {
-      const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.type === 'step' && lastLog.stepStatus) {
+    // Set up state monitoring using run.watch
+    const states: { stepStatus: string | undefined; workflowStatus: string }[] =
+      [];
+    const unsubscribe = run.watch((event: WorkflowEvent) => {
+      if (event.payload.workflowState?.status) {
         states.push({
-          stepStatus: lastLog.stepStatus,
-          workflowStatus: state.status.toLowerCase(),
+          stepStatus: event.payload.stepStatus,
+          workflowStatus:
+            event.payload.workflowState?.status?.toLowerCase() || 'unknown',
         });
       }
     });
 
     // Test completion
     const completeResult = await run.start({ inputData: 5 });
-    // await new Promise((resolve) => setTimeout(resolve, 100));
     unsubscribe();
 
     // Verify states
@@ -1299,7 +1309,7 @@ describe('State Monitoring and Observability', () => {
       workflowStatus: 'running',
     });
     expect(states).toContainEqual({
-      stepStatus: 'completed',
+      stepStatus: undefined,
       workflowStatus: 'completed',
     });
     expect(completeResult.status).toBe('completed');
@@ -1338,14 +1348,14 @@ describe('State Monitoring and Observability', () => {
 
     const run = workflow.createRun();
 
-    // Monitor states with detailed logging
+    // Monitor states with detailed logging using run.watch
     const states: Array<{ stepStatus: string; workflowStatus: string }> = [];
-    const unsubscribe = run.store.subscribe((state: RunStore) => {
-      const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.type === 'step' && lastLog.stepStatus) {
+    const unsubscribe = run.watch((event: WorkflowEvent) => {
+      if (event.type === 'StepStatusUpdate' && event.payload.stepStatus) {
         const stateUpdate = {
-          stepStatus: lastLog.stepStatus,
-          workflowStatus: state.status.toLowerCase(),
+          stepStatus: event.payload.stepStatus,
+          workflowStatus:
+            event.payload.workflowState?.status?.toLowerCase() || 'unknown',
         };
         states.push(stateUpdate);
       }
@@ -1363,7 +1373,7 @@ describe('State Monitoring and Observability', () => {
     });
     expect(states).toContainEqual({
       stepStatus: 'completed',
-      workflowStatus: 'completed',
+      workflowStatus: 'running',
     });
     expect(result.status).toBe('completed');
     if (result.status === 'completed') {
@@ -1408,21 +1418,23 @@ describe('State Monitoring and Observability', () => {
 
     const run = workflow.createRun();
 
-    // Set up state monitoring
-    const states: { stepStatus: string; workflowStatus: string }[] = [];
-    const unsubscribe = run.store.subscribe((state: RunStore) => {
-      const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.type === 'step' && lastLog.stepStatus) {
+    // Set up state monitoring using run.watch
+    const states: { stepStatus: string | undefined; workflowStatus: string }[] =
+      [];
+    const unsubscribe = run.watch((event: WorkflowEvent) => {
+      // console.log(JSON.stringify(event, null, 2));
+
+      if (event.payload.workflowState?.status) {
         states.push({
-          stepStatus: lastLog.stepStatus,
-          workflowStatus: state.status.toLowerCase(),
+          stepStatus: event.payload.stepStatus,
+          workflowStatus:
+            event.payload.workflowState?.status?.toLowerCase() || 'unknown',
         });
       }
     });
 
     // Test even number
     const evenResult = await run.start({ inputData: 4 });
-    // await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Verify even number states - execution is fast so we might only see completed states
     // If states array is empty, that's also acceptable for fast execution
@@ -1432,7 +1444,7 @@ describe('State Monitoring and Observability', () => {
         workflowStatus: 'running',
       });
       expect(states).toContainEqual({
-        stepStatus: 'completed',
+        stepStatus: undefined,
         workflowStatus: 'completed',
       });
     }
@@ -1447,7 +1459,6 @@ describe('State Monitoring and Observability', () => {
 
     // Test odd number
     const oddResult = await run2.start({ inputData: 5 });
-    // await new Promise((resolve) => setTimeout(resolve, 100));
     unsubscribe();
 
     // Verify odd number states - execution is fast so we might only see completed states
@@ -1490,21 +1501,23 @@ describe('State Monitoring and Observability', () => {
 
     const run = workflow.createRun();
 
-    // Set up state monitoring
-    const states: { stepStatus: string; workflowStatus: string }[] = [];
-    const unsubscribe = run.store.subscribe((state: RunStore) => {
-      const lastLog = state.logs[state.logs.length - 1];
-      if (lastLog?.type === 'step' && lastLog.stepStatus) {
+    // Set up state monitoring using run.watch
+    const states: { stepStatus: string | undefined; workflowStatus: string }[] =
+      [];
+    const unsubscribe = run.watch((event: WorkflowEvent) => {
+      // console.log(JSON.stringify(event, null, 2));
+
+      if (event.payload.workflowState?.status) {
         states.push({
-          stepStatus: lastLog.stepStatus,
-          workflowStatus: state.status.toLowerCase(),
+          stepStatus: event.payload.stepStatus,
+          workflowStatus:
+            event.payload.workflowState?.status?.toLowerCase() || 'unknown',
         });
       }
     });
 
     // Test with array of numbers
     const result = await run.start({ inputData: [1, 2, 3, 4, 5] });
-    // await new Promise((resolve) => setTimeout(resolve, 100));
 
     unsubscribe();
 
@@ -1515,7 +1528,7 @@ describe('State Monitoring and Observability', () => {
         workflowStatus: 'running',
       });
       expect(states).toContainEqual({
-        stepStatus: 'completed',
+        stepStatus: undefined,
         workflowStatus: 'completed',
       });
     }
@@ -2114,5 +2127,825 @@ describe('Performance and Concurrency', () => {
       expect(result.result.processed[0].processed).toBe(true);
       expect(result.result.processed[999].processed).toBe(true);
     }
+  });
+});
+describe('Streaming', () => {
+  it('should generate a stream', async () => {
+    const step1Action = vi.fn<any>().mockResolvedValue({ value: 'success1' });
+    const step2Action = vi.fn<any>().mockResolvedValue({ result: 'success2' });
+
+    const step1 = createStep({
+      id: 'step1',
+      execute: step1Action,
+      inputSchema: z.object({}),
+      outputSchema: z.object({ value: z.string() }),
+    });
+    const step2 = createStep({
+      id: 'step2',
+      execute: step2Action,
+      inputSchema: z.object({ value: z.string() }),
+      outputSchema: z.object({}),
+    });
+
+    const workflow = createWorkflow({
+      id: 'test-workflow',
+      inputSchema: z.object({}),
+      outputSchema: z.object({}),
+    });
+    workflow.then(step1).then(step2).commit();
+
+    const runId = 'test-run-id';
+    let watchData:
+      | WorkflowEvent[]
+      | Omit<WorkflowEvent, 'timestamp' | 'description'>[] = [];
+    const run = workflow.createRun({
+      runId,
+    });
+
+    const { stream, getWorkflowState } = run.stream({ inputData: {} });
+
+    // Start watching the workflow
+    const stringfyResult = [];
+    const collectedStreamData: WorkflowEvent[] = [];
+    const reader = stream.getReader();
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (value !== undefined) {
+          stringfyResult.push(value);
+          collectedStreamData.push(JSON.parse(JSON.stringify(value)));
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    watchData = collectedStreamData.map(
+      ({ payload, type, runId, workflowId }) => ({
+        payload,
+        type,
+        runId,
+        workflowId,
+      })
+    );
+    // console.log(JSON.stringify(stringfyResult, null, 2));
+
+    const executionResult = await getWorkflowState();
+
+    expect(watchData.length).toBe(7);
+    expect(watchData).toMatchInlineSnapshot(`
+      [
+        {
+          "payload": {
+            "workflowState": {
+              "status": "RUNNING",
+            },
+          },
+          "runId": "test-run-id",
+          "type": "WorkflowStatusUpdate",
+          "workflowId": "test-workflow",
+        },
+        {
+          "payload": {
+            "stepId": "step1",
+            "stepResult": {
+              "status": "running",
+            },
+            "stepStatus": "running",
+            "workflowState": {
+              "error": null,
+              "result": null,
+              "status": "RUNNING",
+            },
+          },
+          "runId": "test-run-id",
+          "type": "StepStatusUpdate",
+          "workflowId": "test-workflow",
+        },
+        {
+          "payload": {
+            "stepId": "step1",
+            "stepResult": {
+              "output": {
+                "value": "success1",
+              },
+              "status": "completed",
+            },
+            "stepStatus": "completed",
+            "workflowState": {
+              "error": null,
+              "result": null,
+              "status": "RUNNING",
+            },
+          },
+          "runId": "test-run-id",
+          "type": "StepStatusUpdate",
+          "workflowId": "test-workflow",
+        },
+        {
+          "payload": {
+            "stepId": "step2",
+            "stepResult": {
+              "status": "running",
+            },
+            "stepStatus": "running",
+            "workflowState": {
+              "error": null,
+              "result": null,
+              "status": "RUNNING",
+            },
+          },
+          "runId": "test-run-id",
+          "type": "StepStatusUpdate",
+          "workflowId": "test-workflow",
+        },
+        {
+          "payload": {
+            "stepId": "step2",
+            "stepResult": {
+              "output": {},
+              "status": "completed",
+            },
+            "stepStatus": "completed",
+            "workflowState": {
+              "error": null,
+              "result": null,
+              "status": "RUNNING",
+            },
+          },
+          "runId": "test-run-id",
+          "type": "StepStatusUpdate",
+          "workflowId": "test-workflow",
+        },
+        {
+          "payload": {
+            "workflowState": {
+              "result": {
+                "result": {},
+                "status": "completed",
+                "steps": {
+                  "step1": {
+                    "output": {
+                      "value": "success1",
+                    },
+                    "status": "completed",
+                  },
+                  "step2": {
+                    "output": {},
+                    "status": "completed",
+                  },
+                },
+              },
+              "status": "COMPLETED",
+            },
+          },
+          "runId": "test-run-id",
+          "type": "WorkflowStatusUpdate",
+          "workflowId": "test-workflow",
+        },
+        {
+          "payload": {
+            "workflowState": {
+              "status": "COMPLETED",
+            },
+          },
+          "runId": "test-run-id",
+          "type": "WorkflowStatusUpdate",
+          "workflowId": "test-workflow",
+        },
+      ]
+    `);
+    // Verify execution completed successfully
+    // console.log(JSON.stringify(executionResult, null, 2));
+
+    expect(executionResult.steps.step1).toEqual({
+      status: 'completed',
+      output: { value: 'success1' },
+    });
+    expect(executionResult.steps.step2).toEqual({
+      status: 'completed',
+      output: {},
+    });
+  });
+
+  it('should handle stream with parallel execution', async () => {
+    const step1Action = vi.fn<any>().mockResolvedValue({ value: 'parallel1' });
+    const step2Action = vi.fn<any>().mockResolvedValue({ value: 'parallel2' });
+    const combineAction = vi
+      .fn<any>()
+      .mockResolvedValue({ result: 'combined' });
+
+    const step1 = createStep({
+      id: 'parallel1',
+      execute: step1Action,
+      inputSchema: z.number(),
+      outputSchema: z.object({ value: z.string() }),
+    });
+    const step2 = createStep({
+      id: 'parallel2',
+      execute: step2Action,
+      inputSchema: z.number(),
+      outputSchema: z.object({ value: z.string() }),
+    });
+    const combineStep = createStep({
+      id: 'combine',
+      execute: combineAction,
+      inputSchema: z.any(),
+      outputSchema: z.object({ result: z.string() }),
+    });
+
+    const workflow = createWorkflow({
+      id: 'parallel-stream-test',
+      inputSchema: z.number(),
+      outputSchema: z.object({ result: z.string() }),
+    });
+    workflow.parallel([step1, step2]).then(combineStep);
+    workflow.commit();
+
+    const run = workflow.createRun({ runId: 'parallel-test-run' });
+    const { stream, getWorkflowState } = run.stream({ inputData: 5 });
+
+    const collectedStreamData: WorkflowEvent[] = [];
+    const reader = stream.getReader();
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (value !== undefined) {
+          collectedStreamData.push(JSON.parse(JSON.stringify(value)));
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    const watchData = collectedStreamData.map(
+      ({ payload, type, runId, workflowId }) => ({
+        payload,
+        type,
+        runId,
+        workflowId,
+      })
+    );
+
+    const executionResult = await getWorkflowState();
+
+    // Verify we have events for both parallel steps
+    expect(watchData.length).toBeGreaterThan(5);
+    expect(
+      watchData.some(
+        (event) =>
+          event.type === 'StepStatusUpdate' &&
+          event.payload.stepId === 'parallel1'
+      )
+    ).toBe(true);
+    expect(
+      watchData.some(
+        (event) =>
+          event.type === 'StepStatusUpdate' &&
+          event.payload.stepId === 'parallel2'
+      )
+    ).toBe(true);
+    expect(
+      watchData.some(
+        (event) =>
+          event.type === 'StepStatusUpdate' &&
+          event.payload.stepId === 'combine'
+      )
+    ).toBe(true);
+
+    // Verify final result
+    expect(executionResult.steps.parallel1).toEqual({
+      status: 'completed',
+      output: { value: 'parallel1' },
+    });
+    expect(executionResult.steps.parallel2).toEqual({
+      status: 'completed',
+      output: { value: 'parallel2' },
+    });
+    expect(executionResult.steps.combine).toEqual({
+      status: 'completed',
+      output: { result: 'combined' },
+    });
+  });
+
+  it('should handle stream with conditional execution', async () => {
+    const evenStepAction = vi.fn<any>().mockResolvedValue({ result: 'even' });
+    const oddStepAction = vi.fn<any>().mockResolvedValue({ result: 'odd' });
+
+    const evenStep = createStep({
+      id: 'even',
+      execute: evenStepAction,
+      inputSchema: z.number(),
+      outputSchema: z.object({ result: z.string() }),
+    });
+    const oddStep = createStep({
+      id: 'odd',
+      execute: oddStepAction,
+      inputSchema: z.number(),
+      outputSchema: z.object({ result: z.string() }),
+    });
+
+    const workflow = createWorkflow({
+      id: 'conditional-stream-test',
+      inputSchema: z.number(),
+      outputSchema: z.object({ result: z.string() }),
+    });
+    workflow.branch([
+      [async ({ inputData }) => (inputData as number) % 2 === 0, evenStep],
+      [async () => true, oddStep],
+    ]);
+    workflow.commit();
+
+    const run = workflow.createRun({ runId: 'conditional-test-run' });
+    const { stream, getWorkflowState } = run.stream({ inputData: 4 });
+
+    const collectedStreamData: WorkflowEvent[] = [];
+    const reader = stream.getReader();
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (value !== undefined) {
+          collectedStreamData.push(JSON.parse(JSON.stringify(value)));
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    const watchData = collectedStreamData.map(
+      ({ payload, type, runId, workflowId }) => ({
+        payload,
+        type,
+        runId,
+        workflowId,
+      })
+    );
+
+    const executionResult = await getWorkflowState();
+
+    // Verify we have events for the even step (since input is 4)
+    expect(
+      watchData.some(
+        (event) =>
+          event.type === 'StepStatusUpdate' && event.payload.stepId === 'even'
+      )
+    ).toBe(true);
+    expect(
+      watchData.some(
+        (event) =>
+          event.type === 'StepStatusUpdate' && event.payload.stepId === 'odd'
+      )
+    ).toBe(false); // odd step should not be executed
+
+    // Verify final result
+    expect(executionResult.steps.even).toEqual({
+      status: 'completed',
+      output: { result: 'even' },
+    });
+    expect(executionResult.steps.odd).toBeUndefined();
+  });
+
+  it('should handle stream with foreach execution', async () => {
+    const processStepAction = vi
+      .fn<any>()
+      .mockImplementation(async ({ inputData }) => {
+        return { processed: (inputData as number) * 2 };
+      });
+
+    const processStep = createStep({
+      id: 'process',
+      execute: processStepAction,
+      inputSchema: z.number(),
+      outputSchema: z.object({ processed: z.number() }),
+    });
+
+    const workflow = createWorkflow({
+      id: 'foreach-stream-test',
+      inputSchema: z.array(z.number()),
+      outputSchema: z.array(z.object({ processed: z.number() })),
+    });
+    workflow.foreach(processStep, { concurrency: 2 });
+    workflow.commit();
+
+    const run = workflow.createRun({ runId: 'foreach-test-run' });
+    const { stream, getWorkflowState } = run.stream({ inputData: [1, 2, 3] });
+
+    const collectedStreamData: WorkflowEvent[] = [];
+    const reader = stream.getReader();
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (value !== undefined) {
+          collectedStreamData.push(JSON.parse(JSON.stringify(value)));
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    const watchData = collectedStreamData.map(
+      ({ payload, type, runId, workflowId }) => ({
+        payload,
+        type,
+        runId,
+        workflowId,
+      })
+    );
+
+    const executionResult = await getWorkflowState();
+
+    // Verify we have workflow completion events
+    expect(
+      watchData.some(
+        (event) =>
+          event.type === 'WorkflowStatusUpdate' &&
+          event.payload.workflowState?.status === 'COMPLETED'
+      )
+    ).toBe(true);
+
+    // Verify final result
+    if (executionResult.status === 'completed') {
+      expect(executionResult.result).toEqual([
+        { processed: 2 },
+        { processed: 4 },
+        { processed: 6 },
+      ]);
+    }
+  });
+
+  it('should handle stream with suspend and resume', async () => {
+    const suspendStepAction = vi
+      .fn<any>()
+      .mockImplementation(async ({ inputData, suspend }) => {
+        if ((inputData as { value: number }).value < 0) {
+          await suspend({ reason: 'negative_value' });
+          return { result: 0 };
+        }
+        return { result: (inputData as { value: number }).value * 2 };
+      });
+
+    const suspendStep = createStep({
+      id: 'suspendable',
+      execute: suspendStepAction,
+      inputSchema: z.object({ value: z.number() }),
+      outputSchema: z.object({ result: z.number() }),
+      resumeSchema: z.object({ continue: z.boolean(), value: z.number() }),
+      suspendSchema: z.object({ reason: z.string() }),
+    });
+
+    const workflow = createWorkflow({
+      id: 'suspend-stream-test',
+      inputSchema: z.object({ value: z.number() }),
+      outputSchema: z.object({ result: z.number() }),
+    });
+    workflow.then(suspendStep);
+    workflow.commit();
+
+    const run = workflow.createRun({ runId: 'suspend-test-run' });
+    const { stream } = run.stream({
+      inputData: { value: -1 },
+    });
+
+    const collectedStreamData: WorkflowEvent[] = [];
+    const reader = stream.getReader();
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) break;
+        if (value !== undefined) {
+          collectedStreamData.push(JSON.parse(JSON.stringify(value)));
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    const watchData = collectedStreamData.map(
+      ({ payload, type, runId, workflowId }) => ({
+        payload,
+        type,
+        runId,
+        workflowId,
+      })
+    );
+
+    // Verify we have suspension events
+    expect(
+      watchData.some(
+        (event) =>
+          event.type === 'StepStatusUpdate' &&
+          event.payload.stepStatus === 'suspended'
+      )
+    ).toBe(true);
+
+    // Resume the workflow
+    const resumeResult = await run.resume({
+      step: 'suspendable',
+      resumeData: { continue: true, value: 5 },
+    });
+
+    expect(resumeResult.status).toBe('completed');
+    if (resumeResult.status === 'completed') {
+      expect(resumeResult.result).toEqual({ result: 10 });
+    }
+  });
+
+  it('should handle stream with nested workflows', async () => {
+    // Create nested workflow
+    const nestedStep = createStep({
+      id: 'nested',
+      execute: vi
+        .fn<any>()
+        .mockResolvedValue({ nestedResult: 'nested_success' }),
+      inputSchema: z.number(),
+      outputSchema: z.object({ nestedResult: z.string() }),
+    });
+
+    const nestedWorkflow = createWorkflow({
+      id: 'nested-workflow',
+      inputSchema: z.number(),
+      outputSchema: z.object({ nestedResult: z.string() }),
+    });
+    nestedWorkflow.then(nestedStep);
+    nestedWorkflow.commit();
+
+    // Create main workflow
+    const mainStep = createStep({
+      id: 'main',
+      execute: vi.fn<any>().mockResolvedValue({ mainResult: 'main_success' }),
+      inputSchema: z.number(),
+      outputSchema: z.object({ mainResult: z.string() }),
+    });
+
+    const workflow = createWorkflow({
+      id: 'nested-stream-test',
+      inputSchema: z.number(),
+      outputSchema: z.object({
+        mainResult: z.string(),
+        nestedResult: z.string(),
+      }),
+    });
+    workflow
+      .then(mainStep)
+      .map(async ({ getStepResult }) => {
+        // Extract a number from the main step result to pass to nested workflow
+        const mainResult = getStepResult(mainStep.id) as any;
+        return mainResult.mainResult.length; // Use the length of the string as a number
+      })
+      .then(nestedWorkflow);
+    workflow.commit();
+
+    const run = workflow.createRun({ runId: 'nested-test-run' });
+
+    const { stream, getWorkflowState } = run.stream({ inputData: 5 });
+
+    const collectedStreamData: WorkflowEvent[] = [];
+    const reader = stream.getReader();
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (value !== undefined) {
+          collectedStreamData.push(JSON.parse(JSON.stringify(value)));
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    const watchData = collectedStreamData.map(
+      ({ payload, type, runId, workflowId }) => ({
+        payload,
+        type,
+        runId,
+        workflowId,
+      })
+    );
+
+    const executionResult = await getWorkflowState();
+
+    // Verify we have events for both main and nested steps
+    expect(
+      watchData.some(
+        (event) =>
+          event.type === 'StepStatusUpdate' && event.payload.stepId === 'main'
+      )
+    ).toBe(true);
+    expect(
+      watchData.some(
+        (event) =>
+          event.type === 'StepStatusUpdate' &&
+          event.payload.stepId === 'nested-workflow'
+      )
+    ).toBe(true);
+
+    // Verify final result
+    expect(executionResult.steps.main).toEqual({
+      status: 'completed',
+      output: { mainResult: 'main_success' },
+    });
+    expect(executionResult.steps['nested-workflow']).toEqual({
+      status: 'completed',
+      output: { nestedResult: 'nested_success' },
+    });
+  });
+
+  it('should handle stream with error states', async () => {
+    const errorStepAction = vi
+      .fn<any>()
+      .mockImplementation(async ({ inputData }) => {
+        if ((inputData as { value: number }).value === 42) {
+          throw new Error('Life, the universe, and everything');
+        }
+        return { result: (inputData as { value: number }).value * 2 };
+      });
+
+    const errorStep = createStep({
+      id: 'error',
+      execute: errorStepAction,
+      inputSchema: z.object({ value: z.number() }),
+      outputSchema: z.object({ result: z.number() }),
+    });
+
+    const workflow = createWorkflow({
+      id: 'error-stream-test',
+      inputSchema: z.object({ value: z.number() }),
+      outputSchema: z.object({ result: z.number() }),
+    });
+    workflow.then(errorStep);
+    workflow.commit();
+
+    const run = workflow.createRun({ runId: 'error-test-run' });
+    const { stream, getWorkflowState } = run.stream({
+      inputData: { value: 42 },
+    });
+
+    const collectedStreamData: WorkflowEvent[] = [];
+    const reader = stream.getReader();
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (value !== undefined) {
+          collectedStreamData.push(JSON.parse(JSON.stringify(value)));
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    const watchData = collectedStreamData.map(
+      ({ payload, type, runId, workflowId }) => ({
+        payload,
+        type,
+        runId,
+        workflowId,
+      })
+    );
+
+    const executionResult = await getWorkflowState();
+
+    // Verify we have error events
+    expect(
+      watchData.some(
+        (event) =>
+          event.type === 'StepStatusUpdate' &&
+          event.payload.stepStatus === 'failed'
+      )
+    ).toBe(true);
+
+    // Verify final result shows error
+    expect(executionResult.steps.error.status).toBe('failed');
+    expect(executionResult.steps.error.error?.message).toBe(
+      'Life, the universe, and everything'
+    );
+  });
+
+  it('should handle stream with mapping operations', async () => {
+    const dataStepAction = vi.fn<any>().mockResolvedValue({
+      user: { id: '123', name: 'John Doe', email: 'john@example.com' },
+    });
+    const profileStepAction = vi.fn<any>().mockResolvedValue({
+      profile: { displayName: '@john doe' },
+    });
+
+    const dataStep = createStep({
+      id: 'data',
+      execute: dataStepAction,
+      inputSchema: z.object({ userId: z.string() }),
+      outputSchema: z.object({
+        user: z.object({
+          id: z.string(),
+          name: z.string(),
+          email: z.string(),
+        }),
+      }),
+    });
+
+    const profileStep = createStep({
+      id: 'profile',
+      execute: profileStepAction,
+      inputSchema: z.object({
+        profile: z.object({
+          id: z.string(),
+          name: z.string(),
+          email: z.string(),
+        }),
+      }),
+      outputSchema: z.object({
+        profile: z.object({
+          displayName: z.string(),
+        }),
+      }),
+    });
+
+    const workflow = createWorkflow({
+      id: 'mapping-stream-test',
+      inputSchema: z.object({ userId: z.string() }),
+      outputSchema: z.object({
+        profile: z.object({
+          displayName: z.string(),
+        }),
+      }),
+    });
+
+    workflow
+      .then(dataStep)
+      .map(async ({ getStepResult }) => {
+        const userResult = getStepResult(dataStep.id) as any;
+        return {
+          profile: {
+            id: userResult.user.id,
+            name: userResult.user.name,
+            email: userResult.user.email,
+          },
+        };
+      })
+      .then(profileStep);
+    workflow.commit();
+
+    const run = workflow.createRun({ runId: 'mapping-test-run' });
+    const { stream, getWorkflowState } = run.stream({
+      inputData: { userId: '123' },
+    });
+
+    const collectedStreamData: WorkflowEvent[] = [];
+    const reader = stream.getReader();
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (value !== undefined) {
+          collectedStreamData.push(JSON.parse(JSON.stringify(value)));
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    const watchData = collectedStreamData.map(
+      ({ payload, type, runId, workflowId }) => ({
+        payload,
+        type,
+        runId,
+        workflowId,
+      })
+    );
+
+    const executionResult = await getWorkflowState();
+
+    // Verify we have events for both steps
+    expect(
+      watchData.some(
+        (event) =>
+          event.type === 'StepStatusUpdate' && event.payload.stepId === 'data'
+      )
+    ).toBe(true);
+    expect(
+      watchData.some(
+        (event) =>
+          event.type === 'StepStatusUpdate' &&
+          event.payload.stepId === 'profile'
+      )
+    ).toBe(true);
+
+    // Verify final result
+    expect(executionResult.steps.data).toEqual({
+      status: 'completed',
+      output: {
+        user: { id: '123', name: 'John Doe', email: 'john@example.com' },
+      },
+    });
+    expect(executionResult.steps.profile).toEqual({
+      status: 'completed',
+      output: {
+        profile: { displayName: '@john doe' },
+      },
+    });
   });
 });

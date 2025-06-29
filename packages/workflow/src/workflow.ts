@@ -89,6 +89,9 @@ export class Workflow<
     this._stepFlow = stepFlow;
     this._serializedStepFlow = this.serializeStepFlow(stepFlow);
   }
+  setSerializedStepFlow(stepFlow: StepFlowEntry[]) {
+    this._serializedStepFlow = this.serializeStepFlow(stepFlow);
+  }
 
   // Serialize step flow
   private serializeStepFlow(
@@ -339,6 +342,8 @@ export class Workflow<
       );
     }
 
+    this.setSerializedStepFlow(this._stepFlow);
+
     this.executionGraph = this.buildExecutionGraph();
     this._committed = true;
     return this;
@@ -459,3 +464,7 @@ export class Workflow<
     return run.resume(params);
   }
 }
+
+// Export utility functions
+export const createStep = Workflow.createStep;
+export const createWorkflow = Workflow.createWorkflow;

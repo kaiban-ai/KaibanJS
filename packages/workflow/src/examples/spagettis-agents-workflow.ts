@@ -7,7 +7,7 @@ import {
   SystemMessagePromptTemplate,
   HumanMessagePromptTemplate,
 } from '@langchain/core/prompts';
-import { createWorkflow, createStep } from '../';
+import { createWorkflow, createStep } from '..';
 import { z } from 'zod';
 import { Run } from '../run';
 
@@ -124,29 +124,13 @@ const createAgentsWorkflow = () => {
   return workflow;
 };
 
-const log = (message: string, data?: any) => {
-  console.log(`\n[${new Date().toISOString()}] ${message}`);
-  if (data) {
-    console.log(JSON.stringify(data, null, 2));
-  }
-};
-
 const monitorWorkflow = (run: Run<any, any>) => {
   // Monitor overall Workflow status
-  run.store.subscribe((state) => {
-    log(`Workflow Status Update: ${state.status}`, state);
-  });
 
   // Monitor step results
-  const unsubscribe = run.store.subscribe((state) => {
+  const unsubscribe = run.watch((events) => {
     // Log when a new step result is added
-    const lastLog = state.logs[state.logs.length - 1];
-    if (lastLog?.type === 'step') {
-      log(`Step ${lastLog.stepId} Status: ${lastLog.stepStatus}`, {
-        result: lastLog.stepResult,
-        executionPath: state.executionPath,
-      });
-    }
+    console.log(JSON.stringify(events, null, 2));
   });
 
   return unsubscribe;

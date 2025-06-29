@@ -1,6 +1,12 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { Step, StepResult, StepStatus, WatchEvent } from '../types';
+import type {
+  RuntimeContext,
+  Step,
+  StepFlowEntry,
+  StepResult,
+  StepStatus,
+} from '../types';
 
 export enum RUN_STATUS {
   INITIAL = 'INITIAL',
@@ -11,17 +17,43 @@ export enum RUN_STATUS {
   FAILED = 'FAILED',
   SUSPENDED = 'SUSPENDED',
 }
+export enum WorkflowEventType {
+  WorkflowStatusUpdate = 'WorkflowStatusUpdate',
+  StepStatusUpdate = 'StepStatusUpdate',
+}
+
+export interface WorkflowEvent {
+  type: WorkflowEventType;
+  timestamp: number;
+  runId: string;
+  workflowId: string;
+  description: string;
+  payload: {
+    workflowState?: {
+      status: RUN_STATUS;
+      result?: any;
+      error?: any;
+    };
+    stepId?: string;
+    stepStatus?: StepStatus;
+    stepResult?: StepResult;
+  };
+  metadata?: {
+    suspendReason?: string;
+    resumeData?: any;
+    executionPath?: number[];
+  };
+}
 
 export interface RunLog {
   timestamp: number;
-  type: 'status' | 'step' | 'watch';
+  type: 'status' | 'step';
   description: string;
   metadata?: Record<string, unknown>;
   status?: RUN_STATUS;
   stepStatus?: StepStatus;
   stepId?: string;
   stepResult?: StepResult;
-  watchEvent?: WatchEvent;
 }
 
 export interface RunState {
@@ -33,8 +65,12 @@ export interface RunState {
   currentStep?: Step<any, any>;
   executionPath: number[];
   suspendedPaths: Record<string, number[]>;
-  watchEvents: WatchEvent[];
-  state: Record<string, any>;
+  events: WorkflowEvent[];
+  steps: Record<string, any>;
+  executionGraph: StepFlowEntry[];
+  executionContext: RuntimeContext;
+  result?: any;
+  error?: any;
 }
 
 export interface RunStoreActions {
@@ -44,17 +80,28 @@ export interface RunStoreActions {
   setCurrentStep: (step: Step<any, any>) => void;
   updateExecutionPath: (path: number[]) => void;
   updateSuspendedPaths: (paths: Record<string, number[]>) => void;
-  addWatchEvent: (event: WatchEvent) => void;
   updateState: (newState: Record<string, any>) => void;
+  updateExecutionGraph: (graph: StepFlowEntry[]) => void;
+  updateExecutionContext: (context: RuntimeContext) => void;
+  emitWorkflowStatusUpdate: (
+    status: Partial<Omit<WorkflowEvent, 'timestamp' | 'runId' | 'workflowId'>>
+  ) => void;
+  emitStepStatusUpdate: (
+    status: Partial<Omit<WorkflowEvent, 'timestamp' | 'runId' | 'workflowId'>>
+  ) => void;
   reset: () => void;
 }
 
 export type RunStore = RunState & RunStoreActions;
 
-export const createRunStore = (runId: string, workflowId: string) =>
+export const createRunStore = (
+  runId: string,
+  workflowId: string,
+  executionGraph: StepFlowEntry[]
+) =>
   create<RunStore>()(
     devtools(
-      (set) => ({
+      (set, get) => ({
         runId,
         workflowId,
         status: RUN_STATUS.INITIAL,
@@ -63,9 +110,78 @@ export const createRunStore = (runId: string, workflowId: string) =>
         currentStep: undefined,
         executionPath: [],
         suspendedPaths: {},
-        watchEvents: [],
-        state: {},
+        steps: {},
+        result: null,
+        error: null,
+        events: [],
+        executionGraph,
+        executionContext: {
+          get: () => {},
+          set: () => {},
+          has: () => false,
+          delete: () => {},
+          clear: () => {},
+        },
+        emitWorkflowStatusUpdate: (
+          event: Partial<
+            Omit<WorkflowEvent, 'timestamp' | 'runId' | 'workflowId'>
+          >
+        ) => {
+          const workflowEvent: WorkflowEvent = {
+            type: event.type!,
+            description: event.description!,
+            timestamp: Date.now(),
+            runId,
+            workflowId,
+            payload: {
+              ...event.payload,
+            },
+            metadata: event.metadata,
+          };
 
+          set((state) => ({
+            status: event.payload?.workflowState?.status,
+            result: event.payload?.workflowState?.result || null,
+            error: event.payload?.workflowState?.error || null,
+            events: [
+              ...state.events,
+              {
+                ...workflowEvent,
+              },
+            ],
+          }));
+        },
+        emitStepStatusUpdate: (
+          event: Partial<
+            Omit<WorkflowEvent, 'timestamp' | 'runId' | 'workflowId'>
+          >
+        ) => {
+          const workflowEvent: WorkflowEvent = {
+            type: event.type!,
+            description: event.description!,
+            timestamp: Date.now(),
+            runId,
+            workflowId,
+            payload: {
+              ...event.payload,
+              workflowState: {
+                status: get().status,
+                result: get().result,
+                error: get().error,
+              },
+            },
+            metadata: event.metadata,
+          };
+
+          set((state) => ({
+            events: [
+              ...state.events,
+              {
+                ...workflowEvent,
+              },
+            ],
+          }));
+        },
         setStatus: (status: RUN_STATUS) => {
           const log: RunLog = {
             timestamp: Date.now(),
@@ -117,24 +233,16 @@ export const createRunStore = (runId: string, workflowId: string) =>
           set({ suspendedPaths: paths });
         },
 
-        addWatchEvent: (event: WatchEvent) => {
-          const log: RunLog = {
-            timestamp: Date.now(),
-            type: 'watch',
-            description: `Watch event: ${event.type}`,
-            watchEvent: event,
-          };
+        updateExecutionGraph: (graph: StepFlowEntry[]) => {
+          set({ executionGraph: graph });
+        },
 
-          set((state) => ({
-            watchEvents: [...state.watchEvents, event],
-            logs: [...state.logs, log],
-          }));
+        updateExecutionContext: (context: RuntimeContext) => {
+          set({ executionContext: context });
         },
 
         updateState: (newState: Record<string, any>) => {
-          set((state) => ({
-            state: { ...state.state, ...newState },
-          }));
+          set((state) => ({ ...state, ...newState }));
         },
 
         reset: () => {
@@ -145,8 +253,14 @@ export const createRunStore = (runId: string, workflowId: string) =>
             currentStep: undefined,
             executionPath: [],
             suspendedPaths: {},
-            watchEvents: [],
-            state: {},
+            executionGraph: [],
+            executionContext: {
+              get: () => {},
+              set: () => {},
+              has: () => false,
+              delete: () => {},
+              clear: () => {},
+            },
           });
         },
       }),
