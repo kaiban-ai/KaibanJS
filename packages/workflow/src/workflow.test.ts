@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { z } from 'zod';
-import { createStep, createWorkflow } from './';
+import { createStep, createWorkflow } from '.';
 // import { Run } from './run';
 import type { WorkflowEvent } from './stores/runStore';
 

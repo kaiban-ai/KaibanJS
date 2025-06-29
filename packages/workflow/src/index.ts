@@ -1,7 +1,7 @@
 // Core exports
 export { Workflow } from './workflow';
 export { Run } from './run';
-export { RunExecutionEngineWithQueue } from './runExecutionEngineWithQueue';
+export { RunExecutionEngineWithQueue } from './executionEngineWithQueue';
 
 // Store exports
 export { createRunStore, RUN_STATUS } from './stores/runStore';
