@@ -21,18 +21,11 @@ import { OpenAIEmbeddings } from '@langchain/openai';
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { ChatOpenAI } from '@langchain/openai';
 import { RAGToolkit } from './rag/ragToolkit';
+import { VectorStoreRetrieverInput } from '@langchain/core/vectorstores';
 
-/**
- * Type for the parameters in SimpleRAG
- * @typedef {string} SimpleRAGParams
- * @example
- * {
- *   content: "content text"
- */
-type SimpleRAGParams = {
-  query: string;
-  content?: string;
-};
+const SimpleRAGRetrieveSchema = z.object({
+  query: z.string().describe('The question to ask.'),
+});
 
 /**
  * Type for the response in SimpleRAG
@@ -56,9 +49,8 @@ type SimpleRAGError = string;
  * @example
  * "The answer to your question is: [answer]"
  */
-type SimpleRAGResponse = RagToolkitAnswerResponse | SimpleRAGError;
+type SimpleRAGRetrieveResponse = RagToolkitAnswerResponse | SimpleRAGError;
 
-/**
 /**
  * Configuration options for the SimpleRAG tool
  * @interface SimpleRAGFields
@@ -67,17 +59,17 @@ type SimpleRAGResponse = RagToolkitAnswerResponse | SimpleRAGError;
  * @property {any} [chunkOptions] - Chunking options for the RAG model
  * @property {any} [embeddings] - Embeddings instance for the RAG model
  */
-interface SimpleRAGFields {
+interface SimpleRAGRetrieveFields {
   OPENAI_API_KEY: string;
-  content?: string;
   //   loaderOptions?: any;
   chunkOptions?: {
     chunkSize: number;
     chunkOverlap: number;
   };
   embeddings?: OpenAIEmbeddings;
-  vectorStore?: MemoryVectorStore;
+  vectorStore: MemoryVectorStore;
   llmInstance?: ChatOpenAI;
+  retrieverOptions?: VectorStoreRetrieverInput<MemoryVectorStore>;
   promptQuestionTemplate?: string;
 }
 
@@ -85,38 +77,40 @@ interface SimpleRAGFields {
  * SimpleRAG tool class
  * @extends StructuredTool
  */
-export class SimpleRAG extends StructuredTool {
+export class SimpleRAGRetrieve extends StructuredTool {
   private OPENAI_API_KEY: string;
-  private content?: string;
-  //   private loaderOptions: any;
-  private chunkOptions?: any;
+  private chunkOptions?: {
+    chunkSize: number;
+    chunkOverlap: number;
+  };
   private embeddings?: OpenAIEmbeddings;
-  private vectorStore?: MemoryVectorStore;
+  private vectorStore: MemoryVectorStore;
   private llmInstance?: ChatOpenAI;
+  private retrieverOptions?: VectorStoreRetrieverInput<MemoryVectorStore>;
   private promptQuestionTemplate?: string;
   private ragToolkit: RAGToolkit;
-  name = 'simple-rag';
+  name = 'simple-rag-retrieve';
   description =
-    'A simple tool for asking questions using the RAG approach. Input should be a string text content such as a knowledge base and a question string.';
-  schema = z.object({
-    content: z.string().describe('The content text to process.'),
-    query: z.string().describe('The question to ask.'),
-  });
+    'A simple tool for asking questions using the RAG approach. Must be configure vector store with content such as a knowledge base and accept query question string.';
+  schema = SimpleRAGRetrieveSchema;
 
   /**
    * Constructor for the SimpleRAG tool
    * @param {SimpleRAGFields} fields - The configuration fields for the tool
    */
-  constructor(fields: SimpleRAGFields) {
+  constructor(fields: SimpleRAGRetrieveFields) {
     super();
     this.OPENAI_API_KEY = fields.OPENAI_API_KEY;
-    this.content = fields.content;
+    if (!fields.vectorStore) {
+      throw new Error('Vector store is required');
+    }
+    this.vectorStore = fields.vectorStore;
     // this.loaderOptions = fields.loaderOptions;
     this.chunkOptions = fields.chunkOptions;
     this.embeddings = fields.embeddings;
-    this.vectorStore = fields.vectorStore;
     this.llmInstance = fields.llmInstance;
     this.promptQuestionTemplate = fields.promptQuestionTemplate;
+    this.retrieverOptions = fields.retrieverOptions;
     this.ragToolkit = new RAGToolkit({
       // loaderOptions: this.loaderOptions,
       chunkOptions: this.chunkOptions,
@@ -125,30 +119,24 @@ export class SimpleRAG extends StructuredTool {
       llmInstance: this.llmInstance,
       promptQuestionTemplate: this.promptQuestionTemplate,
       env: { OPENAI_API_KEY: this.OPENAI_API_KEY },
+      retrieverOptions: this.retrieverOptions,
     });
   }
 
   /**
    * Call the SimpleRAG tool
-   * @param {SimpleRAGParams} input - The input parameters for the tool
+   * @param {SimpleRAGRetrieveSchema} input - The input parameters for the tool
    * @returns {Promise<SimpleRAGResponse>} The response from the tool
    */
-  async _call(input: SimpleRAGParams): Promise<SimpleRAGResponse> {
-    const { content, query } = input;
-    if (content && content !== '') {
-      this.content = content;
-    }
-    if (!this.content || this.content === '') {
-      return "ERROR_MISSING_CONTENT: No text content was provided for analysis. Agent should provide content in the 'content' field.";
-    }
+  async _call(
+    input: z.infer<typeof SimpleRAGRetrieveSchema>
+  ): Promise<SimpleRAGRetrieveResponse> {
+    const { query } = input;
     if (!query || query === '') {
       return "ERROR_MISSING_QUERY: No question was provided. Agent should provide a question in the 'query' field.";
     }
 
     try {
-      await this.ragToolkit.addDocuments([
-        { source: this.content, type: 'string' },
-      ]);
       const response = await this.ragToolkit.askQuestion(query);
       return response;
     } catch (error) {

@@ -27,9 +27,13 @@ interface RAGToolkitOptions {
 interface DocumentSource {
   source: string | File;
   type: string;
+  metadata?: Record<string, any>;
 }
 
-type LoaderFunction = (source: string | File) => BaseDocumentLoader;
+type LoaderFunction = (
+  source: string | File,
+  metadata?: Record<string, any>
+) => BaseDocumentLoader;
 
 export class RAGToolkit {
   private embeddings: OpenAIEmbeddings;
@@ -67,7 +71,8 @@ export class RAGToolkit {
     };
 
     this.loaders = {
-      string: (source: string | File) => new TextInputLoader(source as string),
+      string: (source: string | File, metadata?: Record<string, any>) =>
+        new TextInputLoader(source as string, metadata),
     };
     this.retrieverOptions = options.retrieverOptions || undefined;
   }
@@ -93,12 +98,12 @@ export class RAGToolkit {
   }
 
   async loadDocuments(sources: DocumentSource[]): Promise<Document[]> {
-    const promises = sources.map(({ source, type }) => {
+    const promises = sources.map(({ source, type, metadata }) => {
       const loaderFn = this.loaders[type];
       if (!loaderFn) {
         throw new Error(`Unsupported loader type: ${type}`);
       }
-      return loaderFn(source).load();
+      return loaderFn(source, metadata).load();
     });
     const results = await Promise.all(promises);
     return results.flat();
@@ -115,8 +120,15 @@ export class RAGToolkit {
   }
 
   async askQuestion(query: string): Promise<string> {
+    console.log('askQuestion');
+    console.log('retrieverOptions', this.retrieverOptions);
+
+    // const retriever = this.vectorStore.asRetriever();
     const retriever = this.vectorStore.asRetriever(this.retrieverOptions);
+    console.log({ query });
+
     const context = await retriever.invoke(query);
+    console.log({ context });
 
     const promptTemplate = PromptTemplate.fromTemplate(
       this.promptQuestionTemplate
