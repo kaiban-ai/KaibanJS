@@ -22,6 +22,7 @@ const toolFolders = [
   'zapier-webhook',
   'make-webhook',
   'jina-url-to-markdown',
+  'simple-rag-retrieve',
 ]; // Add more folder names as needed
 
 const toolConfigs = toolFolders.map((tool) => {
