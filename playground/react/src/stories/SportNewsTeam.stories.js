@@ -4,6 +4,7 @@ import teamAnthropic from '../teams/sport_news/anthropic';
 import teamGemini from '../teams/sport_news/gemini';
 import teamMistral from '../teams/sport_news/mistral';
 import teamDeepSeek from '../teams/sport_news/deepseek';
+import teamXAI from '../teams/sport_news/xai';
 
 import '../index.css';
 
@@ -46,5 +47,12 @@ export const withDeepSeek = {
   args: {
     team: teamDeepSeek,
     title: 'With DeepSeek Model',
+  },
+};
+
+export const withXAI = {
+  args: {
+    team: teamXAI,
+    title: 'With XAI Model',
   },
 };

@@ -14,6 +14,7 @@ jobs:
       GOOGLE_API_KEY: 'fake-api-key-so-we-can-use-ci-in-forked-repositories'
       MISTRAL_API_KEY: 'fake-api-key-so-we-can-use-ci-in-forked-repositories'
       DEEPSEEK_API_KEY: 'fake-api-key-so-we-can-use-ci-in-forked-repositories'
+      XAI_API_KEY: 'fake-api-key-so-we-can-use-ci-in-forked-repositories'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

@@ -201,6 +201,42 @@ const modelsPricing: ModelPricing[] = [
     outputPricePerMillionTokens: 2.2,
     features: 'DeepSeek Reasoner is a powerful and versatile model',
   },
+  // XAI Models
+  {
+    modelCode: 'grok-4',
+    provider: 'xai',
+    inputPricePerMillionTokens: 3.0,
+    outputPricePerMillionTokens: 15.0,
+    features: 'Grok 4 is a powerful and versatile model',
+  },
+  {
+    modelCode: 'grok-3',
+    provider: 'xai',
+    inputPricePerMillionTokens: 3.0,
+    outputPricePerMillionTokens: 15.0,
+    features: 'Grok 3 is a powerful and versatile model',
+  },
+  {
+    modelCode: 'grok-3-mini',
+    provider: 'xai',
+    inputPricePerMillionTokens: 0.3,
+    outputPricePerMillionTokens: 0.5,
+    features: 'Grok 3 Mini is a powerful and versatile model',
+  },
+  {
+    modelCode: 'grok-3-fast',
+    provider: 'xai',
+    inputPricePerMillionTokens: 5.0,
+    outputPricePerMillionTokens: 25.0,
+    features: 'Grok 3 Fast is a powerful and versatile model',
+  },
+  {
+    modelCode: 'grok-3-mini-fast',
+    provider: 'xai',
+    inputPricePerMillionTokens: 0.6,
+    outputPricePerMillionTokens: 4.0,
+    features: 'Grok 3 Mini Fast is a powerful and versatile model',
+  },
 ];
 
 /**
