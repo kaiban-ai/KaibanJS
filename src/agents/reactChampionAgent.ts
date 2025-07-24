@@ -15,6 +15,7 @@
 
 import { ChatAnthropic } from '@langchain/anthropic';
 import { ChatDeepSeek } from '@langchain/deepseek';
+import { ChatXAI } from '@langchain/xai';
 import {
   AIMessageChunk,
   BaseMessage,
@@ -117,12 +118,14 @@ export class ReactChampionAgent extends BaseAgent {
           | ChatGoogleGenerativeAI
           | ChatMistralAI
           | ChatDeepSeek
+          | ChatXAI
       > = {
         anthropic: (llmConfig: LLMConfig) => new ChatAnthropic(llmConfig),
         google: (llmConfig: LLMConfig) => new ChatGoogleGenerativeAI(llmConfig),
         mistral: (llmConfig: LLMConfig) => new ChatMistralAI(llmConfig),
         openai: (llmConfig: LLMConfig) => new ChatOpenAI(llmConfig),
         deepseek: (llmConfig: LLMConfig) => new ChatDeepSeek(llmConfig),
+        xai: (llmConfig: LLMConfig) => new ChatXAI(llmConfig),
         default: (llmConfig: LLMConfig) => new ChatOpenAI(llmConfig),
       };
 
@@ -185,12 +188,14 @@ export class ReactChampionAgent extends BaseAgent {
           | ChatGoogleGenerativeAI
           | ChatMistralAI
           | ChatDeepSeek
+          | ChatXAI
       > = {
         anthropic: (llmConfig: LLMConfig) => new ChatAnthropic(llmConfig),
         google: (llmConfig: LLMConfig) => new ChatGoogleGenerativeAI(llmConfig),
         mistral: (llmConfig: LLMConfig) => new ChatMistralAI(llmConfig),
         openai: (llmConfig: LLMConfig) => new ChatOpenAI(llmConfig),
         deepseek: (llmConfig: LLMConfig) => new ChatDeepSeek(llmConfig),
+        xai: (llmConfig: LLMConfig) => new ChatXAI(llmConfig),
         default: (llmConfig: LLMConfig) => new ChatOpenAI(llmConfig),
       };
 

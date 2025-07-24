@@ -9,6 +9,8 @@ const geminiTeam = require('./examples/teams/sport_news/gemini');
 const geminiTeamRecordedRequests = require('./examples/teams/sport_news/gemini.requests.json');
 const deepseekTeam = require('./examples/teams/sport_news/deepseek');
 const deepseekTeamRecordedRequests = require('./examples/teams/sport_news/deepseek.requests.json');
+const xaiTeam = require('./examples/teams/sport_news/xai');
+const xaiTeamRecordedRequests = require('./examples/teams/sport_news/xai.requests.json');
 
 // Determine if mocks should be applied based on the environment
 const withMockedApis =
@@ -91,6 +93,27 @@ describe('Sport News Team Workflows', () => {
         .getState()
         .getCleanedState();
       expect(storeFinalState).toMatchSnapshot();
+      // const recordedData = getRecords();
+      // console.log(recordedData);
+      // await saveRecords();
+    });
+  });
+  describe('Using XAI Agents', () => {
+    beforeEach(() => {
+      if (withMockedApis) {
+        mock(xaiTeamRecordedRequests);
+      }
+    });
+    afterEach(() => {
+      if (withMockedApis) {
+        restoreAll();
+      }
+    });
+    it('completes the entire workflow successfully', async () => {
+      await xaiTeam.start();
+      const storeFinalState = xaiTeam.useStore().getState().getCleanedState();
+      expect(storeFinalState).toMatchSnapshot();
+
       // const recordedData = getRecords();
       // console.log(recordedData);
       // await saveRecords();
