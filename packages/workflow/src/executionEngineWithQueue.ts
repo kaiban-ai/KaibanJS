@@ -186,14 +186,14 @@ export class RunExecutionEngineWithQueue {
           const suspendedResult = stepResults[entry.step.id];
           if (
             suspendedResult?.status === 'suspended' &&
-            result.status !== 'suspended'
+            (result as StepResult).status !== 'suspended'
           ) {
             // Clear the suspended state from executionContext
             delete executionContext.suspendedPaths[entry.step.id];
           }
         }
 
-        if (result.status === 'suspended') {
+        if ((result as StepResult).status === 'suspended') {
           // Find all suspended steps and their information
           const suspendedSteps = Object.entries(stepResults)
             .filter(([_, result]) => result.status === 'suspended')
@@ -224,7 +224,7 @@ export class RunExecutionEngineWithQueue {
           } as any;
         }
 
-        if (result.status === 'failed') {
+        if ((result as StepResult).status === 'failed') {
           // Emit failed workflow state
           this.store.getState().setStatus(RUN_STATUS.FAILED);
           this.store.getState().emitWorkflowStatusUpdate({
@@ -233,7 +233,7 @@ export class RunExecutionEngineWithQueue {
               workflowState: {
                 status: RUN_STATUS.FAILED,
                 result: undefined,
-                error: result.error,
+                error: (result as StepResult).error,
               },
             },
             description: 'Workflow inside failed',
@@ -241,12 +241,12 @@ export class RunExecutionEngineWithQueue {
 
           return {
             status: 'failed',
-            error: result.error,
+            error: (result as StepResult).error,
             steps: stepResults,
           } as any;
         }
 
-        lastOutput = result;
+        lastOutput = result as StepResult;
         prevStep = entry;
       }
 
@@ -702,14 +702,16 @@ export class RunExecutionEngineWithQueue {
     );
 
     // Check if any step failed
-    const failedResult = results.find((result) => result.status === 'failed');
+    const failedResult = results.find(
+      (result) => (result as StepResult).status === 'failed'
+    );
     if (failedResult) {
       return failedResult;
     }
 
     // Check if any step is suspended
     const suspendedResult = results.find(
-      (result) => result.status === 'suspended'
+      (result) => (result as StepResult).status === 'suspended'
     );
     if (suspendedResult) {
       return suspendedResult;
@@ -719,7 +721,7 @@ export class RunExecutionEngineWithQueue {
     const combinedOutput = results.reduce((acc, result, index) => {
       if (entry.steps[index].type === 'step') {
         const stepId = entry.steps[index].step.id;
-        acc[stepId] = result.output;
+        acc[stepId] = (result as StepResult).output;
       }
       return acc;
     }, {} as Record<string, any>);
@@ -861,15 +863,15 @@ export class RunExecutionEngineWithQueue {
         inputData: lastOutput,
       });
 
-      if (result.status === 'failed') {
+      if ((result as StepResult).status === 'failed') {
         return result;
       }
 
-      if (result.status === 'suspended') {
+      if ((result as StepResult).status === 'suspended') {
         return result;
       }
 
-      lastOutput = result.output;
+      lastOutput = (result as StepResult).output;
       iteration++;
 
       // Check condition
@@ -958,15 +960,15 @@ export class RunExecutionEngineWithQueue {
             { priority: 0 }
           );
 
-          if (result.status === 'failed') {
-            throw result.error;
+          if ((result as StepResult).status === 'failed') {
+            throw (result as StepResult).error;
           }
 
-          if (result.status === 'suspended') {
+          if ((result as StepResult).status === 'suspended') {
             return result;
           }
 
-          return result.output;
+          return (result as StepResult).output;
         })
       );
 
@@ -976,7 +978,7 @@ export class RunExecutionEngineWithQueue {
           result &&
           typeof result === 'object' &&
           'status' in result &&
-          result.status === 'suspended'
+          (result as StepResult).status === 'suspended'
       );
       if (suspendedResult) {
         return suspendedResult as StepResult;

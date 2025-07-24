@@ -52,6 +52,7 @@ import { logger } from '../utils/logger';
 import { getParsedJSON } from '../utils/parser';
 import { interpolateTaskDescriptionV2 } from '../utils/tasks';
 import { BaseAgent, BaseAgentParams, Env, LLMConfig } from './baseAgent';
+import { ChatXAI } from '@langchain/xai';
 
 /**
  * ReactChampionAgent class that extends BaseAgent to implement enhanced ReAct pattern
@@ -117,12 +118,14 @@ export class ReactChampionAgent extends BaseAgent {
           | ChatGoogleGenerativeAI
           | ChatMistralAI
           | ChatDeepSeek
+          | ChatXAI
       > = {
         anthropic: (llmConfig: LLMConfig) => new ChatAnthropic(llmConfig),
         google: (llmConfig: LLMConfig) => new ChatGoogleGenerativeAI(llmConfig),
         mistral: (llmConfig: LLMConfig) => new ChatMistralAI(llmConfig),
         openai: (llmConfig: LLMConfig) => new ChatOpenAI(llmConfig),
         deepseek: (llmConfig: LLMConfig) => new ChatDeepSeek(llmConfig),
+        xai: (llmConfig: LLMConfig) => new ChatXAI(llmConfig),
         default: (llmConfig: LLMConfig) => new ChatOpenAI(llmConfig),
       };
 
@@ -185,12 +188,14 @@ export class ReactChampionAgent extends BaseAgent {
           | ChatGoogleGenerativeAI
           | ChatMistralAI
           | ChatDeepSeek
+          | ChatXAI
       > = {
         anthropic: (llmConfig: LLMConfig) => new ChatAnthropic(llmConfig),
         google: (llmConfig: LLMConfig) => new ChatGoogleGenerativeAI(llmConfig),
         mistral: (llmConfig: LLMConfig) => new ChatMistralAI(llmConfig),
         openai: (llmConfig: LLMConfig) => new ChatOpenAI(llmConfig),
         deepseek: (llmConfig: LLMConfig) => new ChatDeepSeek(llmConfig),
+        xai: (llmConfig: LLMConfig) => new ChatXAI(llmConfig),
         default: (llmConfig: LLMConfig) => new ChatOpenAI(llmConfig),
       };
 
