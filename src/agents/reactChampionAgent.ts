@@ -15,6 +15,7 @@
 
 import { ChatAnthropic } from '@langchain/anthropic';
 import { ChatDeepSeek } from '@langchain/deepseek';
+import { ChatXAI } from '@langchain/xai';
 import {
   AIMessageChunk,
   BaseMessage,

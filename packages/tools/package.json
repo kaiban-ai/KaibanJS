@@ -71,6 +71,11 @@
       "types": "./dist/jina-url-to-markdown/index.d.ts",
       "import": "./dist/jina-url-to-markdown/index.esm.js",
       "require": "./dist/jina-url-to-markdown/index.cjs.js"
+    },
+    "./simple-rag-retrieve": {
+      "types": "./dist/simple-rag-retrieve/index.d.ts",
+      "import": "./dist/simple-rag-retrieve/index.esm.js",
+      "require": "./dist/simple-rag-retrieve/index.cjs.js"
     }
   },
   "files": [

@@ -1,6 +1,6 @@
 {
   "name": "kaibanjs",
-  "version": "0.21.1",
+  "version": "0.22.0",
   "description": "AI Multi-Agent library for Javascript Developers.",
   "main": "./dist/bundle.cjs",
   "types": "./dist/bundle.d.ts",
@@ -90,7 +90,7 @@
   "dependencies": {
     "@langchain/anthropic": "^0.3.19",
     "@langchain/community": "0.3.41",
-    "@langchain/core": "^0.3.65",
+    "@langchain/core": "^0.3.66",
     "@langchain/deepseek": "^0.0.1",
     "@langchain/google-genai": "^0.2.5",
     "@langchain/mistralai": "^0.2.0",
@@ -142,7 +142,7 @@
     "jest": "29.7.0",
     "lint-staged": "^15.2.10",
     "prettier": "2.3.2",
-    "rollup": "4.21.1",
+    "rollup": "^4.45.1",
     "rollup-plugin-dts": "6.1.1",
     "rollup-plugin-esbuild": "^6.2.1",
     "rollup-plugin-node-polyfills": "^0.2.1",
