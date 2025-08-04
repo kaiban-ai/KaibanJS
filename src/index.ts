@@ -111,11 +111,11 @@ export class Agent {
   ): BaseAgent {
     switch (type) {
       case 'ReactChampionAgent':
-        return new ReactChampionAgent(config);
+        return new ReactChampionAgent(config as IAgentParams);
       case 'WorkflowDrivenAgent':
         return new WorkflowDrivenAgent(config as WorkflowDrivenAgentParams);
       default:
-        return new ReactChampionAgent(config);
+        return new ReactChampionAgent(config as IAgentParams);
     }
   }
 

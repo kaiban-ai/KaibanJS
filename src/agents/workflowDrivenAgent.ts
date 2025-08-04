@@ -14,16 +14,36 @@ import { TaskResult } from '../stores/taskStore.types';
 import { AGENT_STATUS_enum } from '../utils/enums';
 import { AgentLoopResult } from '../utils/llm.types';
 import { logger } from '../utils/logger';
-import { BaseAgent, BaseAgentParams, Env } from './baseAgent';
+import { BaseAgent, BaseAgentParams, Env, LLMConfig } from './baseAgent';
+import { BaseTool } from '../tools/baseTool';
+import { LangChainChatModel } from '../utils/agents';
 
 // Import workflow types from packages/workflow
-import type { Workflow, WorkflowResult, RuntimeContext } from 'workflow';
+import type {
+  Workflow,
+  WorkflowResult,
+  RuntimeContext,
+} from '@kaibanjs/workflow';
 
 /**
  * Interface for WorkflowDrivenAgent parameters
  */
-export interface WorkflowDrivenAgentParams extends BaseAgentParams {
+export interface WorkflowDrivenAgentParams {
   /** The workflow to be executed by this agent */
+  name: string;
+  tools?: BaseTool[];
+  /** LLM configuration */
+  llmConfig?: Partial<LLMConfig>;
+  /** Maximum number of iterations */
+  maxIterations?: number;
+  /** Whether to force a final answer */
+  forceFinalAnswer?: boolean;
+  /** Environment variables */
+  env?: Env;
+  /** Kanban tools to enable */
+  kanbanTools?: string[];
+  /** LLM instance */
+  llmInstance?: LangChainChatModel;
   workflow: Workflow<any, any, any>;
   type?: 'WorkflowDrivenAgent';
 }
@@ -60,7 +80,20 @@ export class WorkflowDrivenAgent extends BaseAgent {
   private workflowState: WorkflowAgentState;
 
   constructor(config: WorkflowDrivenAgentParams) {
-    super(config);
+    const baseConfig: BaseAgentParams = {
+      name: config.name,
+      role: 'Agent that executes the workflow',
+      goal: 'Execute the workflow',
+      background: 'This is a workflow driven agent',
+      tools: config.tools,
+      llmConfig: config.llmConfig,
+      maxIterations: config.maxIterations,
+      env: config.env,
+      kanbanTools: config.kanbanTools,
+      llmInstance: config.llmInstance,
+    };
+
+    super(baseConfig);
 
     this.workflow = config.workflow;
 

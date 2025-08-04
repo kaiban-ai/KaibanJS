@@ -3,20 +3,21 @@
  */
 
 // import { WorkflowDrivenAgent } from './workflowDrivenAgent';
-import { createStep, createWorkflow } from '../../packages/workflow/';
+import { createStep, createWorkflow } from '@kaibanjs/workflow';
+import type { Workflow, Step } from '@kaibanjs/workflow';
 import { Agent, Task, Team } from '../../';
 import { z } from 'zod';
 
 describe('WorkflowDrivenAgent', () => {
-  let simpleWorkflow: any;
-  let workflowAgent: Agent;
+  let simpleWorkflow: Workflow<any, any, any>;
+  let workflowAgent: any;
 
   beforeEach(() => {
     // Create a simple workflow for testing
-    const addStep = createStep({
+    const addStep: Step<any, any, any> = createStep({
       id: 'add',
-      inputSchema: z.object({ a: z.number(), b: z.number() }),
-      outputSchema: z.number(),
+      inputSchema: z.object({ a: z.number(), b: z.number() }) as any,
+      outputSchema: z.number() as any,
       execute: async ({ inputData }) => {
         const { a, b } = inputData as { a: number; b: number };
         return a + b;
@@ -25,8 +26,8 @@ describe('WorkflowDrivenAgent', () => {
 
     simpleWorkflow = createWorkflow({
       id: 'test-workflow',
-      inputSchema: z.object({ a: z.number(), b: z.number() }),
-      outputSchema: z.number(),
+      inputSchema: z.object({ a: z.number(), b: z.number() }) as any,
+      outputSchema: z.number() as any,
     });
 
     simpleWorkflow.then(addStep);
@@ -35,9 +36,6 @@ describe('WorkflowDrivenAgent', () => {
     workflowAgent = new Agent({
       type: 'WorkflowDrivenAgent',
       name: 'Test Agent',
-      role: 'Test workflow execution',
-      goal: 'Execute test workflows',
-      background: 'Test agent for workflow execution',
       workflow: simpleWorkflow,
     });
   });

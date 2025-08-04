@@ -53,7 +53,6 @@ import { logger } from '../utils/logger';
 import { getParsedJSON } from '../utils/parser';
 import { interpolateTaskDescriptionV2 } from '../utils/tasks';
 import { BaseAgent, BaseAgentParams, Env, LLMConfig } from './baseAgent';
-import { ChatXAI } from '@langchain/xai';
 
 /**
  * ReactChampionAgent class that extends BaseAgent to implement enhanced ReAct pattern
