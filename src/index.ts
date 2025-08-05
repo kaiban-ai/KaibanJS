@@ -17,7 +17,13 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { BaseAgent, Env, ReactChampionAgent } from './agents';
+import {
+  BaseAgent,
+  Env,
+  ReactChampionAgent,
+  WorkflowDrivenAgent,
+  WorkflowDrivenAgentParams,
+} from './agents';
 import { subscribeTaskStatusUpdates } from './subscribers/taskSubscriber';
 import { subscribeWorkflowStatusUpdates } from './subscribers/teamSubscriber';
 import {
@@ -94,17 +100,22 @@ export class Agent {
   agentInstance: BaseAgent;
   type: string;
 
-  constructor({ type, ...config }: IAgentParams) {
+  constructor({ type, ...config }: IAgentParams | WorkflowDrivenAgentParams) {
     this.agentInstance = this.createAgent(type, config);
     this.type = type || 'ReactChampionAgent';
   }
 
-  createAgent(type: string | undefined, config: IAgentParams): BaseAgent {
+  createAgent(
+    type: string | undefined,
+    config: IAgentParams | WorkflowDrivenAgentParams
+  ): BaseAgent {
     switch (type) {
       case 'ReactChampionAgent':
-        return new ReactChampionAgent(config);
+        return new ReactChampionAgent(config as IAgentParams);
+      case 'WorkflowDrivenAgent':
+        return new WorkflowDrivenAgent(config as WorkflowDrivenAgentParams);
       default:
-        return new ReactChampionAgent(config);
+        return new ReactChampionAgent(config as IAgentParams);
     }
   }
 
