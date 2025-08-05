@@ -40,70 +40,75 @@ describe('WorkflowDrivenAgent', () => {
     });
   });
 
-  // describe('workOnTask', () => {
-  //   it('should execute workflow successfully', async () => {
-  //     const task = {
-  //       id: 'test-task',
-  //       description: 'Add two numbers',
-  //       status: 'pending',
-  //       inputs: { a: 2, b: 3 },
-  //     };
+  describe('workOnTask', () => {
+    it('should execute workflow successfully', async () => {
+      const task = {
+        id: 'test-task',
+        description: 'Add two numbers',
+        status: 'pending',
+        inputs: { a: 2, b: 3 },
+      };
 
-  //     const result = await workflowAgent.workOnTask(
-  //       task as any,
-  //       { a: 2, b: 3 },
-  //       'Test context'
-  //     );
+      const result = await workflowAgent.workOnTask(
+        task as any,
+        { a: 2, b: 3 },
+        'Test context'
+      );
 
-  //     expect(result.result).toBe(5);
-  //     expect(result.metadata.iterations).toBe(1);
-  //   });
+      expect(result.result).toBe(5);
+      expect(result.metadata.iterations).toBe(1);
+    });
 
-  //   it('should handle workflow errors', async () => {
-  //     // Create a workflow that will fail
-  //     const failingStep = createStep({
-  //       id: 'fail',
-  //       inputSchema: z.object({ data: z.string() }),
-  //       outputSchema: z.string(),
-  //       execute: async () => {
-  //         throw new Error('Test error');
-  //       },
-  //     });
+    it('should handle workflow errors', async () => {
+      // Create a workflow that will fail
+      const failingStep: Step<any, any, any> = createStep({
+        id: 'fail',
+        inputSchema: z.object({ data: z.string() }) as any,
+        outputSchema: z.string(),
+        execute: async () => {
+          throw new Error('Test error');
+          // return 'Test error';
+        },
+      });
 
-  //     const failingWorkflow = createWorkflow({
-  //       id: 'failing-workflow',
-  //       inputSchema: z.object({ data: z.string() }),
-  //       outputSchema: z.string(),
-  //     });
+      const failingWorkflow: any = createWorkflow({
+        id: 'failing-workflow',
+        inputSchema: z.object({ data: z.string() }),
+        outputSchema: z.string(),
+      });
 
-  //     failingWorkflow.then(failingStep);
-  //     failingWorkflow.commit();
+      failingWorkflow.then(failingStep);
+      failingWorkflow.commit();
 
-  //     const failingAgent = new WorkflowDrivenAgent({
-  //       name: 'Failing Agent',
-  //       role: 'Test failing workflows',
-  //       goal: 'Test error handling',
-  //       background: 'Test agent',
-  //       workflow: failingWorkflow,
-  //     });
+      const failingAgent = new Agent({
+        type: 'WorkflowDrivenAgent',
+        name: 'Failing Agent',
+        workflow: failingWorkflow,
+      });
 
-  //     const task = {
-  //       id: 'failing-task',
-  //       description: 'This will fail',
-  //       status: 'pending',
-  //       inputs: { data: 'test' },
-  //     };
+      const task = new Task({
+        title: 'failing-task',
+        description: 'This will fail',
+        expectedOutput: 'The workflow result',
+        agent: failingAgent,
+      });
 
-  //     const result = await failingAgent.workOnTask(
-  //       task as any,
-  //       { data: 'test' },
-  //       'Test context'
-  //     );
+      const team = new Team({
+        name: 'Test Team',
+        agents: [failingAgent],
+        tasks: [task],
+      });
 
-  //     expect(result.error).toContain('Workflow execution failed');
-  //     expect(failingAgent['workflowState'].workflowStatus).toBe('failed');
-  //   });
-  // });
+      const result = await team.start({ data: 'test' });
+
+      console.log('result', result);
+
+      expect(result.status).toBe('BLOCKED');
+      expect(failingAgent.agentInstance['workflowState'].workflowStatus).toBe(
+        'failed'
+      );
+    });
+  });
 
   // describe('workOnFeedback', () => {
   //   it('should return error for feedback processing', async () => {
@@ -123,40 +128,40 @@ describe('WorkflowDrivenAgent', () => {
   //   });
   // });
 
-  // describe('workOnTaskResume', () => {
-  //   it('should throw error when no active run', async () => {
-  //     const task = {
-  //       id: 'resume-task',
-  //       description: 'Test resume',
-  //       status: 'pending',
-  //     };
+  describe('workOnTaskResume', () => {
+    it('should throw error when no active run', async () => {
+      const task = {
+        id: 'resume-task',
+        description: 'Test resume',
+        status: 'pending',
+      };
 
-  //     await expect(workflowAgent.workOnTaskResume(task as any)).rejects.toThrow(
-  //       'No active workflow run to resume'
-  //     );
-  //   });
+      await expect(workflowAgent.workOnTaskResume(task as any)).rejects.toThrow(
+        'No active workflow run to resume'
+      );
+    });
 
-  //   it('should throw error when workflow is not suspended', async () => {
-  //     // First execute a task to create a run
-  //     const task = {
-  //       id: 'resume-task',
-  //       description: 'Test resume',
-  //       status: 'pending',
-  //       inputs: { a: 1, b: 2 },
-  //     };
+    it('should throw error when workflow is not suspended', async () => {
+      // First execute a task to create a run
+      const task = {
+        id: 'resume-task',
+        description: 'Test resume',
+        status: 'pending',
+        inputs: { a: 1, b: 2 },
+      };
 
-  //     await workflowAgent.workOnTask(
-  //       task as any,
-  //       { a: 1, b: 2 },
-  //       'Test context'
-  //     );
+      await workflowAgent.workOnTask(
+        task as any,
+        { a: 1, b: 2 },
+        'Test context'
+      );
 
-  //     // Try to resume when not suspended
-  //     await expect(workflowAgent.workOnTaskResume(task as any)).rejects.toThrow(
-  //       'Workflow is not in suspended state'
-  //     );
-  //   });
-  // });
+      // Try to resume when not suspended
+      await expect(workflowAgent.workOnTaskResume(task as any)).rejects.toThrow(
+        'Workflow is not in suspended state'
+      );
+    });
+  });
 
   describe('Works with teams', () => {
     it('should work with teams', async () => {
