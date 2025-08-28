@@ -1,0 +1,268 @@
+require('dotenv').config({ path: './.env.local' });
+// Setup mock
+const { mock, restoreAll, cleanSnapshotForComparison } =
+  require('../utils/moscaFetch')();
+// const { record, getRecords, saveRecords } = require('../utils/moscaFetch')();
+
+// Determine if mocks should be applied based on the environment
+const withMockedApis =
+  process.env.TEST_ENV === 'mocked-llm-apis' ? true : false;
+
+describe('WorkflowDrivenAgent Task Blocking Tests', () => {
+  describe('Workflow-Driven Task Blocking', () => {
+    let fetchSpy;
+
+    beforeEach(() => {
+      fetchSpy = jest.spyOn(global, 'fetch');
+    });
+
+    afterEach(() => {
+      if (withMockedApis) {
+        restoreAll();
+      }
+      jest.restoreAllMocks();
+    });
+
+    it('should block workflow execution when validation fails', async () => {
+      const validationWorkflowTeam = require('./examples/teams/workflow_driven/validationWorkflow');
+      const validationWorkflowTeamRecordedRequests = require('./examples/teams/workflow_driven/validationWorkflow.requests.json');
+
+      if (withMockedApis) {
+        mock(validationWorkflowTeamRecordedRequests);
+      }
+
+      const result = await validationWorkflowTeam.start({
+        data: 'invalid data',
+        shouldBlock: true,
+      });
+      const store = validationWorkflowTeam.useStore();
+      const state = store.getState().getCleanedState();
+
+      // Verify the workflow was blocked
+      expect(result.status).toBe('BLOCKED');
+      expect(state.teamWorkflowStatus).toBe('BLOCKED');
+
+      // Verify task status
+      const task = state.tasks[0];
+      expect(task.status).toBe('BLOCKED');
+
+      // Verify blocking logs
+      const workflowLogs = state.workflowLogs;
+      const blockingLogs = workflowLogs.filter(
+        (log) =>
+          log.logType === 'TaskBlocked' ||
+          log.logDescription.includes('blocked')
+      );
+      expect(blockingLogs.length).toBeGreaterThan(0);
+
+      // Match snapshot with cleaned dynamic values
+      expect(cleanSnapshotForComparison(state)).toMatchSnapshot();
+    });
+
+    it('should allow workflow execution when validation passes', async () => {
+      const validationWorkflowTeam = require('./examples/teams/workflow_driven/validationWorkflow');
+      const validationWorkflowTeamRecordedRequests = require('./examples/teams/workflow_driven/validationWorkflow.requests.json');
+
+      if (withMockedApis) {
+        mock(validationWorkflowTeamRecordedRequests);
+      }
+
+      const result = await validationWorkflowTeam.start({
+        data: 'valid data',
+        shouldBlock: false,
+      });
+      const store = validationWorkflowTeam.useStore();
+      const state = store.getState().getCleanedState();
+
+      // Verify the workflow completed successfully
+      expect(result.status).toBe('FINISHED');
+      expect(state.teamWorkflowStatus).toBe('FINISHED');
+
+      // Verify task status
+      const task = state.tasks[0];
+      expect(task.status).toBe('DONE');
+
+      // Match snapshot with cleaned dynamic values
+      expect(cleanSnapshotForComparison(state)).toMatchSnapshot();
+    });
+
+    it('should handle workflow suspension as blocking mechanism', async () => {
+      const suspensionBlockingTeam = require('./examples/teams/workflow_driven/suspensionBlockingWorkflow');
+      const suspensionBlockingTeamRecordedRequests = require('./examples/teams/workflow_driven/suspensionBlockingWorkflow.requests.json');
+
+      if (withMockedApis) {
+        mock(suspensionBlockingTeamRecordedRequests);
+      }
+
+      const result = await suspensionBlockingTeam.start({
+        requiresApproval: true,
+        approvalData: null,
+      });
+      const store = suspensionBlockingTeam.useStore();
+      const state = store.getState().getCleanedState();
+
+      // Verify the workflow was suspended (blocked)
+      expect(result.status).toBe('PAUSED');
+      expect(state.teamWorkflowStatus).toBe('PAUSED');
+
+      // Verify task status
+      const task = state.tasks[0];
+      expect(task.status).toBe('PAUSED');
+
+      // Verify suspension logs
+      const workflowLogs = state.workflowLogs;
+      const suspensionLogs = workflowLogs.filter(
+        (log) =>
+          log.logType === 'WorkflowSuspended' ||
+          log.logDescription.includes('suspended')
+      );
+      expect(suspensionLogs.length).toBeGreaterThan(0);
+
+      // Match snapshot with cleaned dynamic values
+      expect(cleanSnapshotForComparison(state)).toMatchSnapshot();
+    });
+
+    it('should resume workflow after suspension with approval', async () => {
+      const suspensionBlockingTeam = require('./examples/teams/workflow_driven/suspensionBlockingWorkflow');
+      const suspensionBlockingTeamRecordedRequests = require('./examples/teams/workflow_driven/suspensionBlockingWorkflow.requests.json');
+
+      if (withMockedApis) {
+        mock(suspensionBlockingTeamRecordedRequests);
+      }
+
+      // Start workflow that will suspend
+      const workflowPromise = suspensionBlockingTeam.start({
+        requiresApproval: true,
+        approvalData: null,
+      });
+
+      const store = suspensionBlockingTeam.useStore();
+
+      // Wait for suspension
+      await new Promise((resolve) => {
+        const unsubscribe = store.subscribe(
+          (state) => state.tasks[0].status,
+          (status) => {
+            if (status === 'PAUSED') {
+              unsubscribe();
+              resolve();
+            }
+          }
+        );
+      });
+
+      // Resume with approval data
+      const result = await suspensionBlockingTeam.resumeTask(0, {
+        approvalData: { approved: true, reason: 'Manual approval' },
+      });
+
+      // Wait for completion
+      await workflowPromise;
+
+      const state = store.getState().getCleanedState();
+
+      // Verify the workflow completed after resume
+      expect(result.status).toBe('FINISHED');
+      expect(state.teamWorkflowStatus).toBe('FINISHED');
+
+      // Verify task status
+      const task = state.tasks[0];
+      expect(task.status).toBe('DONE');
+
+      // Match snapshot with cleaned dynamic values
+      expect(cleanSnapshotForComparison(state)).toMatchSnapshot();
+    });
+  });
+
+  describe('Mixed Agent Task Blocking', () => {
+    let fetchSpy;
+
+    beforeEach(() => {
+      fetchSpy = jest.spyOn(global, 'fetch');
+    });
+
+    afterEach(() => {
+      if (withMockedApis) {
+        restoreAll();
+      }
+      jest.restoreAllMocks();
+    });
+
+    it('should block ReactChampionAgent task based on WorkflowDrivenAgent validation', async () => {
+      const mixedBlockingTeam = require('./examples/teams/workflow_driven/mixedBlockingTeam');
+      const mixedBlockingTeamRecordedRequests = require('./examples/teams/workflow_driven/mixedBlockingTeam.requests.json');
+
+      if (withMockedApis) {
+        mock(mixedBlockingTeamRecordedRequests);
+      }
+
+      const result = await mixedBlockingTeam.start({
+        data: 'invalid data for processing',
+        shouldBlock: true,
+      });
+      const store = mixedBlockingTeam.useStore();
+      const state = store.getState().getCleanedState();
+
+      // Verify the workflow was blocked
+      expect(result.status).toBe('BLOCKED');
+      expect(state.teamWorkflowStatus).toBe('BLOCKED');
+
+      // Verify workflow task completed but ReactChampionAgent task blocked
+      const workflowTask = state.tasks.find(
+        (t) => t.agent.type === 'WorkflowDrivenAgent'
+      );
+      const reactTask = state.tasks.find(
+        (t) => t.agent.type === 'ReactChampionAgent'
+      );
+
+      expect(workflowTask.status).toBe('DONE');
+      expect(reactTask.status).toBe('BLOCKED');
+
+      // Verify blocking logs
+      const workflowLogs = state.workflowLogs;
+      const blockingLogs = workflowLogs.filter(
+        (log) =>
+          log.logType === 'TaskBlocked' ||
+          log.logDescription.includes('blocked')
+      );
+      expect(blockingLogs.length).toBeGreaterThan(0);
+
+      // Match snapshot with cleaned dynamic values
+      expect(cleanSnapshotForComparison(state)).toMatchSnapshot();
+    });
+
+    it('should allow both agents to complete when validation passes', async () => {
+      const mixedBlockingTeam = require('./examples/teams/workflow_driven/mixedBlockingTeam');
+      const mixedBlockingTeamRecordedRequests = require('./examples/teams/workflow_driven/mixedBlockingTeam.requests.json');
+
+      if (withMockedApis) {
+        mock(mixedBlockingTeamRecordedRequests);
+      }
+
+      const result = await mixedBlockingTeam.start({
+        data: 'valid data for processing',
+        shouldBlock: false,
+      });
+      const store = mixedBlockingTeam.useStore();
+      const state = store.getState().getCleanedState();
+
+      // Verify the workflow completed successfully
+      expect(result.status).toBe('FINISHED');
+      expect(state.teamWorkflowStatus).toBe('FINISHED');
+
+      // Verify both tasks completed
+      const workflowTask = state.tasks.find(
+        (t) => t.agent.type === 'WorkflowDrivenAgent'
+      );
+      const reactTask = state.tasks.find(
+        (t) => t.agent.type === 'ReactChampionAgent'
+      );
+
+      expect(workflowTask.status).toBe('DONE');
+      expect(reactTask.status).toBe('DONE');
+
+      // Match snapshot with cleaned dynamic values
+      expect(cleanSnapshotForComparison(state)).toMatchSnapshot();
+    });
+  });
+});

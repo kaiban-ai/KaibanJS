@@ -40,129 +40,6 @@ describe('WorkflowDrivenAgent', () => {
     });
   });
 
-  // describe('workOnTask', () => {
-  //   it('should execute workflow successfully', async () => {
-  //     const task = {
-  //       id: 'test-task',
-  //       description: 'Add two numbers',
-  //       status: 'pending',
-  //       inputs: { a: 2, b: 3 },
-  //     };
-
-  //     const result = await workflowAgent.workOnTask(
-  //       task as any,
-  //       { a: 2, b: 3 },
-  //       'Test context'
-  //     );
-
-  //     expect(result.result).toBe(5);
-  //     expect(result.metadata.iterations).toBe(1);
-  //   });
-
-  //   it('should handle workflow errors', async () => {
-  //     // Create a workflow that will fail
-  //     const failingStep: Step<any, any, any> = createStep({
-  //       id: 'fail',
-  //       inputSchema: z.object({ data: z.string() }) as any,
-  //       outputSchema: z.string(),
-  //       execute: async () => {
-  //         throw new Error('Test error');
-  //         // return 'Test error';
-  //       },
-  //     });
-
-  //     const failingWorkflow: any = createWorkflow({
-  //       id: 'failing-workflow',
-  //       inputSchema: z.object({ data: z.string() }),
-  //       outputSchema: z.string(),
-  //     });
-
-  //     failingWorkflow.then(failingStep);
-  //     failingWorkflow.commit();
-
-  //     const failingAgent = new Agent({
-  //       type: 'WorkflowDrivenAgent',
-  //       name: 'Failing Agent',
-  //       workflow: failingWorkflow,
-  //     });
-
-  //     const task = new Task({
-  //       title: 'failing-task',
-  //       description: 'This will fail',
-  //       expectedOutput: 'The workflow result',
-  //       agent: failingAgent,
-  //     });
-
-  //     const team = new Team({
-  //       name: 'Test Team',
-  //       agents: [failingAgent],
-  //       tasks: [task],
-  //     });
-
-  //     const result = await team.start({ data: 'test' });
-
-  //     console.log('result', result);
-
-  //     expect(result.status).toBe('BLOCKED');
-  //     expect(failingAgent.agentInstance['workflowState'].workflowStatus).toBe(
-  //       'failed'
-  //     );
-  //   });
-  // });
-
-  // describe('workOnFeedback', () => {
-  //   it('should return error for feedback processing', async () => {
-  //     const task = {
-  //       id: 'feedback-task',
-  //       description: 'Test feedback',
-  //       status: 'pending',
-  //     };
-
-  //     const result = await workflowAgent.workOnFeedback(
-  //       task as any,
-  //       [{ content: 'Test feedback' }],
-  //       'Test context'
-  //     );
-
-  //     expect(result.error).toContain('Feedback processing is not implemented');
-  //   });
-  // });
-
-  // describe('workOnTaskResume', () => {
-  //   it('should throw error when no active run', async () => {
-  //     const task = {
-  //       id: 'resume-task',
-  //       description: 'Test resume',
-  //       status: 'pending',
-  //     };
-
-  //     await expect(workflowAgent.workOnTaskResume(task as any)).rejects.toThrow(
-  //       'No active workflow run to resume'
-  //     );
-  //   });
-
-  //   it('should throw error when workflow is not suspended', async () => {
-  //     // First execute a task to create a run
-  //     const task = {
-  //       id: 'resume-task',
-  //       description: 'Test resume',
-  //       status: 'pending',
-  //       inputs: { a: 1, b: 2 },
-  //     };
-
-  //     await workflowAgent.workOnTask(
-  //       task as any,
-  //       { a: 1, b: 2 },
-  //       'Test context'
-  //     );
-
-  //     // Try to resume when not suspended
-  //     await expect(workflowAgent.workOnTaskResume(task as any)).rejects.toThrow(
-  //       'Workflow is not in suspended state'
-  //     );
-  //   });
-  // });
-
   describe('Works with teams', () => {
     it('should work with teams', async () => {
       const task = new Task({
@@ -390,5 +267,61 @@ describe('WorkflowDrivenAgent', () => {
       );
       expect(stepLogs.length).toBeGreaterThan(0);
     });
+
+    // it('should handle workflow errors', async () => {
+    //   const errorStep = createStep({
+    //     id: 'error',
+    //     inputSchema: z.any() as any,
+    //     outputSchema: z.any() as any,
+    //     execute: async () => {
+    //       throw new Error('Test error simulating an LLM error');
+    //     },
+    //   });
+
+    //   const errorWorkflow = createWorkflow({
+    //     id: 'error-workflow',
+    //     inputSchema: z.object({ shouldFail: z.boolean() }) as any,
+    //     outputSchema: z.string() as any,
+    //   });
+
+    //   errorWorkflow.then(errorStep);
+    //   errorWorkflow.commit();
+
+    //   const errorWorkflowAgent = new Agent({
+    //     type: 'WorkflowDrivenAgent',
+    //     name: 'Error Workflow Agent',
+    //     workflow: errorWorkflow,
+    //   });
+
+    //   const task = new Task({
+    //     description: 'Execute error workflow',
+    //     expectedOutput: 'Should complete successfully',
+    //     agent: errorWorkflowAgent,
+    //   });
+
+    //   const team = new Team({
+    //     name: 'Error Workflow Team',
+    //     agents: [errorWorkflowAgent],
+    //     tasks: [task],
+    //   });
+    //   try {
+    //     const result = await team.start({ shouldFail: true });
+    //     console.log('result', result);
+    //   } catch (error) {
+    //     console.log('error', error);
+    //   }
+    //   const store = team.useStore();
+    //   //@ts-expect-error - getCleanedState is not a method of the store
+    //   const state = store.getState().getCleanedState();
+    //   console.log('state log length', state.workflowLogs.length);
+    //   console.log('state workflow status', state.teamWorkflowStatus);
+    //   console.log('state workflow logs', state.workflowLogs);
+    //   // const result = await team.start({ shouldFail: true });
+
+    //   // expect(result.status).toBe('ERROR');
+    //   // expect((result as any).error).toContain(
+    //   //   'Test error simulating an LLM error'
+    //   // );
+    // });
   });
 });

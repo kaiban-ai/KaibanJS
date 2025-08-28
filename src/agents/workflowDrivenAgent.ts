@@ -74,26 +74,11 @@ export class WorkflowDrivenAgent extends BaseAgent {
     super(baseConfig);
 
     this.workflow = config.workflow;
-
-    // Initialize workflow state
-    this.workflowState = {
-      currentRunId: null,
-      workflowStatus: 'idle',
-      lastResult: null,
-      lastError: null,
-      metadata: {
-        iterations: 0,
-        maxIterations: 10,
-        startTime: null,
-        endTime: null,
-      },
-    };
+    this.workflowState = this.createInitialState();
   }
 
   /**
    * Initializes the agent with store and environment configuration
-   * @param store - The agent store instance
-   * @param env - Environment configuration
    */
   initialize(store: TeamStore, env: Env): void {
     super.initialize(store, env);
@@ -102,9 +87,6 @@ export class WorkflowDrivenAgent extends BaseAgent {
 
   /**
    * Process a task by executing the assigned workflow
-   * @param task - The task to process
-   * @param inputs - Task inputs
-   * @param context - Task context
    */
   async workOnTask(
     task: Task,
@@ -112,60 +94,17 @@ export class WorkflowDrivenAgent extends BaseAgent {
     context: string
   ): Promise<AgentLoopResult> {
     try {
-      this.setStatus(AGENT_STATUS_enum.THINKING);
-      this.workflowState.metadata.startTime = Date.now();
-      this.workflowState.workflowStatus = 'running';
+      this.initializeWorkflowExecution(task, inputs);
 
-      // Log the start of workflow execution
-      this.logWorkflowStart(task, inputs);
+      const runtimeContext = this.createRuntimeContext(task, inputs, context);
+      const run = this.setupWorkflowRun();
 
-      // Create runtime context with task data
-      const runtimeContext: RuntimeContext = this.createRuntimeContext(
-        task,
-        inputs,
-        context
-      );
-
-      // Commit the workflow if not already committed
-      if (!this.workflow.committed) {
-        this.workflow.commit();
-      }
-
-      // Create a new run
-      const run = this.workflow.createRun();
-      this.workflowState.currentRunId = run.runId;
-
-      // Subscribe to workflow events for monitoring
-      const unsubscribe = run.watch((event) => {
-        this.handleWorkflowEvent(event, task);
-      });
+      const unsubscribe = this.subscribeToWorkflowEvents(run, task);
 
       try {
-        // Execute the workflow
-        const result = await run.start({
-          inputData: inputs,
-          runtimeContext,
-        });
+        const result = await this.executeWorkflow(run, inputs, runtimeContext);
 
-        this.workflowState.lastResult = result;
-        this.workflowState.metadata.endTime = Date.now();
-
-        // Handle different result statuses
-        switch (result.status) {
-          case 'completed':
-            return this.handleWorkflowCompleted(task, result);
-
-          case 'failed':
-            return this.handleWorkflowFailed(task, result);
-
-          case 'suspended':
-            return this.handleWorkflowSuspended(task, result);
-
-          default:
-            throw new Error(
-              `Unknown workflow status: ${(result as any).status}`
-            );
-        }
+        return this.handleWorkflowResult(task, result);
       } finally {
         unsubscribe();
       }
@@ -176,16 +115,12 @@ export class WorkflowDrivenAgent extends BaseAgent {
 
   /**
    * Process feedback for a task (not applicable for workflow-driven agent)
-   * @param task - The task to process feedback for
-   * @param feedbackList - List of feedback items
    */
   async workOnFeedback(
     _task: Task,
     _feedbackList: Array<{ content: string }>,
     _context: string
   ): Promise<AgentLoopResult> {
-    // For workflow-driven agents, feedback is not applicable
-    // We could potentially use feedback to modify workflow parameters
     logger.warn(
       `WorkflowDrivenAgent ${this.name} received feedback, but feedback processing is not implemented for workflow agents`
     );
@@ -193,63 +128,28 @@ export class WorkflowDrivenAgent extends BaseAgent {
     return {
       error:
         'Feedback processing is not implemented for workflow-driven agents',
-      metadata: {
-        iterations: this.workflowState.metadata.iterations,
-        maxAgentIterations: 10,
-      },
+      metadata: this.getMetadata(),
     };
   }
 
   /**
    * Resume work on a suspended workflow
-   * @param task - The task to resume
    */
   async workOnTaskResume(task: Task): Promise<void> {
-    if (!this.workflowState.currentRunId) {
-      throw new Error('No active workflow run to resume');
-    }
-
-    if (this.workflowState.workflowStatus !== 'suspended') {
-      throw new Error('Workflow is not in suspended state');
-    }
+    this.validateResumeConditions();
 
     try {
       this.setStatus(AGENT_STATUS_enum.RESUMED);
       this.workflowState.workflowStatus = 'running';
 
-      // Get the current run
-      const run = this.workflow.runs.get(this.workflowState.currentRunId);
-      if (!run) {
-        throw new Error('Workflow run not found');
-      }
-
-      // Resume the workflow
+      const run = this.getCurrentRun();
       const result = await run.resume({
-        step: task.id, // Resume the specific step
+        step: task.id,
         resumeData: task.inputs || {},
       });
 
       this.workflowState.lastResult = result;
-
-      // Handle the resumed result
-      switch (result.status) {
-        case 'completed':
-          this.handleWorkflowCompleted(task, result);
-          break;
-
-        case 'failed':
-          this.handleWorkflowFailed(task, result);
-          break;
-
-        case 'suspended':
-          this.handleWorkflowSuspended(task, result);
-          break;
-
-        default:
-          throw new Error(
-            `Unknown workflow status after resume: ${(result as any).status}`
-          );
-      }
+      this.handleWorkflowResult(task, result);
     } catch (error) {
       this.handleWorkflowError(task, error as Error);
     }
@@ -270,7 +170,6 @@ export class WorkflowDrivenAgent extends BaseAgent {
     return {
       id: '[REDACTED]',
       env: '[REDACTED]',
-      // Add workflow-specific data
       workflow: {
         id: this.workflow.id,
         committed: this.workflow.committed,
@@ -287,6 +186,39 @@ export class WorkflowDrivenAgent extends BaseAgent {
     };
   }
 
+  // ===== PRIVATE METHODS =====
+
+  /**
+   * Create initial workflow state
+   */
+  private createInitialState(): WorkflowAgentState {
+    return {
+      currentRunId: null,
+      workflowStatus: 'idle',
+      lastResult: null,
+      lastError: null,
+      metadata: {
+        iterations: 0,
+        maxIterations: 10,
+        startTime: null,
+        endTime: null,
+      },
+    };
+  }
+
+  /**
+   * Initialize workflow execution
+   */
+  private initializeWorkflowExecution(
+    task: Task,
+    inputs: Record<string, unknown>
+  ): void {
+    this.setStatus(AGENT_STATUS_enum.THINKING);
+    this.workflowState.metadata.startTime = Date.now();
+    this.workflowState.workflowStatus = 'running';
+    this.logWorkflowStart(task, inputs);
+  }
+
   /**
    * Create runtime context with task data
    */
@@ -295,14 +227,13 @@ export class WorkflowDrivenAgent extends BaseAgent {
     inputs: Record<string, unknown>,
     context: string
   ): RuntimeContext {
-    const contextData = new Map<string, any>();
-
-    // Add task data
-    contextData.set('task.id', task.id);
-    contextData.set('task.description', task.description);
-    contextData.set('task.status', task.status);
-    contextData.set('task.inputs', inputs);
-    contextData.set('task.context', context);
+    const contextData = new Map<string, any>([
+      ['task.id', task.id],
+      ['task.description', task.description],
+      ['task.status', task.status],
+      ['task.inputs', inputs],
+      ['task.context', context],
+    ]);
 
     return {
       get: (path: string) => contextData.get(path),
@@ -311,6 +242,90 @@ export class WorkflowDrivenAgent extends BaseAgent {
       delete: (path: string) => contextData.delete(path),
       clear: () => contextData.clear(),
     };
+  }
+
+  /**
+   * Setup workflow run
+   */
+  private setupWorkflowRun() {
+    if (!this.workflow.committed) {
+      this.workflow.commit();
+    }
+
+    const run = this.workflow.createRun();
+    this.workflowState.currentRunId = run.runId;
+    return run;
+  }
+
+  /**
+   * Subscribe to workflow events
+   */
+  private subscribeToWorkflowEvents(run: any, task: Task) {
+    return run.watch((event: any) => {
+      this.handleWorkflowEvent(event, task);
+    });
+  }
+
+  /**
+   * Execute workflow
+   */
+  private async executeWorkflow(
+    run: any,
+    inputs: Record<string, unknown>,
+    runtimeContext: RuntimeContext
+  ) {
+    const result = await run.start({
+      inputData: inputs,
+      runtimeContext,
+    });
+
+    this.workflowState.lastResult = result;
+    this.workflowState.metadata.endTime = Date.now();
+
+    return result;
+  }
+
+  /**
+   * Handle workflow result based on status
+   */
+  private handleWorkflowResult(
+    task: Task,
+    result: WorkflowResult<any>
+  ): AgentLoopResult {
+    switch (result.status) {
+      case 'completed':
+        return this.handleWorkflowCompleted(task, result);
+      case 'failed':
+        return this.handleWorkflowFailed(task, result);
+      case 'suspended':
+        return this.handleWorkflowSuspended(task, result);
+      default:
+        throw new Error(`Unknown workflow status: ${(result as any).status}`);
+    }
+  }
+
+  /**
+   * Validate resume conditions
+   */
+  private validateResumeConditions(): void {
+    if (!this.workflowState.currentRunId) {
+      throw new Error('No active workflow run to resume');
+    }
+
+    if (this.workflowState.workflowStatus !== 'suspended') {
+      throw new Error('Workflow is not in suspended state');
+    }
+  }
+
+  /**
+   * Get current workflow run
+   */
+  private getCurrentRun() {
+    const run = this.workflow.runs.get(this.workflowState.currentRunId!);
+    if (!run) {
+      throw new Error('Workflow run not found');
+    }
+    return run;
   }
 
   /**
@@ -327,7 +342,6 @@ export class WorkflowDrivenAgent extends BaseAgent {
     const workflowId = this.workflow.id;
     const runId = this.workflowState.currentRunId || 'unknown';
 
-    // Map workflow events to store handlers
     switch (event.type) {
       case 'WorkflowStatusUpdate':
         this.handleWorkflowStatusUpdate(event, task, workflowId, runId);
@@ -354,53 +368,44 @@ export class WorkflowDrivenAgent extends BaseAgent {
 
     const status = workflowState.status;
     const metadata = event.metadata || {};
+    const executionTime = this.calculateExecutionTime();
+
+    const commonParams = {
+      agent: this,
+      task,
+      workflowId,
+      runId,
+      executionPath: metadata.executionPath,
+    };
 
     switch (status) {
       case 'running':
         this.store?.getState()?.handleWorkflowRunning({
-          agent: this,
-          task,
-          workflowId,
-          runId,
+          ...commonParams,
           currentStepId: metadata.currentStepId,
-          executionPath: metadata.executionPath,
         });
         break;
       case 'completed':
         this.store?.getState()?.handleWorkflowCompleted({
-          agent: this,
-          task,
-          workflowId,
-          runId,
+          ...commonParams,
           result: workflowState.result,
           totalSteps: metadata.totalSteps || 0,
           completedSteps: metadata.completedSteps || 0,
-          executionTime: this.workflowState.metadata.endTime
-            ? this.workflowState.metadata.endTime -
-              (this.workflowState.metadata.startTime || 0)
-            : 0,
+          executionTime,
         });
         break;
       case 'failed':
         this.store?.getState()?.handleWorkflowFailed({
-          agent: this,
-          task,
-          workflowId,
-          runId,
+          ...commonParams,
           error: workflowState.error,
           failedStepId: metadata.failedStepId,
-          executionPath: metadata.executionPath,
         });
         break;
       case 'suspended':
         this.store?.getState()?.handleWorkflowSuspended({
-          agent: this,
-          task,
-          workflowId,
-          runId,
+          ...commonParams,
           suspendReason: metadata.suspendReason,
           suspendedSteps: metadata.suspendedSteps,
-          executionPath: metadata.executionPath,
         });
         break;
     }
@@ -422,50 +427,39 @@ export class WorkflowDrivenAgent extends BaseAgent {
 
     if (!stepId || !stepStatus) return;
 
+    const commonParams = {
+      agent: this,
+      task,
+      workflowId,
+      runId,
+      stepId,
+      stepDescription: metadata.stepDescription,
+    };
+
     switch (stepStatus) {
       case 'running':
         this.store?.getState()?.handleWorkflowStepStarted({
-          agent: this,
-          task,
-          workflowId,
-          runId,
-          stepId,
-          stepDescription: metadata.stepDescription,
+          ...commonParams,
           stepInput: metadata.stepInput,
         });
         break;
       case 'completed':
         this.store?.getState()?.handleWorkflowStepCompleted({
-          agent: this,
-          task,
-          workflowId,
-          runId,
-          stepId,
-          stepDescription: metadata.stepDescription,
+          ...commonParams,
           stepOutput: stepResult?.output,
           stepDuration: metadata.stepDuration,
         });
         break;
       case 'failed':
         this.store?.getState()?.handleWorkflowStepFailed({
-          agent: this,
-          task,
-          workflowId,
-          runId,
-          stepId,
-          stepDescription: metadata.stepDescription,
+          ...commonParams,
           error: stepResult?.error,
           stepInput: metadata.stepInput,
         });
         break;
       case 'suspended':
         this.store?.getState()?.handleWorkflowStepSuspended({
-          agent: this,
-          task,
-          workflowId,
-          runId,
-          stepId,
-          stepDescription: metadata.stepDescription,
+          ...commonParams,
           suspendReason: metadata.suspendReason,
           suspendData: metadata.suspendData,
         });
@@ -484,32 +478,12 @@ export class WorkflowDrivenAgent extends BaseAgent {
     this.workflowState.workflowStatus = 'completed';
     this.workflowState.metadata.iterations++;
 
-    // Log completion
     this.logWorkflowCompleted(task, result);
-
-    const executionTime = this.workflowState.metadata.endTime
-      ? this.workflowState.metadata.endTime -
-        (this.workflowState.metadata.startTime || 0)
-      : 0;
-
-    // Update task store
-    this.store?.getState()?.handleWorkflowAgentTaskCompleted({
-      agent: this,
-      task,
-      workflowId: this.workflow.id,
-      runId: this.workflowState.currentRunId || 'unknown',
-      result: (result as any).result as TaskResult,
-      iterations: this.workflowState.metadata.iterations,
-      maxAgentIterations: 10,
-      executionTime,
-    });
+    this.updateTaskStoreForCompletion(task, result);
 
     return {
       result: (result as any).result,
-      metadata: {
-        iterations: this.workflowState.metadata.iterations,
-        maxAgentIterations: 10,
-      },
+      metadata: this.getMetadata(),
     };
   }
 
@@ -520,30 +494,22 @@ export class WorkflowDrivenAgent extends BaseAgent {
     task: Task,
     result: WorkflowResult<any>
   ): AgentLoopResult {
-    this.setStatus(AGENT_STATUS_enum.AGENTIC_LOOP_ERROR);
+    this.setStatus(AGENT_STATUS_enum.TASK_ABORTED);
     this.workflowState.workflowStatus = 'failed';
     this.workflowState.lastError = (result as any).error as Error;
     this.workflowState.metadata.iterations++;
 
-    // Log failure
     this.logWorkflowFailed(task, result);
 
-    // Update task store
-    this.store?.getState()?.handleWorkflowAgentTaskAborted({
-      agent: this,
-      task,
-      workflowId: this.workflow.id,
-      runId: this.workflowState.currentRunId || 'unknown',
-      error: (result as any).error,
-      reason: 'Workflow execution failed',
-    });
+    // CRITICAL FIX: Set workflow status to ERRORED first
+    this.store?.getState()?.handleWorkflowError((result as any).error);
+
+    // Then update task-specific error handling
+    this.updateTaskStoreForFailure(task, result);
 
     return {
       error: `Workflow execution failed: ${(result as any).error.message}`,
-      metadata: {
-        iterations: this.workflowState.metadata.iterations,
-        maxAgentIterations: 10,
-      },
+      metadata: this.getMetadata(),
     };
   }
 
@@ -558,34 +524,30 @@ export class WorkflowDrivenAgent extends BaseAgent {
     this.workflowState.workflowStatus = 'suspended';
     this.workflowState.metadata.iterations++;
 
-    // Log suspension
     this.logWorkflowSuspended(task, result);
-
-    // Update task store
     this.store?.getState()?.handleAgentTaskPaused({ task });
 
     return {
       error: 'Workflow suspended - requires manual intervention',
-      metadata: {
-        iterations: this.workflowState.metadata.iterations,
-        maxAgentIterations: 10,
-      },
+      metadata: this.getMetadata(),
     };
   }
 
   /**
-   * Handle workflow errors
+   * Handle workflow errors - FIXED: Now properly sets ERRORED status
    */
   private handleWorkflowError(task: Task, error: Error): AgentLoopResult {
-    this.setStatus(AGENT_STATUS_enum.AGENTIC_LOOP_ERROR);
+    this.setStatus(AGENT_STATUS_enum.TASK_ABORTED);
     this.workflowState.workflowStatus = 'failed';
     this.workflowState.lastError = error;
     this.workflowState.metadata.iterations++;
 
-    // Log error
     this.logWorkflowError(task, error);
 
-    // Update task store
+    // CRITICAL FIX: Call handleWorkflowError first to set ERRORED status
+    this.store?.getState()?.handleWorkflowError(error);
+
+    // Then update agent-specific error handling
     this.store?.getState()?.handleWorkflowAgentError({
       agent: this,
       task,
@@ -597,10 +559,66 @@ export class WorkflowDrivenAgent extends BaseAgent {
 
     return {
       error: `Workflow execution error: ${error.message}`,
-      metadata: {
-        iterations: this.workflowState.metadata.iterations,
-        maxAgentIterations: 10,
-      },
+      metadata: this.getMetadata(),
+    };
+  }
+
+  /**
+   * Update task store for completion
+   */
+  private updateTaskStoreForCompletion(
+    task: Task,
+    result: WorkflowResult<any>
+  ): void {
+    const executionTime = this.calculateExecutionTime();
+
+    this.store?.getState()?.handleWorkflowAgentTaskCompleted({
+      agent: this,
+      task,
+      workflowId: this.workflow.id,
+      runId: this.workflowState.currentRunId || 'unknown',
+      result: (result as any).result as TaskResult,
+      iterations: this.workflowState.metadata.iterations,
+      maxAgentIterations: 10,
+      executionTime,
+    });
+  }
+
+  /**
+   * Update task store for failure
+   */
+  private updateTaskStoreForFailure(
+    task: Task,
+    result: WorkflowResult<any>
+  ): void {
+    this.store?.getState()?.handleWorkflowAgentTaskAborted({
+      agent: this,
+      task,
+      workflowId: this.workflow.id,
+      runId: this.workflowState.currentRunId || 'unknown',
+      error: (result as any).error,
+      reason: 'Workflow execution failed',
+    });
+  }
+
+  /**
+   * Calculate execution time
+   */
+  private calculateExecutionTime(): number {
+    return this.workflowState.metadata.endTime &&
+      this.workflowState.metadata.startTime
+      ? this.workflowState.metadata.endTime -
+          this.workflowState.metadata.startTime
+      : 0;
+  }
+
+  /**
+   * Get metadata for agent loop result
+   */
+  private getMetadata() {
+    return {
+      iterations: this.workflowState.metadata.iterations,
+      maxAgentIterations: 10,
     };
   }
 
@@ -608,19 +626,10 @@ export class WorkflowDrivenAgent extends BaseAgent {
    * Reset workflow state
    */
   private resetWorkflowState(): void {
-    this.workflowState = {
-      currentRunId: null,
-      workflowStatus: 'idle',
-      lastResult: null,
-      lastError: null,
-      metadata: {
-        iterations: 0,
-        maxIterations: 10,
-        startTime: null,
-        endTime: null,
-      },
-    };
+    this.workflowState = this.createInitialState();
   }
+
+  // ===== LOGGING METHODS =====
 
   /**
    * Log workflow start

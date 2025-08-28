@@ -36,7 +36,6 @@ import {
   WorkflowAgentResumedLog,
 } from '../types/logs';
 import { CombinedStoresState } from './teamStore.types';
-import { TaskBlockError, LLMInvocationError } from '../utils/errors';
 
 export interface WorkflowDrivenAgentStoreState {
   // Workflow execution handlers
@@ -553,15 +552,15 @@ export const useWorkflowDrivenAgentStore: StateCreator<
     }
     set((state) => ({ workflowLogs: [...state.workflowLogs, newLog] }));
 
-    get().handleTaskBlocked({
-      task,
-      error: new TaskBlockError(
-        error.message,
-        error.message,
-        agent.name,
-        false
-      ),
-    });
+    // get().handleTaskBlocked({
+    //   task,
+    //   error: new TaskBlockError(
+    //     error.message,
+    //     error.message,
+    //     agent.name,
+    //     false
+    //   ),
+    // });
   },
 
   handleWorkflowAgentTaskCompleted: ({
@@ -619,6 +618,7 @@ export const useWorkflowDrivenAgentStore: StateCreator<
         task,
         logDescription: `🛑 WorkflowDrivenAgent ${agent.name} aborted task`,
         taskStatus: TASK_STATUS_enum.ABORTED,
+        workflowStatus: WORKFLOW_STATUS_enum.ERRORED,
         agentStatus: WORKFLOW_AGENT_STATUS_enum.TASK_ABORTED,
         metadata: {
           workflowId,
@@ -636,14 +636,10 @@ export const useWorkflowDrivenAgentStore: StateCreator<
     }
     set((state) => ({ workflowLogs: [...state.workflowLogs, newLog] }));
 
-    // Update task state when task is aborted
-    const llmError = new LLMInvocationError(
-      reason || error.message,
-      error,
-      'Check workflow configuration and retry'
-    );
-
-    get().handleTaskAborted({ task, error: llmError });
+    // CRITICAL FIX: Don't call handleTaskAborted as it doesn't set workflow status
+    // The workflow status should already be set to ERRORED by handleWorkflowError
+    // Just update the task status directly
+    task.status = TASK_STATUS_enum.ABORTED;
   },
 
   prepareWorkflowAgentStatusUpdateLog: <T extends WorkflowAgentStatusLog>({
