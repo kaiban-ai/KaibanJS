@@ -62,6 +62,29 @@ export type ModelUsageStats = Record<
 const modelsPricing: ModelPricing[] = [
   // GPT Models from OpenAI
   {
+    modelCode: 'gpt-5',
+    provider: 'openai',
+    inputPricePerMillionTokens: 1.25,
+    outputPricePerMillionTokens: 10.0,
+    features:
+      'Latest generation AI, The best model for coding and agentic tasks across domains',
+  },
+  {
+    modelCode: 'gpt-5-mini',
+    provider: 'openai',
+    inputPricePerMillionTokens: 0.25,
+    outputPricePerMillionTokens: 2.0,
+    features:
+      'A faster, cost-efficient version of GPT-5 for well-defined tasks',
+  },
+  {
+    modelCode: 'gpt-5-nano',
+    provider: 'openai',
+    inputPricePerMillionTokens: 0.05,
+    outputPricePerMillionTokens: 0.4,
+    features: 'Fastest, most cost-efficient version of GPT-5',
+  },
+  {
     modelCode: 'gpt-4o-mini',
     provider: 'openai',
     inputPricePerMillionTokens: 0.15,
