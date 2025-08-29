@@ -1,24 +1,24 @@
 # WorkflowDrivenAgent
 
-El `WorkflowDrivenAgent` es un agente especializado que ejecuta workflows en lugar de usar razonamiento basado en LLM. Este agente mantiene el estado del workflow y puede manejar operaciones de suspensión y reanudación para workflows de larga duración.
+The `WorkflowDrivenAgent` is a specialized agent that executes workflows instead of using LLM-based reasoning. This agent maintains the workflow state and can handle suspension and resumption operations for long-running workflows.
 
-## Características
+## Features
 
-- **Ejecución de Workflows**: Ejecuta workflows definidos usando el paquete `@kaibanjs/workflow`
-- **Manejo de Estado**: Mantiene el estado del workflow entre ejecuciones
-- **Suspensión y Reanudación**: Soporta workflows que pueden suspenderse y reanudarse
-- **Compatibilidad con Teams**: Se integra perfectamente con el sistema de teams existente
-- **Manejo de Errores**: Manejo robusto de errores con logging detallado
-- **Logging en Tiempo Real**: Logs específicos para eventos de workflow mezclados con logs generales del equipo
+- **Workflow Execution**: Executes workflows defined using the `@kaibanjs/workflow` package
+- **State Management**: Maintains workflow state between executions
+- **Suspension and Resumption**: Supports workflows that can be suspended and resumed
+- **Team Compatibility**: Integrates seamlessly with the existing team system
+- **Error Handling**: Robust error handling with detailed logging
+- **Real-time Logging**: Specific logs for workflow events mixed with general team logs
 
-## Uso Básico
+## Basic Usage
 
 ```typescript
 import { Agent } from 'kaibanjs';
 import { createStep, createWorkflow } from '@kaibanjs/workflow';
 import { z } from 'zod';
 
-// Crear pasos del workflow
+// Create workflow steps
 const processStep = createStep({
   id: 'process',
   inputSchema: z.object({ data: z.string() }),
@@ -29,7 +29,7 @@ const processStep = createStep({
   },
 });
 
-// Crear el workflow
+// Create the workflow
 const workflow = createWorkflow({
   id: 'example-workflow',
   inputSchema: z.object({ data: z.string() }),
@@ -39,20 +39,20 @@ const workflow = createWorkflow({
 workflow.then(processStep);
 workflow.commit();
 
-// Crear el agente usando el Agent wrapper
+// Create the agent using the Agent wrapper
 const agent = new Agent({
   type: 'WorkflowDrivenAgent',
   name: 'Workflow Agent',
   workflow: workflow,
 });
 
-// Usar el agente en un team
-// El agente se inicializará automáticamente cuando se asigne a un team
+// Use the agent in a team
+// The agent will be automatically initialized when assigned to a team
 ```
 
-## Integración con Teams
+## Team Integration
 
-El `WorkflowDrivenAgent` se integra perfectamente con el sistema de teams existente:
+The `WorkflowDrivenAgent` integrates seamlessly with the existing team system:
 
 ```typescript
 import { Agent, Task, Team } from 'kaibanjs';
@@ -87,16 +87,16 @@ const team = new Team({
   ],
 });
 
-// Ejecutar el equipo
+// Execute the team
 const result = await team.start({ data: 'input data' });
 ```
 
-## Workflows Complejos
+## Complex Workflows
 
-El agente puede manejar workflows complejos con múltiples patrones:
+The agent can handle complex workflows with multiple patterns:
 
 ```typescript
-// Workflow con pasos secuenciales, condicionales y paralelos
+// Workflow with sequential, conditional, and parallel steps
 const addStep = createStep({
   id: 'add',
   inputSchema: z.object({ a: z.number(), b: z.number() }),
@@ -157,7 +157,7 @@ const complexWorkflow = createWorkflow({
   }),
 });
 
-// Construir workflow complejo: secuencial -> condicional -> final
+// Build complex workflow: sequential -> conditional -> final
 complexWorkflow
   .then(addStep)
   .then(multiplyStep)
@@ -176,9 +176,9 @@ const complexAgent = new Agent({
 });
 ```
 
-## Workflows con Suspensión
+## Workflows with Suspension
 
-El agente puede manejar workflows que se suspenden para requerir intervención manual:
+The agent can handle workflows that suspend to require manual intervention:
 
 ```typescript
 const approvalStep = createStep({
@@ -192,7 +192,7 @@ const approvalStep = createStep({
       return { approved: resumeData.approved };
     }
 
-    // Suspender para aprobación manual
+    // Suspend for manual approval
     await suspend({ reason: 'requires_manual_approval' });
     return { approved: false };
   },
@@ -214,33 +214,33 @@ const approvalAgent = new Agent({
 });
 ```
 
-## Manejo de Estado
+## State Management
 
-El agente mantiene el estado del workflow internamente:
+The agent maintains workflow state internally:
 
-- **currentRunId**: ID del run actual del workflow
-- **workflowStatus**: Estado actual del workflow (idle, running, suspended, completed, failed)
-- **lastResult**: Último resultado del workflow
-- **lastError**: Último error del workflow
-- **metadata**: Metadatos de ejecución (iteraciones, tiempos, etc.)
+- **currentRunId**: ID of the current workflow run
+- **workflowStatus**: Current workflow status (idle, running, suspended, completed, failed)
+- **lastResult**: Last workflow result
+- **lastError**: Last workflow error
+- **metadata**: Execution metadata (iterations, times, etc.)
 
-## Contexto de Runtime
+## Runtime Context
 
-El agente crea automáticamente un contexto de runtime que incluye:
+The agent automatically creates a runtime context that includes:
 
-- Datos de la tarea (id, descripción, estado, inputs)
-- Información del agente (nombre)
-- Contexto de la tarea
+- Task data (id, description, status, inputs)
+- Agent information (name)
+- Task context
 
-Este contexto está disponible para todos los pasos del workflow.
+This context is available to all workflow steps.
 
-## Eventos y Monitoreo
+## Events and Monitoring
 
-El agente se suscribe automáticamente a eventos del workflow para monitoreo y logging:
+The agent automatically subscribes to workflow events for monitoring and logging:
 
 ```typescript
-// El agente automáticamente se suscribe a eventos del workflow
-// y genera logs específicos para cada evento:
+// The agent automatically subscribes to workflow events
+// and generates specific logs for each event:
 // - 🚀 WorkflowDrivenAgent started workflow execution
 // - ⚡ WorkflowDrivenAgent started step: [stepId]
 // - ✅ WorkflowDrivenAgent completed step: [stepId]
@@ -249,50 +249,50 @@ El agente se suscribe automáticamente a eventos del workflow para monitoreo y l
 // - 🏁 WorkflowDrivenAgent completed task successfully
 ```
 
-## Logging y Monitoreo
+## Logging and Monitoring
 
-El agente genera logs detallados que se integran con el sistema de logging del equipo:
+The agent generates detailed logs that integrate with the team's logging system:
 
-- **Logs en tiempo real**: Cada evento del workflow se registra inmediatamente
-- **Logs específicos**: Categoría `WorkflowAgentStatusUpdate` para distinguir de otros agentes
-- **Backward compatibility**: Los logs de `ReactChampionAgent` mantienen su formato original
-- **Integración con workflowLogs**: Los logs aparecen mezclados en el flujo general del equipo
+- **Real-time logs**: Each workflow event is logged immediately
+- **Specific logs**: `WorkflowAgentStatusUpdate` category to distinguish from other agents
+- **Backward compatibility**: `ReactChampionAgent` logs maintain their original format
+- **Integration with workflowLogs**: Logs appear mixed in the general team flow
 
-## Manejo de Errores
+## Error Handling
 
-El agente maneja diferentes tipos de errores:
+The agent handles different types of errors:
 
-- **Workflow Failed**: Cuando el workflow falla durante la ejecución
-- **Workflow Suspended**: Cuando el workflow se suspende para intervención manual
-- **Execution Error**: Errores durante la ejecución del workflow
-- **Step Failed**: Cuando un paso específico del workflow falla
+- **Workflow Failed**: When the workflow fails during execution
+- **Workflow Suspended**: When the workflow suspends for manual intervention
+- **Execution Error**: Errors during workflow execution
+- **Step Failed**: When a specific workflow step fails
 
-## Métodos Principales
+## Main Methods
 
 ### `workOnTask(task, inputs, context)`
 
-Ejecuta el workflow asignado con los inputs de la tarea.
+Executes the assigned workflow with task inputs.
 
 ### `workOnTaskResume(task)`
 
-Reanuda un workflow suspendido.
+Resumes a suspended workflow.
 
 ### `workOnFeedback(task, feedbackList, context)`
 
-No aplicable para agentes basados en workflow (retorna error).
+Not applicable for workflow-based agents (returns error).
 
 ### `reset()`
 
-Resetea el estado del agente y del workflow.
+Resets the agent and workflow state.
 
 ### `getCleanedAgent()`
 
-Retorna una versión limpia del agente sin información sensible.
+Returns a clean version of the agent without sensitive information.
 
-## Ejemplos de Tests
+## Test Examples
 
 ```typescript
-// Test básico de integración con teams
+// Basic team integration test
 it('should work with teams', async () => {
   const task = new Task({
     description: 'Execute the workflow',
@@ -310,7 +310,7 @@ it('should work with teams', async () => {
   expect(result.result).toBe(3);
 });
 
-// Test de logging en tiempo real
+// Real-time logging test
 it('should log workflow execution steps in real-time', async () => {
   const team = new Team({
     name: 'Logging Team',
@@ -320,7 +320,7 @@ it('should log workflow execution steps in real-time', async () => {
 
   const result = await team.start({ data: 'test' });
 
-  // Verificar logs del workflow
+  // Verify workflow logs
   const workflowLogs = team.store.getState().workflowLogs;
   const workflowAgentLogs = workflowLogs.filter(
     (log) => log.logType === 'WorkflowAgentStatusUpdate'
@@ -330,26 +330,26 @@ it('should log workflow execution steps in real-time', async () => {
 });
 ```
 
-## Compatibilidad
+## Compatibility
 
-El `WorkflowDrivenAgent` es completamente compatible con:
+The `WorkflowDrivenAgent` is fully compatible with:
 
-- Sistema de teams existente
-- Sistema de logs y monitoreo
-- Sistema de manejo de errores
-- Sistema de estado de agentes
-- Backward compatibility con `ReactChampionAgent`
+- Existing team system
+- Logging and monitoring system
+- Error handling system
+- Agent state system
+- Backward compatibility with `ReactChampionAgent`
 
-## Dependencias
+## Dependencies
 
-- `@kaibanjs/workflow`: Para la definición y ejecución de workflows
-- `zod`: Para validación de esquemas
-- Sistema de stores existente para integración con teams
+- `@kaibanjs/workflow`: For workflow definition and execution
+- `zod`: For schema validation
+- Existing store system for team integration
 
-## Diferencias con ReactChampionAgent
+## Differences with ReactChampionAgent
 
-- **Sin LLM**: No usa razonamiento basado en LLM
-- **Sin role/goal/background**: Se enfoca únicamente en ejecución de workflows
-- **Logging específico**: Logs categorizados como `WorkflowAgentStatusUpdate`
-- **Estado de workflow**: Mantiene estado interno del workflow
-- **Manejo de suspensión**: Soporte nativo para workflows suspendibles
+- **No LLM**: Does not use LLM-based reasoning
+- **No role/goal/background**: Focuses solely on workflow execution
+- **Specific logging**: Logs categorized as `WorkflowAgentStatusUpdate`
+- **Workflow state**: Maintains internal workflow state
+- **Suspension handling**: Native support for suspendible workflows
