@@ -1,6 +1,6 @@
 # WorkflowDrivenAgent
 
-The `WorkflowDrivenAgent` is a specialized agent that executes workflows instead of using LLM-based reasoning. This agent maintains the workflow state and can handle suspension and resumption operations for long-running workflows.
+The `WorkflowDrivenAgent` new approach, is a specialized agent that executes workflows instead of using LLM-based reasoning. This agent maintains the workflow state and can handle suspension and resumption operations for long-running workflows.
 
 ## Features
 
