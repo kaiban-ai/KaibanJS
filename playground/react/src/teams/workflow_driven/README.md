@@ -1,158 +1,91 @@
 # Workflow-Driven Teams
 
-This directory contains examples of teams that utilize the new `WorkflowDrivenAgent` in KaibanJS. The `WorkflowDrivenAgent` executes predefined workflows instead of using LLM-based reasoning, providing deterministic, structured execution.
+This directory contains examples of teams that use WorkflowDrivenAgent to execute predefined workflows instead of using LLM-based reasoning.
 
 ## Available Teams
 
-### 1. Basic Workflow Team (`basic_workflow.js`)
+### Basic Workflow (`basic_workflow.js`)
 
-- **Purpose**: Demonstrates simple sequential workflow execution
-- **Workflow**: Mathematical operations (add → multiply → format)
-- **Input**: `{ a: 5, b: 3 }`
-- **Output**: Mathematical result with calculation details
+Simple mathematical workflow demonstrating sequential processing:
 
-### 2. Complex Workflow Team (`complex_workflow.js`)
+- Add two numbers
+- Multiply result by original inputs
+- Format output with calculation details
 
-- **Purpose**: Demonstrates advanced workflow patterns
-- **Workflow**: Sequential → Conditional → Parallel → ForEach → Final
-- **Input**: `{ a: 4, b: 5 }`
-- **Output**: Complex result with multiple processing patterns
+### Complex Workflow (`complex_workflow.js`)
 
-### 3. Suspension Workflow Team (`suspension_workflow.js`)
+Advanced workflow with multiple patterns:
 
-- **Purpose**: Demonstrates workflow suspension and resumption
-- **Workflow**: Validate → Approval (suspends) → Process → Final
-- **Input**: `{ data: 'Sample data for approval workflow' }`
-- **Output**: Workflow result after validation and approval
+- Sequential processing
+- Conditional branching
+- Parallel processing (foreach)
+- Result aggregation
 
-### 4. Mixed Team (`mixed_team.js`)
+### Suspension Workflow (`suspension_workflow.js`)
 
-- **Purpose**: Combines workflow-driven agents with LLM agents
-- **Composition**:
-  - Data Processor (WorkflowDrivenAgent)
-  - Content Analyzer (ReactChampionAgent)
-  - Summary Generator (ReactChampionAgent)
-- **Input**: Sample text for analysis
-- **Output**: Processed data, analysis insights, and summary
+Workflow with suspension/resumption capabilities:
+
+- Data validation
+- Manual approval step (suspends workflow)
+- Data processing after approval
+- Final result aggregation
+
+### Mixed Team (`mixed_team.js`)
+
+Combines WorkflowDrivenAgent with ReactChampionAgent:
+
+- Workflow-driven data processing (validation and formatting)
+- LLM-based content analysis
+- LLM-based summary generation
+
+### LangChain + AI SDK Workflow (`langchain_ai_sdk_workflow.js`)
+
+**NEW**: Demonstrates multi-SDK integration:
+
+- **Step 1**: LangChain-powered web search using Tavily API
+- **Step 2**: Vercel AI SDK-powered analysis and summarization
+- **Team**: WorkflowDrivenAgent + ReactChampionAgent collaboration
+
+### LangChain Only Workflow (`langchain_only_workflow.js`)
+
+**NEW**: Pure LangChain implementation:
+
+- **Step 1**: LangChain web search with Tavily API
+- **Step 2**: LangChain content analysis and insights
+- **Team**: Single WorkflowDrivenAgent with pure LangChain workflow
+
+### AI SDK Only Workflow (`ai_sdk_only_workflow.js`)
+
+**NEW**: Pure Vercel AI SDK implementation:
+
+- **Step 1**: AI SDK content generation with `generateText`
+- **Step 2**: AI SDK content enhancement with `generateObject`
+- **Team**: Single WorkflowDrivenAgent with pure AI SDK workflow
 
 ## Key Features
-
-### WorkflowDrivenAgent Capabilities
 
 - **Deterministic Execution**: Workflows execute the same way every time
 - **Type Safety**: Full TypeScript support with Zod schema validation
 - **State Management**: Built-in workflow state tracking
 - **Error Handling**: Robust error handling and recovery
 - **Team Integration**: Seamless integration with existing team system
+- **Multi-SDK Support**: Integration of different LLM SDKs in single workflows
 
-### Workflow Patterns Supported
+## Environment Variables
 
-- **Sequential Processing**: Linear workflow execution
-- **Parallel Processing**: Concurrent step execution
-- **Conditional Logic**: Branching based on conditions
-- **ForEach Operations**: Processing multiple items
-- **Suspension/Resumption**: Pausing workflows for manual intervention
+For the different workflows, you'll need:
 
-## Usage Examples
+- `VITE_OPENAI_API_KEY`: OpenAI API key (required for all workflows)
+- `VITE_TAVILY_API_KEY`: Tavily API key for web search (LangChain workflows)
+- `VITE_ANTHROPIC_API_KEY`: Anthropic API key (mixed teams with ReactChampionAgent)
 
-### Basic Workflow
+## Usage
 
-```javascript
-import { Agent, Task, Team } from 'kaibanjs';
-import { createStep, createWorkflow } from '@kaibanjs/workflow';
-import { z } from 'zod';
-
-// Create workflow steps
-const addStep = createStep({
-  id: 'add',
-  inputSchema: z.object({ a: z.number(), b: z.number() }),
-  outputSchema: z.number(),
-  execute: async ({ inputData }) => {
-    const { a, b } = inputData;
-    return a + b;
-  },
-});
-
-// Create and build workflow
-const workflow = createWorkflow({
-  id: 'example-workflow',
-  inputSchema: z.object({ a: z.number(), b: z.number() }),
-  outputSchema: z.number(),
-});
-
-workflow.then(addStep);
-workflow.commit();
-
-// Create workflow-driven agent
-const agent = new Agent({
-  name: 'Workflow Agent',
-  type: 'WorkflowDrivenAgent',
-  workflow: workflow,
-});
-```
-
-### Mixed Team
+Each team can be imported and used in Storybook stories or directly in your application:
 
 ```javascript
-// Workflow-driven agent for structured processing
-const dataProcessor = new Agent({
-  name: 'Data Processor',
-  type: 'WorkflowDrivenAgent',
-  workflow: dataProcessingWorkflow,
-});
+import langchainAiSdkTeam from './teams/workflow_driven/langchain_ai_sdk_workflow';
 
-// LLM-based agent for intelligent analysis
-const analyzer = new Agent({
-  name: 'Content Analyzer',
-  type: 'ReactChampionAgent',
-});
-
-// Combine in team
-const team = new Team({
-  name: 'Mixed Team',
-  agents: [dataProcessor, analyzer],
-  tasks: [processTask, analyzeTask],
-});
+// Use the team
+const result = await langchainAiSdkTeam.execute();
 ```
-
-## Benefits
-
-### Workflow-Driven Agents
-
-- **Reliability**: Deterministic execution
-- **Performance**: Fast, predictable processing
-- **Debugging**: Easy to trace and debug
-- **Testing**: Simple to unit test
-- **Cost**: No LLM API calls for processing
-
-### Mixed Teams
-
-- **Best of Both Worlds**: Combine reliability of workflows with creativity of LLMs
-- **Optimized Processing**: Use workflows for structured tasks, LLMs for creative tasks
-- **Cost Efficiency**: Minimize LLM usage where deterministic processing suffices
-- **Flexibility**: Adapt to different task requirements
-
-## Integration with Existing System
-
-The `WorkflowDrivenAgent` integrates seamlessly with the existing KaibanJS team system:
-
-- **Same Interface**: Uses the same Agent/Task/Team APIs
-- **State Management**: Integrates with existing store system
-- **Logging**: Uses existing logging infrastructure
-- **Error Handling**: Follows existing error handling patterns
-- **UI Components**: Works with existing React components
-
-## Testing
-
-Each team can be tested using the Storybook stories in `../stories/WorkflowDrivenTeam.stories.js`. The stories demonstrate:
-
-- Different workflow patterns
-- Team execution
-- Result visualization
-- Error handling
-
-## Dependencies
-
-- `@kaibanjs/workflow`: For workflow definition and execution
-- `zod`: For schema validation
-- `kaibanjs`: Core framework

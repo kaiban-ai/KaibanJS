@@ -3,6 +3,9 @@ import basicWorkflowTeam from '../teams/workflow_driven/basic_workflow';
 import complexWorkflowTeam from '../teams/workflow_driven/complex_workflow';
 import suspensionWorkflowTeam from '../teams/workflow_driven/suspension_workflow';
 import mixedTeam from '../teams/workflow_driven/mixed_team';
+import langchainAiSdkTeam from '../teams/workflow_driven/langchain_ai_sdk_workflow';
+import langchainOnlyTeam from '../teams/workflow_driven/langchain_only_workflow';
+import aiSdkOnlyTeam from '../teams/workflow_driven/ai_sdk_only_workflow';
 
 import '../index.css';
 
@@ -172,6 +175,130 @@ This example demonstrates how workflow-driven agents can work alongside traditio
 
 **Input:** Sample text for analysis
 **Expected Output:** Processed data, analysis insights, and summary
+        `,
+      },
+    },
+  },
+};
+
+// LangChain + AI SDK workflow demonstration
+export const LangchainAiSdkWorkflow = {
+  args: {
+    team: langchainAiSdkTeam,
+    title: 'LangChain + AI SDK Research Workflow',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+## LangChain + AI SDK Research Workflow
+
+This example demonstrates a sophisticated research workflow that combines multiple LLM SDKs:
+
+### Workflow Steps
+1. **Search Step (LangChain)**: 
+   - Uses Tavily search tool for comprehensive web research
+   - LangChain AgentExecutor with intelligent tool calling
+   - Extracts structured search results with source attribution
+
+2. **Analysis Step (AI SDK)**:
+   - Vercel AI SDK with OpenAI for advanced analysis
+   - Extracts key points and insights from search results
+   - Generates confidence scores and structured summaries
+   - Provides objective, factual analysis
+
+### Team Composition
+- **Research Agent**: WorkflowDrivenAgent handling the multi-SDK workflow
+- **Insights Generator**: ReactChampionAgent providing strategic recommendations
+
+### Key Benefits
+- **Multi-SDK Integration**: Leverages strengths of both LangChain and AI SDK
+- **Type Safety**: Full Zod schema validation throughout the workflow
+- **Structured Processing**: Deterministic execution with rich output
+- **Comprehensive Research**: Web search + advanced analysis + strategic insights
+
+**Input:** Research query about AI/ML developments
+**Expected Output:** Comprehensive research analysis with key points, summary, confidence score, and strategic insights
+        `,
+      },
+    },
+  },
+};
+
+// LangChain only workflow demonstration
+export const LangchainOnlyWorkflow = {
+  args: {
+    team: langchainOnlyTeam,
+    title: 'LangChain Only Research Workflow',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+## LangChain Only Research Workflow
+
+This example demonstrates a pure LangChain implementation for research and analysis:
+
+### Workflow Steps
+1. **Search Step (LangChain)**: 
+   - Uses Tavily search tool for comprehensive web research
+   - LangChain AgentExecutor with intelligent tool calling
+   - Extracts structured search results with source attribution
+
+2. **Analysis Step (LangChain)**:
+   - LangChain ChatOpenAI for advanced content analysis
+   - Structured prompt engineering for consistent output format
+   - Key points extraction and confidence scoring
+
+### Key Benefits
+- **Pure LangChain**: Demonstrates LangChain's full capabilities
+- **Tool Integration**: Seamless integration with external tools (Tavily)
+- **Agent Orchestration**: Sophisticated agent-based workflow execution
+- **Research Pipeline**: Complete research-to-analysis workflow
+
+**Input:** Research query about AI/ML trends
+**Expected Output:** Comprehensive research analysis with key points, summary, confidence score, and source attribution
+        `,
+      },
+    },
+  },
+};
+
+// AI SDK only workflow demonstration
+export const AiSdkOnlyWorkflow = {
+  args: {
+    team: aiSdkOnlyTeam,
+    title: 'AI SDK Only Content Workflow',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+## AI SDK Only Content Workflow
+
+This example demonstrates a pure Vercel AI SDK implementation for content generation and enhancement:
+
+### Workflow Steps
+1. **Research Step (AI SDK)**: 
+   - Uses \`generateText\` with web search tool for research and content creation
+   - AI SDK compatible tool calling with Tavily search integration
+   - Content generation with research sources and metadata tracking
+
+2. **Enhance Step (AI SDK)**:
+   - Uses \`generateObject\` for structured content analysis
+   - Quality assessment with readability and source accuracy scoring
+   - Key themes extraction and improvement suggestions
+   - Enhanced content generation with incorporated improvements
+
+### Key Benefits
+- **Pure AI SDK**: Demonstrates AI SDK's full capabilities with tool calling
+- **Web Search Integration**: AI SDK compatible tool with Tavily search
+- **Structured Generation**: \`generateObject\` for consistent output format
+- **Research Pipeline**: Complete research-to-enhancement workflow
+- **Quality Assessment**: Built-in content analysis and source accuracy scoring
+
+**Input:** Content topic (e.g., "AI in healthcare")
+**Expected Output:** Enhanced content with web research, analysis, quality score, source accuracy, key themes, and improvement suggestions
         `,
       },
     },
