@@ -1,4 +1,63 @@
 const fs = require('fs');
+
+/**
+ * Helper function to clean dynamic values from snapshots for consistent test comparisons
+ * @param {Object} state - The state object to clean
+ * @returns {Object} - The cleaned state object with dynamic values replaced by [REDACTED]
+ */
+function cleanSnapshotForComparison(state) {
+  const cleaned = JSON.parse(JSON.stringify(state));
+
+  // Recursive function to clean all dynamic values
+  const cleanDynamicValues = (obj) => {
+    if (obj === null || typeof obj !== 'object') return;
+
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        const value = obj[key];
+
+        // Clean specific dynamic fields
+        if (
+          key === 'timestamp' ||
+          key === 'startTime' ||
+          key === 'endTime' ||
+          key === 'executionTime'
+        ) {
+          if (typeof value === 'number' || typeof value === 'string') {
+            obj[key] = '[REDACTED]';
+          }
+        }
+
+        // Clean run IDs and workflow IDs
+        if (key === 'runId' || key === 'workflowId' || key === 'currentRunId') {
+          if (typeof value === 'string') {
+            obj[key] = '[REDACTED]';
+          }
+        }
+
+        // Clean duration fields
+        if (
+          key === 'duration' &&
+          typeof value === 'string' &&
+          value !== '[REDACTED]'
+        ) {
+          obj[key] = '[REDACTED]';
+        }
+
+        // Recursively clean nested objects and arrays
+        if (typeof value === 'object' && value !== null) {
+          cleanDynamicValues(value);
+        }
+      }
+    }
+  };
+
+  // Apply cleaning to the entire state
+  cleanDynamicValues(cleaned);
+
+  return cleaned;
+}
+
 function moscaFetch() {
   let originalFetch = globalThis.fetch; // Save the original fetch function
   // Step 1: Define your custom fetch function
@@ -191,6 +250,7 @@ function moscaFetch() {
     restoreAll,
     restoreOne,
     saveRecords,
+    cleanSnapshotForComparison,
   };
 }
 

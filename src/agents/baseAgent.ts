@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Task } from '..';
 import { TeamStore } from '../stores';
 import { BaseTool } from '../tools/baseTool';
-import { AGENT_STATUS_enum } from '../utils/enums';
+import { AGENT_STATUS_enum, WORKFLOW_AGENT_STATUS_enum } from '../utils/enums';
 import { AgentLoopResult } from '../utils/llm.types';
 import {
   DefaultPrompts,
@@ -123,7 +123,7 @@ export abstract class BaseAgent {
   /** LLM configuration */
   llmConfig: LLMConfig;
   /** Current agent status */
-  status: AGENT_STATUS_enum;
+  status: AGENT_STATUS_enum | WORKFLOW_AGENT_STATUS_enum;
   /** Available tools */
   tools: BaseTool[];
 
@@ -152,7 +152,8 @@ export abstract class BaseAgent {
     this.tools = tools;
     this.maxIterations = maxIterations;
     this.store = null;
-    this.status = AGENT_STATUS_enum.INITIAL;
+    this.status =
+      AGENT_STATUS_enum.INITIAL || WORKFLOW_AGENT_STATUS_enum.INITIAL;
     this.env = env;
 
     // Create a combined config with defaults and user-provided values
@@ -243,7 +244,7 @@ export abstract class BaseAgent {
    * Sets the agent's status
    * @param status - New status
    */
-  setStatus(status: AGENT_STATUS_enum): void {
+  setStatus(status: AGENT_STATUS_enum | WORKFLOW_AGENT_STATUS_enum): void {
     this.status = status;
   }
 
