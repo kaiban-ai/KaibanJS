@@ -1,0 +1,89 @@
+{
+  "name": "@kaibanjs/opentelemetry",
+  "version": "0.1.0",
+  "description": "OpenTelemetry integration for KaibanJS observability and tracing",
+  "private": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "browser": "dist/index.mjs",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "dev": "tsx watch src/examples/basic-integration.ts",
+    "dev:otlp-example": "tsx src/examples/run-otlp-example.ts",
+    "dev:multi-service": "tsx src/examples/multi-service-integration.ts",
+    "dev:env-config": "tsx src/examples/env-configuration.ts",
+    "dev:practical": "tsx src/examples/practical-otlp-usage.ts",
+    "example:console": "tsx src/examples/console-example.ts",
+    "example:langfuse": "tsx src/examples/langfuse-example.ts",
+    "example:signoz": "tsx src/examples/signoz-example.ts",
+    "example:phoenix": "tsx src/examples/phoenix-example.ts",
+    "example:braintrust": "tsx src/examples/braintrust-example.ts",
+    "example:all": "tsx -e \"import('./src/examples/index.js').then(m => m.runAllExamples())\""
+  },
+  "keywords": [
+    "kaibanjs",
+    "opentelemetry",
+    "observability",
+    "tracing",
+    "telemetry",
+    "distributed-tracing",
+    "jaeger",
+    "prometheus",
+    "monitoring",
+    "ai-agents",
+    "workflow"
+  ],
+  "author": "Kaiban Team",
+  "license": "MIT",
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/exporter-jaeger": "^2.2.0",
+    "@opentelemetry/exporter-prometheus": "^0.207.0",
+    "@opentelemetry/exporter-trace-otlp-grpc": "^0.207.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.207.0",
+    "@opentelemetry/instrumentation": "^0.207.0",
+    "@opentelemetry/resources": "^2.2.0",
+    "@opentelemetry/sdk-node": "^0.207.0",
+    "@opentelemetry/semantic-conventions": "^1.37.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "@vitest/coverage-v8": "^1.2.2",
+    "eslint": "^8.56.0",
+    "kaibanjs": "^0.22.2",
+    "prettier": "^3.2.5",
+    "tsup": "^8.0.2",
+    "tsx": "^4.19.4",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.2"
+  },
+  "peerDependencies": {
+    "kaibanjs": ">=0.22.0",
+    "typescript": ">=5.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "EXAMPLES.md"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
