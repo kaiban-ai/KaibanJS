@@ -158,10 +158,12 @@ interface KaibanSpanContext {
 ### Context Methods
 
 - **Root Span Management**:
+
   - `setRootSpan(span: Span)` - Set the workflow root span
   - `getRootSpan()` - Get the current root span
 
 - **Task Span Management**:
+
   - `setTaskSpan(taskId: string, span: Span)` - Associate a span with a task
   - `getTaskSpan(taskId: string)` - Retrieve task span
   - `removeTaskSpan(taskId: string)` - Remove task span from context
