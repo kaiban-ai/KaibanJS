@@ -101,24 +101,88 @@ interface OpenTelemetryConfig {
 The package creates simplified traces with the following structure:
 
 ```
-Task Span (DOING → DONE)
-├── Agent Thinking Span (THINKING_END)
-├── Agent Thinking Span (THINKING_END)
-└── Agent Thinking Span (THINKING_END)
+Task Span (CLIENT) - DOING → DONE
+├── Agent Thinking Span (CLIENT) - THINKING → THINKING_END
+├── Agent Thinking Span (CLIENT) - THINKING → THINKING_END
+└── Agent Thinking Span (CLIENT) - THINKING → THINKING_END
 ```
+
+### Span Hierarchy
+
+- **Task Spans**: Individual task execution spans
+- **Agent Thinking Spans**: Nested spans for agent LLM interactions
+
+### Span Kinds
+
+The package automatically determines span kinds based on span names:
+
+- **CLIENT** (2): Task and Agent spans - represent client operations
+- **INTERNAL** (0): Default for other spans - internal operations
 
 ## Supported Events
 
+The package processes the following KaibanJS workflow events:
+
 ### Task Events
 
-- `task.execute` - Task execution started (DOING)
-- `task.complete` - Task completed successfully (DONE)
-- `task.error` - Task failed with error (ERRORED)
-- `task.abort` - Task aborted (ABORTED)
+- `TaskStatusUpdate` - Task execution lifecycle events
+  - `DOING` - Task execution started
+  - `DONE` - Task completed successfully
+  - `AWAITING_VALIDATION` - Task awaiting validation
+  - `VALIDATED` - Task validated successfully
+  - `ERRORED` - Task failed with error
+  - `ABORTED` - Task aborted
 
 ### Agent Events
 
-- `agent.thinking` - Agent thinking span (THINKING_END)
+- `AgentStatusUpdate` - Agent thinking and execution events
+  - `THINKING` - Agent begins thinking process
+  - `THINKING_END` - Agent completes thinking process
+
+## Span Context Management
+
+The package uses a `KaibanSpanContext` to manage span relationships and correlation across workflows:
+
+### Context Structure
+
+```typescript
+interface KaibanSpanContext {
+  teamName: string;
+  workflowId: string;
+  rootSpan?: Span;
+  taskSpans: Map<string, Span>;
+  agentSpans: Map<string, Span>;
+}
+```
+
+### Context Methods
+
+- **Root Span Management**:
+  - `setRootSpan(span: Span)` - Set the workflow root span
+  - `getRootSpan()` - Get the current root span
+
+- **Task Span Management**:
+  - `setTaskSpan(taskId: string, span: Span)` - Associate a span with a task
+  - `getTaskSpan(taskId: string)` - Retrieve task span
+  - `removeTaskSpan(taskId: string)` - Remove task span from context
+
+- **Agent Span Management**:
+  - `setAgentSpan(agentId: string, span: Span)` - Associate a span with an agent
+  - `getAgentSpan(agentId: string)` - Retrieve agent span
+  - `removeAgentSpan(agentId: string)` - Remove agent span from context
+
+### Context Lifecycle
+
+1. **Task Execution**: Task spans are created
+2. **Agent Thinking**: Agent thinking spans are nested under task spans
+3. **Task Completion**: All spans are completed and context is cleared
+
+### Span Correlation
+
+The context ensures proper parent-child relationships between spans:
+
+- Task spans are parents of agent thinking spans
+- All spans maintain proper trace context for distributed tracing
 
 ## Metrics
 
@@ -143,6 +207,8 @@ The package uses KaibanJS-specific semantic conventions for LLM attributes that 
 - `kaiban.llm.request.start_time` - When the thinking process started
 - `kaiban.llm.request.status` - Status of the request (started, interrupted, completed)
 - `kaiban.llm.request.input_length` - Length of the input messages
+- `kaiban.llm.request.has_metadata` - Whether metadata is available
+- `kaiban.llm.request.metadata_keys` - Available metadata keys
 
 ### LLM Usage Attributes (`kaiban.llm.usage.*`)
 
@@ -160,6 +226,39 @@ The package uses KaibanJS-specific semantic conventions for LLM attributes that 
 - `kaiban.llm.response.end_time` - When the response ended
 - `kaiban.llm.response.status` - Status of the response (completed, error, etc.)
 - `kaiban.llm.response.output_length` - Length of the output messages
+
+### Task Attributes (`task.*`)
+
+- `task.id` - Unique task identifier
+- `task.name` - Task title
+- `task.description` - Task description
+- `task.status` - Task status (started, completed, errored, aborted)
+- `task.start_time` - When task execution started
+- `task.end_time` - When task execution ended
+- `task.duration_ms` - Task execution duration in milliseconds
+- `task.iterations` - Number of iterations performed
+- `task.total_cost` - Total cost for the task
+- `task.total_tokens_input` - Total input tokens used
+- `task.total_tokens_output` - Total output tokens generated
+- `task.has_metadata` - Whether task has metadata
+- `task.metadata_keys` - Available metadata keys
+
+### Agent Attributes (`agent.*`)
+
+- `agent.id` - Unique agent identifier
+- `agent.name` - Agent name
+- `agent.role` - Agent role description
+
+### Error Attributes (`error.*`)
+
+- `error.message` - Error message
+- `error.type` - Error type
+- `error.stack` - Error stack trace
+
+### Span Types
+
+- `task.execute` - Task execution spans
+- `kaiban.agent.thinking` - Agent thinking spans (nested under task spans)
 
 These conventions ensure that observability services like Langfuse, Phoenix, and others can automatically recognize and properly display LLM-related data in their dashboards.
 
