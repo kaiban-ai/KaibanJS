@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Spinner from './components/Spinner';
+import ReactMarkdown from 'react-markdown';
 
 const WorkflowStats = ({ stats }) => {
   if (!stats) return null;
@@ -295,9 +296,11 @@ const AgentsBoardDebugger = ({ team, title = null }) => {
         <div>
           {workflowResult ? (
             typeof workflowResult == 'object' ? (
-              JSON.stringify(workflowResult, null, 2)
+              <ReactMarkdown>
+                {JSON.stringify(workflowResult, null, 2)}
+              </ReactMarkdown>
             ) : (
-              workflowResult
+              <ReactMarkdown>{workflowResult}</ReactMarkdown>
             )
           ) : (
             <div className="noAvailableData">

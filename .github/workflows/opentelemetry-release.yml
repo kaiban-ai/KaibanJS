@@ -1,0 +1,68 @@
+name: Opentelemetry - Release Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Enter the version for this release'
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: 'main'
+          token: ${{ secrets.PAT_GITHUB }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Reset local changes
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+          git clean -fdx
+
+      - name: Configure git user
+        run: |
+          git config user.name "Dariel Noel"
+          git config user.email "darielnoel@gmail.com"
+
+      - name: Install dependencies
+        run: cd packages/opentelemetry && npm install --also=dev
+
+      - name: Build production version
+        run: cd packages/opentelemetry && npm run build
+
+      - name: Display changes
+        run: |
+          echo "Showing status..."
+          git status
+          echo "Showing diff..."
+          git diff
+
+      - name: Update package.json version
+        run: |
+          cd packages/opentelemetry
+          npm version ${{ github.event.inputs.version }}
+
+      - name: Push changes and tags
+        run: |
+          git push origin main
+          git tag -a "opentelemetry-v${{ github.event.inputs.version }}" -m "Release version ${{ github.event.inputs.version }} for @kaibanjs/opentelemetry"
+          git push origin "opentelemetry-v${{ github.event.inputs.version }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+
+      - name: Publish to npm
+        run: |
+          cd packages/opentelemetry
+          npm publish --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
