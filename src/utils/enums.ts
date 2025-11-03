@@ -68,6 +68,43 @@ export enum AGENT_STATUS_enum {
 }
 
 /**
+ * Workflow Agent status states throughout their lifecycle
+ * @enum {string}
+ */
+export enum WORKFLOW_AGENT_STATUS_enum {
+  /** Initial state when workflow agent is set up */
+  INITIAL = 'INITIAL',
+  /** Workflow agent is starting execution */
+  WORKFLOW_STARTED = 'WORKFLOW_STARTED',
+  /** Workflow agent is executing a step */
+  WORKFLOW_STEP_STARTED = 'WORKFLOW_STEP_STARTED',
+  /** Workflow agent completed a step */
+  WORKFLOW_STEP_COMPLETED = 'WORKFLOW_STEP_COMPLETED',
+  /** Workflow agent failed a step */
+  WORKFLOW_STEP_FAILED = 'WORKFLOW_STEP_FAILED',
+  /** Workflow agent suspended a step */
+  WORKFLOW_STEP_SUSPENDED = 'WORKFLOW_STEP_SUSPENDED',
+  /** Workflow agent is running */
+  WORKFLOW_RUNNING = 'WORKFLOW_RUNNING',
+  /** Workflow agent completed successfully */
+  WORKFLOW_COMPLETED = 'WORKFLOW_COMPLETED',
+  /** Workflow agent failed */
+  WORKFLOW_FAILED = 'WORKFLOW_FAILED',
+  /** Workflow agent is suspended */
+  WORKFLOW_SUSPENDED = 'WORKFLOW_SUSPENDED',
+  /** Workflow agent encountered an error */
+  WORKFLOW_ERROR = 'WORKFLOW_ERROR',
+  /** Workflow agent is paused */
+  PAUSED = 'PAUSED',
+  /** Workflow agent is resumed */
+  RESUMED = 'RESUMED',
+  /** Task completed by workflow agent */
+  TASK_COMPLETED = 'TASK_COMPLETED',
+  /** Task was aborted */
+  TASK_ABORTED = 'TASK_ABORTED',
+}
+
+/**
  * Task status states throughout their lifecycle
  * @enum {string}
  */
