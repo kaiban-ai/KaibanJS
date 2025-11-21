@@ -138,7 +138,6 @@ describe('WorkflowDrivenAgent E2E Tests', () => {
       const result = await parallelWorkflowTeam.start({
         value: 5,
       });
-      console.log('result.result', result.result);
 
       const store = parallelWorkflowTeam.useStore();
       const state = store.getState().getCleanedState();
@@ -212,99 +211,6 @@ describe('WorkflowDrivenAgent E2E Tests', () => {
     });
   });
 
-  //   describe('Mixed Agent Teams', () => {
-  //     let _fetchSpy;
-
-  //     beforeEach(() => {
-  //       _fetchSpy = jest.spyOn(global, 'fetch');
-  //     });
-
-  //     afterEach(() => {
-  //       if (withMockedApis) {
-  //         restoreAll();
-  //       }
-  //       jest.restoreAllMocks();
-  //     });
-
-  //     it('should work with mixed WorkflowDrivenAgent and ReactChampionAgent teams', async () => {
-  //       const mixedAgentTeam = require('./examples/teams/workflow_driven/mixedAgentTeam');
-  //       const mixedAgentTeamRecordedRequests = require('./examples/teams/workflow_driven/mixedAgentTeam.requests.json');
-
-  //       if (withMockedApis) {
-  //         mock(mixedAgentTeamRecordedRequests);
-  //       }
-
-  //       const result = await mixedAgentTeam.start({
-  //         data: 'test data',
-  //         calculation: { a: 5, b: 3 },
-  //       });
-  //       const store = mixedAgentTeam.useStore();
-  //       const state = store.getState().getCleanedState();
-
-  //       // Verify successful execution
-  //       expect(result.status).toBe('FINISHED');
-  //       expect(result.result).toBeDefined();
-
-  //       // Verify both agent types worked together
-  //       const workflowLogs = state.workflowLogs;
-  //       const workflowAgentLogs = workflowLogs.filter(
-  //         (log) => log.agentType === 'WorkflowDrivenAgent'
-  //       );
-  //       const reactAgentLogs = workflowLogs.filter(
-  //         (log) => log.agentType === 'ReactChampionAgent'
-  //       );
-
-  //       expect(workflowAgentLogs.length).toBeGreaterThan(0);
-  //       expect(reactAgentLogs.length).toBeGreaterThan(0);
-
-  //       // Verify all tasks completed
-  //       expect(state.tasks.every((task) => task.status === 'DONE')).toBe(true);
-
-  //       expect(cleanSnapshotForComparison(state)).toMatchSnapshot();
-  //     });
-
-  //     it('should handle task dependencies between different agent types', async () => {
-  //       const dependentTasksTeam = require('./examples/teams/workflow_driven/dependentTasksTeam');
-  //       const dependentTasksTeamRecordedRequests = require('./examples/teams/workflow_driven/dependentTasksTeam.requests.json');
-
-  //       if (withMockedApis) {
-  //         mock(dependentTasksTeamRecordedRequests);
-  //       }
-
-  //       const result = await dependentTasksTeam.start({
-  //         input: 'process this data',
-  //       });
-  //       const store = dependentTasksTeam.useStore();
-  //       const state = store.getState().getCleanedState();
-
-  //       // Verify successful execution
-  //       expect(result.status).toBe('FINISHED');
-
-  //       // Verify task execution order
-  //       const workflowLogs = state.workflowLogs;
-  //       const taskStatusLogs = workflowLogs.filter(
-  //         (log) => log.logType === 'TaskStatusUpdate'
-  //       );
-
-  //       // Find the order of task completions
-  //       const taskCompletionOrder = taskStatusLogs
-  //         .filter((log) => log.taskStatus === 'DONE')
-  //         .map((log) => log.task.description);
-
-  //       // Verify workflow task completed before ReactChampionAgent task
-  //       const workflowTaskIndex = taskCompletionOrder.findIndex((desc) =>
-  //         desc.includes('workflow')
-  //       );
-  //       const reactTaskIndex = taskCompletionOrder.findIndex((desc) =>
-  //         desc.includes('ReactChampionAgent')
-  //       );
-
-  //       expect(workflowTaskIndex).toBeLessThan(reactTaskIndex);
-
-  //       expect(cleanSnapshotForComparison(state)).toMatchSnapshot();
-  //     });
-  //   });
-
   describe('Workflow State Management', () => {
     let _fetchSpy;
 
@@ -352,63 +258,4 @@ describe('WorkflowDrivenAgent E2E Tests', () => {
       expect(cleanSnapshotForComparison(state)).toMatchSnapshot();
     });
   });
-
-  //   describe('Workflow Performance and Monitoring', () => {
-  //     let _fetchSpy;
-
-  //     beforeEach(() => {
-  //       _fetchSpy = jest.spyOn(global, 'fetch');
-  //     });
-
-  //     afterEach(() => {
-  //       if (withMockedApis) {
-  //         restoreAll();
-  //       }
-  //       jest.restoreAllMocks();
-  //     });
-
-  //     it('should track workflow execution metrics', async () => {
-  //       const monitoredWorkflowTeam = require('./examples/teams/workflow_driven/monitoredWorkflow');
-  //       const monitoredWorkflowTeamRecordedRequests = require('./examples/teams/workflow_driven/monitoredWorkflow.requests.json');
-
-  //       if (withMockedApis) {
-  //         mock(monitoredWorkflowTeamRecordedRequests);
-  //       }
-
-  //       const startTime = Date.now();
-  //       const result = await monitoredWorkflowTeam.start({
-  //         iterations: 3,
-  //         delay: 100,
-  //       });
-  //       const endTime = Date.now();
-  //       const store = monitoredWorkflowTeam.useStore();
-  //       const state = store.getState().getCleanedState();
-
-  //       // Verify successful execution
-  //       expect(result.status).toBe('FINISHED');
-
-  //       // Verify execution time tracking
-  //       const workflowLogs = state.workflowLogs;
-  //       const executionTimeLogs = workflowLogs.filter(
-  //         (log) =>
-  //           log.logDescription.includes('execution time') ||
-  //           log.logDescription.includes('duration')
-  //       );
-  //       expect(executionTimeLogs.length).toBeGreaterThan(0);
-
-  //       // Verify iteration tracking
-  //       const iterationLogs = workflowLogs.filter(
-  //         (log) =>
-  //           log.logDescription.includes('iteration') ||
-  //           log.logDescription.includes('step')
-  //       );
-  //       expect(iterationLogs.length).toBeGreaterThan(0);
-
-  //       // Verify reasonable execution time
-  //       const executionTime = endTime - startTime;
-  //       expect(executionTime).toBeGreaterThan(0);
-
-  //       expect(cleanSnapshotForComparison(state)).toMatchSnapshot();
-  //     });
-  //   });
 });
