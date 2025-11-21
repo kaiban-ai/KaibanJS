@@ -44,24 +44,6 @@ const oddStep = createStep({
   },
 });
 
-// const processItemStep = createStep({
-//   id: 'process-item',
-//   inputSchema: z.number(),
-//   outputSchema: z.object({
-//     original: z.number(),
-//     processed: z.string(),
-//     doubled: z.number(),
-//   }),
-//   execute: async ({ inputData }) => {
-//     const num = inputData;
-//     return {
-//       original: num,
-//       processed: `processed_${num}`,
-//       doubled: num * 2,
-//     };
-//   },
-// });
-
 const finalStep = createStep({
   id: 'final',
   inputSchema: z.any(),
@@ -157,50 +139,5 @@ const team = new Team({
     ANTHROPIC_API_KEY: import.meta.env.VITE_ANTHROPIC_API_KEY,
   },
 });
-
-// ============================================================================
-// ALTERNATIVE: WORKFLOW WITH FOREACH (following official examples)
-// ============================================================================
-
-// Example of a workflow that uses foreach correctly
-// This would be a separate workflow that receives an array as input
-// const createForeachWorkflow = () => {
-//   const foreachWorkflow = createWorkflow({
-//     id: 'foreach-workflow',
-//     inputSchema: z.array(z.number()), // ✅ Receives array as input
-//     outputSchema: z.array(
-//       z.object({
-//         original: z.number(),
-//         processed: z.string(),
-//         doubled: z.number(),
-//       })
-//     ),
-//   });
-
-//   foreachWorkflow.foreach(processItemStep, { concurrency: 2 });
-//   foreachWorkflow.commit();
-
-//   return foreachWorkflow;
-// };
-
-// Example usage of foreach workflow:
-// const foreachAgent = new Agent({
-//   name: 'Foreach Processor',
-//   type: 'WorkflowDrivenAgent',
-//   workflow: createForeachWorkflow(),
-// });
-//
-// const foreachTask = new Task({
-//   description: 'Process array of numbers',
-//   expectedOutput: 'Processed array results',
-//   agent: foreachAgent,
-// });
-//
-// const foreachTeam = new Team({
-//   name: 'Foreach Team',
-//   agents: [foreachAgent],
-//   tasks: [foreachTask],
-//   inputs: [1, 2, 3, 4, 5], // ✅ Array input
-// });
 
 export default team;

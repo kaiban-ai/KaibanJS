@@ -23,7 +23,6 @@
     "@langchain/openai": "^0.6.11",
     "@langchain/tavily": "^0.1.1",
     "ai": "^5.0.33",
-    "crypto-browserify": "^3.12.1",
     "kaibanjs": "file:../..",
     "langchain": "^0.3.33",
     "mathjs": "^13.0.3",
