@@ -1,4 +1,4 @@
-name: Release Version
+name: Release Version Test
 
 on:
   workflow_dispatch:
@@ -98,5 +98,3 @@ jobs:
 
       - name: Update package.json version and create Git tag
         run: npm version ${{ github.event.inputs.version }}
-
-
