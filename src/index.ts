@@ -41,6 +41,11 @@ import { LangChainChatModel, LLMConfig } from './utils/agents';
 import { DefaultPrompts } from './utils/prompts';
 import { TaskFeedback, TaskResult, TaskStats } from './stores/taskStore.types';
 import { AgentLoopResult } from './utils/llm.types';
+import {
+  WorkflowDrivenAgent,
+  WorkflowDrivenAgentParams,
+} from './agents/workflowDrivenAgent';
+import { WORKFLOW_AGENT_STATUS_enum } from './utils/enums';
 
 /**
  * Interface for Agent configuration
@@ -94,17 +99,22 @@ export class Agent {
   agentInstance: BaseAgent;
   type: string;
 
-  constructor({ type, ...config }: IAgentParams) {
+  constructor({ type, ...config }: IAgentParams | WorkflowDrivenAgentParams) {
     this.agentInstance = this.createAgent(type, config);
     this.type = type || 'ReactChampionAgent';
   }
 
-  createAgent(type: string | undefined, config: IAgentParams): BaseAgent {
+  createAgent(
+    type: string | undefined,
+    config: IAgentParams | WorkflowDrivenAgentParams
+  ): BaseAgent {
     switch (type) {
       case 'ReactChampionAgent':
-        return new ReactChampionAgent(config);
+        return new ReactChampionAgent(config as IAgentParams);
+      case 'WorkflowDrivenAgent':
+        return new WorkflowDrivenAgent(config as WorkflowDrivenAgentParams);
       default:
-        return new ReactChampionAgent(config);
+        return new ReactChampionAgent(config as IAgentParams);
     }
   }
 
@@ -128,7 +138,7 @@ export class Agent {
     return this.agentInstance.workOnFeedback(task, feedbackList, context);
   }
 
-  setStatus(status: AGENT_STATUS_enum): void {
+  setStatus(status: AGENT_STATUS_enum | WORKFLOW_AGENT_STATUS_enum): void {
     this.agentInstance.setStatus(status);
   }
 

@@ -11,6 +11,7 @@ import { WorkflowLog, WorkflowStats } from '../types/logs';
 import { AgentStoreState } from './agentStore.types';
 import { TaskResult, TaskStoreState } from './taskStore.types';
 import { WorkflowLoopState } from './workflowLoopStore.types';
+import { WorkflowDrivenAgentStoreState } from './workflowDrivenAgentStore';
 
 // Add these type definitions at the top of the file, after the imports
 export type CleanedLLMConfig = Partial<LLMConfig> | Record<string, never>;
@@ -137,10 +138,11 @@ export type NewLogParams<T extends WorkflowLog> = {
   metadata?: T['metadata'];
 };
 
-export type CombinedStoresState = TaskStoreState &
-  AgentStoreState &
+export type CombinedStoresState = AgentStoreState &
+  TaskStoreState &
   WorkflowLoopState &
   TeamStoreState &
-  TeamStoreActions;
+  TeamStoreActions &
+  WorkflowDrivenAgentStoreState;
 
 export type TeamStore = UseBoundStore<StoreApi<CombinedStoresState>>;

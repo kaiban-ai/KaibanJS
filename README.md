@@ -517,6 +517,67 @@ For more details on how to utilize observability features in KaibanJS, please vi
 
   </details>
 
+  <details style="margin-bottom:10px;">
+  <summary><b style="color:black;">WorkflowDrivenAgent</b></summary>
+
+<p style="margin-top:10px;">
+The `WorkflowDrivenAgent` is a specialized agent that executes workflows instead of using LLM-based reasoning. This agent maintains workflow state and can handle suspension and resumption operations for long-running workflows, providing a deterministic approach to task execution.
+
+In this example, a `WorkflowDrivenAgent` is created to execute a workflow that processes data through defined steps, allowing for complex multi-step operations without LLM calls.
+
+</p>
+
+```js
+import { Agent } from 'kaibanjs';
+import { createStep, createWorkflow } from '@kaibanjs/workflow';
+import { z } from 'zod';
+
+// Create workflow steps
+const processStep = createStep({
+  id: 'process',
+  inputSchema: z.object({ data: z.string() }),
+  outputSchema: z.object({ result: z.string() }),
+  execute: async ({ inputData }) => {
+    const { data } = inputData as { data: string };
+    return { result: data.toUpperCase() };
+  },
+});
+
+// Create the workflow
+const workflow = createWorkflow({
+  id: 'example-workflow',
+  inputSchema: z.object({ data: z.string() }),
+  outputSchema: z.object({ result: z.string() }),
+});
+
+workflow.then(processStep);
+workflow.commit();
+
+// Create the agent using the Agent wrapper
+const agent = new Agent({
+  type: 'WorkflowDrivenAgent',
+  name: 'Workflow Agent',
+  workflow: workflow,
+});
+
+// Use the agent in a team
+const team = new Team({
+  name: 'Workflow Team',
+  agents: [agent],
+  tasks: [
+    new Task({
+      description: 'Process the input data using workflow',
+      expectedOutput: 'Processed data result',
+      agent: agent,
+    }),
+  ],
+});
+```
+
+_The `WorkflowDrivenAgent` integrates seamlessly with the existing team system, supports workflows with suspension for manual intervention, and provides detailed logging for workflow events. For more information, visit the [WorkflowDrivenAgent documentation](https://github.com/kaiban-ai/KaibanJS/tree/main/packages/workflow/src/examples/kaibanjs-integration-readme.md)._
+
+  </details>
+
 ## Documentation
 
 - [Official Documentation](https://docs.kaibanjs.com/category/get-started)

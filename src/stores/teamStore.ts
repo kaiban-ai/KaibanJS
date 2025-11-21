@@ -63,6 +63,7 @@ import {
   TeamStoreState,
 } from './teamStore.types';
 import { useWorkflowLoopStore } from './workflowLoopStore';
+import { useWorkflowDrivenAgentStore } from './workflowDrivenAgentStore';
 
 // Initialize telemetry with default values
 const td = initializeTelemetry();
@@ -89,6 +90,7 @@ const createTeamStore = (
     ...useAgentStore(set, get, useTeamStore),
     ...useTaskStore(set, get, useTeamStore),
     ...useWorkflowLoopStore(set, get, useTeamStore),
+    ...useWorkflowDrivenAgentStore(set, get, useTeamStore),
     teamWorkflowStatus:
       initialState.teamWorkflowStatus || WORKFLOW_STATUS_enum.INITIAL,
     workflowResult: initialState.workflowResult || null,

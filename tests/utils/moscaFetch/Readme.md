@@ -16,7 +16,13 @@
 #### Importing
 
 ```js
-const { mock, record, restoreAll, getRecords } = require('moscaFetch');
+const {
+  mock,
+  record,
+  restoreAll,
+  getRecords,
+  cleanSnapshotForComparison,
+} = require('moscaFetch');
 ```
 
 #### Mocking Requests
@@ -87,6 +93,23 @@ To restore the original fetch after tests:
 ```js
 restoreAll();
 ```
+
+#### Cleaning Snapshots for Testing
+
+To clean dynamic values from state objects for consistent snapshot testing:
+
+```js
+const cleanedState = cleanSnapshotForComparison(state);
+expect(cleanedState).toMatchSnapshot();
+```
+
+This function recursively cleans the following dynamic values:
+
+- `timestamp`, `startTime`, `endTime`, `executionTime` (numbers or strings)
+- `runId`, `workflowId`, `currentRunId` (strings)
+- `duration` (strings that aren't already `[REDACTED]`)
+
+All dynamic values are replaced with `[REDACTED]` to ensure consistent test results across different executions.
 
 ### Contributing
 
