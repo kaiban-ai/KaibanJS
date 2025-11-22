@@ -23,7 +23,6 @@ jobs:
         with:
           ref: 'main' # Ensures the main branch is checked out
           token: ${{ secrets.PAT_GITHUB }}
-          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
@@ -69,7 +68,7 @@ jobs:
           git config user.email "darielnoel@gmail.com"
 
       - name: Install dependencies
-        run: npm install --also=dev
+        run: npm install --also=dev --ignore-scripts
 
       - name: Debug - Check packages/tools after npm install
         run: |
