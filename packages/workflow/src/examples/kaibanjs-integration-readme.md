@@ -1,236 +1,355 @@
-# @kaibanjs/workflow Examples
+# WorkflowDrivenAgent
 
-This directory contains comprehensive examples demonstrating the capabilities of the @kaibanjs/workflow engine. Each example focuses on specific features and patterns.
+The `WorkflowDrivenAgent` new approach, is a specialized agent that executes workflows instead of using LLM-based reasoning. This agent maintains the workflow state and can handle suspension and resumption operations for long-running workflows.
 
-## Quick Start
+## Features
 
-All examples can be run using `npx tsx`:
+- **Workflow Execution**: Executes workflows defined using the `@kaibanjs/workflow` package
+- **State Management**: Maintains workflow state between executions
+- **Suspension and Resumption**: Supports workflows that can be suspended and resumed
+- **Team Compatibility**: Integrates seamlessly with the existing team system
+- **Error Handling**: Robust error handling with detailed logging
+- **Real-time Logging**: Specific logs for workflow events mixed with general team logs
 
-```bash
-# Run all examples
-npx tsx src/examples/basic-workflow-patterns.ts
-npx tsx src/examples/state-management-events.ts
-npx tsx src/examples/streaming-workflows.ts
-```
-
-## Examples Overview
-
-### 1. [Basic Workflow Patterns](./basic-workflow-patterns.md)
-
-**File**: `basic-workflow-patterns.ts`
-
-Demonstrates the fundamental workflow patterns:
-
-- **Sequential Execution** - Steps executed one after another
-- **Parallel Execution** - Multiple steps executed simultaneously
-- **Conditional Branching** - Different paths based on conditions
-- **Foreach Loops** - Processing arrays with concurrency control
-- **Nested Workflows** - Workflows within workflows
-
-**Key Learning**: Understanding the core workflow building blocks and execution patterns.
-
-```bash
-npx tsx src/examples/basic-workflow-patterns.ts
-```
-
-### 2. [State Management and Events](./state-management-events.md)
-
-**File**: `state-management-events.ts`
-
-Shows how to monitor workflow execution in real-time:
-
-- **Real-time State Monitoring** - Track workflow and step status changes
-- **Event Subscription** - Subscribe to workflow events using `watch()`
-- **Suspend and Resume** - Handle interactive workflows that require user input
-- **Comprehensive Event Tracking** - Monitor all aspects of workflow execution
-
-**Key Learning**: Building reactive applications that respond to workflow state changes.
-
-```bash
-npx tsx src/examples/state-management-events.ts
-```
-
-### 3. [Streaming Workflows](./streaming-workflows.md)
-
-**File**: `streaming-workflows.ts`
-
-Demonstrates streaming capabilities using ReadableStream:
-
-- **Basic Streaming** - Simple workflow execution with real-time event streaming
-- **Parallel Streaming** - Monitoring parallel step execution
-- **Conditional Streaming** - Streaming with conditional branching
-- **Suspendable Streaming** - Handling suspended workflows in streams
-- **Custom Stream Processing** - Processing streams with custom logic
-
-**Key Learning**: Building real-time applications with streaming workflow data.
-
-```bash
-npx tsx src/examples/streaming-workflows.ts
-```
-
-## Example Progression
-
-The examples are designed to be consumed in order:
-
-1. **Start with Basic Patterns** - Learn the fundamental concepts
-2. **Move to State Management** - Understand monitoring and events
-3. **Explore Streaming** - Build real-time applications
-
-## Common Patterns Across Examples
-
-### Workflow Creation Pattern
+## Basic Usage
 
 ```typescript
-const workflow = createWorkflow({
-  id: 'my-workflow',
-  inputSchema: z.object({
-    /* input schema */
-  }),
-  outputSchema: z.object({
-    /* output schema */
-  }),
-});
+import { Agent } from 'kaibanjs';
+import { createStep, createWorkflow } from '@kaibanjs/workflow';
+import { z } from 'zod';
 
-workflow.then(step1).then(step2);
-workflow.commit();
-```
-
-### Step Creation Pattern
-
-```typescript
-const step = createStep({
-  id: 'my-step',
-  inputSchema: z.object({
-    /* input schema */
-  }),
-  outputSchema: z.object({
-    /* output schema */
-  }),
+// Create workflow steps
+const processStep = createStep({
+  id: 'process',
+  inputSchema: z.object({ data: z.string() }),
+  outputSchema: z.object({ result: z.string() }),
   execute: async ({ inputData }) => {
-    // Step logic here
-    return result;
+    const { data } = inputData as { data: string };
+    return { result: data.toUpperCase() };
   },
 });
+
+// Create the workflow
+const workflow = createWorkflow({
+  id: 'example-workflow',
+  inputSchema: z.object({ data: z.string() }),
+  outputSchema: z.object({ result: z.string() }),
+});
+
+workflow.then(processStep);
+workflow.commit();
+
+// Create the agent using the Agent wrapper
+const agent = new Agent({
+  type: 'WorkflowDrivenAgent',
+  name: 'Workflow Agent',
+  workflow: workflow,
+});
+
+// Use the agent in a team
+// The agent will be automatically initialized when assigned to a team
 ```
 
-### Execution Pattern
+## Team Integration
+
+The `WorkflowDrivenAgent` integrates seamlessly with the existing team system:
 
 ```typescript
-const run = workflow.createRun();
-const result = await run.start({
-  inputData: {
-    /* input data */
+import { Agent, Task, Team } from 'kaibanjs';
+
+const team = new Team({
+  name: 'Workflow Team',
+  agents: [
+    new Agent({
+      type: 'WorkflowDrivenAgent',
+      name: 'Data Processor',
+      workflow: dataProcessingWorkflow,
+    }),
+    new Agent({
+      type: 'ReactChampionAgent',
+      name: 'Analyst',
+      role: 'Analyze results',
+      goal: 'Provide insights on processed data',
+      background: 'Data analysis expert',
+    }),
+  ],
+  tasks: [
+    new Task({
+      description: 'Process the input data using workflow',
+      expectedOutput: 'Processed data result',
+      agent: 'Data Processor',
+    }),
+    new Task({
+      description: 'Analyze the processed data',
+      expectedOutput: 'Analysis insights',
+      agent: 'Analyst',
+    }),
+  ],
+});
+
+// Execute the team
+const result = await team.start({ data: 'input data' });
+```
+
+## Complex Workflows
+
+The agent can handle complex workflows with multiple patterns:
+
+```typescript
+// Workflow with sequential, conditional, and parallel steps
+const addStep = createStep({
+  id: 'add',
+  inputSchema: z.object({ a: z.number(), b: z.number() }),
+  outputSchema: z.number(),
+  execute: async ({ inputData }) => {
+    const { a, b } = inputData as { a: number; b: number };
+    return a + b;
   },
 });
-```
 
-### Monitoring Pattern
-
-```typescript
-const unsubscribe = run.watch((event) => {
-  console.log('Event:', event);
-});
-```
-
-### Streaming Pattern
-
-```typescript
-const { stream, getWorkflowState } = run.stream({
-  inputData: {
-    /* input data */
+const multiplyStep = createStep({
+  id: 'multiply',
+  inputSchema: z.number(),
+  outputSchema: z.number(),
+  execute: async ({ inputData, getInitData }) => {
+    const sum = inputData as number;
+    const { a, b } = getInitData() as { a: number; b: number };
+    return sum * a * b;
   },
 });
-const events = await readStream(stream);
-const finalResult = await getWorkflowState();
+
+const evenStep = createStep({
+  id: 'even',
+  inputSchema: z.number(),
+  outputSchema: z.string(),
+  execute: async ({ inputData }) => {
+    const num = inputData as number;
+    return `even: ${num}`;
+  },
+});
+
+const finalStep = createStep({
+  id: 'final',
+  inputSchema: z.any(),
+  outputSchema: z.object({
+    sequentialResult: z.number(),
+    conditionalResult: z.string(),
+    finalResult: z.number(),
+  }),
+  execute: async ({ getStepResult }) => {
+    const sequentialResult = getStepResult('multiply') as number;
+    const conditionalResult = getStepResult('even') as string;
+    return {
+      sequentialResult,
+      conditionalResult,
+      finalResult: sequentialResult,
+    };
+  },
+});
+
+const complexWorkflow = createWorkflow({
+  id: 'complex-workflow',
+  inputSchema: z.object({ a: z.number(), b: z.number() }),
+  outputSchema: z.object({
+    sequentialResult: z.number(),
+    conditionalResult: z.string(),
+    finalResult: z.number(),
+  }),
+});
+
+// Build complex workflow: sequential -> conditional -> final
+complexWorkflow
+  .then(addStep)
+  .then(multiplyStep)
+  .branch([
+    [async ({ inputData }) => (inputData as number) % 2 === 0, evenStep],
+    [async () => true, evenStep], // fallback
+  ])
+  .then(finalStep);
+
+complexWorkflow.commit();
+
+const complexAgent = new Agent({
+  type: 'WorkflowDrivenAgent',
+  name: 'Complex Workflow Agent',
+  workflow: complexWorkflow,
+});
 ```
 
-## Key Concepts Demonstrated
+## Workflows with Suspension
 
-### 1. Type Safety
+The agent can handle workflows that suspend to require manual intervention:
 
-- Zod schemas for input/output validation
-- TypeScript integration for compile-time safety
-- Runtime validation with detailed error messages
+```typescript
+const approvalStep = createStep({
+  id: 'approval',
+  inputSchema: z.object({ data: z.string() }),
+  outputSchema: z.object({ approved: z.boolean() }),
+  suspendSchema: z.object({ reason: z.string() }),
+  resumeSchema: z.object({ approved: z.boolean() }),
+  execute: async ({ inputData, suspend, isResuming, resumeData }) => {
+    if (isResuming) {
+      return { approved: resumeData.approved };
+    }
 
-### 2. Execution Patterns
+    // Suspend for manual approval
+    await suspend({ reason: 'requires_manual_approval' });
+    return { approved: false };
+  },
+});
 
-- Sequential execution with `.then()`
-- Parallel execution with `.parallel()`
-- Conditional execution with `.branch()`
-- Loop execution with `.foreach()`, `.dowhile()`, `.dountil()`
+const approvalWorkflow = createWorkflow({
+  id: 'approval-workflow',
+  inputSchema: z.object({ data: z.string() }),
+  outputSchema: z.object({ approved: z.boolean() }),
+});
 
-### 3. Data Flow
+approvalWorkflow.then(approvalStep);
+approvalWorkflow.commit();
 
-- Data transformation with `.map()`
-- Step result access with `getStepResult()`
-- Initial data access with `getInitData()`
-
-### 4. State Management
-
-- Real-time event subscription
-- Workflow and step status tracking
-- Suspend and resume functionality
-
-### 5. Streaming
-
-- ReadableStream integration
-- Real-time event processing
-- Custom stream handling
-
-## Expected Output Structure
-
-All examples follow a consistent output pattern:
-
-```
-[timestamp] === EXAMPLE NAME ===
-[timestamp] Starting workflow execution...
-[timestamp] Step execution logs...
-[timestamp] Workflow result: { status: "completed", result: {...} }
-[timestamp] === EXAMPLE COMPLETED ===
+const approvalAgent = new Agent({
+  type: 'WorkflowDrivenAgent',
+  name: 'Approval Agent',
+  workflow: approvalWorkflow,
+});
 ```
 
-## Troubleshooting
+## State Management
 
-### Common Issues
+The agent maintains workflow state internally:
 
-1. **TypeScript Errors**: Ensure you have the latest TypeScript version
-2. **Import Errors**: Check that the workflow package is properly installed
-3. **Schema Validation Errors**: Verify input data matches the defined schemas
-4. **Stream Reading Errors**: Always use try/finally to release stream readers
+- **currentRunId**: ID of the current workflow run
+- **workflowStatus**: Current workflow status (idle, running, suspended, completed, failed)
+- **lastResult**: Last workflow result
+- **lastError**: Last workflow error
+- **metadata**: Execution metadata (iterations, times, etc.)
 
-### Debug Tips
+## Runtime Context
 
-1. **Enable Verbose Logging**: Add console.log statements in step execute functions
-2. **Check Event Flow**: Use the watch() method to monitor all events
-3. **Validate Schemas**: Ensure input/output schemas are correctly defined
-4. **Test Step by Step**: Run individual steps to isolate issues
+The agent automatically creates a runtime context that includes:
 
-## Next Steps
+- Task data (id, description, status, inputs)
+- Agent information (name)
+- Task context
 
-After completing these examples:
+This context is available to all workflow steps.
 
-1. **Build Your Own Workflows** - Apply the patterns to your use cases
-2. **Explore Advanced Features** - Check the main documentation for more features
-3. **Integrate with Your Application** - Use workflows in your existing codebase
-4. **Contribute Examples** - Share your workflow patterns with the community
+## Events and Monitoring
 
-## Additional Resources
+The agent automatically subscribes to workflow events for monitoring and logging:
 
-- [Main Documentation](../../README.md) - Complete API reference
-- [Test Files](../../run.test.ts) - Comprehensive test cases
-- [Type Definitions](../types.ts) - TypeScript type definitions
-- [Source Code](../workflow.ts) - Implementation details
+```typescript
+// The agent automatically subscribes to workflow events
+// and generates specific logs for each event:
+// - 🚀 WorkflowDrivenAgent started workflow execution
+// - ⚡ WorkflowDrivenAgent started step: [stepId]
+// - ✅ WorkflowDrivenAgent completed step: [stepId]
+// - ❌ WorkflowDrivenAgent failed step: [stepId]
+// - ✅ WorkflowDrivenAgent completed workflow execution
+// - 🏁 WorkflowDrivenAgent completed task successfully
+```
 
-## Contributing
+## Logging and Monitoring
 
-To add new examples:
+The agent generates detailed logs that integrate with the team's logging system:
 
-1. Create a new TypeScript file in this directory
-2. Follow the existing naming and structure patterns
-3. Create a corresponding README.md file
-4. Update this main README.md to include the new example
-5. Ensure the example can be run with `npx tsx`
+- **Real-time logs**: Each workflow event is logged immediately
+- **Specific logs**: `WorkflowAgentStatusUpdate` category to distinguish from other agents
+- **Backward compatibility**: `ReactChampionAgent` logs maintain their original format
+- **Integration with workflowLogs**: Logs appear mixed in the general team flow
 
-## License
+## Error Handling
 
-MIT - Same as the main package
+The agent handles different types of errors:
+
+- **Workflow Failed**: When the workflow fails during execution
+- **Workflow Suspended**: When the workflow suspends for manual intervention
+- **Execution Error**: Errors during workflow execution
+- **Step Failed**: When a specific workflow step fails
+
+## Main Methods
+
+### `workOnTask(task, inputs, context)`
+
+Executes the assigned workflow with task inputs.
+
+### `workOnTaskResume(task)`
+
+Resumes a suspended workflow.
+
+### `workOnFeedback(task, feedbackList, context)`
+
+Not applicable for workflow-based agents (returns error).
+
+### `reset()`
+
+Resets the agent and workflow state.
+
+### `getCleanedAgent()`
+
+Returns a clean version of the agent without sensitive information.
+
+## Test Examples
+
+```typescript
+// Basic team integration test
+it('should work with teams', async () => {
+  const task = new Task({
+    description: 'Execute the workflow',
+    expectedOutput: 'The workflow result',
+    agent: workflowAgent,
+  });
+
+  const team = new Team({
+    name: 'Test Team',
+    agents: [workflowAgent],
+    tasks: [task],
+  });
+
+  const result = await team.start({ a: 1, b: 2 });
+  expect(result.result).toBe(3);
+});
+
+// Real-time logging test
+it('should log workflow execution steps in real-time', async () => {
+  const team = new Team({
+    name: 'Logging Team',
+    agents: [workflowAgent],
+    tasks: [task],
+  });
+
+  const result = await team.start({ data: 'test' });
+
+  // Verify workflow logs
+  const workflowLogs = team.store.getState().workflowLogs;
+  const workflowAgentLogs = workflowLogs.filter(
+    (log) => log.logType === 'WorkflowAgentStatusUpdate'
+  );
+
+  expect(workflowAgentLogs.length).toBeGreaterThan(0);
+});
+```
+
+## Compatibility
+
+The `WorkflowDrivenAgent` is fully compatible with:
+
+- Existing team system
+- Logging and monitoring system
+- Error handling system
+- Agent state system
+- Backward compatibility with `ReactChampionAgent`
+
+## Dependencies
+
+- `@kaibanjs/workflow`: For workflow definition and execution
+- `zod`: For schema validation
+- Existing store system for team integration
+
+## Differences with ReactChampionAgent
+
+- **No LLM**: Does not use LLM-based reasoning
+- **No role/goal/background**: Focuses solely on workflow execution
+- **Specific logging**: Logs categorized as `WorkflowAgentStatusUpdate`
+- **Workflow state**: Maintains internal workflow state
+- **Suspension handling**: Native support for suspendible workflows
