@@ -67,8 +67,16 @@ jobs:
           git config user.name "Dariel Noel"
           git config user.email "darielnoel@gmail.com"
 
-      - name: Install dependencies
-        run: npm install --also=dev --ignore-scripts
+      - name: Install dependencies (with detailed logging)
+        run: |
+          echo "=== Before npm install ==="
+          echo "Files in packages/tools:"
+          ls -la packages/tools/ 2>&1 | head -20 || echo "Directory does not exist"
+          echo "=== Running npm install with verbose logging ==="
+          npm install --also=dev --loglevel=verbose 2>&1 | tee npm-install.log || true
+          echo "=== npm install completed ==="
+          echo "=== Checking for any postinstall scripts that ran ==="
+          grep -i "postinstall\|prepare\|preinstall" npm-install.log | tail -20 || echo "No postinstall scripts found in log"
 
       - name: Debug - Check packages/tools after npm install
         run: |
@@ -77,6 +85,10 @@ jobs:
           ls -la packages/tools/ 2>&1 || echo "Directory does not exist"
           echo "Git status of packages/tools:"
           git status packages/tools/ 2>&1 || echo "No status"
+          echo "=== Checking if packages/tools is tracked by git ==="
+          git ls-files packages/tools/ | head -10 || echo "No tracked files found"
+          echo "=== Checking git diff for packages/tools ==="
+          git diff packages/tools/ | head -50 || echo "No diff found"
 
       - name: Build production version
         run: npm run build
