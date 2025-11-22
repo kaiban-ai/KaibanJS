@@ -23,6 +23,7 @@ jobs:
         with:
           ref: 'main' # Ensures the main branch is checked out
           token: ${{ secrets.PAT_GITHUB }}
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
