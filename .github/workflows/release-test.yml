@@ -73,7 +73,7 @@ jobs:
           echo "Files in packages/tools:"
           ls -la packages/tools/ 2>&1 | head -20 || echo "Directory does not exist"
           echo "=== Running npm install with verbose logging ==="
-          npm install --also=dev 
+          npm ci
           echo "=== npm install completed ==="
           echo "=== Checking for any postinstall scripts that ran ==="
           grep -i "postinstall\|prepare\|preinstall" npm-install.log | tail -20 || echo "No postinstall scripts found in log"
