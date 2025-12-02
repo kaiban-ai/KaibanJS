@@ -26,7 +26,7 @@
     "@langchain/core": "^0.3.58",
     "@langchain/openai": "^0.5.13",
     "langchain": "^0.3.28",
-    "p-queue": "^6.6.2",
+    "p-queue": "^8.1.0",
     "zod": "^3.22.4",
     "zustand": "4.5.2"
   },
