@@ -8,5 +8,7 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   outDir: 'dist',
-  external: ['zustand', 'p-queue'],
+  // Bundle p-queue and zustand to ensure compatibility
+  // in both standalone usage and when used within kaibanjs
+  noExternal: ['p-queue', 'zustand'],
 });
