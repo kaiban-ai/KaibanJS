@@ -88,7 +88,7 @@
     "nextjs"
   ],
   "dependencies": {
-    "@kaibanjs/workflow": "^0.1.5",
+    "@kaibanjs/workflow": "^0.1.7",
     "@langchain/anthropic": "^0.3.19",
     "@langchain/community": "0.3.41",
     "@langchain/core": "^0.3.66",
