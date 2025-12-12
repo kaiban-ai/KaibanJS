@@ -9,6 +9,7 @@ import {
   WorkflowLog,
   WorkflowStatusLog,
 } from '../types/logs';
+import { logger } from '../utils/logger';
 
 export type DependencyResult = {
   taskId: string;
@@ -46,6 +47,83 @@ export const subscribeDeterministicExecution = (teamStore: TeamStore): void => {
         t.agent.id === currentTask.agent.id &&
         t.status === TASK_STATUS_enum.DOING
     );
+  };
+
+  /**
+   * Get structured outputs from dependency tasks that have outputSchema defined.
+   * Returns a map of taskId -> structured result
+   */
+  const _getStructuredOutputsFromDependencies = (
+    teamStoreState: CombinedStoresState,
+    task: Task
+  ): Record<string, unknown> => {
+    const logs = teamStoreState.workflowLogs;
+    const structuredOutputs: Record<string, unknown> = {};
+
+    // Get all dependencies for the current task
+    const dependencies = contextDepGraph.dependantsOf(task.id);
+
+    for (const dependencyId of dependencies) {
+      const dependency: Task | undefined = teamStoreState.tasks.find(
+        (t) => t.id === dependencyId
+      );
+
+      if (!dependency || !dependency.outputSchema) {
+        continue; // Skip if no outputSchema defined
+      }
+
+      // Find last log for the dependency
+      const dependencyResultsLogs = [...logs]
+        .reverse()
+        .find(
+          (l) =>
+            l.logType === 'TaskStatusUpdate' &&
+            (l as TaskStatusLog).taskStatus === TASK_STATUS_enum.DONE &&
+            (l as TaskStatusLog).task.id === dependencyId
+        ) as TaskCompletionLog | undefined;
+
+      if (!dependencyResultsLogs) {
+        continue;
+      }
+
+      const result = dependencyResultsLogs.metadata.result;
+      // If result is already an object and matches the schema, use it directly
+      if (typeof result === 'object' && result !== null) {
+        // Validate against schema if possible
+        try {
+          const validated = dependency.outputSchema.parse(result);
+          structuredOutputs[dependencyId] = validated;
+          logger.debug(
+            `Extracted structured output from task ${dependencyId} for task ${task.id}`
+          );
+        } catch (error) {
+          console.log(`Validation failed`);
+          // If validation fails, still pass the result but log a warning
+          logger.warn(
+            `Output from task ${dependencyId} does not match its outputSchema, passing as-is`,
+            error
+          );
+          structuredOutputs[dependencyId] = result;
+        }
+      } else if (typeof result === 'string') {
+        // Try to parse string result as JSON
+        try {
+          const parsed = JSON.parse(result);
+          const validated = dependency.outputSchema.parse(parsed);
+          structuredOutputs[dependencyId] = validated;
+          logger.debug(
+            `Parsed and extracted structured output from task ${dependencyId} for task ${task.id}`
+          );
+        } catch (error) {
+          logger.warn(
+            `Could not parse or validate string result from task ${dependencyId}`,
+            error
+          );
+        }
+      }
+    }
+
+    return structuredOutputs;
   };
 
   /**
@@ -118,8 +196,69 @@ export const subscribeDeterministicExecution = (teamStore: TeamStore): void => {
   ): Promise<void> => {
     const context = _getContextForTask(teamStoreState, task);
 
+    // Get structured outputs from dependencies
+    const structuredOutputs = _getStructuredOutputsFromDependencies(
+      teamStoreState,
+      task
+    );
+
+    // Merge team inputs with structured outputs
+    // Priority: structured outputs > team inputs (for keys that exist in both)
+    const hasStructuredOutputs = Object.keys(structuredOutputs).length > 0;
+    let mergedInputs: Record<string, unknown> | undefined = undefined;
+
+    if (hasStructuredOutputs) {
+      mergedInputs = {
+        ...teamStoreState.inputs,
+        ...structuredOutputs,
+      };
+
+      // Special handling for WorkflowDrivenAgent with single dependency:
+      // If there's only one dependency and the agent is WorkflowDrivenAgent,
+      // try to pass the output directly at root level if the workflow's inputSchema matches
+      const dependencyKeys = Object.keys(structuredOutputs);
+      if (
+        dependencyKeys.length === 1 &&
+        task.agent.type === 'WorkflowDrivenAgent'
+      ) {
+        const dependencyOutput = structuredOutputs[dependencyKeys[0]];
+        const workflow = (task.agent.agentInstance as any).workflow;
+
+        if (workflow && workflow.inputSchema) {
+          try {
+            // Try to validate the dependency output against workflow's inputSchema
+            workflow.inputSchema.parse(dependencyOutput);
+            // If validation succeeds, merge the output directly at root level
+            mergedInputs = {
+              ...teamStoreState.inputs,
+              ...structuredOutputs,
+              ...(dependencyOutput as Record<string, unknown>),
+            };
+            logger.debug(
+              `Passing structured output directly to workflow for task ${task.id}`
+            );
+          } catch (_error) {
+            // If validation fails, keep the original structure (under taskId)
+            logger.debug(
+              `Workflow inputSchema doesn't match dependency output, keeping taskId structure for task ${task.id}`
+            );
+          }
+        }
+      }
+    }
+
     teamStoreState.updateTaskStatus(task.id, TASK_STATUS_enum.DOING);
-    return await teamStoreState.workOnTask(task.agent, task, context);
+
+    if (mergedInputs) {
+      return await teamStoreState.workOnTask(
+        task.agent,
+        task,
+        context,
+        mergedInputs
+      );
+    } else {
+      return await teamStoreState.workOnTask(task.agent, task, context);
+    }
   };
 
   const _resumeTask = async (

@@ -313,7 +313,12 @@ const createTeamStore = (
       }));
     },
 
-    workOnTask: async (agent: Agent, task: Task, context: string) => {
+    workOnTask: async (
+      agent: Agent,
+      task: Task,
+      context: string,
+      customInputs?: Record<string, unknown>
+    ) => {
       if (task && agent) {
         logger.debug(`Task: ${getTaskTitleForLogs(task)} starting...`);
         task.status = TASK_STATUS_enum.DOING;
@@ -334,10 +339,12 @@ const createTeamStore = (
           };
         });
 
-        task.inputs = get().inputs;
+        // Use customInputs if provided, otherwise use team inputs
+        const taskInputs = customInputs || get().inputs;
+        task.inputs = taskInputs;
         const interpolatedTaskDescription = interpolateTaskDescriptionV2(
           task.description,
-          get().inputs,
+          taskInputs,
           get().getTaskResults()
         );
         task.interpolatedTaskDescription = interpolatedTaskDescription;
@@ -355,7 +362,7 @@ const createTeamStore = (
             currentContext
           );
         } else {
-          await agent.workOnTask(task, get().inputs, currentContext);
+          await agent.workOnTask(task, taskInputs, currentContext);
         }
       }
     },

@@ -6,6 +6,7 @@ import mixedTeam from '../teams/workflow_driven/mixed_team';
 import langchainAiSdkTeam from '../teams/workflow_driven/langchain_ai_sdk_workflow';
 import langchainOnlyTeam from '../teams/workflow_driven/langchain_only_workflow';
 import aiSdkOnlyTeam from '../teams/workflow_driven/ai_sdk_only_workflow';
+import structuredOutputChainTeam from '../teams/workflow_driven/structured_output_chain';
 
 import '../index.css';
 
@@ -299,6 +300,66 @@ This example demonstrates a pure Vercel AI SDK implementation for content genera
 
 **Input:** Content topic (e.g., "AI in healthcare")
 **Expected Output:** Enhanced content with web research, analysis, quality score, source accuracy, key themes, and improvement suggestions
+        `,
+      },
+    },
+  },
+};
+
+// Structured output chain demonstration
+export const StructuredOutputChain = {
+  args: {
+    team: structuredOutputChainTeam,
+    title: 'Structured Output Chain: ReactChampion → WorkflowDriven',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+## Structured Output Chain: ReactChampion → WorkflowDriven
+
+This example demonstrates the new feature that allows passing structured outputs from one task to another, specifically from a ReactChampionAgent with \`outputSchema\` to a WorkflowDrivenAgent.
+
+### Workflow Overview
+1. **Task 1 - Text Analyzer (ReactChampionAgent)**:
+   - Analyzes input text using LLM
+   - Extracts structured information: title, summary, keywords, word count, sentiment, topics
+   - Returns validated output using \`outputSchema\` (Zod schema)
+   - Ensures type-safe, structured data output
+
+2. **Task 2 - Analysis Processor (WorkflowDrivenAgent)**:
+   - Automatically receives the structured output from Task 1 as input
+   - Validates the analysis data
+   - Enriches the analysis with metadata and recommendations
+   - Processes through a deterministic workflow
+
+### Key Features Demonstrated
+- **Structured Output Passing**: Output from Task 1 is automatically passed to Task 2
+- **Schema Validation**: Both tasks use Zod schemas for type safety
+- **Type-Safe Chaining**: The workflow's \`inputSchema\` matches the ReactChampion's \`outputSchema\`
+- **Automatic Input Mapping**: The system automatically maps the structured output to workflow inputs
+- **Seamless Integration**: Works seamlessly between different agent types
+
+### Workflow Steps (Task 2)
+- \`validate-analysis\`: Validates the structured analysis from Task 1
+- \`enrich-analysis\`: Adds metadata, recommendations, and processing timestamp
+
+### Technical Details
+- **Output Schema (Task 1)**: \`textAnalysisSchema\` with title, summary, keywords, wordCount, sentiment, topics
+- **Input Schema (Task 2)**: Matches \`textAnalysisSchema\` for seamless data flow
+- **Automatic Mapping**: When schemas match, the output is passed directly to the workflow
+- **Fallback Behavior**: If schemas don't match, output is passed under taskId key
+
+### Key Benefits
+- **Type Safety**: Full end-to-end type safety from LLM output to workflow input
+- **No Manual Mapping**: Automatic passing of structured outputs between tasks
+- **Deterministic Processing**: Workflow ensures consistent processing of LLM outputs
+- **Error Prevention**: Schema validation prevents type mismatches
+
+**Input:** Sample text about AI and technology
+**Expected Output:** 
+1. Structured analysis (title, summary, keywords, sentiment, topics)
+2. Enriched analysis with validation status, metadata, and recommendations
         `,
       },
     },

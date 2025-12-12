@@ -91,6 +91,191 @@ const team = new Team({
 const result = await team.start({ data: 'input data' });
 ```
 
+## Structured Output Chaining
+
+When a `WorkflowDrivenAgent` is preceded by another agent (like `ReactChampionAgent`) in a team, the system can automatically pass structured outputs from the previous task as inputs to the workflow. This feature enables seamless data flow between different agent types.
+
+### How It Works
+
+1. **Previous Task with `outputSchema`**: The preceding task must have an `outputSchema` defined (Zod schema)
+2. **Automatic Extraction**: The system automatically extracts and validates the structured output from the previous task
+3. **Input Mapping**: The structured output is merged with team inputs and passed to the `WorkflowDrivenAgent`
+4. **Schema Matching**: If the workflow's `inputSchema` matches the previous task's `outputSchema`, the output is passed directly at the root level
+
+### Example: ReactChampion → WorkflowDriven
+
+```typescript
+import { Agent, Task, Team } from 'kaibanjs';
+import { createStep, createWorkflow } from '@kaibanjs/workflow';
+import { z } from 'zod';
+
+// Define output schema for ReactChampionAgent task
+const textAnalysisSchema = z.object({
+  title: z.string(),
+  summary: z.string(),
+  keywords: z.array(z.string()),
+  wordCount: z.number(),
+  sentiment: z.enum(['positive', 'neutral', 'negative']),
+  topics: z.array(z.string()),
+});
+
+// ReactChampionAgent for text analysis
+const textAnalyzerAgent = new Agent({
+  name: 'Text Analyzer',
+  role: 'Text Analysis Expert',
+  goal: 'Analyze text and extract structured information',
+  background: 'Expert in NLP and text analysis',
+  type: 'ReactChampionAgent',
+});
+
+// Task 1: Analyze text with structured output
+const analyzeTextTask = new Task({
+  description: 'Analyze the following text: {text}',
+  expectedOutput: 'Structured analysis with title, summary, keywords, etc.',
+  outputSchema: textAnalysisSchema, // ⚠️ Required for structured output passing
+  agent: textAnalyzerAgent,
+});
+
+// Workflow that processes the structured analysis
+const validateStep = createStep({
+  id: 'validate',
+  inputSchema: textAnalysisSchema, // ⚠️ Must match the outputSchema above
+  outputSchema: z.object({
+    isValid: z.boolean(),
+    analysis: textAnalysisSchema,
+  }),
+  execute: async ({ inputData }) => {
+    const { title, summary, keywords } = inputData;
+    return {
+      isValid: title.length > 0 && summary.length > 0 && keywords.length > 0,
+      analysis: inputData,
+    };
+  },
+});
+
+const processingWorkflow = createWorkflow({
+  id: 'processing-workflow',
+  inputSchema: textAnalysisSchema, // ⚠️ Must match the outputSchema of Task 1
+  outputSchema: z.object({
+    isValid: z.boolean(),
+    analysis: textAnalysisSchema,
+  }),
+});
+
+processingWorkflow.then(validateStep);
+processingWorkflow.commit();
+
+// WorkflowDrivenAgent for processing
+const processorAgent = new Agent({
+  type: 'WorkflowDrivenAgent',
+  name: 'Analysis Processor',
+  workflow: processingWorkflow,
+});
+
+// Task 2: Process the structured output from Task 1
+const processAnalysisTask = new Task({
+  description: 'Process and validate the text analysis',
+  expectedOutput: 'Validated analysis result',
+  agent: processorAgent,
+});
+
+// Create team - Task 2 will automatically receive Task 1's output
+const team = new Team({
+  name: 'Structured Output Chain Team',
+  agents: [textAnalyzerAgent, processorAgent],
+  tasks: [analyzeTextTask, processAnalysisTask],
+  inputs: {
+    text: 'Sample text to analyze',
+  },
+});
+```
+
+### Constraints and Disclaimers
+
+⚠️ **Important Considerations When WorkflowDrivenAgent is Preceded by Another Agent:**
+
+1. **`outputSchema` Requirement**:
+
+   - The preceding task **MUST** have an `outputSchema` defined
+   - Without `outputSchema`, the output will be passed as a string in the context, not as structured input
+   - The `outputSchema` must be a valid Zod schema
+
+2. **Schema Matching**:
+
+   - For optimal behavior, the workflow's `inputSchema` should match the previous task's `outputSchema`
+   - When schemas match, the output is passed directly at the root level
+   - When schemas don't match, the output is passed under the task ID key (e.g., `{ [taskId]: output }`)
+
+3. **Multiple Dependencies**:
+
+   - If a task has multiple dependencies with `outputSchema`, all outputs are merged
+   - Outputs are passed under their respective task IDs
+   - The workflow must handle multiple inputs or use `getInitData()` to access specific task outputs
+
+4. **Input Precedence**:
+
+   - Structured outputs from dependencies have **higher precedence** than team inputs
+   - If both team inputs and structured outputs have the same keys, structured outputs will override team inputs
+   - This ensures that task outputs take priority over initial team configuration
+
+5. **Validation**:
+
+   - The system validates outputs against their `outputSchema` before passing them
+   - If validation fails, the original result is still passed but a warning is logged
+   - Invalid outputs may cause the workflow to fail if strict validation is required
+
+6. **Type Safety**:
+
+   - While the system attempts to maintain type safety, runtime validation is performed
+   - Always ensure your workflow's `inputSchema` can handle the actual output structure
+   - Consider using Zod's `.passthrough()` or `.catchall()` for flexible schemas
+
+7. **Backward Compatibility**:
+
+   - If no `outputSchema` is defined, the system falls back to the original behavior
+   - Outputs are passed as strings in the context, not as structured inputs
+   - Existing teams without `outputSchema` continue to work as before
+
+8. **Error Handling**:
+   - If a dependency task fails, its output won't be available
+   - The workflow will receive team inputs only (or other successful dependencies)
+   - Always handle cases where expected structured inputs might be missing
+
+### Best Practices
+
+1. **Always Define `outputSchema`**: When you want structured output passing, always define `outputSchema` on the preceding task
+2. **Match Schemas**: Design your workflow's `inputSchema` to match the previous task's `outputSchema` for seamless integration
+3. **Handle Missing Inputs**: Use optional fields or default values in your workflow to handle cases where structured inputs might not be available
+4. **Test Schema Compatibility**: Verify that your schemas are compatible before deploying to production
+5. **Use Descriptive Task IDs**: When accessing outputs from multiple dependencies, use clear task IDs to avoid confusion
+
+### Example: Handling Multiple Dependencies
+
+```typescript
+// If you have multiple dependencies, access them via task IDs
+const multiInputStep = createStep({
+  id: 'process-multi',
+  inputSchema: z.object({
+    task1Output: z.object({ data: z.string() }),
+    task2Output: z.object({ count: z.number() }),
+  }),
+  outputSchema: z.object({ result: z.string() }),
+  execute: async ({ inputData, getInitData }) => {
+    // Access specific task outputs from merged inputs
+    const allInputs = getInitData() as Record<string, unknown>;
+    const task1Id = 'task-1-id'; // Your actual task ID
+    const task2Id = 'task-2-id'; // Your actual task ID
+
+    const task1Output = allInputs[task1Id] as { data: string };
+    const task2Output = allInputs[task2Id] as { count: number };
+
+    return {
+      result: `${task1Output.data} - ${task2Output.count}`,
+    };
+  },
+});
+```
+
 ## Complex Workflows
 
 The agent can handle complex workflows with multiple patterns:

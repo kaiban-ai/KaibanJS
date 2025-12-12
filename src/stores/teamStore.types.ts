@@ -114,7 +114,12 @@ export interface TeamStoreActions {
   handleWorkflowError: (error: Error) => void;
   handleWorkflowBlocked: (task: Task, error: Error) => void;
   handleWorkflowAborted: (task: Task, error: Error) => void;
-  workOnTask: (agent: Agent, task: Task, context: string) => Promise<void>;
+  workOnTask: (
+    agent: Agent,
+    task: Task,
+    context: string,
+    customInputs?: Record<string, unknown>
+  ) => Promise<void>;
   workOnTaskResume: (agent: Agent, task: Task) => Promise<void>;
   deriveContextFromLogs: (logs: WorkflowLog[], currentTaskId: string) => string;
   provideFeedback: (taskId: string, feedbackContent: string) => Promise<void>;
