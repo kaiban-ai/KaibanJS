@@ -59,21 +59,25 @@ Extraction y Validation están fusionados en un solo agente/task (como en sourci
 ## 4. Tasks (acciones y lógica) – implementación actual
 
 - **Task 0 – Get card and move to doing** (Kaiban Card Sync Agent, tools MCP)
+
   - Input: `card_id`, `board_id`, `team_id`, `agent_id`, `agent_name` (del team).
   - Acción: Llamar `get_card(card_id)`, extraer `description`; si column_key es `todo`, llamar `move_card` a `doing` y opcionalmente `create_card_activities`.
   - Output: `userMessage` = texto de la card (inquiry). Sirve de input al siguiente task.
 
 - **Task 1 – Extract and validate inquiry**
+
   - Input: `userMessage` (del Task 0).
   - Acción: Extraer origen, destino, fechas, pax, etc.; validar obligatorios; devolver `valid`, `missingFields?`, `validationMessage?`.
   - Output: Objeto estructurado + validación.
 
 - **Task 2 – Check availability and apply pricing**
+
   - Input: Resultado del Task 1.
   - Acción: Si válido, llamar tools mock (disponibilidad + pricing); si no válido, no llamar tools. Resumir disponibilidad y precio.
   - Output: Disponibilidad (sí/no), precio total, desglose.
 
 - **Task 3 – Generate quote**
+
   - Input: Inquiry + resultado Task 2.
   - Acción: Redactar quote en texto claro o mensaje pidiendo datos faltantes / disponibilidad no confirmada.
   - Output: Texto de la cotización listo para el cliente.
@@ -127,10 +131,12 @@ Implementación: un solo Team secuencial en `agent.ts` con 5 tasks y 4 agents (K
 ## 7. Datos mock
 
 - **Availability:**
+
   - Por ejemplo: 2–3 rutas fijas (LHR–MIA, JFK–LAX, …) con fechas “válidas” en un rango; el resto “no disponible” o “solicitar fechas alternativas”.
   - Respuesta mock: `available`, `availableSeats`, 1–2 `flightOptions` con fecha y vuelo ficticio.
 
 - **Pricing:**
+
   - Por ruta: precio base por pax (ej. 450, 520, 600 USD).
   - Tramos de grupo: 10–19 pax → -5 %, 20–49 → -10 %, 50+ → -15 %.
   - Salida: `totalPrice`, `pricePerPax`, `discountApplied`, `currency`.
