@@ -2,6 +2,135 @@ import { Agent, Task, Team } from 'kaibanjs';
 import { createStep, createWorkflow } from '@kaibanjs/workflow';
 import { z } from 'zod';
 
+/**
+ * ============================================================================
+ * VISUAL REPRESENTATION OF SCHEMA CHAINING
+ * ============================================================================
+ *
+ * This example demonstrates how the outputSchema of a task processed by a
+ * ReactChampionAgent automatically chains with the inputSchema of a workflow
+ * from a task processed by a WorkflowDrivenAgent within the same Team.
+ *
+ * ┌─────────────────────────────────────────────────────────────────────────┐
+ * │                           TEAM EXECUTION FLOW                           │
+ * └─────────────────────────────────────────────────────────────────────────┘
+ *
+ *
+ * ┌─────────────────────────────────────────────────────────────────────────┐
+ * │  TASK 1: analyzeTextTask                                                │
+ * │  Agent: ReactChampionAgent (textAnalyzerAgent)                          │
+ * └─────────────────────────────────────────────────────────────────────────┘
+ *                              │
+ *                              │ Input: { text: "..." }
+ *                              ▼
+ *         ┌─────────────────────────────────────┐
+ *         │   ReactChampionAgent Processing      │
+ *         │   - LLM analyzes text               │
+ *         │   - Extracts structured data        │
+ *         │   - Validates against outputSchema  │
+ *         └─────────────────────────────────────┘
+ *                              │
+ *                              │ Output (Validated)
+ *                              ▼
+ *         ┌─────────────────────────────────────────────────────────────┐
+ *         │  outputSchema: textAnalysisSchema                          │
+ *         │  ┌───────────────────────────────────────────────────────┐ │
+ *         │  │ {                                                     │ │
+ *         │  │   title: string                                      │ │
+ *         │  │   summary: string                                    │ │
+ *         │  │   keywords: string[]                                 │ │
+ *         │  │   wordCount: number                                  │ │
+ *         │  │   sentiment: 'positive' | 'neutral' | 'negative'    │ │
+ *         │  │   topics: string[]                                  │ │
+ *         │  │ }                                                     │ │
+ *         │  └───────────────────────────────────────────────────────┘ │
+ *         └─────────────────────────────────────────────────────────────┘
+ *                              │
+ *                              │ ═══════════════════════════════════════
+ *                              │  AUTOMATIC SCHEMA CHAINING
+ *                              │  (System validates & passes data)
+ *                              │ ═══════════════════════════════════════
+ *                              ▼
+ *         ┌─────────────────────────────────────────────────────────────┐
+ *         │  inputSchema: textAnalysisSchema (Workflow Level)           │
+ *         │  ┌───────────────────────────────────────────────────────┐ │
+ *         │  │ {                                                     │ │
+ *         │  │   title: string                                      │ │
+ *         │  │   summary: string                                    │ │
+ *         │  │   keywords: string[]                                 │ │
+ *         │  │   wordCount: number                                  │ │
+ *         │  │   sentiment: 'positive' | 'neutral' | 'negative'    │ │
+ *         │  │   topics: string[]                                  │ │
+ *         │  │ }                                                     │ │
+ *         │  └───────────────────────────────────────────────────────┘ │
+ *         └─────────────────────────────────────────────────────────────┘
+ *                              │
+ *                              ▼
+ * ┌─────────────────────────────────────────────────────────────────────────┐
+ * │  TASK 2: processAnalysisTask                                            │
+ * │  Agent: WorkflowDrivenAgent (analysisProcessorAgent)                   │
+ * └─────────────────────────────────────────────────────────────────────────┘
+ *                              │
+ *                              │ Workflow receives validated input
+ *                              ▼
+ *         ┌─────────────────────────────────────┐
+ *         │  STEP 1: validateAnalysisStep       │
+ *         │  inputSchema: textAnalysisSchema    │
+ *         │  ─────────────────────────────────  │
+ *         │  • Validates analysis data          │
+ *         │  • Checks completeness              │
+ *         │  • Generates validation notes       │
+ *         └─────────────────────────────────────┘
+ *                              │
+ *                              │ Output: { isValid, analysis, validationNotes }
+ *                              ▼
+ *         ┌─────────────────────────────────────┐
+ *         │  STEP 2: enrichAnalysisStep         │
+ *         │  ─────────────────────────────────  │
+ *         │  • Adds metadata (timestamp, counts) │
+ *         │  • Generates recommendations        │
+ *         │  • Enriches analysis data            │
+ *         └─────────────────────────────────────┘
+ *                              │
+ *                              │ Final Output
+ *                              ▼
+ *         ┌─────────────────────────────────────────────────────────────┐
+ *         │  Final Result:                                               │
+ *         │  {                                                           │
+ *         │    enrichedAnalysis: textAnalysisSchema,                     │
+ *         │    metadata: { processedAt, keywordCount, topicCount, ... }, │
+ *         │    recommendations: string[]                                 │
+ *         │  }                                                           │
+ *         └─────────────────────────────────────────────────────────────┘
+ *
+ *
+ * ════════════════════════════════════════════════════════════════════════
+ * KEY FEATURES OF SCHEMA CHAINING:
+ * ════════════════════════════════════════════════════════════════════════
+ *
+ * 1. SCHEMA MATCHING:
+ *    • Task 1's outputSchema (textAnalysisSchema) exactly matches
+ *      Task 2's workflow inputSchema
+ *    • When schemas match, the output is passed directly to the
+ *      workflow without requiring manual transformation
+ *
+ * 2. AUTOMATIC VALIDATION:
+ *    • The system validates Task 1's output against its outputSchema
+ *    • Then validates that it matches the workflow's inputSchema
+ *    • If validation fails, the output is passed under the taskId key
+ *
+ * 3. DATA FLOW:
+ *    • Task 1 output → Validation → Workflow inputSchema → Step 1 inputSchema
+ *    • Data flows in a type-safe manner through the entire pipeline
+ *
+ * 4. NO MANUAL CONFIGURATION:
+ *    • No manual data mapping is required
+ *    • The system automatically detects the dependency between tasks
+ *    • Chaining occurs when Task 2 depends on Task 1
+ *
+ * ════════════════════════════════════════════════════════════════════════
+ */
+
 // ============================================
 // STEP 1: ReactChampionAgent with outputSchema
 // ============================================
@@ -196,7 +325,6 @@ const team = new Team({
   },
   env: {
     OPENAI_API_KEY: import.meta.env.VITE_OPENAI_API_KEY,
-    ANTHROPIC_API_KEY: import.meta.env.VITE_ANTHROPIC_API_KEY,
   },
   logLevel: 'info',
 });
