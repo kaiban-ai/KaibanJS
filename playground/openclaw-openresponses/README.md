@@ -39,18 +39,20 @@ The server listens on `http://localhost:3100` (or the `PORT` from `.env`).
 ## Endpoints
 
 | Method | Path            | Description                           |
-|--------|-----------------|---------------------------------------|
+| ------ | --------------- | ------------------------------------- |
 | GET    | `/health`       | Health check (no auth)                |
 | POST   | `/v1/responses` | OpenResponses API (Bearer token auth) |
 
 ## Test with curl
 
 **Health (no auth):**
+
 ```bash
 curl -s http://localhost:3100/health
 ```
 
 **Non-streaming (replace `YOUR_SECRET` with `KAIBAN_OPENRESPONSES_SECRET`):**
+
 ```bash
 curl -s -X POST http://localhost:3100/v1/responses \
   -H "Authorization: Bearer YOUR_SECRET" \
@@ -59,6 +61,7 @@ curl -s -X POST http://localhost:3100/v1/responses \
 ```
 
 **Streaming:**
+
 ```bash
 curl -N -X POST http://localhost:3100/v1/responses \
   -H "Authorization: Bearer YOUR_SECRET" \
@@ -90,27 +93,27 @@ Add a top-level `models` section (or merge into your existing one):
 
 ```json5
 {
-  "models": {
-    "mode": "merge",
-    "providers": {
-      "kaiban-adapter": {
-        "baseUrl": "http://localhost:3100/v1",
-        "apiKey": "YOUR_KAIBAN_OPENRESPONSES_SECRET_VALUE",
-        "api": "openai-responses",
-        "models": [
+  models: {
+    mode: 'merge',
+    providers: {
+      'kaiban-adapter': {
+        baseUrl: 'http://localhost:3100/v1',
+        apiKey: 'YOUR_KAIBAN_OPENRESPONSES_SECRET_VALUE',
+        api: 'openai-responses',
+        models: [
           {
-            "id": "kaiban",
-            "name": "KaibanJS Team",
-            "reasoning": false,
-            "input": ["text"],
-            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
-            "contextWindow": 128000,
-            "maxTokens": 32000
-          }
-        ]
-      }
-    }
-  }
+            id: 'kaiban',
+            name: 'KaibanJS Team',
+            reasoning: false,
+            input: ['text'],
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+            contextWindow: 128000,
+            maxTokens: 32000,
+          },
+        ],
+      },
+    },
+  },
 }
 ```
 
@@ -118,13 +121,13 @@ Replace `YOUR_KAIBAN_OPENRESPONSES_SECRET_VALUE` with the same value as `KAIBAN_
 
 If the adapter runs on a different host, change `baseUrl` to the adapter's IP/hostname (e.g. `http://192.168.1.10:3100/v1`). The URL **must** include `/v1`; OpenClaw appends `/responses` automatically.
 
-| Key | Required | Description |
-|-----|----------|-------------|
-| `models.mode` | Yes | Use `"merge"` to add this provider alongside the existing catalog. |
-| `baseUrl` | Yes | Adapter base URL including `/v1`. |
-| `apiKey` | Yes | Same value as `KAIBAN_OPENRESPONSES_SECRET`. Supports env substitution: `"${KAIBAN_OPENRESPONSES_SECRET}"`. |
-| `api` | Yes | Must be `"openai-responses"` for the OpenResponses API. |
-| `models[].id` | Yes | Model id used in the model reference: `kaiban-adapter/<id>`. |
+| Key           | Required | Description                                                                                                 |
+| ------------- | -------- | ----------------------------------------------------------------------------------------------------------- |
+| `models.mode` | Yes      | Use `"merge"` to add this provider alongside the existing catalog.                                          |
+| `baseUrl`     | Yes      | Adapter base URL including `/v1`.                                                                           |
+| `apiKey`      | Yes      | Same value as `KAIBAN_OPENRESPONSES_SECRET`. Supports env substitution: `"${KAIBAN_OPENRESPONSES_SECRET}"`. |
+| `api`         | Yes      | Must be `"openai-responses"` for the OpenResponses API.                                                     |
+| `models[].id` | Yes      | Model id used in the model reference: `kaiban-adapter/<id>`.                                                |
 
 ### Step 2 — Allowlist the model and add an agent
 
@@ -132,17 +135,17 @@ If the adapter runs on a different host, change `baseUrl` to the adapter's IP/ho
 
 ```json5
 {
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "kaiban-adapter/kaiban"
+  agents: {
+    defaults: {
+      model: {
+        primary: 'kaiban-adapter/kaiban',
       },
-      "models": {
-        "kaiban-adapter/kaiban": { "alias": "KaibanJS" }
+      models: {
+        'kaiban-adapter/kaiban': { alias: 'KaibanJS' },
       },
-      "timeoutSeconds": 600
-    }
-  }
+      timeoutSeconds: 600,
+    },
+  },
 }
 ```
 
@@ -150,25 +153,25 @@ If the adapter runs on a different host, change `baseUrl` to the adapter's IP/ho
 
 ```json5
 {
-  "agents": {
-    "list": [
+  agents: {
+    list: [
       {
-        "id": "kaiban-team",
-        "default": true,
-        "model": "kaiban-adapter/kaiban",
-        "workspace": "/Users/<you>/.openclaw/workspace"
-      }
-    ]
-  }
+        id: 'kaiban-team',
+        default: true,
+        model: 'kaiban-adapter/kaiban',
+        workspace: '/Users/<you>/.openclaw/workspace',
+      },
+    ],
+  },
 }
 ```
 
-| Key | Description |
-|-----|-------------|
-| `id` | Stable agent id (used for routing). |
-| `default` | Set `true` so this agent handles traffic without explicit routing. |
-| `model` | `"<providerId>/<modelId>"` — must match what you defined in Step 1. |
-| `workspace` | Agent workspace path (optional). |
+| Key         | Description                                                         |
+| ----------- | ------------------------------------------------------------------- |
+| `id`        | Stable agent id (used for routing).                                 |
+| `default`   | Set `true` so this agent handles traffic without explicit routing.  |
+| `model`     | `"<providerId>/<modelId>"` — must match what you defined in Step 1. |
+| `workspace` | Agent workspace path (optional).                                    |
 
 ### Step 3 — Set a longer timeout
 
@@ -176,11 +179,11 @@ KaibanJS Teams can take time. Increase the timeout so OpenClaw doesn't cancel th
 
 ```json5
 {
-  "agents": {
-    "defaults": {
-      "timeoutSeconds": 600
-    }
-  }
+  agents: {
+    defaults: {
+      timeoutSeconds: 600,
+    },
+  },
 }
 ```
 
@@ -195,6 +198,7 @@ openssl rand -base64 32
 Set it in two places:
 
 1. **Adapter** — `playground/openclaw-openresponses/.env`:
+
    ```
    KAIBAN_OPENRESPONSES_SECRET=<generated-value>
    ```
@@ -223,17 +227,20 @@ Then verify the Telegram bot responds through the new agent before testing furth
 ### Step 6 — Verify
 
 1. **Call the adapter directly:**
+
    ```bash
    curl -s -X POST http://localhost:3100/v1/responses \
      -H "Authorization: Bearer YOUR_KAIBAN_OPENRESPONSES_SECRET" \
      -H "Content-Type: application/json" \
      -d '{"model":"kaiban","input":"Say hello in one sentence."}'
    ```
+
    Expect a JSON response with an `output` array.
 
 2. **Send a message via OpenClaw** (e.g. Telegram) to the agent that uses `kaiban-adapter/kaiban`. The reply should be the Content Creation Team's response.
 
 **Common errors:**
+
 - `401` — the `apiKey` in `models.providers["kaiban-adapter"]` does not match `KAIBAN_OPENRESPONSES_SECRET`.
 - Request timeout — increase `agents.defaults.timeoutSeconds`.
 - `"Unrecognized keys"` — you have `provider`, `endpoint`, or `auth` inside `agents.list[]`. Remove them; the model is set via `model: "kaiban-adapter/kaiban"` only.
