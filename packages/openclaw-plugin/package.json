@@ -1,0 +1,18 @@
+{
+  "name": "@kaibanjs/openclaw-plugin",
+  "version": "0.1.0",
+  "description": "Plugin OpenClaw genérico: expone un Team KaibanJS definido por el usuario como una tool.",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "files": [
+    "./index.ts",
+    "./openclaw.plugin.json",
+    "./README.md",
+    "./examples/**/*"
+  ],
+  "openclaw": {
+    "extensions": ["./index.ts"]
+  }
+}
+
