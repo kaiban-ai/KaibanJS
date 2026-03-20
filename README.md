@@ -601,6 +601,14 @@ const writtenBy = `Another JS Dev Who Doesn't Want to Learn Python to do meaning
 console.log(writtenBy);
 ```
 
+## Community Projects
+
+Projects built by the KaibanJS community that extend the ecosystem:
+
+- [kaiban-distributed](https://github.com/andreibesleaga/kaiban-distributed) - Distributed actor-model runtime for KaibanJS teams with Redis/Kafka messaging, A2A/MCP integration, and real-time board synchronization.
+
+> Community-maintained project: ownership, roadmap, and support are managed by the project author.
+
 ## Community and Support
 
 Join the [Discord community](https://www.kaibanjs.com/discord) to connect with other developers and get support. [Follow us](https://x.com/dariel_noel) on Twitter for the latest updates.
