@@ -1,0 +1,21 @@
+{
+  "id": "kaibanjs-plugin",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "team": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "modulePath": { "type": "string" },
+          "exportName": { "type": "string", "default": "createTeam" },
+          "metadataExportName": { "type": "string", "default": "teamMetadata" },
+          "defaults": { "type": "object", "additionalProperties": true }
+        },
+        "required": ["modulePath"]
+      }
+    },
+    "required": ["team"]
+  }
+}

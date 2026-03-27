@@ -1,0 +1,27 @@
+{
+  "name": "@kaibanjs/kaibanjs-plugin",
+  "version": "0.1.0",
+  "description": "Generic OpenClaw plugin: exposes a user-defined KaibanJS Team as a tool.",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "files": [
+    "./index.ts",
+    "./openclaw.plugin.json",
+    "./README.md",
+    "./examples/**/*",
+    "./scripts/**/*"
+  ],
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  },
+  "peerDependencies": {
+    "kaibanjs": ">=0.20.0",
+    "@langchain/tavily": ">=0.1.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2"
+  }
+}
