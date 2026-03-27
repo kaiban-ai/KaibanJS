@@ -12,7 +12,7 @@ You do **not** need to publish it to npm to use it: install the folder into Open
 
 ## What problem this solves
 
-OpenClaw’s orchestrator decides *when* to call tools and passes structured arguments. KaibanJS runs multi-agent **Teams** with tasks, agents, and optional tools (e.g. web search). This plugin connects the two: the main agent calls one tool; behind it, your Team runs end-to-end and the workflow result is returned as tool output.
+OpenClaw’s orchestrator decides _when_ to call tools and passes structured arguments. KaibanJS runs multi-agent **Teams** with tasks, agents, and optional tools (e.g. web search). This plugin connects the two: the main agent calls one tool; behind it, your Team runs end-to-end and the workflow result is returned as tool output.
 
 ---
 
@@ -52,12 +52,12 @@ flowchart LR
 
 ## Repository layout (KaibanJS)
 
-| Path | Role |
-|------|------|
-| [`packages/openclaw-plugin/index.ts`](./index.ts) | Plugin runtime: register tool, execute Team |
-| [`packages/openclaw-plugin/openclaw.plugin.json`](./openclaw.plugin.json) | Manifest: plugin id `kaibanjs-plugin`, JSON Schema for plugin config |
-| [`packages/openclaw-plugin/package.json`](./package.json) | Package name `@kaibanjs/kaibanjs-plugin`, `openclaw.extensions` entry |
-| [`packages/openclaw-plugin/examples/example.ts`](./examples/example.ts) | Reference Team + `teamMetadata` |
+| Path                                                                      | Role                                                                  |
+| ------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [`packages/openclaw-plugin/index.ts`](./index.ts)                         | Plugin runtime: register tool, execute Team                           |
+| [`packages/openclaw-plugin/openclaw.plugin.json`](./openclaw.plugin.json) | Manifest: plugin id `kaibanjs-plugin`, JSON Schema for plugin config  |
+| [`packages/openclaw-plugin/package.json`](./package.json)                 | Package name `@kaibanjs/kaibanjs-plugin`, `openclaw.extensions` entry |
+| [`packages/openclaw-plugin/examples/example.ts`](./examples/example.ts)   | Reference Team + `teamMetadata`                                       |
 
 The **npm package name** is `@kaibanjs/kaibanjs-plugin`. OpenClaw’s discovery uses it to infer an id hint; the **manifest id** in `openclaw.plugin.json` is `kaibanjs-plugin`. Your `openclaw.json` entry key must match that id: `plugins.entries.kaibanjs-plugin`.
 
@@ -140,19 +140,19 @@ Whatever your `createTeam` / Team use (e.g. `OPENAI_API_KEY`, `TAVILY_API_KEY`) 
   plugins: {
     enabled: true,
     entries: {
-      "kaibanjs-plugin": {
+      'kaibanjs-plugin': {
         enabled: true,
         config: {
           team: {
-            modulePath: "/absolute/path/to/your/team.ts",
-            exportName: "createTeam",
-            metadataExportName: "teamMetadata",
-            defaults: {}
-          }
-        }
-      }
-    }
-  }
+            modulePath: '/absolute/path/to/your/team.ts',
+            exportName: 'createTeam',
+            metadataExportName: 'teamMetadata',
+            defaults: {},
+          },
+        },
+      },
+    },
+  },
 }
 ```
 
@@ -168,13 +168,13 @@ Whatever your `createTeam` / Team use (e.g. `OPENAI_API_KEY`, `TAVILY_API_KEY`) 
   agents: {
     list: [
       {
-        id: "default",
+        id: 'default',
         tools: {
-          allow: ["kaiban_run_team"]
-        }
-      }
-    ]
-  }
+          allow: ['kaiban_run_team'],
+        },
+      },
+    ],
+  },
 }
 ```
 
@@ -187,6 +187,7 @@ Restart the Gateway after config changes.
 Export:
 
 1. **`teamMetadata`** (or the name set in `metadataExportName`):
+
    - **`description`** (string, required) — Shown to the main LLM as the tool description.
    - **`inputs`** (optional) — JSON Schema for the **`inputs`** parameter: `type: "object"`, `properties`, `required`, `additionalProperties` (recommended `false` so keys match `createTeam`).
 
@@ -204,11 +205,11 @@ See [`examples/example.ts`](./examples/example.ts) for a full pattern.
 
 ## Tool surface
 
-| Field | Value |
-|--------|--------|
-| Tool name | `kaiban_run_team` |
+| Field     | Value                                                                      |
+| --------- | -------------------------------------------------------------------------- |
+| Tool name | `kaiban_run_team`                                                          |
 | Arguments | `{ inputs: { ... } }` — shape from `teamMetadata.inputs` or generic object |
-| Return | OpenClaw tool result with `content` text and `details.workflowResult` |
+| Return    | OpenClaw tool result with `content` text and `details.workflowResult`      |
 
 ---
 
