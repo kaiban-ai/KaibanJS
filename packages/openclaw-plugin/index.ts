@@ -14,9 +14,21 @@ type PluginRegisterApi = {
   registerTool: (tool: unknown) => void;
 };
 
+/** JSON Schema fragment for the tool parameter `inputs` (what OpenClaw must send). */
+type TeamMetadataInputsSchema = {
+  type?: 'object';
+  description?: string;
+  properties?: Record<string, unknown>;
+  required?: string[];
+  additionalProperties?: boolean;
+};
+
 type UserTeamModule = {
-  // Prefer metadata to feed tool.description (so OpenClaw's main agent can decide when to call it).
-  teamMetadata?: { description?: string };
+  teamMetadata?: {
+    description?: string;
+    /** JSON Schema for `inputs` so the main agent uses the same keys as createTeam. */
+    inputs?: TeamMetadataInputsSchema;
+  };
   createTeam?: (args: {
     inputs: Record<string, unknown>;
     ctx?: {
@@ -49,6 +61,54 @@ function toImportUrl(resolvedPath: string): string {
     ? resolvedPath
     : path.resolve(process.cwd(), resolvedPath);
   return pathToFileURL(abs).href;
+}
+
+function buildToolInputsParameterSchema(
+  teamMetadata: UserTeamModule['teamMetadata'] | undefined,
+  metadataExportName: string,
+  pluginId: string
+): Record<string, unknown> {
+  const meta = teamMetadata?.inputs;
+  if (meta == null) {
+    return {
+      type: 'object',
+      description:
+        'Inputs for the Team. Prefer defining teamMetadata.inputs in your module so keys match createTeam.',
+      additionalProperties: true,
+    };
+  }
+  if (typeof meta !== 'object' || meta === null) {
+    throw new Error(
+      `OpenClaw plugin ${pluginId}: "${metadataExportName}.inputs" must be a JSON Schema object.`
+    );
+  }
+  const props = meta.properties;
+  if (
+    !props ||
+    typeof props !== 'object' ||
+    Object.keys(props as object).length === 0
+  ) {
+    throw new Error(
+      `OpenClaw plugin ${pluginId}: "${metadataExportName}.inputs.properties" must list at least one field so the OpenClaw agent knows which keys to send (same keys as createTeam expects).`
+    );
+  }
+  if (meta.type !== undefined && meta.type !== 'object') {
+    throw new Error(
+      `OpenClaw plugin ${pluginId}: "${metadataExportName}.inputs.type" must be "object" if set.`
+    );
+  }
+  return {
+    type: 'object',
+    description:
+      typeof meta.description === 'string' && meta.description.trim()
+        ? meta.description
+        : 'Team inputs. Use the property names and types defined in teamMetadata.inputs (same as createTeam).',
+    properties: meta.properties,
+    ...(Array.isArray(meta.required) && meta.required.length > 0
+      ? { required: meta.required }
+      : {}),
+    additionalProperties: meta.additionalProperties ?? false,
+  };
 }
 
 export default async function register(api: PluginRegisterApi) {
@@ -104,9 +164,12 @@ export default async function register(api: PluginRegisterApi) {
     );
   }
 
-  // IMPORTANT:
-  // - The tool description is the primary signal the OpenClaw LLM uses to decide tool invocation.
-  // - With your preference (B), we set it from teamMetadata.description.
+  const inputsParameterSchema = buildToolInputsParameterSchema(
+    teamMetadata,
+    metadataExportName,
+    api.id
+  );
+
   api.registerTool({
     name: 'kaiban_run_team',
     description,
@@ -114,12 +177,7 @@ export default async function register(api: PluginRegisterApi) {
       type: 'object',
       additionalProperties: false,
       properties: {
-        inputs: {
-          type: 'object',
-          description:
-            'Inputs for the Team. Usually includes topic/message/task fields.',
-          additionalProperties: true,
-        },
+        inputs: inputsParameterSchema,
       },
       required: ['inputs'],
     },
@@ -131,10 +189,14 @@ export default async function register(api: PluginRegisterApi) {
       const inputs = { ...defaults, ...userInputs };
 
       const teamInstance = await createTeam({ inputs, ctx: undefined });
-      const workflowResult = await (teamInstance as any).start({ inputs });
+      const workflowResult = await (
+        teamInstance as {
+          start: (overrides?: Record<string, unknown>) => unknown;
+        }
+      ).start();
 
       const text = resultToText(
-        (workflowResult as any)?.result ?? workflowResult
+        (workflowResult as { result?: unknown })?.result ?? workflowResult
       );
 
       return {
