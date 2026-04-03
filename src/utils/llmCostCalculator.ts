@@ -58,38 +58,125 @@ export type ModelUsageStats = Record<
   }
 >;
 
-/** Available model pricing configurations (updated Sep 19, 2025) */
+/** Model pricing — OpenAI & Anthropic IDs aligned with platform docs (Apr 2026); standard tier unless noted */
 const modelsPricing: ModelPricing[] = [
-  // GPT Models from OpenAI
+  // GPT / frontier models — OpenAI (standard pricing, platform.openai.com/docs/pricing)
+  {
+    modelCode: 'gpt-5.4',
+    provider: 'openai',
+    inputPricePerMillionTokens: 2.5,
+    outputPricePerMillionTokens: 15.0,
+    features:
+      'Flagship frontier; complex reasoning and coding; long context (see OpenAI pricing for >272K tiers)',
+  },
+  {
+    modelCode: 'gpt-5.4-mini',
+    provider: 'openai',
+    inputPricePerMillionTokens: 0.75,
+    outputPricePerMillionTokens: 4.5,
+    features: 'Lower-latency GPT-5.4 family; strong capability per cost',
+  },
+  {
+    modelCode: 'gpt-5.4-nano',
+    provider: 'openai',
+    inputPricePerMillionTokens: 0.2,
+    outputPricePerMillionTokens: 1.25,
+    features: 'Fastest, lowest-cost GPT-5.4 tier',
+  },
+  {
+    modelCode: 'gpt-5.4-pro',
+    provider: 'openai',
+    inputPricePerMillionTokens: 30.0,
+    outputPricePerMillionTokens: 180.0,
+    features: 'Highest capability GPT-5.4 variant; premium pricing',
+  },
+  {
+    modelCode: 'gpt-5.2',
+    provider: 'openai',
+    inputPricePerMillionTokens: 1.75,
+    outputPricePerMillionTokens: 14.0,
+    features: 'GPT-5.2 series; strong general and coding use',
+  },
+  {
+    modelCode: 'gpt-5.2-pro',
+    provider: 'openai',
+    inputPricePerMillionTokens: 21.0,
+    outputPricePerMillionTokens: 168.0,
+    features: 'Pro tier GPT-5.2',
+  },
+  {
+    modelCode: 'gpt-5.1',
+    provider: 'openai',
+    inputPricePerMillionTokens: 1.25,
+    outputPricePerMillionTokens: 10.0,
+    features: 'GPT-5.1 series',
+  },
   {
     modelCode: 'gpt-5',
     provider: 'openai',
     inputPricePerMillionTokens: 1.25,
     outputPricePerMillionTokens: 10.0,
     features:
-      'Latest generation model; excellent for coding and agentic tasks across domains',
+      'GPT-5 series; excellent for coding and agentic tasks across domains',
   },
   {
     modelCode: 'gpt-5-mini',
     provider: 'openai',
     inputPricePerMillionTokens: 0.25,
     outputPricePerMillionTokens: 2.0,
-    features: 'Faster, cost-efficient version of GPT-5 for well-defined tasks',
+    features: 'Faster, cost-efficient GPT-5 for well-defined tasks',
   },
   {
     modelCode: 'gpt-5-nano',
     provider: 'openai',
     inputPricePerMillionTokens: 0.05,
     outputPricePerMillionTokens: 0.4,
-    features: 'Fastest, most cost-efficient tier of GPT-5',
+    features: 'Fastest, most cost-efficient GPT-5 tier',
+  },
+  {
+    modelCode: 'gpt-5-pro',
+    provider: 'openai',
+    inputPricePerMillionTokens: 15.0,
+    outputPricePerMillionTokens: 120.0,
+    features: 'Pro tier GPT-5',
+  },
+  {
+    modelCode: 'gpt-4.1',
+    provider: 'openai',
+    inputPricePerMillionTokens: 2.0,
+    outputPricePerMillionTokens: 8.0,
+    features:
+      'GPT-4.1; strong for long context and latency-sensitive workloads',
+  },
+  {
+    modelCode: 'gpt-4.1-mini',
+    provider: 'openai',
+    inputPricePerMillionTokens: 0.4,
+    outputPricePerMillionTokens: 1.6,
+    features: 'Cost-efficient GPT-4.1 variant',
+  },
+  {
+    modelCode: 'gpt-4.1-nano',
+    provider: 'openai',
+    inputPricePerMillionTokens: 0.1,
+    outputPricePerMillionTokens: 0.4,
+    features: 'Lightest GPT-4.1 tier',
   },
   {
     modelCode: 'gpt-4o',
     provider: 'openai',
+    inputPricePerMillionTokens: 2.5,
+    outputPricePerMillionTokens: 10.0,
+    features:
+      'Multimodal; text and vision; current standard gpt-4o list pricing',
+  },
+  {
+    modelCode: 'gpt-4o-2024-05-13',
+    provider: 'openai',
     inputPricePerMillionTokens: 5.0,
     outputPricePerMillionTokens: 15.0,
     features:
-      'Multimodal model supporting text, image, and audio; general-purpose high capability',
+      'Pinned GPT-4o snapshot; higher per-token rates than default gpt-4o',
   },
   {
     modelCode: 'gpt-4o-mini',
@@ -98,51 +185,287 @@ const modelsPricing: ModelPricing[] = [
     outputPricePerMillionTokens: 0.6,
     features: 'Cost-efficient multimodal variant of GPT-4o',
   },
-  // Legacy / compatibility GPT-4 / GPT-4-turbo
+  // Reasoning / o-series (standard pricing)
+  {
+    modelCode: 'o1',
+    provider: 'openai',
+    inputPricePerMillionTokens: 15.0,
+    outputPricePerMillionTokens: 60.0,
+    features: 'Reasoning model; complex multi-step problems',
+  },
+  {
+    modelCode: 'o1-pro',
+    provider: 'openai',
+    inputPricePerMillionTokens: 150.0,
+    outputPricePerMillionTokens: 600.0,
+    features: 'Highest-tier o1 capability',
+  },
+  {
+    modelCode: 'o1-mini',
+    provider: 'openai',
+    inputPricePerMillionTokens: 1.1,
+    outputPricePerMillionTokens: 4.4,
+    features: 'Faster, cheaper reasoning model',
+  },
+  {
+    modelCode: 'o3',
+    provider: 'openai',
+    inputPricePerMillionTokens: 2.0,
+    outputPricePerMillionTokens: 8.0,
+    features: 'Reasoning model; successor-class to o1 for many tasks',
+  },
+  {
+    modelCode: 'o3-mini',
+    provider: 'openai',
+    inputPricePerMillionTokens: 1.1,
+    outputPricePerMillionTokens: 4.4,
+    features: 'Efficient o3-class reasoning',
+  },
+  {
+    modelCode: 'o3-pro',
+    provider: 'openai',
+    inputPricePerMillionTokens: 20.0,
+    outputPricePerMillionTokens: 80.0,
+    features: 'Pro-tier o3 reasoning',
+  },
+  {
+    modelCode: 'o4-mini',
+    provider: 'openai',
+    inputPricePerMillionTokens: 1.1,
+    outputPricePerMillionTokens: 4.4,
+    features: 'Compact reasoning model in the o4 line',
+  },
+  {
+    modelCode: 'o3-deep-research',
+    provider: 'openai',
+    inputPricePerMillionTokens: 10.0,
+    outputPricePerMillionTokens: 40.0,
+    features: 'Deep research specialized model',
+  },
+  {
+    modelCode: 'o4-mini-deep-research',
+    provider: 'openai',
+    inputPricePerMillionTokens: 2.0,
+    outputPricePerMillionTokens: 8.0,
+    features: 'Cost-efficient deep research variant',
+  },
+  {
+    modelCode: 'computer-use-preview',
+    provider: 'openai',
+    inputPricePerMillionTokens: 3.0,
+    outputPricePerMillionTokens: 12.0,
+    features: 'Computer-use preview model (OpenAI pricing)',
+  },
+  // Legacy / compatibility GPT-4 and GPT-3.5
   {
     modelCode: 'gpt-4-turbo',
     provider: 'openai',
     inputPricePerMillionTokens: 10.0,
     outputPricePerMillionTokens: 30.0,
-    features: 'Legacy high-speed GPT-4 variant (availability may be limited)',
+    features: 'Legacy GPT-4 Turbo alias (availability may be limited)',
+  },
+  {
+    modelCode: 'gpt-4-turbo-2024-04-09',
+    provider: 'openai',
+    inputPricePerMillionTokens: 10.0,
+    outputPricePerMillionTokens: 30.0,
+    features: 'Pinned GPT-4 Turbo snapshot',
+  },
+  {
+    modelCode: 'gpt-4-0125-preview',
+    provider: 'openai',
+    inputPricePerMillionTokens: 10.0,
+    outputPricePerMillionTokens: 30.0,
+    features: 'Legacy GPT-4 preview snapshot',
+  },
+  {
+    modelCode: 'gpt-4-1106-preview',
+    provider: 'openai',
+    inputPricePerMillionTokens: 10.0,
+    outputPricePerMillionTokens: 30.0,
+    features: 'Legacy GPT-4 preview snapshot',
+  },
+  {
+    modelCode: 'gpt-4-1106-vision-preview',
+    provider: 'openai',
+    inputPricePerMillionTokens: 10.0,
+    outputPricePerMillionTokens: 30.0,
+    features: 'Legacy GPT-4 vision preview snapshot',
+  },
+  {
+    modelCode: 'gpt-4-0613',
+    provider: 'openai',
+    inputPricePerMillionTokens: 30.0,
+    outputPricePerMillionTokens: 60.0,
+    features: 'Legacy dated GPT-4',
+  },
+  {
+    modelCode: 'gpt-4-0314',
+    provider: 'openai',
+    inputPricePerMillionTokens: 30.0,
+    outputPricePerMillionTokens: 60.0,
+    features: 'Legacy dated GPT-4',
+  },
+  {
+    modelCode: 'gpt-4-32k',
+    provider: 'openai',
+    inputPricePerMillionTokens: 60.0,
+    outputPricePerMillionTokens: 120.0,
+    features: 'Legacy GPT-4 32k context',
   },
   {
     modelCode: 'gpt-4',
     provider: 'openai',
     inputPricePerMillionTokens: 30.0,
     outputPricePerMillionTokens: 60.0,
-    features: 'Legacy flagship GPT-4 model (availability may be limited)',
+    features: 'Legacy flagship GPT-4 (availability may be limited)',
   },
   {
     modelCode: 'gpt-3.5-turbo',
     provider: 'openai',
     inputPricePerMillionTokens: 0.5,
     outputPricePerMillionTokens: 1.5,
-    features: 'Legacy cost-effective option; mostly superseded by newer models',
+    features: 'Legacy cost-effective option; mostly superseded',
   },
   {
     modelCode: 'gpt-3.5-turbo-0125',
     provider: 'openai',
     inputPricePerMillionTokens: 0.5,
     outputPricePerMillionTokens: 1.5,
-    features: 'Legacy pinned version for compatibility',
+    features: 'Legacy pinned GPT-3.5 snapshot',
+  },
+  {
+    modelCode: 'gpt-3.5-turbo-1106',
+    provider: 'openai',
+    inputPricePerMillionTokens: 1.0,
+    outputPricePerMillionTokens: 2.0,
+    features: 'Legacy GPT-3.5 snapshot',
+  },
+  {
+    modelCode: 'gpt-3.5-turbo-0613',
+    provider: 'openai',
+    inputPricePerMillionTokens: 1.5,
+    outputPricePerMillionTokens: 2.0,
+    features: 'Legacy GPT-3.5 snapshot',
   },
 
-  // Claude Models from Anthropic
+  // Claude Models from Anthropic (latest generation — 1M context Opus/Sonnet 4.6 per Anthropic docs)
   {
-    modelCode: 'claude-opus-4.1',
+    modelCode: 'claude-opus-4-6',
+    provider: 'anthropic',
+    inputPricePerMillionTokens: 5.0,
+    outputPricePerMillionTokens: 25.0,
+    features:
+      'Latest flagship; agents, coding, reasoning; 1M context (standard Messages API)',
+  },
+  {
+    modelCode: 'claude-sonnet-4-6',
+    provider: 'anthropic',
+    inputPricePerMillionTokens: 3.0,
+    outputPricePerMillionTokens: 15.0,
+    features:
+      'Latest balanced model; speed and capability; 1M context (standard Messages API)',
+  },
+  {
+    modelCode: 'claude-haiku-4-5',
+    provider: 'anthropic',
+    inputPricePerMillionTokens: 1.0,
+    outputPricePerMillionTokens: 5.0,
+    features:
+      'Fast Haiku 4.5; near-frontier intelligence; alias resolves to dated snapshot',
+  },
+  {
+    modelCode: 'claude-haiku-4-5-20251001',
+    provider: 'anthropic',
+    inputPricePerMillionTokens: 1.0,
+    outputPricePerMillionTokens: 5.0,
+    features: 'Claude Haiku 4.5 dated snapshot (200k context)',
+  },
+  // Claude 4.5 generation (200k context)
+  {
+    modelCode: 'claude-opus-4-5',
+    provider: 'anthropic',
+    inputPricePerMillionTokens: 5.0,
+    outputPricePerMillionTokens: 25.0,
+    features: 'Opus 4.5 alias; strong reasoning and coding',
+  },
+  {
+    modelCode: 'claude-opus-4-5-20251101',
+    provider: 'anthropic',
+    inputPricePerMillionTokens: 5.0,
+    outputPricePerMillionTokens: 25.0,
+    features: 'Opus 4.5 dated snapshot',
+  },
+  {
+    modelCode: 'claude-sonnet-4-5',
+    provider: 'anthropic',
+    inputPricePerMillionTokens: 3.0,
+    outputPricePerMillionTokens: 15.0,
+    features: 'Sonnet 4.5 alias',
+  },
+  {
+    modelCode: 'claude-sonnet-4-5-20250929',
+    provider: 'anthropic',
+    inputPricePerMillionTokens: 3.0,
+    outputPricePerMillionTokens: 15.0,
+    features: 'Sonnet 4.5 dated snapshot',
+  },
+  // Claude 4.0 line (snapshots and API aliases from Anthropic)
+  {
+    modelCode: 'claude-opus-4-20250514',
     provider: 'anthropic',
     inputPricePerMillionTokens: 15.0,
     outputPricePerMillionTokens: 75.0,
-    features:
-      'Top-tier model for deep reasoning, complex tasks, and high-quality output',
+    features: 'Opus 4 dated snapshot',
+  },
+  {
+    modelCode: 'claude-opus-4-0',
+    provider: 'anthropic',
+    inputPricePerMillionTokens: 15.0,
+    outputPricePerMillionTokens: 75.0,
+    features: 'Opus 4 API alias (same as claude-opus-4-20250514)',
   },
   {
     modelCode: 'claude-opus-4',
     provider: 'anthropic',
     inputPricePerMillionTokens: 15.0,
     outputPricePerMillionTokens: 75.0,
-    features: 'Frontier performance for demanding use cases',
+    features: 'Opus 4 shorthand (match snapshot/alias used at runtime)',
+  },
+  {
+    modelCode: 'claude-opus-4-1-20250805',
+    provider: 'anthropic',
+    inputPricePerMillionTokens: 15.0,
+    outputPricePerMillionTokens: 75.0,
+    features: 'Opus 4.1 dated snapshot',
+  },
+  {
+    modelCode: 'claude-opus-4-1',
+    provider: 'anthropic',
+    inputPricePerMillionTokens: 15.0,
+    outputPricePerMillionTokens: 75.0,
+    features: 'Opus 4.1 API alias',
+  },
+  {
+    modelCode: 'claude-opus-4.1',
+    provider: 'anthropic',
+    inputPricePerMillionTokens: 15.0,
+    outputPricePerMillionTokens: 75.0,
+    features: 'Legacy calculator id; prefer claude-opus-4-1 per Anthropic API',
+  },
+  {
+    modelCode: 'claude-sonnet-4-20250514',
+    provider: 'anthropic',
+    inputPricePerMillionTokens: 3.0,
+    outputPricePerMillionTokens: 15.0,
+    features: 'Sonnet 4 dated snapshot',
+  },
+  {
+    modelCode: 'claude-sonnet-4-0',
+    provider: 'anthropic',
+    inputPricePerMillionTokens: 3.0,
+    outputPricePerMillionTokens: 15.0,
+    features: 'Sonnet 4 API alias',
   },
   {
     modelCode: 'claude-sonnet-4',
@@ -150,14 +473,15 @@ const modelsPricing: ModelPricing[] = [
     inputPricePerMillionTokens: 3.0,
     outputPricePerMillionTokens: 15.0,
     features:
-      'Balanced model; good trade-off between cost, speed, and capability',
+      'Balanced Sonnet 4; good trade-off between cost, speed, and capability',
   },
   {
-    modelCode: 'claude-4-haiku', // alias if exists; using haiku nomenclature if updated
+    modelCode: 'claude-4-haiku',
     provider: 'anthropic',
-    inputPricePerMillionTokens: 0.25,
-    outputPricePerMillionTokens: 1.25,
-    features: 'Low-latency, cost-sensitive tasks; simpler and faster responses',
+    inputPricePerMillionTokens: 1.0,
+    outputPricePerMillionTokens: 5.0,
+    features:
+      'Informal id; pricing aligned with Claude Haiku 4.5 — prefer claude-haiku-4-5',
   },
   // Retain legacy 3.x for compatibility
   {
