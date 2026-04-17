@@ -1,6 +1,19 @@
 # Playground: External coding agents (`ExternalCodingAgent`)
 
-Runs a minimal `Team` whose worker is **`ExternalCodingAgent`**: KaibanJS delegates the task prompt to **Claude Code**, **OpenCode**, or a **`mock`** backend.
+Runs a small **`Team`** with **two** `ExternalCodingAgent` workers. KaibanJS sends each task’s prompt to **Claude Code**, **OpenCode**, or a **`mock`** backend (no local CLI required).
+
+## What this example does
+
+| Step | Agent            | Task                                                                                                                                 |
+| ---- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 1    | `RepoExplorer`   | Answer `inputs.question` about the repo (may use **Read** when using Claude Code with `allowedTools: 'Read'`).                       |
+| 2    | `AnswerReviewer` | Reads the first agent’s output through **`{taskResult:task1}`** in the task description, then adds strengths, gaps, and a follow-up. |
+
+**Task chaining:** Kaiban resolves `task1`, `task2`, … from the **order of tasks** in the team (see `getTaskResults` in the library). So the second prompt must use `{taskResult:task1}` to refer to the result of the first task.
+
+**Changing the question:** edit `inputs.question` in `index.ts` (or extend the script to read `process.argv`).
+
+**Mock vs real CLI:** with `KAIBAN_CODING_BACKEND=mock`, both agents echo the interpolated prompt (good for wiring checks). With `claude-code` or `opencode`, each task is a separate CLI invocation.
 
 ## How to choose the backend (three ways)
 

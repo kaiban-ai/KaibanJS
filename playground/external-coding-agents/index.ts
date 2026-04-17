@@ -1,8 +1,8 @@
 /**
- * Demo: ExternalCodingAgent (Claude Code, OpenCode, or mock).
+ * Demo: two `ExternalCodingAgent` workers (Claude Code, OpenCode, or mock).
  *
- * Set the default backend in `PLAYGROUND_DEFAULT_BACKEND` below and run `npm start`
- * (or `npm run dev`). Optional: override with env or `.env` — see README.
+ * Task 2 receives task 1’s result via `{taskResult:task1}` (see KaibanJS task interpolation).
+ * Set `PLAYGROUND_DEFAULT_BACKEND` below and run `npm start` / `npm run dev`.
  */
 
 import 'dotenv/config';
@@ -41,53 +41,108 @@ const cliPathFromEnv =
     ? process.env.KAIBAN_OPENCODE_CLI || process.env.OPENCODE_CLI
     : undefined;
 
-const summarizer = new Agent({
-  type: 'ExternalCodingAgent',
-  name: 'DevCLI',
-  role: 'Coding agent delegate',
-  goal: 'Execute the task via an external coding CLI or mock',
-  background: 'Configured for local development only',
-  codingBackend,
-  workspaceRoot,
-  ...(cliPathFromEnv ? { cliPath: cliPathFromEnv } : {}),
-  timeoutMs: 600_000,
-  ...(codingBackend === 'claude-code'
-    ? {
-        claude: {
-          useBare: true,
-          allowedTools: 'Read',
-        },
-      }
-    : {}),
-  ...(codingBackend === 'opencode'
-    ? {
-        opencode: {
-          // model: 'anthropic/claude-3-5-sonnet-latest',
-        },
-      }
-    : {}),
+type WorkerIdentity = {
+  name: string;
+  role: string;
+  goal: string;
+  background: string;
+};
+
+/** Same CLI/mock settings; different persona per agent so the team reads clearly in logs. */
+function createExternalCodingWorker(c: WorkerIdentity): Agent {
+  return new Agent({
+    type: 'ExternalCodingAgent',
+    name: c.name,
+    role: c.role,
+    goal: c.goal,
+    background: c.background,
+    codingBackend,
+    workspaceRoot,
+    ...(cliPathFromEnv ? { cliPath: cliPathFromEnv } : {}),
+    timeoutMs: 600_000,
+    ...(codingBackend === 'claude-code'
+      ? {
+          claude: {
+            useBare: true,
+            allowedTools: 'Read',
+          },
+        }
+      : {}),
+    ...(codingBackend === 'opencode'
+      ? {
+          opencode: {
+            // model: 'anthropic/claude-3-5-sonnet-latest',
+          },
+        }
+      : {}),
+  });
+}
+
+const explorer = createExternalCodingWorker({
+  name: 'RepoExplorer',
+  role: 'Repository analyst',
+  goal: 'Answer questions about this workspace using the external coding CLI or mock',
+  background: 'Runs first; may read files when the backend allows it',
 });
 
-const task = new Task({
-  title: 'External coding demo',
-  description:
-    'Respond to the user question about workspace of current project: Question: {question}',
-  expectedOutput: 'Answer to the user question in plain text',
-  agent: summarizer,
+const reviewer = createExternalCodingWorker({
+  name: 'AnswerReviewer',
+  role: 'Quality check on the first answer',
+  goal: 'Critique and extend the prior agent’s answer without repeating it verbatim',
+  background: 'Runs second; sees task 1 output via task-result interpolation',
+});
+
+const exploreTask = new Task({
+  title: 'Explore repo (task 1)',
+  description: `You are the first agent in a two-step workflow.
+
+Question (from team inputs): {question}
+
+Instructions:
+- Use the workspace (read files if your tools allow) and answer in plain text.
+- Be concrete: mention relevant files or scripts when you can.
+- Keep the answer under ~400 words.`,
+  expectedOutput: 'Plain-text answer to the question',
+  agent: explorer,
+});
+
+const reviewTask = new Task({
+  title: 'Review prior answer (task 2)',
+  description: `You are the second agent. Another agent already answered this question:
+
+--- BEGIN TASK 1 ANSWER ---
+{taskResult:task1}
+--- END TASK 1 ANSWER ---
+
+Original question: {question}
+
+Instructions:
+- Give **Strengths** (bullet list), **Gaps or risks** (bullet list), and **One concrete follow-up** the user could ask next.
+- Do not copy task 1 verbatim; add judgment.`,
+  expectedOutput: 'Structured review in plain text',
+  agent: reviewer,
 });
 
 const team = new Team({
-  name: 'External coding playground',
-  agents: [summarizer],
-  tasks: [task],
-  inputs: { question: 'Whats dependencies are needed to run the project?' },
+  name: 'External coding — two-agent demo',
+  agents: [explorer, reviewer],
+  tasks: [exploreTask, reviewTask],
+  inputs: {
+    question:
+      'What do I need installed or configured to build and test this repo?',
+  },
 });
 
 async function main() {
   console.log(`[playground] codingBackend=${codingBackend}`);
   const outcome = await team.start();
   console.log('Workflow status:', outcome.status);
-  console.log('Task result:', team.getTasks()[0].result);
+  const tasks = team.getTasks();
+  tasks.forEach((t, i) => {
+    console.log(`\n--- Task ${i + 1}: ${t.title} (${t.agent.name}) ---`);
+    console.log(String(t.result ?? '').slice(0, 2000));
+    if (String(t.result ?? '').length > 2000) console.log('… [truncated]');
+  });
 }
 
 main().catch((err) => {
