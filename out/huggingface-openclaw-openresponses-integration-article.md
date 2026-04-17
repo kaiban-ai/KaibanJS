@@ -90,14 +90,12 @@ const body = normalizeBody(req.body);
 const userMessage = extractUserMessage(body);
 
 if (!userMessage) {
-  res
-    .status(400)
-    .json({
-      error: {
-        message: 'Missing or invalid input',
-        type: 'invalid_request_error',
-      },
-    });
+  res.status(400).json({
+    error: {
+      message: 'Missing or invalid input',
+      type: 'invalid_request_error',
+    },
+  });
   return;
 }
 
@@ -105,14 +103,12 @@ const team = createTeam({ topic: userMessage });
 const workflowResult = await team.start({ inputs: { topic: userMessage } });
 
 if (workflowResult.status === 'BLOCKED') {
-  res
-    .status(422)
-    .json({
-      error: {
-        message: extractWorkflowErrorMessage(team),
-        type: 'workflow_blocked',
-      },
-    });
+  res.status(422).json({
+    error: {
+      message: extractWorkflowErrorMessage(team),
+      type: 'workflow_blocked',
+    },
+  });
   return;
 }
 

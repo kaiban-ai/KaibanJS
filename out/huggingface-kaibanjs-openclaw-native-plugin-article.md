@@ -24,12 +24,10 @@ If you already publish models or tools on the Hub, think of this as **composable
 
 KaibanJS documents **two** OpenClaw integration shapes:
 
-
 | Approach                                        | What it is                                                                                              | Best when                                                                                           |
 | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| **Native plugin (`@kaibanjs/kaibanjs-plugin`)** | One tool, `kaiban_run_team`; main agent **calls** your Team with structured `inputs`.                   | You want the **orchestrator** to decide *when* to spin up a multi-agent run, alongside other tools. |
+| **Native plugin (`@kaibanjs/kaibanjs-plugin`)** | One tool, `kaiban_run_team`; main agent **calls** your Team with structured `inputs`.                   | You want the **orchestrator** to decide _when_ to spin up a multi-agent run, alongside other tools. |
 | **OpenResponses adapter**                       | Your Team is exposed as a **custom model provider**; OpenClaw sends chat turns to `POST /v1/responses`. | You want the **entire turn** to be handled by your backend as if it were a model.                   |
-
 
 Both are valid. Choose based on **routing**: tool-calling delegation vs full “model replacement.” The OpenResponses path is a great fit when you already think in terms of a single HTTP surface; the plugin path is ideal when KaibanJS is **one capability** among many tools the main agent can use. For the HTTP/OpenResponses pattern with KaibanJS, see the [Team as OpenClaw agent via OpenResponses](https://www.kaibanjs.com/examples/kaibanjs-team-openclaw-openresponses) example and the [openclaw-openresponses playground](https://github.com/kaiban-ai/KaibanJS/tree/main/playground/openclaw-openresponses) in the repo.
 
@@ -39,10 +37,10 @@ Both are valid. Choose based on **routing**: tool-calling delegation vs full “
 
 At startup, OpenClaw loads the plugin entrypoint and calls `register(api)`. The runtime (`[packages/openclaw-plugin/index.ts](https://github.com/kaiban-ai/KaibanJS/tree/main/packages/openclaw-plugin/index.ts)`):
 
-1. Reads `plugins.entries.<id>.config.team` (manifest id: `**kaibanjs-plugin`**, validated by `[openclaw.plugin.json](https://github.com/kaiban-ai/KaibanJS/blob/main/packages/openclaw-plugin/openclaw.plugin.json)`).
+1. Reads `plugins.entries.<id>.config.team` (manifest id: `**kaibanjs-plugin`\*\*, validated by `[openclaw.plugin.json](https://github.com/kaiban-ai/KaibanJS/blob/main/packages/openclaw-plugin/openclaw.plugin.json)`).
 2. Resolves `team.modulePath` (absolute paths are safest on the Gateway host) and dynamically imports your module via a `file:` URL (with optional `api.resolvePath`).
 3. Loads `**teamMetadata**`: `description` becomes the **tool description** for the LLM; optional `inputs` is merged into the tool schema so the model sends the **same keys** your factory expects.
-4. Loads `**createTeam`**, registers `**kaiban_run_team**` with parameters `{ inputs: … }`.
+4. Loads `**createTeam`**, registers `**kaiban_run_team\*\*`with parameters`{ inputs: … }`.
 5. On execute: merges `config.team.defaults` with the tool’s `inputs`, calls `createTeam({ inputs, ctx })`, then `team.start()`. User-visible text is derived from the workflow result (preferring a string `result` field when present); structured output is also attached under `details.workflowResult`.
 
 Conceptually:
@@ -150,7 +148,7 @@ If you do not need the full monorepo, you can still vendor `packages/openclaw-pl
 
 ## Summary
 
-- `**@kaibanjs/kaibanjs-plugin`** exposes a KaibanJS **Team** as OpenClaw tool `**kaiban_run_team`**, with schema driven by `**teamMetadata**` and execution via `**createTeam**`.
+- `**@kaibanjs/kaibanjs-plugin`** exposes a KaibanJS **Team** as OpenClaw tool `**kaiban_run_team`**, with schema driven by `**teamMetadata**`and execution via`**createTeam**`.
 - It complements the **OpenResponses** integration: use the plugin for **tool delegation**, use OpenResponses when the Team should act as a **full model backend**.
 - Install from disk, configure `modulePath`, allow the tool, set secrets in the Gateway environment — then ship multi-agent workflows to the channels OpenClaw already supports.
 
@@ -162,4 +160,4 @@ If you do not need the full monorepo, you can still vendor `packages/openclaw-pl
 
 ---
 
-*This article describes the native OpenClaw plugin shipped in the KaibanJS monorepo. For questions and improvements, open an issue or discussion on the [KaibanJS GitHub](https://github.com/kaiban-ai/KaibanJS).*
+_This article describes the native OpenClaw plugin shipped in the KaibanJS monorepo. For questions and improvements, open an issue or discussion on the [KaibanJS GitHub](https://github.com/kaiban-ai/KaibanJS)._

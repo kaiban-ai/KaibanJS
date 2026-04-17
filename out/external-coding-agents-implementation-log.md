@@ -4,17 +4,17 @@ Internal log of what was implemented against the single-issue plan in `out/githu
 
 ## Status
 
-| Area | Status | Notes |
-|------|--------|-------|
-| `ExternalCodingAgent` + factory | Done | `type: 'ExternalCodingAgent'` |
-| Claude Code CLI drivers | Done | `claude --bare -p … --output-format json` |
-| OpenCode CLI drivers | Done | `opencode run --format json …` |
-| `mock` backend (tests / demo without CLI) | Done | `codingBackend: 'mock'` |
-| Playground | Done | `playground/external-coding-agents/` |
-| Single-issue plan doc | Done | `out/github-issues-external-coding-agents.md` |
-| Kaiban.io / boards | Pending | Out of agreed scope |
-| OpenCode HTTP driver | Pending | Future issue |
-| Claude Agent SDK (TS) in-process | Pending | Future issue |
+| Area                                      | Status  | Notes                                         |
+| ----------------------------------------- | ------- | --------------------------------------------- |
+| `ExternalCodingAgent` + factory           | Done    | `type: 'ExternalCodingAgent'`                 |
+| Claude Code CLI drivers                   | Done    | `claude --bare -p … --output-format json`     |
+| OpenCode CLI drivers                      | Done    | `opencode run --format json …`                |
+| `mock` backend (tests / demo without CLI) | Done    | `codingBackend: 'mock'`                       |
+| Playground                                | Done    | `playground/external-coding-agents/`          |
+| Single-issue plan doc                     | Done    | `out/github-issues-external-coding-agents.md` |
+| Kaiban.io / boards                        | Pending | Out of agreed scope                           |
+| OpenCode HTTP driver                      | Pending | Future issue                                  |
+| Claude Agent SDK (TS) in-process          | Pending | Future issue                                  |
 
 ## Files touched (quick reference)
 

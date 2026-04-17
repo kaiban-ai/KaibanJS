@@ -4,7 +4,7 @@
 
 ---
 
-If you build **multi-agent systems** in TypeScript, you have probably asked this question more than once: *the workflow is clear in code — but how do I get it in front of users on the channels they already use?*
+If you build **multi-agent systems** in TypeScript, you have probably asked this question more than once: _the workflow is clear in code — but how do I get it in front of users on the channels they already use?_
 
 **OpenClaw** is a messaging gateway that connects agents to WhatsApp, Telegram, Discord, and similar surfaces with a consistent tool and plugin model. **KaibanJS** gives you structured **Teams** (agents, tasks, optional tools like live search). The piece that used to live in “glue code” is now a **first-party plugin** in the KaibanJS repo: `packages/openclaw-plugin`, published on npm conceptually as **`@kaibanjs/kaibanjs-plugin`**.
 
@@ -14,7 +14,7 @@ This post walks through **what it solves**, **how it works under the hood**, and
 
 ## The idea in one sentence
 
-OpenClaw’s **main agent** decides *when* to call a tool and sends **structured arguments**. The plugin registers **one tool** — `kaiban_run_team` — that loads **your** Team module, runs `createTeam`, then `team.start()`, and returns text plus workflow details to the conversation.
+OpenClaw’s **main agent** decides _when_ to call a tool and sends **structured arguments**. The plugin registers **one tool** — `kaiban_run_team` — that loads **your** Team module, runs `createTeam`, then `team.start()`, and returns text plus workflow details to the conversation.
 
 That is a different shape from “expose my team as a custom HTTP API for every integration.” Here, the gateway’s **tool-calling layer** is the integration point.
 
@@ -30,7 +30,7 @@ The KaibanJS team has a **product-style overview** of this integration (includin
 
 **[KaibanJS Team as a Native OpenClaw Plugin](https://www.kaibanjs.com/examples/kaibanjs-openclaw-plugin)**
 
-If you prefer to *see* the gateway invoke the tool end-to-end, there is a short walkthrough on YouTube:
+If you prefer to _see_ the gateway invoke the tool end-to-end, there is a short walkthrough on YouTube:
 
 **[Demo: KaibanJS Team inside OpenClaw](https://www.youtube.com/watch?v=GgRRFxhpCmk)**
 
@@ -65,7 +65,7 @@ You export two things (names configurable via `exportName` / `metadataExportName
 
 ### `teamMetadata`
 
-- **`description`** (required) — Tells the main agent *when* to use `kaiban_run_team`.
+- **`description`** (required) — Tells the main agent _when_ to use `kaiban_run_team`.
 - **`inputs`** (optional, strongly recommended) — JSON Schema for the `inputs` object: `type: "object"`, explicit `properties`, and `additionalProperties: false` so tool keys stay aligned with `createTeam`.
 
 ### `createTeam`
@@ -167,10 +167,10 @@ Full package documentation: **[`packages/openclaw-plugin/README.md`](https://git
 
 KaibanJS documents **two** ways to integrate with OpenClaw:
 
-| Approach | What happens | Often best when |
-| -------- | ------------- | ----------------- |
-| **Native plugin** (`kaiban_run_team`) | Main agent **calls a tool** with structured `inputs`. | You want KaibanJS as **one tool** among many; the orchestrator chooses *when* to run the Team. |
-| **OpenResponses adapter** | OpenClaw talks to your backend like a **custom model** over HTTP. | You want the **entire turn** routed to your service as a provider-style surface. |
+| Approach                              | What happens                                                      | Often best when                                                                                |
+| ------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **Native plugin** (`kaiban_run_team`) | Main agent **calls a tool** with structured `inputs`.             | You want KaibanJS as **one tool** among many; the orchestrator chooses _when_ to run the Team. |
+| **OpenResponses adapter**             | OpenClaw talks to your backend like a **custom model** over HTTP. | You want the **entire turn** routed to your service as a provider-style surface.               |
 
 Pick based on **routing**, not dogma. The example site contrasts these patterns in more detail on the page linked above.
 
@@ -201,4 +201,4 @@ For the narrative and UI context, start with the **[KaibanJS example page](https
 
 ---
 
-*Disclaimer: This article is based on the KaibanJS monorepo at the time of writing. For the latest install steps and API details, follow the package README in the repository.*
+_Disclaimer: This article is based on the KaibanJS monorepo at the time of writing. For the latest install steps and API details, follow the package README in the repository._
