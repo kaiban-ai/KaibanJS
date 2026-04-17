@@ -22,8 +22,10 @@ function generateConfig(format) {
         'pino-pretty',
         'p-queue',
         'p-timeout',
+        'node:child_process',
+        'child_process',
       ]
-    : ['uuid', 'pino', 'pino-pretty'];
+    : ['uuid', 'pino', 'pino-pretty', 'node:child_process', 'child_process'];
 
   if (isDTS) {
     return {

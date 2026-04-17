@@ -1,0 +1,7 @@
+{
+  "plugins": {
+    "huggingface-skills": {
+      "enabled": true
+    }
+  }
+}

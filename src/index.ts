@@ -45,6 +45,10 @@ import {
   WorkflowDrivenAgent,
   WorkflowDrivenAgentParams,
 } from './agents/workflowDrivenAgent';
+import {
+  ExternalCodingAgent,
+  ExternalCodingAgentParams,
+} from './agents/externalCodingAgent';
 import { WORKFLOW_AGENT_STATUS_enum } from './utils/enums';
 
 /**
@@ -99,20 +103,25 @@ export class Agent {
   agentInstance: BaseAgent;
   type: string;
 
-  constructor({ type, ...config }: IAgentParams | WorkflowDrivenAgentParams) {
+  constructor({
+    type,
+    ...config
+  }: IAgentParams | WorkflowDrivenAgentParams | ExternalCodingAgentParams) {
     this.agentInstance = this.createAgent(type, config);
     this.type = type || 'ReactChampionAgent';
   }
 
   createAgent(
     type: string | undefined,
-    config: IAgentParams | WorkflowDrivenAgentParams
+    config: IAgentParams | WorkflowDrivenAgentParams | ExternalCodingAgentParams
   ): BaseAgent {
     switch (type) {
       case 'ReactChampionAgent':
         return new ReactChampionAgent(config as IAgentParams);
       case 'WorkflowDrivenAgent':
         return new WorkflowDrivenAgent(config as WorkflowDrivenAgentParams);
+      case 'ExternalCodingAgent':
+        return new ExternalCodingAgent(config as ExternalCodingAgentParams);
       default:
         return new ReactChampionAgent(config as IAgentParams);
     }
@@ -587,3 +596,11 @@ export class Team {
     }
   }
 }
+
+export type {
+  ExternalCodingAgentParams,
+  ExternalCodingBackend,
+  ClaudeCodeCliOptions,
+  OpenCodeCliOptions,
+} from './agents/externalCodingAgent';
+export { ExternalCodingAgent };

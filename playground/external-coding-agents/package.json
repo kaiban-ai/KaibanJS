@@ -1,0 +1,19 @@
+{
+  "name": "kaibanjs-playground-external-coding-agents",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx index.ts",
+    "dev": "tsx index.ts"
+  },
+  "dependencies": {
+    "kaibanjs": "file:../.."
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.1",
+    "dotenv": "^16.4.5",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.3"
+  }
+}
