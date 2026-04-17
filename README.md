@@ -578,6 +578,20 @@ _The `WorkflowDrivenAgent` integrates seamlessly with the existing team system, 
 
   </details>
 
+<details style="margin-bottom:10px;">
+  <summary><b style="color:black;">External coding agents (Claude Code & OpenCode)</b></summary>
+
+You can add an agent that **delegates a task** to a local CLI instead of calling an LLM through LangChain: set `type: 'ExternalCodingAgent'` and choose `codingBackend: 'claude-code'`, `'opencode'`, or `'mock'` (no binaries required).
+
+- **Claude Code:** non-interactive `claude --bare -p "…" --output-format json` — see Anthropic’s [headless / programmatic](https://docs.anthropic.com/en/docs/claude-code/headless) docs.
+- **OpenCode:** `opencode run --format json` — see the [OpenCode CLI](https://opencode.ai/docs/cli/) docs.
+- **Playground:** [playground/external-coding-agents](playground/external-coding-agents/README.md) (`npm start`; default backend is set in `index.ts`, see playground README).
+- **Tracking / single-issue draft:** [out/github-issues-external-coding-agents.md](out/github-issues-external-coding-agents.md), [out/external-coding-agents-implementation-log.md](out/external-coding-agents-implementation-log.md).
+
+CLI execution uses Node’s `child_process` and is intended for **local development**; browser bundles list `node:child_process` as external (use this agent from Node or a server runtime).
+
+</details>
+
 ## Documentation
 
 - [Official Documentation](https://docs.kaibanjs.com/category/get-started)

@@ -23,7 +23,8 @@ coverage
 
 # Build Outputs
 .next/
-out/
+# Ignore generated artifacts under out/ but keep tracked Markdown (e.g. planning docs).
+out/*
 build
 dist
 
