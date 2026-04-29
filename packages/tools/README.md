@@ -38,6 +38,7 @@ Here's a list of all available tools. Click on the tool names to view their deta
 | WolframAlpha        | Computational intelligence engine for complex queries and calculations          | [README](src/wolfram-alpha/README.md)        |
 | Zapier Webhook      | Integration with Zapier for workflow automation                                 | [README](src/zapier-webhook/README.md)       |
 | Make Webhook        | Integration with Make (formerly Integromat) for workflow automation             | [README](src/make-webhook/README.md)         |
+| Perplexity Search   | Web search via the Perplexity Search API with domain and recency filters        | [README](src/perplexity-search/README.md)    |
 | Simple RAG Retrieve | Basic Retrieval-Augmented Generation implementation for Q&A with preloaded data | [README](src/simple-rag-retrieve/README.md)  |
 
 ## Development
