@@ -58,13 +58,13 @@ If you see **`spawn opencode ENOENT`**, the binary was not found — install it,
 
 The driver calls `codex exec --json --ephemeral --sandbox read-only <prompt>` by default. Stdin is closed by the process runner so Codex will not wait for interactive input. Key options exposed via `codex: { ... }` in the agent config:
 
-| Option              | CLI flag                                          | Default        |
-| ------------------- | ------------------------------------------------- | -------------- |
-| `model`             | `-m <model>`                                      | Codex default  |
-| `sandboxMode`       | `--sandbox read-only\|workspace-write\|danger-full-access` | `'read-only'` |
-| `ephemeral`         | `--ephemeral` / omit flag                         | `true`         |
-| `skipGitRepoCheck`  | `--skip-git-repo-check`                           | `false`        |
-| `extraArgs`         | appended verbatim                                 | —              |
+| Option             | CLI flag                                                   | Default       |
+| ------------------ | ---------------------------------------------------------- | ------------- |
+| `model`            | `-m <model>`                                               | Codex default |
+| `sandboxMode`      | `--sandbox read-only\|workspace-write\|danger-full-access` | `'read-only'` |
+| `ephemeral`        | `--ephemeral` / omit flag                                  | `true`        |
+| `skipGitRepoCheck` | `--skip-git-repo-check`                                    | `false`       |
+| `extraArgs`        | appended verbatim                                          | —             |
 
 If `codex` is not on `PATH`, set **`KAIBAN_CODEX_CLI`** / **`CODEX_CLI`** to the full path in `.env`.
 
