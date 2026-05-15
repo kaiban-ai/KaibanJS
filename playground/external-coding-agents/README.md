@@ -1,23 +1,23 @@
 # Playground: External coding agents (`ExternalCodingAgent`)
 
-Runs a small **`Team`** with **two** `ExternalCodingAgent` workers. KaibanJS sends each task’s prompt to **Claude Code**, **OpenCode**, or a **`mock`** backend (no local CLI required).
+Runs a small **`Team`** with **two** `ExternalCodingAgent` workers. KaibanJS sends each task's prompt to **Claude Code**, **OpenCode**, **Codex**, or a **`mock`** backend (no local CLI required).
 
 ## What this example does
 
 | Step | Agent            | Task                                                                                                                                 |
 | ---- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | 1    | `RepoExplorer`   | Answer `inputs.question` about the repo (may use **Read** when using Claude Code with `allowedTools: 'Read'`).                       |
-| 2    | `AnswerReviewer` | Reads the first agent’s output through **`{taskResult:task1}`** in the task description, then adds strengths, gaps, and a follow-up. |
+| 2    | `AnswerReviewer` | Reads the first agent's output through **`{taskResult:task1}`** in the task description, then adds strengths, gaps, and a follow-up. |
 
 **Task chaining:** Kaiban resolves `task1`, `task2`, … from the **order of tasks** in the team (see `getTaskResults` in the library). So the second prompt must use `{taskResult:task1}` to refer to the result of the first task.
 
 **Changing the question:** edit `inputs.question` in `index.ts` (or extend the script to read `process.argv`).
 
-**Mock vs real CLI:** with `KAIBAN_CODING_BACKEND=mock`, both agents echo the interpolated prompt (good for wiring checks). With `claude-code` or `opencode`, each task is a separate CLI invocation.
+**Mock vs real CLI:** with `KAIBAN_CODING_BACKEND=mock`, both agents echo the interpolated prompt (good for wiring checks). With `claude-code`, `opencode`, or `codex`, each task is a separate CLI invocation.
 
 ## How to choose the backend (three ways)
 
-1. **In code (recommended for day-to-day)** — edit `PLAYGROUND_DEFAULT_BACKEND` at the top of `index.ts` (`'claude-code'`, `'opencode'`, or `'mock'`), then run:
+1. **In code (recommended for day-to-day)** — edit `PLAYGROUND_DEFAULT_BACKEND` at the top of `index.ts` (`'claude-code'`, `'opencode'`, `'codex'`, or `'mock'`), then run:
 
    ```bash
    npm start
@@ -49,6 +49,24 @@ If `claude` is not on `PATH`, set **`KAIBAN_CLAUDE_CLI`** / **`CLAUDE_CLI`** to 
 2. Set `PLAYGROUND_DEFAULT_BACKEND` to `'opencode'` in `index.ts` (or use `.env`), then `npm start`.
 
 If you see **`spawn opencode ENOENT`**, the binary was not found — install it, fix `PATH`, or set **`KAIBAN_OPENCODE_CLI`** / **`OPENCODE_CLI`** to the full path in `.env`.
+
+## Codex
+
+1. Install [Codex CLI](https://github.com/openai/codex); verify `which codex` (v0.1 or newer).
+2. Authenticate once: `codex login` (stores your key in `~/.codex/auth.json`). Alternatively, export **`OPENAI_API_KEY`** in `.env`.
+3. Set `PLAYGROUND_DEFAULT_BACKEND` to `'codex'` in `index.ts` (or use `.env`), then `npm start`.
+
+The driver calls `codex exec --json --ephemeral --sandbox read-only <prompt>` by default. Stdin is closed by the process runner so Codex will not wait for interactive input. Key options exposed via `codex: { ... }` in the agent config:
+
+| Option              | CLI flag                                          | Default        |
+| ------------------- | ------------------------------------------------- | -------------- |
+| `model`             | `-m <model>`                                      | Codex default  |
+| `sandboxMode`       | `--sandbox read-only\|workspace-write\|danger-full-access` | `'read-only'` |
+| `ephemeral`         | `--ephemeral` / omit flag                         | `true`         |
+| `skipGitRepoCheck`  | `--skip-git-repo-check`                           | `false`        |
+| `extraArgs`         | appended verbatim                                 | —              |
+
+If `codex` is not on `PATH`, set **`KAIBAN_CODEX_CLI`** / **`CODEX_CLI`** to the full path in `.env`.
 
 ## Mock (no CLI)
 

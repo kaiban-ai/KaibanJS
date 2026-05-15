@@ -102,6 +102,36 @@ export function parseClaudeJsonOutput(stdout: string): ParsedCodingOutput {
  * OpenCode may emit NDJSON or a single JSON blob depending on version and flags.
  * We take the last successfully parsed object and prefer common text fields.
  */
+/**
+ * Codex CLI (`codex exec --json`) emits NDJSON events.
+ * We collect every `item.completed` event whose `item.type` is `"agent_message"`,
+ * join their `text` fields, and surface the `turn.completed` payload as structured data.
+ * Non-JSON lines (e.g. "Reading additional input from stdin...") are silently skipped.
+ */
+export function parseCodexJsonOutput(stdout: string): ParsedCodingOutput {
+  const lines = stdout.trim().split(/\r?\n/).filter(Boolean);
+  const textParts: string[] = [];
+  for (const line of lines) {
+    try {
+      const obj = JSON.parse(line) as Record<string, unknown>;
+      if (obj.type === 'item.completed') {
+        const item = obj.item as Record<string, unknown> | undefined;
+        if (item?.type === 'agent_message' && typeof item.text === 'string') {
+          textParts.push(item.text);
+        }
+      }
+    } catch {
+      /* skip non-JSON lines */
+    }
+  }
+
+  const text = textParts.join('\n\n');
+  if (text) {
+    return { text };
+  }
+  return { text: stdout.trim() };
+}
+
 export function parseOpenCodeJsonOutput(stdout: string): ParsedCodingOutput {
   const lines = stdout.trim().split(/\r?\n/).filter(Boolean);
   let last: Record<string, unknown> | null = null;
@@ -175,6 +205,63 @@ export async function runClaudeCodeCli(
 
   const parsed =
     run.exitCode === 0 ? parseClaudeJsonOutput(run.stdout) : { text: '' };
+  return { run, parsed };
+}
+
+export type CodexDriverInput = {
+  cliPath: string;
+  prompt: string;
+  cwd: string;
+  env: NodeJS.ProcessEnv;
+  timeoutMs: number;
+  model?: string;
+  /**
+   * Sandbox policy passed to `--sandbox`.
+   * Defaults to `'read-only'` for safe scripted runs.
+   * Use `'workspace-write'` to allow the agent to edit files in `cwd`.
+   */
+  sandboxMode?: 'read-only' | 'workspace-write' | 'danger-full-access';
+  /**
+   * When `true` (default) the session is not persisted to disk (`--ephemeral`).
+   * Set to `false` if you need Codex to retain its session history.
+   */
+  ephemeral?: boolean;
+  /** Pass `--skip-git-repo-check` when `cwd` is not a git repository. */
+  skipGitRepoCheck?: boolean;
+  extraArgs?: string[];
+};
+
+export async function runCodexCli(
+  input: CodexDriverInput
+): Promise<{ run: CliRunResult; parsed: ParsedCodingOutput }> {
+  const args = ['exec', '--json'];
+
+  if (input.ephemeral !== false) {
+    args.push('--ephemeral');
+  }
+  const sandbox = input.sandboxMode ?? 'read-only';
+  args.push('--sandbox', sandbox);
+  if (input.model) {
+    args.push('-m', input.model);
+  }
+  if (input.skipGitRepoCheck) {
+    args.push('--skip-git-repo-check');
+  }
+  if (input.extraArgs?.length) {
+    args.push(...input.extraArgs);
+  }
+  args.push(input.prompt);
+
+  const run = await runChildProcess({
+    command: input.cliPath,
+    args,
+    cwd: input.cwd,
+    env: input.env,
+    timeoutMs: input.timeoutMs,
+  });
+
+  const parsed =
+    run.exitCode === 0 ? parseCodexJsonOutput(run.stdout) : { text: '' };
   return { run, parsed };
 }
 
