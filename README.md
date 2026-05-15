@@ -579,12 +579,13 @@ _The `WorkflowDrivenAgent` integrates seamlessly with the existing team system, 
   </details>
 
 <details style="margin-bottom:10px;">
-  <summary><b style="color:black;">External coding agents (Claude Code & OpenCode)</b></summary>
+  <summary><b style="color:black;">External coding agents (Claude Code, OpenCode & Codex)</b></summary>
 
-You can add an agent that **delegates a task** to a local CLI instead of calling an LLM through LangChain: set `type: 'ExternalCodingAgent'` and choose `codingBackend: 'claude-code'`, `'opencode'`, or `'mock'` (no binaries required).
+You can add an agent that **delegates a task** to a local CLI instead of calling an LLM through LangChain: set `type: 'ExternalCodingAgent'` and choose `codingBackend: 'claude-code'`, `'opencode'`, `'codex'`, or `'mock'` (no binaries required).
 
 - **Claude Code:** non-interactive `claude --bare -p "…" --output-format json` — see Anthropic’s [headless / programmatic](https://docs.anthropic.com/en/docs/claude-code/headless) docs.
 - **OpenCode:** `opencode run --format json` — see the [OpenCode CLI](https://opencode.ai/docs/cli/) docs.
+- **Codex:** non-interactive `codex exec --json --ephemeral --sandbox read-only "…"` — see the [Codex CLI](https://github.com/openai/codex) docs. Authenticate once with `codex login` (or export `OPENAI_API_KEY`). Key options via `codex: { model, sandboxMode, ephemeral, skipGitRepoCheck }`.
 - **Playground:** [playground/external-coding-agents](playground/external-coding-agents/README.md) (`npm start`; default backend is set in `index.ts`, see playground README).
 - **Tracking / single-issue draft:** [out/github-issues-external-coding-agents.md](out/github-issues-external-coding-agents.md), [out/external-coding-agents-implementation-log.md](out/external-coding-agents-implementation-log.md).
 

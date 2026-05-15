@@ -12,10 +12,15 @@ import { interpolateTaskDescriptionV2 } from '../utils/tasks';
 import { BaseAgent, BaseAgentParams } from './baseAgent';
 import {
   runClaudeCodeCli,
+  runCodexCli,
   runOpenCodeCli,
 } from './externalCoding/cliCodingDrivers';
 
-export type ExternalCodingBackend = 'claude-code' | 'opencode' | 'mock';
+export type ExternalCodingBackend =
+  | 'claude-code'
+  | 'opencode'
+  | 'codex'
+  | 'mock';
 
 export interface ClaudeCodeCliOptions {
   /** When true (default), passes `--bare` for reproducible scripted runs. */
@@ -32,6 +37,25 @@ export interface OpenCodeCliOptions {
   /** OpenCode `--agent` flag value (named agent in OpenCode config). */
   agentName?: string;
   attachUrl?: string;
+  extraArgs?: string[];
+}
+
+export interface CodexCliOptions {
+  model?: string;
+  /**
+   * Sandbox policy for `codex exec --sandbox`.
+   * `'read-only'` (default) — safe for read-only tasks.
+   * `'workspace-write'` — lets the agent edit files in `workspaceRoot`.
+   * `'danger-full-access'` — no sandboxing (use only in isolated environments).
+   */
+  sandboxMode?: 'read-only' | 'workspace-write' | 'danger-full-access';
+  /**
+   * Keep the session on disk (`--no-ephemeral`).
+   * Defaults to `true` (ephemeral) for reproducible scripted runs.
+   */
+  ephemeral?: boolean;
+  /** Pass `--skip-git-repo-check` when `workspaceRoot` is not a git repo. */
+  skipGitRepoCheck?: boolean;
   extraArgs?: string[];
 }
 
@@ -53,6 +77,7 @@ export interface ExternalCodingAgentParams {
   timeoutMs?: number;
   claude?: ClaudeCodeCliOptions;
   opencode?: OpenCodeCliOptions;
+  codex?: CodexCliOptions;
 }
 
 export class ExternalCodingAgent extends BaseAgent {
@@ -62,6 +87,7 @@ export class ExternalCodingAgent extends BaseAgent {
   private readonly timeoutMs: number;
   private readonly claude?: ClaudeCodeCliOptions;
   private readonly opencode?: OpenCodeCliOptions;
+  private readonly codex?: CodexCliOptions;
 
   constructor(config: ExternalCodingAgentParams) {
     const base: BaseAgentParams = {
@@ -86,6 +112,7 @@ export class ExternalCodingAgent extends BaseAgent {
     this.timeoutMs = config.timeoutMs ?? 600_000;
     this.claude = config.claude;
     this.opencode = config.opencode;
+    this.codex = config.codex;
   }
 
   async workOnTask(
@@ -297,6 +324,32 @@ export class ExternalCodingAgent extends BaseAgent {
         taskResult,
         errorMessage: null,
       };
+    }
+
+    if (this.codingBackend === 'codex') {
+      const cliPath = this.cliPath ?? 'codex';
+      const cx = this.codex ?? {};
+      const { run, parsed } = await runCodexCli({
+        cliPath,
+        prompt,
+        cwd,
+        env,
+        timeoutMs: this.timeoutMs,
+        model: cx.model,
+        sandboxMode: cx.sandboxMode,
+        ephemeral: cx.ephemeral,
+        skipGitRepoCheck: cx.skipGitRepoCheck,
+        extraArgs: cx.extraArgs,
+      });
+
+      if (run.exitCode !== 0) {
+        const msg = formatCliFailure('Codex', run);
+        return { taskResult: '', errorMessage: msg };
+      }
+
+      // parsed.structured for Codex is the turn.completed telemetry (usage stats),
+      // not a semantic structured result — always surface the agent's text output.
+      return { taskResult: parsed.text, errorMessage: null };
     }
 
     return {

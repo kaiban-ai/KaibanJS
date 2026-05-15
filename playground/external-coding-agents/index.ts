@@ -8,12 +8,17 @@
 import 'dotenv/config';
 import { Agent, Task, Team } from 'kaibanjs';
 
-type CodingBackend = 'mock' | 'claude-code' | 'opencode';
+type CodingBackend = 'mock' | 'claude-code' | 'opencode' | 'codex';
 
 /** Edit this for normal `npm start` / `npm run dev` without shell prefixes. */
 const PLAYGROUND_DEFAULT_BACKEND: CodingBackend = 'claude-code';
 
-const ALLOWED_BACKENDS = new Set<string>(['mock', 'claude-code', 'opencode']);
+const ALLOWED_BACKENDS = new Set<string>([
+  'mock',
+  'claude-code',
+  'opencode',
+  'codex',
+]);
 
 function resolveCodingBackend(): CodingBackend {
   const raw = process.env.KAIBAN_CODING_BACKEND?.trim();
@@ -23,7 +28,7 @@ function resolveCodingBackend(): CodingBackend {
   if (raw) {
     console.warn(
       `[playground] Invalid KAIBAN_CODING_BACKEND="${process.env.KAIBAN_CODING_BACKEND}". ` +
-        `Expected one of: mock, claude-code, opencode. ` +
+        `Expected one of: mock, claude-code, opencode, codex. ` +
         `Using PLAYGROUND_DEFAULT_BACKEND (${PLAYGROUND_DEFAULT_BACKEND}). ` +
         `Tip: avoid typos like VAR=VAR=value — use VAR=value or put VAR=value in .env`
     );
@@ -39,6 +44,8 @@ const cliPathFromEnv =
     ? process.env.KAIBAN_CLAUDE_CLI || process.env.CLAUDE_CLI
     : codingBackend === 'opencode'
     ? process.env.KAIBAN_OPENCODE_CLI || process.env.OPENCODE_CLI
+    : codingBackend === 'codex'
+    ? process.env.KAIBAN_CODEX_CLI || process.env.CODEX_CLI
     : undefined;
 
 type WorkerIdentity = {
@@ -72,6 +79,14 @@ function createExternalCodingWorker(c: WorkerIdentity): Agent {
       ? {
           opencode: {
             // model: 'anthropic/claude-3-5-sonnet-latest',
+          },
+        }
+      : {}),
+    ...(codingBackend === 'codex'
+      ? {
+          codex: {
+            // model: 'o4-mini',
+            sandboxMode: 'read-only' as const,
           },
         }
       : {}),
