@@ -32,6 +32,11 @@
       "import": "./dist/exa/index.esm.js",
       "require": "./dist/exa/index.cjs.js"
     },
+    "./linkup": {
+      "types": "./dist/linkup/index.d.ts",
+      "import": "./dist/linkup/index.esm.js",
+      "require": "./dist/linkup/index.cjs.js"
+    },
     "./wolframalpha": {
       "types": "./dist/wolframalpha/index.d.ts",
       "import": "./dist/wolframalpha/index.esm.js",

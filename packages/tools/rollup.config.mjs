@@ -13,6 +13,7 @@ const toolFolders = [
   'tavily',
   'serper',
   'exa',
+  'linkup',
   'wolfram-alpha',
   'github-issues',
   'simple-rag',

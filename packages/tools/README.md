@@ -29,6 +29,7 @@ Here's a list of all available tools. Click on the tool names to view their deta
 | Firecrawl           | Web scraping service for extracting structured data                             | [README](src/firecrawl/README.md)            |
 | GitHub Issues       | GitHub API integration for fetching and analyzing repository issues             | [README](src/github-issues/README.md)        |
 | Jina URL to MD      | Convert web content into clean, LLM-ready markdown using Jina.ai                | [README](src/jina-url-to-markdown/README.md) |
+| Linkup Search       | Real-time web search API for AI returning citable sources or sourced answers    | [README](src/linkup/README.md)               |
 | PDF Search          | Extract and search content from PDF documents                                   | [README](src/pdf-search/README.md)           |
 | Serper              | Google Search API integration with support for multiple search types            | [README](src/serper/README.md)               |
 | Simple RAG          | Basic Retrieval-Augmented Generation implementation for Q&A                     | [README](src/simple-rag/README.md)           |
@@ -83,6 +84,7 @@ VITE_FIRECRAWL_API_KEY=your_firecrawl_api_key
 VITE_TAVILY_API_KEY=your_tavily_api_key
 VITE_SERPER_API_KEY=your_serper_api_key
 VITE_EXA_API_KEY=your_exa_api_key
+VITE_LINKUP_API_KEY=your_linkup_api_key
 VITE_WOLFRAM_APP_ID=your_wolfram_app_id
 ```
 
