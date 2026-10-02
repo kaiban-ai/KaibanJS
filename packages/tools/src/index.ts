@@ -15,5 +15,6 @@ export { GithubIssues } from './github-issues';
 export { Serper } from './serper';
 export { WolframAlphaTool } from './wolfram-alpha';
 export { ExaSearch } from './exa';
+export { LinkupSearch } from './linkup';
 export { SimpleRAGRetrieve } from './simple-rag-retrieve';
 export { RAGToolkit } from './_utils/rag/ragToolkit';
